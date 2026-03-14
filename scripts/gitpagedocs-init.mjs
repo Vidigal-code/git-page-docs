@@ -1,7 +1,12 @@
-import { mkdir, writeFile } from "node:fs/promises";
+#!/usr/bin/env node
+
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const ROOT = process.cwd();
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const SPA_TEMPLATE_PATH = path.join(SCRIPT_DIR, "templates", "index.spa.js");
 
 const LAYOUTS = [
   {
@@ -1175,8 +1180,10 @@ async function run() {
 
   const layoutsConfig = { layouts: LAYOUTS };
   const fallbackLayoutsConfig = { layouts: FALLBACK_LAYOUTS };
+  const spaRendererScript = await readFile(SPA_TEMPLATE_PATH, "utf-8");
 
   await writeJson("gitpagedocs/config.json", rootConfig);
+  await writeText("index.js", spaRendererScript);
   await writeText("gitpagedocs/docs/en/index.md", DOCS.en.index);
   await writeText("gitpagedocs/docs/en/getting-started.md", DOCS.en.gettingStarted);
   await writeText("gitpagedocs/docs/en/configuration.md", DOCS.en.configuration);
@@ -1330,6 +1337,7 @@ async function run() {
   }
 
   console.log("Git Page Docs scaffold created successfully.");
+  console.log("Created index.js SPA renderer. Add it to your index.html to render gitpagedocs content.");
 }
 
 run().catch((error) => {

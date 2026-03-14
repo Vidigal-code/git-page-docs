@@ -1,21 +1,34 @@
 {
-  "name": "git-page-docs",
+  "name": "gitpagedocs",
   "version": "1.0.0",
   "description": "Multi-language docs with themeable layouts for GitHub Pages repositories.",
   "main": "scripts/gitpagedocs-init.mjs",
+  "bin": {
+    "gitpagedocs": "./scripts/gitpagedocs-init.mjs",
+    "gitpagedocs-init": "./scripts/gitpagedocs-init.mjs",
+    "create-gitpagedocs": "./scripts/gitpagedocs-init.mjs"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "prestart": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "gitpagedocs": "node scripts/gitpagedocs-init.mjs"
+    "gitpagedocs": "node scripts/gitpagedocs-init.mjs",
+    "init:gitpagedocs": "node scripts/gitpagedocs-init.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Vidigal-code/git-page-docs.git"
   },
-  "keywords": [],
+  "keywords": [
+    "gitpagedocs",
+    "documentation",
+    "markdown",
+    "nextjs",
+    "cli",
+    "github-pages"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {

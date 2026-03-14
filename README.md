@@ -23,11 +23,27 @@ Open: `http://localhost:3000`
 
 ## CLI
 
-Run:
+Run locally inside a project:
 
 ```bash
 npm run gitpagedocs
 ```
+
+You can also run as a global/local CLI after publishing:
+
+```bash
+npm install -g gitpagedocs
+gitpagedocs
+```
+
+And with npm initializer convention:
+
+```bash
+npm init gitpagedocs
+```
+
+Important: `npm init gitpagedocs` resolves to package `create-gitpagedocs`.  
+To support this command in npm, publish the same CLI package under the name `create-gitpagedocs` (or a thin wrapper package that calls this CLI).
 
 This command creates or updates:
 
@@ -36,6 +52,25 @@ This command creates or updates:
 - `gitpagedocs/layouts/**` (fallback themes)
 - `public/layouts/layoutsConfig.json`
 - `public/layouts/templates/*.json`
+- `index.js` (SPA renderer for plain `index.html` projects)
+
+## SPA Renderer (`index.js`)
+
+The scaffold now generates a browser-ready `index.js`.
+
+If you have a plain SPA/static site, add this to your `index.html`:
+
+```html
+<div id="gitpagedocs-app"></div>
+<script src="./index.js"></script>
+```
+
+`index.js` reads `./gitpagedocs/config.json`, loads markdown files, and renders:
+
+- language selector
+- sidebar navigation from `menus-header`
+- previous/next navigation
+- markdown content for the selected route
 
 ## Repository Search Mode
 
@@ -80,4 +115,21 @@ The workflow builds and deploys to:
 ```bash
 npm run lint
 npm run build
+```
+
+## Publish To NPM (Your Account)
+
+Use your own npm account/session:
+
+```bash
+npm login
+npm whoami
+npm publish --access public
+```
+
+To make `npm init gitpagedocs` work, also publish initializer package name:
+
+```bash
+# same codebase, package name must be create-gitpagedocs
+npm publish --access public
 ```
