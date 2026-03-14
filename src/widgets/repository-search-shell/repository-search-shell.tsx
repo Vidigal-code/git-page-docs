@@ -110,9 +110,9 @@ export function RepositorySearchShell({
   const searchLabel = getLangMenuLabel(data, language, "searchButtonLabel", "Search");
 
   const localizedMessage = {
-    pt: "Este projeto nao usa GitPageDocs.",
-    en: "This project does not use GitPageDocs.",
-    es: "Este proyecto no usa GitPageDocs.",
+    pt: "GitPageDocs não está instalado neste repositório.",
+    en: "GitPageDocs is not installed in this repository.",
+    es: "GitPageDocs no está instalado en este repositorio.",
   }[language];
 
   const localizedDescription = {
@@ -122,6 +122,17 @@ export function RepositorySearchShell({
   }[language];
 
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
+
+  // Handle repository identification via URL hash (#/owner/repo)
+  useMemo(() => {
+    if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
+      const parts = window.location.hash.slice(2).split("/").filter(Boolean);
+      if (parts.length >= 2 && (!ownerInput || !repoInput)) {
+        setOwnerInput(parts[0]);
+        setRepoInput(parts[1]);
+      }
+    }
+  }, [ownerInput, repoInput]);
 
   function onThemeChange(nextThemeId: string) {
     setActiveThemeId(nextThemeId);
@@ -140,6 +151,9 @@ export function RepositorySearchShell({
     const repo = repoInput.trim();
     if (!owner || !repo) {
       return;
+    }
+    if (typeof window !== "undefined") {
+      window.location.hash = `#/${owner}/${repo}`;
     }
     router.push(`/${owner}/${repo}`);
   }

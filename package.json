@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node -e \"const fs=require('fs'); if(fs.existsSync('public/gitpagedocs')) fs.rmSync('public/gitpagedocs', {recursive:true}); fs.cpSync('gitpagedocs', 'public/gitpagedocs', {recursive:true, dereference:true})\" && next build",
     "prestart": "next build",
     "start": "next start",
     "lint": "eslint .",

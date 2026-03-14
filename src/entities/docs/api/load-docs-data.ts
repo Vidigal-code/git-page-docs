@@ -31,10 +31,38 @@ function parseOwnerRepoFromRenderingUrl(rendering: string): { owner?: string; re
   return {};
 }
 
+function isBrowser(): boolean {
+  return typeof window !== "undefined";
+}
+
+async function readLocalText(filePath: string): Promise<string | null> {
+  if (isBrowser()) {
+    try {
+      // Normalize path to avoid double slashes and handle base path if necessary
+      const baseUrl = window.location.origin;
+      const pathPrefix = window.location.pathname.startsWith("/git-page-docs") ? "/git-page-docs" : "";
+      const url = `${baseUrl}${pathPrefix}/${filePath.replace(/^\//, "")}`;
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      return await response.text();
+    } catch {
+      return null;
+    }
+  }
+  try {
+    const fullPath = path.join(process.cwd(), filePath);
+    return await fs.readFile(fullPath, "utf-8");
+  } catch {
+    return null;
+  }
+}
+
 async function readJsonFile<T>(filePath: string): Promise<T> {
-  const fullPath = path.join(process.cwd(), filePath);
-  const raw = await fs.readFile(fullPath, "utf-8");
-  return JSON.parse(raw) as T;
+  const text = await readLocalText(filePath);
+  if (text === null) {
+    throw new Error(`Failed to read local file: ${filePath}`);
+  }
+  return JSON.parse(text) as T;
 }
 
 async function tryReadJsonFile<T>(filePath: string): Promise<T | null> {
@@ -353,18 +381,35 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const isRepositoryRouteRequest = Boolean(canUseRepositorySearch && requestedOwner && requestedRepo);
   const showRepositorySearchHome = Boolean(canUseRepositorySearch && !requestedOwner && !requestedRepo);
   const renderingFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
+  const projectLinkFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
 
   let source: "local" | "remote" = "local";
   let owner: string | undefined;
   let repo: string | undefined;
 
-  if (canUseRepositorySearch && requestedOwner && requestedRepo) {
+  const isLocalRepo = Boolean(
+    requestedOwner &&
+    requestedRepo &&
+    ((requestedOwner.toLowerCase() === projectLinkFallback.owner?.toLowerCase() &&
+      requestedRepo.toLowerCase() === projectLinkFallback.repo?.toLowerCase()) ||
+      (requestedOwner.toLowerCase() === renderingFallback.owner?.toLowerCase() &&
+        requestedRepo.toLowerCase() === renderingFallback.repo?.toLowerCase())),
+  );
+
+  if (canUseRepositorySearch && requestedOwner && requestedRepo && !isLocalRepo) {
     source = "remote";
     owner = requestedOwner;
     repo = requestedRepo;
   }
 
-  if (!showRepositorySearchHome && canUseRepositorySearch && !owner && !repo && renderingFallback.owner && renderingFallback.repo) {
+  if (
+    !showRepositorySearchHome &&
+    canUseRepositorySearch &&
+    !owner &&
+    !repo &&
+    renderingFallback.owner &&
+    renderingFallback.repo
+  ) {
     source = "remote";
     owner = renderingFallback.owner;
     repo = renderingFallback.repo;
@@ -372,6 +417,12 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
 
   let config = localConfig;
   let hasGitPageDocs = true;
+
+  if (isLocalRepo) {
+    source = "local";
+    owner = requestedOwner;
+    repo = requestedRepo;
+  }
   if (owner && repo) {
     const remoteConfig = await readRemoteJsonFromRepo<GitPageDocsConfig>(owner, repo, DEFAULT_CONFIG_PATH);
     if (remoteConfig) {
@@ -445,8 +496,8 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
           }
 
           try {
-            const localText = await fs.readFile(path.join(process.cwd(), languagePath), "utf-8");
-            markdownByLanguage[language] = markdownToHtml(localText);
+            const localText = await readLocalText(languagePath);
+            markdownByLanguage[language] = localText ? markdownToHtml(localText) : "<p>Unable to load local markdown file.</p>";
           } catch {
             markdownByLanguage[language] = "<p>Unable to load local markdown file.</p>";
           }
