@@ -1,0 +1,28 @@
+{
+  "name": "create-gitpagedocs",
+  "version": "1.1.1",
+  "description": "Initialize gitpagedocs in your project. Use: npm init gitpagedocs",
+  "bin": {
+    "create-gitpagedocs": "./bin.mjs"
+  },
+  "files": [
+    "bin.mjs"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vidigal-code/git-page-docs.git"
+  },
+  "keywords": [
+    "gitpagedocs",
+    "create",
+    "init",
+    "documentation",
+    "cli"
+  ],
+  "author": "Vidigal-code",
+  "license": "ISC",
+  "dependencies": {
+    "gitpagedocs": "^1.1.1"
+  }
+}

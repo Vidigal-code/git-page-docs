@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -1182,8 +1182,27 @@ async function run() {
   const fallbackLayoutsConfig = { layouts: FALLBACK_LAYOUTS };
   const spaRendererScript = await readFile(SPA_TEMPLATE_PATH, "utf-8");
 
+  const INDEX_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitPageDocs</title>
+</head>
+<body>
+  <div id="gitpagedocs-app"></div>
+  <script src="./index.js"></script>
+</body>
+</html>`;
+
   await writeJson("gitpagedocs/config.json", rootConfig);
   await writeText("index.js", spaRendererScript);
+  try {
+    await access(path.join(ROOT, "index.html"));
+  } catch {
+    await writeText("index.html", INDEX_HTML);
+    console.log("Created index.html with gitpagedocs-app div. Serve it to view the SPA.");
+  }
   await writeText("gitpagedocs/docs/en/index.md", DOCS.en.index);
   await writeText("gitpagedocs/docs/en/getting-started.md", DOCS.en.gettingStarted);
   await writeText("gitpagedocs/docs/en/configuration.md", DOCS.en.configuration);
@@ -1337,7 +1356,7 @@ async function run() {
   }
 
   console.log("Git Page Docs scaffold created successfully.");
-  console.log("Created index.js SPA renderer. Add it to your index.html to render gitpagedocs content.");
+  console.log("index.js SPA renderer ready. Open index.html (or add <div id=\"gitpagedocs-app\"></div><script src=\"./index.js\"></script> to your HTML) to view docs.");
 }
 
 run().catch((error) => {

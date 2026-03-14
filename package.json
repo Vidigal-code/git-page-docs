@@ -1,13 +1,15 @@
 {
   "name": "gitpagedocs",
-  "version": "1.1.0",
-  "description": "Multi-language docs with themeable layouts for GitHub Pages repositories.",
+  "version": "1.1.2",
+  "description": "Multi-language docs with themeable layouts for GitHub Pages repositories. CLI + SPA renderer.",
   "main": "scripts/gitpagedocs-init.mjs",
   "bin": {
     "gitpagedocs": "./scripts/gitpagedocs-init.mjs",
-    "gitpagedocs-init": "./scripts/gitpagedocs-init.mjs",
-    "create-gitpagedocs": "./scripts/gitpagedocs-init.mjs"
+    "gitpagedocs-init": "./scripts/gitpagedocs-init.mjs"
   },
+  "files": [
+    "scripts"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "node -e \"const fs=require('fs'); if(fs.existsSync('public/gitpagedocs')) fs.rmSync('public/gitpagedocs', {recursive:true}); fs.cpSync('gitpagedocs', 'public/gitpagedocs', {recursive:true, dereference:true})\" && next build",
@@ -15,7 +17,7 @@
     "start": "next start",
     "lint": "eslint .",
     "gitpagedocs": "node scripts/gitpagedocs-init.mjs",
-    "init:gitpagedocs": "node scripts/gitpagedocs-init.mjs"
+    "publish:create": "npm publish --access public --prefix packages/create-gitpagedocs"
   },
   "repository": {
     "type": "git",
@@ -25,25 +27,26 @@
     "gitpagedocs",
     "documentation",
     "markdown",
-    "nextjs",
+    "spa",
     "cli",
-    "github-pages"
+    "github-pages",
+    "create-gitpagedocs"
   ],
-  "author": "",
+  "author": "Vidigal-code",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Vidigal-code/git-page-docs/issues"
   },
   "homepage": "https://vidigal-code.github.io/git-page-docs/",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "gray-matter": "^4.0.3",
     "marked": "^15.0.7",
     "next": "^15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.4.0"
-  },
-  "devDependencies": {
+    "react-icons": "^5.4.0",
+    "@eslint/eslintrc": "^3.3.5",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",

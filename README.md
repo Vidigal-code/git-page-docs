@@ -23,27 +23,33 @@ Open: `http://localhost:3000`
 
 ## CLI
 
-Run locally inside a project:
+### Install and run
 
 ```bash
+npm install gitpagedocs
+npx gitpagedocs
+# or
 npm run gitpagedocs
 ```
 
-You can also run as a global/local CLI after publishing:
+Add to your `package.json` scripts:
 
-```bash
-npm install -g gitpagedocs
-gitpagedocs
+```json
+"scripts": {
+  "gitpagedocs": "gitpagedocs"
+}
 ```
 
-And with npm initializer convention:
+### npm init (create-gitpagedocs)
 
 ```bash
 npm init gitpagedocs
 ```
 
-Important: `npm init gitpagedocs` resolves to package `create-gitpagedocs`.  
-To support this command in npm, publish the same CLI package under the name `create-gitpagedocs` (or a thin wrapper package that calls this CLI).
+This runs `create-gitpagedocs`, which scaffolds the docs. Both packages must be published:
+
+- `gitpagedocs` – main CLI
+- `create-gitpagedocs` – initializer for `npm init gitpagedocs`
 
 This command creates or updates:
 
@@ -52,18 +58,19 @@ This command creates or updates:
 - `gitpagedocs/layouts/**` (fallback themes)
 - `public/layouts/layoutsConfig.json`
 - `public/layouts/templates/*.json`
-- `index.js` (SPA renderer for plain `index.html` projects)
+- `index.js` (SPA renderer)
+- `index.html` (created only if it does not exist)
 
 ## SPA Renderer (`index.js`)
 
-The scaffold now generates a browser-ready `index.js`.
-
-If you have a plain SPA/static site, add this to your `index.html`:
+The scaffold generates a browser-ready `index.js`. If `index.html` does not exist, it is created with:
 
 ```html
 <div id="gitpagedocs-app"></div>
 <script src="./index.js"></script>
 ```
+
+If you already have an `index.html`, add the above block inside `<body>`.
 
 `index.js` reads `./gitpagedocs/config.json`, loads markdown files, and renders:
 
@@ -117,19 +124,40 @@ npm run lint
 npm run build
 ```
 
-## Publish To NPM (Your Account)
+## Publish to npm
 
-Use your own npm account/session:
+1. Log in and check your account:
 
 ```bash
 npm login
 npm whoami
+```
+
+2. Publish the main package:
+
+```bash
 npm publish --access public
 ```
 
-To make `npm init gitpagedocs` work, also publish initializer package name:
+3. Publish the initializer for `npm init gitpagedocs`:
 
 ```bash
-# same codebase, package name must be create-gitpagedocs
+cd packages/create-gitpagedocs
 npm publish --access public
+```
+
+Or from the repo root: `npm run publish:create`
+
+### Troubleshooting: `Cannot read properties of null (reading 'matches')`
+
+This npm error often occurs when:
+
+- Mixing package managers (e.g. `pnpm` then `npm` in the same project)
+- Corrupt or inconsistent `node_modules`
+
+Try:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
 ```
