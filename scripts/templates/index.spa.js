@@ -2,27 +2,6 @@
   const STORAGE_PREFIX = "gitpagedocs:spa:";
   const APP_ID = "gitpagedocs-app";
 
-  const AURORA = {
-    dark: {
-      bg: "#070A14",
-      cardBg: "#101726",
-      cardBorder: "#334155",
-      primary: "#7C3AED",
-      secondary: "#22D3EE",
-      text: "#E5E7EB",
-      textMuted: "#B8C3D6",
-    },
-    light: {
-      bg: "#F8FAFC",
-      cardBg: "#FFFFFF",
-      cardBorder: "#E2E8F0",
-      primary: "#7C3AED",
-      secondary: "#0D9488",
-      text: "#1E293B",
-      textMuted: "#64748B",
-    },
-  };
-
   function getAppRoot() {
     const existing = document.getElementById(APP_ID);
     if (existing) return existing;
@@ -117,26 +96,78 @@
     }
   }
 
-  function splitMarkdownIntoPages(html) {
-    const pages = html.split(/(?=<h1)/i).filter(Boolean);
-    return pages.length ? pages : [html];
+  function resolveThemeByMode(layouts, active, mode) {
+    if (!active?.supportsLightAndDarkModes || !active?.supportsLightAndDarkModesReference) return active;
+    const pair = layouts.find(
+      (item) =>
+        item.supportsLightAndDarkModesReference === active.supportsLightAndDarkModesReference && item.mode === mode
+    );
+    return pair ?? active;
   }
 
-  function createStyles(theme) {
-    const t = theme === "aurora-light" ? AURORA.light : AURORA.dark;
+  function hexToRgba(hex, alpha) {
+    if (!hex || typeof hex !== "string") return `rgba(34,211,238,${alpha})`;
+    const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (!m) return `rgba(34,211,238,${alpha})`;
+    const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function themeToVars(theme) {
+    const c = theme?.colors ?? {};
+    const card = theme?.components?.card ?? {};
+    const header = theme?.components?.header ?? {};
+    const button = theme?.components?.button ?? {};
+    const select = theme?.components?.select ?? {};
+    return {
+      bg: c.background ?? "#0b0f15",
+      cardBg: c.cardBackground ?? "#0f172a",
+      cardBorder: c.cardBorder ?? "#334155",
+      primary: c.primary ?? "#7c3aed",
+      secondary: c.secondary ?? "#22d3ee",
+      text: c.text ?? "#e2e8f0",
+      textMuted: c.textSecondary ?? "#94a3b8",
+      headerBg: header.backgroundColor ?? "#0b1220",
+      headerBorder: header.borderBottom ?? "1px solid #334155",
+      cardRadius: card.borderRadius ?? "16px",
+      cardShadow: card.boxShadow ?? "0 18px 60px rgba(0,0,0,0.35)",
+      controlRadius: button.borderRadius ?? select.borderRadius ?? "12px",
+      controlBorder: button.border ?? select.border ?? "1px solid #334155",
+      controlBg: select.backgroundColor ?? "#0f172a",
+    };
+  }
+
+  function createStylesFromTheme(theme) {
+    const t = themeToVars(theme);
+    const isLight = theme?.mode === "light";
+    const bgGradient = isLight
+      ? "linear-gradient(180deg, #E0F2FE, #F0F9FF 50%, #F8FAFC)"
+      : `radial-gradient(circle at 10% -20%, ${hexToRgba(t.primary, 0.22)}, transparent 44%), radial-gradient(circle at 90% -30%, ${hexToRgba(t.secondary, 0.2)}, transparent 42%), ${t.bg}`;
+    const headerGradient = isLight
+      ? "linear-gradient(90deg, rgba(241,245,249,0.95), rgba(248,250,252,0.95))"
+      : "linear-gradient(90deg, rgba(11,18,32,0.95), rgba(15,23,42,0.95))";
+    const sidebarGradient = isLight
+      ? "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.88))"
+      : "linear-gradient(180deg, rgba(16,23,38,0.94), rgba(7,10,20,0.88))";
+    const railBg = isLight ? "rgba(248,250,252,0.92)" : "rgba(16,23,38,0.92)";
+    const cardGradient = isLight
+      ? "linear-gradient(160deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95))"
+      : "linear-gradient(160deg, rgba(16,23,38,0.94), rgba(15,23,42,0.92))";
+    const footerBg = isLight ? "#F8FAFC" : "#0B1220";
+
     return `
       #${APP_ID} {
         min-height: 100vh;
-        background: ${theme === "aurora-light" ? `linear-gradient(180deg, #E0F2FE, #F0F9FF 50%, #F8FAFC)` : `radial-gradient(circle at 10% -20%, rgba(124,58,237,0.22), transparent 44%), radial-gradient(circle at 90% -30%, rgba(34,211,238,0.2), transparent 42%), ${t.bg}`};
+        background: ${bgGradient};
         color: ${t.text};
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif;
+        font-family: ${theme?.typography?.fontFamily ?? "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif"};
       }
       #${APP_ID} .gpd-shell { max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
       #${APP_ID} .gpd-header {
         position: sticky; top: 0; z-index: 20;
         padding: 14px 18px;
-        border-bottom: 1px solid ${t.cardBorder};
-        background: ${theme === "aurora-light" ? "linear-gradient(90deg, rgba(241,245,249,0.95), rgba(248,250,252,0.95))" : "linear-gradient(90deg, rgba(11,18,32,0.95), rgba(15,23,42,0.95))"};
+        border-bottom: ${t.headerBorder};
+        background: ${headerGradient};
         backdrop-filter: blur(8px);
         display: flex;
         flex-wrap: wrap;
@@ -149,9 +180,9 @@
       #${APP_ID} .gpd-header a:hover { color: ${t.secondary}; }
       #${APP_ID} .gpd-header select, #${APP_ID} .gpd-header button {
         height: 38px; min-height: 38px;
-        border-radius: 12px;
-        border: 1px solid ${t.cardBorder};
-        background: ${t.cardBg};
+        border-radius: ${t.controlRadius};
+        border: ${t.controlBorder};
+        background: ${t.controlBg};
         color: ${t.text};
         padding: 0 12px;
         font-size: 0.9rem;
@@ -162,7 +193,7 @@
       #${APP_ID} .gpd-mode-btn {
         width: 38px; min-width: 38px; padding: 0;
         display: inline-flex; align-items: center; justify-content: center;
-        font-size: 1.1rem; border-radius: 12px;
+        font-size: 1.1rem; border-radius: ${t.controlRadius};
       }
       #${APP_ID} .gpd-main {
         display: grid;
@@ -175,7 +206,7 @@
         display: flex; flex-direction: column;
         border-right: 1px solid ${t.cardBorder};
         padding: 18px 14px;
-        background: ${theme === "aurora-light" ? "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.88))" : "linear-gradient(180deg, rgba(16,23,38,0.94), rgba(7,10,20,0.88))"};
+        background: ${sidebarGradient};
         overflow-y: auto;
         height: 100%;
         min-height: calc(100vh - 60px);
@@ -186,14 +217,14 @@
         display: none;
         width: 28px; min-width: 28px;
         border-right: 1px solid ${t.cardBorder};
-        background: ${theme === "aurora-light" ? "rgba(248,250,252,0.92)" : "rgba(16,23,38,0.92)"};
+        background: ${railBg};
         align-items: center; justify-content: center;
         cursor: pointer;
         color: ${t.secondary};
         font-size: 1rem;
       }
       #${APP_ID} .gpd-main.gpd-sidebar-collapsed .gpd-sidebar-rail { display: flex; }
-      #${APP_ID} .gpd-sidebar-rail:hover { background: rgba(34,211,238,0.12); }
+      #${APP_ID} .gpd-sidebar-rail:hover { background: ${hexToRgba(t.secondary, 0.12)}; }
       #${APP_ID} .gpd-brand {
         display: flex; align-items: center; gap: 10px;
         font-weight: 800; font-size: 1.1rem;
@@ -216,13 +247,13 @@
       #${APP_ID} .gpd-menu-item:hover {
         color: ${t.text};
         border-color: ${t.secondary};
-        background: rgba(34,211,238,0.08);
+        background: ${hexToRgba(t.secondary, 0.08)};
       }
       #${APP_ID} .gpd-menu-item.gpd-active {
         color: ${t.text};
         border-left-color: ${t.secondary};
-        background: rgba(34,211,238,0.12);
-        border-color: rgba(34,211,238,0.3);
+        background: ${hexToRgba(t.secondary, 0.12)};
+        border-color: ${hexToRgba(t.secondary, 0.3)};
       }
       #${APP_ID} .gpd-menu-item.gpd-sub { padding-left: 24px; font-size: 0.85rem; }
       #${APP_ID} .gpd-menu-group { margin-bottom: 6px; }
@@ -240,10 +271,9 @@
         width: 100%; text-align: left;
         transition: all 0.16s ease;
       }
-      #${APP_ID} .gpd-menu-group-title:hover { color: ${t.text}; border-color: ${t.secondary}; background: rgba(34,211,238,0.08); }
-      #${APP_ID} .gpd-menu-group-title.gpd-active { border-left-color: ${t.secondary}; background: rgba(34,211,238,0.12); color: ${t.text}; }
+      #${APP_ID} .gpd-menu-group-title:hover { color: ${t.text}; border-color: ${t.secondary}; background: ${hexToRgba(t.secondary, 0.08)}; }
+      #${APP_ID} .gpd-menu-group-title.gpd-active { border-left-color: ${t.secondary}; background: ${hexToRgba(t.secondary, 0.12)}; color: ${t.text}; }
       #${APP_ID} .gpd-menu-group-row { display: flex; align-items: center; gap: 4px; }
-      #${APP_ID} .gpd-menu-group-title { flex: 1; text-align: left; }
       #${APP_ID} .gpd-menu-expand {
         width: 34px; min-width: 34px; height: 34px; padding: 0;
         border: none; border-radius: 50%; background: transparent;
@@ -251,7 +281,7 @@
         display: inline-flex; align-items: center; justify-content: center;
         font-size: 0.9rem; transition: transform 0.2s;
       }
-      #${APP_ID} .gpd-menu-expand:hover { background: rgba(34,211,238,0.12); }
+      #${APP_ID} .gpd-menu-expand:hover { background: ${hexToRgba(t.secondary, 0.12)}; }
       #${APP_ID} .gpd-menu-group.expanded .gpd-menu-expand { transform: rotate(90deg); }
       #${APP_ID} .gpd-menu-group-children { margin-left: 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px; }
       #${APP_ID} .gpd-sidebar-footer {
@@ -270,28 +300,28 @@
         font-size: 1rem;
         transition: all 0.16s;
       }
-      #${APP_ID} .gpd-collapse-btn:hover { background: rgba(34,211,238,0.15); border-color: ${t.secondary}; }
+      #${APP_ID} .gpd-collapse-btn:hover { background: ${hexToRgba(t.secondary, 0.15)}; border-color: ${t.secondary}; }
       #${APP_ID} .gpd-content-wrap { padding: 24px 18px 80px; overflow-y: auto; min-width: 0; }
       #${APP_ID} .gpd-card {
-        background: ${theme === "aurora-light" ? "linear-gradient(160deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95))" : "linear-gradient(160deg, rgba(16,23,38,0.94), rgba(15,23,42,0.92))"};
+        background: ${cardGradient};
         border: 1px solid ${t.cardBorder};
-        border-radius: 16px;
+        border-radius: ${t.cardRadius};
         padding: 22px;
-        box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+        box-shadow: ${t.cardShadow};
       }
       #${APP_ID} .gpd-content h1, #${APP_ID} .gpd-content h2, #${APP_ID} .gpd-content h3 { color: ${t.text}; }
       #${APP_ID} .gpd-content a { color: ${t.primary}; }
       #${APP_ID} .gpd-footer-actions { margin-top: 18px; display: flex; justify-content: space-between; gap: 12px; }
       #${APP_ID} .gpd-footer-actions button, #${APP_ID} .gpd-footer button {
-        padding: 10px 18px; border-radius: 12px;
-        border: 1px solid ${t.cardBorder};
+        padding: 10px 18px; border-radius: ${t.controlRadius};
+        border: ${t.controlBorder};
         background: ${t.cardBg};
         color: ${t.text};
         cursor: pointer; font-weight: 600; font-size: 0.9rem;
       }
       #${APP_ID} .gpd-footer-actions button:hover:not(:disabled), #${APP_ID} .gpd-footer button:hover:not(:disabled) { border-color: ${t.secondary}; }
       #${APP_ID} .gpd-footer button:disabled, #${APP_ID} .gpd-footer-actions button:disabled { opacity: 0.55; cursor: not-allowed; }
-      #${APP_ID} .gpd-footer { border-top: 1px solid ${t.cardBorder}; padding: 16px 24px; display: flex; justify-content: space-between; background: ${theme === "aurora-light" ? "#F8FAFC" : "#0B1220"}; }
+      #${APP_ID} .gpd-footer { border-top: 1px solid ${t.cardBorder}; padding: 16px 24px; display: flex; justify-content: space-between; background: ${footerBg}; }
       #${APP_ID} .gpd-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
       #${APP_ID} .gpd-modal { background: ${t.cardBg}; border: 1px solid ${t.cardBorder}; border-radius: 16px; padding: 24px; max-width: 480px; width: 100%; max-height: 80vh; overflow-y: auto; }
       #${APP_ID} .gpd-modal a { color: ${t.primary}; }
@@ -331,6 +361,7 @@
     root.innerHTML = "<p>Loading GitPageDocs...</p>";
 
     const baseUrl = getConfigBaseUrl();
+
     let config;
     for (const path of [baseUrl + "gitpagedocs/config.json", "./gitpagedocs/config.json", "gitpagedocs/config.json"]) {
       try {
@@ -343,13 +374,35 @@
     }
 
     if (!config) {
-      root.innerHTML = `<div style="padding:24px;color:#e2e8f0;font-family:system-ui"><h2>GitPageDocs config not found</h2><p>Run <code>npx gitpagedocs</code> then <code>npx serve .</code></p></div>`;
+      root.innerHTML = `<div style="padding:24px;color:#e2e8f0;font-family:system-ui"><h2>GitPageDocs config not found</h2><p>Run <code>npx gitpagedocs</code> then <code>npx serve out</code></p></div>`;
       return;
+    }
+
+    let layoutsConfig = { layouts: [] };
+    try {
+      const lcRes = await fetch(baseUrl + "gitpagedocs/layouts/layoutsConfig.json");
+      if (lcRes.ok) layoutsConfig = await lcRes.json();
+    } catch {}
+
+    let layouts = layoutsConfig.layouts ?? [];
+    if (!layouts.length) {
+      layouts = [
+        { id: "aurora-dark", name: "Aurora Dark", file: "templates/aurora-dark.json", mode: "dark", supportsLightAndDarkModes: true, supportsLightAndDarkModesReference: "aurora-1" },
+        { id: "aurora-light", name: "Aurora Light", file: "templates/aurora-light.json", mode: "light", supportsLightAndDarkModes: true, supportsLightAndDarkModesReference: "aurora-1" },
+      ];
+    }
+    const themes = {};
+    for (const layout of layouts) {
+      try {
+        const tRes = await fetch(baseUrl + "gitpagedocs/layouts/" + (layout.file || "templates/" + layout.id + ".json"));
+        if (tRes.ok) themes[layout.id] = await tRes.json();
+      } catch {}
     }
 
     const versions = config?.VersionControl?.versions ?? [];
     const versionKey = getStorageKey(config, "version");
     const themeKey = getStorageKey(config, "theme");
+    const modeKey = getStorageKey(config, "mode");
     const expandedKey = getStorageKey(config, "menu-expanded");
     const sidebarKey = getStorageKey(config, "sidebar-collapsed");
     let activeVersionId = localStorage.getItem(versionKey) || config?.site?.docsVersion || versions[0]?.id || "";
@@ -360,19 +413,42 @@
     let language = localStorage.getItem(languageKey) || config?.site?.defaultLanguage || languages[0] || "en";
     if (!languages.includes(language)) language = languages[0] || "en";
     let routeIndex = Number(localStorage.getItem(routeKey) || 0);
-    const urlModetheme = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("modetheme") : null;
-    let activeThemeId =
-      urlModetheme === "dark"
-        ? "aurora-dark"
-        : urlModetheme === "light"
-          ? "aurora-light"
-          : localStorage.getItem(themeKey) || config?.site?.ThemeDefault || "aurora-dark";
     let sidebarCollapsed = localStorage.getItem(sidebarKey) === "true";
     let expandedMap = {};
     try {
       const saved = localStorage.getItem(expandedKey);
       if (saved) expandedMap = JSON.parse(saved) || {};
     } catch {}
+
+    const defaultThemeId = config?.site?.ThemeDefault || layouts[0]?.id || "aurora-dark";
+    const FALLBACK_THEME = {
+      mode: "dark",
+      colors: { background: "#070A14", primary: "#7C3AED", secondary: "#22D3EE", text: "#E5E7EB", textSecondary: "#B8C3D6", cardBackground: "#101726", cardBorder: "#334155" },
+      components: { header: { backgroundColor: "#0B1220", borderBottom: "1px solid #334155" }, card: { borderRadius: "16px", boxShadow: "0 18px 60px rgba(0,0,0,0.35)" }, button: {}, select: {} },
+    };
+    const defaultMode = config?.site?.ThemeModeDefault === "light" ? "light" : "dark";
+    let activeThemeId = defaultThemeId;
+
+    const urlModetheme = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("modetheme") : null;
+    if (urlModetheme === "dark" || urlModetheme === "light") {
+      const baseLayout = layouts.find((l) => l.id === defaultThemeId) ?? layouts[0];
+      if (baseLayout) {
+        const resolved = resolveThemeByMode(layouts, baseLayout, urlModetheme);
+        activeThemeId = resolved?.id ?? activeThemeId;
+      }
+    } else {
+      const savedTheme = localStorage.getItem(themeKey);
+      if (savedTheme && themes[savedTheme]) activeThemeId = savedTheme;
+      else {
+        const savedMode = localStorage.getItem(modeKey);
+        const targetMode = savedMode === "light" || savedMode === "dark" ? savedMode : defaultMode;
+        const baseLayout = layouts.find((l) => l.id === defaultThemeId) ?? layouts[0];
+        if (baseLayout) {
+          const resolved = resolveThemeByMode(layouts, baseLayout, targetMode);
+          activeThemeId = resolved?.id ?? activeThemeId;
+        }
+      }
+    }
 
     async function getActiveConfig() {
       if (!activeVersionId || !versions.length) return config;
@@ -401,8 +477,11 @@
     }
 
     function toggleThemeMode() {
-      activeThemeId = activeThemeId === "aurora-dark" ? "aurora-light" : "aurora-dark";
-      updateModethemeInUrl(activeThemeId === "aurora-dark" ? "dark" : "light");
+      const currentLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
+      const nextMode = currentLayout?.mode === "dark" ? "light" : "dark";
+      const paired = resolveThemeByMode(layouts, currentLayout, nextMode);
+      activeThemeId = paired?.id ?? activeThemeId;
+      updateModethemeInUrl(nextMode);
       void render();
     }
 
@@ -452,14 +531,20 @@
       return links;
     }
 
-    const layouts = [{ id: "aurora-dark", name: "Aurora Dark" }, { id: "aurora-light", name: "Aurora Light" }];
-    const canToggleMode = layouts.some((l) => l.id === activeThemeId);
+    if (!themes[activeThemeId]) {
+      activeThemeId = themes[defaultThemeId] ? defaultThemeId : (Object.keys(themes)[0] || defaultThemeId);
+    }
+    const activeLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
+    const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
 
     async function render() {
       const activeConfig = await getActiveConfig();
       const routes = activeConfig.routes ?? [];
+      const activeTheme = themes[activeThemeId] || FALLBACK_THEME;
+
       if (!routes.length) {
-        root.innerHTML = `<style>${createStyles(activeThemeId)}</style><div class="gpd-shell" style="padding:24px"><h2>No routes</h2></div>`;
+        const fallbackStyles = createStylesFromTheme(activeTheme || FALLBACK_THEME);
+        root.innerHTML = `<style>${fallbackStyles}</style><div class="gpd-shell" style="padding:24px"><h2>No routes</h2></div>`;
         return;
       }
 
@@ -468,6 +553,7 @@
       localStorage.setItem(routeKey, String(routeIndex));
       localStorage.setItem(versionKey, activeVersionId);
       localStorage.setItem(themeKey, activeThemeId);
+      if (activeLayout?.mode) localStorage.setItem(modeKey, activeLayout.mode);
       localStorage.setItem(sidebarKey, String(sidebarCollapsed));
       try {
         localStorage.setItem(expandedKey, JSON.stringify(expandedMap));
@@ -485,7 +571,7 @@
       const versionEntry = versions.find((v) => v.id === activeVersionId);
       const versionLinks = getVersionLinks(versionEntry);
       const hideTheme = config?.site?.HideThemeSelector === true;
-      const darkMode = activeThemeId === "aurora-dark";
+      const darkMode = activeLayout?.mode === "dark";
 
       const versionSelect =
         versions.length > 1
@@ -498,8 +584,10 @@
 
       const themeOptions = hideTheme ? "" : layouts.map((t) => `<option value="${t.id}" ${t.id === activeThemeId ? "selected" : ""}>${t.name}</option>`).join("");
 
+      const styles = createStylesFromTheme(activeTheme || FALLBACK_THEME);
+
       root.innerHTML = `
-        <style>${createStyles(activeThemeId)}</style>
+        <style>${styles}</style>
         <div class="gpd-shell">
           <header class="gpd-header">
             <div class="gpd-header-left">
@@ -548,8 +636,8 @@
       });
       root.querySelector("#gpd-theme")?.addEventListener("change", (e) => {
         activeThemeId = e.target.value;
-        const mode = activeThemeId === "aurora-light" ? "light" : "dark";
-        updateModethemeInUrl(mode);
+        const layout = layouts.find((l) => l.id === activeThemeId);
+        if (layout?.mode) updateModethemeInUrl(layout.mode);
         void render();
       });
       root.querySelector("#gpd-mode-toggle")?.addEventListener("click", toggleThemeMode);

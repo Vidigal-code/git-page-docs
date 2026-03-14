@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from "node:child_process";
+import { cpSync, existsSync, rmSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +11,8 @@ const isBuild = process.argv.includes("--build") || process.env.GITPAGEDOCS_BUIL
 const isServe = process.argv.includes("--serve");
 const OUT_DIR = isBuild ? "out-init" : "out";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const PKG_ROOT = path.join(SCRIPT_DIR, "..");
+const PREBUILT_DIR = path.join(PKG_ROOT, "prebuilt");
 const SPA_TEMPLATE_PATH = path.join(SCRIPT_DIR, "templates", "index.spa.js");
 
 const LAYOUTS = [
@@ -671,6 +674,25 @@ async function writeText(relativePath, data) {
 }
 
 async function run() {
+  const usePrebuilt = !isBuild && existsSync(PREBUILT_DIR) && (existsSync(path.join(PREBUILT_DIR, "index.html")) || existsSync(path.join(PREBUILT_DIR, "_next")));
+
+  if (usePrebuilt) {
+    const outPath = path.join(ROOT, OUT_DIR);
+    if (existsSync(outPath)) rmSync(outPath, { recursive: true });
+    cpSync(PREBUILT_DIR, outPath, { recursive: true });
+    console.log(`Generated: ${OUT_DIR}/ (Next.js static export, same as GitHub Pages)`);
+    if (!isServe) console.log("Render: npx serve out");
+    if (isServe) {
+      console.log("Starting server...");
+      const child = spawn("npx", ["serve", OUT_DIR], { cwd: ROOT, stdio: "inherit", shell: true });
+      child.on("error", (err) => {
+        console.error("Failed to start serve. Run: npx serve out", err);
+        process.exitCode = 1;
+      });
+    }
+    return;
+  }
+
   const versionRoutes_1_0_0 = [
     {
       id: 0,
@@ -1272,15 +1294,11 @@ async function run() {
   }
 
   await writeJson("public/layouts/layoutsConfig.json", layoutsConfig);
-  await writeJson(`${OUT_DIR}/gitpagedocs/layouts/layoutsConfig.json`, fallbackLayoutsConfig);
+  await writeJson(`${OUT_DIR}/gitpagedocs/layouts/layoutsConfig.json`, layoutsConfig);
 
   for (const layout of LAYOUTS) {
     const template = createThemeTemplate(layout);
     await writeJson(`public/layouts/${layout.file}`, template);
-  }
-
-  for (const layout of FALLBACK_LAYOUTS) {
-    const template = createThemeTemplate(layout);
     await writeJson(`${OUT_DIR}/gitpagedocs/layouts/${layout.file}`, template);
   }
 
