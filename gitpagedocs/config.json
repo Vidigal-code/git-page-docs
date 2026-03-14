@@ -25,7 +25,7 @@
     "layoutsConfigPath": "https://github.com/Vidigal-code/git-page-docs/blob/main/public/layouts/layoutsConfig.json",
     "layoutsConfigPathTemplates": "https://github.com/Vidigal-code/git-page-docs/blob/main/public/layouts/templates/",
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
-    "RendertoanyRepositoryviaSearch": true,
+    "RendertoanyRepositoryviaSearch": false,
     "langmenu": {
       "pt": {
         "pt": "Portugues",
