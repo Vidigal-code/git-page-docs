@@ -1355,8 +1355,9 @@ async function run() {
     await writeJson(`gitpagedocs/layouts/${layout.file}`, template);
   }
 
-  console.log("Git Page Docs scaffold created successfully.");
-  console.log("index.js SPA renderer ready. Open index.html (or add <div id=\"gitpagedocs-app\"></div><script src=\"./index.js\"></script> to your HTML) to view docs.");
+  console.log("Git Page Docs scaffold created successfully in:", ROOT);
+  console.log("Files: gitpagedocs/config.json, index.js, index.html");
+  console.log("Serve this folder (e.g. npx serve .) and open index.html to view docs.");
 }
 
 run().catch((error) => {

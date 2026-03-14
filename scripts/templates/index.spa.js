@@ -96,12 +96,13 @@
     return Object.keys(route.path);
   }
 
-  async function loadMarkdown(route, language) {
+  async function loadMarkdown(route, language, baseUrl) {
     const mdPath = route?.path?.[language];
     if (!mdPath) {
       return "<p>Missing markdown path for selected language.</p>";
     }
-    const response = await fetch(mdPath);
+    const url = mdPath.startsWith("http") ? mdPath : (baseUrl || "") + mdPath.replace(/^\\.\\//, "");
+    const response = await fetch(url);
     if (!response.ok) {
       return "<p>Unable to load markdown file.</p>";
     }
@@ -195,22 +196,50 @@
     `;
   }
 
+  function getConfigBaseUrl() {
+    const script = document.currentScript;
+    if (script && script.src) {
+      try {
+        const url = new URL(script.src);
+        return url.origin + url.pathname.replace(/\/[^/]*$/, "/") || "./";
+      } catch {}
+    }
+    const loc = typeof window !== "undefined" && window.location;
+    if (loc) {
+      const path = loc.pathname.replace(/\/[^/]*$/, "/") || "./";
+      return loc.origin + (path.startsWith("/") ? path : "/" + path);
+    }
+    return "./";
+  }
+
   async function bootstrap() {
     const root = getAppRoot();
     root.innerHTML = "<p>Loading GitPageDocs...</p>";
 
+    const baseUrl = getConfigBaseUrl();
+    const configPaths = [
+      baseUrl + "gitpagedocs/config.json",
+      "./gitpagedocs/config.json",
+      "gitpagedocs/config.json",
+    ];
+
     let config;
-    try {
-      const response = await fetch("./gitpagedocs/config.json");
-      if (!response.ok) {
-        throw new Error("Config not found.");
-      }
-      config = await response.json();
-    } catch (_error) {
+    for (const configPath of configPaths) {
+      try {
+        const response = await fetch(configPath);
+        if (response.ok) {
+          config = await response.json();
+          break;
+        }
+      } catch {}
+    }
+
+    if (!config) {
       root.innerHTML = `
         <div class="gpd-shell" style="padding:20px">
           <h2>GitPageDocs config not found</h2>
-          <p>Create <code>gitpagedocs/config.json</code> first by running <code>npm run gitpagedocs</code>.</p>
+          <p>Run <code>npx gitpagedocs</code> in your project root to create the config.</p>
+          <p style="margin-top:12px;color:#94a3b8">Then serve the folder (e.g. <code>npx serve .</code>) &mdash; opening index.html as <code>file://</code> may block fetch.</p>
         </div>
       `;
       return;
@@ -267,7 +296,7 @@
       localStorage.setItem(routeKey, String(routeIndex));
 
       const route = config.routes[routeIndex];
-      const html = await loadMarkdown(route, language);
+      const html = await loadMarkdown(route, language, baseUrl);
       const prevDisabled = routeIndex <= 0 ? "disabled" : "";
       const nextDisabled = routeIndex >= config.routes.length - 1 ? "disabled" : "";
 
