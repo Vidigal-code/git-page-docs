@@ -24,8 +24,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: "20"
+          cache: "npm"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -38,12 +38,15 @@ jobs:
 
       - name: Build static site
         run: npm run build
+        env:
+          GITHUB_ACTIONS: "true"
+          GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Add .nojekyll
-        run: touch out/.nojekyll
+        run: touch out/.nojekyll 2>/dev/null || mkdir -p out && touch out/.nojekyll
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@3
         with:
           path: ./out
 

@@ -86,7 +86,6 @@ async function tryFetchText(url: string): Promise<string | null> {
       headers: {
         "User-Agent": "git-page-docs",
       },
-      next: { revalidate: 120 },
     });
     if (!response.ok) {
       return null;

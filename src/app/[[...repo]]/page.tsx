@@ -6,9 +6,12 @@ import { DocsShell } from "@/widgets/docs-shell/docs-shell";
 import { RepositorySearchShell } from "@/widgets/repository-search-shell/repository-search-shell";
 
 interface PageProps {
-  params: { repo?: string[] };
-  searchParams: { version?: string };
+  params: Promise<{ repo?: string[] }>;
+  searchParams?: Promise<{ version?: string }>;
 }
+
+// For static export, avoid awaiting searchParams (triggers dynamic)
+export const dynamic = "force-static";
 
 export async function generateStaticParams() {
   const params: { repo: string[] }[] = [{ repo: [] }];
@@ -23,14 +26,19 @@ export async function generateStaticParams() {
         params.push({ repo: [parts[0], parts[1]] });
       }
     }
-  } catch { }
+    const knownRepos = [["Vidigal-code", "git-page-link-create"]];
+    for (const [owner, repo] of knownRepos) {
+      if (!params.some((p) => p.repo[0] === owner && p.repo[1] === repo)) {
+        params.push({ repo: [owner, repo] });
+      }
+    }
+  } catch {}
   return params;
 }
 
 export default async function DocsPage({ params, searchParams }: PageProps) {
-  const { repo } = params;
-  const { version } = searchParams;
-  const data = await loadDocsData(repo, version);
+  const { repo } = await params;
+  const data = await loadDocsData(repo, undefined);
 
   const repositoryNotUsingGitPageDocs = Boolean(data.activeRepository.requested && data.activeRepository.hasGitPageDocs === false);
   if (!data.showRepositorySearchHome && !repositoryNotUsingGitPageDocs && !data.config.routes.length) {

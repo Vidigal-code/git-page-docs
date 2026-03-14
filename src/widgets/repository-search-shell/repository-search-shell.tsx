@@ -110,9 +110,9 @@ export function RepositorySearchShell({
   const searchLabel = getLangMenuLabel(data, language, "searchButtonLabel", "Search");
 
   const localizedMessage = {
-    pt: "GitPageDocs não está instalado neste repositório.",
-    en: "GitPageDocs is not installed in this repository.",
-    es: "GitPageDocs no está instalado en este repositorio.",
+    pt: "GitPageDocs Não instalado.",
+    en: "GitPageDocs is not installed.",
+    es: "GitPageDocs no está instalado.",
   }[language];
 
   const localizedDescription = {
@@ -123,7 +123,7 @@ export function RepositorySearchShell({
 
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
 
-  // Handle repository identification via URL hash (#/owner/repo)
+  // Handle repository identification via URL hash (#/owner/repo) on mount only
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
       const parts = window.location.hash.slice(2).split("/").filter(Boolean);
@@ -132,6 +132,7 @@ export function RepositorySearchShell({
         setRepoInput(parts[1]);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount to sync from hash
   }, []);
 
   function onThemeChange(nextThemeId: string) {
