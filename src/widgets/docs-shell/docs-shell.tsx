@@ -647,20 +647,20 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   }, [themeModeStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, activeThemeId]);
 
   useEffect(() => {
-    if (!showVersionSelector) {
+    if (!showVersionSelector) return;
+    const urlVersion = searchParams.get("version");
+    if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion)) {
+      const base = pathname.replace(/\/v\/[^/]+$/, "");
+      if (!pathname.endsWith(`/v/${urlVersion}`)) {
+        router.replace(`${base}/v/${urlVersion}`);
+      }
       return;
     }
-
-    if (searchParams.get("version")) {
-      return;
-    }
-
     try {
       const savedVersion = window.localStorage.getItem(versionStorageKey);
-      if (savedVersion && data.availableVersions.some((version) => version.id === savedVersion)) {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("version", savedVersion);
-        router.replace(`${pathname}?${params.toString()}`);
+      if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !pathname.includes("/v/")) {
+        const base = pathname.replace(/\/v\/[^/]+$/, "");
+        router.replace(`${base}/v/${savedVersion}`);
       }
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
@@ -706,9 +706,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("version", versionId);
-    router.replace(`${pathname}?${params.toString()}`);
+    const base = pathname.replace(/\/v\/[^/]+$/, "");
+    router.replace(`${base}/v/${versionId}`);
   }
 
   function goToLinearNavigation(offset: -1 | 1) {
