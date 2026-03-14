@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
@@ -124,7 +124,7 @@ export function RepositorySearchShell({
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
 
   // Handle repository identification via URL hash (#/owner/repo)
-  useMemo(() => {
+  useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
       const parts = window.location.hash.slice(2).split("/").filter(Boolean);
       if (parts.length >= 2 && (!ownerInput || !repoInput)) {
@@ -132,7 +132,7 @@ export function RepositorySearchShell({
         setRepoInput(parts[1]);
       }
     }
-  }, [ownerInput, repoInput]);
+  }, []);
 
   function onThemeChange(nextThemeId: string) {
     setActiveThemeId(nextThemeId);
