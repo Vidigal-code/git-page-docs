@@ -727,57 +727,23 @@ async function run() {
   ];
 
   const versionRoutes_1_1_0 = [
-    {
-      id: 0,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.1.0/pt/index.md",
-        en: "gitpagedocs/docs/versions/1.1.0/en/index.md",
-        es: "gitpagedocs/docs/versions/1.1.0/es/index.md",
-      },
-    },
-    {
-      id: 1,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.1.0/pt/configuration.md",
-        en: "gitpagedocs/docs/versions/1.1.0/en/configuration.md",
-        es: "gitpagedocs/docs/versions/1.1.0/es/configuration.md",
-      },
-    },
-    {
-      id: 2,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.1.0/pt/deployment.md",
-        en: "gitpagedocs/docs/versions/1.1.0/en/deployment.md",
-        es: "gitpagedocs/docs/versions/1.1.0/es/deployment.md",
-      },
-    },
+    { id: 0, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/index.md", en: "gitpagedocs/docs/versions/1.1.0/en/index.md", es: "gitpagedocs/docs/versions/1.1.0/es/index.md" } },
+    { id: 1, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/getting-started.md", en: "gitpagedocs/docs/versions/1.1.0/en/getting-started.md", es: "gitpagedocs/docs/versions/1.1.0/es/getting-started.md" } },
+    { id: 2, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/configuration.md", en: "gitpagedocs/docs/versions/1.1.0/en/configuration.md", es: "gitpagedocs/docs/versions/1.1.0/es/configuration.md" } },
+    { id: 3, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/deployment.md", en: "gitpagedocs/docs/versions/1.1.0/en/deployment.md", es: "gitpagedocs/docs/versions/1.1.0/es/deployment.md" } },
+    { id: 4, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/architecture.md", en: "gitpagedocs/docs/versions/1.1.0/en/architecture.md", es: "gitpagedocs/docs/versions/1.1.0/es/architecture.md" } },
+    { id: 5, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/themes.md", en: "gitpagedocs/docs/versions/1.1.0/en/themes.md", es: "gitpagedocs/docs/versions/1.1.0/es/themes.md" } },
+    { id: 6, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/faq.md", en: "gitpagedocs/docs/versions/1.1.0/en/faq.md", es: "gitpagedocs/docs/versions/1.1.0/es/faq.md" } },
   ];
 
   const versionRoutes_1_1_1 = [
-    {
-      id: 0,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.1.1/pt/index.md",
-        en: "gitpagedocs/docs/versions/1.1.1/en/index.md",
-        es: "gitpagedocs/docs/versions/1.1.1/es/index.md",
-      },
-    },
-    {
-      id: 1,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.1.1/pt/configuration.md",
-        en: "gitpagedocs/docs/versions/1.1.1/en/configuration.md",
-        es: "gitpagedocs/docs/versions/1.1.1/es/configuration.md",
-      },
-    },
-    {
-      id: 2,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.1.1/pt/deployment.md",
-        en: "gitpagedocs/docs/versions/1.1.1/en/deployment.md",
-        es: "gitpagedocs/docs/versions/1.1.1/es/deployment.md",
-      },
-    },
+    { id: 0, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/index.md", en: "gitpagedocs/docs/versions/1.1.1/en/index.md", es: "gitpagedocs/docs/versions/1.1.1/es/index.md" } },
+    { id: 1, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/getting-started.md", en: "gitpagedocs/docs/versions/1.1.1/en/getting-started.md", es: "gitpagedocs/docs/versions/1.1.1/es/getting-started.md" } },
+    { id: 2, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/configuration.md", en: "gitpagedocs/docs/versions/1.1.1/en/configuration.md", es: "gitpagedocs/docs/versions/1.1.1/es/configuration.md" } },
+    { id: 3, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/deployment.md", en: "gitpagedocs/docs/versions/1.1.1/en/deployment.md", es: "gitpagedocs/docs/versions/1.1.1/es/deployment.md" } },
+    { id: 4, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/architecture.md", en: "gitpagedocs/docs/versions/1.1.1/en/architecture.md", es: "gitpagedocs/docs/versions/1.1.1/es/architecture.md" } },
+    { id: 5, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/themes.md", en: "gitpagedocs/docs/versions/1.1.1/en/themes.md", es: "gitpagedocs/docs/versions/1.1.1/es/themes.md" } },
+    { id: 6, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/faq.md", en: "gitpagedocs/docs/versions/1.1.1/en/faq.md", es: "gitpagedocs/docs/versions/1.1.1/es/faq.md" } },
   ];
 
   const versionMenus_1_0_0 = [
@@ -832,63 +798,27 @@ async function run() {
   ];
 
   const versionMenus_1_1_0 = [
-    {
-      id: 0,
-      pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/index.md" },
-      en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.1.0/en/index.md" },
-      es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.0/es/index.md" },
-    },
-    {
-      id: 1,
-      pt: {
-        title: "Configuracao",
-        "path-click": "gitpagedocs/docs/versions/1.1.0/pt/configuration.md",
-      },
-      en: {
-        title: "Configuration",
-        "path-click": "gitpagedocs/docs/versions/1.1.0/en/configuration.md",
-      },
-      es: {
-        title: "Configuracion",
-        "path-click": "gitpagedocs/docs/versions/1.1.0/es/configuration.md",
-      },
-    },
+    { id: 0, pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/index.md" }, en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.1.0/en/index.md" }, es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.0/es/index.md" } },
+    { id: 1, pt: { title: "Primeiros passos", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/getting-started.md" }, en: { title: "Getting Started", "path-click": "gitpagedocs/docs/versions/1.1.0/en/getting-started.md" }, es: { title: "Primeros pasos", "path-click": "gitpagedocs/docs/versions/1.1.0/es/getting-started.md" } },
     {
       id: 2,
-      pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/deployment.md" },
-      en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.1.0/en/deployment.md" },
-      es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.1.0/es/deployment.md" },
+      pt: { title: "Configuracao", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/configuration.md", submenus: [{ title: "Arquitetura", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/architecture.md" }, { title: "Temas e layouts", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/faq.md" }] },
+      en: { title: "Configuration", "path-click": "gitpagedocs/docs/versions/1.1.0/en/configuration.md", submenus: [{ title: "Architecture", "path-click": "gitpagedocs/docs/versions/1.1.0/en/architecture.md" }, { title: "Themes and layouts", "path-click": "gitpagedocs/docs/versions/1.1.0/en/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.0/en/faq.md" }] },
+      es: { title: "Configuracion", "path-click": "gitpagedocs/docs/versions/1.1.0/es/configuration.md", submenus: [{ title: "Arquitectura", "path-click": "gitpagedocs/docs/versions/1.1.0/es/architecture.md" }, { title: "Temas y layouts", "path-click": "gitpagedocs/docs/versions/1.1.0/es/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.0/es/faq.md" }] },
     },
+    { id: 3, pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/deployment.md" }, en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.1.0/en/deployment.md" }, es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.1.0/es/deployment.md" } },
   ];
 
   const versionMenus_1_1_1 = [
-    {
-      id: 0,
-      pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/index.md" },
-      en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.1.1/en/index.md" },
-      es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.1/es/index.md" },
-    },
-    {
-      id: 1,
-      pt: {
-        title: "Configuracao",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md",
-      },
-      en: {
-        title: "Configuration",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/en/configuration.md",
-      },
-      es: {
-        title: "Configuracion",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/es/configuration.md",
-      },
-    },
+    { id: 0, pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/index.md" }, en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.1.1/en/index.md" }, es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.1/es/index.md" } },
+    { id: 1, pt: { title: "Primeiros passos", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/getting-started.md" }, en: { title: "Getting Started", "path-click": "gitpagedocs/docs/versions/1.1.1/en/getting-started.md" }, es: { title: "Primeros pasos", "path-click": "gitpagedocs/docs/versions/1.1.1/es/getting-started.md" } },
     {
       id: 2,
-      pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md" },
-      en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.1.1/en/deployment.md" },
-      es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.1.1/es/deployment.md" },
+      pt: { title: "Configuracao", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md", submenus: [{ title: "Arquitetura", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/architecture.md" }, { title: "Temas e layouts", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/faq.md" }] },
+      en: { title: "Configuration", "path-click": "gitpagedocs/docs/versions/1.1.1/en/configuration.md", submenus: [{ title: "Architecture", "path-click": "gitpagedocs/docs/versions/1.1.1/en/architecture.md" }, { title: "Themes and layouts", "path-click": "gitpagedocs/docs/versions/1.1.1/en/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.1/en/faq.md" }] },
+      es: { title: "Configuracion", "path-click": "gitpagedocs/docs/versions/1.1.1/es/configuration.md", submenus: [{ title: "Arquitectura", "path-click": "gitpagedocs/docs/versions/1.1.1/es/architecture.md" }, { title: "Temas y layouts", "path-click": "gitpagedocs/docs/versions/1.1.1/es/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.1/es/faq.md" }] },
     },
+    { id: 3, pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md" }, en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.1.1/en/deployment.md" }, es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.1.1/es/deployment.md" } },
   ];
 
   const rootConfig = {
@@ -1197,12 +1127,7 @@ async function run() {
 
   await writeJson("gitpagedocs/config.json", rootConfig);
   await writeText("index.js", spaRendererScript);
-  try {
-    await access(path.join(ROOT, "index.html"));
-  } catch {
-    await writeText("index.html", INDEX_HTML);
-    console.log("Created index.html with gitpagedocs-app div. Serve it to view the SPA.");
-  }
+  await writeText("index.html", INDEX_HTML);
   await writeText("gitpagedocs/docs/en/index.md", DOCS.en.index);
   await writeText("gitpagedocs/docs/en/getting-started.md", DOCS.en.gettingStarted);
   await writeText("gitpagedocs/docs/en/configuration.md", DOCS.en.configuration);
@@ -1355,16 +1280,8 @@ async function run() {
     await writeJson(`gitpagedocs/layouts/${layout.file}`, template);
   }
 
-  console.log("Git Page Docs scaffold created successfully in:", ROOT);
-  console.log("");
-  console.log("Generated:");
-  console.log("  - gitpagedocs/config.json (root config with routes, menus, VersionControl)");
-  console.log("  - gitpagedocs/docs/{en,pt,es}/*.md (base docs: index, getting-started, configuration, deployment, architecture, themes, faq)");
-  console.log("  - gitpagedocs/docs/versions/{1.0.0,1.1.0,1.1.1}/* (versioned docs)");
-  console.log("  - gitpagedocs/layouts/ + public/layouts/ (theme templates)");
-  console.log("  - index.js (SPA renderer) + index.html");
-  console.log("");
-  console.log("Serve this folder (e.g. npx serve .) then open the URL to view docs.");
+  console.log("Generated: gitpagedocs/ index.js index.html");
+  console.log("Render: npx serve .");
 }
 
 run().catch((error) => {

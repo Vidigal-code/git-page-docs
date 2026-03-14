@@ -11,17 +11,49 @@
     {
       "id": 1,
       "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.0/pt/getting-started.md",
+        "en": "gitpagedocs/docs/versions/1.1.0/en/getting-started.md",
+        "es": "gitpagedocs/docs/versions/1.1.0/es/getting-started.md"
+      }
+    },
+    {
+      "id": 2,
+      "path": {
         "pt": "gitpagedocs/docs/versions/1.1.0/pt/configuration.md",
         "en": "gitpagedocs/docs/versions/1.1.0/en/configuration.md",
         "es": "gitpagedocs/docs/versions/1.1.0/es/configuration.md"
       }
     },
     {
-      "id": 2,
+      "id": 3,
       "path": {
         "pt": "gitpagedocs/docs/versions/1.1.0/pt/deployment.md",
         "en": "gitpagedocs/docs/versions/1.1.0/en/deployment.md",
         "es": "gitpagedocs/docs/versions/1.1.0/es/deployment.md"
+      }
+    },
+    {
+      "id": 4,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.0/pt/architecture.md",
+        "en": "gitpagedocs/docs/versions/1.1.0/en/architecture.md",
+        "es": "gitpagedocs/docs/versions/1.1.0/es/architecture.md"
+      }
+    },
+    {
+      "id": 5,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.0/pt/themes.md",
+        "en": "gitpagedocs/docs/versions/1.1.0/en/themes.md",
+        "es": "gitpagedocs/docs/versions/1.1.0/es/themes.md"
+      }
+    },
+    {
+      "id": 6,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.0/pt/faq.md",
+        "en": "gitpagedocs/docs/versions/1.1.0/en/faq.md",
+        "es": "gitpagedocs/docs/versions/1.1.0/es/faq.md"
       }
     }
   ],
@@ -44,20 +76,77 @@
     {
       "id": 1,
       "pt": {
-        "title": "Configuracao",
-        "path-click": "gitpagedocs/docs/versions/1.1.0/pt/configuration.md"
+        "title": "Primeiros passos",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/pt/getting-started.md"
       },
       "en": {
-        "title": "Configuration",
-        "path-click": "gitpagedocs/docs/versions/1.1.0/en/configuration.md"
+        "title": "Getting Started",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/en/getting-started.md"
       },
       "es": {
-        "title": "Configuracion",
-        "path-click": "gitpagedocs/docs/versions/1.1.0/es/configuration.md"
+        "title": "Primeros pasos",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/es/getting-started.md"
       }
     },
     {
       "id": 2,
+      "pt": {
+        "title": "Configuracao",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/pt/configuration.md",
+        "submenus": [
+          {
+            "title": "Arquitetura",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/pt/architecture.md"
+          },
+          {
+            "title": "Temas e layouts",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/pt/themes.md"
+          },
+          {
+            "title": "FAQ",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/pt/faq.md"
+          }
+        ]
+      },
+      "en": {
+        "title": "Configuration",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/en/configuration.md",
+        "submenus": [
+          {
+            "title": "Architecture",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/en/architecture.md"
+          },
+          {
+            "title": "Themes and layouts",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/en/themes.md"
+          },
+          {
+            "title": "FAQ",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/en/faq.md"
+          }
+        ]
+      },
+      "es": {
+        "title": "Configuracion",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/es/configuration.md",
+        "submenus": [
+          {
+            "title": "Arquitectura",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/es/architecture.md"
+          },
+          {
+            "title": "Temas y layouts",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/es/themes.md"
+          },
+          {
+            "title": "FAQ",
+            "path-click": "gitpagedocs/docs/versions/1.1.0/es/faq.md"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
       "pt": {
         "title": "Publicacao",
         "path-click": "gitpagedocs/docs/versions/1.1.0/pt/deployment.md"
