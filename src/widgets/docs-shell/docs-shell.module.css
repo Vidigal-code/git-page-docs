@@ -1,0 +1,729 @@
+.wrapper {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background:
+    radial-gradient(circle at 10% -20%, color-mix(in srgb, var(--primary) 22%, transparent), transparent 44%),
+    radial-gradient(circle at 90% -30%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 42%),
+    var(--background);
+  color: var(--text);
+  transition: grid-template-columns 0.2s ease;
+}
+
+.wrapperCollapsed {
+  grid-template-columns: 28px 1fr;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--card-border);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--card-background) 94%, transparent),
+      color-mix(in srgb, var(--background) 88%, transparent)
+    );
+  padding: 18px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: opacity 0.2s ease;
+}
+
+.wrapperCollapsed .sidebar {
+  display: none;
+}
+
+.collapsedNavRail {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid var(--card-border);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--card-background) 92%, transparent),
+      color-mix(in srgb, var(--background) 86%, transparent)
+    );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.brandIcon,
+.headerIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.brandReactIcon,
+.headerReactIcon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+  font-size: 1.1rem;
+}
+
+.sidebarFooter {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  justify-content: center;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menuNode {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menuNodeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menuChildren {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menuButton {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: clamp(9px, 1.1vw, 12px) clamp(12px, 1.8vw, 16px);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: clamp(0.85rem, 0.45vw + 0.75rem, 0.95rem);
+  min-height: 40px;
+}
+
+.menuExpandButton {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--secondary) 78%, var(--text) 22%);
+  cursor: pointer;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.menuExpandButton:hover {
+  color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 14%, transparent);
+  transform: scale(1.04);
+}
+
+.menuActionContainer {
+  flex: 1;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.menuActionContainer:hover {
+  border-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 10%, transparent);
+}
+
+.menuActionMain {
+  flex: 1;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  font-size: clamp(0.85rem, 0.45vw + 0.75rem, 0.95rem);
+  padding: clamp(9px, 1.1vw, 12px) 8px clamp(9px, 1.1vw, 12px) clamp(12px, 1.8vw, 16px);
+  text-align: center;
+  cursor: pointer;
+}
+
+.menuExpandInline {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  margin-right: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, var(--secondary) 78%, var(--text) 22%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.menuExpandInline:hover {
+  color: var(--secondary);
+  background: transparent;
+  box-shadow: none;
+}
+
+.menuButton:hover,
+.menuButtonActive {
+  color: var(--text);
+  border-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 10%, transparent);
+}
+
+.contentArea {
+  min-width: 0;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: var(--header-border);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--header-background) 92%, var(--primary) 8%),
+      color-mix(in srgb, var(--header-background) 92%, var(--secondary) 8%)
+    );
+  backdrop-filter: blur(8px);
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.select,
+.button {
+  height: clamp(38px, 1.2vw + 30px, 42px);
+  border-radius: var(--control-radius);
+  border: var(--control-border);
+  background: var(--control-background);
+  color: var(--text);
+  font-weight: 600;
+  font-size: clamp(0.82rem, 0.4vw + 0.72rem, 0.95rem);
+}
+
+.select {
+  min-width: 130px;
+  padding: 0 12px;
+  border-radius: var(--select-radius);
+  border: var(--select-border);
+  text-align: center;
+  text-align-last: center;
+}
+
+.select option {
+  text-align: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 clamp(12px, 1.3vw, 16px);
+  min-width: clamp(86px, 8vw, 140px);
+  border-radius: var(--button-radius);
+  border: var(--button-border);
+}
+
+.modeIconButton {
+  width: clamp(38px, 1.8vw + 26px, 42px);
+  min-width: clamp(38px, 1.8vw + 26px, 42px);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+.docsVersionBadge {
+  height: clamp(38px, 1.2vw + 30px, 42px);
+  padding: 0 clamp(12px, 1.3vw, 16px);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-background);
+  color: var(--text);
+  font-weight: 600;
+  font-size: clamp(0.82rem, 0.4vw + 0.72rem, 0.95rem);
+  white-space: nowrap;
+}
+
+.githubLinkButton {
+  width: clamp(38px, 1.8vw + 26px, 42px);
+  min-width: clamp(38px, 1.8vw + 26px, 42px);
+  padding: 0;
+}
+
+.githubIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.button:hover,
+.select:hover {
+  border-color: var(--secondary);
+  box-shadow: var(--button-glow);
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 18px 80px;
+}
+
+.card {
+  border: 1px solid var(--card-border);
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--card-background) 94%, var(--primary) 6%),
+      color-mix(in srgb, var(--card-background) 92%, var(--secondary) 8%)
+    );
+  border-radius: var(--card-radius);
+  padding: 22px;
+  box-shadow: var(--card-shadow);
+}
+
+.markdown :global(h1),
+.markdown :global(h2),
+.markdown :global(h3) {
+  color: var(--text);
+}
+
+.markdown :global(a) {
+  color: var(--primary);
+}
+
+.markdown :global(code) {
+  background: color-mix(in srgb, var(--card-border) 35%, transparent);
+  border-radius: 6px;
+  padding: 2px 5px;
+}
+
+.footerActions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.repoInfo {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.mobileToggle {
+  display: none;
+}
+
+.desktopToggle {
+  display: inline-flex;
+}
+
+.sidebarRailButton {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+}
+
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobileControls {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobileDrawerOverlay {
+  display: none;
+}
+
+.mobileDrawer {
+  width: min(400px, 90vw);
+  height: 100vh;
+  margin-left: auto;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--card-background) 96%, transparent),
+      color-mix(in srgb, var(--background) 88%, transparent)
+    );
+  border-left: 1px solid var(--card-border);
+  padding: 18px 16px;
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.45);
+  overflow-y: auto;
+}
+
+.mobileDrawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mobileDrawerClose {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+}
+
+.quickNavOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.66);
+  display: grid;
+  place-items: start center;
+  padding-top: 10vh;
+  z-index: 40;
+}
+
+.quickNavCard {
+  width: min(640px, 92vw);
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 14px;
+}
+
+.quickNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.quickNavHeaderTitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.quickNavCloseButton {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+}
+
+.quickNavInput {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: var(--background);
+  color: var(--text);
+  padding: 0 12px;
+  margin-bottom: 10px;
+}
+
+.quickNavList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quickNavItemActive {
+  border-color: var(--secondary);
+  color: var(--text);
+  background: color-mix(in srgb, var(--secondary) 10%, transparent);
+}
+
+.quickNavFooter {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
+.versionLinksOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.66);
+  display: grid;
+  place-items: center;
+  z-index: 60;
+  padding: 16px;
+}
+
+.versionLinksCard {
+  width: min(520px, 94vw);
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 14px;
+}
+
+.versionLinksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.versionLinksCloseButton {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+}
+
+.versionLinksList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.focusModeOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.72);
+  display: grid;
+  place-items: center;
+  z-index: 65;
+  padding: 16px;
+}
+
+.focusModeCard {
+  width: min(980px, 96vw);
+  max-height: 90vh;
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.focusModeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.focusModeCloseButton {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+}
+
+.focusModeBody {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: clamp(12px, 2vw, 18px);
+  overflow-y: auto;
+  min-height: 180px;
+  max-height: 64vh;
+  background: color-mix(in srgb, var(--background) 86%, transparent);
+}
+
+.focusModeFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .mobileToggle {
+    display: inline-flex;
+  }
+
+  .desktopToggle {
+    display: none;
+  }
+
+  .collapsedNavRail {
+    display: none;
+  }
+
+  .mobileMenu {
+    display: flex;
+  }
+
+  .headerInner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .headerLeft,
+  .headerRight {
+    width: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .headerLeft {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .headerRight {
+    display: none;
+  }
+
+  .footerActions {
+    flex-direction: column;
+  }
+
+  .footerActions .button {
+    width: 100%;
+  }
+
+  .mobileDrawerOverlay {
+    position: fixed;
+    inset: 0;
+    display: block;
+    background: rgba(2, 6, 23, 0.6);
+    z-index: 50;
+  }
+
+  .mobileControls .button,
+  .mobileControls .select {
+    width: 100%;
+  }
+
+  .mobileControls .modeIconButton {
+    margin: 0 auto;
+  }
+
+  .versionLinksCard {
+    width: min(460px, 96vw);
+  }
+
+  .versionLinksList .button {
+    width: 100%;
+  }
+
+  .focusModeCard {
+    width: min(780px, 96vw);
+    max-height: 92vh;
+  }
+
+  .focusModeBody {
+    max-height: 66vh;
+  }
+}
+
+@media (max-width: 640px) {
+  .focusModeCard {
+    width: min(520px, 98vw);
+    max-height: 94vh;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .focusModeBody {
+    max-height: 68vh;
+    padding: 12px;
+  }
+
+  .focusModeFooter {
+    flex-direction: column;
+  }
+
+  .focusModeFooter .button {
+    width: 100%;
+  }
+}

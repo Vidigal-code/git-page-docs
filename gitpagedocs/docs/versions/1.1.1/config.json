@@ -1,0 +1,75 @@
+{
+  "routes": [
+    {
+      "id": 0,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/index.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/index.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/index.md"
+      }
+    },
+    {
+      "id": 1,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/configuration.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/configuration.md"
+      }
+    },
+    {
+      "id": 2,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/deployment.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/deployment.md"
+      }
+    }
+  ],
+  "menus-header": [
+    {
+      "id": 0,
+      "pt": {
+        "title": "Inicio",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/index.md"
+      },
+      "en": {
+        "title": "Home",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/index.md"
+      },
+      "es": {
+        "title": "Inicio",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/index.md"
+      }
+    },
+    {
+      "id": 1,
+      "pt": {
+        "title": "Configuracao",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md"
+      },
+      "en": {
+        "title": "Configuration",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/configuration.md"
+      },
+      "es": {
+        "title": "Configuracion",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/configuration.md"
+      }
+    },
+    {
+      "id": 2,
+      "pt": {
+        "title": "Publicacao",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md"
+      },
+      "en": {
+        "title": "Deployment",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/deployment.md"
+      },
+      "es": {
+        "title": "Publicacion",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/deployment.md"
+      }
+    }
+  ]
+}

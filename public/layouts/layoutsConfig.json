@@ -1,0 +1,153 @@
+{
+  "layouts": [
+    {
+      "id": "matrix-dark",
+      "name": "Matrix Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-dark.json",
+      "preview": "Dark theme with neon green accents inspired by The Matrix",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "matrix-1",
+      "mode": "dark"
+    },
+    {
+      "id": "matrix-light",
+      "name": "Matrix Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-light.json",
+      "preview": "Light theme with green accents inspired by The Matrix",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "matrix-1",
+      "mode": "light"
+    },
+    {
+      "id": "default",
+      "name": "Default Theme",
+      "author": "Kauan Vidigal",
+      "file": "templates/default.json",
+      "preview": "Clean and minimal default theme",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "github-dark",
+      "name": "GitHub Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/github-dark.json",
+      "preview": "GitHub-inspired dark theme",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "github-1",
+      "mode": "dark"
+    },
+    {
+      "id": "github-light",
+      "name": "GitHub Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/github-light.json",
+      "preview": "GitHub-inspired light theme",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "github-1",
+      "mode": "light"
+    },
+    {
+      "id": "cyberpunk-dark",
+      "name": "Cyberpunk Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/cyberpunk-dark.json",
+      "preview": "Futuristic dark theme with neon pink and cyan accents",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "cyberpunk-1",
+      "mode": "dark"
+    },
+    {
+      "id": "cyberpunk-light",
+      "name": "Cyberpunk Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/cyberpunk-light.json",
+      "preview": "Futuristic light theme with bright pink and cyan accents",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "cyberpunk-1",
+      "mode": "light"
+    },
+    {
+      "id": "aurora-dark",
+      "name": "Aurora Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/aurora-dark.json",
+      "preview": "Modern dark theme with purple + cyan accents and glassy cards",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "aurora-1",
+      "mode": "dark"
+    },
+    {
+      "id": "aurora-light",
+      "name": "Aurora Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/aurora-light.json",
+      "preview": "Modern light theme with purple + teal accents and soft shadows",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "aurora-1",
+      "mode": "light"
+    },
+    {
+      "id": "nord-dark",
+      "name": "Nord Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/nord-dark.json",
+      "preview": "Calm Nord-inspired dark theme (icy blues, low contrast glare)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "nord-1",
+      "mode": "dark"
+    },
+    {
+      "id": "nord-light",
+      "name": "Nord Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/nord-light.json",
+      "preview": "Calm Nord-inspired light theme (clean, readable, modern)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "nord-1",
+      "mode": "light"
+    },
+    {
+      "id": "sunset-dark",
+      "name": "Sunset Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/sunset-dark.json",
+      "preview": "Warm dark theme with orange + pink accents (sunset vibe)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "sunset-1",
+      "mode": "dark"
+    },
+    {
+      "id": "sunset-light",
+      "name": "Sunset Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/sunset-light.json",
+      "preview": "Warm light theme with orange + rose accents (soft, modern UI)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "sunset-1",
+      "mode": "light"
+    },
+    {
+      "id": "mono-dark",
+      "name": "Mono Pro Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/mono-dark.json",
+      "preview": "Minimal dark theme with lime accent and high readability",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "mono-1",
+      "mode": "dark"
+    },
+    {
+      "id": "mono-light",
+      "name": "Mono Pro Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/mono-light.json",
+      "preview": "Minimal light theme with lime accent and clean surfaces",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "mono-1",
+      "mode": "light"
+    }
+  ]
+}

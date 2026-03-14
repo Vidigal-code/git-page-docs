@@ -1,0 +1,41 @@
+{
+  "name": "git-page-docs",
+  "version": "1.0.0",
+  "description": "Multi-language docs with themeable layouts for GitHub Pages repositories.",
+  "main": "scripts/gitpagedocs-init.mjs",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "prestart": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "gitpagedocs": "node scripts/gitpagedocs-init.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vidigal-code/git-page-docs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vidigal-code/git-page-docs/issues"
+  },
+  "homepage": "https://vidigal-code.github.io/git-page-docs/",
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^17.0.4",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-icons": "^5.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.1.6",
+    "typescript": "^5.9.3"
+  }
+}
