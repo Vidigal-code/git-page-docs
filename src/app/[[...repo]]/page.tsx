@@ -4,13 +4,17 @@ import { DocsShell } from "@/widgets/docs-shell/docs-shell";
 import { RepositorySearchShell } from "@/widgets/repository-search-shell/repository-search-shell";
 
 interface PageProps {
-  params: Promise<{ repo?: string[] }>;
-  searchParams: Promise<{ version?: string }>;
+  params: { repo?: string[] };
+  searchParams: { version?: string };
+}
+
+export function generateStaticParams() {
+  return [{ repo: [] }];
 }
 
 export default async function DocsPage({ params, searchParams }: PageProps) {
-  const { repo } = await params;
-  const { version } = await searchParams;
+  const { repo } = params;
+  const { version } = searchParams;
   const data = await loadDocsData(repo, version);
 
   const repositoryNotUsingGitPageDocs = Boolean(data.activeRepository.requested && data.activeRepository.hasGitPageDocs === false);

@@ -66,6 +66,9 @@ export function RepositorySearchShell({
   const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
   const [ownerInput, setOwnerInput] = useState(data.activeRepository.owner ?? "");
   const [repoInput, setRepoInput] = useState(data.activeRepository.repo ?? "");
+  const searchLanguages: LanguageCode[] = repositoryNotUsingGitPageDocs
+    ? (["en", "pt", "es"] as LanguageCode[])
+    : data.availableLanguages;
 
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
@@ -159,9 +162,9 @@ export function RepositorySearchShell({
         <p className={styles.description}>{currentMessage}</p>
 
         <div className={styles.controls}>
-          {data.availableLanguages.length > 1 && (
+          {searchLanguages.length > 1 && (
             <select className={styles.select} value={String(language)} onChange={(event) => setLanguage(event.target.value as LanguageCode)}>
-              {data.availableLanguages.map((lang) => (
+              {searchLanguages.map((lang) => (
                 <option key={lang} value={lang}>
                   {getLanguageLabel(data, language, lang)}
                 </option>
