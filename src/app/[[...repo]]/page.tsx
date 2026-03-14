@@ -48,7 +48,10 @@ export async function generateStaticParams() {
         addRepoWithVersions(parts[0], parts[1]);
       }
     }
-    for (const [owner, repo] of [["Vidigal-code", "git-page-link-create"]]) {
+    for (const [owner, repo] of [
+      ["Vidigal-code", "git-page-link-create"],
+      ["Vidigal-code", "git-page-docs"],
+    ]) {
       addRepoWithVersions(owner, repo);
     }
   } catch {}

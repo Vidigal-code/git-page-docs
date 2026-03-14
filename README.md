@@ -1,17 +1,80 @@
 # Git Page Docs
 
-Git Page Docs is a `Next.js` documentation app and scaffolding CLI for multi-language markdown documentation (`en`, `pt`, `es`) with themeable layouts.
+Documentação multi-idioma (en, pt, es) com temas configuráveis para repositórios GitHub Pages. Inclui CLI de scaffold, SPA standalone e app Next.js.
 
-## Features
+## Instalação e uso rápido
 
-- Multi-language docs from `gitpagedocs/config.json`
-- Theme system with layout templates (`light`/`dark` support)
-- Repository search mode with URL format `/{owner}/{repo}`
-- Version selector and version-aware routes
-- Responsive UI for desktop/mobile
-- Keyboard navigation (`Ctrl+K`) and focus reading mode
+```bash
+# 1. Instalar o pacote
+npm install gitpagedocs
 
-## Getting Started
+# 2. Gerar documentação completa no projeto
+npx gitpagedocs
+
+# 3. Servir a pasta e abrir no navegador
+npx serve .
+# Abra http://localhost:3000
+```
+
+## Alternativas ao passo 2
+
+```bash
+# Usando npm init (cria projeto do zero)
+npm init gitpagedocs
+
+# Ou adicione ao package.json e rode o script:
+# "scripts": { "gitpagedocs": "gitpagedocs" }
+npm run gitpagedocs
+```
+
+## O que é gerado
+
+O comando `npx gitpagedocs` cria:
+
+| Arquivo / Pasta | Descrição |
+|-----------------|-----------|
+| `gitpagedocs/config.json` | Config raiz (rotas, menus, VersionControl, idiomas) |
+| `gitpagedocs/docs/en/`, `pt/`, `es/` | Docs base: index, getting-started, configuration, deployment, architecture, themes, faq |
+| `gitpagedocs/docs/versions/1.0.0/` | Docs da versão 1.0.0 |
+| `gitpagedocs/docs/versions/1.1.0/` | Docs da versão 1.1.0 |
+| `gitpagedocs/docs/versions/1.1.1/` | Docs da versão 1.1.1 |
+| `gitpagedocs/layouts/` | Temas padrão (aurora-dark, aurora-light) |
+| `public/layouts/` | Templates de tema (se `public` existir) |
+| `index.js` | SPA para renderizar a documentação no navegador |
+| `index.html` | Página HTML com `<div id="gitpagedocs-app">` e script (criado se não existir) |
+
+## SPA no index.html
+
+Se `index.html` não existir, ele é criado com:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitPageDocs</title>
+</head>
+<body>
+  <div id="gitpagedocs-app"></div>
+  <script src="./index.js"></script>
+</body>
+</html>
+```
+
+O `index.js` carrega `gitpagedocs/config.json` e exibe:
+
+- Seletor de versão (1.0.0, 1.1.0, 1.1.1)
+- Seletor de idioma (EN, PT, ES)
+- Menu lateral com submenus (Inicio, Primeiros passos, Configuracao › Arquitetura, Temas, FAQ, Publicacao)
+- Conteúdo Markdown renderizado
+- Navegação anterior/próximo
+
+Servir sempre via HTTP (ex.: `npx serve .`), pois abrir `index.html` como `file://` pode bloquear o `fetch`.
+
+## Desenvolvimento com Next.js
+
+Para rodar o app Next.js deste repositório:
 
 ```bash
 npm install
@@ -19,143 +82,42 @@ npm run gitpagedocs
 npm run dev
 ```
 
-Open: `http://localhost:3000`
+Acesse: http://localhost:3000
 
-## CLI
+## Funcionalidades
 
-### Install and run
+- Documentação multi-idioma (en, pt, es)
+- Temas com suporte dark/light
+- Seleção de versão
+- Rotas por versão (`/owner/repo/v/1.1.1`)
+- Redirecionamento de `?version=1.1.1` para `/v/1.1.1`
+- Modo de busca por repositório (`/{owner}/{repo}`)
+- UI responsiva e navegação por teclado (Ctrl+K)
 
-```bash
-npm install gitpagedocs
-npx gitpagedocs
-# or
-npm run gitpagedocs
-```
+## Deploy no GitHub Pages
 
-Add to your `package.json` scripts:
+1. Repo → **Settings** → **Pages**
+2. **Source**: GitHub Actions
+3. Push na branch `main`
 
-```json
-"scripts": {
-  "gitpagedocs": "gitpagedocs"
-}
-```
+Deploy em: [https://vidigal-code.github.io/git-page-docs/](https://vidigal-code.github.io/git-page-docs/)
 
-### npm init (create-gitpagedocs)
-
-```bash
-npm init gitpagedocs
-```
-
-This runs `create-gitpagedocs`, which scaffolds the docs. Both packages must be published:
-
-- `gitpagedocs` – main CLI
-- `create-gitpagedocs` – initializer for `npm init gitpagedocs`
-
-This command creates or updates:
-
-- `gitpagedocs/config.json`
-- `gitpagedocs/docs/**` (base docs and versioned docs)
-- `gitpagedocs/layouts/**` (fallback themes)
-- `public/layouts/layoutsConfig.json`
-- `public/layouts/templates/*.json`
-- `index.js` (SPA renderer)
-- `index.html` (created only if it does not exist)
-
-## SPA Renderer (`index.js`)
-
-The scaffold generates a browser-ready `index.js`. If `index.html` does not exist, it is created with:
-
-```html
-<div id="gitpagedocs-app"></div>
-<script src="./index.js"></script>
-```
-
-If you already have an `index.html`, add the above block inside `<body>`.
-
-`index.js` reads `./gitpagedocs/config.json`, loads markdown files, and renders:
-
-- language selector
-- sidebar navigation from `menus-header`
-- previous/next navigation
-- markdown content for the selected route
-
-## Repository Search Mode
-
-In `gitpagedocs/config.json`:
-
-- Set `RendertoanyRepositoryviaSearch: true` to enable remote repository lookup.
-- The home route shows a centered search page with:
-  - owner input
-  - repository input
-  - language selector
-  - theme controls (when available)
-
-Example URL:
-
-`https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-link-create`
-
-If the target repository does not contain `gitpagedocs/config.json`, the app renders a themed fallback page with a localized message and language selector (`en`, `pt`, `es`).
-
-## Theme Behavior
-
-- `HideThemeSelector: false` shows the theme selector.
-- `HideThemeSelector: true` keeps `ThemeDefault`.
-- If the active theme supports mode pairs, the dark/light toggle appears.
-- If not, the mode toggle is hidden.
-
-## Deploy to GitHub Pages
-
-This repository includes `/.github/workflows/deploy.yml` for GitHub Pages deployment.
-
-### One-time setup
-
-1. Go to repository **Settings** -> **Pages**
-2. Set **Source** to **GitHub Actions**
-3. Push to `main`
-
-The workflow builds and deploys to:
-
-- [https://vidigal-code.github.io/git-page-docs/](https://vidigal-code.github.io/git-page-docs/)
-
-## Local Validation
-
-```bash
-npm run lint
-npm run build
-```
-
-## Publish to npm
-
-1. Log in and check your account:
+## Publicar no npm
 
 ```bash
 npm login
 npm whoami
-```
 
-2. Publish the main package:
-
-```bash
+# Pacote principal
 npm publish --access public
+
+# Para npm init gitpagedocs
+cd packages/create-gitpagedocs && npm publish --access public
 ```
 
-3. Publish the initializer for `npm init gitpagedocs`:
+### Erro "Cannot read properties of null (reading 'matches')"
 
-```bash
-cd packages/create-gitpagedocs
-npm publish --access public
-```
-
-Or from the repo root: `npm run publish:create`
-
-### Troubleshooting: `Cannot read properties of null (reading 'matches')`
-
-This npm error often occurs when:
-
-- Mixing package managers (e.g. `pnpm` then `npm` in the same project)
-- Corrupt or inconsistent `node_modules`
-
-Try:
+Em geral causado por `node_modules` inconsistente ou uso misto de gerenciadores (pnpm + npm). Resolver:
 
 ```bash
 rm -rf node_modules package-lock.json

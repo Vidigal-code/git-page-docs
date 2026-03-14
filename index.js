@@ -246,6 +246,13 @@
       return;
     }
 
+    const versions = config?.VersionControl?.versions ?? [];
+    const versionKey = getStorageKey(config, "version");
+    const defaultVersionId = config?.site?.docsVersion || versions[0]?.id;
+    let activeVersionId = localStorage.getItem(versionKey) || defaultVersionId;
+    if (!versions.some((v) => v.id === activeVersionId)) {
+      activeVersionId = versions[0]?.id || "";
+    }
     const languages = resolveLanguages(config);
     const languageKey = getStorageKey(config, "language");
     const routeKey = getStorageKey(config, "route-index");
@@ -255,34 +262,48 @@
     }
     let routeIndex = Number(localStorage.getItem(routeKey) || 0);
 
-    function safeRouteIndex() {
-      if (!Array.isArray(config.routes) || !config.routes.length) {
-        return 0;
+    async function getActiveConfig() {
+      if (!activeVersionId || !versions.length) {
+        return config;
       }
-      if (routeIndex < 0) {
-        return 0;
+      try {
+        const versionConfigPath = baseUrl + "gitpagedocs/docs/versions/" + activeVersionId + "/config.json";
+        const res = await fetch(versionConfigPath);
+        if (!res.ok) return config;
+        const versionConfig = await res.json();
+        return {
+          ...config,
+          routes: versionConfig.routes ?? config.routes,
+          "menus-header": versionConfig["menus-header"] ?? config["menus-header"],
+        };
+      } catch {
+        return config;
       }
-      if (routeIndex >= config.routes.length) {
-        return config.routes.length - 1;
-      }
+    }
+
+    function safeRouteIndex(routes) {
+      if (!Array.isArray(routes) || !routes.length) return 0;
+      if (routeIndex < 0) return 0;
+      if (routeIndex >= routes.length) return routes.length - 1;
       return routeIndex;
     }
 
-    function buildMenuButtons() {
-      const menuEntries = flattenMenus(config["menus-header"], language);
+    function buildMenuButtons(activeConfig) {
+      const menuEntries = flattenMenus(activeConfig["menus-header"], language);
+      const routes = activeConfig.routes;
       return menuEntries
         .map((entry) => {
-          const idx = config.routes.findIndex((route) => route?.path?.[language] === entry.pathClick);
-          if (idx < 0) {
-            return "";
-          }
+          const idx = routes.findIndex((route) => route?.path?.[language] === entry.pathClick);
+          if (idx < 0) return "";
           return `<button data-route-index="${idx}">${entry.title}</button>`;
         })
         .join("");
     }
 
     async function render() {
-      if (!Array.isArray(config.routes) || !config.routes.length) {
+      const activeConfig = await getActiveConfig();
+      const routes = activeConfig.routes ?? [];
+      if (!Array.isArray(routes) || !routes.length) {
         root.innerHTML = `
           <style>${createStyles()}</style>
           <div class="gpd-shell" style="padding:20px">
@@ -292,14 +313,26 @@
         return;
       }
 
-      routeIndex = safeRouteIndex();
+      routeIndex = safeRouteIndex(routes);
       localStorage.setItem(languageKey, language);
       localStorage.setItem(routeKey, String(routeIndex));
+      if (activeVersionId) {
+        localStorage.setItem(versionKey, activeVersionId);
+      }
 
-      const route = config.routes[routeIndex];
+      const route = routes[routeIndex];
       const html = await loadMarkdown(route, language, baseUrl);
       const prevDisabled = routeIndex <= 0 ? "disabled" : "";
-      const nextDisabled = routeIndex >= config.routes.length - 1 ? "disabled" : "";
+      const nextDisabled = routeIndex >= routes.length - 1 ? "disabled" : "";
+      const prevLabel = config?.translations?.navigation?.previous?.[language] || "Previous";
+      const nextLabel = config?.translations?.navigation?.next?.[language] || "Next";
+
+      const versionSelectorHtml =
+        versions.length > 1
+          ? `<select id="gpd-version" aria-label="Version">
+              ${versions.map((v) => `<option value="${v.id}" ${v.id === activeVersionId ? "selected" : ""}>Version ${v.id}</option>`).join("")}
+            </select>`
+          : "";
 
       root.innerHTML = `
         <style>${createStyles()}</style>
@@ -307,6 +340,7 @@
           <header class="gpd-header">
             <strong>${getSiteName(config)}</strong>
             <div class="gpd-controls">
+              ${versionSelectorHtml}
               <select id="gpd-language">
                 ${languages.map((lang) => `<option value="${lang}" ${lang === language ? "selected" : ""}>${lang.toUpperCase()}</option>`).join("")}
               </select>
@@ -314,16 +348,25 @@
           </header>
           <section class="gpd-main">
             <aside class="gpd-sidebar">
-              ${buildMenuButtons()}
+              ${buildMenuButtons(activeConfig)}
             </aside>
             <article class="gpd-content">${html}</article>
           </section>
           <footer class="gpd-footer">
-            <button id="gpd-prev" ${prevDisabled}>Previous</button>
-            <button id="gpd-next" ${nextDisabled}>Next</button>
+            <button id="gpd-prev" ${prevDisabled}>${prevLabel}</button>
+            <button id="gpd-next" ${nextDisabled}>${nextLabel}</button>
           </footer>
         </div>
       `;
+
+      const versionSelect = root.querySelector("#gpd-version");
+      if (versionSelect) {
+        versionSelect.addEventListener("change", (event) => {
+          activeVersionId = event.target.value;
+          routeIndex = 0;
+          void render();
+        });
+      }
 
       const languageSelect = root.querySelector("#gpd-language");
       if (languageSelect) {

@@ -536,6 +536,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   }, [activeNavigation, quickNavOpen, focusModeOpen]);
 
   useEffect(() => {
+    const langFromQuery = searchParams.get("lang") as LanguageCode | null;
+    if (langFromQuery && data.availableLanguages.includes(langFromQuery)) {
+      setLanguage(langFromQuery);
+      languageRestoredRef.current = true;
+    }
+  }, [searchParams, data.availableLanguages]);
+
+  useEffect(() => {
     if (languageRestoredRef.current) {
       return;
     }
@@ -649,23 +657,25 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   useEffect(() => {
     if (!showVersionSelector) return;
     const urlVersion = searchParams.get("version");
-    if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion)) {
-      const base = pathname.replace(/\/v\/[^/]+$/, "");
-      if (!pathname.endsWith(`/v/${urlVersion}`)) {
-        router.replace(`${base}/v/${urlVersion}`);
-      }
+    const urlLang = searchParams.get("lang") as LanguageCode | null;
+    const langQ =
+      urlLang && data.availableLanguages.includes(urlLang) ? `?lang=${urlLang}` : "";
+    const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
+    if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
+      const base = pathname.replace(/\/$/, "");
+      router.replace(`${base}/v/${urlVersion}${langQ}`);
       return;
     }
     try {
       const savedVersion = window.localStorage.getItem(versionStorageKey);
-      if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !pathname.includes("/v/")) {
-        const base = pathname.replace(/\/v\/[^/]+$/, "");
-        router.replace(`${base}/v/${savedVersion}`);
+      if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
+        const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        router.replace(`${base || pathname}/v/${savedVersion}${langQ}`);
       }
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-  }, [showVersionSelector, searchParams, versionStorageKey, data.availableVersions, pathname, router]);
+  }, [showVersionSelector, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
 
   function onThemeChange(themeId: string) {
     setActiveThemeId(themeId);
@@ -706,8 +716,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-    const base = pathname.replace(/\/v\/[^/]+$/, "");
-    router.replace(`${base}/v/${versionId}`);
+    const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+    const langQ = data.availableLanguages.length > 1 ? `?lang=${language}` : "";
+    router.replace(`${base || "/"}/v/${versionId}${langQ}`);
+  }
+
+  function onLanguageChange(newLang: LanguageCode) {
+    setLanguage(newLang);
+    const cleanPath = pathname.replace(/\/$/, "") || pathname;
+    router.replace(`${cleanPath}?lang=${newLang}`);
   }
 
   function goToLinearNavigation(offset: -1 | 1) {
@@ -937,7 +954,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 <select
                   className={styles.select}
                   value={String(language)}
-                  onChange={(event) => setLanguage(event.target.value)}
+                  onChange={(event) => onLanguageChange(event.target.value as LanguageCode)}
                   aria-label="Language selector"
                 >
                   {data.availableLanguages.map((lang) => (
@@ -1072,7 +1089,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 <select
                   className={styles.select}
                   value={String(language)}
-                  onChange={(event) => setLanguage(event.target.value)}
+                  onChange={(event) => onLanguageChange(event.target.value as LanguageCode)}
                   aria-label="Language selector"
                 >
                   {data.availableLanguages.map((lang) => (

@@ -1356,8 +1356,15 @@ async function run() {
   }
 
   console.log("Git Page Docs scaffold created successfully in:", ROOT);
-  console.log("Files: gitpagedocs/config.json, index.js, index.html");
-  console.log("Serve this folder (e.g. npx serve .) and open index.html to view docs.");
+  console.log("");
+  console.log("Generated:");
+  console.log("  - gitpagedocs/config.json (root config with routes, menus, VersionControl)");
+  console.log("  - gitpagedocs/docs/{en,pt,es}/*.md (base docs: index, getting-started, configuration, deployment, architecture, themes, faq)");
+  console.log("  - gitpagedocs/docs/versions/{1.0.0,1.1.0,1.1.1}/* (versioned docs)");
+  console.log("  - gitpagedocs/layouts/ + public/layouts/ (theme templates)");
+  console.log("  - index.js (SPA renderer) + index.html");
+  console.log("");
+  console.log("Serve this folder (e.g. npx serve .) then open the URL to view docs.");
 }
 
 run().catch((error) => {
