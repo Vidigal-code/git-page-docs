@@ -101,7 +101,8 @@
     if (!mdPath) {
       return "<p>Missing markdown path for selected language.</p>";
     }
-    const url = mdPath.startsWith("http") ? mdPath : (baseUrl || "") + mdPath.replace(/^\\.\\//, "");
+    const cleanPath = mdPath.startsWith("./") ? mdPath.slice(2) : mdPath;
+    const url = mdPath.startsWith("http") ? mdPath : (baseUrl || "") + cleanPath;
     const response = await fetch(url);
     if (!response.ok) {
       return "<p>Unable to load markdown file.</p>";
