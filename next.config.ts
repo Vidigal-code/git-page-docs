@@ -6,7 +6,7 @@ const basePath = isGithubPagesBuild ? `/${repositoryName}` : "";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: isGithubPagesBuild ? "export" : undefined,
+  output: process.env.NODE_ENV === "production" ? "export" : undefined,
   trailingSlash: isGithubPagesBuild,
   basePath,
   assetPrefix: basePath || undefined,

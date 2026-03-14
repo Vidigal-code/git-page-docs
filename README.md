@@ -1,11 +1,10 @@
 # Git Page Docs
 
-CLI that generates `gitpagedocs/` with configs, multi-language docs (en, pt, es), themes, version control, and SPA renderer. Renders 100% like the original site.
+CLI that generates `out/` with index.html, index.js, and `gitpagedocs/` (configs, multi-language docs, themes, versions). Renders 100% like the original site.
 
 ```bash
 npm install gitpagedocs
-npx gitpagedocs
-npx serve .
+npx gitpagedocs --serve
 ```
 
-Open the URL shown (e.g. http://localhost:3000). For Next.js: copy `gitpagedocs` to `public/gitpagedocs` before `npm run build`.
+Opens the URL automatically (e.g. http://localhost:3000). Or generate only: `npx gitpagedocs` then `npx serve out`.

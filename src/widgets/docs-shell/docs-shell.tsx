@@ -582,8 +582,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
 
     try {
+      const urlMode = searchParams.get("modetheme");
       const savedMode = window.localStorage.getItem(themeModeStorageKey);
-      const targetMode = savedMode === "light" || savedMode === "dark" ? savedMode : configuredDefaultMode;
+      const targetMode =
+        urlMode === "dark" || urlMode === "light"
+          ? urlMode
+          : savedMode === "light" || savedMode === "dark"
+            ? savedMode
+            : configuredDefaultMode;
       const baseLayout =
         data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
       if (baseLayout) {
@@ -599,7 +605,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
 
     themeModeRestoredRef.current = true;
-  }, [themeModeStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId]);
+  }, [themeModeStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId, searchParams]);
 
   useEffect(() => {
     if (!themeModeRestoredRef.current || !activeLayout?.mode) {
@@ -677,8 +683,19 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
   }, [showVersionSelector, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
 
+  function updateModethemeInUrl(mode: "dark" | "light") {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("modetheme", mode);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : `${pathname}?modetheme=${mode}`);
+  }
+
   function onThemeChange(themeId: string) {
     setActiveThemeId(themeId);
+    const layout = data.layoutsConfig.layouts.find((l) => l.id === themeId);
+    if (layout?.mode === "dark" || layout?.mode === "light") {
+      updateModethemeInUrl(layout.mode);
+    }
   }
 
   function onToggleMode() {
@@ -687,6 +704,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
     const paired = resolveThemeByMode(data.layoutsConfig.layouts, activeLayout, nextMode);
     setActiveThemeId(paired.id);
+    if (paired.mode === "dark" || paired.mode === "light") {
+      updateModethemeInUrl(paired.mode);
+    }
   }
 
   function onMenuClick(pathClick: string, ancestorKeys: string[] = []) {

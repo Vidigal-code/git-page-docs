@@ -24,7 +24,7 @@
     "IconProjectLinkReactIconesTagSize": "25px",
     "layoutsConfigPath": "https://github.com/Vidigal-code/git-page-docs/blob/main/public/layouts/layoutsConfig.json",
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
-    "RendertoanyRepositoryviaSearch": true,
+    "RendertoanyRepositoryviaSearch": false,
     "langmenu": {
       "pt": {
         "pt": "Portugues",

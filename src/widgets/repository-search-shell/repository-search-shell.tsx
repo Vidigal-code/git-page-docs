@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { FaGithubAlt, FaGithubSquare } from "react-icons/fa";
 import type { LanguageCode, LayoutItem, LoadedDocsData, ThemeTemplate } from "@/entities/docs/model/types";
@@ -62,6 +62,8 @@ export function RepositorySearchShell({
   repositoryNotUsingGitPageDocs: boolean;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const defaultLanguage = data.config.site.defaultLanguage;
   const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
   const [ownerInput, setOwnerInput] = useState(data.activeRepository.owner ?? "");
@@ -123,6 +125,20 @@ export function RepositorySearchShell({
 
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
 
+  // Handle modetheme from URL on mount
+  useEffect(() => {
+    const urlMode = searchParams.get("modetheme");
+    if (urlMode === "dark" || urlMode === "light") {
+      const base =
+        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
+      if (base) {
+        const resolved = resolveThemeByMode(data.layoutsConfig.layouts, base, urlMode);
+        setActiveThemeId(resolved.id);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount
+  }, [searchParams]);
+
   // Handle repository identification via URL hash (#/owner/repo) on mount only
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
@@ -135,8 +151,19 @@ export function RepositorySearchShell({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount to sync from hash
   }, []);
 
+  function updateModethemeInUrl(mode: "dark" | "light") {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("modetheme", mode);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : `${pathname}?modetheme=${mode}`);
+  }
+
   function onThemeChange(nextThemeId: string) {
     setActiveThemeId(nextThemeId);
+    const layout = data.layoutsConfig.layouts.find((l) => l.id === nextThemeId);
+    if (layout?.mode === "dark" || layout?.mode === "light") {
+      updateModethemeInUrl(layout.mode);
+    }
   }
 
   function onToggleMode() {
@@ -145,6 +172,9 @@ export function RepositorySearchShell({
     }
     const nextLayout = resolveThemeByMode(data.layoutsConfig.layouts, activeLayout, nextMode);
     setActiveThemeId(nextLayout.id);
+    if (nextLayout.mode === "dark" || nextLayout.mode === "light") {
+      updateModethemeInUrl(nextLayout.mode);
+    }
   }
 
   function onSearch() {

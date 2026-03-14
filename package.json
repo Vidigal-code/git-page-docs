@@ -1,7 +1,7 @@
 {
   "name": "gitpagedocs",
-  "version": "1.1.6",
-  "description": "CLI that generates gitpagedocs/ with configs, docs, themes, versions. Renders 100% like original. npx serve . to view.",
+  "version": "1.1.7",
+  "description": "CLI that generates out/ 100% like original site. npx gitpagedocs --serve to generate and view.",
   "main": "scripts/gitpagedocs-init.mjs",
   "bin": {
     "gitpagedocs": "scripts/gitpagedocs-init.mjs"
@@ -11,12 +11,15 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "node -e \"const fs=require('fs'); if(fs.existsSync('public/gitpagedocs')) fs.rmSync('public/gitpagedocs', {recursive:true}); fs.cpSync('gitpagedocs', 'public/gitpagedocs', {recursive:true, dereference:true})\" && next build",
+    "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('.next',{recursive:true})}catch(e){}\"",
+    "build": "node scripts/gitpagedocs-init.mjs --build && node -e \"const fs=require('fs'); const o='out-init/gitpagedocs'; const g='gitpagedocs'; if(fs.existsSync(g)) fs.rmSync(g,{recursive:true}); fs.cpSync(o,g,{recursive:true}); try{fs.existsSync('out')&&fs.rmSync('out',{recursive:true})}catch(e){}\" && next build",
+    "export": "next export",
     "prestart": "next build",
     "start": "next start",
     "lint": "eslint .",
     "gitpagedocs": "node scripts/gitpagedocs-init.mjs",
-    "publish:create": "npm publish --access public --prefix packages/create-gitpagedocs"
+    "publish:create": "npm publish --access public --prefix packages/create-gitpagedocs",
+    "publish:npm": "npm publish --access public"
   },
   "repository": {
     "type": "git",

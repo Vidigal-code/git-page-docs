@@ -360,7 +360,13 @@
     let language = localStorage.getItem(languageKey) || config?.site?.defaultLanguage || languages[0] || "en";
     if (!languages.includes(language)) language = languages[0] || "en";
     let routeIndex = Number(localStorage.getItem(routeKey) || 0);
-    let activeThemeId = localStorage.getItem(themeKey) || config?.site?.ThemeDefault || "aurora-dark";
+    const urlModetheme = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("modetheme") : null;
+    let activeThemeId =
+      urlModetheme === "dark"
+        ? "aurora-dark"
+        : urlModetheme === "light"
+          ? "aurora-light"
+          : localStorage.getItem(themeKey) || config?.site?.ThemeDefault || "aurora-dark";
     let sidebarCollapsed = localStorage.getItem(sidebarKey) === "true";
     let expandedMap = {};
     try {
@@ -385,8 +391,18 @@
       return Math.max(0, Math.min(routeIndex, routes.length - 1));
     }
 
+    function updateModethemeInUrl(mode) {
+      if (typeof window === "undefined") return;
+      const params = new URLSearchParams(window.location.search);
+      params.set("modetheme", mode);
+      const qs = params.toString();
+      const url = qs ? window.location.pathname + "?" + qs : window.location.pathname + "?modetheme=" + mode;
+      window.history.replaceState({}, "", url);
+    }
+
     function toggleThemeMode() {
       activeThemeId = activeThemeId === "aurora-dark" ? "aurora-light" : "aurora-dark";
+      updateModethemeInUrl(activeThemeId === "aurora-dark" ? "dark" : "light");
       void render();
     }
 
@@ -532,6 +548,8 @@
       });
       root.querySelector("#gpd-theme")?.addEventListener("change", (e) => {
         activeThemeId = e.target.value;
+        const mode = activeThemeId === "aurora-light" ? "light" : "dark";
+        updateModethemeInUrl(mode);
         void render();
       });
       root.querySelector("#gpd-mode-toggle")?.addEventListener("click", toggleThemeMode);

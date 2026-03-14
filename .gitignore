@@ -1,6 +1,7 @@
 .next
 node_modules
 out
+out-init
 dist
 .DS_Store
 *.log

@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
-import { mkdir, readFile, writeFile, access } from "node:fs/promises";
+import { spawn } from "node:child_process";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = process.cwd();
+const isBuild = process.argv.includes("--build") || process.env.GITPAGEDOCS_BUILD === "1";
+const isServe = process.argv.includes("--serve");
+const OUT_DIR = isBuild ? "out-init" : "out";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const SPA_TEMPLATE_PATH = path.join(SCRIPT_DIR, "templates", "index.spa.js");
 
@@ -1125,32 +1129,32 @@ async function run() {
 </body>
 </html>`;
 
-  await writeJson("gitpagedocs/config.json", rootConfig);
-  await writeText("index.js", spaRendererScript);
-  await writeText("index.html", INDEX_HTML);
-  await writeText("gitpagedocs/docs/en/index.md", DOCS.en.index);
-  await writeText("gitpagedocs/docs/en/getting-started.md", DOCS.en.gettingStarted);
-  await writeText("gitpagedocs/docs/en/configuration.md", DOCS.en.configuration);
-  await writeText("gitpagedocs/docs/en/deployment.md", DOCS.en.deployment);
-  await writeText("gitpagedocs/docs/en/architecture.md", DOCS.en.architecture);
-  await writeText("gitpagedocs/docs/en/themes.md", DOCS.en.themes);
-  await writeText("gitpagedocs/docs/en/faq.md", DOCS.en.faq);
+  await writeJson(`${OUT_DIR}/gitpagedocs/config.json`, rootConfig);
+  await writeText(`${OUT_DIR}/index.js`, spaRendererScript);
+  await writeText(`${OUT_DIR}/index.html`, INDEX_HTML);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/index.md`, DOCS.en.index);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/getting-started.md`, DOCS.en.gettingStarted);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/configuration.md`, DOCS.en.configuration);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/deployment.md`, DOCS.en.deployment);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/architecture.md`, DOCS.en.architecture);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/themes.md`, DOCS.en.themes);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/faq.md`, DOCS.en.faq);
 
-  await writeText("gitpagedocs/docs/pt/index.md", DOCS.pt.index);
-  await writeText("gitpagedocs/docs/pt/getting-started.md", DOCS.pt.gettingStarted);
-  await writeText("gitpagedocs/docs/pt/configuration.md", DOCS.pt.configuration);
-  await writeText("gitpagedocs/docs/pt/deployment.md", DOCS.pt.deployment);
-  await writeText("gitpagedocs/docs/pt/architecture.md", DOCS.pt.architecture);
-  await writeText("gitpagedocs/docs/pt/themes.md", DOCS.pt.themes);
-  await writeText("gitpagedocs/docs/pt/faq.md", DOCS.pt.faq);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/index.md`, DOCS.pt.index);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/getting-started.md`, DOCS.pt.gettingStarted);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/configuration.md`, DOCS.pt.configuration);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/deployment.md`, DOCS.pt.deployment);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/architecture.md`, DOCS.pt.architecture);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/themes.md`, DOCS.pt.themes);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/faq.md`, DOCS.pt.faq);
 
-  await writeText("gitpagedocs/docs/es/index.md", DOCS.es.index);
-  await writeText("gitpagedocs/docs/es/getting-started.md", DOCS.es.gettingStarted);
-  await writeText("gitpagedocs/docs/es/configuration.md", DOCS.es.configuration);
-  await writeText("gitpagedocs/docs/es/deployment.md", DOCS.es.deployment);
-  await writeText("gitpagedocs/docs/es/architecture.md", DOCS.es.architecture);
-  await writeText("gitpagedocs/docs/es/themes.md", DOCS.es.themes);
-  await writeText("gitpagedocs/docs/es/faq.md", DOCS.es.faq);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/index.md`, DOCS.es.index);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/getting-started.md`, DOCS.es.gettingStarted);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/configuration.md`, DOCS.es.configuration);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/deployment.md`, DOCS.es.deployment);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/architecture.md`, DOCS.es.architecture);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/themes.md`, DOCS.es.themes);
+  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/faq.md`, DOCS.es.faq);
 
   const VERSIONED_DOCS = {
     "1.0.0": {
@@ -1236,39 +1240,39 @@ async function run() {
     },
   };
 
-  await writeJson("gitpagedocs/docs/versions/1.0.0/config.json", {
+  await writeJson(`${OUT_DIR}/gitpagedocs/docs/versions/1.0.0/config.json`, {
     routes: versionRoutes_1_0_0,
     "menus-header": versionMenus_1_0_0,
   });
-  await writeJson("gitpagedocs/docs/versions/1.1.0/config.json", {
+  await writeJson(`${OUT_DIR}/gitpagedocs/docs/versions/1.1.0/config.json`, {
     routes: versionRoutes_1_1_0,
     "menus-header": versionMenus_1_1_0,
   });
-  await writeJson("gitpagedocs/docs/versions/1.1.1/config.json", {
+  await writeJson(`${OUT_DIR}/gitpagedocs/docs/versions/1.1.1/config.json`, {
     routes: versionRoutes_1_1_1,
     "menus-header": versionMenus_1_1_1,
   });
 
   for (const [versionId, languageMap] of Object.entries(VERSIONED_DOCS)) {
     for (const [language, pages] of Object.entries(languageMap)) {
-      await writeText(`gitpagedocs/docs/versions/${versionId}/${language}/index.md`, pages.index);
+      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/index.md`, pages.index);
       await writeText(
-        `gitpagedocs/docs/versions/${versionId}/${language}/getting-started.md`,
+        `${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/getting-started.md`,
         pages.gettingStarted ?? DOCS[language].gettingStarted,
       );
-      await writeText(`gitpagedocs/docs/versions/${versionId}/${language}/configuration.md`, pages.configuration);
-      await writeText(`gitpagedocs/docs/versions/${versionId}/${language}/deployment.md`, pages.deployment);
+      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/configuration.md`, pages.configuration);
+      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/deployment.md`, pages.deployment);
       await writeText(
-        `gitpagedocs/docs/versions/${versionId}/${language}/architecture.md`,
+        `${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/architecture.md`,
         pages.architecture ?? DOCS[language].architecture,
       );
-      await writeText(`gitpagedocs/docs/versions/${versionId}/${language}/themes.md`, pages.themes ?? DOCS[language].themes);
-      await writeText(`gitpagedocs/docs/versions/${versionId}/${language}/faq.md`, pages.faq ?? DOCS[language].faq);
+      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/themes.md`, pages.themes ?? DOCS[language].themes);
+      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/faq.md`, pages.faq ?? DOCS[language].faq);
     }
   }
 
   await writeJson("public/layouts/layoutsConfig.json", layoutsConfig);
-  await writeJson("gitpagedocs/layouts/layoutsConfig.json", fallbackLayoutsConfig);
+  await writeJson(`${OUT_DIR}/gitpagedocs/layouts/layoutsConfig.json`, fallbackLayoutsConfig);
 
   for (const layout of LAYOUTS) {
     const template = createThemeTemplate(layout);
@@ -1277,11 +1281,24 @@ async function run() {
 
   for (const layout of FALLBACK_LAYOUTS) {
     const template = createThemeTemplate(layout);
-    await writeJson(`gitpagedocs/layouts/${layout.file}`, template);
+    await writeJson(`${OUT_DIR}/gitpagedocs/layouts/${layout.file}`, template);
   }
 
-  console.log("Generated: gitpagedocs/ index.js index.html");
-  console.log("Render: npx serve .");
+  console.log(`Generated: ${OUT_DIR}/ (index.html index.js gitpagedocs/)`);
+  if (!isBuild && !isServe) console.log("Render: npx serve out");
+  if (isServe && !isBuild) {
+    const serveDir = path.join(ROOT, OUT_DIR);
+    console.log("Starting server...");
+    const child = spawn("npx", ["serve", OUT_DIR], {
+      cwd: ROOT,
+      stdio: "inherit",
+      shell: true,
+    });
+    child.on("error", (err) => {
+      console.error("Failed to start serve. Run: npx serve out", err);
+      process.exitCode = 1;
+    });
+  }
 }
 
 run().catch((error) => {
