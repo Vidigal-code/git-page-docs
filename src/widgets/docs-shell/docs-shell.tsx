@@ -434,6 +434,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const showVersionSelector = data.availableVersions.length > 1;
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
+  const isRemoteRepositorySession = data.activeRepository.source === "remote";
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -693,6 +694,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   useEffect(() => {
     if (!showVersionSelector) return;
+    if (isRemoteRepositorySession) return;
     const params = new URLSearchParams(searchParams.toString());
     const urlVersion = params.get("version");
     params.delete("version");
@@ -715,13 +717,30 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-  }, [showVersionSelector, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
+  }, [showVersionSelector, isRemoteRepositorySession, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
+
+  function getCurrentSearchParams(): URLSearchParams {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams(searchParams.toString());
+  }
+
+  function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
+    const normalizedPath = nextPathname || pathname || "/";
+    const qs = params.toString();
+    const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", nextUrl);
+      return;
+    }
+    router.replace(nextUrl);
+  }
 
   function updateModethemeInUrl(mode: "dark" | "light") {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = getCurrentSearchParams();
     params.set("modetheme", mode);
-    const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : `${pathname}?modetheme=${mode}`);
+    replaceUrlWithoutNavigation(pathname, params);
   }
 
   function onThemeChange(themeId: string) {
@@ -785,12 +804,11 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   function onLanguageChange(newLang: LanguageCode) {
     setLanguage(newLang);
-    const params = new URLSearchParams(searchParams.toString());
+    const params = getCurrentSearchParams();
     params.set("lang", newLang);
     params.delete("version");
     const cleanPath = pathname.replace(/\/$/, "") || pathname;
-    const qs = params.toString();
-    router.replace(qs ? `${cleanPath}?${qs}` : cleanPath);
+    replaceUrlWithoutNavigation(cleanPath, params);
   }
 
   function goToLinearNavigation(offset: -1 | 1) {
