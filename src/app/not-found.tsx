@@ -52,11 +52,12 @@ const RETURN_HOME = {
 };
 
 type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
-type ParsedPath = { owner: string; repo: string; version?: string };
+type ParsedPath = { owner: string; repo: string; version?: string; language: SupportedLanguage };
 type VersionConfig = { routes?: RouteConfig[]; "menus-header"?: HeaderMenuItem[] };
 type ThemeMode = "light" | "dark";
 type SupportedLanguage = "en" | "pt" | "es";
 const REQUEST_TIMEOUT_MS = 12000;
+const MIN_LOADING_TRANSITION_MS = 700;
 
 const DEFAULT_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
 const DEFAULT_TEMPLATES_BASE_PATH = "gitpagedocs/layouts/";
@@ -141,6 +142,13 @@ function buildFallbackLayoutsAndThemes(): {
 
 function normalizeRelativePath(input: string): string {
   return input.replace(/^\/+/, "");
+}
+
+function parseSupportedLanguage(input: string | null | undefined): SupportedLanguage {
+  if (input === "pt" || input === "es" || input === "en") {
+    return input;
+  }
+  return "en";
 }
 
 function toRawGithubUrl(url: string): string {
@@ -255,8 +263,9 @@ function parsePathFromLocation(): ParsedPath | null {
   const repo = parts[1];
   const versionFromPath = parts.length >= 4 && parts[2] === "v" ? parts[3] : undefined;
   const versionFromQuery = searchParams.get("version") ?? undefined;
+  const language = parseSupportedLanguage(searchParams.get("lang"));
   const version = versionFromPath || versionFromQuery;
-  return { owner, repo, version };
+  return { owner, repo, version, language };
 }
 
 function getAvailableLanguages(routes: RouteConfig[], fallbackLanguage: LanguageCode): LanguageCode[] {
@@ -526,6 +535,8 @@ export default function NotFound() {
   const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
   const [appLoading, setAppLoading] = useState(false);
   const [appLoadFailed, setAppLoadFailed] = useState(false);
+  const [loaderDots, setLoaderDots] = useState(1);
+  const [loadingTransitionDone, setLoadingTransitionDone] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -537,6 +548,7 @@ export default function NotFound() {
       setPathOwner(parsed.owner);
       setPathRepo(parsed.repo);
       setPathVersion(parsed.version);
+      setLang(parsed.language);
     }
     syncFromCurrentLocation();
     if (typeof window !== "undefined") {
@@ -579,6 +591,7 @@ export default function NotFound() {
     }
 
     let cancelled = false;
+    setLoadedData(null);
     setAppLoading(true);
     setAppLoadFailed(false);
     loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang)
@@ -600,6 +613,41 @@ export default function NotFound() {
     };
   }, [pathOwner, pathRepo, pathVersion, repoStatus, lang]);
 
+  const isRepoPath = pathOwner && pathRepo;
+  const isCheckingOrLoading =
+    Boolean(isRepoPath) && (repoStatus === "unknown" || repoStatus === "checking" || (repoStatus === "installed" && appLoading));
+
+  useEffect(() => {
+    if (!isCheckingOrLoading) {
+      setLoadingTransitionDone(true);
+      return;
+    }
+
+    setLoadingTransitionDone(false);
+    const timer = window.setTimeout(() => {
+      setLoadingTransitionDone(true);
+    }, MIN_LOADING_TRANSITION_MS);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isCheckingOrLoading, pathOwner, pathRepo, pathVersion, lang]);
+
+  useEffect(() => {
+    if (!isCheckingOrLoading) {
+      setLoaderDots(1);
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setLoaderDots((prev) => (prev >= 3 ? 1 : prev + 1));
+    }, 280);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isCheckingOrLoading]);
+
   if (!mounted) {
     return (
       <main style={styles.main}>
@@ -610,18 +658,18 @@ export default function NotFound() {
     );
   }
 
-  if (loadedData) {
+  if (loadedData && loadingTransitionDone) {
     return <DocsShell data={loadedData} />;
   }
 
-  const isRepoPath = pathOwner && pathRepo;
-  const isCheckingOrLoading =
-    Boolean(isRepoPath) && (repoStatus === "unknown" || repoStatus === "checking" || (repoStatus === "installed" && appLoading));
   if (isCheckingOrLoading) {
+    const loadingTitleBase = lang === "pt" ? "Carregando documentação" : lang === "es" ? "Cargando documentación" : "Loading documentation";
+    const loadingTitle = `${loadingTitleBase}${".".repeat(loaderDots)}`;
+    const progressWidth = loaderDots === 1 ? "34%" : loaderDots === 2 ? "68%" : "100%";
     return (
       <main style={styles.main}>
         <section style={styles.section}>
-          <h1 style={styles.title}>{lang === "pt" ? "Carregando documentação..." : lang === "es" ? "Cargando documentación..." : "Loading documentation..."}</h1>
+          <h1 style={styles.title}>{loadingTitle}</h1>
           <p style={styles.description}>
             {lang === "pt"
               ? "Repositório detectado. Abrindo o app..."
@@ -629,6 +677,9 @@ export default function NotFound() {
                 ? "Repositorio detectado. Abriendo la app..."
                 : "Repository detected. Opening the app..."}
           </p>
+          <div style={styles.loadingTrack}>
+            <div style={{ ...styles.loadingBar, width: progressWidth }} />
+          </div>
         </section>
       </main>
     );
@@ -767,6 +818,21 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: 0,
     color: "#cbd5e1",
     lineHeight: 1.6,
+  },
+  loadingTrack: {
+    width: "100%",
+    height: 8,
+    borderRadius: 999,
+    border: "1px solid #334155",
+    background: "#0b1322",
+    overflow: "hidden",
+    marginTop: 8,
+  },
+  loadingBar: {
+    height: "100%",
+    borderRadius: 999,
+    background: "linear-gradient(90deg, #7c3aed, #22d3ee)",
+    transition: "width 220ms ease",
   },
   form: {
     display: "flex",
