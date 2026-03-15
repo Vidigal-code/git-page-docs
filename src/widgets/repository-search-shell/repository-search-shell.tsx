@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { FaGithubAlt, FaGithubSquare } from "react-icons/fa";
 import type { LanguageCode, LayoutItem, LoadedDocsData, ThemeTemplate } from "@/entities/docs/model/types";
@@ -58,14 +58,6 @@ function resolveHeaderReactIcon(tag: string | undefined, mode: "light" | "dark" 
   return mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />;
 }
 
-function buildThemeModeStorageKey(siteName: string): string {
-  return `git-page-docs:mode:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
-function buildThemeLayoutStorageKey(siteName: string): string {
-  return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
 export function RepositorySearchShell({
   data,
   repositoryNotUsingGitPageDocs,
@@ -74,10 +66,7 @@ export function RepositorySearchShell({
   repositoryNotUsingGitPageDocs: boolean;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const themeModeStorageKey = buildThemeModeStorageKey(data.config.site.name);
-  const themeLayoutStorageKey = buildThemeLayoutStorageKey(data.config.site.name);
   const defaultLanguage = data.config.site.defaultLanguage;
   const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
   const [ownerInput, setOwnerInput] = useState(data.activeRepository.owner ?? "");
@@ -136,50 +125,16 @@ export function RepositorySearchShell({
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
 
-  // Restore theme mode + selected template family.
+  // Local-only theme for search page (does not affect docs shell state).
   useEffect(() => {
-    try {
-      const urlMode = searchParams.get("modetheme");
-      const savedMode = window.localStorage.getItem(themeModeStorageKey);
-      const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
-      const targetMode =
-        urlMode === "dark" || urlMode === "light"
-          ? urlMode
-          : savedMode === "light" || savedMode === "dark"
-            ? savedMode
-            : configuredDefaultMode;
-      const base =
-        data.layoutsConfig.layouts.find((layout) => layout.id === savedThemeId) ??
-        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ??
-        data.layoutsConfig.layouts[0];
-      if (base) {
-        const resolved = resolveThemeByMode(data.layoutsConfig.layouts, base, targetMode);
-        setActiveThemeId(resolved.id);
-      }
-    } catch {
-      // Ignore localStorage errors.
+    const urlMode = searchParams.get("modetheme");
+    const targetMode = urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
+    const base = data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
+    if (base) {
+      const resolved = resolveThemeByMode(data.layoutsConfig.layouts, base, targetMode);
+      setActiveThemeId(resolved.id);
     }
-  }, [searchParams, themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId]);
-
-  useEffect(() => {
-    if (activeLayout?.mode === "dark" || activeLayout?.mode === "light") {
-      try {
-        window.localStorage.setItem(themeModeStorageKey, activeLayout.mode);
-      } catch {
-        // Ignore localStorage errors.
-      }
-    }
-  }, [activeLayout?.mode, themeModeStorageKey]);
-
-  useEffect(() => {
-    if (activeThemeId) {
-      try {
-        window.localStorage.setItem(themeLayoutStorageKey, activeThemeId);
-      } catch {
-        // Ignore localStorage errors.
-      }
-    }
-  }, [activeThemeId, themeLayoutStorageKey]);
+  }, [searchParams, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId]);
 
   // Handle repository identification via URL hash (#/owner/repo) on mount only
   useEffect(() => {
@@ -232,6 +187,13 @@ export function RepositorySearchShell({
               ))}
             </select>
           )}
+          <select className={styles.select} value={activeThemeId} onChange={(event) => setActiveThemeId(event.target.value)}>
+            {data.layoutsConfig.layouts.map((layout) => (
+              <option key={layout.id} value={layout.id}>
+                {layout.name}
+              </option>
+            ))}
+          </select>
 
         </div>
 

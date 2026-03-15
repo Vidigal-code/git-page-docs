@@ -56,6 +56,7 @@ type ParsedPath = { owner: string; repo: string; version?: string; language: Sup
 type VersionConfig = { routes?: RouteConfig[]; "menus-header"?: HeaderMenuItem[] };
 type ThemeMode = "light" | "dark";
 type SupportedLanguage = "en" | "pt" | "es";
+type NotFoundTemplate = "default" | "aurora" | "minimal";
 const REQUEST_TIMEOUT_MS = 12000;
 const MIN_LOADING_TRANSITION_MS = 700;
 
@@ -537,6 +538,7 @@ export default function NotFound() {
   const [appLoadFailed, setAppLoadFailed] = useState(false);
   const [loaderDots, setLoaderDots] = useState(1);
   const [loadingTransitionDone, setLoadingTransitionDone] = useState(false);
+  const [notFoundTemplate, setNotFoundTemplate] = useState<NotFoundTemplate>("default");
 
   useEffect(() => {
     setMounted(true);
@@ -662,13 +664,33 @@ export default function NotFound() {
     return <DocsShell data={loadedData} />;
   }
 
+  const templateStyles =
+    notFoundTemplate === "aurora"
+      ? {
+          mainBackground:
+            "radial-gradient(circle at 8% -12%, rgba(124,58,237,0.28), transparent 42%), radial-gradient(circle at 92% -18%, rgba(34,211,238,0.22), transparent 40%), radial-gradient(circle at top, #131b2a, #070b12 55%)",
+          sectionBackground: "linear-gradient(160deg, rgba(15, 23, 42, 0.95), rgba(11, 19, 34, 0.95))",
+          sectionBorder: "1px solid #334155",
+        }
+      : notFoundTemplate === "minimal"
+        ? {
+            mainBackground: "radial-gradient(circle at top, #0d1320, #050811 62%)",
+            sectionBackground: "#0f172a",
+            sectionBorder: "1px solid #263549",
+          }
+        : {
+            mainBackground: "radial-gradient(circle at top, #131b2a, #070b12 55%)",
+            sectionBackground: "#0f172a",
+            sectionBorder: "1px solid #334155",
+          };
+
   if (isCheckingOrLoading) {
     const loadingTitleBase = lang === "pt" ? "Carregando documentação" : lang === "es" ? "Cargando documentación" : "Loading documentation";
     const loadingTitle = `${loadingTitleBase}${".".repeat(loaderDots)}`;
     const progressWidth = loaderDots === 1 ? "34%" : loaderDots === 2 ? "68%" : "100%";
     return (
-      <main style={styles.main}>
-        <section style={styles.section}>
+      <main style={{ ...styles.main, background: templateStyles.mainBackground }}>
+        <section style={{ ...styles.section, background: templateStyles.sectionBackground, border: templateStyles.sectionBorder }}>
           <h1 style={styles.title}>{loadingTitle}</h1>
           <p style={styles.description}>
             {lang === "pt"
@@ -687,8 +709,8 @@ export default function NotFound() {
 
   if (Boolean(isRepoPath) && repoStatus === "installed" && appLoadFailed) {
     return (
-      <main style={styles.main}>
-        <section style={styles.section}>
+      <main style={{ ...styles.main, background: templateStyles.mainBackground }}>
+        <section style={{ ...styles.section, background: templateStyles.sectionBackground, border: templateStyles.sectionBorder }}>
           <h1 style={styles.title}>{lang === "pt" ? "Não foi possível carregar agora" : lang === "es" ? "No se pudo cargar ahora" : "Could not load right now"}</h1>
           <p style={styles.description}>
             {lang === "pt"
@@ -724,8 +746,8 @@ export default function NotFound() {
   const returnLabel = RETURN_HOME[lang];
 
   return (
-    <main style={styles.main}>
-      <section style={styles.section}>
+    <main style={{ ...styles.main, background: templateStyles.mainBackground }}>
+      <section style={{ ...styles.section, background: templateStyles.sectionBackground, border: templateStyles.sectionBorder }}>
         {(repoStatus === "not_installed" || !isRepoPath) && <p style={styles.code}>404</p>}
         <h1 style={styles.title}>{message}</h1>
         <p style={styles.description}>{prompt}</p>
@@ -750,15 +772,26 @@ export default function NotFound() {
               }
             }}
           >
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value as "en" | "pt" | "es")}
-              style={styles.select}
-            >
-              <option value="en">English</option>
-              <option value="pt">Português</option>
-              <option value="es">Español</option>
-            </select>
+            <div style={styles.controlsRow}>
+              <select
+                value={lang}
+                onChange={(e) => setLang(e.target.value as "en" | "pt" | "es")}
+                style={{ ...styles.select, ...styles.controlFull }}
+              >
+                <option value="en">English</option>
+                <option value="pt">Português</option>
+                <option value="es">Español</option>
+              </select>
+              <select
+                value={notFoundTemplate}
+                onChange={(e) => setNotFoundTemplate(e.target.value as NotFoundTemplate)}
+                style={{ ...styles.select, ...styles.controlFull }}
+              >
+                <option value="default">Default</option>
+                <option value="aurora">Aurora</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </div>
             <input
               name="owner"
               placeholder={lang === "pt" ? "Usuário (ex: Vidigal-code)" : lang === "es" ? "Usuario (ej: Vidigal-code)" : "Owner (ex: Vidigal-code)"}
@@ -794,11 +827,9 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "24px",
   },
   section: {
-    width: "min(680px, 100%)",
-    border: "1px solid #334155",
+    width: "min(760px, 100%)",
     borderRadius: "16px",
-    padding: "32px",
-    background: "#0f172a",
+    padding: "clamp(18px, 3vw, 32px)",
     boxShadow: "0 18px 60px rgba(0, 0, 0, 0.4)",
   },
   loading: {
@@ -840,6 +871,15 @@ const styles: Record<string, React.CSSProperties> = {
     gap: "12px",
     marginTop: 20,
     marginBottom: 16,
+  },
+  controlsRow: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: "12px",
+  },
+  controlFull: {
+    maxWidth: "100%",
+    width: "100%",
   },
   select: {
     padding: "10px 16px",
