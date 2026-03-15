@@ -2161,7 +2161,21 @@ function runGitPushForGeneratedArtifacts(options) {
   execSync('git commit -m "chore: setup gitpagedocs pages workflow"', { cwd: ROOT, stdio: "inherit" });
 
   const currentBranch = execSync("git branch --show-current", { cwd: ROOT, stdio: "pipe" }).toString().trim() || "main";
-  execSync(`git push -u origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
+  try {
+    execSync(`git push -u origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
+    return;
+  } catch {
+    console.warn("Initial push failed. Trying automatic rebase with remote branch...");
+  }
+
+  try {
+    execSync(`git pull --rebase origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
+    execSync(`git push -u origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
+  } catch {
+    throw new Error(
+      `Failed to push after automatic rebase on branch '${currentBranch}'. Resolve conflicts and run 'git push -u origin ${currentBranch}' manually.`,
+    );
+  }
 }
 
 async function writeConfigOnlyOutput(outputDir, artifacts, options) {
