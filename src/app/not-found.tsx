@@ -15,10 +15,22 @@ const NOT_INSTALLED = {
   es: "GitPageDocs no está instalado.",
 };
 
+const INSTALLED_NOT_PRERENDERED = {
+  en: "GitPageDocs is installed in this repository.",
+  pt: "GitPageDocs esta instalado neste repositorio.",
+  es: "GitPageDocs esta instalado en este repositorio.",
+};
+
 const SEARCH_PROMPT = {
   en: "Enter owner and repository to open remote documentation.",
   pt: "Informe usuário e repositório para abrir a documentação remota.",
   es: "Ingresa usuario y repositorio para abrir la documentación remota.",
+};
+
+const INSTALLED_PROMPT = {
+  en: "This direct URL was not pre-rendered on GitHub Pages. Use the search form below with the same owner and repository.",
+  pt: "Esta URL direta nao foi pre-renderizada no GitHub Pages. Use o formulario de busca abaixo com o mesmo usuario e repositorio.",
+  es: "Esta URL directa no fue pre-renderizada en GitHub Pages. Usa el formulario de busqueda abajo con el mismo usuario y repositorio.",
 };
 
 const RETURN_HOME = {
@@ -27,12 +39,38 @@ const RETURN_HOME = {
   es: "Volver al inicio",
 };
 
+type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
+
+async function checkRepositoryHasGitPageDocs(owner: string, repo: string): Promise<boolean> {
+  const candidates = [
+    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/gitpagedocs/config.json`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/main/gitpagedocs/config.json`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/master/gitpagedocs/config.json`,
+  ];
+
+  for (const url of candidates) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        continue;
+      }
+      const body = await response.text();
+      JSON.parse(body);
+      return true;
+    } catch {
+      // Ignore candidate errors and try the next one.
+    }
+  }
+  return false;
+}
+
 export default function NotFound() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [pathOwner, setPathOwner] = useState<string | null>(null);
   const [pathRepo, setPathRepo] = useState<string | null>(null);
   const [lang, setLang] = useState<"en" | "pt" | "es">("en");
+  const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
 
   useEffect(() => {
     setMounted(true);
@@ -47,6 +85,25 @@ export default function NotFound() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!pathOwner || !pathRepo) {
+      return;
+    }
+
+    let cancelled = false;
+    setRepoStatus("checking");
+    checkRepositoryHasGitPageDocs(pathOwner, pathRepo).then((hasGitPageDocs) => {
+      if (cancelled) {
+        return;
+      }
+      setRepoStatus(hasGitPageDocs ? "installed" : "not_installed");
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathOwner, pathRepo]);
+
   if (!mounted) {
     return (
       <main style={styles.main}>
@@ -58,8 +115,16 @@ export default function NotFound() {
   }
 
   const isRepoPath = pathOwner && pathRepo;
-  const message = isRepoPath ? NOT_INSTALLED[lang] : "Page not found";
-  const prompt = isRepoPath ? SEARCH_PROMPT[lang] : "The requested page does not exist.";
+  const message = isRepoPath
+    ? repoStatus === "installed"
+      ? INSTALLED_NOT_PRERENDERED[lang]
+      : NOT_INSTALLED[lang]
+    : "Page not found";
+  const prompt = isRepoPath
+    ? repoStatus === "installed"
+      ? INSTALLED_PROMPT[lang]
+      : SEARCH_PROMPT[lang]
+    : "The requested page does not exist.";
   const returnLabel = RETURN_HOME[lang];
 
   return (
