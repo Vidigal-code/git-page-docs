@@ -1,29 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
-import { FaGithubAlt, FaGithubSquare } from "react-icons/fa";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
 import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
-import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
 import { RepositorySearchForm } from "@/features/repository-search-form/ui/repository-search-form";
-import { SiteFooter } from "@/shared/ui/site-footer";
+import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
+import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
+import { getBasePath } from "@/shared/lib/base-path";
 import styles from "./repository-search-shell.module.css";
-
-function resolveHeaderReactIcon(tag: string | undefined, mode: "light" | "dark" | undefined): React.ReactNode {
-  const normalizedTag = (tag ?? "").trim();
-  if (normalizedTag === "FaGithubAlt") {
-    return <FaGithubAlt aria-hidden />;
-  }
-  if (normalizedTag === "FaGithubSquare") {
-    return <FaGithubSquare aria-hidden />;
-  }
-  return mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />;
-}
 
 export function RepositorySearchShell({
   data,
@@ -58,10 +45,12 @@ export function RepositorySearchShell({
   const iconImage =
     (activeLayout?.mode === "dark"
       ? data.config.site.IconImageMenuHeaderDark?.trim()
-      : data.config.site.IconImageMenuHeaderLight?.trim()) || data.config.site.IconImageMenuHeader?.trim();
+      : data.config.site.IconImageMenuHeaderLight?.trim()) ||
+    data.config.site.IconImageMenuHeader?.trim() ||
+    data.config.site.SiteIconPath?.trim();
+  const headerName = data.config.site.SiteHeaderName?.trim() || data.config.site.name;
   const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
   const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
-  const headerReactIcon = resolveHeaderReactIcon(reactHeaderIconTag, activeLayout?.mode);
   const headerReactIconColor =
     activeLayout?.mode === "dark"
       ? data.config.site.IconImageMenuHeaderReactIconesTagColorDark
@@ -127,43 +116,49 @@ export function RepositorySearchShell({
     router.push(`/${owner}/${repo}`);
   }
 
-  return (
-    <main className={styles.page} style={cssVars}>
-      <section className={styles.card}>
-        <div className={styles.brand}>
-          {useReactHeaderIcon ? (
-            <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-              {headerReactIcon}
-            </span>
-          ) : iconImage ? (
-            <Image src={iconImage} alt={data.config.site.name} width={34} height={34} className={styles.brandIcon} unoptimized />
-          ) : null}
-          <strong>{data.config.site.name}</strong>
-        </div>
+  function onToggleMode() {
+    if (!activeLayout?.supportsLightAndDarkModes) return;
+    const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
+    const paired = resolveThemeByMode(data.layoutsConfig.layouts, activeLayout, nextMode);
+    setActiveThemeId(paired.id);
+  }
 
+  const basePath = getBasePath();
+  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
+  const nextModeIsDark = activeLayout?.mode === "dark";
+
+  const header = (
+    <SearchShellHeader
+      siteName={headerName}
+      basePath={basePath}
+      language={language}
+      languages={searchLanguages}
+      onLanguageChange={setLanguage}
+      activeThemeId={activeThemeId}
+      layouts={data.layoutsConfig.layouts}
+      onThemeChange={setActiveThemeId}
+      nextModeIsDark={nextModeIsDark}
+      canToggleMode={canToggleMode}
+      onToggleMode={onToggleMode}
+      iconImage={iconImage || undefined}
+      useReactHeaderIcon={useReactHeaderIcon}
+      reactHeaderIconTag={reactHeaderIconTag}
+      headerReactIconStyle={headerReactIconStyle}
+      getLanguageLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
+    />
+  );
+
+  return (
+    <SearchShellLayout
+      header={header}
+      footerEnabled={footerEnabled}
+      projectFooterUrl={projectFooterUrl}
+      language={language}
+      style={cssVars}
+    >
+      <section className={styles.card}>
         <h1 className={styles.title}>{repositoryNotUsingGitPageDocs ? localizedMessage : "GitPageDocs"}</h1>
         <p className={styles.description}>{currentMessage}</p>
-
-        <div className={styles.controls}>
-          {searchLanguages.length > 1 && (
-            <LanguageSelector
-              languages={searchLanguages}
-              value={language}
-              onChange={setLanguage}
-              className={styles.select}
-              getLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
-            />
-          )}
-          <select className={styles.select} value={activeThemeId} onChange={(event) => setActiveThemeId(event.target.value)}>
-            {data.layoutsConfig.layouts.map((layout) => (
-              <option key={layout.id} value={layout.id}>
-                {layout.name}
-              </option>
-            ))}
-          </select>
-
-        </div>
-
         <RepositorySearchForm
           owner={ownerInput}
           repo={repoInput}
@@ -180,7 +175,6 @@ export function RepositorySearchShell({
           }}
         />
       </section>
-      {footerEnabled && <SiteFooter language={language} projectUrl={projectFooterUrl} />}
-    </main>
+    </SearchShellLayout>
   );
 }

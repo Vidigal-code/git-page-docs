@@ -613,6 +613,13 @@
   gap: 8px;
 }
 
+.infoOverlayDate {
+  margin: 0;
+  padding: 8px 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
 .focusModeOverlay {
   position: fixed;
   inset: 0;

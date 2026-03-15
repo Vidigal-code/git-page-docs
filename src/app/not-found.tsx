@@ -1,25 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { checkRepositoryHasGitPageDocs, loadRemoteDocsData, parseSupportedLanguage } from "@/entities/docs/api/load-remote-docs-data-client";
 import type { LoadedDocsData } from "@/entities/docs/model/types";
+import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
+import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
+import { getBasePath } from "@/shared/lib/base-path";
+import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
+import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
+import { useStandaloneShellConfig } from "@/widgets/search-shell-header/model/use-standalone-shell-config";
 import { DocsShell } from "@/widgets/docs-shell/docs-shell";
-
-function getBasePath(): string {
-  const configuredBasePath = (process.env.NEXT_PUBLIC_GITPAGEDOCS_BASE_PATH ?? "").trim();
-  if (typeof window === "undefined") return configuredBasePath;
-  const p = window.location.pathname;
-  if (configuredBasePath && p.startsWith(configuredBasePath)) {
-    return configuredBasePath;
-  }
-  if (window.location.hostname.endsWith("github.io")) {
-    const parts = p.split("/").filter(Boolean);
-    if (parts.length > 0) {
-      return `/${parts[0]}`;
-    }
-  }
-  return "";
-}
 
 const NOT_INSTALLED = {
   en: "GitPageDocs is not installed.",
@@ -54,9 +44,10 @@ const RETURN_HOME = {
 type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
 type SupportedLanguage = "en" | "pt" | "es";
 type ParsedPath = { owner: string; repo: string; version?: string; language: SupportedLanguage };
-type NotFoundTemplate = "default" | "aurora" | "minimal";
 
 const MIN_LOADING_TRANSITION_MS = 700;
+const SEARCH_LANGUAGES: SupportedLanguage[] = ["en", "pt", "es"];
+const PROJECT_FOOTER_URL = "https://github.com/Vidigal-code/git-page-docs";
 
 function parsePathFromLocation(): ParsedPath | null {
   if (typeof window === "undefined") {
@@ -91,7 +82,35 @@ export default function NotFound() {
   const [appLoadFailed, setAppLoadFailed] = useState(false);
   const [loaderDots, setLoaderDots] = useState(1);
   const [loadingTransitionDone, setLoadingTransitionDone] = useState(false);
-  const [notFoundTemplate, setNotFoundTemplate] = useState<NotFoundTemplate>("default");
+
+  const { config: standaloneConfig } = useStandaloneShellConfig();
+  const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
+  const themes = standaloneConfig?.themes ?? {};
+  const [activeThemeId, setActiveThemeId] = useState("");
+
+  useEffect(() => {
+    if (layouts.length > 0 && !activeThemeId) {
+      const preferred = layouts.find((l) => l.id === "aurora-dark") ?? layouts[0];
+      setActiveThemeId(preferred.id);
+    }
+  }, [layouts, activeThemeId]);
+
+  const activeLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
+  const activeTheme = themes[activeLayout?.id ?? ""];
+  const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
+  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
+  const nextModeIsDark = activeLayout?.mode === "dark";
+
+  function onToggleMode() {
+    if (!activeLayout?.supportsLightAndDarkModes) return;
+    const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
+    const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
+    setActiveThemeId(paired.id);
+  }
+
+  function getLanguageLabel(langCode: string): string {
+    return langCode === "pt" ? "Português" : langCode === "es" ? "Español" : "English";
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -195,13 +214,53 @@ export default function NotFound() {
     };
   }, [isCheckingOrLoading]);
 
+  const basePath = getBasePath();
+  const headerName =
+    standaloneConfig?.siteConfig?.SiteHeaderName?.trim() ||
+    standaloneConfig?.siteConfig?.name ||
+    "git-page-docs";
+  const iconImage = standaloneConfig?.siteConfig?.SiteIconPath?.trim() || "/icon.svg";
+  const header = standaloneConfig ? (
+    <SearchShellHeader
+      siteName={headerName}
+      basePath={basePath}
+      language={lang}
+      languages={SEARCH_LANGUAGES}
+      onLanguageChange={(l) => setLang(l as SupportedLanguage)}
+      activeThemeId={activeThemeId}
+      layouts={layouts}
+      onThemeChange={setActiveThemeId}
+      nextModeIsDark={nextModeIsDark}
+      canToggleMode={canToggleMode}
+      onToggleMode={onToggleMode}
+      iconImage={iconImage}
+      getLanguageLabel={getLanguageLabel}
+    />
+  ) : (
+    <SearchShellHeader
+      siteName={headerName}
+      basePath={basePath}
+      language={lang}
+      languages={SEARCH_LANGUAGES}
+      onLanguageChange={(l) => setLang(l as SupportedLanguage)}
+      activeThemeId=""
+      layouts={[]}
+      onThemeChange={() => {}}
+      nextModeIsDark={true}
+      canToggleMode={false}
+      onToggleMode={() => {}}
+      iconImage={iconImage}
+      getLanguageLabel={getLanguageLabel}
+    />
+  );
+
   if (!mounted) {
     return (
-      <main style={styles.main}>
+      <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
         <section style={styles.section}>
           <p style={styles.loading}>Loading...</p>
         </section>
-      </main>
+      </SearchShellLayout>
     );
   }
 
@@ -209,33 +268,13 @@ export default function NotFound() {
     return <DocsShell data={loadedData} />;
   }
 
-  const templateStyles =
-    notFoundTemplate === "aurora"
-      ? {
-          mainBackground:
-            "radial-gradient(circle at 8% -12%, rgba(124,58,237,0.28), transparent 42%), radial-gradient(circle at 92% -18%, rgba(34,211,238,0.22), transparent 40%), radial-gradient(circle at top, #131b2a, #070b12 55%)",
-          sectionBackground: "linear-gradient(160deg, rgba(15, 23, 42, 0.95), rgba(11, 19, 34, 0.95))",
-          sectionBorder: "1px solid #334155",
-        }
-      : notFoundTemplate === "minimal"
-        ? {
-            mainBackground: "radial-gradient(circle at top, #0d1320, #050811 62%)",
-            sectionBackground: "#0f172a",
-            sectionBorder: "1px solid #263549",
-          }
-        : {
-            mainBackground: "radial-gradient(circle at top, #131b2a, #070b12 55%)",
-            sectionBackground: "#0f172a",
-            sectionBorder: "1px solid #334155",
-          };
-
   if (isCheckingOrLoading) {
     const loadingTitleBase = lang === "pt" ? "Carregando documentação" : lang === "es" ? "Cargando documentación" : "Loading documentation";
     const loadingTitle = `${loadingTitleBase}${".".repeat(loaderDots)}`;
     const progressWidth = loaderDots === 1 ? "34%" : loaderDots === 2 ? "68%" : "100%";
     return (
-      <main style={{ ...styles.main, background: templateStyles.mainBackground }}>
-        <section style={{ ...styles.section, background: templateStyles.sectionBackground, border: templateStyles.sectionBorder }}>
+      <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
+        <section style={styles.section}>
           <h1 style={styles.title}>{loadingTitle}</h1>
           <p style={styles.description}>
             {lang === "pt"
@@ -248,14 +287,14 @@ export default function NotFound() {
             <div style={{ ...styles.loadingBar, width: progressWidth }} />
           </div>
         </section>
-      </main>
+      </SearchShellLayout>
     );
   }
 
   if (Boolean(isRepoPath) && repoStatus === "installed" && appLoadFailed) {
     return (
-      <main style={{ ...styles.main, background: templateStyles.mainBackground }}>
-        <section style={{ ...styles.section, background: templateStyles.sectionBackground, border: templateStyles.sectionBorder }}>
+      <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
+        <section style={styles.section}>
           <h1 style={styles.title}>{lang === "pt" ? "Não foi possível carregar agora" : lang === "es" ? "No se pudo cargar ahora" : "Could not load right now"}</h1>
           <p style={styles.description}>
             {lang === "pt"
@@ -274,7 +313,7 @@ export default function NotFound() {
             {lang === "pt" ? "Tentar novamente" : lang === "es" ? "Intentar de nuevo" : "Try again"}
           </button>
         </section>
-      </main>
+      </SearchShellLayout>
     );
   }
 
@@ -291,8 +330,8 @@ export default function NotFound() {
   const returnLabel = RETURN_HOME[lang];
 
   return (
-    <main style={{ ...styles.main, background: templateStyles.mainBackground }}>
-      <section style={{ ...styles.section, background: templateStyles.sectionBackground, border: templateStyles.sectionBorder }}>
+    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
+      <section style={styles.section}>
         {(repoStatus === "not_installed" || !isRepoPath) && <p style={styles.code}>404</p>}
         <h1 style={styles.title}>{message}</h1>
         <p style={styles.description}>{prompt}</p>
@@ -311,32 +350,11 @@ export default function NotFound() {
                 setPathVersion(undefined);
                 setRepoStatus("unknown");
                 setLoadedData(null);
-                const basePath = getBasePath();
-                const nextPath = `${basePath}/${owner}/${repo}/`;
+                const nextPath = `${basePath ? basePath + "/" : "/"}${owner}/${repo}/`;
                 window.history.replaceState({}, "", nextPath);
               }
             }}
           >
-            <div style={styles.controlsRow}>
-              <select
-                value={lang}
-                onChange={(e) => setLang(e.target.value as SupportedLanguage)}
-                style={{ ...styles.select, ...styles.controlFull }}
-              >
-                <option value="en">English</option>
-                <option value="pt">Português</option>
-                <option value="es">Español</option>
-              </select>
-              <select
-                value={notFoundTemplate}
-                onChange={(e) => setNotFoundTemplate(e.target.value as NotFoundTemplate)}
-                style={{ ...styles.select, ...styles.controlFull }}
-              >
-                <option value="default">Default</option>
-                <option value="aurora">Aurora</option>
-                <option value="minimal">Minimal</option>
-              </select>
-            </div>
             <input
               name="owner"
               placeholder={lang === "pt" ? "Usuário (ex: Vidigal-code)" : lang === "es" ? "Usuario (ej: Vidigal-code)" : "Owner (ex: Vidigal-code)"}
@@ -355,27 +373,22 @@ export default function NotFound() {
           </form>
         )}
 
-        <a href={(getBasePath() ? getBasePath() + "/" : "/")} style={styles.link}>
+        <a href={basePath ? `${basePath}/` : "/"} style={styles.link}>
           {returnLabel}
         </a>
       </section>
-    </main>
+    </SearchShellLayout>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  main: {
-    minHeight: "100vh",
-    display: "grid",
-    placeItems: "center",
-    background: "radial-gradient(circle at top, #131b2a, #070b12 55%)",
-    padding: "24px",
-  },
   section: {
     width: "min(760px, 100%)",
     borderRadius: "16px",
     padding: "clamp(18px, 3vw, 32px)",
     boxShadow: "0 18px 60px rgba(0, 0, 0, 0.4)",
+    background: "var(--card-background, #0f172a)",
+    border: "1px solid var(--card-border, #334155)",
   },
   loading: {
     margin: 0,
@@ -411,28 +424,11 @@ const styles: Record<string, React.CSSProperties> = {
     transition: "width 220ms ease",
   },
   form: {
-    display: "flex",
-    flexDirection: "column",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr auto",
     gap: "12px",
     marginTop: 20,
     marginBottom: 16,
-  },
-  controlsRow: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-    gap: "12px",
-  },
-  controlFull: {
-    maxWidth: "100%",
-    width: "100%",
-  },
-  select: {
-    padding: "10px 16px",
-    borderRadius: 10,
-    border: "1px solid #334155",
-    background: "#1e293b",
-    color: "#f1f5f9",
-    maxWidth: 200,
   },
   input: {
     padding: "10px 16px",

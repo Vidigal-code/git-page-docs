@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
 import { QuickNavigationTrigger } from "@/features/quick-navigation/ui/quick-navigation-trigger";
 import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
@@ -20,6 +21,23 @@ interface DocsShellControlsProps {
   projectLinkReactIconStyle: React.CSSProperties;
   versionLinkOptionsWithLabels: VersionLinkOption[];
   versionLinksLabel: string;
+  useReactVersionLinksIcon: boolean;
+  versionLinksIconTag: string | undefined;
+  versionLinksIconStyle: React.CSSProperties;
+  versionLinksIconImage: string | undefined;
+  showInfoButton: boolean;
+  updateDate: string;
+  lastUpdateLabel: string;
+  useReactInfoIcon: boolean;
+  infoIconTag: string | undefined;
+  infoIconStyle: React.CSSProperties;
+  infoIconImage: string | undefined;
+  showPreviewButton: boolean;
+  previewProjectUrl: string;
+  useReactPreviewIcon: boolean;
+  previewIconTag: string | undefined;
+  previewIconStyle: React.CSSProperties;
+  previewIconImage: string | undefined;
   focusModeEnabled: boolean;
   focusModeLabel: string;
   activeNavigation: boolean;
@@ -40,6 +58,7 @@ interface DocsShellControlsProps {
   darkModeLabel: string;
   lightModeLabel: string;
   onOpenVersionLinksPopup: () => void;
+  onOpenInfoPopup: () => void;
   onOpenFocusMode: () => void;
   onOpenQuickNavigation: () => void;
   onVersionChange: (versionId: string) => void;
@@ -56,6 +75,23 @@ export function DocsShellControls({
   projectLinkReactIconStyle,
   versionLinkOptionsWithLabels,
   versionLinksLabel,
+  useReactVersionLinksIcon,
+  versionLinksIconTag,
+  versionLinksIconStyle,
+  versionLinksIconImage,
+  showInfoButton,
+  updateDate,
+  lastUpdateLabel,
+  useReactInfoIcon,
+  infoIconTag,
+  infoIconStyle,
+  infoIconImage,
+  showPreviewButton,
+  previewProjectUrl,
+  useReactPreviewIcon,
+  previewIconTag,
+  previewIconStyle,
+  previewIconImage,
   focusModeEnabled,
   focusModeLabel,
   activeNavigation,
@@ -76,6 +112,7 @@ export function DocsShellControls({
   darkModeLabel,
   lightModeLabel,
   onOpenVersionLinksPopup,
+  onOpenInfoPopup,
   onOpenFocusMode,
   onOpenQuickNavigation,
   onVersionChange,
@@ -107,9 +144,44 @@ export function DocsShellControls({
         </a>
       )}
       {!!versionLinkOptionsWithLabels.length && (
-        <button className={styles.button} onClick={onOpenVersionLinksPopup} aria-label={versionLinksLabel}>
-          {versionLinksLabel}
+        <button className={styles.button} onClick={onOpenVersionLinksPopup} aria-label={versionLinksLabel} title={versionLinksLabel}>
+          {useReactVersionLinksIcon ? (
+            <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
+          ) : versionLinksIconImage ? (
+            <Image src={versionLinksIconImage} alt="" width={24} height={24} className={styles.headerIcon} unoptimized />
+          ) : (
+            <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
+          )}
         </button>
+      )}
+      {showInfoButton && (
+        <button className={styles.button} onClick={onOpenInfoPopup} aria-label={lastUpdateLabel} title={lastUpdateLabel}>
+          {useReactInfoIcon ? (
+            <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
+          ) : infoIconImage ? (
+            <Image src={infoIconImage} alt="" width={24} height={24} className={styles.headerIcon} unoptimized />
+          ) : (
+            <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
+          )}
+        </button>
+      )}
+      {showPreviewButton && previewProjectUrl && (
+        <a
+          href={previewProjectUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`${styles.button} ${styles.githubLinkButton}`}
+          aria-label="Preview"
+          title="Preview"
+        >
+          {useReactPreviewIcon ? (
+            <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
+          ) : previewIconImage ? (
+            <Image src={previewIconImage} alt="" width={24} height={24} className={styles.headerIcon} unoptimized />
+          ) : (
+            <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
+          )}
+        </a>
       )}
       {focusModeEnabled && (
         <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>

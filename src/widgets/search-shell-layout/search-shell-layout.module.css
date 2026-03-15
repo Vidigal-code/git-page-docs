@@ -1,0 +1,18 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 8% -18%, color-mix(in srgb, var(--primary) 24%, transparent), transparent 44%),
+    radial-gradient(circle at 92% -22%, color-mix(in srgb, var(--secondary) 22%, transparent), transparent 42%),
+    var(--background);
+  color: var(--text);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+}

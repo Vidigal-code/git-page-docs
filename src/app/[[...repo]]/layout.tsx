@@ -7,8 +7,8 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const configPath = path.join(process.cwd(), "gitpagedocs/config.json");
     const raw = await readFile(configPath, "utf-8");
-    const config = JSON.parse(raw) as { site?: { name?: string } };
-    siteName = config?.site?.name ?? siteName;
+    const config = JSON.parse(raw) as { site?: { SiteHeaderName?: string; name?: string } };
+    siteName = config?.site?.SiteHeaderName?.trim() ?? config?.site?.name ?? siteName;
   } catch {
     // fallback kept
   }

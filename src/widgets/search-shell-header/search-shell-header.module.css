@@ -1,0 +1,96 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: var(--header-border, 1px solid var(--card-border));
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--header-background, var(--card-background)) 92%, var(--primary) 8%),
+      color-mix(in srgb, var(--header-background, var(--card-background)) 92%, var(--secondary) 8%)
+    );
+  backdrop-filter: blur(8px);
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brandLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.brandLink:hover {
+  color: var(--secondary);
+}
+
+.brandIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.brandReactIcon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.select {
+  height: clamp(38px, 1.2vw + 30px, 42px);
+  min-width: 130px;
+  padding: 0 12px;
+  border-radius: var(--select-radius, 10px);
+  border: var(--select-border, 1px solid var(--card-border));
+  background: var(--control-background, var(--card-background));
+  color: var(--text);
+  font-weight: 600;
+  font-size: clamp(0.82rem, 0.4vw + 0.72rem, 0.95rem);
+}
+
+.modeIconButton {
+  width: clamp(38px, 1.8vw + 26px, 42px);
+  min-width: clamp(38px, 1.8vw + 26px, 42px);
+  height: clamp(38px, 1.2vw + 30px, 42px);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--control-radius, 10px);
+  border: var(--control-border, 1px solid var(--card-border));
+  background: var(--control-background, var(--card-background));
+  color: var(--text);
+  cursor: pointer;
+}
+
+.modeIconButton:hover {
+  color: var(--secondary);
+}

@@ -97,6 +97,58 @@ function buildFallbackLayoutsAndThemes(): {
   };
 }
 
+const STANDALONE_LAYOUT_IDS = ["aurora-dark", "aurora-light", "default", "github-dark", "github-light"];
+
+export async function loadStandaloneLayoutsAndThemes(): Promise<{
+  layoutsConfig: LayoutsConfig;
+  themes: Record<string, ThemeTemplate>;
+}> {
+  try {
+    const rawLayoutsUrl = toRawGithubUrl(OFFICIAL_LAYOUTS_CONFIG_URL);
+    const layoutsConfig = await fetchUrlJson<LayoutsConfig>(rawLayoutsUrl);
+    if (!layoutsConfig?.layouts?.length) {
+      return buildFallbackLayoutsAndThemes();
+    }
+    const standaloneLayouts = layoutsConfig.layouts.filter((l) => STANDALONE_LAYOUT_IDS.includes(l.id));
+    const layoutsToLoad = standaloneLayouts.length > 0 ? standaloneLayouts : layoutsConfig.layouts.slice(0, 6);
+    const templatesBaseUrl = ensureTrailingSlash(
+      rawLayoutsUrl.slice(0, rawLayoutsUrl.lastIndexOf("/") + 1) + "templates/",
+    );
+    const themes: Record<string, ThemeTemplate> = {};
+    await Promise.all(
+      layoutsToLoad.map(async (layout: LayoutItem) => {
+        const templateUrl = buildRemoteTemplateUrl(layout.file, templatesBaseUrl);
+        const template = await fetchUrlJson<ThemeTemplate>(templateUrl);
+        if (template) {
+          themes[layout.id] = template;
+        }
+      }),
+    );
+    if (Object.keys(themes).length === 0) {
+      return buildFallbackLayoutsAndThemes();
+    }
+    return {
+      layoutsConfig: { layouts: layoutsToLoad },
+      themes,
+    };
+  } catch {
+    return buildFallbackLayoutsAndThemes();
+  }
+}
+
+export async function fetchOfficialSiteConfig(): Promise<{
+  SiteHeaderName?: string;
+  SiteIconPath?: string;
+  name?: string;
+} | null> {
+  const config = await fetchRepoJson<{ site?: { SiteHeaderName?: string; SiteIconPath?: string; name?: string } }>(
+    "Vidigal-code",
+    "git-page-docs",
+    "gitpagedocs/config.json",
+  );
+  return config?.site ?? null;
+}
+
 export function parseSupportedLanguage(input: string | null | undefined): SupportedLanguage {
   if (input === "pt" || input === "es" || input === "en") {
     return input;
