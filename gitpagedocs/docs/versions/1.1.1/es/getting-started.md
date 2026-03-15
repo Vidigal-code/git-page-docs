@@ -36,3 +36,5 @@ En local, se controla por variable:
 - `GITPAGEDOCS_REPOSITORY_SEARCH=false`
 
 En build de GitHub Pages (`GITHUB_ACTIONS=true`), la busqueda de repositorio siempre esta activa.
+
+> Version (ES): 1.1.1

@@ -29,3 +29,5 @@ El runtime espera esta estructura:
 - Abre **Arquitectura** para mapa de codigo y flujo de datos.
 - Abre **Temas y layouts** para creacion de templates.
 - Abre **FAQ** para troubleshooting.
+
+> Version (ES): 1.0.0

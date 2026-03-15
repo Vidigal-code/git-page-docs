@@ -127,6 +127,14 @@ function buildThemeLayoutStorageKey(siteName: string): string {
   return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
 }
 
+function buildVersionPath(basePath: string | undefined, versionId: string): string {
+  const cleanedBase = (basePath ?? "").replace(/\/+$/, "");
+  if (!cleanedBase) {
+    return `/v/${versionId}`;
+  }
+  return `${cleanedBase}/v/${versionId}`;
+}
+
 interface MenuEntry {
   key: string;
   id: number;
@@ -435,6 +443,25 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
+  const versionFromPath = useMemo(() => {
+    const match = pathname.match(/\/v\/([^/]+)\/?$/);
+    return match?.[1];
+  }, [pathname]);
+  const versionFromQuery = searchParams.get("version");
+  const selectedVersionValue = useMemo(() => {
+    const isKnownVersion = (versionId: string | null | undefined) =>
+      Boolean(versionId && data.availableVersions.some((version) => version.id === versionId));
+    if (isKnownVersion(versionFromPath)) {
+      return versionFromPath as string;
+    }
+    if (isKnownVersion(versionFromQuery)) {
+      return versionFromQuery as string;
+    }
+    if (isKnownVersion(data.activeVersionId)) {
+      return data.activeVersionId as string;
+    }
+    return data.availableVersions[0]?.id ?? "";
+  }, [versionFromPath, versionFromQuery, data.activeVersionId, data.availableVersions]);
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -709,7 +736,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       if (validUrlVersion && validUrlVersion !== validPathVersion) {
         const basePath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
         params.delete("version");
-        const target = `${basePath || ""}/v/${validUrlVersion}` || `/v/${validUrlVersion}`;
+        const target = buildVersionPath(basePath, validUrlVersion);
         const qs = params.toString();
         const nextUrl = qs ? `${target}?${qs}` : target;
         if (typeof window !== "undefined") {
@@ -749,7 +776,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       const savedVersion = window.localStorage.getItem(versionStorageKey);
       if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
         const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        const target = `${base || pathname}/v/${savedVersion}`;
+        const target = buildVersionPath(base || pathname, savedVersion);
         const qs = params.toString();
         router.replace(qs ? `${target}?${qs}` : target);
       }
@@ -835,7 +862,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       if (typeof window !== "undefined") {
         const currentUrl = new URL(window.location.href);
         const cleanPath = currentUrl.pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        currentUrl.pathname = `${cleanPath || ""}/v/${versionId}` || `/v/${versionId}`;
+        currentUrl.pathname = buildVersionPath(cleanPath, versionId);
         currentUrl.searchParams.set("lang", String(language));
         currentUrl.searchParams.delete("version");
         window.location.assign(currentUrl.toString());
@@ -844,7 +871,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         params.delete("version");
         params.set("lang", String(language));
         const cleanPath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        const targetPath = `${cleanPath || ""}/v/${versionId}` || `/v/${versionId}`;
+        const targetPath = buildVersionPath(cleanPath, versionId);
         const qs = params.toString();
         const nextUrl = qs ? `${targetPath}?${qs}` : targetPath;
         router.replace(nextUrl);
@@ -852,16 +879,21 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       return;
     }
     const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-    const params = new URLSearchParams(searchParams.toString());
+    const params = getCurrentSearchParams();
     params.delete("version");
     if (data.availableLanguages.length > 1) {
       params.set("lang", language);
     } else {
       params.delete("lang");
     }
-    const target = `${base || "/"}/v/${versionId}`;
+    const target = buildVersionPath(base, versionId);
     const qs = params.toString();
-    router.replace(qs ? `${target}?${qs}` : target);
+    const nextUrl = qs ? `${target}?${qs}` : target;
+    if (typeof window !== "undefined") {
+      window.location.assign(nextUrl);
+      return;
+    }
+    router.replace(nextUrl);
   }
 
   function onLanguageChange(newLang: LanguageCode) {
@@ -1091,7 +1123,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
               {showVersionSelector && (
                 <select
                   className={styles.select}
-                  value={data.activeVersionId ?? ""}
+                  value={selectedVersionValue}
                   onChange={(event) => onVersionChange(event.target.value)}
                   aria-label={versionLabel}
                 >
@@ -1226,7 +1258,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
               {showVersionSelector && (
                 <select
                   className={styles.select}
-                  value={data.activeVersionId ?? ""}
+                  value={selectedVersionValue}
                   onChange={(event) => onVersionChange(event.target.value)}
                   aria-label={versionLabel}
                 >

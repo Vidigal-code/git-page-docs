@@ -28,3 +28,5 @@ Para publicar en npm:
 - valida autenticacion con `npm whoami`
 
 Si `build:prebuilt` se omite en Windows, usa CI para generar artefactos prebuilt.
+
+> Version (ES): 1.1.0

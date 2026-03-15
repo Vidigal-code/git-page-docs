@@ -113,7 +113,8 @@ async function readLocalText(filePath: string): Promise<string | null> {
     try {
       // Normalize path to avoid double slashes and handle base path if necessary
       const baseUrl = window.location.origin;
-      const pathPrefix = window.location.pathname.startsWith("/git-page-docs") ? "/git-page-docs" : "";
+      const configuredBasePath = process.env.NEXT_PUBLIC_GITPAGEDOCS_BASE_PATH?.trim() ?? "";
+      const pathPrefix = configuredBasePath && window.location.pathname.startsWith(configuredBasePath) ? configuredBasePath : "";
       const url = `${baseUrl}${pathPrefix}/${filePath.replace(/^\//, "")}`;
       const response = await fetch(url);
       if (!response.ok) return null;
@@ -476,7 +477,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const requestedOwner = slug?.[0];
   const requestedRepo = slug?.[1];
   const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
-  const showRepositorySearchHome = Boolean(repositorySearchEnabled && !requestedOwner && !requestedRepo);
+  const showRepositorySearchHome = Boolean(repositorySearchEnabled && !requestedOwner && !requestedRepo && !selectedVersionId);
   const renderingFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
   const projectLinkFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
 
@@ -499,18 +500,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     repo = requestedRepo;
   }
 
-  if (
-    !showRepositorySearchHome &&
-    repositorySearchEnabled &&
-    !owner &&
-    !repo &&
-    renderingFallback.owner &&
-    renderingFallback.repo
-  ) {
-    source = "remote";
-    owner = renderingFallback.owner;
-    repo = renderingFallback.repo;
-  }
+  // Keep local docs routes deterministic. Only use remote source when owner/repo are explicitly requested.
 
   let config = localConfig;
   let hasGitPageDocs = true;

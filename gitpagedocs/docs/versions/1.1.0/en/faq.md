@@ -27,3 +27,5 @@ Check:
 ## Why can GitHub Pages behave differently from local?
 
 Because GitHub Pages build mode enables repository-search home and static-export specific behavior.
+
+> Version: 1.1.0

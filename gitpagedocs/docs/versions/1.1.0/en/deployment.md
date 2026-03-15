@@ -28,3 +28,5 @@ Package publish:
 - ensure npm auth is valid (`npm whoami`)
 
 If publishing prebuilt artifacts on Windows is skipped, use CI for `build:prebuilt`.
+
+> Version: 1.1.0

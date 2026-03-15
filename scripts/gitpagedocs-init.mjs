@@ -1593,6 +1593,30 @@ function extractLanguageFromPath(docPath) {
   return match?.[1];
 }
 
+function withVersionBadge(content, versionId, language) {
+  const normalized = typeof content === "string" ? content : "";
+  if (!normalized.trim()) {
+    return normalized;
+  }
+
+  const alreadyTagged =
+    normalized.includes(`Version: ${versionId}`) ||
+    normalized.includes(`Versao: ${versionId}`) ||
+    normalized.includes(`Version (ES): ${versionId}`);
+  if (alreadyTagged) {
+    return normalized;
+  }
+
+  const label =
+    language === "pt"
+      ? `> Versao: ${versionId}`
+      : language === "es"
+        ? `> Version (ES): ${versionId}`
+        : `> Version: ${versionId}`;
+
+  return `${normalized.trimEnd()}\n\n${label}\n`;
+}
+
 function buildConfigArtifacts(options = {}) {
   const useLocalLayoutConfig = Boolean(options.useLocalLayoutConfig);
   const useOfficialLayouts = !useLocalLayoutConfig;
@@ -1981,7 +2005,8 @@ async function writeConfigOnlyOutput(outputDir, artifacts, options) {
         const language = extractLanguageFromPath(docPath);
         const content = key && language ? artifacts.docs?.[language]?.[key] : undefined;
         if (!content) continue;
-        await writeText(normalizeToOutputPath(outputDir, docPath), content);
+        const versionedContent = withVersionBadge(content, versionId, language);
+        await writeText(normalizeToOutputPath(outputDir, docPath), versionedContent);
       }
     }
 
@@ -1991,7 +2016,8 @@ async function writeConfigOnlyOutput(outputDir, artifacts, options) {
       if (!fallbackIndex) continue;
       const versionIndexPath = `${outputDir}/docs/versions/${versionId}/${language}/index.md`;
       if (!existsSync(path.join(ROOT, versionIndexPath))) {
-        await writeText(versionIndexPath, fallbackIndex);
+        const versionedFallbackIndex = withVersionBadge(fallbackIndex, versionId, language);
+        await writeText(versionIndexPath, versionedFallbackIndex);
       }
     }
   }

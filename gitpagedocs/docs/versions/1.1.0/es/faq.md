@@ -27,3 +27,5 @@ Verifica:
 ## Por que GitHub Pages puede comportarse distinto a local?
 
 Porque el build de GitHub Pages habilita la pagina inicial de busqueda y comportamiento especifico de exportacion.
+
+> Version (ES): 1.1.0

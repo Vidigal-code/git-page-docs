@@ -32,3 +32,5 @@ This project is organized by feature boundaries and UI runtime responsibilities.
 - fallback strategy for layout/template loading
 - resilient markdown loading per language
 - localStorage sync for user language/version/theme
+
+> Version: 1.0.0

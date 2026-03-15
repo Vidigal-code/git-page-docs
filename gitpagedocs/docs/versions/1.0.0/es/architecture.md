@@ -32,3 +32,5 @@ El proyecto esta organizado por fronteras de feature y responsabilidades de runt
 - fallback de carga para layouts/templates
 - carga de markdown por idioma con fallback de error
 - sincronizacion de idioma/version/tema via localStorage
+
+> Version (ES): 1.0.0

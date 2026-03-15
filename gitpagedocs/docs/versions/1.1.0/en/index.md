@@ -29,3 +29,5 @@ The runtime expects this structure:
 - Open **Architecture** for code map and data flow.
 - Open **Themes and layouts** for template authoring details.
 - Open **FAQ** for troubleshooting.
+
+> Version: 1.1.0

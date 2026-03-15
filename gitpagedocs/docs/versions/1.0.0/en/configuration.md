@@ -38,3 +38,5 @@ Main keys:
 
 - `GITPAGEDOCS_REPOSITORY_SEARCH`: toggles remote repository search in local runtime
 - `GITHUB_ACTIONS`: when true, enables GitHub Pages specific behavior
+
+> Version: 1.0.0

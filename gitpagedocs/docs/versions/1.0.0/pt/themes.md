@@ -30,3 +30,5 @@ Cada template normalmente contem:
 - mantenha contraste acessivel
 - padronize escala de espaco e borda
 - ofereca variantes dark e light quando possivel
+
+> Versao: 1.0.0

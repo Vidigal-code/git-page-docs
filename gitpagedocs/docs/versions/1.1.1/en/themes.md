@@ -30,3 +30,5 @@ Each template usually contains:
 - keep color contrast accessible
 - keep spacing and radius scales consistent
 - define both dark and light variants when possible
+
+> Version: 1.1.1

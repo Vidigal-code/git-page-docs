@@ -30,3 +30,5 @@ Cada template normalmente incluye:
 - mantener contraste accesible
 - mantener escala consistente de espacios y bordes
 - ofrecer variantes dark y light cuando sea posible
+
+> Version (ES): 1.1.0

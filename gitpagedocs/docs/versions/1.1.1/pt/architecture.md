@@ -32,3 +32,5 @@ O projeto e organizado por fronteiras de feature e responsabilidades do runtime.
 - fallback de carga para layouts/templates
 - carregamento de markdown por idioma com fallback de erro
 - sincronizacao de linguagem/versao/tema via localStorage
+
+> Versao: 1.1.1

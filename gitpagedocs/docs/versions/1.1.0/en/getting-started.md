@@ -36,3 +36,5 @@ Local repository search is controlled by environment variable:
 - `GITPAGEDOCS_REPOSITORY_SEARCH=false`
 
 On GitHub Pages builds (`GITHUB_ACTIONS=true`), repository search is always enabled.
+
+> Version: 1.1.0

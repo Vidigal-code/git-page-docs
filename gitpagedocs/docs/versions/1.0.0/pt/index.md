@@ -29,3 +29,5 @@ O runtime espera esta estrutura:
 - Abra **Arquitetura** para mapa de codigo e fluxo de dados.
 - Abra **Temas e layouts** para autoria de templates.
 - Abra **FAQ** para troubleshooting.
+
+> Versao: 1.0.0

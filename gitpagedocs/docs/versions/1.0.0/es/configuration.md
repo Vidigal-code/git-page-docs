@@ -38,3 +38,5 @@ Claves principales:
 
 - `GITPAGEDOCS_REPOSITORY_SEARCH`: activa/desactiva busqueda remota en local
 - `GITHUB_ACTIONS`: habilita comportamiento especifico de GitHub Pages
+
+> Version (ES): 1.0.0
