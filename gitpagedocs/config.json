@@ -7,7 +7,7 @@
       "pt",
       "es"
     ],
-    "HideThemeSelector": true,
+    "HideThemeSelector": false,
     "ThemeDefault": "aurora-dark",
     "ThemeModeDefault": "dark",
     "ActiveNavigation": true,
