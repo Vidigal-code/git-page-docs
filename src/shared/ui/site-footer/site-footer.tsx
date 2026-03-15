@@ -47,7 +47,7 @@ export function SiteFooter({ language, projectUrl }: SiteFooterProps) {
           </a>
         </span>
         <span className={styles.item}>
-          {copy.date}: <span suppressHydrationWarning>{browserDate}</span>
+          <span suppressHydrationWarning>{browserDate}</span>
         </span>
       </div>
     </footer>
