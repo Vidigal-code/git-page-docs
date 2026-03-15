@@ -2,6 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { marked } from "marked";
+import type {
+  GitPageDocsConfig,
+  HeaderMenuItem,
+  LanguageCode,
+  LayoutItem,
+  LayoutsConfig,
+  LoadedDocsData,
+  RouteConfig,
+  ThemeTemplate,
+  VersionEntry,
+} from "@/entities/docs/model/types";
+import { DocsShell } from "@/widgets/docs-shell/docs-shell";
 
 function getBasePath(): string {
   if (typeof window === "undefined") return "/git-page-docs";
@@ -40,38 +52,88 @@ const RETURN_HOME = {
 };
 
 type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
+type ParsedPath = { owner: string; repo: string; version?: string };
+type VersionConfig = { routes?: RouteConfig[]; "menus-header"?: HeaderMenuItem[] };
+type ThemeMode = "light" | "dark";
+type SupportedLanguage = "en" | "pt" | "es";
 
-type VersionConfig = {
-  routes?: Array<{
-    path?: Record<string, string>;
-  }>;
-};
+const DEFAULT_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
+const DEFAULT_TEMPLATES_BASE_PATH = "gitpagedocs/layouts/";
+const OFFICIAL_LAYOUTS_CONFIG_URL =
+  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json";
+const OFFICIAL_LAYOUTS_TEMPLATES_URL =
+  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates";
 
 function normalizeRelativePath(input: string): string {
   return input.replace(/^\/+/, "");
 }
 
-async function fetchRepoText(owner: string, repo: string, relativePath: string): Promise<string | null> {
-  const normalizedPath = normalizeRelativePath(relativePath);
-  const candidates = [
-    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${normalizedPath}`,
-    `https://raw.githubusercontent.com/${owner}/${repo}/main/${normalizedPath}`,
-    `https://raw.githubusercontent.com/${owner}/${repo}/master/${normalizedPath}`,
-  ];
+function toRawGithubUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== "github.com") {
+      return url;
+    }
+    const parts = parsed.pathname.split("/").filter(Boolean);
+    const blobOrTreeIndex = parts.findIndex((part) => part === "blob" || part === "tree");
+    if (parts.length >= 5 && blobOrTreeIndex === 2) {
+      const owner = parts[0];
+      const repo = parts[1];
+      const branch = parts[3];
+      const filePath = parts.slice(4).join("/");
+      return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+    }
+  } catch {
+    return url;
+  }
+  return url;
+}
 
-  for (const url of candidates) {
-    try {
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) {
-        continue;
-      }
-      return await response.text();
-    } catch {
-      // Try next candidate.
+function ensureTrailingSlash(value: string): string {
+  return value.endsWith("/") ? value : `${value}/`;
+}
+
+function stripFrontMatter(markdown: string): string {
+  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+}
+
+function buildGithubRawCandidates(owner: string, repo: string, relativePath: string): string[] {
+  const safePath = normalizeRelativePath(relativePath);
+  return [
+    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${safePath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/main/${safePath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/master/${safePath}`,
+    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@HEAD/${safePath}`,
+    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@main/${safePath}`,
+    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@master/${safePath}`,
+  ];
+}
+
+async function tryFetchText(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) {
+      return null;
+    }
+    return await response.text();
+  } catch {
+    return null;
+  }
+}
+
+async function fetchRepoText(owner: string, repo: string, relativePath: string): Promise<string | null> {
+  const candidates = buildGithubRawCandidates(owner, repo, relativePath);
+  for (const candidate of candidates) {
+    const content = await tryFetchText(candidate);
+    if (content !== null) {
+      return content;
     }
   }
-
   return null;
+}
+
+async function fetchUrlText(url: string): Promise<string | null> {
+  return tryFetchText(toRawGithubUrl(url));
 }
 
 async function fetchRepoJson<T>(owner: string, repo: string, relativePath: string): Promise<T | null> {
@@ -86,37 +148,234 @@ async function fetchRepoJson<T>(owner: string, repo: string, relativePath: strin
   }
 }
 
-async function loadRemotePreviewHtml(owner: string, repo: string, language: "en" | "pt" | "es"): Promise<string | null> {
-  const config = await fetchRepoJson<{
-    VersionControl?: { versions?: Array<{ PathConfig?: string; path?: string }> };
-  }>(owner, repo, "gitpagedocs/config.json");
+async function fetchUrlJson<T>(url: string): Promise<T | null> {
+  const text = await fetchUrlText(url);
+  if (!text) {
+    return null;
+  }
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+function parsePathFromLocation(): ParsedPath | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  const path = window.location.pathname;
+  const base = getBasePath();
+  const withoutBase = base ? path.slice(base.length) : path;
+  const parts = withoutBase.split("/").filter(Boolean);
+  if (parts.length < 2) {
+    return null;
+  }
+  const owner = parts[0];
+  const repo = parts[1];
+  const version = parts.length >= 4 && parts[2] === "v" ? parts[3] : undefined;
+  return { owner, repo, version };
+}
+
+function getAvailableLanguages(routes: RouteConfig[], fallbackLanguage: LanguageCode): LanguageCode[] {
+  const firstRoute = routes[0];
+  if (!firstRoute) {
+    return [fallbackLanguage];
+  }
+  return Object.keys(firstRoute.path);
+}
+
+function resolveActiveVersion(
+  versions: VersionEntry[],
+  selectedVersionId: string | undefined,
+  defaultVersionId: string | undefined,
+): VersionEntry | undefined {
+  if (!versions.length) {
+    return undefined;
+  }
+  if (selectedVersionId) {
+    const selected = versions.find((version) => version.id === selectedVersionId);
+    if (selected) {
+      return selected;
+    }
+  }
+  if (defaultVersionId) {
+    const preferred = versions.find((version) => version.id === defaultVersionId);
+    if (preferred) {
+      return preferred;
+    }
+  }
+  return versions[0];
+}
+
+async function loadVersionConfig(owner: string, repo: string, versionEntry: VersionEntry): Promise<VersionConfig | null> {
+  const versionPath = versionEntry.PathConfig || versionEntry.path;
+  if (!versionPath) {
+    return null;
+  }
+
+  if (/^https?:\/\//i.test(versionPath)) {
+    return await fetchUrlJson<VersionConfig>(versionPath);
+  }
+
+  const normalizedPathCandidates = Array.from(
+    new Set([versionPath, versionPath.replace(/^gitpagedocs\//, ""), versionPath.startsWith("docs/") ? `gitpagedocs/${versionPath}` : versionPath]),
+  );
+  for (const pathCandidate of normalizedPathCandidates) {
+    const candidateConfig = await fetchRepoJson<VersionConfig>(owner, repo, pathCandidate);
+    if (candidateConfig) {
+      return candidateConfig;
+    }
+  }
+
+  return null;
+}
+
+function deriveRemoteTemplatesBaseUrl(
+  layoutsConfigPath: string | undefined,
+  templatesPathOverride: string | undefined,
+  owner: string,
+  repo: string,
+): string {
+  if (templatesPathOverride) {
+    return ensureTrailingSlash(toRawGithubUrl(templatesPathOverride));
+  }
+  if (layoutsConfigPath) {
+    const rawUrl = toRawGithubUrl(layoutsConfigPath);
+    return ensureTrailingSlash(rawUrl.slice(0, rawUrl.lastIndexOf("/") + 1));
+  }
+  return ensureTrailingSlash(`https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${DEFAULT_TEMPLATES_BASE_PATH}`);
+}
+
+function buildRemoteTemplateUrl(layoutFile: string, remoteTemplatesBaseUrl: string): string {
+  const normalizedBase = ensureTrailingSlash(remoteTemplatesBaseUrl);
+  const basePath = new URL(normalizedBase).pathname;
+  const baseEndsWithTemplates = /\/templates\/$/i.test(basePath);
+  const normalizedFile = layoutFile.replace(/^\.\//, "");
+  const fileWithoutTemplatesPrefix = normalizedFile.replace(/^templates\//i, "");
+  const filePath = baseEndsWithTemplates ? fileWithoutTemplatesPrefix : normalizedFile;
+  return new URL(filePath, normalizedBase).toString();
+}
+
+async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, repo: string): Promise<{
+  layoutsConfig: LayoutsConfig;
+  themes: Record<string, ThemeTemplate>;
+}> {
+  const useOfficialLayouts = config.site.layoutsConfigPathOficial === true;
+  const preferredLayoutsConfigPath = config.site.layoutsConfigPathOficialUrl || config.site.layoutsConfigPath || OFFICIAL_LAYOUTS_CONFIG_URL;
+  const preferredTemplatesPath =
+    config.site.layoutsConfigPathTemplatesOficial || config.site.layoutsConfigPathTemplates || OFFICIAL_LAYOUTS_TEMPLATES_URL;
+
+  let layoutsConfig: LayoutsConfig | null = null;
+  if (useOfficialLayouts) {
+    layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
+  }
+  if (!layoutsConfig?.layouts?.length) {
+    layoutsConfig = await fetchRepoJson<LayoutsConfig>(owner, repo, DEFAULT_LAYOUTS_PATH);
+  }
+  if (!layoutsConfig?.layouts?.length) {
+    layoutsConfig = await fetchUrlJson<LayoutsConfig>(OFFICIAL_LAYOUTS_CONFIG_URL);
+  }
+  if (!layoutsConfig?.layouts?.length) {
+    throw new Error("Could not load layouts configuration.");
+  }
+
+  const remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
+    useOfficialLayouts ? preferredLayoutsConfigPath : undefined,
+    preferredTemplatesPath,
+    owner,
+    repo,
+  );
+
+  const themes: Record<string, ThemeTemplate> = {};
+  await Promise.all(
+    layoutsConfig.layouts.map(async (layout: LayoutItem) => {
+      const templateUrl = buildRemoteTemplateUrl(layout.file, remoteTemplatesBaseUrl);
+      let template = await fetchUrlJson<ThemeTemplate>(templateUrl);
+      if (!template) {
+        template = await fetchRepoJson<ThemeTemplate>(owner, repo, `gitpagedocs/layouts/${layout.file}`);
+      }
+      if (template) {
+        themes[layout.id] = template;
+      }
+    }),
+  );
+
+  return { layoutsConfig, themes };
+}
+
+async function loadRemoteDocsData(owner: string, repo: string, selectedVersionId?: string): Promise<LoadedDocsData | null> {
+  const config = await fetchRepoJson<GitPageDocsConfig>(owner, repo, "gitpagedocs/config.json");
   if (!config) {
     return null;
   }
 
-  const firstVersion = config.VersionControl?.versions?.[0];
-  const versionConfigPath = firstVersion?.PathConfig || firstVersion?.path;
-  if (!versionConfigPath) {
-    return null;
+  const versions = config.VersionControl?.versions ?? [];
+  const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);
+  const activeVersionId = activeVersion?.id;
+
+  let routes = config.routes ?? [];
+  let menusHeader = config["menus-header"] ?? [];
+  if (activeVersion) {
+    const versionConfig = await loadVersionConfig(owner, repo, activeVersion);
+    if (versionConfig?.routes?.length) {
+      routes = versionConfig.routes;
+    }
+    if (versionConfig?.["menus-header"]?.length) {
+      menusHeader = versionConfig["menus-header"];
+    }
   }
 
-  const versionConfig = await fetchRepoJson<VersionConfig>(owner, repo, versionConfigPath);
-  if (!versionConfig?.routes?.length) {
-    return null;
-  }
+  const effectiveConfig: GitPageDocsConfig = {
+    ...config,
+    routes,
+    "menus-header": menusHeader,
+  };
 
-  const firstRoute = versionConfig.routes[0];
-  const markdownPath = firstRoute?.path?.[language] || firstRoute?.path?.en || firstRoute?.path?.pt || firstRoute?.path?.es;
-  if (!markdownPath) {
-    return null;
-  }
+  const availableLanguages = getAvailableLanguages(routes, effectiveConfig.site.defaultLanguage);
+  const docs = await Promise.all(
+    routes.map(async (route) => {
+      const markdownByLanguage: Record<LanguageCode, string> = {};
+      await Promise.all(
+        availableLanguages.map(async (language) => {
+          const markdownPath = route.path[language];
+          if (!markdownPath) {
+            markdownByLanguage[language] = "<p>Missing language file path in config.</p>";
+            return;
+          }
+          const markdown = await fetchRepoText(owner, repo, markdownPath);
+          markdownByLanguage[language] = markdown
+            ? (marked.parse(stripFrontMatter(markdown)) as string)
+            : "<p>Unable to load remote markdown file.</p>";
+        }),
+      );
+      return {
+        routeId: route.id,
+        markdownByLanguage,
+      };
+    }),
+  );
 
-  const markdown = await fetchRepoText(owner, repo, markdownPath);
-  if (!markdown) {
-    return null;
-  }
+  const { layoutsConfig, themes } = await loadLayoutsAndThemes(effectiveConfig, owner, repo);
 
-  return marked.parse(markdown) as string;
+  return {
+    config: effectiveConfig,
+    docs,
+    showRepositorySearchHome: false,
+    availableVersions: versions,
+    activeVersionId,
+    activeVersion,
+    activeRepository: {
+      owner,
+      repo,
+      requested: true,
+      hasGitPageDocs: true,
+      source: "remote",
+    },
+    availableLanguages,
+    layoutsConfig,
+    themes,
+  };
 }
 
 async function checkRepositoryHasGitPageDocs(owner: string, repo: string): Promise<boolean> {
@@ -146,21 +405,19 @@ export default function NotFound() {
   const [mounted, setMounted] = useState(false);
   const [pathOwner, setPathOwner] = useState<string | null>(null);
   const [pathRepo, setPathRepo] = useState<string | null>(null);
-  const [lang, setLang] = useState<"en" | "pt" | "es">("en");
+  const [pathVersion, setPathVersion] = useState<string | undefined>(undefined);
+  const [lang, setLang] = useState<SupportedLanguage>("en");
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
-  const [previewHtml, setPreviewHtml] = useState<string>("");
-  const [previewLoading, setPreviewLoading] = useState(false);
+  const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
+  const [appLoading, setAppLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window === "undefined") return;
-    const path = window.location.pathname;
-    const base = getBasePath();
-    const withoutBase = base ? path.slice(base.length) : path;
-    const parts = withoutBase.split("/").filter(Boolean);
-    if (parts.length >= 2) {
-      setPathOwner(parts[0]);
-      setPathRepo(parts[1]);
+    const parsed = parsePathFromLocation();
+    if (parsed) {
+      setPathOwner(parsed.owner);
+      setPathRepo(parsed.repo);
+      setPathVersion(parsed.version);
     }
   }, []);
 
@@ -185,27 +442,27 @@ export default function NotFound() {
 
   useEffect(() => {
     if (!pathOwner || !pathRepo || repoStatus !== "installed") {
-      setPreviewHtml("");
+      setLoadedData(null);
       return;
     }
 
     let cancelled = false;
-    setPreviewLoading(true);
-    loadRemotePreviewHtml(pathOwner, pathRepo, lang)
-      .then((html) => {
+    setAppLoading(true);
+    loadRemoteDocsData(pathOwner, pathRepo, pathVersion)
+      .then((data) => {
         if (cancelled) return;
-        setPreviewHtml(html ?? "");
+        setLoadedData(data);
       })
       .finally(() => {
         if (!cancelled) {
-          setPreviewLoading(false);
+          setAppLoading(false);
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [pathOwner, pathRepo, repoStatus, lang]);
+  }, [pathOwner, pathRepo, pathVersion, repoStatus]);
 
   if (!mounted) {
     return (
@@ -215,6 +472,10 @@ export default function NotFound() {
         </section>
       </main>
     );
+  }
+
+  if (loadedData) {
+    return <DocsShell data={loadedData} />;
   }
 
   const isRepoPath = pathOwner && pathRepo;
@@ -248,7 +509,9 @@ export default function NotFound() {
               if (owner && repo) {
                 setPathOwner(owner);
                 setPathRepo(repo);
+                setPathVersion(undefined);
                 setRepoStatus("unknown");
+                setLoadedData(null);
                 const basePath = getBasePath();
                 const nextPath = `${basePath}/${owner}/${repo}/`;
                 window.history.replaceState({}, "", nextPath);
@@ -284,20 +547,20 @@ export default function NotFound() {
 
         {repoStatus === "installed" && (
           <section style={styles.previewSection}>
-            <p style={styles.previewTitle}>{lang === "pt" ? "Previa da documentacao" : lang === "es" ? "Vista previa de la documentacion" : "Documentation preview"}</p>
-            {previewLoading ? (
-              <p style={styles.loading}>{lang === "pt" ? "Carregando..." : lang === "es" ? "Cargando..." : "Loading..."}</p>
-            ) : previewHtml ? (
-              <div style={styles.previewBody} dangerouslySetInnerHTML={{ __html: previewHtml }} />
-            ) : (
-              <p style={styles.loading}>
-                {lang === "pt"
-                  ? "Nao foi possivel carregar a previa deste repositorio."
+            <p style={styles.previewTitle}>{lang === "pt" ? "Carregando app completo..." : lang === "es" ? "Cargando app completo..." : "Loading full app..."}</p>
+            <p style={styles.loading}>
+              {appLoading
+                ? lang === "pt"
+                  ? "Montando shell completo da documentação remota."
                   : lang === "es"
-                    ? "No fue posible cargar la vista previa de este repositorio."
-                    : "Could not load preview for this repository."}
-              </p>
-            )}
+                    ? "Montando el shell completo de la documentación remota."
+                    : "Building full remote documentation shell."
+                : lang === "pt"
+                  ? "Se demorar, tente buscar novamente."
+                  : lang === "es"
+                    ? "Si tarda, intenta buscar nuevamente."
+                    : "If it takes too long, try searching again."}
+            </p>
           </section>
         )}
 
