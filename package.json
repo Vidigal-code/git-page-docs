@@ -42,6 +42,10 @@
     "url": "https://github.com/Vidigal-code/git-page-docs/issues"
   },
   "homepage": "https://vidigal-code.github.io/git-page-docs/",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@types/node": "^22.13.4",
