@@ -171,6 +171,16 @@ function deriveRemoteTemplatesBaseUrl(
   return undefined;
 }
 
+function buildRemoteTemplateUrl(layoutFile: string, remoteTemplatesBaseUrl: string): string {
+  const normalizedBase = ensureTrailingSlash(remoteTemplatesBaseUrl);
+  const basePath = new URL(normalizedBase).pathname;
+  const baseEndsWithTemplates = /\/templates\/$/i.test(basePath);
+  const normalizedFile = layoutFile.replace(/^\.\//, "");
+  const fileWithoutTemplatesPrefix = normalizedFile.replace(/^templates\//i, "");
+  const filePath = baseEndsWithTemplates ? fileWithoutTemplatesPrefix : normalizedFile;
+  return new URL(filePath, normalizedBase).toString();
+}
+
 function buildGithubRawCandidates(owner: string, repo: string, relativePath: string): string[] {
   const safePath = relativePath.replace(/^\/+/, "");
   return [
@@ -354,7 +364,7 @@ async function loadLayoutsAndThemes(options: {
         let template: ThemeTemplate | null = null;
 
         if (remoteTemplatesBaseUrl && !options.isLocal) {
-          const templateUrl = new URL(layoutItem.file, remoteTemplatesBaseUrl).toString();
+          const templateUrl = buildRemoteTemplateUrl(layoutItem.file, remoteTemplatesBaseUrl);
           template = await readRemoteJson<ThemeTemplate>(templateUrl);
         }
 
@@ -364,7 +374,7 @@ async function loadLayoutsAndThemes(options: {
         }
 
         if (!template && remoteTemplatesBaseUrl && !options.isLocal) {
-          const templateUrl = new URL(layoutItem.file, remoteTemplatesBaseUrl).toString();
+          const templateUrl = buildRemoteTemplateUrl(layoutItem.file, remoteTemplatesBaseUrl);
           template = await readRemoteJson<ThemeTemplate>(templateUrl);
         }
 

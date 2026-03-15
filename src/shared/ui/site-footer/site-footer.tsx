@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import type { LanguageCode } from "@/entities/docs/model/types";
 import styles from "./site-footer.module.css";
 
@@ -31,9 +31,10 @@ function resolveLanguage(language: LanguageCode): keyof typeof COPY {
 export function SiteFooter({ language, projectUrl }: SiteFooterProps) {
   const lang = resolveLanguage(language);
   const copy = COPY[lang];
+  const [browserDate, setBrowserDate] = useState("--/--/----");
 
-  const formattedDate = useMemo(() => {
-    return new Date().toLocaleDateString();
+  useEffect(() => {
+    setBrowserDate(new Date().toLocaleDateString());
   }, []);
 
   return (
@@ -46,7 +47,7 @@ export function SiteFooter({ language, projectUrl }: SiteFooterProps) {
           </a>
         </span>
         <span className={styles.item}>
-          {formattedDate}
+          {copy.date}: <span suppressHydrationWarning>{browserDate}</span>
         </span>
       </div>
     </footer>
