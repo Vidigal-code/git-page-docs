@@ -506,13 +506,15 @@
   position: fixed;
   inset: 0;
   background: rgba(2, 6, 23, 0.66);
-  display: grid;
-  place-items: start center;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   padding: clamp(56px, 10vh, 96px) 12px 12px;
   z-index: 40;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  box-sizing: border-box;
 }
 
 .quickNavCard {
@@ -590,19 +592,25 @@
   position: fixed;
   inset: 0;
   background: rgba(2, 6, 23, 0.66);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 60;
   padding: 16px;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .versionLinksCard {
-  width: min(520px, 94vw);
+  width: min(520px, 100%);
+  max-width: 100%;
   background: var(--card-background);
   border: 1px solid var(--card-border);
   border-radius: 14px;
   box-shadow: var(--card-shadow);
   padding: 14px;
+  box-sizing: border-box;
+  margin: auto;
 }
 
 .versionLinksHeader {
@@ -636,13 +644,15 @@
   position: fixed;
   inset: 0;
   background: rgba(2, 6, 23, 0.72);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 65;
   padding: 16px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  box-sizing: border-box;
 }
 
 .focusModeCard {
@@ -768,8 +778,13 @@
     margin: 0 auto;
   }
 
+  .versionLinksOverlay {
+    padding: 12px;
+  }
+
   .versionLinksCard {
-    width: min(460px, 96vw);
+    width: min(460px, 100%);
+    max-width: calc(100% - 24px);
   }
 
   .versionLinksList .button {
@@ -806,7 +821,8 @@
     padding-right: max(8px, env(safe-area-inset-right, 0px));
     padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
     padding-left: max(8px, env(safe-area-inset-left, 0px));
-    place-items: start center;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   .quickNavCard {
@@ -857,8 +873,8 @@
     padding-right: max(8px, env(safe-area-inset-right, 0px));
     padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
     padding-left: max(8px, env(safe-area-inset-left, 0px));
-    place-items: start center;
-    align-content: start;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   .focusModeCard {
@@ -901,6 +917,26 @@
     min-height: 44px;
     padding: 12px 14px;
   }
+
+  .versionLinksOverlay {
+    padding: 8px;
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-right: max(8px, env(safe-area-inset-right, 0px));
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(8px, env(safe-area-inset-left, 0px));
+  }
+
+  .versionLinksCard {
+    width: 100%;
+    max-width: calc(100% - 16px);
+    padding: 12px;
+  }
+
+  .versionLinksCloseButton {
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -928,5 +964,14 @@
 
   .focusModeBody {
     padding: 10px;
+  }
+
+  .versionLinksOverlay {
+    padding: 6px;
+  }
+
+  .versionLinksCard {
+    padding: 10px;
+    max-width: calc(100% - 12px);
   }
 }

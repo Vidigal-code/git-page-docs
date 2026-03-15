@@ -123,9 +123,9 @@
         "PathConfig": "gitpagedocs/docs/versions/1.0.0/config.json",
         "PreviewProject": "https://github.com/Vidigal-code/git-page-docs",
         "UpdateDate": "16/03/2026",
-        "branch": "",
-        "release": "",
-        "commit": ""
+        "branch": "https://github.com/Vidigal-code/git-page-docs",
+        "release": "https://github.com/Vidigal-code/git-page-docs",
+        "commit": "https://github.com/Vidigal-code/git-page-docs"
       },
       {
         "id": "1.1.0",
