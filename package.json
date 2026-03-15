@@ -1,6 +1,6 @@
 {
   "name": "gitpagedocs",
-  "version": "1.1.30",
+  "version": "1.1.31",
   "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
   "main": "scripts/gitpagedocs-init.mjs",
   "bin": {
@@ -13,8 +13,8 @@
   "scripts": {
     "dev": "next dev",
     "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('.next',{recursive:true})}catch(e){}\"",
-    "build": "node scripts/gitpagedocs-init.mjs && next build",
-    "build:prebuilt": "node scripts/gitpagedocs-init.mjs && next build && node -e \"const fs=require('fs'); if(fs.existsSync('prebuilt')) fs.rmSync('prebuilt',{recursive:true}); fs.cpSync('out','prebuilt',{recursive:true}); fs.writeFileSync('prebuilt/.nojekyll','')\"",
+    "build": "node scripts/gitpagedocs-init.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build",
+    "build:prebuilt": "node scripts/gitpagedocs-init.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build && node -e \"const fs=require('fs'); if(fs.existsSync('prebuilt')) fs.rmSync('prebuilt',{recursive:true}); fs.cpSync('out','prebuilt',{recursive:true}); fs.writeFileSync('prebuilt/.nojekyll','')\"",
     "prepublishOnly": "node -e \"if(process.platform==='win32'){console.warn('Skipping build:prebuilt on Windows (EBUSY). Use GitHub Actions to publish with prebuilt.');process.exit(0)}require('child_process').execSync('npm run build:prebuilt',{stdio:'inherit'})\"",
     "export": "next export",
     "prestart": "npm run build",
@@ -42,7 +42,6 @@
     "url": "https://github.com/Vidigal-code/git-page-docs/issues"
   },
   "homepage": "https://vidigal-code.github.io/git-page-docs/",
-  "dependencies": {},
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@types/node": "^22.13.4",
@@ -56,6 +55,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
-    "typescript": "^5.7.3"
+    "typescript": "5.9.3"
   }
 }

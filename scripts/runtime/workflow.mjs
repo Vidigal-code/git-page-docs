@@ -35,14 +35,18 @@ jobs:
       - name: Prepare runtime source
         run: |
           git clone --depth 1 https://github.com/Vidigal-code/git-page-docs.git .gitpagedocs-runtime
+          cp .gitpagedocs-runtime/gitpagedocs/icon.svg /tmp/default-icon.svg 2>/dev/null || true
           if [ -d gitpagedocs ]; then
             rm -rf .gitpagedocs-runtime/gitpagedocs
             cp -R gitpagedocs .gitpagedocs-runtime/gitpagedocs
           fi
+          mkdir -p .gitpagedocs-runtime/public
           if [ -f icon.svg ]; then
             cp icon.svg .gitpagedocs-runtime/public/icon.svg
           elif [ -f gitpagedocs/icon.svg ]; then
             cp gitpagedocs/icon.svg .gitpagedocs-runtime/public/icon.svg
+          elif [ -f /tmp/default-icon.svg ]; then
+            cp /tmp/default-icon.svg .gitpagedocs-runtime/public/icon.svg
           fi
 
       - name: Install runtime dependencies
