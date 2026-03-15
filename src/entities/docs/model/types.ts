@@ -57,6 +57,7 @@ export interface GitPageDocsConfig {
 export interface VersionEntry {
   id: string;
   path: string;
+  PathConfig?: string;
   ProjectLink?: string;
   branch?: string;
   release?: string;

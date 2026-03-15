@@ -226,7 +226,10 @@ async function loadVersionConfig(options: {
   owner?: string;
   repo?: string;
 }): Promise<VersionRoutesConfig | undefined> {
-  const versionPath = options.versionEntry.path;
+  const versionPath = options.versionEntry.PathConfig || options.versionEntry.path;
+  if (!versionPath) {
+    return undefined;
+  }
 
   let versionConfig: VersionRoutesConfig | null = null;
   const normalizedPathCandidates = Array.from(

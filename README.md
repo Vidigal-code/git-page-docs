@@ -6,6 +6,15 @@ Current CLI behavior:
 - generates only `gitpagedocs/`
 - generates `.json` and `.md` files required for docs, versions, and layouts
 
+## Official Website
+
+You can use the official website to view remote documentation:
+
+- Open `https://vidigal-code.github.io/git-page-docs/`
+- Enter the GitHub owner (username) and repository name
+- If the target repository uses `gitpagedocs`, the site loads and displays its documentation
+- If the target repository does not use `gitpagedocs`, the site shows a message saying that repository is not using `gitpagedocs`
+
 ## Installation
 
 ```bash
@@ -74,8 +83,3 @@ Repository search is no longer controlled by `gitpagedocs/config.json`.
 - `npm run dev`: runs `next dev`.
 - `npm run start`: runs `npm run build` (prestart) and starts with `next start`.
 - `npm run lint`: runs `eslint .`.
-
-## Site Icon
-
-- The official site icon uses `public/icon.svg`.
-- Metadata includes `icon`, `shortcut icon`, and `apple-touch-icon` pointing to `/icon.svg`.

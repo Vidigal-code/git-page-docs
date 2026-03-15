@@ -1,18 +1,31 @@
-# Bienvenido a Git Page Docs
+# Git Page Docs
 
-Este proyecto fue generado con `npm run gitpagedocs`.
+Git Page Docs es un runtime de documentacion multilenguaje para repositorios que incluyen la carpeta `gitpagedocs/`.
 
-## Que es esto?
+## Que entrega este proyecto
 
-Git Page Docs es un renderizador markdown multilenguaje con:
+- Renderizado markdown multilenguaje (`en`, `pt`, `es`)
+- Ruteo por version (`/v/:version`)
+- Sistema de temas con templates JSON
+- Ejecucion local y en GitHub Pages
+- Busqueda de repositorio + render remoto opcional
 
-- Catalogo de temas con soporte dark/light
-- Selector de idioma
-- Sidebar responsiva + menu hamburguesa en mobile
-- Renderizado por busqueda de repositorio cuando esta activo
+## Contrato de carpetas
 
-## Como publicar
+El runtime espera esta estructura:
 
-1. Sube este proyecto a tu repositorio de GitHub.
-2. Configura el deploy (Vercel, Next.js self-hosted o plataforma compatible).
-3. Mantiene tus markdowns en `gitpagedocs/docs/en`, `gitpagedocs/docs/pt` y `gitpagedocs/docs/es`.
+- `gitpagedocs/config.json`
+- `gitpagedocs/docs/<lang>/*.md`
+- `gitpagedocs/docs/versions/<version>/config.json`
+- `gitpagedocs/docs/versions/<version>/<lang>/*.md`
+- `gitpagedocs/layouts/layoutsConfig.json`
+- `gitpagedocs/layouts/templates/*.json`
+
+## Navegacion rapida
+
+- Abre **Primeros pasos** para setup local.
+- Abre **Configuracion** para detalle completo de `config.json`.
+- Abre **Publicacion** para comportamiento local/produccion/GitHub Pages.
+- Abre **Arquitectura** para mapa de codigo y flujo de datos.
+- Abre **Temas y layouts** para creacion de templates.
+- Abre **FAQ** para troubleshooting.

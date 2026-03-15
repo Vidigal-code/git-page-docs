@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
-import { FaGithubAlt, FaGithubSquare } from "react-icons/fa";
 import { FiChevronDown, FiChevronRight, FiX } from "react-icons/fi";
 import type {
   HeaderMenuItem,
@@ -14,6 +13,7 @@ import type {
   LoadedDocsData,
   ThemeTemplate,
 } from "@/entities/docs/model/types";
+import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import styles from "./docs-shell.module.css";
 
 function getLanguageLabel(data: LoadedDocsData, selectedLanguage: LanguageCode, target: LanguageCode): string {
@@ -172,17 +172,6 @@ function buildVersionLinkOptions(activeVersion: LoadedDocsData["activeVersion"])
   }
 
   return options;
-}
-
-function resolveHeaderReactIcon(tag: string | undefined, mode: "light" | "dark" | undefined): React.ReactNode {
-  const normalizedTag = (tag ?? "").trim();
-  if (normalizedTag === "FaGithubAlt") {
-    return <FaGithubAlt aria-hidden />;
-  }
-  if (normalizedTag === "FaGithubSquare") {
-    return <FaGithubSquare aria-hidden />;
-  }
-  return mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />;
 }
 
 function splitMarkdownHtmlIntoPages(html: string): string[] {
@@ -386,7 +375,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       : data.config.site.IconImageMenuHeaderLight?.trim()) || data.config.site.IconImageMenuHeader?.trim();
   const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
   const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
-  const headerReactIcon = resolveHeaderReactIcon(reactHeaderIconTag, activeLayout?.mode);
   const headerReactIconColor =
     activeLayout?.mode === "dark"
       ? data.config.site.IconImageMenuHeaderReactIconesTagColorDark
@@ -398,7 +386,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   };
   const useReactProjectLinkIcon = Boolean(data.config.site.IconProjectLinkReactIcones);
   const projectLinkReactIconTag = data.config.site.IconProjectLinkReactIconesTag;
-  const projectLinkReactIcon = resolveHeaderReactIcon(projectLinkReactIconTag, activeLayout?.mode);
   const projectLinkReactIconColor =
     activeLayout?.mode === "dark"
       ? data.config.site.IconProjectLinkReactIconesTagColorDark
@@ -863,7 +850,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         <div className={styles.brand}>
           {useReactHeaderIcon ? (
             <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-              {headerReactIcon}
+              <ReactIconByTag
+                tag={reactHeaderIconTag}
+                fallback={activeLayout?.mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
+              />
             </span>
           ) : iconImage ? (
             <Image
@@ -911,7 +901,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             <div className={styles.headerLeft}>
               {useReactHeaderIcon ? (
                 <span className={styles.headerReactIcon} style={headerReactIconStyle}>
-                  {headerReactIcon}
+                  <ReactIconByTag
+                    tag={reactHeaderIconTag}
+                    fallback={activeLayout?.mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
+                  />
                 </span>
               ) : iconImage ? (
                 <Image
@@ -945,7 +938,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                   title="Open project repository"
                 >
                   {useReactProjectLinkIcon ? (
-                    <span style={projectLinkReactIconStyle}>{projectLinkReactIcon}</span>
+                    <ReactIconByTag tag={projectLinkReactIconTag} style={projectLinkReactIconStyle} />
                   ) : (
                     <svg viewBox="0 0 24 24" aria-hidden className={styles.githubIcon}>
                       <path
@@ -1077,7 +1070,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                   title={projectLabel}
                 >
                   {useReactProjectLinkIcon ? (
-                    <span style={projectLinkReactIconStyle}>{projectLinkReactIcon}</span>
+                    <ReactIconByTag tag={projectLinkReactIconTag} style={projectLinkReactIconStyle} />
                   ) : (
                     <svg viewBox="0 0 24 24" aria-hidden className={styles.githubIcon}>
                       <path
