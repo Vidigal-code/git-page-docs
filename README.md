@@ -120,6 +120,7 @@ npm start
   - The generated workflow is self-sufficient: it clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds with your repository path, and deploys to your own GitHub Pages URL.
   - In `--push` mode, root URL opens docs directly (search home is disabled via `site.repositorySearchHome=false`).
   - The workflow trigger is generated for your current git branch automatically, so it works in repositories that do not use `main`.
+  - After push, CLI also attempts to switch repository Pages source to **GitHub Actions** automatically using `gh api` (if GitHub CLI is available and authenticated).
 
 When built with `GITHUB_ACTIONS=true`, the runtime enables GitHub Pages behavior.
 

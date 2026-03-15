@@ -2175,6 +2175,7 @@ function runGitPushForGeneratedArtifacts(options) {
   const currentBranch = getCurrentGitBranch();
   try {
     execSync(`git push -u origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
+    tryConfigurePagesToGitHubActions(owner, repo, currentBranch);
     return;
   } catch {
     console.warn("Initial push failed. Trying automatic rebase with remote branch...");
@@ -2188,6 +2189,40 @@ function runGitPushForGeneratedArtifacts(options) {
       `Failed to push after automatic rebase on branch '${currentBranch}'. Resolve conflicts and run 'git push -u origin ${currentBranch}' manually.`,
     );
   }
+
+  tryConfigurePagesToGitHubActions(owner, repo, currentBranch);
+}
+
+function tryConfigurePagesToGitHubActions(owner, repo, branch) {
+  try {
+    execSync("gh --version", { cwd: ROOT, stdio: "ignore" });
+  } catch {
+    console.warn(
+      "GitHub CLI (gh) not found. Could not auto-configure Pages source. Set GitHub Pages source to 'GitHub Actions' manually in repository settings.",
+    );
+    return;
+  }
+
+  const candidates = [
+    `gh api -X PUT "repos/${owner}/${repo}/pages" -f build_type=workflow`,
+    `gh api -X POST "repos/${owner}/${repo}/pages" -f build_type=workflow`,
+    `gh api -X POST "repos/${owner}/${repo}/pages" -f source[branch]=${branch} -f source[path]=/`,
+    `gh api -X PUT "repos/${owner}/${repo}/pages" -f source[branch]=${branch} -f source[path]=/ -f build_type=workflow`,
+  ];
+
+  for (const command of candidates) {
+    try {
+      execSync(command, { cwd: ROOT, stdio: "ignore" });
+      console.log("GitHub Pages source configured for GitHub Actions.");
+      return;
+    } catch {
+      // Try next candidate endpoint.
+    }
+  }
+
+  console.warn(
+    "Could not auto-configure Pages source through GitHub API. Set repository Pages source to 'GitHub Actions' manually.",
+  );
 }
 
 async function writeConfigOnlyOutput(outputDir, artifacts, options) {
