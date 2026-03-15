@@ -29,6 +29,7 @@ export interface SiteConfig {
   layoutsConfigPathTemplatesOficial?: string;
   layoutsConfigPath?: string;
   layoutsConfigPathTemplates?: string;
+  repositorySearchHome?: boolean;
   rendering: string;
   langmenu: Record<LanguageCode, Record<LanguageCode, string>>;
 }

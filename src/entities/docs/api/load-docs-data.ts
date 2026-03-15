@@ -445,7 +445,10 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const requestedOwner = slug?.[0];
   const requestedRepo = slug?.[1];
   const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
-  const showRepositorySearchHome = Boolean(repositorySearchEnabled && !requestedOwner && !requestedRepo && !selectedVersionId);
+  const repositorySearchHomeEnabled = localConfig.site.repositorySearchHome ?? true;
+  const showRepositorySearchHome = Boolean(
+    repositorySearchEnabled && repositorySearchHomeEnabled && !requestedOwner && !requestedRepo && !selectedVersionId,
+  );
   const renderingFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
   const projectLinkFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
 

@@ -118,6 +118,8 @@ npm start
   - `npx gitpagedocs --push --owner your-user --repo your-repository`
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
   - The generated workflow is self-sufficient: it clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds with your repository path, and deploys to your own GitHub Pages URL.
+  - In `--push` mode, root URL opens docs directly (search home is disabled via `site.repositorySearchHome=false`).
+  - The workflow trigger is generated for your current git branch automatically, so it works in repositories that do not use `main`.
 
 When built with `GITHUB_ACTIONS=true`, the runtime enables GitHub Pages behavior.
 

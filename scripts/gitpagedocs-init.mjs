@@ -1647,6 +1647,7 @@ function buildConfigArtifacts(options = {}) {
   const useOfficialLayouts = !useLocalLayoutConfig;
   const githubOwner = options.githubOwner;
   const githubRepo = options.githubRepo;
+  const repositorySearchHome = githubOwner && githubRepo ? false : true;
   const renderingUrl = githubOwner && githubRepo
     ? `https://${githubOwner}.github.io/${githubRepo}/`
     : "https://vidigal-code.github.io/git-page-docs/";
@@ -1834,6 +1835,7 @@ function buildConfigArtifacts(options = {}) {
       layoutsConfigPathOficial: useOfficialLayouts,
       layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",
+      repositorySearchHome,
       rendering: renderingUrl,
       ProjectLink: projectLink,
       langmenu: {
@@ -2054,12 +2056,13 @@ function sanitizeSegment(value) {
 }
 
 async function ensureGitHubPagesWorkflow() {
+  const currentBranch = getCurrentGitBranch();
   const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
   const workflowContent = `name: Deploy GitPageDocs
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["${currentBranch}"]
   workflow_dispatch:
 
 permissions:
@@ -2127,6 +2130,15 @@ jobs:
   await writeText(workflowPath, workflowContent);
 }
 
+function getCurrentGitBranch() {
+  try {
+    const branch = execSync("git branch --show-current", { cwd: ROOT, stdio: "pipe" }).toString().trim();
+    return branch || "main";
+  } catch {
+    return "main";
+  }
+}
+
 function runGitPushForGeneratedArtifacts(options) {
   const owner = sanitizeSegment(options.githubOwner);
   const repo = sanitizeSegment(options.githubRepo);
@@ -2160,7 +2172,7 @@ function runGitPushForGeneratedArtifacts(options) {
 
   execSync('git commit -m "chore: setup gitpagedocs pages workflow"', { cwd: ROOT, stdio: "inherit" });
 
-  const currentBranch = execSync("git branch --show-current", { cwd: ROOT, stdio: "pipe" }).toString().trim() || "main";
+  const currentBranch = getCurrentGitBranch();
   try {
     execSync(`git push -u origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
     return;
