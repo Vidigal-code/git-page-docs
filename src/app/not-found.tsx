@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { marked } from "marked";
 
 function getBasePath(): string {
   if (typeof window === "undefined") return "/git-page-docs";
@@ -41,6 +41,84 @@ const RETURN_HOME = {
 
 type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
 
+type VersionConfig = {
+  routes?: Array<{
+    path?: Record<string, string>;
+  }>;
+};
+
+function normalizeRelativePath(input: string): string {
+  return input.replace(/^\/+/, "");
+}
+
+async function fetchRepoText(owner: string, repo: string, relativePath: string): Promise<string | null> {
+  const normalizedPath = normalizeRelativePath(relativePath);
+  const candidates = [
+    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${normalizedPath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/main/${normalizedPath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/master/${normalizedPath}`,
+  ];
+
+  for (const url of candidates) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        continue;
+      }
+      return await response.text();
+    } catch {
+      // Try next candidate.
+    }
+  }
+
+  return null;
+}
+
+async function fetchRepoJson<T>(owner: string, repo: string, relativePath: string): Promise<T | null> {
+  const text = await fetchRepoText(owner, repo, relativePath);
+  if (!text) {
+    return null;
+  }
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+async function loadRemotePreviewHtml(owner: string, repo: string, language: "en" | "pt" | "es"): Promise<string | null> {
+  const config = await fetchRepoJson<{
+    VersionControl?: { versions?: Array<{ PathConfig?: string; path?: string }> };
+  }>(owner, repo, "gitpagedocs/config.json");
+  if (!config) {
+    return null;
+  }
+
+  const firstVersion = config.VersionControl?.versions?.[0];
+  const versionConfigPath = firstVersion?.PathConfig || firstVersion?.path;
+  if (!versionConfigPath) {
+    return null;
+  }
+
+  const versionConfig = await fetchRepoJson<VersionConfig>(owner, repo, versionConfigPath);
+  if (!versionConfig?.routes?.length) {
+    return null;
+  }
+
+  const firstRoute = versionConfig.routes[0];
+  const markdownPath = firstRoute?.path?.[language] || firstRoute?.path?.en || firstRoute?.path?.pt || firstRoute?.path?.es;
+  if (!markdownPath) {
+    return null;
+  }
+
+  const markdown = await fetchRepoText(owner, repo, markdownPath);
+  if (!markdown) {
+    return null;
+  }
+
+  return marked.parse(markdown) as string;
+}
+
 async function checkRepositoryHasGitPageDocs(owner: string, repo: string): Promise<boolean> {
   const candidates = [
     `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/gitpagedocs/config.json`,
@@ -65,12 +143,13 @@ async function checkRepositoryHasGitPageDocs(owner: string, repo: string): Promi
 }
 
 export default function NotFound() {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [pathOwner, setPathOwner] = useState<string | null>(null);
   const [pathRepo, setPathRepo] = useState<string | null>(null);
   const [lang, setLang] = useState<"en" | "pt" | "es">("en");
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
+  const [previewHtml, setPreviewHtml] = useState<string>("");
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -103,6 +182,30 @@ export default function NotFound() {
       cancelled = true;
     };
   }, [pathOwner, pathRepo]);
+
+  useEffect(() => {
+    if (!pathOwner || !pathRepo || repoStatus !== "installed") {
+      setPreviewHtml("");
+      return;
+    }
+
+    let cancelled = false;
+    setPreviewLoading(true);
+    loadRemotePreviewHtml(pathOwner, pathRepo, lang)
+      .then((html) => {
+        if (cancelled) return;
+        setPreviewHtml(html ?? "");
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setPreviewLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathOwner, pathRepo, repoStatus, lang]);
 
   if (!mounted) {
     return (
@@ -143,7 +246,12 @@ export default function NotFound() {
               const owner = (form.querySelector('[name="owner"]') as HTMLInputElement)?.value?.trim();
               const repo = (form.querySelector('[name="repo"]') as HTMLInputElement)?.value?.trim();
               if (owner && repo) {
-                router.push(`/${owner}/${repo}`);
+                setPathOwner(owner);
+                setPathRepo(repo);
+                setRepoStatus("unknown");
+                const basePath = getBasePath();
+                const nextPath = `${basePath}/${owner}/${repo}/`;
+                window.history.replaceState({}, "", nextPath);
               }
             }}
           >
@@ -172,6 +280,25 @@ export default function NotFound() {
               {lang === "pt" ? "Buscar" : lang === "es" ? "Buscar" : "Search"}
             </button>
           </form>
+        )}
+
+        {repoStatus === "installed" && (
+          <section style={styles.previewSection}>
+            <p style={styles.previewTitle}>{lang === "pt" ? "Previa da documentacao" : lang === "es" ? "Vista previa de la documentacion" : "Documentation preview"}</p>
+            {previewLoading ? (
+              <p style={styles.loading}>{lang === "pt" ? "Carregando..." : lang === "es" ? "Cargando..." : "Loading..."}</p>
+            ) : previewHtml ? (
+              <div style={styles.previewBody} dangerouslySetInnerHTML={{ __html: previewHtml }} />
+            ) : (
+              <p style={styles.loading}>
+                {lang === "pt"
+                  ? "Nao foi possivel carregar a previa deste repositorio."
+                  : lang === "es"
+                    ? "No fue posible cargar la vista previa de este repositorio."
+                    : "Could not load preview for this repository."}
+              </p>
+            )}
+          </section>
         )}
 
         <a href={(getBasePath() ? getBasePath() + "/" : "/")} style={styles.link}>
@@ -257,5 +384,27 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#f1f5f9",
     fontWeight: 600,
     textDecoration: "none",
+  },
+  previewSection: {
+    marginTop: 16,
+    border: "1px solid #334155",
+    borderRadius: 12,
+    background: "#0b1322",
+    padding: 12,
+  },
+  previewTitle: {
+    margin: "0 0 8px 0",
+    color: "#cbd5e1",
+    fontWeight: 700,
+  },
+  previewBody: {
+    maxHeight: "45vh",
+    overflowY: "auto",
+    border: "1px solid #334155",
+    borderRadius: 10,
+    padding: 12,
+    background: "#0f172a",
+    color: "#f8fafc",
+    lineHeight: 1.55,
   },
 };
