@@ -1781,6 +1781,7 @@ function buildConfigArtifacts(options = {}) {
         { owner: "Vidigal-code", repo: "git-page-docs" },
         { owner: "Vidigal-code", repo: "git-page-link-create" },
         { owner: "Vidigal-code", repo: "git-page-docs-example" },
+        { owner: "Vidigal-code", repo: "energy-bill-ai-parser" },
       ],
       rendering: "https://vidigal-code.github.io/git-page-docs/",
       langmenu: {
