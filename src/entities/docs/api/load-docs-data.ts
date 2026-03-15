@@ -443,16 +443,26 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const repositorySearchEnabled = isGithubPagesBuild || repositorySearchEnabledByEnv;
   const renderingRef = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
   const projectRef = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
+  const buildRepositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1]?.toLowerCase();
   const isOfficialSearchAggregatorRepo =
-    renderingRef.repo?.toLowerCase() === "git-page-docs" || projectRef.repo?.toLowerCase() === "git-page-docs";
+    renderingRef.repo?.toLowerCase() === "git-page-docs" ||
+    projectRef.repo?.toLowerCase() === "git-page-docs" ||
+    buildRepositoryName === "git-page-docs";
 
   const requestedOwner = slug?.[0];
   const requestedRepo = slug?.[1];
   const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
-  const repositorySearchHomeEnabled =
-    typeof localConfig.site.repositorySearchHome === "boolean"
-      ? localConfig.site.repositorySearchHome
-      : isOfficialSearchAggregatorRepo;
+  const repositorySearchHomeEnabled = (() => {
+    if (typeof localConfig.site.repositorySearchHome === "boolean") {
+      return localConfig.site.repositorySearchHome;
+    }
+    if (isGithubPagesBuild) {
+      // Backward compatibility: old configs without repositorySearchHome should open docs directly
+      // for project repositories and keep search home only for the official aggregator repository.
+      return isOfficialSearchAggregatorRepo;
+    }
+    return true;
+  })();
   const showRepositorySearchHome = Boolean(
     repositorySearchEnabled && repositorySearchHomeEnabled && !requestedOwner && !requestedRepo && !selectedVersionId,
   );
