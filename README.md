@@ -3,8 +3,11 @@
 `gitpagedocs` is a CLI to initialize and maintain the official `gitpagedocs/` directory.
 
 Current CLI behavior:
-- generates only `gitpagedocs/`
-- generates `.json` and `.md` files required for docs, versions, and layouts
+- generates only `gitpagedocs/` artifacts (no `index.html` / `index.js`)
+- generates versioned docs and config files
+- supports two layout strategies:
+  - default: uses official remote layouts from this repository
+  - `--layoutconfig`: generates local `gitpagedocs/layouts/**`
 
 ## Official Website
 
@@ -21,28 +24,61 @@ You can use the official website to view remote documentation:
 npm install gitpagedocs
 ```
 
-## CLI Usage
+You can also run without local install:
 
 ```bash
 npx gitpagedocs
 ```
 
-Supported flags (compatibility mode):
+## CLI Usage
+
+### Default mode (recommended)
+
+```bash
+npx gitpagedocs
+```
+
+Default mode generates `gitpagedocs/` and configures layout loading from the official project URLs.
+
+### Local layouts mode
+
+```bash
+npx gitpagedocs --layoutconfig
+```
+
+This mode generates local `gitpagedocs/layouts/**` and disables official remote layout URLs.
+
+### Compatibility flags
+
 - `--build`
 - `--serve`
 - `--full`
 
-Note: these flags no longer change artifact type. Output remains only `gitpagedocs/`, with no external command execution.
+Note: compatibility flags no longer change artifact type. Output remains `gitpagedocs/` only, with no external command execution.
 
 ## Generated Structure (summary)
+
+### Default (`npx gitpagedocs`)
 
 ```text
 gitpagedocs/
   config.json
   docs/
-    en/*.md
-    pt/*.md
-    es/*.md
+    versions/
+      1.0.0/config.json
+      1.0.0/{en,pt,es}/*.md
+      1.1.0/config.json
+      1.1.0/{en,pt,es}/*.md
+      1.1.1/config.json
+      1.1.1/{en,pt,es}/*.md
+```
+
+### Local layouts (`npx gitpagedocs --layoutconfig`)
+
+```text
+gitpagedocs/
+  config.json
+  docs/
     versions/
       1.0.0/config.json
       1.0.0/{en,pt,es}/*.md
@@ -55,6 +91,19 @@ gitpagedocs/
     layoutsFallbackConfig.json
     templates/*.json
 ```
+
+## Layout Source Configuration
+
+`gitpagedocs/config.json` now controls official layout source with:
+
+- `layoutsConfigPathOficial`
+- `layoutsConfigPathOficialUrl`
+- `layoutsConfigPathTemplatesOficial`
+
+Behavior:
+
+- If `layoutsConfigPathOficial=true`, layouts/templates are loaded from the official remote URLs.
+- If `layoutsConfigPathOficial=false`, local `gitpagedocs/layouts/**` is used.
 
 ## Repository Search (GitHub Pages vs local)
 
