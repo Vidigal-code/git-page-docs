@@ -332,7 +332,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       const validPathVersion = hasVersionInConfig(versionFromPath) ? versionFromPath : undefined;
 
       if (validUrlVersion && validUrlVersion !== validPathVersion) {
-        const basePath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname;
+        const basePath = currentPathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
         params.delete("version");
         const target = buildVersionPath(basePath, validUrlVersion);
         const qs = params.toString();
@@ -364,7 +365,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
     params.delete("version");
     if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
-      const base = pathname.replace(/\/$/, "");
+      const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname;
+      const base = currentPathname.replace(/\/$/, "");
       const target = `${base}/v/${urlVersion}`;
       const qs = params.toString();
       router.replace(qs ? `${target}?${qs}` : target);
@@ -373,8 +375,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     try {
       const savedVersion = window.localStorage.getItem(versionStorageKey);
       if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
-        const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        const target = buildVersionPath(base || pathname, savedVersion);
+        const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname;
+        const base = currentPathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        const target = buildVersionPath(base || currentPathname, savedVersion);
         const qs = params.toString();
         router.replace(qs ? `${target}?${qs}` : target);
       }

@@ -45,6 +45,18 @@ export function useVersionRouting({
     return availableVersions[0]?.id ?? "";
   }, [versionFromPath, versionFromQuery, activeVersionId, availableVersions]);
 
+  function buildPathFromCurrentLocation(versionId: string): { targetPath: string; params: URLSearchParams } {
+    if (typeof window !== "undefined") {
+      const currentUrl = new URL(window.location.href);
+      const cleanPath = currentUrl.pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+      const params = new URLSearchParams(currentUrl.search);
+      return { targetPath: buildVersionPath(cleanPath, versionId), params };
+    }
+    const cleanPath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+    const params = getCurrentSearchParams();
+    return { targetPath: buildVersionPath(cleanPath, versionId), params };
+  }
+
   function onVersionChange(versionId: string) {
     if (isRemoteRepositorySession) {
       if (typeof window !== "undefined") {
@@ -67,17 +79,15 @@ export function useVersionRouting({
       return;
     }
 
-    const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-    const params = getCurrentSearchParams();
+    const { targetPath, params } = buildPathFromCurrentLocation(versionId);
     params.delete("version");
     if (isLanguageSelectVisible) {
       params.set("lang", language);
     } else {
       params.delete("lang");
     }
-    const target = buildVersionPath(base, versionId);
     const qs = params.toString();
-    const nextUrl = qs ? `${target}?${qs}` : target;
+    const nextUrl = qs ? `${targetPath}?${qs}` : targetPath;
     if (typeof window !== "undefined") {
       window.location.assign(nextUrl);
       return;

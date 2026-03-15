@@ -1,6 +1,6 @@
 {
   "name": "gitpagedocs",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
   "main": "scripts/gitpagedocs-init.mjs",
   "bin": {
@@ -21,9 +21,7 @@
     "start": "next start",
     "lint": "eslint .",
     "gitpagedocs": "node scripts/gitpagedocs-init.mjs",
-    "gitpagedocs:full": "node scripts/gitpagedocs-init.mjs",
-    "publish:create": "npm publish --access public --prefix packages/create-gitpagedocs",
-    "publish:npm": "npm publish --access public"
+    "gitpagedocs:full": "node scripts/gitpagedocs-init.mjs"
   },
   "repository": {
     "type": "git",
