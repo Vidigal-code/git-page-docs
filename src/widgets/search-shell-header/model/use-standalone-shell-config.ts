@@ -5,16 +5,13 @@ import {
   fetchOfficialSiteConfig,
   loadStandaloneLayoutsAndThemes,
 } from "@/entities/docs/api/load-remote-docs-data-client";
+import type { OfficialSiteConfig } from "@/entities/docs/api/load-remote-docs-data-client";
 import type { LayoutsConfig, ThemeTemplate } from "@/entities/docs/model/types";
 
 export interface StandaloneShellConfig {
   layoutsConfig: LayoutsConfig;
   themes: Record<string, ThemeTemplate>;
-  siteConfig?: {
-    SiteHeaderName?: string;
-    SiteIconPath?: string;
-    name?: string;
-  } | null;
+  siteConfig?: OfficialSiteConfig | null;
 }
 
 export function useStandaloneShellConfig(): {

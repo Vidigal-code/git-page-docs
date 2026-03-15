@@ -136,12 +136,22 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
   }
 }
 
-export async function fetchOfficialSiteConfig(): Promise<{
+export interface OfficialSiteConfig {
   SiteHeaderName?: string;
   SiteIconPath?: string;
   name?: string;
-} | null> {
-  const config = await fetchRepoJson<{ site?: { SiteHeaderName?: string; SiteIconPath?: string; name?: string } }>(
+  IconImageMenuHeaderLight?: string;
+  IconImageMenuHeaderDark?: string;
+  IconImageMenuHeader?: string;
+  IconImageMenuHeaderReactIcones?: boolean;
+  IconImageMenuHeaderReactIconesTag?: string;
+  IconImageMenuHeaderReactIconesTagColorDark?: string;
+  IconImageMenuHeaderReactIconesTagColorLight?: string;
+  IconImageMenuHeaderReactIconesTagSize?: string;
+}
+
+export async function fetchOfficialSiteConfig(): Promise<OfficialSiteConfig | null> {
+  const config = await fetchRepoJson<{ site?: OfficialSiteConfig }>(
     "Vidigal-code",
     "git-page-docs",
     "gitpagedocs/config.json",

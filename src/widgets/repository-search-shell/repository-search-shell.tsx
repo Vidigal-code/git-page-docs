@@ -52,9 +52,17 @@ export function RepositorySearchShell({
     data.config.site.SiteIconPath?.trim();
   const iconImage = resolveIconPath(rawIconImage, basePath);
   const headerName = resolveHeaderName(data.config.site.SiteHeaderName, data.config.site.name);
-  const useReactHeaderIcon = false;
-  const reactHeaderIconTag = undefined;
-  const headerReactIconStyle: CSSProperties = {};
+  const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
+  const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
+  const headerReactIconColor =
+    activeLayout?.mode === "dark"
+      ? data.config.site.IconImageMenuHeaderReactIconesTagColorDark
+      : data.config.site.IconImageMenuHeaderReactIconesTagColorLight;
+  const headerReactIconSize = data.config.site.IconImageMenuHeaderReactIconesTagSize;
+  const headerReactIconStyle: CSSProperties = {
+    color: headerReactIconColor?.trim() || undefined,
+    fontSize: headerReactIconSize?.trim() || undefined,
+  };
 
   const ownerLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchOwnerLabel", "Owner");
   const repoLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchRepoLabel", "Repository");

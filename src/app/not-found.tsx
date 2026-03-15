@@ -217,11 +217,27 @@ export default function NotFound() {
   }, [isCheckingOrLoading]);
 
   const basePath = getBasePath();
-  const headerName = resolveHeaderName(
-    standaloneConfig?.siteConfig?.SiteHeaderName,
-    standaloneConfig?.siteConfig?.name
-  );
-  const iconImage = resolveIconPath(standaloneConfig?.siteConfig?.SiteIconPath, basePath);
+  const siteConfig = standaloneConfig?.siteConfig;
+  const headerName = resolveHeaderName(siteConfig?.SiteHeaderName, siteConfig?.name);
+
+  const rawIconImage = siteConfig
+    ? (nextModeIsDark
+        ? siteConfig.IconImageMenuHeaderDark?.trim()
+        : siteConfig.IconImageMenuHeaderLight?.trim()) ||
+      siteConfig.IconImageMenuHeader?.trim() ||
+      siteConfig.SiteIconPath?.trim()
+    : undefined;
+  const iconImage = resolveIconPath(rawIconImage, basePath);
+  const useReactHeaderIcon = Boolean(siteConfig?.IconImageMenuHeaderReactIcones);
+  const reactHeaderIconTag = siteConfig?.IconImageMenuHeaderReactIconesTag;
+  const headerReactIconStyle: React.CSSProperties = {
+    color: (nextModeIsDark
+      ? siteConfig?.IconImageMenuHeaderReactIconesTagColorDark
+      : siteConfig?.IconImageMenuHeaderReactIconesTagColorLight
+    )?.trim() || undefined,
+    fontSize: siteConfig?.IconImageMenuHeaderReactIconesTagSize?.trim() || undefined,
+  };
+
   const header = standaloneConfig ? (
     <SearchShellHeader
       siteName={headerName}
@@ -236,6 +252,9 @@ export default function NotFound() {
       canToggleMode={canToggleMode}
       onToggleMode={onToggleMode}
       iconImage={iconImage}
+      useReactHeaderIcon={useReactHeaderIcon}
+      reactHeaderIconTag={reactHeaderIconTag}
+      headerReactIconStyle={headerReactIconStyle}
       getLanguageLabel={getLanguageLabel}
     />
   ) : (
