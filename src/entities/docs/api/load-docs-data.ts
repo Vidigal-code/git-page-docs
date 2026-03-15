@@ -102,8 +102,8 @@ function toRawGithubUrl(url: string): string {
       return url;
     }
     const parts = parsed.pathname.split("/").filter(Boolean);
-    const blobIndex = parts.indexOf("blob");
-    if (parts.length >= 5 && blobIndex === 2) {
+    const blobOrTreeIndex = parts.findIndex((part) => part === "blob" || part === "tree");
+    if (parts.length >= 5 && blobOrTreeIndex === 2) {
       const owner = parts[0];
       const repo = parts[1];
       const branch = parts[3];
