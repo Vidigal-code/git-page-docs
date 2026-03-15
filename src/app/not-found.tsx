@@ -56,6 +56,7 @@ type ParsedPath = { owner: string; repo: string; version?: string };
 type VersionConfig = { routes?: RouteConfig[]; "menus-header"?: HeaderMenuItem[] };
 type ThemeMode = "light" | "dark";
 type SupportedLanguage = "en" | "pt" | "es";
+const REQUEST_TIMEOUT_MS = 12000;
 
 const DEFAULT_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
 const DEFAULT_TEMPLATES_BASE_PATH = "gitpagedocs/layouts/";
@@ -63,6 +64,80 @@ const OFFICIAL_LAYOUTS_CONFIG_URL =
   "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json";
 const OFFICIAL_LAYOUTS_TEMPLATES_URL =
   "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates";
+const FALLBACK_LAYOUT_ID = "gitpagedocs-fallback-dark";
+
+function buildFallbackLayoutsAndThemes(): {
+  layoutsConfig: LayoutsConfig;
+  themes: Record<string, ThemeTemplate>;
+} {
+  const fallbackLayout: LayoutItem = {
+    id: FALLBACK_LAYOUT_ID,
+    name: "Fallback Dark",
+    author: "gitpagedocs",
+    file: "templates/fallback-dark.json",
+    preview: "",
+    supportsLightAndDarkModes: false,
+    mode: "dark",
+  };
+
+  const fallbackTheme: ThemeTemplate = {
+    id: FALLBACK_LAYOUT_ID,
+    name: "Fallback Dark",
+    author: "gitpagedocs",
+    version: "1.0.0",
+    mode: "dark",
+    supportsLightAndDarkModes: false,
+    colors: {
+      background: "#0b0f15",
+      primary: "#7c3aed",
+      secondary: "#22d3ee",
+      text: "#e2e8f0",
+      textSecondary: "#94a3b8",
+      cardBackground: "#0f172a",
+      cardBorder: "#334155",
+    },
+    typography: {
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: {
+        base: "16px",
+        heading: "28px",
+        small: "14px",
+      },
+    },
+    components: {
+      header: {
+        backgroundColor: "#0b1220",
+        borderBottom: "1px solid #334155",
+      },
+      button: {
+        borderRadius: "10px",
+        border: "1px solid #334155",
+      },
+      select: {
+        borderRadius: "10px",
+        border: "1px solid #334155",
+        backgroundColor: "#0f172a",
+      },
+      card: {
+        borderRadius: "16px",
+        boxShadow: "0 18px 60px rgba(0, 0, 0, 0.35)",
+      },
+      headerControls: {
+        common: {
+          borderRadius: "10px",
+          border: "1px solid #334155",
+          backgroundColor: "#0f172a",
+        },
+      },
+    },
+    animations: {},
+  };
+
+  return {
+    layoutsConfig: { layouts: [fallbackLayout] },
+    themes: { [FALLBACK_LAYOUT_ID]: fallbackTheme },
+  };
+}
 
 function normalizeRelativePath(input: string): string {
   return input.replace(/^\/+/, "");
@@ -110,14 +185,18 @@ function buildGithubRawCandidates(owner: string, repo: string, relativePath: str
 }
 
 async function tryFetchText(url: string): Promise<string | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetch(url, { cache: "no-store", signal: controller.signal });
     if (!response.ok) {
       return null;
     }
     return await response.text();
   } catch {
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -304,7 +383,20 @@ async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, re
   return { layoutsConfig, themes };
 }
 
-async function loadRemoteDocsData(owner: string, repo: string, selectedVersionId?: string): Promise<LoadedDocsData | null> {
+function pickRoutePathForLanguage(
+  route: RouteConfig,
+  language: LanguageCode,
+  defaultLanguage: LanguageCode,
+): string | undefined {
+  return route.path[language] ?? route.path[defaultLanguage] ?? route.path.en ?? route.path.pt ?? route.path.es ?? Object.values(route.path)[0];
+}
+
+async function loadRemoteDocsData(
+  owner: string,
+  repo: string,
+  selectedVersionId?: string,
+  selectedLanguage: SupportedLanguage = "en",
+): Promise<LoadedDocsData | null> {
   const config = await fetchRepoJson<GitPageDocsConfig>(owner, repo, "gitpagedocs/config.json");
   if (!config) {
     return null;
@@ -326,25 +418,45 @@ async function loadRemoteDocsData(owner: string, repo: string, selectedVersionId
     }
   }
 
+  const language: LanguageCode = selectedLanguage || config.site.defaultLanguage || "en";
+  const normalizedRoutes: RouteConfig[] = routes
+    .map((route) => {
+      const pickedPath = pickRoutePathForLanguage(route, language, config.site.defaultLanguage);
+      if (!pickedPath) {
+        return null;
+      }
+      return {
+        ...route,
+        path: {
+          [language]: pickedPath,
+        },
+      };
+    })
+    .filter((route): route is RouteConfig => route !== null);
+
   const effectiveConfig: GitPageDocsConfig = {
     ...config,
-    routes,
+    site: {
+      ...config.site,
+      defaultLanguage: language,
+    },
+    routes: normalizedRoutes,
     "menus-header": menusHeader,
   };
 
-  const availableLanguages = getAvailableLanguages(routes, effectiveConfig.site.defaultLanguage);
+  const availableLanguages: LanguageCode[] = [language];
   const docs = await Promise.all(
-    routes.map(async (route) => {
+    normalizedRoutes.map(async (route) => {
       const markdownByLanguage: Record<LanguageCode, string> = {};
       await Promise.all(
-        availableLanguages.map(async (language) => {
-          const markdownPath = route.path[language];
+        availableLanguages.map(async (langCode) => {
+          const markdownPath = route.path[langCode];
           if (!markdownPath) {
-            markdownByLanguage[language] = "<p>Missing language file path in config.</p>";
+            markdownByLanguage[langCode] = "<p>Missing language file path in config.</p>";
             return;
           }
           const markdown = await fetchRepoText(owner, repo, markdownPath);
-          markdownByLanguage[language] = markdown
+          markdownByLanguage[langCode] = markdown
             ? (marked.parse(stripFrontMatter(markdown)) as string)
             : "<p>Unable to load remote markdown file.</p>";
         }),
@@ -356,7 +468,8 @@ async function loadRemoteDocsData(owner: string, repo: string, selectedVersionId
     }),
   );
 
-  const { layoutsConfig, themes } = await loadLayoutsAndThemes(effectiveConfig, owner, repo);
+  // Keep fallback rendering fast and resilient: avoid loading all remote templates in not-found path.
+  const { layoutsConfig, themes } = buildFallbackLayoutsAndThemes();
 
   return {
     config: effectiveConfig,
@@ -410,6 +523,7 @@ export default function NotFound() {
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
   const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
   const [appLoading, setAppLoading] = useState(false);
+  const [appLoadFailed, setAppLoadFailed] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -443,15 +557,21 @@ export default function NotFound() {
   useEffect(() => {
     if (!pathOwner || !pathRepo || repoStatus !== "installed") {
       setLoadedData(null);
+      setAppLoadFailed(false);
       return;
     }
 
     let cancelled = false;
     setAppLoading(true);
-    loadRemoteDocsData(pathOwner, pathRepo, pathVersion)
+    setAppLoadFailed(false);
+    loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang)
       .then((data) => {
         if (cancelled) return;
-        setLoadedData(data);
+        if (data) {
+          setLoadedData(data);
+          return;
+        }
+        setAppLoadFailed(true);
       })
       .finally(() => {
         if (!cancelled) {
@@ -462,7 +582,7 @@ export default function NotFound() {
     return () => {
       cancelled = true;
     };
-  }, [pathOwner, pathRepo, pathVersion, repoStatus]);
+  }, [pathOwner, pathRepo, pathVersion, repoStatus, lang]);
 
   if (!mounted) {
     return (
@@ -512,6 +632,7 @@ export default function NotFound() {
                 setPathVersion(undefined);
                 setRepoStatus("unknown");
                 setLoadedData(null);
+                setAppLoadFailed(false);
                 const basePath = getBasePath();
                 const nextPath = `${basePath}/${owner}/${repo}/`;
                 window.history.replaceState({}, "", nextPath);
@@ -549,7 +670,13 @@ export default function NotFound() {
           <section style={styles.previewSection}>
             <p style={styles.previewTitle}>{lang === "pt" ? "Carregando app completo..." : lang === "es" ? "Cargando app completo..." : "Loading full app..."}</p>
             <p style={styles.loading}>
-              {appLoading
+              {appLoadFailed
+                ? lang === "pt"
+                  ? "Falha ao montar o app completo. Tente buscar novamente."
+                  : lang === "es"
+                    ? "No se pudo montar la app completa. Intenta buscar de nuevo."
+                    : "Could not render full app. Try searching again."
+                : appLoading
                 ? lang === "pt"
                   ? "Montando shell completo da documentação remota."
                   : lang === "es"
