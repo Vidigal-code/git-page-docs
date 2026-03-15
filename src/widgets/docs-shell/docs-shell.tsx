@@ -341,6 +341,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const [expandedMenuMap, setExpandedMenuMap] = useState<Record<string, boolean>>({});
   const languageRestoredRef = useRef(false);
   const themeModeRestoredRef = useRef(false);
+  const quickNavListRef = useRef<HTMLDivElement | null>(null);
+  const quickNavItemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
   const initialThemeBase =
@@ -501,6 +503,25 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setQuickNavQuery("");
     setQuickNavActiveIndex(0);
   }
+
+  useEffect(() => {
+    if (!quickNavOpen) {
+      return;
+    }
+    const list = quickNavListRef.current;
+    const activeButton = quickNavItemRefs.current[quickNavActiveIndex];
+    if (!list || !activeButton) {
+      return;
+    }
+    activeButton.scrollIntoView({ block: "nearest" });
+  }, [quickNavOpen, quickNavActiveIndex, filteredQuickNavEntries.length]);
+
+  useEffect(() => {
+    if (!quickNavOpen) {
+      return;
+    }
+    quickNavListRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  }, [quickNavOpen, quickNavQuery]);
 
   useEffect(() => {
     if (!activeNavigation) {
@@ -1232,10 +1253,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 }
               }}
             />
-            <div className={styles.quickNavList}>
+            <div className={styles.quickNavList} ref={quickNavListRef}>
               {filteredQuickNavEntries.map((entry, index) => (
                 <button
                   key={`quick-${entry.key}`}
+                  ref={(element) => {
+                    quickNavItemRefs.current[index] = element;
+                  }}
                   className={`${styles.menuButton} ${index === quickNavActiveIndex ? styles.quickNavItemActive : ""}`}
                   onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys)}
                   onMouseEnter={() => setQuickNavActiveIndex(index)}

@@ -500,7 +500,7 @@
   background: rgba(2, 6, 23, 0.66);
   display: grid;
   place-items: start center;
-  padding: 10vh 12px 12px;
+  padding: clamp(56px, 10vh, 96px) 12px 12px;
   z-index: 40;
   overflow-y: auto;
 }
