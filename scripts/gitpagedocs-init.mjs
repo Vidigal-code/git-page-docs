@@ -9,6 +9,10 @@ const ROOT = process.cwd();
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = path.join(SCRIPT_DIR, "..");
 const PREBUILT_DIR = path.join(PKG_ROOT, "prebuilt");
+const OFFICIAL_LAYOUTS_CONFIG_URL =
+  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json";
+const OFFICIAL_LAYOUTS_TEMPLATES_URL =
+  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates";
 
 const LAYOUTS = [
   {
@@ -1169,7 +1173,9 @@ function extractLanguageFromPath(docPath) {
   return match?.[1];
 }
 
-function buildConfigArtifacts() {
+function buildConfigArtifacts(options = {}) {
+  const useLocalLayoutConfig = Boolean(options.useLocalLayoutConfig);
+  const useOfficialLayouts = !useLocalLayoutConfig;
   const versionRoutes_1_0_0 = [
     {
       id: 0,
@@ -1348,7 +1354,9 @@ function buildConfigArtifacts() {
       IconProjectLinkReactIconesTagColorDark: "White",
       IconProjectLinkReactIconesTagColorLight: "black",
       IconProjectLinkReactIconesTagSize: "25px",
-      layoutsConfigPath: "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
+      layoutsConfigPathOficial: useOfficialLayouts,
+      layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
+      layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",
       rendering: "https://vidigal-code.github.io/git-page-docs/",
       langmenu: {
         pt: {
@@ -1512,12 +1520,13 @@ function buildConfigArtifacts() {
 function parseCliOptions(argv, env) {
   const isBuild = argv.includes("--build") || env.GITPAGEDOCS_BUILD === "1";
   const isServe = argv.includes("--serve");
+  const useLocalLayoutConfig = argv.includes("--layoutconfig");
   const mode = argv.includes("--full") ? "full" : "config-only";
   const outputDir = "gitpagedocs";
-  return { isBuild, isServe, mode, outputDir };
+  return { isBuild, isServe, mode, outputDir, useLocalLayoutConfig };
 }
 
-async function writeConfigOnlyOutput(outputDir, artifacts) {
+async function writeConfigOnlyOutput(outputDir, artifacts, options) {
   // Keep only versioned docs output in docs/, removing legacy root language folders.
   for (const legacyLanguageDir of ["en", "pt", "es"]) {
     const legacyPath = path.join(ROOT, outputDir, "docs", legacyLanguageDir);
@@ -1527,16 +1536,20 @@ async function writeConfigOnlyOutput(outputDir, artifacts) {
   }
 
   await writeJson(`${outputDir}/config.json`, artifacts.rootConfig);
-  await writeJson(`${outputDir}/layouts/layoutsConfig.json`, artifacts.layoutsConfig);
-  await writeJson(`${outputDir}/layouts/layoutsFallbackConfig.json`, artifacts.fallbackLayoutsConfig);
+  const layoutsPath = path.join(ROOT, outputDir, "layouts");
+  if (options.useLocalLayoutConfig) {
+    await writeJson(`${outputDir}/layouts/layoutsConfig.json`, artifacts.layoutsConfig);
+    await writeJson(`${outputDir}/layouts/layoutsFallbackConfig.json`, artifacts.fallbackLayoutsConfig);
+    for (const layout of LAYOUTS) {
+      const template = createThemeTemplate(layout);
+      await writeJson(`${outputDir}/layouts/${layout.file}`, template);
+    }
+  } else if (existsSync(layoutsPath)) {
+    rmSync(layoutsPath, { recursive: true, force: true });
+  }
 
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
     await writeJson(`${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);
-  }
-
-  for (const layout of LAYOUTS) {
-    const template = createThemeTemplate(layout);
-    await writeJson(`${outputDir}/layouts/${layout.file}`, template);
   }
 
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
@@ -1566,11 +1579,16 @@ async function writeConfigOnlyOutput(outputDir, artifacts) {
 
 async function run() {
   const options = parseCliOptions(process.argv, process.env);
-  const artifacts = buildConfigArtifacts();
-  await writeConfigOnlyOutput(options.outputDir, artifacts);
+  const artifacts = buildConfigArtifacts({ useLocalLayoutConfig: options.useLocalLayoutConfig });
+  await writeConfigOnlyOutput(options.outputDir, artifacts, options);
 
   console.log(`Generated: ${options.outputDir}/ (config-only)`);
   console.log("No index.html/index.js generated.");
+  if (options.useLocalLayoutConfig) {
+    console.log("Local layouts generated in gitpagedocs/layouts/ (--layoutconfig).");
+  } else {
+    console.log("Using official remote layouts config by default (no local gitpagedocs/layouts generated).");
+  }
   if (options.isBuild) {
     console.log("`--build` keeps compatibility flag but output remains gitpagedocs/.");
   }

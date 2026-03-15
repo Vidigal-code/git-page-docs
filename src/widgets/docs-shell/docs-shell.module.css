@@ -613,11 +613,13 @@
   place-items: center;
   z-index: 65;
   padding: 16px;
+  overflow-y: auto;
 }
 
 .focusModeCard {
-  width: min(980px, 96vw);
-  max-height: 90vh;
+  width: min(980px, 100%);
+  max-width: 100%;
+  max-height: calc(100dvh - 32px);
   background: var(--card-background);
   border: 1px solid var(--card-border);
   border-radius: 14px;
@@ -647,8 +649,10 @@
   padding: clamp(12px, 2vw, 18px);
   overflow-y: auto;
   min-height: 180px;
-  max-height: 64vh;
+  max-height: min(64vh, calc(100dvh - 220px));
   background: color-mix(in srgb, var(--background) 86%, transparent);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .focusModeFooter {
@@ -742,11 +746,11 @@
 
   .focusModeCard {
     width: min(780px, 96vw);
-    max-height: 92vh;
+    max-height: calc(100dvh - 24px);
   }
 
   .focusModeBody {
-    max-height: 66vh;
+    max-height: calc(100dvh - 220px);
   }
 }
 
@@ -763,16 +767,22 @@
     padding: 16px;
   }
 
+  .focusModeOverlay {
+    padding: 8px;
+    place-items: start center;
+  }
+
   .focusModeCard {
-    width: min(520px, 98vw);
-    max-height: 94vh;
-    padding: 12px;
+    width: 100%;
+    max-height: calc(100dvh - 16px);
+    padding: 10px;
     border-radius: 12px;
   }
 
   .focusModeBody {
-    max-height: 68vh;
-    padding: 12px;
+    min-height: 140px;
+    max-height: calc(100dvh - 210px);
+    padding: 10px;
   }
 
   .focusModeFooter {

@@ -281,6 +281,9 @@ async function loadLayoutsAndThemes(options: {
   isLocal: boolean;
   owner?: string;
   repo?: string;
+  useOfficialLayouts?: boolean;
+  officialLayoutsConfigPath?: string;
+  officialLayoutsTemplatesPath?: string;
   layoutsConfigPath?: string;
   layoutsConfigPathTemplates?: string;
 }): Promise<{
@@ -289,17 +292,32 @@ async function loadLayoutsAndThemes(options: {
 }> {
   let layoutsConfig: LayoutsConfig | null = null;
   let remoteTemplatesBaseUrl: string | undefined;
+  const preferredRemoteLayoutsPath = options.officialLayoutsConfigPath || options.layoutsConfigPath;
+  const preferredRemoteTemplatesPath = options.officialLayoutsTemplatesPath || options.layoutsConfigPathTemplates;
 
-  if (options.isLocal) {
+  if (options.useOfficialLayouts && preferredRemoteLayoutsPath) {
+    const remoteConfig = await readRemoteJson<LayoutsConfig>(preferredRemoteLayoutsPath);
+    if (remoteConfig?.layouts?.length) {
+      layoutsConfig = remoteConfig;
+      remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
+        preferredRemoteLayoutsPath,
+        preferredRemoteTemplatesPath,
+        options.owner,
+        options.repo,
+      );
+    }
+  }
+
+  if (!layoutsConfig && options.isLocal) {
     layoutsConfig = await tryReadJsonFile<LayoutsConfig>(DEFAULT_LAYOUTS_PATH);
-  } else {
-    if (options.layoutsConfigPath) {
-      const remoteConfig = await readRemoteJson<LayoutsConfig>(options.layoutsConfigPath);
+  } else if (!layoutsConfig) {
+    if (preferredRemoteLayoutsPath) {
+      const remoteConfig = await readRemoteJson<LayoutsConfig>(preferredRemoteLayoutsPath);
       if (remoteConfig?.layouts?.length) {
         layoutsConfig = remoteConfig;
         remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
-          options.layoutsConfigPath,
-          options.layoutsConfigPathTemplates,
+          preferredRemoteLayoutsPath,
+          preferredRemoteTemplatesPath,
           options.owner,
           options.repo,
         );
@@ -312,7 +330,7 @@ async function loadLayoutsAndThemes(options: {
         layoutsConfig = repoLayouts;
         remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
           undefined,
-          options.layoutsConfigPathTemplates,
+          preferredRemoteTemplatesPath,
           options.owner,
           options.repo,
         );
@@ -464,6 +482,9 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     isLocal: local,
     owner,
     repo,
+    useOfficialLayouts: effectiveConfig.site.layoutsConfigPathOficial === true,
+    officialLayoutsConfigPath: effectiveConfig.site.layoutsConfigPathOficialUrl,
+    officialLayoutsTemplatesPath: effectiveConfig.site.layoutsConfigPathTemplatesOficial,
     layoutsConfigPath: effectiveConfig.site.layoutsConfigPath,
     layoutsConfigPathTemplates: effectiveConfig.site.layoutsConfigPathTemplates,
   });

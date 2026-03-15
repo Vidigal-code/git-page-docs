@@ -7,8 +7,8 @@
       "pt",
       "es"
     ],
-    "HideThemeSelector": true,
-    "ThemeDefault": "nord-dark",
+    "HideThemeSelector": false,
+    "ThemeDefault": "aurora-dark",
     "ThemeModeDefault": "dark",
     "ActiveNavigation": true,
     "FocusMode": true,
@@ -26,7 +26,9 @@
     "IconProjectLinkReactIconesTagColorDark": "White",
     "IconProjectLinkReactIconesTagColorLight": "black",
     "IconProjectLinkReactIconesTagSize": "25px",
-    "layoutsConfigPath": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
+    "layoutsConfigPathOficial": false,
+    "layoutsConfigPathTemplatesOficial": "",
+    "layoutsConfigPathOficialUrl": "",
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
     "langmenu": {
       "pt": {

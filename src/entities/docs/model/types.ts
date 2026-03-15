@@ -24,6 +24,9 @@ export interface SiteConfig {
   IconProjectLinkReactIconesTagColorDark?: string;
   IconProjectLinkReactIconesTagColorLight?: string;
   IconProjectLinkReactIconesTagSize?: string;
+  layoutsConfigPathOficial?: boolean;
+  layoutsConfigPathOficialUrl?: string;
+  layoutsConfigPathTemplatesOficial?: string;
   layoutsConfigPath?: string;
   layoutsConfigPathTemplates?: string;
   rendering: string;

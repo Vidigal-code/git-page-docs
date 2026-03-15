@@ -23,6 +23,7 @@ function resolveThemeByMode(layouts: LayoutItem[], active: LayoutItem, mode: "li
 
 function toCssVars(theme: ThemeTemplate | undefined): CSSProperties {
   const colors = theme?.colors ?? {};
+  const header = (theme?.components.header as { backgroundColor?: string; borderBottom?: string } | undefined) ?? {};
   return {
     ["--background" as string]: colors.background ?? "#0b0f15",
     ["--primary" as string]: colors.primary ?? "#7c3aed",
@@ -31,6 +32,8 @@ function toCssVars(theme: ThemeTemplate | undefined): CSSProperties {
     ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
     ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
     ["--card-border" as string]: colors.cardBorder ?? "#334155",
+    ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? "#0f172a",
+    ["--header-border" as string]: header.borderBottom ?? `1px solid ${colors.cardBorder ?? "#334155"}`,
   };
 }
 
