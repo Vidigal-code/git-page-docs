@@ -123,6 +123,10 @@ function buildThemeModeStorageKey(siteName: string): string {
   return `git-page-docs:mode:${siteName.toLowerCase().replaceAll(" ", "-")}`;
 }
 
+function buildThemeLayoutStorageKey(siteName: string): string {
+  return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
+}
+
 interface MenuEntry {
   key: string;
   id: number;
@@ -322,6 +326,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const languageStorageKey = buildLanguageStorageKey(data.config.site.name);
   const versionStorageKey = buildVersionStorageKey(data.config.site.name);
   const themeModeStorageKey = buildThemeModeStorageKey(data.config.site.name);
+  const themeLayoutStorageKey = buildThemeLayoutStorageKey(data.config.site.name);
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
   const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
   const [routeIndex, setRouteIndex] = useState(0);
@@ -574,6 +579,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     try {
       const urlMode = searchParams.get("modetheme");
       const savedMode = window.localStorage.getItem(themeModeStorageKey);
+      const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
       const targetMode =
         urlMode === "dark" || urlMode === "light"
           ? urlMode
@@ -581,7 +587,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             ? savedMode
             : configuredDefaultMode;
       const baseLayout =
-        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
+        data.layoutsConfig.layouts.find((layout) => layout.id === savedThemeId) ??
+        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ??
+        data.layoutsConfig.layouts[0];
       if (baseLayout) {
         const resolved = resolveThemeByMode(data.layoutsConfig.layouts, baseLayout, targetMode);
         queueMicrotask(() => {
@@ -595,7 +603,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
 
     themeModeRestoredRef.current = true;
-  }, [themeModeStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId, searchParams]);
+  }, [themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId, searchParams]);
 
   useEffect(() => {
     if (!themeModeRestoredRef.current || !activeLayout?.mode) {
@@ -608,6 +616,18 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       // Ignore localStorage errors.
     }
   }, [themeModeStorageKey, activeLayout?.mode]);
+
+  useEffect(() => {
+    if (!themeModeRestoredRef.current || !activeThemeId) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(themeLayoutStorageKey, activeThemeId);
+    } catch {
+      // Ignore localStorage errors.
+    }
+  }, [themeLayoutStorageKey, activeThemeId]);
 
   useEffect(() => {
     function syncThemeFromStorage() {

@@ -55,6 +55,14 @@ function resolveHeaderReactIcon(tag: string | undefined, mode: "light" | "dark" 
   return mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />;
 }
 
+function buildThemeModeStorageKey(siteName: string): string {
+  return `git-page-docs:mode:${siteName.toLowerCase().replaceAll(" ", "-")}`;
+}
+
+function buildThemeLayoutStorageKey(siteName: string): string {
+  return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
+}
+
 export function RepositorySearchShell({
   data,
   repositoryNotUsingGitPageDocs,
@@ -65,6 +73,8 @@ export function RepositorySearchShell({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const themeModeStorageKey = buildThemeModeStorageKey(data.config.site.name);
+  const themeLayoutStorageKey = buildThemeLayoutStorageKey(data.config.site.name);
   const defaultLanguage = data.config.site.defaultLanguage;
   const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
   const [ownerInput, setOwnerInput] = useState(data.activeRepository.owner ?? "");
@@ -128,19 +138,50 @@ export function RepositorySearchShell({
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
 
-  // Handle modetheme from URL on mount
+  // Restore theme mode + selected template family.
   useEffect(() => {
-    const urlMode = searchParams.get("modetheme");
-    if (urlMode === "dark" || urlMode === "light") {
+    try {
+      const urlMode = searchParams.get("modetheme");
+      const savedMode = window.localStorage.getItem(themeModeStorageKey);
+      const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
+      const targetMode =
+        urlMode === "dark" || urlMode === "light"
+          ? urlMode
+          : savedMode === "light" || savedMode === "dark"
+            ? savedMode
+            : configuredDefaultMode;
       const base =
-        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
+        data.layoutsConfig.layouts.find((layout) => layout.id === savedThemeId) ??
+        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ??
+        data.layoutsConfig.layouts[0];
       if (base) {
-        const resolved = resolveThemeByMode(data.layoutsConfig.layouts, base, urlMode);
+        const resolved = resolveThemeByMode(data.layoutsConfig.layouts, base, targetMode);
         setActiveThemeId(resolved.id);
       }
+    } catch {
+      // Ignore localStorage errors.
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount
-  }, [searchParams]);
+  }, [searchParams, themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId]);
+
+  useEffect(() => {
+    if (activeLayout?.mode === "dark" || activeLayout?.mode === "light") {
+      try {
+        window.localStorage.setItem(themeModeStorageKey, activeLayout.mode);
+      } catch {
+        // Ignore localStorage errors.
+      }
+    }
+  }, [activeLayout?.mode, themeModeStorageKey]);
+
+  useEffect(() => {
+    if (activeThemeId) {
+      try {
+        window.localStorage.setItem(themeLayoutStorageKey, activeThemeId);
+      } catch {
+        // Ignore localStorage errors.
+      }
+    }
+  }, [activeThemeId, themeLayoutStorageKey]);
 
   // Handle repository identification via URL hash (#/owner/repo) on mount only
   useEffect(() => {
