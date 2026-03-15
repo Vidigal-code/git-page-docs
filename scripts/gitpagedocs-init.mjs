@@ -792,42 +792,47 @@ The runtime expects this structure:
 `,
     gettingStarted: `# Getting Started
 
-This guide configures the project from zero to running docs.
+This guide configures your repository from zero to running docs.
 
 ## Prerequisites
 
 - Node.js 20+
-- npm 10+ (or pnpm if preferred)
+- npm 10+
 
-## Local setup
+## Install and generate
 
-1. Install dependencies:
-   - \`npm install\`
-2. Generate/update docs assets:
-   - \`npm run gitpagedocs\`
-3. Start development:
+1. Install package:
+   - \`npm install gitpagedocs\`
+2. Generate docs config and versions:
+   - \`npx gitpagedocs\`
+3. Optional: generate local layouts/templates:
+   - \`npx gitpagedocs --layoutconfig\`
+
+## Local run
+
+1. Development:
    - \`npm run dev\`
-4. Build + run production locally:
+2. Production locally:
    - \`npm run build\`
    - \`npm start\`
 
 ## CLI behavior
 
-\`npx gitpagedocs\` (or \`npm run gitpagedocs\`) generates docs assets in the official \`gitpagedocs/\` folder.
+\`npx gitpagedocs\` generates only artifacts in \`gitpagedocs/\`:
 
-- Generates only markdown/json artifacts
-- Does not generate \`index.html\`
-- Does not generate \`index.js\`
-- Does not run install commands
+- JSON + markdown docs assets
+- No \`index.html\`
+- No \`index.js\`
+- No install command execution
 
 ## Repository search mode
 
-Local repository search is controlled by environment variable:
+Local repository search is controlled by:
 
 - \`GITPAGEDOCS_REPOSITORY_SEARCH=true\`
 - \`GITPAGEDOCS_REPOSITORY_SEARCH=false\`
 
-On GitHub Pages builds (\`GITHUB_ACTIONS=true\`), repository search is always enabled.
+On GitHub Pages builds (\`GITHUB_ACTIONS=true\`), repository-search home is enabled.
 `,
     configuration: `# Configuration
 
@@ -835,71 +840,90 @@ Runtime configuration lives in \`gitpagedocs/config.json\`.
 
 ## \`site\` section
 
-Main keys:
+Important keys:
 
-- \`name\`: project title shown in UI
-- \`defaultLanguage\`: default docs language
-- \`supportedLanguages\`: available language list
-- \`HideThemeSelector\`: hide/show theme selector
-- \`ThemeDefault\`: initial theme id
-- \`ThemeModeDefault\`: initial mode (\`light\` or \`dark\`)
-- \`ProjectLink\`: repository URL used by header actions
-- \`docsVersion\`: default selected docs version
-- \`ActiveNavigation\`: enable previous/next behavior
-- \`FocusMode\`: enable focus/reader mode
-- \`IconImageMenuHeader\`: top-left icon path
-- \`layoutsConfigPath\`: remote layouts config URL fallback
-- \`rendering\`: canonical published runtime URL
+- \`name\`
+- \`defaultLanguage\`
+- \`supportedLanguages\`
+- \`docsVersion\`
+- \`rendering\`
+- \`ThemeDefault\`
+- \`ThemeModeDefault\`
+- \`ProjectLink\`
+
+## Layout source keys
+
+- \`layoutsConfigPathOficial\`
+- \`layoutsConfigPathOficialUrl\`
+- \`layoutsConfigPathTemplatesOficial\`
+- \`layoutsConfigPath\`
+- \`layoutsConfigPathTemplates\`
+
+Behavior:
+
+- If \`layoutsConfigPathOficial=true\`, runtime prefers official layout/template sources.
+- If \`layoutsConfigPathOficial=false\`, runtime prefers repository-local/custom layout sources.
 
 ## \`VersionControl\` section
 
 \`VersionControl.versions\` defines:
 
-- \`id\`: version identifier
-- \`path\`: version config path
-- optional links (\`ProjectLink\`, \`branch\`, \`release\`, \`commit\`)
+- \`id\`
+- \`path\`
+- optional metadata links (\`ProjectLink\`, \`branch\`, \`release\`, \`commit\`)
 
-## Navigation and routes
+## Navigation
 
 - \`routes\`: markdown paths per language
 - \`menus-header\`: hierarchical menu model
-- \`translations\`: UI labels for not-found and navigation
+- \`translations\`: UI labels
 
 ## Environment variables
 
-- \`GITPAGEDOCS_REPOSITORY_SEARCH\`: toggles remote repository search in local runtime
-- \`GITHUB_ACTIONS\`: when true, enables GitHub Pages specific behavior
+- \`GITPAGEDOCS_REPOSITORY_SEARCH\`: enable/disable remote repository search in local runtime
+- \`GITHUB_ACTIONS\`: enables GitHub Pages specific runtime behavior
 `,
     deployment: `# Deployment
 
-Git Page Docs runs as a Next.js app with two major targets: local server and GitHub Pages.
+Git Page Docs supports two usage models:
 
-## Local deployment
+1. Use the official viewer site
+2. Self-host your own GitHub Pages runtime
+
+## Official viewer site
 
 Use:
 
-1. \`npm run build\`
-2. \`npm start\`
+- \`https://vidigal-code.github.io/git-page-docs/\`
 
-This runs Node + Next.js runtime with the local \`gitpagedocs/\` folder.
+Provide owner + repository to load docs from repositories that contain \`gitpagedocs/\`.
 
-## GitHub Pages deployment
+## Self-hosted GitHub Pages
 
-In GitHub Actions builds:
+1. Generate docs:
+   - \`npx gitpagedocs\`
+   - or \`npx gitpagedocs --layoutconfig\` for local templates
+2. Set \`site.rendering\` in \`gitpagedocs/config.json\`:
+   - \`https://<your-user>.github.io/<your-repo>/\`
+3. Build and validate:
+   - \`npm run lint\`
+   - \`npm run build\`
+4. Deploy with GitHub Pages workflow.
 
-- \`GITHUB_ACTIONS=true\`
-- static export behavior is enabled by configuration
-- repository search home is always enabled
+When \`GITHUB_ACTIONS=true\`, runtime applies GitHub Pages behavior.
 
-## Publish flow
+## npm publish flows
 
-Package publish:
+Recommended: GitHub Release + CI publish.
 
-- bump version in \`package.json\`
-- run \`npm publish --access public\`
-- ensure npm auth is valid (\`npm whoami\`)
+Manual fallback:
 
-If publishing prebuilt artifacts on Windows is skipped, use CI for \`build:prebuilt\`.
+1. \`npm whoami\`
+2. \`npm run lint\`
+3. \`npm run build\`
+4. \`npm pack --ignore-scripts\`
+5. \`npm version patch\`
+6. \`npm publish --access public\`
 `,
     architecture: `# Architecture
 
@@ -940,7 +964,12 @@ This project is organized by feature boundaries and UI runtime responsibilities.
 
 Themes are JSON templates mapped by \`layoutsConfig.json\`.
 
-## Files
+## Strategy options
+
+- Default mode (\`npx gitpagedocs\`): use official layouts/templates from the upstream repository.
+- Local mode (\`npx gitpagedocs --layoutconfig\`): generate and use local templates from your repository.
+
+## Local layout files
 
 - \`gitpagedocs/layouts/layoutsConfig.json\`
 - \`gitpagedocs/layouts/layoutsFallbackConfig.json\`
@@ -948,26 +977,21 @@ Themes are JSON templates mapped by \`layoutsConfig.json\`.
 
 ## Template model
 
-Each template usually contains:
+Each template usually includes:
 
 - \`id\`, \`name\`, \`author\`, \`version\`
-- \`mode\` and dark/light pair metadata
+- \`mode\` + dark/light pairing metadata
 - \`colors\`
 - \`typography\`
-- \`components\` tokens
+- \`components\`
 - \`animations\`
 
 ## Runtime behavior
 
-- Active theme id comes from config/user selection
-- Light/dark toggle resolves paired theme by reference id
-- CSS custom properties are generated from template tokens
-
-## Good practices
-
-- keep color contrast accessible
-- keep spacing and radius scales consistent
-- define both dark and light variants when possible
+- Active theme is resolved from config/user selection.
+- Light/dark toggle resolves paired theme via reference.
+- CSS variables are generated from template tokens.
+- Runtime includes fallback behavior if a source is unavailable.
 `,
     faq: `# FAQ
 
@@ -1988,7 +2012,7 @@ async function writeConfigOnlyOutput(outputDir, artifacts, options) {
       const template = createThemeTemplate(layout);
       await writeJson(`${outputDir}/layouts/${layout.file}`, template);
     }
-  } else if (existsSync(layoutsPath)) {
+  } else if (existsSync(layoutsPath) && ROOT !== PKG_ROOT) {
     rmSync(layoutsPath, { recursive: true, force: true });
   }
 

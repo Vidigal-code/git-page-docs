@@ -341,8 +341,12 @@ async function loadLayoutsAndThemes(options: {
 }> {
   let layoutsConfig: LayoutsConfig | null = null;
   let remoteTemplatesBaseUrl: string | undefined;
-  const preferredRemoteLayoutsPath = options.officialLayoutsConfigPath || options.layoutsConfigPath;
-  const preferredRemoteTemplatesPath = options.officialLayoutsTemplatesPath || options.layoutsConfigPathTemplates;
+  const preferredRemoteLayoutsPath = options.useOfficialLayouts
+    ? options.officialLayoutsConfigPath || options.layoutsConfigPath
+    : options.layoutsConfigPath;
+  const preferredRemoteTemplatesPath = options.useOfficialLayouts
+    ? options.officialLayoutsTemplatesPath || options.layoutsConfigPathTemplates
+    : options.layoutsConfigPathTemplates;
 
   if (options.useOfficialLayouts && preferredRemoteLayoutsPath) {
     const remoteConfig = await readRemoteJson<LayoutsConfig>(preferredRemoteLayoutsPath);

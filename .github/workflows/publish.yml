@@ -29,6 +29,8 @@ jobs:
 
       - name: Build prebuilt (Next.js export, same as GitHub Pages)
         run: npm run build:prebuilt
+        env:
+          GITHUB_ACTIONS: "true"
 
       - name: Verify prebuilt matches Pages structure
         run: |

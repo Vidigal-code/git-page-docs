@@ -248,18 +248,24 @@ async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, re
   themes: Record<string, ThemeTemplate>;
 }> {
   const useOfficialLayouts = config.site.layoutsConfigPathOficial === true;
-  const preferredLayoutsConfigPath = config.site.layoutsConfigPathOficialUrl || config.site.layoutsConfigPath || OFFICIAL_LAYOUTS_CONFIG_URL;
-  const preferredTemplatesPath =
-    config.site.layoutsConfigPathTemplatesOficial || config.site.layoutsConfigPathTemplates || OFFICIAL_LAYOUTS_TEMPLATES_URL;
+  const preferredLayoutsConfigPath = useOfficialLayouts
+    ? config.site.layoutsConfigPathOficialUrl || config.site.layoutsConfigPath || OFFICIAL_LAYOUTS_CONFIG_URL
+    : config.site.layoutsConfigPath;
+  const preferredTemplatesPath = useOfficialLayouts
+    ? config.site.layoutsConfigPathTemplatesOficial || config.site.layoutsConfigPathTemplates || OFFICIAL_LAYOUTS_TEMPLATES_URL
+    : config.site.layoutsConfigPathTemplates;
 
   let layoutsConfig: LayoutsConfig | null = null;
   if (useOfficialLayouts) {
+    layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath ?? OFFICIAL_LAYOUTS_CONFIG_URL);
+  }
+  if (!layoutsConfig?.layouts?.length && !useOfficialLayouts && preferredLayoutsConfigPath) {
     layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
   }
   if (!layoutsConfig?.layouts?.length) {
     layoutsConfig = await fetchRepoJson<LayoutsConfig>(owner, repo, DEFAULT_LAYOUTS_PATH);
   }
-  if (!layoutsConfig?.layouts?.length) {
+  if (!layoutsConfig?.layouts?.length && useOfficialLayouts) {
     layoutsConfig = await fetchUrlJson<LayoutsConfig>(OFFICIAL_LAYOUTS_CONFIG_URL);
   }
   if (!layoutsConfig?.layouts?.length) {

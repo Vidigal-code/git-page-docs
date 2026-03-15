@@ -1,134 +1,225 @@
 # Git Page Docs
 
-`gitpagedocs` is a CLI to initialize and maintain the official `gitpagedocs/` directory.
+`gitpagedocs` is a CLI and runtime contract for repository documentation.
 
-Current CLI behavior:
-- generates only `gitpagedocs/` artifacts (no `index.html` / `index.js`)
-- generates versioned docs and config files
-- supports two layout strategies:
-  - default: uses official remote layouts from this repository
-  - `--layoutconfig`: generates local `gitpagedocs/layouts/**`
+It generates and maintains a `gitpagedocs/` folder with config and versioned markdown files.  
+It does **not** generate `index.html` or `index.js`.
 
-## Official Website
+## Quick Start
 
-You can use the official website to view remote documentation:
-
-- Open `https://vidigal-code.github.io/git-page-docs/`
-- Enter the GitHub owner (username) and repository name
-- If the target repository uses `gitpagedocs`, the site loads and displays its documentation
-- If the target repository does not use `gitpagedocs`, the site shows a message saying that repository is not using `gitpagedocs`
-
-## Installation
+Install in your project:
 
 ```bash
 npm install gitpagedocs
 ```
 
-You can also run without local install:
+Generate docs config and versioned files (recommended default):
 
 ```bash
 npx gitpagedocs
 ```
 
-## CLI Usage
-
-### Default mode (recommended)
-
-```bash
-npx gitpagedocs
-```
-
-Default mode generates `gitpagedocs/` and configures layout loading from the official project URLs.
-
-### Local layouts mode
+Generate docs plus local layout templates:
 
 ```bash
 npx gitpagedocs --layoutconfig
 ```
 
-This mode generates local `gitpagedocs/layouts/**` and disables official remote layout URLs.
+## Layout Strategy
 
-### Compatibility flags
+`gitpagedocs` supports two layout strategies:
+
+### 1) Default mode (`npx gitpagedocs`)
+
+- `gitpagedocs/config.json` is generated with official layout source enabled.
+- Layouts/templates are loaded from the official repository URLs:
+  - `https://github.com/Vidigal-code/git-page-docs/tree/main/gitpagedocs/layouts`
+- Best option if you want to focus only on writing docs.
+
+### 2) Local layout mode (`npx gitpagedocs --layoutconfig`)
+
+- Generates local files in `gitpagedocs/layouts/**`:
+  - `layoutsConfig.json`
+  - `layoutsFallbackConfig.json`
+  - `templates/*.json`
+- Official layout URLs are disabled in generated config.
+- Best option if you want to create and maintain your own templates in your own repository.
+
+### Fallback behavior
+
+- Runtime keeps resilient fallback behavior if a layout/template source is unavailable.
+- In local layout mode, the runtime prioritizes local repository layout sources and does not force official template URLs by default.
+
+## Use Official Site or Your Own GitHub Pages
+
+You can choose either:
+
+1. **Official viewer site**  
+   `https://vidigal-code.github.io/git-page-docs/`
+2. **Self-hosted viewer** in your own GitHub repository using GitHub Pages.
+
+This means your docs can run independently from the official domain when you publish your own site.
+
+## Self-Hosted GitHub Pages Setup
+
+### 1) Prepare your repository
+
+```bash
+npm install
+npx gitpagedocs
+```
+
+Or, if you want local templates:
+
+```bash
+npx gitpagedocs --layoutconfig
+```
+
+### 2) Configure runtime URL (`site.rendering`)
+
+Set `gitpagedocs/config.json` `site.rendering` to your GitHub Pages URL:
+
+```text
+https://<your-user>.github.io/<your-repository>/
+```
+
+Example:
+
+```text
+https://octocat.github.io/my-docs/
+```
+
+### 3) Build and validate locally
+
+```bash
+npm run lint
+npm run build
+npm start
+```
+
+### 4) Publish with GitHub Pages
+
+- Push your repository to GitHub.
+- Enable Pages for your repository (Settings -> Pages).
+- Use the repository workflow to build/deploy static output.
+
+When built with `GITHUB_ACTIONS=true`, the runtime enables GitHub Pages behavior.
+
+## Generated Structure
+
+Default mode:
+
+```text
+gitpagedocs/
+  config.json
+  docs/
+    versions/
+      1.0.0/config.json
+      1.0.0/{en,pt,es}/*.md
+      1.1.0/config.json
+      1.1.0/{en,pt,es}/*.md
+      1.1.1/config.json
+      1.1.1/{en,pt,es}/*.md
+```
+
+Local layout mode adds:
+
+```text
+gitpagedocs/layouts/
+  layoutsConfig.json
+  layoutsFallbackConfig.json
+  templates/*.json
+```
+
+## Configuration Keys (Layout Source)
+
+Main layout source keys in `gitpagedocs/config.json`:
+
+- `layoutsConfigPathOficial`
+- `layoutsConfigPathOficialUrl`
+- `layoutsConfigPathTemplatesOficial`
+- `layoutsConfigPath`
+- `layoutsConfigPathTemplates`
+
+Behavior:
+
+- If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
+- If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagedocs/layouts/**` or your custom paths).
+
+## Repository Search Behavior
+
+Repository search is controlled by environment/runtime context:
+
+- GitHub Pages builds (`GITHUB_ACTIONS=true`): repository-search home enabled.
+- Local runtime: controlled by `GITPAGEDOCS_REPOSITORY_SEARCH=true|false`.
+
+Recommended for local testing:
+
+```env
+GITPAGEDOCS_REPOSITORY_SEARCH=true
+```
+
+## Scripts
+
+- `npm run gitpagedocs` -> runs `node scripts/gitpagedocs-init.mjs`
+- `npm run gitpagedocs:full` -> compatibility alias for the same generator
+- `npm run build` -> generate `gitpagedocs/` + `next build`
+- `npm run build:prebuilt` -> generate + build + copy `out/` to `prebuilt/`
+- `npm run dev` -> `next dev`
+- `npm run start` -> `next start` (after `prestart` build)
+- `npm run lint` -> `eslint .`
+
+## Release and Publish (npm)
+
+Two supported flows are documented below.  
+**Recommended:** GitHub Release + CI publish.
+
+### A) Recommended CI flow (GitHub Release)
+
+1. Update version:
+
+```bash
+npm version patch
+```
+
+2. Push commit + tag:
+
+```bash
+git push origin main --follow-tags
+```
+
+3. Create/publish a GitHub Release for the tag.
+4. CI workflow builds, packs, and publishes to npm using `NPM_TOKEN`.
+
+### B) Manual local flow
+
+1. Validate auth and quality:
+
+```bash
+npm whoami
+npm run lint
+npm run build
+npm pack --ignore-scripts
+```
+
+2. Bump version:
+
+```bash
+npm version patch
+```
+
+3. Publish:
+
+```bash
+npm publish --access public
+```
+
+## Compatibility Flags
+
+Supported for compatibility:
 
 - `--build`
 - `--serve`
 - `--full`
 
-Note: compatibility flags no longer change artifact type. Output remains `gitpagedocs/` only, with no external command execution.
-
-## Generated Structure (summary)
-
-### Default (`npx gitpagedocs`)
-
-```text
-gitpagedocs/
-  config.json
-  docs/
-    versions/
-      1.0.0/config.json
-      1.0.0/{en,pt,es}/*.md
-      1.1.0/config.json
-      1.1.0/{en,pt,es}/*.md
-      1.1.1/config.json
-      1.1.1/{en,pt,es}/*.md
-```
-
-### Local layouts (`npx gitpagedocs --layoutconfig`)
-
-```text
-gitpagedocs/
-  config.json
-  docs/
-    versions/
-      1.0.0/config.json
-      1.0.0/{en,pt,es}/*.md
-      1.1.0/config.json
-      1.1.0/{en,pt,es}/*.md
-      1.1.1/config.json
-      1.1.1/{en,pt,es}/*.md
-  layouts/
-    layoutsConfig.json
-    layoutsFallbackConfig.json
-    templates/*.json
-```
-
-## Layout Source Configuration
-
-`gitpagedocs/config.json` now controls official layout source with:
-
-- `layoutsConfigPathOficial`
-- `layoutsConfigPathOficialUrl`
-- `layoutsConfigPathTemplatesOficial`
-
-Behavior:
-
-- If `layoutsConfigPathOficial=true`, layouts/templates are loaded from the official remote URLs.
-- If `layoutsConfigPathOficial=false`, local `gitpagedocs/layouts/**` is used.
-
-## Repository Search (GitHub Pages vs local)
-
-Repository search is no longer controlled by `gitpagedocs/config.json`.
-
-- On GitHub Pages (`GITHUB_ACTIONS=true` build):
-  - repository-search home is always enabled.
-- On local execution (`npm start` / `npm run dev`):
-  - use `GITPAGEDOCS_REPOSITORY_SEARCH=true|false` in `.env`.
-  - if `true`, it allows searching and rendering GitHub repositories.
-  - if `false`, it renders only local docs from `gitpagedocs/`.
-
-### Environment Variables
-
-- `.env.example`: local configuration template.
-- `.env`: real local runtime configuration.
-- recommended value:
-  - `GITPAGEDOCS_REPOSITORY_SEARCH=true`
-
-## Project Scripts
-
-- `npm run gitpagedocs`: runs `node scripts/gitpagedocs-init.mjs`.
-- `npm run gitpagedocs:full`: alias to `node scripts/gitpagedocs-init.mjs`.
-- `npm run build`: runs the CLI and then `next build`.
-- `npm run build:prebuilt`: runs the CLI, then `next build`, then updates `prebuilt/` from `out/`.
-- `npm run dev`: runs `next dev`.
-- `npm run start`: runs `npm run build` (prestart) and starts with `next start`.
-- `npm run lint`: runs `eslint .`.
+These flags do not change the artifact type. Output remains `gitpagedocs/`.

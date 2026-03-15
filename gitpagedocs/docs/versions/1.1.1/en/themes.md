@@ -2,7 +2,12 @@
 
 Themes are JSON templates mapped by `layoutsConfig.json`.
 
-## Files
+## Strategy options
+
+- Default mode (`npx gitpagedocs`): use official layouts/templates from the upstream repository.
+- Local mode (`npx gitpagedocs --layoutconfig`): generate and use local templates from your repository.
+
+## Local layout files
 
 - `gitpagedocs/layouts/layoutsConfig.json`
 - `gitpagedocs/layouts/layoutsFallbackConfig.json`
@@ -10,25 +15,20 @@ Themes are JSON templates mapped by `layoutsConfig.json`.
 
 ## Template model
 
-Each template usually contains:
+Each template usually includes:
 
 - `id`, `name`, `author`, `version`
-- `mode` and dark/light pair metadata
+- `mode` + dark/light pairing metadata
 - `colors`
 - `typography`
-- `components` tokens
+- `components`
 - `animations`
 
 ## Runtime behavior
 
-- Active theme id comes from config/user selection
-- Light/dark toggle resolves paired theme by reference id
-- CSS custom properties are generated from template tokens
-
-## Good practices
-
-- keep color contrast accessible
-- keep spacing and radius scales consistent
-- define both dark and light variants when possible
+- Active theme is resolved from config/user selection.
+- Light/dark toggle resolves paired theme via reference.
+- CSS variables are generated from template tokens.
+- Runtime includes fallback behavior if a source is unavailable.
 
 > Version: 1.1.1

@@ -1,32 +1,43 @@
 # Deployment
 
-Git Page Docs runs as a Next.js app with two major targets: local server and GitHub Pages.
+Git Page Docs supports two usage models:
 
-## Local deployment
+1. Use the official viewer site
+2. Self-host your own GitHub Pages runtime
+
+## Official viewer site
 
 Use:
 
-1. `npm run build`
-2. `npm start`
+- `https://vidigal-code.github.io/git-page-docs/`
 
-This runs Node + Next.js runtime with the local `gitpagedocs/` folder.
+Provide owner + repository to load docs from repositories that contain `gitpagedocs/`.
 
-## GitHub Pages deployment
+## Self-hosted GitHub Pages
 
-In GitHub Actions builds:
+1. Generate docs:
+   - `npx gitpagedocs`
+   - or `npx gitpagedocs --layoutconfig` for local templates
+2. Set `site.rendering` in `gitpagedocs/config.json`:
+   - `https://<your-user>.github.io/<your-repo>/`
+3. Build and validate:
+   - `npm run lint`
+   - `npm run build`
+4. Deploy with GitHub Pages workflow.
 
-- `GITHUB_ACTIONS=true`
-- static export behavior is enabled by configuration
-- repository search home is always enabled
+When `GITHUB_ACTIONS=true`, runtime applies GitHub Pages behavior.
 
-## Publish flow
+## npm publish flows
 
-Package publish:
+Recommended: GitHub Release + CI publish.
 
-- bump version in `package.json`
-- run `npm publish --access public`
-- ensure npm auth is valid (`npm whoami`)
+Manual fallback:
 
-If publishing prebuilt artifacts on Windows is skipped, use CI for `build:prebuilt`.
+1. `npm whoami`
+2. `npm run lint`
+3. `npm run build`
+4. `npm pack --ignore-scripts`
+5. `npm version patch`
+6. `npm publish --access public`
 
 > Version: 1.0.0

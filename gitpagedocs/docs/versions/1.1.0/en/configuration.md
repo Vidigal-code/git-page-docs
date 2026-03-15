@@ -4,39 +4,47 @@ Runtime configuration lives in `gitpagedocs/config.json`.
 
 ## `site` section
 
-Main keys:
+Important keys:
 
-- `name`: project title shown in UI
-- `defaultLanguage`: default docs language
-- `supportedLanguages`: available language list
-- `HideThemeSelector`: hide/show theme selector
-- `ThemeDefault`: initial theme id
-- `ThemeModeDefault`: initial mode (`light` or `dark`)
-- `ProjectLink`: repository URL used by header actions
-- `docsVersion`: default selected docs version
-- `ActiveNavigation`: enable previous/next behavior
-- `FocusMode`: enable focus/reader mode
-- `IconImageMenuHeader`: top-left icon path
-- `layoutsConfigPath`: remote layouts config URL fallback
-- `rendering`: canonical published runtime URL
+- `name`
+- `defaultLanguage`
+- `supportedLanguages`
+- `docsVersion`
+- `rendering`
+- `ThemeDefault`
+- `ThemeModeDefault`
+- `ProjectLink`
+
+## Layout source keys
+
+- `layoutsConfigPathOficial`
+- `layoutsConfigPathOficialUrl`
+- `layoutsConfigPathTemplatesOficial`
+- `layoutsConfigPath`
+- `layoutsConfigPathTemplates`
+
+Behavior:
+
+- If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
+- If `layoutsConfigPathOficial=false`, runtime prefers repository-local/custom layout sources.
 
 ## `VersionControl` section
 
 `VersionControl.versions` defines:
 
-- `id`: version identifier
-- `path`: version config path
-- optional links (`ProjectLink`, `branch`, `release`, `commit`)
+- `id`
+- `path`
+- optional metadata links (`ProjectLink`, `branch`, `release`, `commit`)
 
-## Navigation and routes
+## Navigation
 
 - `routes`: markdown paths per language
 - `menus-header`: hierarchical menu model
-- `translations`: UI labels for not-found and navigation
+- `translations`: UI labels
 
 ## Environment variables
 
-- `GITPAGEDOCS_REPOSITORY_SEARCH`: toggles remote repository search in local runtime
-- `GITHUB_ACTIONS`: when true, enables GitHub Pages specific behavior
+- `GITPAGEDOCS_REPOSITORY_SEARCH`: enable/disable remote repository search in local runtime
+- `GITHUB_ACTIONS`: enables GitHub Pages specific runtime behavior
 
 > Version: 1.1.0
