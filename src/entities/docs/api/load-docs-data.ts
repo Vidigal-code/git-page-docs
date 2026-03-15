@@ -453,12 +453,15 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const requestedRepo = slug?.[1];
   const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
   const repositorySearchHomeEnabled = (() => {
+    // On project repositories published to GitHub Pages, root must render local docs directly.
+    // Keep search home only for the official aggregator repository.
+    if (isGithubPagesBuild && !isOfficialSearchAggregatorRepo) {
+      return false;
+    }
     if (typeof localConfig.site.repositorySearchHome === "boolean") {
       return localConfig.site.repositorySearchHome;
     }
     if (isGithubPagesBuild) {
-      // Backward compatibility: old configs without repositorySearchHome should open docs directly
-      // for project repositories and keep search home only for the official aggregator repository.
       return isOfficialSearchAggregatorRepo;
     }
     return true;
