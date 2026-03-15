@@ -13,10 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     // fallback kept
   }
   return {
-    title: {
-      default: siteName,
-      template: `%s | ${siteName}`,
-    },
+    title: siteName,
     openGraph: {
       siteName,
     },
