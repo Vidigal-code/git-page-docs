@@ -524,6 +524,8 @@ export default function NotFound() {
   const [lang, setLang] = useState<SupportedLanguage>("en");
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
   const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
+  const [appLoading, setAppLoading] = useState(false);
+  const [appLoadFailed, setAppLoadFailed] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -571,10 +573,14 @@ export default function NotFound() {
   useEffect(() => {
     if (!pathOwner || !pathRepo || repoStatus !== "installed") {
       setLoadedData(null);
+      setAppLoading(false);
+      setAppLoadFailed(false);
       return;
     }
 
     let cancelled = false;
+    setAppLoading(true);
+    setAppLoadFailed(false);
     loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang)
       .then((data) => {
         if (cancelled) return;
@@ -582,6 +588,11 @@ export default function NotFound() {
           setLoadedData(data);
           return;
         }
+        setAppLoadFailed(true);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setAppLoading(false);
       });
 
     return () => {
@@ -604,6 +615,51 @@ export default function NotFound() {
   }
 
   const isRepoPath = pathOwner && pathRepo;
+  const isCheckingOrLoading =
+    Boolean(isRepoPath) && (repoStatus === "unknown" || repoStatus === "checking" || (repoStatus === "installed" && appLoading));
+  if (isCheckingOrLoading) {
+    return (
+      <main style={styles.main}>
+        <section style={styles.section}>
+          <h1 style={styles.title}>{lang === "pt" ? "Carregando documentação..." : lang === "es" ? "Cargando documentación..." : "Loading documentation..."}</h1>
+          <p style={styles.description}>
+            {lang === "pt"
+              ? "Repositório detectado. Abrindo o app..."
+              : lang === "es"
+                ? "Repositorio detectado. Abriendo la app..."
+                : "Repository detected. Opening the app..."}
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  if (Boolean(isRepoPath) && repoStatus === "installed" && appLoadFailed) {
+    return (
+      <main style={styles.main}>
+        <section style={styles.section}>
+          <h1 style={styles.title}>{lang === "pt" ? "Não foi possível carregar agora" : lang === "es" ? "No se pudo cargar ahora" : "Could not load right now"}</h1>
+          <p style={styles.description}>
+            {lang === "pt"
+              ? "O repositório possui gitpagedocs, mas houve falha temporária de rede. Tente novamente."
+              : lang === "es"
+                ? "El repositorio tiene gitpagedocs, pero hubo un fallo temporal de red. Intenta de nuevo."
+                : "This repository has gitpagedocs, but there was a temporary network failure. Try again."}
+          </p>
+          <button
+            type="button"
+            style={styles.button}
+            onClick={() => {
+              setRepoStatus("checking");
+            }}
+          >
+            {lang === "pt" ? "Tentar novamente" : lang === "es" ? "Intentar de nuevo" : "Try again"}
+          </button>
+        </section>
+      </main>
+    );
+  }
+
   const message = isRepoPath
     ? repoStatus === "installed"
       ? INSTALLED_NOT_PRERENDERED[lang]
@@ -619,7 +675,7 @@ export default function NotFound() {
   return (
     <main style={styles.main}>
       <section style={styles.section}>
-        <p style={styles.code}>404</p>
+        {(repoStatus === "not_installed" || !isRepoPath) && <p style={styles.code}>404</p>}
         <h1 style={styles.title}>{message}</h1>
         <p style={styles.description}>{prompt}</p>
 

@@ -694,11 +694,41 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   useEffect(() => {
     if (!showVersionSelector) return;
-    if (isRemoteRepositorySession) return;
     const params = new URLSearchParams(searchParams.toString());
     const urlVersion = params.get("version");
-    params.delete("version");
     const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
+    const pathVersionMatch = pathname.match(/\/v\/([^/]+)\/?$/);
+    const versionFromPath = pathVersionMatch?.[1];
+    const hasVersionInConfig = (versionId: string | null | undefined) =>
+      Boolean(versionId && data.availableVersions.some((v) => v.id === versionId));
+
+    if (isRemoteRepositorySession) {
+      const validUrlVersion = hasVersionInConfig(urlVersion) ? urlVersion : undefined;
+      const validPathVersion = hasVersionInConfig(versionFromPath) ? versionFromPath : undefined;
+
+      if (validUrlVersion && validUrlVersion !== validPathVersion) {
+        const basePath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        params.delete("version");
+        const target = `${basePath || ""}/v/${validUrlVersion}` || `/v/${validUrlVersion}`;
+        const qs = params.toString();
+        const nextUrl = qs ? `${target}?${qs}` : target;
+        if (typeof window !== "undefined") {
+          window.location.replace(nextUrl);
+        } else {
+          router.replace(nextUrl);
+        }
+        return;
+      }
+
+      if (urlVersion && !validUrlVersion) {
+        // Remove invalid version from query to avoid inconsistent state.
+        params.delete("version");
+        replaceUrlWithoutNavigation(pathname, params);
+      }
+      return;
+    }
+
+    params.delete("version");
     if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
       const base = pathname.replace(/\/$/, "");
       const target = `${base}/v/${urlVersion}`;
@@ -795,16 +825,19 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     if (isRemoteRepositorySession) {
       if (typeof window !== "undefined") {
         const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set("version", versionId);
+        const cleanPath = currentUrl.pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        currentUrl.pathname = `${cleanPath || ""}/v/${versionId}` || `/v/${versionId}`;
         currentUrl.searchParams.set("lang", String(language));
+        currentUrl.searchParams.delete("version");
         window.location.assign(currentUrl.toString());
       } else {
         const params = getCurrentSearchParams();
-        params.set("version", versionId);
+        params.delete("version");
         params.set("lang", String(language));
-        const cleanPath = pathname.replace(/\/$/, "") || pathname || "/";
+        const cleanPath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        const targetPath = `${cleanPath || ""}/v/${versionId}` || `/v/${versionId}`;
         const qs = params.toString();
-        const nextUrl = qs ? `${cleanPath}?${qs}` : cleanPath;
+        const nextUrl = qs ? `${targetPath}?${qs}` : targetPath;
         router.replace(nextUrl);
       }
       return;
