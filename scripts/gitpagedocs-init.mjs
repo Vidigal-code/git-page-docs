@@ -1837,7 +1837,6 @@ function buildConfigArtifacts(options = {}) {
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",
       repositorySearchHome,
       rendering: renderingUrl,
-      ProjectLink: projectLink,
       langmenu: {
         pt: {
           pt: "Portugues",
@@ -2102,7 +2101,7 @@ jobs:
         working-directory: .gitpagedocs-runtime
 
       - name: Build static site with target repository path
-        run: npm run build
+        run: npx next build
         working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
