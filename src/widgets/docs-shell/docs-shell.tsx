@@ -127,6 +127,17 @@ function buildThemeLayoutStorageKey(siteName: string): string {
   return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
 }
 
+function normalizeBasePath(pathname: string | undefined): string {
+  if (!pathname) {
+    return "";
+  }
+  const normalized = pathname.trim();
+  if (!normalized || normalized === "/") {
+    return "";
+  }
+  return normalized.endsWith("/") ? normalized.slice(0, -1) : normalized;
+}
+
 interface MenuEntry {
   key: string;
   id: number;
@@ -435,6 +446,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
+  const configuredRenderingPath = useMemo(() => {
+    try {
+      const parsed = new URL(data.config.site.rendering);
+      return normalizeBasePath(parsed.pathname);
+    } catch {
+      return "";
+    }
+  }, [data.config.site.rendering]);
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -726,8 +745,28 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     return new URLSearchParams(searchParams.toString());
   }
 
+  function ensureRuntimeBasePath(nextPathname: string): string {
+    if (typeof window === "undefined") {
+      return nextPathname;
+    }
+
+    const normalizedPath = nextPathname.startsWith("/") ? nextPathname : `/${nextPathname}`;
+    const currentPath = window.location.pathname;
+    const currentPathLower = currentPath.toLowerCase();
+    const configuredPathLower = configuredRenderingPath.toLowerCase();
+
+    if (configuredRenderingPath && (currentPathLower.startsWith(configuredPathLower) || window.location.host.endsWith("github.io"))) {
+      if (normalizedPath.toLowerCase().startsWith(configuredPathLower)) {
+        return normalizedPath;
+      }
+      return `${configuredRenderingPath}${normalizedPath}`;
+    }
+
+    return normalizedPath;
+  }
+
   function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
-    const normalizedPath = nextPathname || pathname || "/";
+    const normalizedPath = ensureRuntimeBasePath(nextPathname || pathname || "/");
     const qs = params.toString();
     const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
     if (typeof window !== "undefined") {
@@ -793,7 +832,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       const params = getCurrentSearchParams();
       params.set("version", versionId);
       params.set("lang", String(language));
-      const cleanPath = pathname.replace(/\/$/, "") || pathname || "/";
+      const cleanPath = ensureRuntimeBasePath(pathname.replace(/\/$/, "") || pathname || "/");
       const qs = params.toString();
       const nextUrl = qs ? `${cleanPath}?${qs}` : cleanPath;
       if (typeof window !== "undefined") {
