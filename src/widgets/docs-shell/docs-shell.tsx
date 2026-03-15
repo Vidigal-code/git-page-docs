@@ -127,17 +127,6 @@ function buildThemeLayoutStorageKey(siteName: string): string {
   return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
 }
 
-function normalizeBasePath(pathname: string | undefined): string {
-  if (!pathname) {
-    return "";
-  }
-  const normalized = pathname.trim();
-  if (!normalized || normalized === "/") {
-    return "";
-  }
-  return normalized.endsWith("/") ? normalized.slice(0, -1) : normalized;
-}
-
 interface MenuEntry {
   key: string;
   id: number;
@@ -446,34 +435,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
-  const configuredRenderingPath = useMemo(() => {
-    try {
-      const parsed = new URL(data.config.site.rendering);
-      return normalizeBasePath(parsed.pathname);
-    } catch {
-      return "";
-    }
-  }, [data.config.site.rendering]);
-  const runtimeBasePath = useMemo(() => {
-    if (typeof window === "undefined") {
-      return configuredRenderingPath;
-    }
-
-    const currentPath = window.location.pathname;
-    const currentParts = currentPath.split("/").filter(Boolean);
-    const hostname = window.location.hostname.toLowerCase();
-
-    // On GitHub Pages, the first segment is the project base path.
-    if (hostname.endsWith("github.io") && currentParts.length >= 2) {
-      return `/${currentParts[0]}`;
-    }
-
-    if (configuredRenderingPath && currentPath.toLowerCase().startsWith(configuredRenderingPath.toLowerCase())) {
-      return configuredRenderingPath;
-    }
-
-    return "";
-  }, [configuredRenderingPath]);
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -765,32 +726,17 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     return new URLSearchParams(searchParams.toString());
   }
 
-  function ensureRuntimeBasePath(nextPathname: string): string {
-    if (typeof window === "undefined") {
-      return nextPathname;
-    }
-
-    const normalizedPath = nextPathname.startsWith("/") ? nextPathname : `/${nextPathname}`;
-    const runtimeBasePathLower = runtimeBasePath.toLowerCase();
-
-    if (runtimeBasePath) {
-      if (normalizedPath.toLowerCase().startsWith(runtimeBasePathLower)) {
-        return normalizedPath;
-      }
-      return `${runtimeBasePath}${normalizedPath}`;
-    }
-
-    return normalizedPath;
-  }
-
   function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
-    const normalizedPath = ensureRuntimeBasePath(nextPathname || pathname || "/");
-    const qs = params.toString();
-    const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
     if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname || "/";
+      const qs = params.toString();
+      const nextUrl = qs ? `${currentPath}?${qs}` : currentPath;
       window.history.replaceState({}, "", nextUrl);
       return;
     }
+    const normalizedPath = nextPathname || pathname || "/";
+    const qs = params.toString();
+    const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
     router.replace(nextUrl);
   }
 
@@ -847,15 +793,18 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       // Ignore localStorage errors (private mode / blocked storage).
     }
     if (isRemoteRepositorySession) {
-      const params = getCurrentSearchParams();
-      params.set("version", versionId);
-      params.set("lang", String(language));
-      const cleanPath = ensureRuntimeBasePath(pathname.replace(/\/$/, "") || pathname || "/");
-      const qs = params.toString();
-      const nextUrl = qs ? `${cleanPath}?${qs}` : cleanPath;
       if (typeof window !== "undefined") {
-        window.location.assign(nextUrl);
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("version", versionId);
+        currentUrl.searchParams.set("lang", String(language));
+        window.location.assign(currentUrl.toString());
       } else {
+        const params = getCurrentSearchParams();
+        params.set("version", versionId);
+        params.set("lang", String(language));
+        const cleanPath = pathname.replace(/\/$/, "") || pathname || "/";
+        const qs = params.toString();
+        const nextUrl = qs ? `${cleanPath}?${qs}` : cleanPath;
         router.replace(nextUrl);
       }
       return;

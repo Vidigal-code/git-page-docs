@@ -524,8 +524,6 @@ export default function NotFound() {
   const [lang, setLang] = useState<SupportedLanguage>("en");
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
   const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
-  const [appLoading, setAppLoading] = useState(false);
-  const [appLoadFailed, setAppLoadFailed] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -559,13 +557,10 @@ export default function NotFound() {
   useEffect(() => {
     if (!pathOwner || !pathRepo || repoStatus !== "installed") {
       setLoadedData(null);
-      setAppLoadFailed(false);
       return;
     }
 
     let cancelled = false;
-    setAppLoading(true);
-    setAppLoadFailed(false);
     loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang)
       .then((data) => {
         if (cancelled) return;
@@ -573,13 +568,8 @@ export default function NotFound() {
           setLoadedData(data);
           return;
         }
-        setAppLoadFailed(true);
       })
-      .finally(() => {
-        if (!cancelled) {
-          setAppLoading(false);
-        }
-      });
+      .finally(() => {});
 
     return () => {
       cancelled = true;
@@ -634,7 +624,6 @@ export default function NotFound() {
                 setPathVersion(undefined);
                 setRepoStatus("unknown");
                 setLoadedData(null);
-                setAppLoadFailed(false);
                 const basePath = getBasePath();
                 const nextPath = `${basePath}/${owner}/${repo}/`;
                 window.history.replaceState({}, "", nextPath);
@@ -666,31 +655,6 @@ export default function NotFound() {
               {lang === "pt" ? "Buscar" : lang === "es" ? "Buscar" : "Search"}
             </button>
           </form>
-        )}
-
-        {repoStatus === "installed" && (
-          <section style={styles.previewSection}>
-            <p style={styles.previewTitle}>{lang === "pt" ? "Carregando app completo..." : lang === "es" ? "Cargando app completo..." : "Loading full app..."}</p>
-            <p style={styles.loading}>
-              {appLoadFailed
-                ? lang === "pt"
-                  ? "Falha ao montar o app completo. Tente buscar novamente."
-                  : lang === "es"
-                    ? "No se pudo montar la app completa. Intenta buscar de nuevo."
-                    : "Could not render full app. Try searching again."
-                : appLoading
-                ? lang === "pt"
-                  ? "Montando shell completo da documentação remota."
-                  : lang === "es"
-                    ? "Montando el shell completo de la documentación remota."
-                    : "Building full remote documentation shell."
-                : lang === "pt"
-                  ? "Se demorar, tente buscar novamente."
-                  : lang === "es"
-                    ? "Si tarda, intenta buscar nuevamente."
-                    : "If it takes too long, try searching again."}
-            </p>
-          </section>
         )}
 
         <a href={(getBasePath() ? getBasePath() + "/" : "/")} style={styles.link}>
@@ -776,27 +740,5 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#f1f5f9",
     fontWeight: 600,
     textDecoration: "none",
-  },
-  previewSection: {
-    marginTop: 16,
-    border: "1px solid #334155",
-    borderRadius: 12,
-    background: "#0b1322",
-    padding: 12,
-  },
-  previewTitle: {
-    margin: "0 0 8px 0",
-    color: "#cbd5e1",
-    fontWeight: 700,
-  },
-  previewBody: {
-    maxHeight: "45vh",
-    overflowY: "auto",
-    border: "1px solid #334155",
-    borderRadius: 10,
-    padding: 12,
-    background: "#0f172a",
-    color: "#f8fafc",
-    lineHeight: 1.55,
   },
 };
