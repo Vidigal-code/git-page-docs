@@ -4,16 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
-import { FiChevronDown, FiChevronRight, FiX } from "react-icons/fi";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
 import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LoadedDocsData } from "@/entities/docs/model/types";
-import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
-import { QuickNavigationTrigger } from "@/features/quick-navigation/ui/quick-navigation-trigger";
-import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
-import { VersionSelector } from "@/features/version-selector/ui/version-selector";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
@@ -21,7 +16,7 @@ import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
 import { useFocusMode } from "./model/use-focus-mode";
-import { buildHeaderMenuTree, flattenMenuTree, getRouteIndexByPath, type MenuNode } from "./model/menu-tree";
+import { buildHeaderMenuTree, flattenMenuTree, getRouteIndexByPath } from "./model/menu-tree";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { DocsShellControls } from "./ui/docs-shell-controls";
@@ -240,8 +235,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const {
     focusModeOpen,
     setFocusModeOpen,
-    focusModePages,
-    safeFocusModePageIndex,
     focusModeCurrentHtml,
     canFocusModeGoPrevious,
     canFocusModeGoNext,
@@ -249,7 +242,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     closeFocusMode: closeFocusModeInternal,
     onFocusModeNavigate: onFocusModeNavigateInternal,
   } = useFocusMode(markdownHtml);
-  const { versionFromPath, selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
+  const { selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
     pathname,
     versionFromQuery,
     activeVersionId: data.activeVersionId,
