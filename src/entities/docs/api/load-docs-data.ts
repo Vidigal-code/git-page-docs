@@ -172,10 +172,14 @@ function deriveRemoteTemplatesBaseUrl(
 }
 
 function buildGithubRawCandidates(owner: string, repo: string, relativePath: string): string[] {
+  const safePath = relativePath.replace(/^\/+/, "");
   return [
-    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${relativePath}`,
-    `https://raw.githubusercontent.com/${owner}/${repo}/main/${relativePath}`,
-    `https://raw.githubusercontent.com/${owner}/${repo}/master/${relativePath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${safePath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/main/${safePath}`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/master/${safePath}`,
+    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@HEAD/${safePath}`,
+    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@main/${safePath}`,
+    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@master/${safePath}`,
   ];
 }
 

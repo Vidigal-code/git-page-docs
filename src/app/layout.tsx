@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vidigal-code.github.io"),
+  metadataBase: new URL("https://vidigal-code.github.io/git-page-docs/"),
   title: {
     default: "Git Page Docs",
     template: "%s | Git Page Docs",
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
+    icon: "icon.svg",
+    shortcut: "icon.svg",
+    apple: "icon.svg",
   },
 };
 
