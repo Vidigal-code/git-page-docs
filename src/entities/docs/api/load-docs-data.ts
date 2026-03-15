@@ -14,9 +14,8 @@ import {
 } from "@/entities/docs/model/types";
 
 const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
-const DEFAULT_LAYOUTS_PATH = "public/layouts/layoutsConfig.json";
-const DEFAULT_TEMPLATES_BASE_PATH = "public/layouts/";
-const FALLBACK_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
+const DEFAULT_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
+const DEFAULT_TEMPLATES_BASE_PATH = "gitpagedocs/layouts/";
 
 function parseOwnerRepoFromRenderingUrl(rendering: string): { owner?: string; repo?: string } {
   try {
@@ -286,9 +285,6 @@ async function loadLayoutsAndThemes(options: {
 
   if (options.isLocal) {
     layoutsConfig = await tryReadJsonFile<LayoutsConfig>(DEFAULT_LAYOUTS_PATH);
-    if (!layoutsConfig?.layouts?.length) {
-      layoutsConfig = await tryReadJsonFile<LayoutsConfig>(FALLBACK_LAYOUTS_PATH);
-    }
   } else {
     if (options.layoutsConfigPath) {
       const remoteConfig = await readRemoteJson<LayoutsConfig>(options.layoutsConfigPath);
@@ -316,17 +312,13 @@ async function loadLayoutsAndThemes(options: {
       }
     }
 
-    if (!layoutsConfig) {
-      layoutsConfig = await tryReadJsonFile<LayoutsConfig>(DEFAULT_LAYOUTS_PATH);
-    }
-
     if (!layoutsConfig?.layouts?.length) {
-      layoutsConfig = await tryReadJsonFile<LayoutsConfig>(FALLBACK_LAYOUTS_PATH);
+      layoutsConfig = await tryReadJsonFile<LayoutsConfig>(DEFAULT_LAYOUTS_PATH);
     }
   }
 
   if (!layoutsConfig?.layouts?.length) {
-    throw new Error("No layouts configuration found in public/layouts/layoutsConfig.json or remote path.");
+    throw new Error("No layouts configuration found in gitpagedocs/layouts/layoutsConfig.json or remote path.");
   }
 
   const themes: Record<string, ThemeTemplate> = {};
@@ -342,13 +334,8 @@ async function loadLayoutsAndThemes(options: {
         }
 
         if (!template) {
-          const templatePath = path.join("public/layouts", layoutItem.file);
+          const templatePath = path.join("gitpagedocs/layouts", layoutItem.file);
           template = await tryReadJsonFile<ThemeTemplate>(templatePath);
-        }
-
-        if (!template) {
-          const fallbackTemplatePath = path.join("gitpagedocs/layouts", layoutItem.file);
-          template = await tryReadJsonFile<ThemeTemplate>(fallbackTemplatePath);
         }
 
         if (!template && remoteTemplatesBaseUrl && !options.isLocal) {
@@ -373,12 +360,14 @@ async function loadLayoutsAndThemes(options: {
 export async function loadDocsData(slug: string[] | undefined, selectedVersionId?: string): Promise<LoadedDocsData> {
   const localConfig = await readJsonFile<GitPageDocsConfig>(DEFAULT_CONFIG_PATH);
   const local = isLocalRuntime();
+  const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
+  const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
+  const repositorySearchEnabled = isGithubPagesBuild || repositorySearchEnabledByEnv;
 
   const requestedOwner = slug?.[0];
   const requestedRepo = slug?.[1];
-  const canUseRepositorySearch = localConfig.site.RendertoanyRepositoryviaSearch;
-  const isRepositoryRouteRequest = Boolean(canUseRepositorySearch && requestedOwner && requestedRepo);
-  const showRepositorySearchHome = Boolean(canUseRepositorySearch && !requestedOwner && !requestedRepo);
+  const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
+  const showRepositorySearchHome = Boolean(repositorySearchEnabled && !requestedOwner && !requestedRepo);
   const renderingFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
   const projectLinkFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
 
@@ -395,7 +384,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
         requestedRepo.toLowerCase() === renderingFallback.repo?.toLowerCase())),
   );
 
-  if (canUseRepositorySearch && requestedOwner && requestedRepo && !isLocalRepo) {
+  if (repositorySearchEnabled && requestedOwner && requestedRepo && !isLocalRepo) {
     source = "remote";
     owner = requestedOwner;
     repo = requestedRepo;
@@ -403,7 +392,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
 
   if (
     !showRepositorySearchHome &&
-    canUseRepositorySearch &&
+    repositorySearchEnabled &&
     !owner &&
     !repo &&
     renderingFallback.owner &&

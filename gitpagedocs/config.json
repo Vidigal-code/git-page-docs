@@ -2,6 +2,11 @@
   "site": {
     "name": "Git Pages Docs",
     "defaultLanguage": "en",
+    "supportedLanguages": [
+      "en",
+      "pt",
+      "es"
+    ],
     "HideThemeSelector": false,
     "ThemeDefault": "aurora-dark",
     "ThemeModeDefault": "dark",
@@ -22,9 +27,8 @@
     "IconProjectLinkReactIconesTagColorDark": "White",
     "IconProjectLinkReactIconesTagColorLight": "black",
     "IconProjectLinkReactIconesTagSize": "25px",
-    "layoutsConfigPath": "https://github.com/Vidigal-code/git-page-docs/blob/main/public/layouts/layoutsConfig.json",
+    "layoutsConfigPath": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
-    "RendertoanyRepositoryviaSearch": true,
     "langmenu": {
       "pt": {
         "pt": "Portugues",

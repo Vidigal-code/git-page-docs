@@ -1,5 +1,8 @@
 # Publicacao
 
-Marcador de versao: **1.1.1**
+Este projeto esta pronto para deploy como aplicacao Next.js.
 
-Este patch melhora o fallback quando links de versao nao sao preenchidos.
+## Build de producao
+
+1. Execute: `npm run build`
+2. Inicie servidor: `npm start` ou `pnpm start`

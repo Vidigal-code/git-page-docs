@@ -1,5 +1,11 @@
 # Configuration
 
-Version marker: **1.1.1**
+All runtime options are configured in `gitpagedocs/config.json`.
 
-This patch adds dynamic branch/release/commit link metadata per selected version.
+## Site settings
+
+- `defaultLanguage`
+- `HideThemeSelector`
+- `ThemeDefault`
+- `ActiveNavigation`
+- `IconImageMenuHeader`

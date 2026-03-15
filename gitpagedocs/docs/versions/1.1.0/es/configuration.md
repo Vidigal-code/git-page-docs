@@ -1,5 +1,11 @@
 # Configuracion
 
-Marcador de version: **1.1.0**
+Todas las opciones de ejecucion estan en `gitpagedocs/config.json`.
 
-Esta version agrega rutas por version sin sobrescribir metadatos del config raiz.
+## Configuracion del sitio
+
+- `defaultLanguage`
+- `HideThemeSelector`
+- `ThemeDefault`
+- `ActiveNavigation`
+- `IconImageMenuHeader`

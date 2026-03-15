@@ -1,5 +1,8 @@
 # Publicacion
 
-Marcador de version: **1.1.1**
+Este proyecto esta listo para despliegue como aplicacion Next.js.
 
-Este patch mejora el fallback cuando no hay enlaces de version definidos.
+## Build de produccion
+
+1. Ejecuta: `npm run build`
+2. Inicia servidor: `npm start` o `pnpm start`

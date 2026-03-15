@@ -15,6 +15,9 @@ export const dynamic = "force-static";
 
 function parseRepoAndVersion(repoSlug: string[] | undefined): { owner?: string; repo?: string; version?: string } {
   if (!repoSlug?.length) return {};
+  if (repoSlug.length >= 2 && repoSlug[0] === "v" && repoSlug[1]) {
+    return { version: repoSlug[1] };
+  }
   if (repoSlug.length >= 4 && repoSlug[2] === "v" && repoSlug[3]) {
     return { owner: repoSlug[0], repo: repoSlug[1], version: repoSlug[3] };
   }
@@ -31,6 +34,11 @@ export async function generateStaticParams() {
     const raw = await fs.readFile(configPath, "utf-8");
     const config = JSON.parse(raw);
     const versions = config?.VersionControl?.versions?.map((v: { id: string }) => v.id) ?? [];
+    for (const vid of versions) {
+      if (!params.some((p) => p.repo[0] === "v" && p.repo[1] === vid)) {
+        params.push({ repo: ["v", vid] });
+      }
+    }
     const addRepoWithVersions = (owner: string, repo: string) => {
       if (!params.some((p) => p.repo[0] === owner && p.repo[1] === repo)) {
         params.push({ repo: [owner, repo] });

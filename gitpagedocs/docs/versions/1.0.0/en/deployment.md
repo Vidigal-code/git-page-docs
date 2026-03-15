@@ -1,5 +1,8 @@
 # Deployment
 
-Version marker: **1.0.0**
+This project is ready to deploy as a Next.js application.
 
-This release focuses on local and standard Next.js deployment flow.
+## Production build
+
+1. Run: `npm run build`
+2. Start server: `npm start` or `pnpm start`

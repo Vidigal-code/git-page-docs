@@ -1,5 +1,8 @@
 # Publicacao
 
-Marcador de versao: **1.0.0**
+Este projeto esta pronto para deploy como aplicacao Next.js.
 
-Esta versao foca no fluxo de deploy local e padrao do Next.js.
+## Build de producao
+
+1. Execute: `npm run build`
+2. Inicie servidor: `npm start` ou `pnpm start`

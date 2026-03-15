@@ -1,5 +1,8 @@
 # Publicacao
 
-Marcador de versao: **1.1.0**
+Este projeto esta pronto para deploy como aplicacao Next.js.
 
-Esta versao melhora a compatibilidade da renderizacao remota em ambientes de producao.
+## Build de producao
+
+1. Execute: `npm run build`
+2. Inicie servidor: `npm start` ou `pnpm start`

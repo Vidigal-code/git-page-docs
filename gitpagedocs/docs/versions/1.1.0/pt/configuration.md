@@ -1,5 +1,11 @@
 # Configuracao
 
-Marcador de versao: **1.1.0**
+Todas as opcoes de execucao ficam em `gitpagedocs/config.json`.
 
-Esta versao adiciona comportamento de rotas por versao sem sobrescrever metadados do config raiz.
+## Configuracoes do site
+
+- `defaultLanguage`
+- `HideThemeSelector`
+- `ThemeDefault`
+- `ActiveNavigation`
+- `IconImageMenuHeader`

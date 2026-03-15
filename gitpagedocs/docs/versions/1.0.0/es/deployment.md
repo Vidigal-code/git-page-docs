@@ -1,5 +1,8 @@
 # Publicacion
 
-Marcador de version: **1.0.0**
+Este proyecto esta listo para despliegue como aplicacion Next.js.
 
-Esta version se enfoca en el flujo de despliegue local y estandar de Next.js.
+## Build de produccion
+
+1. Ejecuta: `npm run build`
+2. Inicia servidor: `npm start` o `pnpm start`

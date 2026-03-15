@@ -1,19 +1,14 @@
 #!/usr/bin/env node
 
-import { spawn } from "node:child_process";
-import { cpSync, existsSync, rmSync } from "node:fs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = process.cwd();
-const isBuild = process.argv.includes("--build") || process.env.GITPAGEDOCS_BUILD === "1";
-const isServe = process.argv.includes("--serve");
-const OUT_DIR = isBuild ? "out-init" : "out";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = path.join(SCRIPT_DIR, "..");
 const PREBUILT_DIR = path.join(PKG_ROOT, "prebuilt");
-const SPA_TEMPLATE_PATH = path.join(SCRIPT_DIR, "templates", "index.spa.js");
 
 const LAYOUTS = [
   {
@@ -410,15 +405,14 @@ Themes are defined by JSON templates and loaded dynamically.
 
 ## Locations
 
-- \`public/layouts/layoutsConfig.json\`
-- \`public/layouts/templates/*.json\`
-- \`gitpagedocs/layouts/layoutsConfig.json\` (fallback)
+- \`gitpagedocs/layouts/layoutsConfig.json\`
+- \`gitpagedocs/layouts/templates/*.json\`
 `,
     faq: `# FAQ
 
 ## Why is my repository not rendering?
 
-Check \`RendertoanyRepositoryviaSearch\`, remote \`gitpagedocs/config.json\`, and route paths.
+Check \`GITPAGEDOCS_REPOSITORY_SEARCH\`, remote \`gitpagedocs/config.json\`, and route paths.
 `,
   },
   pt: {
@@ -493,15 +487,14 @@ Temas sao definidos em JSON e carregados dinamicamente.
 
 ## Locais
 
-- \`public/layouts/layoutsConfig.json\`
-- \`public/layouts/templates/*.json\`
-- \`gitpagedocs/layouts/layoutsConfig.json\` (fallback)
+- \`gitpagedocs/layouts/layoutsConfig.json\`
+- \`gitpagedocs/layouts/templates/*.json\`
 `,
     faq: `# FAQ
 
 ## Por que o repositorio nao renderiza?
 
-Verifique \`RendertoanyRepositoryviaSearch\`, \`gitpagedocs/config.json\` remoto e caminhos em \`routes\`.
+Verifique \`GITPAGEDOCS_REPOSITORY_SEARCH\`, \`gitpagedocs/config.json\` remoto e caminhos em \`routes\`.
 `,
   },
   es: {
@@ -576,15 +569,14 @@ Los temas se definen en JSON y se cargan dinamicamente.
 
 ## Ubicaciones
 
-- \`public/layouts/layoutsConfig.json\`
-- \`public/layouts/templates/*.json\`
-- \`gitpagedocs/layouts/layoutsConfig.json\` (fallback)
+- \`gitpagedocs/layouts/layoutsConfig.json\`
+- \`gitpagedocs/layouts/templates/*.json\`
 `,
     faq: `# FAQ
 
 ## Por que el repositorio no renderiza?
 
-Verifica \`RendertoanyRepositoryviaSearch\`, \`gitpagedocs/config.json\` remoto y rutas en \`routes\`.
+Verifica \`GITPAGEDOCS_REPOSITORY_SEARCH\`, \`gitpagedocs/config.json\` remoto y rutas en \`routes\`.
 `,
   },
 };
@@ -673,26 +665,28 @@ async function writeText(relativePath, data) {
   await writeFile(absolutePath, data, "utf-8");
 }
 
-async function run() {
-  const usePrebuilt = !isBuild && existsSync(PREBUILT_DIR) && (existsSync(path.join(PREBUILT_DIR, "index.html")) || existsSync(path.join(PREBUILT_DIR, "_next")));
+function normalizeToOutputPath(outputDir, configPath) {
+  const normalized = configPath.replace(/^gitpagedocs\//, "");
+  return `${outputDir}/${normalized}`;
+}
 
-  if (usePrebuilt) {
-    const outPath = path.join(ROOT, OUT_DIR);
-    if (existsSync(outPath)) rmSync(outPath, { recursive: true });
-    cpSync(PREBUILT_DIR, outPath, { recursive: true });
-    console.log(`Generated: ${OUT_DIR}/ (Next.js static export, same as GitHub Pages)`);
-    if (!isServe) console.log("Render: npx serve out");
-    if (isServe) {
-      console.log("Starting server...");
-      const child = spawn("npx", ["serve", OUT_DIR], { cwd: ROOT, stdio: "inherit", shell: true });
-      child.on("error", (err) => {
-        console.error("Failed to start serve. Run: npx serve out", err);
-        process.exitCode = 1;
-      });
-    }
-    return;
-  }
+function parseDocFileToKey(fileName) {
+  if (fileName === "index.md") return "index";
+  if (fileName === "getting-started.md") return "gettingStarted";
+  if (fileName === "configuration.md") return "configuration";
+  if (fileName === "deployment.md") return "deployment";
+  if (fileName === "architecture.md") return "architecture";
+  if (fileName === "themes.md") return "themes";
+  if (fileName === "faq.md") return "faq";
+  return undefined;
+}
 
+function extractLanguageFromPath(docPath) {
+  const match = docPath.match(/\/(pt|en|es)\//);
+  return match?.[1];
+}
+
+function buildConfigArtifacts() {
   const versionRoutes_1_0_0 = [
     {
       id: 0,
@@ -851,6 +845,7 @@ async function run() {
     site: {
       name: "Git Pages Docs",
       defaultLanguage: "en",
+      supportedLanguages: Object.keys(DOCS),
       HideThemeSelector: false,
       ThemeDefault: "aurora-dark",
       ThemeModeDefault: "dark",
@@ -871,9 +866,8 @@ async function run() {
       IconProjectLinkReactIconesTagColorDark: "White",
       IconProjectLinkReactIconesTagColorLight: "black",
       IconProjectLinkReactIconesTagSize: "25px",
-      layoutsConfigPath: "https://github.com/Vidigal-code/git-page-docs/blob/main/public/layouts/layoutsConfig.json",
+      layoutsConfigPath: "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
       rendering: "https://vidigal-code.github.io/git-page-docs/",
-      RendertoanyRepositoryviaSearch: true,
       langmenu: {
         pt: {
           pt: "Portugues",
@@ -1136,186 +1130,101 @@ async function run() {
 
   const layoutsConfig = { layouts: LAYOUTS };
   const fallbackLayoutsConfig = { layouts: FALLBACK_LAYOUTS };
-  const spaRendererScript = await readFile(SPA_TEMPLATE_PATH, "utf-8");
 
-  const INDEX_HTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitPageDocs</title>
-</head>
-<body>
-  <div id="gitpagedocs-app"></div>
-  <script src="./index.js"></script>
-</body>
-</html>`;
-
-  await writeJson(`${OUT_DIR}/gitpagedocs/config.json`, rootConfig);
-  await writeText(`${OUT_DIR}/index.js`, spaRendererScript);
-  await writeText(`${OUT_DIR}/index.html`, INDEX_HTML);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/index.md`, DOCS.en.index);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/getting-started.md`, DOCS.en.gettingStarted);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/configuration.md`, DOCS.en.configuration);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/deployment.md`, DOCS.en.deployment);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/architecture.md`, DOCS.en.architecture);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/themes.md`, DOCS.en.themes);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/en/faq.md`, DOCS.en.faq);
-
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/index.md`, DOCS.pt.index);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/getting-started.md`, DOCS.pt.gettingStarted);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/configuration.md`, DOCS.pt.configuration);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/deployment.md`, DOCS.pt.deployment);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/architecture.md`, DOCS.pt.architecture);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/themes.md`, DOCS.pt.themes);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/pt/faq.md`, DOCS.pt.faq);
-
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/index.md`, DOCS.es.index);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/getting-started.md`, DOCS.es.gettingStarted);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/configuration.md`, DOCS.es.configuration);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/deployment.md`, DOCS.es.deployment);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/architecture.md`, DOCS.es.architecture);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/themes.md`, DOCS.es.themes);
-  await writeText(`${OUT_DIR}/gitpagedocs/docs/es/faq.md`, DOCS.es.faq);
-
-  const VERSIONED_DOCS = {
-    "1.0.0": {
-      en: {
-        index: "# Welcome to Git Page Docs\n\nVersion marker: **1.0.0**\n\nThis baseline release ships the core documentation shell with multilingual rendering.\n",
-        gettingStarted: DOCS.en.gettingStarted,
-        configuration:
-          "# Configuration\n\nVersion marker: **1.0.0**\n\nUse this version for the initial config structure and core site settings.\n",
-        deployment:
-          "# Deployment\n\nVersion marker: **1.0.0**\n\nThis release focuses on local and standard Next.js deployment flow.\n",
-        architecture: DOCS.en.architecture,
-        themes: DOCS.en.themes,
-        faq: DOCS.en.faq,
+  return {
+    rootConfig,
+    layoutsConfig,
+    fallbackLayoutsConfig,
+    docs: DOCS,
+    versionConfigs: {
+      "1.0.0": {
+        routes: versionRoutes_1_0_0,
+        "menus-header": versionMenus_1_0_0,
       },
-      pt: {
-        index: "# Bem-vindo ao Git Page Docs\n\nMarcador de versao: **1.0.0**\n\nEsta versao base entrega o shell principal da documentacao com renderizacao multi-idioma.\n",
-        gettingStarted: DOCS.pt.gettingStarted,
-        configuration:
-          "# Configuracao\n\nMarcador de versao: **1.0.0**\n\nUse esta versao para a estrutura inicial do config e dos ajustes centrais do site.\n",
-        deployment:
-          "# Publicacao\n\nMarcador de versao: **1.0.0**\n\nEsta versao foca no fluxo de deploy local e padrao do Next.js.\n",
-        architecture: DOCS.pt.architecture,
-        themes: DOCS.pt.themes,
-        faq: DOCS.pt.faq,
+      "1.1.0": {
+        routes: versionRoutes_1_1_0,
+        "menus-header": versionMenus_1_1_0,
       },
-      es: {
-        index: "# Bienvenido a Git Page Docs\n\nMarcador de version: **1.0.0**\n\nEsta version base entrega el shell principal de documentacion con renderizado multilenguaje.\n",
-        gettingStarted: DOCS.es.gettingStarted,
-        configuration:
-          "# Configuracion\n\nMarcador de version: **1.0.0**\n\nUsa esta version para la estructura inicial del config y ajustes centrales del sitio.\n",
-        deployment:
-          "# Publicacion\n\nMarcador de version: **1.0.0**\n\nEsta version se enfoca en el flujo de despliegue local y estandar de Next.js.\n",
-        architecture: DOCS.es.architecture,
-        themes: DOCS.es.themes,
-        faq: DOCS.es.faq,
-      },
-    },
-    "1.1.0": {
-      en: {
-        index: "# Welcome to Git Page Docs\n\nVersion marker: **1.1.0**\n\nThis version introduces expanded navigation coverage and richer docs structure.\n",
-        configuration:
-          "# Configuration\n\nVersion marker: **1.1.0**\n\nThis release adds version-aware routing behavior while preserving site metadata from root config.\n",
-        deployment:
-          "# Deployment\n\nVersion marker: **1.1.0**\n\nThis release improves remote repository rendering compatibility in production builds.\n",
-      },
-      pt: {
-        index: "# Bem-vindo ao Git Page Docs\n\nMarcador de versao: **1.1.0**\n\nEsta versao amplia a navegacao e a estrutura geral da documentacao.\n",
-        configuration:
-          "# Configuracao\n\nMarcador de versao: **1.1.0**\n\nEsta versao adiciona comportamento de rotas por versao sem sobrescrever metadados do config raiz.\n",
-        deployment:
-          "# Publicacao\n\nMarcador de versao: **1.1.0**\n\nEsta versao melhora a compatibilidade da renderizacao remota em ambientes de producao.\n",
-      },
-      es: {
-        index: "# Bienvenido a Git Page Docs\n\nMarcador de version: **1.1.0**\n\nEsta version amplifica la navegacion y la estructura general de la documentacion.\n",
-        configuration:
-          "# Configuracion\n\nMarcador de version: **1.1.0**\n\nEsta version agrega rutas por version sin sobrescribir metadatos del config raiz.\n",
-        deployment:
-          "# Publicacion\n\nMarcador de version: **1.1.0**\n\nEsta version mejora la compatibilidad de renderizado remoto en produccion.\n",
-      },
-    },
-    "1.1.1": {
-      en: {
-        index: "# Welcome to Git Page Docs\n\nVersion marker: **1.1.1**\n\nThis patch release stabilizes the version selector and dynamic repository links in header controls.\n",
-        configuration:
-          "# Configuration\n\nVersion marker: **1.1.1**\n\nThis patch adds dynamic branch/release/commit link metadata per selected version.\n",
-        deployment:
-          "# Deployment\n\nVersion marker: **1.1.1**\n\nThis patch improves fallback behavior when version links are not provided.\n",
-      },
-      pt: {
-        index: "# Bem-vindo ao Git Page Docs\n\nMarcador de versao: **1.1.1**\n\nEste patch estabiliza o seletor de versao e os links dinamicos no cabecalho.\n",
-        configuration:
-          "# Configuracao\n\nMarcador de versao: **1.1.1**\n\nEste patch adiciona metadados dinamicos de branch/release/commit por versao selecionada.\n",
-        deployment:
-          "# Publicacao\n\nMarcador de versao: **1.1.1**\n\nEste patch melhora o fallback quando links de versao nao sao preenchidos.\n",
-      },
-      es: {
-        index: "# Bienvenido a Git Page Docs\n\nMarcador de version: **1.1.1**\n\nEste patch estabiliza el selector de version y los enlaces dinamicos del encabezado.\n",
-        configuration:
-          "# Configuracion\n\nMarcador de version: **1.1.1**\n\nEste patch agrega metadatos dinamicos de branch/release/commit por version seleccionada.\n",
-        deployment:
-          "# Publicacion\n\nMarcador de version: **1.1.1**\n\nEste patch mejora el fallback cuando no hay enlaces de version definidos.\n",
+      "1.1.1": {
+        routes: versionRoutes_1_1_1,
+        "menus-header": versionMenus_1_1_1,
       },
     },
   };
+}
 
-  await writeJson(`${OUT_DIR}/gitpagedocs/docs/versions/1.0.0/config.json`, {
-    routes: versionRoutes_1_0_0,
-    "menus-header": versionMenus_1_0_0,
-  });
-  await writeJson(`${OUT_DIR}/gitpagedocs/docs/versions/1.1.0/config.json`, {
-    routes: versionRoutes_1_1_0,
-    "menus-header": versionMenus_1_1_0,
-  });
-  await writeJson(`${OUT_DIR}/gitpagedocs/docs/versions/1.1.1/config.json`, {
-    routes: versionRoutes_1_1_1,
-    "menus-header": versionMenus_1_1_1,
-  });
+function parseCliOptions(argv, env) {
+  const isBuild = argv.includes("--build") || env.GITPAGEDOCS_BUILD === "1";
+  const isServe = argv.includes("--serve");
+  const mode = argv.includes("--full") ? "full" : "config-only";
+  const outputDir = "gitpagedocs";
+  return { isBuild, isServe, mode, outputDir };
+}
 
-  for (const [versionId, languageMap] of Object.entries(VERSIONED_DOCS)) {
-    for (const [language, pages] of Object.entries(languageMap)) {
-      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/index.md`, pages.index);
-      await writeText(
-        `${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/getting-started.md`,
-        pages.gettingStarted ?? DOCS[language].gettingStarted,
-      );
-      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/configuration.md`, pages.configuration);
-      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/deployment.md`, pages.deployment);
-      await writeText(
-        `${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/architecture.md`,
-        pages.architecture ?? DOCS[language].architecture,
-      );
-      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/themes.md`, pages.themes ?? DOCS[language].themes);
-      await writeText(`${OUT_DIR}/gitpagedocs/docs/versions/${versionId}/${language}/faq.md`, pages.faq ?? DOCS[language].faq);
-    }
+async function writeConfigOnlyOutput(outputDir, artifacts) {
+  await writeJson(`${outputDir}/config.json`, artifacts.rootConfig);
+  await writeJson(`${outputDir}/layouts/layoutsConfig.json`, artifacts.layoutsConfig);
+  await writeJson(`${outputDir}/layouts/layoutsFallbackConfig.json`, artifacts.fallbackLayoutsConfig);
+
+  for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
+    await writeJson(`${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);
   }
-
-  await writeJson("public/layouts/layoutsConfig.json", layoutsConfig);
-  await writeJson(`${OUT_DIR}/gitpagedocs/layouts/layoutsConfig.json`, layoutsConfig);
 
   for (const layout of LAYOUTS) {
     const template = createThemeTemplate(layout);
-    await writeJson(`public/layouts/${layout.file}`, template);
-    await writeJson(`${OUT_DIR}/gitpagedocs/layouts/${layout.file}`, template);
+    await writeJson(`${outputDir}/layouts/${layout.file}`, template);
   }
 
-  console.log(`Generated: ${OUT_DIR}/ (index.html index.js gitpagedocs/)`);
-  if (!isBuild && !isServe) console.log("Render: npx serve out");
-  if (isServe && !isBuild) {
-    const serveDir = path.join(ROOT, OUT_DIR);
-    console.log("Starting server...");
-    const child = spawn("npx", ["serve", OUT_DIR], {
-      cwd: ROOT,
-      stdio: "inherit",
-      shell: true,
-    });
-    child.on("error", (err) => {
-      console.error("Failed to start serve. Run: npx serve out", err);
-      process.exitCode = 1;
-    });
+  for (const route of artifacts.rootConfig.routes ?? []) {
+    for (const [language, docPath] of Object.entries(route.path ?? {})) {
+      const fileName = path.basename(docPath);
+      const key = parseDocFileToKey(fileName);
+      const content = key ? artifacts.docs?.[language]?.[key] : undefined;
+      if (!content) continue;
+      await writeText(normalizeToOutputPath(outputDir, docPath), content);
+    }
+  }
+
+  for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
+    const versionRoutes = versionConfig.routes ?? [];
+    for (const route of versionRoutes) {
+      for (const docPath of Object.values(route.path ?? {})) {
+        const fileName = path.basename(docPath);
+        const key = parseDocFileToKey(fileName);
+        const language = extractLanguageFromPath(docPath);
+        const content = key && language ? artifacts.docs?.[language]?.[key] : undefined;
+        if (!content) continue;
+        await writeText(normalizeToOutputPath(outputDir, docPath), content);
+      }
+    }
+
+    // Ensure version folders always include an index file.
+    for (const language of ["pt", "en", "es"]) {
+      const fallbackIndex = artifacts.docs?.[language]?.index;
+      if (!fallbackIndex) continue;
+      const versionIndexPath = `${outputDir}/docs/versions/${versionId}/${language}/index.md`;
+      if (!existsSync(path.join(ROOT, versionIndexPath))) {
+        await writeText(versionIndexPath, fallbackIndex);
+      }
+    }
+  }
+}
+
+async function run() {
+  const options = parseCliOptions(process.argv, process.env);
+  const artifacts = buildConfigArtifacts();
+  await writeConfigOnlyOutput(options.outputDir, artifacts);
+
+  console.log(`Generated: ${options.outputDir}/ (config-only)`);
+  console.log("No index.html/index.js generated.");
+  if (options.isBuild) {
+    console.log("`--build` keeps compatibility flag but output remains gitpagedocs/.");
+  }
+  if (options.mode === "full" || options.isServe) {
+    console.log("External commands were skipped (no prebuilt copy and no local serve spawn).");
+  }
+  if (existsSync(PREBUILT_DIR)) {
+    console.log("`prebuilt/` detected, but ignored by config-only generator.");
   }
 }
 

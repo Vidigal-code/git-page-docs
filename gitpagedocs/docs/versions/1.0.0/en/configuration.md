@@ -1,5 +1,11 @@
 # Configuration
 
-Version marker: **1.0.0**
+All runtime options are configured in `gitpagedocs/config.json`.
 
-Use this version for the initial config structure and core site settings.
+## Site settings
+
+- `defaultLanguage`
+- `HideThemeSelector`
+- `ThemeDefault`
+- `ActiveNavigation`
+- `IconImageMenuHeader`

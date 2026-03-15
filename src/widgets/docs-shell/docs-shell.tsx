@@ -662,21 +662,24 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   useEffect(() => {
     if (!showVersionSelector) return;
-    const urlVersion = searchParams.get("version");
-    const urlLang = searchParams.get("lang") as LanguageCode | null;
-    const langQ =
-      urlLang && data.availableLanguages.includes(urlLang) ? `?lang=${urlLang}` : "";
+    const params = new URLSearchParams(searchParams.toString());
+    const urlVersion = params.get("version");
+    params.delete("version");
     const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
     if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
       const base = pathname.replace(/\/$/, "");
-      router.replace(`${base}/v/${urlVersion}${langQ}`);
+      const target = `${base}/v/${urlVersion}`;
+      const qs = params.toString();
+      router.replace(qs ? `${target}?${qs}` : target);
       return;
     }
     try {
       const savedVersion = window.localStorage.getItem(versionStorageKey);
       if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
         const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        router.replace(`${base || pathname}/v/${savedVersion}${langQ}`);
+        const target = `${base || pathname}/v/${savedVersion}`;
+        const qs = params.toString();
+        router.replace(qs ? `${target}?${qs}` : target);
       }
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
@@ -737,14 +740,26 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       // Ignore localStorage errors (private mode / blocked storage).
     }
     const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-    const langQ = data.availableLanguages.length > 1 ? `?lang=${language}` : "";
-    router.replace(`${base || "/"}/v/${versionId}${langQ}`);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("version");
+    if (data.availableLanguages.length > 1) {
+      params.set("lang", language);
+    } else {
+      params.delete("lang");
+    }
+    const target = `${base || "/"}/v/${versionId}`;
+    const qs = params.toString();
+    router.replace(qs ? `${target}?${qs}` : target);
   }
 
   function onLanguageChange(newLang: LanguageCode) {
     setLanguage(newLang);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("lang", newLang);
+    params.delete("version");
     const cleanPath = pathname.replace(/\/$/, "") || pathname;
-    router.replace(`${cleanPath}?lang=${newLang}`);
+    const qs = params.toString();
+    router.replace(qs ? `${cleanPath}?${qs}` : cleanPath);
   }
 
   function goToLinearNavigation(offset: -1 | 1) {

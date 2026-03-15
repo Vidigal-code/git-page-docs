@@ -2,4 +2,4 @@
 
 ## Why is my repository not rendering?
 
-Check `RendertoanyRepositoryviaSearch`, remote `gitpagedocs/config.json`, and route paths.
+Check `GITPAGEDOCS_REPOSITORY_SEARCH`, remote `gitpagedocs/config.json`, and route paths.

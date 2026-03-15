@@ -1,5 +1,8 @@
 # Deployment
 
-Version marker: **1.1.1**
+This project is ready to deploy as a Next.js application.
 
-This patch improves fallback behavior when version links are not provided.
+## Production build
+
+1. Run: `npm run build`
+2. Start server: `npm start` or `pnpm start`

@@ -26,7 +26,6 @@ export interface SiteConfig {
   layoutsConfigPath?: string;
   layoutsConfigPathTemplates?: string;
   rendering: string;
-  RendertoanyRepositoryviaSearch: boolean;
   langmenu: Record<LanguageCode, Record<LanguageCode, string>>;
 }
 

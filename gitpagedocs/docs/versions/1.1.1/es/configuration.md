@@ -1,5 +1,11 @@
 # Configuracion
 
-Marcador de version: **1.1.1**
+Todas las opciones de ejecucion estan en `gitpagedocs/config.json`.
 
-Este patch agrega metadatos dinamicos de branch/release/commit por version seleccionada.
+## Configuracion del sitio
+
+- `defaultLanguage`
+- `HideThemeSelector`
+- `ThemeDefault`
+- `ActiveNavigation`
+- `IconImageMenuHeader`

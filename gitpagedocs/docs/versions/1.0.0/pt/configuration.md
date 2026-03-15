@@ -1,5 +1,11 @@
 # Configuracao
 
-Marcador de versao: **1.0.0**
+Todas as opcoes de execucao ficam em `gitpagedocs/config.json`.
 
-Use esta versao para a estrutura inicial do config e dos ajustes centrais do site.
+## Configuracoes do site
+
+- `defaultLanguage`
+- `HideThemeSelector`
+- `ThemeDefault`
+- `ActiveNavigation`
+- `IconImageMenuHeader`

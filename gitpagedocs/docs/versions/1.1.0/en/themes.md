@@ -4,6 +4,5 @@ Themes are defined by JSON templates and loaded dynamically.
 
 ## Locations
 
-- `public/layouts/layoutsConfig.json`
-- `public/layouts/templates/*.json`
-- `gitpagedocs/layouts/layoutsConfig.json` (fallback)
+- `gitpagedocs/layouts/layoutsConfig.json`
+- `gitpagedocs/layouts/templates/*.json`
