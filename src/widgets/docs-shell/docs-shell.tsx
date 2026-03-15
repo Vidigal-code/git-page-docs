@@ -8,14 +8,8 @@ import { FiChevronDown, FiChevronRight, FiX } from "react-icons/fi";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
 import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
-import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
-import type {
-  HeaderMenuItem,
-  HeaderMenuLocalizedContent,
-  LanguageCode,
-  LoadedDocsData,
-} from "@/entities/docs/model/types";
+import type { LoadedDocsData } from "@/entities/docs/model/types";
 import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
 import { QuickNavigationTrigger } from "@/features/quick-navigation/ui/quick-navigation-trigger";
 import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
@@ -23,38 +17,20 @@ import { VersionSelector } from "@/features/version-selector/ui/version-selector
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
+import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
+import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
+import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
 import { useFocusMode } from "./model/use-focus-mode";
+import { buildHeaderMenuTree, flattenMenuTree, getRouteIndexByPath, type MenuNode } from "./model/menu-tree";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
+import { DocsShellControls } from "./ui/docs-shell-controls";
+import { DocsShellFocusOverlay } from "./ui/docs-shell-focus-overlay";
+import { DocsShellMobileDrawer } from "./ui/docs-shell-mobile-drawer";
+import { DocsShellQuickNavOverlay } from "./ui/docs-shell-quick-nav-overlay";
+import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
+import { DocsShellVersionLinksOverlay } from "./ui/docs-shell-version-links-overlay";
 import styles from "./docs-shell.module.css";
-
-function getRouteIndexByPath(data: LoadedDocsData, language: LanguageCode, filePath: string): number {
-  return data.config.routes.findIndex((route) => route.path[language] === filePath);
-}
-
-
-interface MenuEntry {
-  key: string;
-  id: number;
-  title: string;
-  pathClick: string;
-  active: boolean;
-  level: number;
-  searchLabel: string;
-  ancestorKeys: string[];
-}
-
-interface MenuNode {
-  key: string;
-  id: number;
-  title: string;
-  pathClick: string;
-  active: boolean;
-  level: number;
-  searchLabel: string;
-  ancestorKeys: string[];
-  children: MenuNode[];
-}
 
 interface VersionLinkOption {
   id: "branch" | "release" | "commit";
@@ -85,152 +61,84 @@ function buildVersionLinkOptions(activeVersion: LoadedDocsData["activeVersion"])
   return options;
 }
 
-
-function buildLocalizedSubmenuTree(
-  submenus: HeaderMenuLocalizedContent[],
-  parentKey: string,
-  parentTrail: string[],
-  parentAncestors: string[],
-  level: number,
-  data: LoadedDocsData,
-  language: LanguageCode,
-  routeIndex: number,
-): MenuNode[] {
-  const entries: MenuNode[] = [];
-
-  submenus.forEach((submenu, index) => {
-    const pathClick = submenu["path-click"] ?? "";
-    const title = submenu.title ?? "Menu";
-    const trail = [...parentTrail, title];
-    const key = `${parentKey}-l${level}-${index}`;
-    const ancestorKeys = [...parentAncestors];
-    const children = submenu.submenus?.length
-      ? buildLocalizedSubmenuTree(submenu.submenus, key, trail, [...ancestorKeys, key], level + 1, data, language, routeIndex)
-      : [];
-
-    entries.push({
-      key,
-      id: index,
-      title,
-      pathClick,
-      active: routeIndex === getRouteIndexByPath(data, language, pathClick),
-      level,
-      searchLabel: trail.join(" / "),
-      ancestorKeys,
-      children,
-    });
-  });
-
-  return entries;
-}
-
-function buildHeaderMenuTree(
-  menus: HeaderMenuItem[],
-  data: LoadedDocsData,
-  language: LanguageCode,
-  routeIndex: number,
-  level = 0,
-  parentTrail: string[] = [],
-  parentAncestors: string[] = [],
-): MenuNode[] {
-  const entries: MenuNode[] = [];
-
-  menus.forEach((menu) => {
-    const value = menu[language] as HeaderMenuLocalizedContent | undefined;
-    const title = value?.title ?? "Menu";
-    const pathClick = value?.["path-click"] ?? "";
-    const trail = [...parentTrail, title];
-    const key = `${trail.join("-")}-${menu.id}`;
-    const ancestorKeys = [...parentAncestors];
-    const nestedByItem = Array.isArray(menu.submenus)
-      ? buildHeaderMenuTree(menu.submenus, data, language, routeIndex, level + 1, trail, [...ancestorKeys, key])
-      : [];
-    const nestedByLanguage = value?.submenus?.length
-      ? buildLocalizedSubmenuTree(
-          value.submenus,
-          `${menu.id}`,
-          trail,
-          [...ancestorKeys, key],
-          level + 1,
-          data,
-          language,
-          routeIndex,
-        )
-      : [];
-
-    entries.push({
-      key,
-      id: menu.id,
-      title,
-      pathClick,
-      active: routeIndex === getRouteIndexByPath(data, language, pathClick),
-      level,
-      searchLabel: trail.join(" / "),
-      ancestorKeys,
-      children: [...nestedByItem, ...nestedByLanguage],
-    });
-  });
-
-  return entries;
-}
-
-function flattenMenuTree(nodes: MenuNode[]): MenuEntry[] {
-  const result: MenuEntry[] = [];
-  nodes.forEach((node) => {
-    result.push({
-      key: node.key,
-      id: node.id,
-      title: node.title,
-      pathClick: node.pathClick,
-      active: node.active,
-      level: node.level,
-      searchLabel: node.searchLabel,
-      ancestorKeys: node.ancestorKeys,
-    });
-    if (node.children.length) {
-      result.push(...flattenMenuTree(node.children));
-    }
-  });
-  return result;
-}
-
 export function DocsShell({ data }: { data: LoadedDocsData }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const defaultLanguage = data.config.site.defaultLanguage;
-  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey, languageRestoredRef, themeModeRestoredRef } =
-    useDocsPreferences(data.config.site.name);
+  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(data.config.site.name);
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
-  const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
-  const [routeIndex, setRouteIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [versionLinksPopupOpen, setVersionLinksPopupOpen] = useState(false);
-  const [expandedMenuMap, setExpandedMenuMap] = useState<Record<string, boolean>>({});
-
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
-  const initialThemeBase =
-    data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
-  const initialThemeId = initialThemeBase
-    ? resolveThemeByMode(data.layoutsConfig.layouts, initialThemeBase, configuredDefaultMode).id
-    : "";
-  const [activeThemeId, setActiveThemeId] = useState(initialThemeId);
-
-  const activeLayout = data.layoutsConfig.layouts.find((layout) => layout.id === activeThemeId) ?? data.layoutsConfig.layouts[0];
-  const activeTheme = data.themes[activeLayout?.id];
-
-  const nextMode = activeLayout?.mode === "dark" ? "light" : "dark";
-  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
-  const hideThemeSelector = data.config.site.HideThemeSelector;
-
-  const safeRouteIndex = routeIndex >= 0 && routeIndex < data.docs.length ? routeIndex : 0;
-  const currentDoc = data.docs[safeRouteIndex];
-  const markdownHtml = currentDoc?.markdownByLanguage[language] ?? "<p>Document not found for this language.</p>";
-
   const languageCount = data.availableLanguages.length;
   const isLanguageSelectVisible = languageCount > 1;
 
+  function getCurrentSearchParams(): URLSearchParams {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams(searchParams.toString());
+  }
+
+  function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname || "/";
+      const qs = params.toString();
+      const nextUrl = qs ? `${currentPath}?${qs}` : currentPath;
+      window.history.replaceState({}, "", nextUrl);
+      return;
+    }
+    const normalizedPath = nextPathname || pathname || "/";
+    const qs = params.toString();
+    const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
+    router.replace(nextUrl);
+  }
+
+  const { language, onLanguageChange } = useDocsShellLanguageState({
+    defaultLanguage,
+    availableLanguages: data.availableLanguages,
+    languageStorageKey,
+    searchParams,
+    pathname,
+    getCurrentSearchParams,
+    replaceUrlWithoutNavigation,
+  });
+  const {
+    activeThemeId,
+    activeLayout,
+    nextMode,
+    canToggleMode,
+    onThemeChange,
+    onToggleMode,
+  } = useDocsShellThemeState({
+    layouts: data.layoutsConfig.layouts,
+    configuredDefaultMode,
+    initialThemeBaseId,
+    searchParams,
+    themeModeStorageKey,
+    themeLayoutStorageKey,
+    pathname,
+    getCurrentSearchParams,
+    replaceUrlWithoutNavigation,
+  });
+  const {
+    routeIndex,
+    onMenuClick: onMenuClickState,
+    toggleNode,
+    isNodeExpanded,
+  } = useDocsShellNavigationState({
+    data,
+    language,
+    setSidebarOpen,
+    setMenuOpen,
+  });
+  const safeRouteIndex = routeIndex >= 0 && routeIndex < data.docs.length ? routeIndex : 0;
+  const currentDoc = data.docs[safeRouteIndex];
+  const markdownHtml = currentDoc?.markdownByLanguage[language] ?? "<p>Document not found for this language.</p>";
+  const activeTheme = data.themes[activeLayout?.id];
+  const hideThemeSelector = data.config.site.HideThemeSelector;
   const cssVars = useMemo(() => toDocsShellCssVars(activeTheme), [activeTheme]);
   const previousLabel = resolveTranslation(
     data.config.translations?.navigation?.previous,
@@ -417,146 +325,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   }, [activeNavigation, quickNavOpen, focusModeOpen, setFocusModeOpen, setQuickNavOpen, setQuickNavQuery]);
 
   useEffect(() => {
-    const langFromQuery = searchParams.get("lang") as LanguageCode | null;
-    if (langFromQuery && data.availableLanguages.includes(langFromQuery)) {
-      setLanguage(langFromQuery);
-      languageRestoredRef.current = true;
-    }
-  }, [searchParams, data.availableLanguages, languageRestoredRef]);
-
-  useEffect(() => {
-    if (languageRestoredRef.current) {
-      return;
-    }
-
-    try {
-      const savedLanguage = window.localStorage.getItem(languageStorageKey);
-      if (savedLanguage && data.availableLanguages.includes(savedLanguage)) {
-        queueMicrotask(() => {
-          setLanguage(savedLanguage);
-          languageRestoredRef.current = true;
-        });
-        return;
-      }
-    } catch {
-      // Ignore localStorage errors (private mode / blocked storage).
-    }
-
-    languageRestoredRef.current = true;
-  }, [languageStorageKey, data.availableLanguages, languageRestoredRef]);
-
-  useEffect(() => {
-    if (!languageRestoredRef.current) {
-      return;
-    }
-
-    try {
-      window.localStorage.setItem(languageStorageKey, String(language));
-    } catch {
-      // Ignore localStorage errors (private mode / blocked storage).
-    }
-  }, [language, languageStorageKey, languageRestoredRef]);
-
-  useEffect(() => {
-    if (themeModeRestoredRef.current) {
-      return;
-    }
-
-    try {
-      const urlMode = searchParams.get("modetheme");
-      const savedMode = window.localStorage.getItem(themeModeStorageKey);
-      const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
-      const targetMode =
-        urlMode === "dark" || urlMode === "light"
-          ? urlMode
-          : savedMode === "light" || savedMode === "dark"
-            ? savedMode
-            : configuredDefaultMode;
-      const baseLayout =
-        data.layoutsConfig.layouts.find((layout) => layout.id === savedThemeId) ??
-        data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ??
-        data.layoutsConfig.layouts[0];
-      if (baseLayout) {
-        const resolved = resolveThemeByMode(data.layoutsConfig.layouts, baseLayout, targetMode);
-        queueMicrotask(() => {
-          setActiveThemeId(resolved.id);
-          themeModeRestoredRef.current = true;
-        });
-        return;
-      }
-    } catch {
-      // Ignore localStorage errors.
-    }
-
-    themeModeRestoredRef.current = true;
-  }, [themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId, searchParams, themeModeRestoredRef]);
-
-  useEffect(() => {
-    if (!themeModeRestoredRef.current || !activeLayout?.mode) {
-      return;
-    }
-
-    try {
-      window.localStorage.setItem(themeModeStorageKey, activeLayout.mode);
-    } catch {
-      // Ignore localStorage errors.
-    }
-  }, [themeModeStorageKey, activeLayout?.mode, themeModeRestoredRef]);
-
-  useEffect(() => {
-    if (!themeModeRestoredRef.current || !activeThemeId) {
-      return;
-    }
-
-    try {
-      window.localStorage.setItem(themeLayoutStorageKey, activeThemeId);
-    } catch {
-      // Ignore localStorage errors.
-    }
-  }, [themeLayoutStorageKey, activeThemeId, themeModeRestoredRef]);
-
-  useEffect(() => {
-    function syncThemeFromStorage() {
-      try {
-        const savedMode = window.localStorage.getItem(themeModeStorageKey);
-        const targetMode = savedMode === "light" || savedMode === "dark" ? savedMode : configuredDefaultMode;
-        const currentBase =
-          data.layoutsConfig.layouts.find((layout) => layout.id === activeThemeId) ?? data.layoutsConfig.layouts[0];
-        if (!currentBase) {
-          return;
-        }
-        const resolved = resolveThemeByMode(data.layoutsConfig.layouts, currentBase, targetMode);
-        if (resolved.id !== activeThemeId) {
-          setActiveThemeId(resolved.id);
-        }
-      } catch {
-        // Ignore localStorage errors.
-      }
-    }
-
-    function onStorage(event: StorageEvent) {
-      if (event.key === themeModeStorageKey) {
-        syncThemeFromStorage();
-      }
-    }
-
-    function onVisibilityChange() {
-      if (!document.hidden) {
-        syncThemeFromStorage();
-      }
-    }
-
-    window.addEventListener("storage", onStorage);
-    window.addEventListener("focus", syncThemeFromStorage);
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener("focus", syncThemeFromStorage);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, [themeModeStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, activeThemeId]);
-
-  useEffect(() => {
     if (!showVersionSelector) return;
     const params = new URLSearchParams(searchParams.toString());
     const urlVersion = params.get("version");
@@ -622,68 +390,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
   }, [showVersionSelector, isRemoteRepositorySession, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
 
-  function getCurrentSearchParams(): URLSearchParams {
-    if (typeof window !== "undefined") {
-      return new URLSearchParams(window.location.search);
-    }
-    return new URLSearchParams(searchParams.toString());
-  }
-
-  function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
-    if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname || "/";
-      const qs = params.toString();
-      const nextUrl = qs ? `${currentPath}?${qs}` : currentPath;
-      window.history.replaceState({}, "", nextUrl);
-      return;
-    }
-    const normalizedPath = nextPathname || pathname || "/";
-    const qs = params.toString();
-    const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
-    router.replace(nextUrl);
-  }
-
-  function updateModethemeInUrl(mode: "dark" | "light") {
-    const params = getCurrentSearchParams();
-    params.set("modetheme", mode);
-    replaceUrlWithoutNavigation(pathname, params);
-  }
-
-  function onThemeChange(themeId: string) {
-    setActiveThemeId(themeId);
-    const layout = data.layoutsConfig.layouts.find((l) => l.id === themeId);
-    if (layout?.mode === "dark" || layout?.mode === "light") {
-      updateModethemeInUrl(layout.mode);
-    }
-  }
-
-  function onToggleMode() {
-    if (!activeLayout) {
-      return;
-    }
-    const paired = resolveThemeByMode(data.layoutsConfig.layouts, activeLayout, nextMode);
-    setActiveThemeId(paired.id);
-    if (paired.mode === "dark" || paired.mode === "light") {
-      updateModethemeInUrl(paired.mode);
-    }
-  }
-
   function onMenuClick(pathClick: string, ancestorKeys: string[] = []) {
-    const idx = getRouteIndexByPath(data, language, pathClick);
-    if (idx >= 0) {
-      setRouteIndex(idx);
-    }
-    if (ancestorKeys.length) {
-      setExpandedMenuMap((prev) => {
-        const nextMap = { ...prev };
-        ancestorKeys.forEach((key) => {
-          nextMap[key] = true;
-        });
-        return nextMap;
-      });
-    }
-    setSidebarOpen(true);
-    setMenuOpen(false);
+    onMenuClickState(pathClick, ancestorKeys);
     setQuickNavOpen(false);
     setFocusModeOpen(false);
     setQuickNavQuery("");
@@ -696,15 +404,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       // Ignore localStorage errors (private mode / blocked storage).
     }
     onVersionChangeInternal(versionId);
-  }
-
-  function onLanguageChange(newLang: LanguageCode) {
-    setLanguage(newLang);
-    const params = getCurrentSearchParams();
-    params.set("lang", newLang);
-    params.delete("version");
-    const cleanPath = pathname.replace(/\/$/, "") || pathname;
-    replaceUrlWithoutNavigation(cleanPath, params);
   }
 
   function goToLinearNavigation(offset: -1 | 1) {
@@ -744,94 +443,58 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     window.open(url, "_blank", "noreferrer");
   }
 
-  function toggleNode(nodeKey: string) {
-    setExpandedMenuMap((prev) => ({
-      ...prev,
-      [nodeKey]: !prev[nodeKey],
-    }));
-  }
-
-  function isNodeExpanded(node: MenuNode): boolean {
-    return expandedMenuMap[node.key] ?? true;
-  }
-
-  function renderMenuTree(nodes: MenuNode[], keyPrefix: string) {
-    return nodes.map((node) => {
-      const hasChildren = node.children.length > 0;
-      const expanded = isNodeExpanded(node);
-
-      return (
-        <div key={`${keyPrefix}-${node.key}`} className={styles.menuNode}>
-          <div className={styles.menuNodeRow}>
-            {hasChildren ? (
-              <div className={`${styles.menuActionContainer} ${node.active ? styles.menuButtonActive : ""}`}>
-                <button
-                  className={styles.menuActionMain}
-                  onClick={() => onMenuClick(node.pathClick, node.ancestorKeys)}
-                >
-                  {`${node.level > 0 ? "› ".repeat(node.level) : ""}${node.title}`}
-                </button>
-                <button
-                  className={styles.menuExpandInline}
-                  onClick={() => toggleNode(node.key)}
-                  aria-label={expanded ? "Collapse submenu" : "Expand submenu"}
-                  title={expanded ? "Collapse submenu" : "Expand submenu"}
-                >
-                  {expanded ? <FiChevronDown aria-hidden /> : <FiChevronRight aria-hidden />}
-                </button>
-              </div>
-            ) : (
-              <button
-                className={`${styles.menuButton} ${node.active ? styles.menuButtonActive : ""}`}
-                onClick={() => onMenuClick(node.pathClick, node.ancestorKeys)}
-              >
-                {`${node.level > 0 ? "› ".repeat(node.level) : ""}${node.title}`}
-              </button>
-            )}
-          </div>
-          {hasChildren && expanded && <div className={styles.menuChildren}>{renderMenuTree(node.children, keyPrefix)}</div>}
-        </div>
-      );
-    });
-  }
+  const controlsProps = {
+    fallbackProjectLink,
+    projectLabel,
+    useReactProjectLinkIcon,
+    projectLinkReactIconTag,
+    projectLinkReactIconStyle,
+    versionLinkOptionsWithLabels,
+    versionLinksLabel,
+    focusModeEnabled,
+    focusModeLabel,
+    activeNavigation,
+    quickNavLabel,
+    showVersionSelector,
+    availableVersions: data.availableVersions,
+    selectedVersionValue,
+    versionLabel,
+    isLanguageSelectVisible,
+    availableLanguages: data.availableLanguages,
+    language,
+    languageLabelResolver: (lang: string) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang),
+    hideThemeSelector,
+    activeThemeId,
+    layouts: data.layoutsConfig.layouts,
+    canToggleMode,
+    nextModeIsDark: nextMode === "dark",
+    darkModeLabel,
+    lightModeLabel,
+    onOpenVersionLinksPopup: openVersionLinksPopup,
+    onOpenFocusMode: openFocusMode,
+    onOpenQuickNavigation: openQuickNavigation,
+    onVersionChange,
+    onLanguageChange,
+    onThemeChange,
+    onToggleMode,
+  };
 
   return (
     <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
-      <aside className={styles.sidebar}>
-        <div className={styles.brand}>
-          {useReactHeaderIcon ? (
-            <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-              <ReactIconByTag
-                tag={reactHeaderIconTag}
-                fallback={activeLayout?.mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-              />
-            </span>
-          ) : iconImage ? (
-            <Image
-              src={iconImage}
-              alt={data.config.site.name}
-              width={28}
-              height={28}
-              className={styles.brandIcon}
-              unoptimized
-            />
-          ) : null}
-          <span>{data.config.site.name}</span>
-        </div>
-        <nav className={styles.menuList}>
-          {renderMenuTree(headerMenuTree, "desktop")}
-        </nav>
-        <div className={styles.sidebarFooter}>
-          <button
-            className={`${styles.button} ${styles.sidebarRailButton}`}
-            onClick={() => setSidebarOpen(false)}
-            aria-label={menuCloseLabel}
-            title={menuCloseLabel}
-          >
-            ❮❮
-          </button>
-        </div>
-      </aside>
+      <DocsShellSidebar
+        siteName={data.config.site.name}
+        useReactHeaderIcon={useReactHeaderIcon}
+        reactHeaderIconTag={reactHeaderIconTag}
+        headerReactIconStyle={headerReactIconStyle}
+        activeLayoutMode={activeLayout?.mode}
+        iconImage={iconImage}
+        menuNodes={headerMenuTree}
+        menuCloseLabel={menuCloseLabel}
+        onMenuClick={onMenuClick}
+        onToggleNode={toggleNode}
+        isNodeExpanded={isNodeExpanded}
+        onCollapseSidebar={() => setSidebarOpen(false)}
+      />
 
       {!sidebarOpen && (
         <div className={styles.collapsedNavRail}>
@@ -879,82 +542,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             </div>
 
             <div className={styles.headerRight}>
-              {fallbackProjectLink && (
-                <a
-                  href={fallbackProjectLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`${styles.button} ${styles.githubLinkButton}`}
-                  aria-label="Open project repository"
-                  title="Open project repository"
-                >
-                  {useReactProjectLinkIcon ? (
-                    <ReactIconByTag tag={projectLinkReactIconTag} style={projectLinkReactIconStyle} />
-                  ) : (
-                    <svg viewBox="0 0 24 24" aria-hidden className={styles.githubIcon}>
-                      <path
-                        fill="currentColor"
-                        d="M12 2C6.48 2 2 6.58 2 12.24c0 4.53 2.87 8.37 6.85 9.72.5.1.68-.22.68-.5 0-.24-.01-.9-.01-1.77-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.93.85.09-.67.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.74-.1-.26-.45-1.31.1-2.73 0 0 .84-.28 2.75 1.05A9.32 9.32 0 0 1 12 6.88a9.3 9.3 0 0 1 2.5.35c1.9-1.33 2.74-1.05 2.74-1.05.54 1.42.2 2.47.1 2.73.64.71 1.03 1.62 1.03 2.74 0 3.94-2.33 4.8-4.56 5.06.36.31.68.92.68 1.86 0 1.35-.01 2.43-.01 2.76 0 .27.18.6.69.49A10.22 10.22 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z"
-                      />
-                    </svg>
-                  )}
-                </a>
-              )}
-              {!!versionLinkOptionsWithLabels.length && (
-                <button className={styles.button} onClick={openVersionLinksPopup} aria-label={versionLinksLabel}>
-                  {versionLinksLabel}
-                </button>
-              )}
-              {focusModeEnabled && (
-                <button className={styles.button} onClick={openFocusMode} aria-label={focusModeLabel}>
-                  {focusModeLabel}
-                </button>
-              )}
-              {activeNavigation && (
-                <QuickNavigationTrigger className={styles.button} label={quickNavLabel} onClick={openQuickNavigation} />
-              )}
-              {showVersionSelector && (
-                <VersionSelector
-                  className={styles.select}
-                  versions={data.availableVersions}
-                  value={selectedVersionValue}
-                  onChange={onVersionChange}
-                  ariaLabel={versionLabel}
-                />
-              )}
-              {isLanguageSelectVisible && (
-                <LanguageSelector
-                  className={styles.select}
-                  languages={data.availableLanguages}
-                  value={language}
-                  onChange={onLanguageChange}
-                  getLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
-                  ariaLabel="Language selector"
-                />
-              )}
-
-              {!hideThemeSelector && (
-                <select
-                  className={styles.select}
-                  value={activeThemeId}
-                  onChange={(event) => onThemeChange(event.target.value)}
-                  aria-label="Theme selector"
-                >
-                  {data.layoutsConfig.layouts.map((layout) => (
-                    <option key={layout.id} value={layout.id}>
-                      {layout.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              <ThemeModeToggle
-                className={`${styles.button} ${styles.modeIconButton}`}
-                isDarkMode={nextMode === "dark"}
-                canToggle={canToggleMode}
-                label={nextMode === "dark" ? darkModeLabel : lightModeLabel}
-                onToggle={onToggleMode}
-              />
+              <DocsShellControls {...controlsProps} />
             </div>
           </div>
         </header>
@@ -978,245 +566,59 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         {footerEnabled && <SiteFooter language={language} projectUrl={projectFooterUrl} />}
       </div>
 
-      {menuOpen && (
-        <div className={styles.mobileDrawerOverlay} onClick={() => setMenuOpen(false)}>
-          <aside className={styles.mobileDrawer} onClick={(event) => event.stopPropagation()}>
-            <div className={styles.mobileDrawerHeader}>
-              <strong>{data.config.site.name}</strong>
-              <button
-                className={`${styles.button} ${styles.mobileDrawerClose}`}
-                onClick={() => setMenuOpen(false)}
-                aria-label={menuCloseLabel}
-                title={menuCloseLabel}
-              >
-                ✕
-              </button>
-            </div>
+      <DocsShellMobileDrawer
+        isOpen={menuOpen}
+        siteName={data.config.site.name}
+        menuNodes={headerMenuTree}
+        menuCloseLabel={menuCloseLabel}
+        onClose={() => setMenuOpen(false)}
+        onMenuClick={onMenuClick}
+        onToggleNode={toggleNode}
+        isNodeExpanded={isNodeExpanded}
+        controls={controlsProps}
+      />
 
-            <nav className={styles.mobileMenu}>
-              {renderMenuTree(headerMenuTree, "mobile")}
-            </nav>
+      <DocsShellQuickNavOverlay
+        isOpen={activeNavigation && quickNavOpen}
+        quickNavPlaceholder={quickNavPlaceholder}
+        menuCloseLabel={menuCloseLabel}
+        quickNavQuery={quickNavQuery}
+        filteredQuickNavEntries={filteredQuickNavEntries}
+        quickNavActiveIndex={quickNavActiveIndex}
+        navigateHintLabel={navigateHintLabel}
+        selectHintLabel={selectHintLabel}
+        escHintLabel={escHintLabel}
+        closeHintLabel={closeHintLabel}
+        noNavigationResults={noNavigationResults}
+        quickNavListRef={quickNavListRef}
+        quickNavItemRefs={quickNavItemRefs}
+        onClose={closeQuickNavigation}
+        onQueryChange={setQuickNavQuery}
+        onActiveIndexChange={setQuickNavActiveIndex}
+        onMenuClick={onMenuClick}
+      />
 
-            <div className={styles.mobileControls}>
-              {fallbackProjectLink && (
-                <a
-                  href={fallbackProjectLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`${styles.button} ${styles.githubLinkButton}`}
-                  aria-label={projectLabel}
-                  title={projectLabel}
-                >
-                  {useReactProjectLinkIcon ? (
-                    <ReactIconByTag tag={projectLinkReactIconTag} style={projectLinkReactIconStyle} />
-                  ) : (
-                    <svg viewBox="0 0 24 24" aria-hidden className={styles.githubIcon}>
-                      <path
-                        fill="currentColor"
-                        d="M12 2C6.48 2 2 6.58 2 12.24c0 4.53 2.87 8.37 6.85 9.72.5.1.68-.22.68-.5 0-.24-.01-.9-.01-1.77-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.93.85.09-.67.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.74-.1-.26-.45-1.31.1-2.73 0 0 .84-.28 2.75 1.05A9.32 9.32 0 0 1 12 6.88a9.3 9.3 0 0 1 2.5.35c1.9-1.33 2.74-1.05 2.74-1.05.54 1.42.2 2.47.1 2.73.64.71 1.03 1.62 1.03 2.74 0 3.94-2.33 4.8-4.56 5.06.36.31.68.92.68 1.86 0 1.35-.01 2.43-.01 2.76 0 .27.18.6.69.49A10.22 10.22 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z"
-                      />
-                    </svg>
-                  )}
-                </a>
-              )}
-              {!!versionLinkOptionsWithLabels.length && (
-                <button className={styles.button} onClick={openVersionLinksPopup} aria-label={versionLinksLabel}>
-                  {versionLinksLabel}
-                </button>
-              )}
-              {focusModeEnabled && (
-                <button className={styles.button} onClick={openFocusMode} aria-label={focusModeLabel}>
-                  {focusModeLabel}
-                </button>
-              )}
+      <DocsShellFocusOverlay
+        isOpen={focusModeEnabled && focusModeOpen}
+        focusModeLabel={focusModeLabel}
+        menuCloseLabel={menuCloseLabel}
+        previousLabel={previousLabel}
+        nextLabel={nextLabel}
+        focusModeCurrentHtml={focusModeCurrentHtml}
+        canFocusModeGoPrevious={canFocusModeGoPrevious}
+        canFocusModeGoNext={canFocusModeGoNext}
+        onClose={closeFocusMode}
+        onNavigate={onFocusModeNavigate}
+      />
 
-              {activeNavigation && (
-                <QuickNavigationTrigger className={styles.button} label={quickNavLabel} onClick={openQuickNavigation} />
-              )}
-
-              {showVersionSelector && (
-                <VersionSelector
-                  className={styles.select}
-                  versions={data.availableVersions}
-                  value={selectedVersionValue}
-                  onChange={onVersionChange}
-                  ariaLabel={versionLabel}
-                />
-              )}
-
-              {isLanguageSelectVisible && (
-                <LanguageSelector
-                  className={styles.select}
-                  languages={data.availableLanguages}
-                  value={language}
-                  onChange={onLanguageChange}
-                  getLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
-                  ariaLabel="Language selector"
-                />
-              )}
-
-              {!hideThemeSelector && (
-                <select
-                  className={styles.select}
-                  value={activeThemeId}
-                  onChange={(event) => onThemeChange(event.target.value)}
-                  aria-label="Theme selector"
-                >
-                  {data.layoutsConfig.layouts.map((layout) => (
-                    <option key={layout.id} value={layout.id}>
-                      {layout.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              <ThemeModeToggle
-                className={`${styles.button} ${styles.modeIconButton}`}
-                isDarkMode={nextMode === "dark"}
-                canToggle={canToggleMode}
-                label={nextMode === "dark" ? darkModeLabel : lightModeLabel}
-                onToggle={onToggleMode}
-              />
-            </div>
-          </aside>
-        </div>
-      )}
-
-      {activeNavigation && quickNavOpen && (
-        <div className={styles.quickNavOverlay} onClick={closeQuickNavigation}>
-          <div className={styles.quickNavCard} onClick={(event) => event.stopPropagation()}>
-            <div className={styles.quickNavHeader}>
-              <span className={styles.quickNavHeaderTitle}>{quickNavPlaceholder}</span>
-              <button
-                className={`${styles.button} ${styles.quickNavCloseButton}`}
-                onClick={closeQuickNavigation}
-                aria-label={menuCloseLabel}
-                title={menuCloseLabel}
-              >
-                <FiX aria-hidden />
-              </button>
-            </div>
-            <input
-              className={styles.quickNavInput}
-              placeholder={quickNavPlaceholder}
-              autoFocus
-              value={quickNavQuery}
-              onChange={(event) => {
-                setQuickNavQuery(event.target.value);
-                setQuickNavActiveIndex(0);
-              }}
-              onKeyDown={(event) => {
-                if (!filteredQuickNavEntries.length) {
-                  if (event.key === "Escape") {
-                    event.preventDefault();
-                    closeQuickNavigation();
-                  }
-                  return;
-                }
-
-                if (event.key === "ArrowDown") {
-                  event.preventDefault();
-                  setQuickNavActiveIndex((prev) => Math.min(prev + 1, filteredQuickNavEntries.length - 1));
-                } else if (event.key === "ArrowUp") {
-                  event.preventDefault();
-                  setQuickNavActiveIndex((prev) => Math.max(prev - 1, 0));
-                } else if (event.key === "Enter") {
-                  event.preventDefault();
-                  const selectedEntry = filteredQuickNavEntries[quickNavActiveIndex];
-                  if (selectedEntry) {
-                    onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys);
-                  }
-                } else if (event.key === "Escape") {
-                  event.preventDefault();
-                  closeQuickNavigation();
-                }
-              }}
-            />
-            <div className={styles.quickNavList} ref={quickNavListRef}>
-              {filteredQuickNavEntries.map((entry, index) => (
-                <button
-                  key={`quick-${entry.key}`}
-                  ref={(element) => {
-                    quickNavItemRefs.current[index] = element;
-                  }}
-                  className={`${styles.menuButton} ${index === quickNavActiveIndex ? styles.quickNavItemActive : ""}`}
-                  onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys)}
-                  onMouseEnter={() => setQuickNavActiveIndex(index)}
-                >
-                  {entry.searchLabel}
-                </button>
-              ))}
-              {!filteredQuickNavEntries.length && <p className={styles.repoInfo}>{noNavigationResults}</p>}
-            </div>
-            <div className={styles.quickNavFooter}>
-              <span>↓ ↑ {navigateHintLabel}</span>
-              <span>↵ {selectHintLabel}</span>
-              <span>{escHintLabel} {closeHintLabel}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {focusModeEnabled && focusModeOpen && (
-        <div className={styles.focusModeOverlay} onClick={closeFocusMode}>
-          <div className={styles.focusModeCard} onClick={(event) => event.stopPropagation()}>
-            <div className={styles.focusModeHeader}>
-              <strong>{focusModeLabel}</strong>
-              <button
-                className={`${styles.button} ${styles.focusModeCloseButton}`}
-                onClick={closeFocusMode}
-                aria-label={menuCloseLabel}
-                title={menuCloseLabel}
-              >
-                <FiX aria-hidden />
-              </button>
-            </div>
-            <div className={styles.focusModeBody}>
-              <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: focusModeCurrentHtml }} />
-            </div>
-            <div className={styles.focusModeFooter}>
-              <button className={styles.button} onClick={() => onFocusModeNavigate(-1)} disabled={!canFocusModeGoPrevious}>
-                {previousLabel}
-              </button>
-              <button className={styles.button} onClick={() => onFocusModeNavigate(1)} disabled={!canFocusModeGoNext}>
-                {nextLabel}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {versionLinksPopupOpen && !!versionLinkOptionsWithLabels.length && (
-        <div className={styles.versionLinksOverlay} onClick={() => setVersionLinksPopupOpen(false)}>
-          <div className={styles.versionLinksCard} onClick={(event) => event.stopPropagation()}>
-            <div className={styles.versionLinksHeader}>
-              <strong>{versionLinksLabel}</strong>
-              <button
-                className={`${styles.button} ${styles.versionLinksCloseButton}`}
-                onClick={() => setVersionLinksPopupOpen(false)}
-                aria-label={menuCloseLabel}
-                title={menuCloseLabel}
-              >
-                <FiX aria-hidden />
-              </button>
-            </div>
-            <div className={styles.versionLinksList}>
-              {versionLinkOptionsWithLabels.map((option) => (
-                <button
-                  key={`version-link-${option.id}`}
-                  className={styles.button}
-                  onClick={() => {
-                    openVersionLink(option.url);
-                    setVersionLinksPopupOpen(false);
-                  }}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <DocsShellVersionLinksOverlay
+        isOpen={versionLinksPopupOpen}
+        versionLinksLabel={versionLinksLabel}
+        menuCloseLabel={menuCloseLabel}
+        options={versionLinkOptionsWithLabels}
+        onClose={() => setVersionLinksPopupOpen(false)}
+        onOpenVersionLink={openVersionLink}
+      />
     </div>
   );
 }
