@@ -56,10 +56,15 @@ export async function generateStaticParams() {
         addRepoWithVersions(parts[0], parts[1]);
       }
     }
-    for (const [owner, repo] of [
-      ["Vidigal-code", "git-page-link-create"],
-      ["Vidigal-code", "git-page-docs"],
-    ]) {
+    const configuredPreRenderRepos = Array.isArray(config?.site?.preRenderRepositories)
+      ? config.site.preRenderRepositories
+      : [];
+    for (const entry of configuredPreRenderRepos) {
+      const owner = typeof entry?.owner === "string" ? entry.owner.trim() : "";
+      const repo = typeof entry?.repo === "string" ? entry.repo.trim() : "";
+      if (!owner || !repo) {
+        continue;
+      }
       addRepoWithVersions(owner, repo);
     }
   } catch {}
