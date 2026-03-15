@@ -527,12 +527,26 @@ export default function NotFound() {
 
   useEffect(() => {
     setMounted(true);
-    const parsed = parsePathFromLocation();
-    if (parsed) {
+    function syncFromCurrentLocation() {
+      const parsed = parsePathFromLocation();
+      if (!parsed) {
+        return;
+      }
       setPathOwner(parsed.owner);
       setPathRepo(parsed.repo);
       setPathVersion(parsed.version);
     }
+    syncFromCurrentLocation();
+    if (typeof window !== "undefined") {
+      window.addEventListener("popstate", syncFromCurrentLocation);
+      window.addEventListener("hashchange", syncFromCurrentLocation);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("popstate", syncFromCurrentLocation);
+        window.removeEventListener("hashchange", syncFromCurrentLocation);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -568,8 +582,7 @@ export default function NotFound() {
           setLoadedData(data);
           return;
         }
-      })
-      .finally(() => {});
+      });
 
     return () => {
       cancelled = true;
