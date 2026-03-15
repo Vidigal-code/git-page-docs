@@ -2075,37 +2075,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout target repository
         uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Install dependencies
+      - name: Prepare runtime source
+        run: |
+          git clone --depth 1 https://github.com/Vidigal-code/git-page-docs.git .gitpagedocs-runtime
+          if [ -d gitpagedocs ]; then
+            rm -rf .gitpagedocs-runtime/gitpagedocs
+            cp -R gitpagedocs .gitpagedocs-runtime/gitpagedocs
+          fi
+
+      - name: Install runtime dependencies
         run: npm ci
+        working-directory: .gitpagedocs-runtime
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Build static site
+      - name: Build static site with target repository path
         run: npm run build
+        working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
 
       - name: Add .nojekyll
-        run: touch out/.nojekyll 2>/dev/null || mkdir -p out && touch out/.nojekyll
+        run: touch .gitpagedocs-runtime/out/.nojekyll 2>/dev/null || mkdir -p .gitpagedocs-runtime/out && touch .gitpagedocs-runtime/out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./.gitpagedocs-runtime/out
 
   deploy:
     environment:

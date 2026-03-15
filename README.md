@@ -117,6 +117,7 @@ npm start
 - Optional one-command bootstrap:
   - `npx gitpagedocs --push --owner your-user --repo your-repository`
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
+  - The generated workflow is self-sufficient: it clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds with your repository path, and deploys to your own GitHub Pages URL.
 
 When built with `GITHUB_ACTIONS=true`, the runtime enables GitHub Pages behavior.
 
@@ -183,51 +184,6 @@ GITPAGEDOCS_REPOSITORY_SEARCH=true
 - `npm run dev` -> `next dev`
 - `npm run start` -> `next start` (after `prestart` build)
 - `npm run lint` -> `eslint .`
-
-## Release and Publish (npm)
-
-Two supported flows are documented below.  
-**Recommended:** GitHub Release + CI publish.
-
-### A) Recommended CI flow (GitHub Release)
-
-1. Update version:
-
-```bash
-npm version patch
-```
-
-2. Push commit + tag:
-
-```bash
-git push origin main --follow-tags
-```
-
-3. Create/publish a GitHub Release for the tag.
-4. CI workflow builds, packs, and publishes to npm using `NPM_TOKEN`.
-
-### B) Manual local flow
-
-1. Validate auth and quality:
-
-```bash
-npm whoami
-npm run lint
-npm run build
-npm pack --ignore-scripts
-```
-
-2. Bump version:
-
-```bash
-npm version patch
-```
-
-3. Publish:
-
-```bash
-npm publish --access public
-```
 
 ## Compatibility Flags
 
