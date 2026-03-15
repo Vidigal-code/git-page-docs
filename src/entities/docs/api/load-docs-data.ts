@@ -441,11 +441,18 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
   const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
   const repositorySearchEnabled = isGithubPagesBuild || repositorySearchEnabledByEnv;
+  const renderingRef = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
+  const projectRef = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
+  const isOfficialSearchAggregatorRepo =
+    renderingRef.repo?.toLowerCase() === "git-page-docs" || projectRef.repo?.toLowerCase() === "git-page-docs";
 
   const requestedOwner = slug?.[0];
   const requestedRepo = slug?.[1];
   const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
-  const repositorySearchHomeEnabled = localConfig.site.repositorySearchHome ?? true;
+  const repositorySearchHomeEnabled =
+    typeof localConfig.site.repositorySearchHome === "boolean"
+      ? localConfig.site.repositorySearchHome
+      : isOfficialSearchAggregatorRepo;
   const showRepositorySearchHome = Boolean(
     repositorySearchEnabled && repositorySearchHomeEnabled && !requestedOwner && !requestedRepo && !selectedVersionId,
   );
