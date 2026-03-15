@@ -2110,7 +2110,18 @@ jobs:
 
       - name: Force root URL to docs entrypoint
         run: |
-          node -e "const fs=require('fs');const path=require('path');const cfgPath=path.join('.gitpagedocs-runtime','gitpagedocs','config.json');if(!fs.existsSync(cfgPath))process.exit(0);const cfg=JSON.parse(fs.readFileSync(cfgPath,'utf8'));const defaultVersion=cfg?.site?.docsVersion||cfg?.VersionControl?.versions?.[0]?.id||'1.1.0';const defaultLang=cfg?.site?.defaultLanguage||'en';const redirectTarget='./v/'+defaultVersion+'/?lang='+defaultLang;const html='<!doctype html><html><head><meta charset=\"utf-8\"><meta http-equiv=\"refresh\" content=\"0;url='+redirectTarget+'\"/><script>window.location.replace(\"'+redirectTarget+'\"+(window.location.search||\"\"));</script></head><body>Redirecting...</body></html>';fs.writeFileSync(path.join('.gitpagedocs-runtime','out','index.html'),html);"
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
+          if (!fs.existsSync(cfgPath)) process.exit(0);
+          const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
+          const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.0';
+          const defaultLang = cfg?.site?.defaultLanguage || 'en';
+          const redirectTarget = './v/' + defaultVersion + '/?lang=' + defaultLang;
+          const html = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTarget + '"/><script>window.location.replace("' + redirectTarget + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
+          fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), html);
+          NODE
 
       - name: Add .nojekyll
         run: touch .gitpagedocs-runtime/out/.nojekyll 2>/dev/null || mkdir -p .gitpagedocs-runtime/out && touch .gitpagedocs-runtime/out/.nojekyll
