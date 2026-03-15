@@ -418,35 +418,25 @@ async function loadRemoteDocsData(
     }
   }
 
-  const language: LanguageCode = selectedLanguage || config.site.defaultLanguage || "en";
-  const normalizedRoutes: RouteConfig[] = routes
-    .map((route) => {
-      const pickedPath = pickRoutePathForLanguage(route, language, config.site.defaultLanguage);
-      if (!pickedPath) {
-        return null;
-      }
-      return {
-        ...route,
-        path: {
-          [language]: pickedPath,
-        },
-      };
-    })
-    .filter((route): route is RouteConfig => route !== null);
+  const availableLanguages = getAvailableLanguages(routes, config.site.defaultLanguage);
+  const preferredLanguage = availableLanguages.includes(selectedLanguage)
+    ? selectedLanguage
+    : availableLanguages.includes(config.site.defaultLanguage)
+      ? config.site.defaultLanguage
+      : availableLanguages[0] ?? "en";
 
   const effectiveConfig: GitPageDocsConfig = {
     ...config,
     site: {
       ...config.site,
-      defaultLanguage: language,
+      defaultLanguage: preferredLanguage,
     },
-    routes: normalizedRoutes,
+    routes,
     "menus-header": menusHeader,
   };
 
-  const availableLanguages: LanguageCode[] = [language];
   const docs = await Promise.all(
-    normalizedRoutes.map(async (route) => {
+    routes.map(async (route) => {
       const markdownByLanguage: Record<LanguageCode, string> = {};
       await Promise.all(
         availableLanguages.map(async (langCode) => {
@@ -468,8 +458,17 @@ async function loadRemoteDocsData(
     }),
   );
 
-  // Keep fallback rendering fast and resilient: avoid loading all remote templates in not-found path.
-  const { layoutsConfig, themes } = buildFallbackLayoutsAndThemes();
+  let layoutsConfig: LayoutsConfig;
+  let themes: Record<string, ThemeTemplate>;
+  try {
+    const loadedLayouts = await loadLayoutsAndThemes(effectiveConfig, owner, repo);
+    layoutsConfig = loadedLayouts.layoutsConfig;
+    themes = loadedLayouts.themes;
+  } catch {
+    const fallback = buildFallbackLayoutsAndThemes();
+    layoutsConfig = fallback.layoutsConfig;
+    themes = fallback.themes;
+  }
 
   return {
     config: effectiveConfig,
