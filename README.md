@@ -25,6 +25,18 @@ Generate docs plus local layout templates:
 npx gitpagedocs --layoutconfig
 ```
 
+Generate docs, configure GitHub Pages URL, create workflow, and push:
+
+```bash
+npx gitpagedocs --push --owner your-user --repo your-repository
+```
+
+Shortcut syntax also supported:
+
+```bash
+npx gitpagedocs --push --your-user --your-repository
+```
+
 ## Layout Strategy
 
 `gitpagedocs` supports two layout strategies:
@@ -102,6 +114,9 @@ npm start
 - Push your repository to GitHub.
 - Enable Pages for your repository (Settings -> Pages).
 - Use the repository workflow to build/deploy static output.
+- Optional one-command bootstrap:
+  - `npx gitpagedocs --push --owner your-user --repo your-repository`
+  - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
 
 When built with `GITHUB_ACTIONS=true`, the runtime enables GitHub Pages behavior.
 
@@ -221,5 +236,6 @@ Supported for compatibility:
 - `--build`
 - `--serve`
 - `--full`
+- `--push` (setup + workflow + git push automation)
 
 These flags do not change the artifact type. Output remains `gitpagedocs/`.

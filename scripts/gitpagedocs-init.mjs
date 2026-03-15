@@ -4,6 +4,7 @@ import { existsSync, rmSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
 
 const ROOT = process.cwd();
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -1644,6 +1645,14 @@ function withVersionBadge(content, versionId, language) {
 function buildConfigArtifacts(options = {}) {
   const useLocalLayoutConfig = Boolean(options.useLocalLayoutConfig);
   const useOfficialLayouts = !useLocalLayoutConfig;
+  const githubOwner = options.githubOwner;
+  const githubRepo = options.githubRepo;
+  const renderingUrl = githubOwner && githubRepo
+    ? `https://${githubOwner}.github.io/${githubRepo}/`
+    : "https://vidigal-code.github.io/git-page-docs/";
+  const projectLink = githubOwner && githubRepo
+    ? `https://github.com/${githubOwner}/${githubRepo}`
+    : "https://github.com/Vidigal-code/git-page-docs";
   const versionRoutes_1_0_0 = [
     {
       id: 0,
@@ -1825,7 +1834,8 @@ function buildConfigArtifacts(options = {}) {
       layoutsConfigPathOficial: useOfficialLayouts,
       layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",
-      rendering: "https://vidigal-code.github.io/git-page-docs/",
+      rendering: renderingUrl,
+      ProjectLink: projectLink,
       langmenu: {
         pt: {
           pt: "Portugues",
@@ -1891,7 +1901,7 @@ function buildConfigArtifacts(options = {}) {
         {
           id: "1.0.0",
           path: "gitpagedocs/docs/versions/1.0.0/config.json",
-          ProjectLink: "https://github.com/Vidigal-code/git-page-docs",
+          ProjectLink: projectLink,
           PathConfig: "gitpagedocs/docs/versions/1.0.0/config.json",
           branch: "",
           release: "",
@@ -1900,7 +1910,7 @@ function buildConfigArtifacts(options = {}) {
         {
           id: "1.1.0",
           path: "gitpagedocs/docs/versions/1.1.0/config.json",
-          ProjectLink: "https://github.com/Vidigal-code/git-page-docs",
+          ProjectLink: projectLink,
           PathConfig: "gitpagedocs/docs/versions/1.1.0/config.json",
           branch: "",
           release: "",
@@ -1909,7 +1919,7 @@ function buildConfigArtifacts(options = {}) {
         {
           id: "1.1.1",
           path: "gitpagedocs/docs/versions/1.1.1/config.json",
-          ProjectLink: "https://github.com/Vidigal-code/git-page-docs",
+          ProjectLink: projectLink,
           PathConfig: "gitpagedocs/docs/versions/1.1.1/config.json",
           branch: "",
           release: "",
@@ -1986,12 +1996,166 @@ function buildConfigArtifacts(options = {}) {
 }
 
 function parseCliOptions(argv, env) {
+  const args = argv.slice(2);
+  const knownFlags = new Set(["--build", "--serve", "--layoutconfig", "--full", "--push"]);
+  const readOptionValue = (optionName) => {
+    const equalsArg = args.find((arg) => arg.startsWith(`${optionName}=`));
+    if (equalsArg) {
+      return equalsArg.slice(optionName.length + 1).trim();
+    }
+    const index = args.indexOf(optionName);
+    if (index >= 0) {
+      const nextArg = args[index + 1];
+      if (nextArg && !nextArg.startsWith("--")) {
+        return nextArg.trim();
+      }
+    }
+    return "";
+  };
+
+  let githubOwner = readOptionValue("--owner");
+  let githubRepo = readOptionValue("--repo");
+  const fallbackDashedArgs = args
+    .filter((arg) => arg.startsWith("--"))
+    .filter((arg) => !knownFlags.has(arg))
+    .filter((arg) => !arg.startsWith("--owner"))
+    .filter((arg) => !arg.startsWith("--repo"))
+    .map((arg) => arg.replace(/^--/, "").trim())
+    .filter(Boolean);
+  if (!githubOwner && fallbackDashedArgs[0]) {
+    githubOwner = fallbackDashedArgs[0];
+  }
+  if (!githubRepo && fallbackDashedArgs[1]) {
+    githubRepo = fallbackDashedArgs[1];
+  }
+
   const isBuild = argv.includes("--build") || env.GITPAGEDOCS_BUILD === "1";
   const isServe = argv.includes("--serve");
   const useLocalLayoutConfig = argv.includes("--layoutconfig");
+  const shouldPush = argv.includes("--push");
   const mode = argv.includes("--full") ? "full" : "config-only";
   const outputDir = "gitpagedocs";
-  return { isBuild, isServe, mode, outputDir, useLocalLayoutConfig };
+  return {
+    isBuild,
+    isServe,
+    mode,
+    outputDir,
+    useLocalLayoutConfig,
+    shouldPush,
+    githubOwner,
+    githubRepo,
+  };
+}
+
+function sanitizeSegment(value) {
+  if (!value) return "";
+  const normalized = value.trim();
+  return /^[A-Za-z0-9._-]+$/.test(normalized) ? normalized : "";
+}
+
+async function ensureGitHubPagesWorkflow() {
+  const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
+  const workflowContent = `name: Deploy GitPageDocs
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build static site
+        run: npm run build
+        env:
+          GITHUB_ACTIONS: "true"
+          GITHUB_REPOSITORY: \${{ github.repository }}
+
+      - name: Add .nojekyll
+        run: touch out/.nojekyll 2>/dev/null || mkdir -p out && touch out/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: \${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+`;
+  await writeText(workflowPath, workflowContent);
+}
+
+function runGitPushForGeneratedArtifacts(options) {
+  const owner = sanitizeSegment(options.githubOwner);
+  const repo = sanitizeSegment(options.githubRepo);
+  if (!owner || !repo) {
+    throw new Error("`--push` requires owner and repo. Use `--owner <owner> --repo <repo>` or `--<owner> --<repo>`.");
+  }
+  if (!existsSync(path.join(ROOT, ".git"))) {
+    throw new Error("Current directory is not a git repository. Initialize git before using --push.");
+  }
+
+  const repoUrl = `https://github.com/${owner}/${repo}.git`;
+  try {
+    execSync("git remote get-url origin", { cwd: ROOT, stdio: "ignore" });
+  } catch {
+    execSync(`git remote add origin "${repoUrl}"`, { cwd: ROOT, stdio: "inherit" });
+  }
+
+  execSync('git add "gitpagedocs" ".github/workflows/gitpagedocs-pages.yml"', { cwd: ROOT, stdio: "inherit" });
+
+  let hasStagedChanges = false;
+  try {
+    execSync("git diff --cached --quiet", { cwd: ROOT, stdio: "ignore" });
+    hasStagedChanges = false;
+  } catch {
+    hasStagedChanges = true;
+  }
+
+  if (!hasStagedChanges) {
+    return;
+  }
+
+  execSync('git commit -m "chore: setup gitpagedocs pages workflow"', { cwd: ROOT, stdio: "inherit" });
+
+  const currentBranch = execSync("git branch --show-current", { cwd: ROOT, stdio: "pipe" }).toString().trim() || "main";
+  execSync(`git push -u origin ${currentBranch}`, { cwd: ROOT, stdio: "inherit" });
 }
 
 async function writeConfigOnlyOutput(outputDir, artifacts, options) {
@@ -2049,8 +2213,16 @@ async function writeConfigOnlyOutput(outputDir, artifacts, options) {
 
 async function run() {
   const options = parseCliOptions(process.argv, process.env);
-  const artifacts = buildConfigArtifacts({ useLocalLayoutConfig: options.useLocalLayoutConfig });
+  const artifacts = buildConfigArtifacts({
+    useLocalLayoutConfig: options.useLocalLayoutConfig,
+    githubOwner: sanitizeSegment(options.githubOwner),
+    githubRepo: sanitizeSegment(options.githubRepo),
+  });
   await writeConfigOnlyOutput(options.outputDir, artifacts, options);
+  if (options.shouldPush) {
+    await ensureGitHubPagesWorkflow();
+    runGitPushForGeneratedArtifacts(options);
+  }
 
   console.log(`Generated: ${options.outputDir}/ (config-only)`);
   console.log("No index.html/index.js generated.");
@@ -2058,6 +2230,16 @@ async function run() {
     console.log("Local layouts generated in gitpagedocs/layouts/ (--layoutconfig).");
   } else {
     console.log("Using official remote layouts config by default (no local gitpagedocs/layouts generated).");
+  }
+  if (options.githubOwner && options.githubRepo) {
+    console.log(`Configured rendering URL: https://${options.githubOwner}.github.io/${options.githubRepo}/`);
+    console.log(
+      `Official viewer remains available: https://vidigal-code.github.io/git-page-docs/${options.githubOwner}/${options.githubRepo}?modetheme=light&lang=pt`,
+    );
+  }
+  if (options.shouldPush) {
+    console.log("Generated: .github/workflows/gitpagedocs-pages.yml");
+    console.log("Push mode enabled: committed and pushed gitpagedocs/ + workflow to origin.");
   }
   if (options.isBuild) {
     console.log("`--build` keeps compatibility flag but output remains gitpagedocs/.");
