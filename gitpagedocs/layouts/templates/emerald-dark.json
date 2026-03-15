@@ -1,0 +1,77 @@
+{
+  "id": "emerald-dark",
+  "name": "Emerald Dark",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#07150F",
+    "primary": "#10B981",
+    "secondary": "#34D399",
+    "text": "#D1FAE5",
+    "textSecondary": "#6EE7B7",
+    "cardBackground": "#10231A",
+    "cardBorder": "#1F6A4C",
+    "error": "#F87171",
+    "success": "#10B981"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#0B1220",
+      "borderBottom": "1px solid #334155"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#0B1220",
+      "borderTop": "1px solid #334155"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 60px rgba(0, 0, 0, 0.45)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #334155",
+      "hoverGlow": "0 0 0 3px rgba(124, 58, 237, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #334155",
+      "backgroundColor": "#0F172A",
+      "textAlign": "center",
+      "iconColor": "#34D399",
+      "hoverBorderColor": "rgba(34, 211, 238, 0.7)",
+      "focusBorderColor": "rgba(124, 58, 237, 0.8)",
+      "focusGlow": "0 0 0 4px rgba(124, 58, 237, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#10B981",
+      "borderColor": "#475569",
+      "hoverBorderColor": "rgba(34, 211, 238, 0.75)",
+      "checkMarkColor": "#07150F",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": true,
+    "transitionDuration": "0.22s"
+  }
+}

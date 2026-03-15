@@ -789,6 +789,20 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
+    if (isRemoteRepositorySession) {
+      const params = getCurrentSearchParams();
+      params.set("version", versionId);
+      params.set("lang", String(language));
+      const cleanPath = pathname.replace(/\/$/, "") || pathname || "/";
+      const qs = params.toString();
+      const nextUrl = qs ? `${cleanPath}?${qs}` : cleanPath;
+      if (typeof window !== "undefined") {
+        window.location.assign(nextUrl);
+      } else {
+        router.replace(nextUrl);
+      }
+      return;
+    }
     const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
     const params = new URLSearchParams(searchParams.toString());
     params.delete("version");

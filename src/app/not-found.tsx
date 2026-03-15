@@ -244,6 +244,7 @@ function parsePathFromLocation(): ParsedPath | null {
     return null;
   }
   const path = window.location.pathname;
+  const searchParams = new URLSearchParams(window.location.search);
   const base = getBasePath();
   const withoutBase = base ? path.slice(base.length) : path;
   const parts = withoutBase.split("/").filter(Boolean);
@@ -252,7 +253,9 @@ function parsePathFromLocation(): ParsedPath | null {
   }
   const owner = parts[0];
   const repo = parts[1];
-  const version = parts.length >= 4 && parts[2] === "v" ? parts[3] : undefined;
+  const versionFromPath = parts.length >= 4 && parts[2] === "v" ? parts[3] : undefined;
+  const versionFromQuery = searchParams.get("version") ?? undefined;
+  const version = versionFromPath || versionFromQuery;
   return { owner, repo, version };
 }
 
