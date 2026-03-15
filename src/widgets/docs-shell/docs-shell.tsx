@@ -14,6 +14,7 @@ import type {
   ThemeTemplate,
 } from "@/entities/docs/model/types";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { SiteFooter } from "@/shared/ui/site-footer";
 import styles from "./docs-shell.module.css";
 
 function getLanguageLabel(data: LoadedDocsData, selectedLanguage: LanguageCode, target: LanguageCode): string {
@@ -424,6 +425,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const commitLabel = getLangMenuLabel(data, language, "commitLabel", "Commit");
   const projectLabel = getLangMenuLabel(data, language, "projectLabel", "Project");
   const showVersionSelector = data.availableVersions.length > 1;
+  const footerEnabled = data.config.site.FooterEnabled !== false;
+  const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -1038,6 +1041,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             )}
           </article>
         </main>
+        {footerEnabled && <SiteFooter language={language} projectUrl={projectFooterUrl} />}
       </div>
 
       {menuOpen && (

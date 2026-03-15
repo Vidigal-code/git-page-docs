@@ -10,6 +10,7 @@ export interface SiteConfig {
   docsVersion?: string;
   ActiveNavigation?: boolean;
   FocusMode?: boolean;
+  FooterEnabled?: boolean;
   IconImageMenuHeader?: string;
   IconImageMenuHeaderLight?: string;
   IconImageMenuHeaderDark?: string;

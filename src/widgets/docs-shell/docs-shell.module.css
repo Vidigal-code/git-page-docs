@@ -8,6 +8,9 @@
     var(--background);
   color: var(--text);
   transition: grid-template-columns 0.2s ease;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .wrapperCollapsed {
@@ -216,6 +219,11 @@
 
 .contentArea {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -343,6 +351,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 18px 80px;
+  width: 100%;
+  min-width: 0;
+  flex: 1;
 }
 
 .card {
@@ -356,6 +367,15 @@
   border-radius: var(--card-radius);
   padding: 22px;
   box-shadow: var(--card-shadow);
+  width: 100%;
+  min-width: 0;
+}
+
+.markdown {
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .markdown :global(h1),
@@ -372,6 +392,30 @@
   background: color-mix(in srgb, var(--card-border) 35%, transparent);
   border-radius: 6px;
   padding: 2px 5px;
+  white-space: break-spaces;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.markdown :global(pre) {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--card-border) 22%, transparent);
+}
+
+.markdown :global(pre code) {
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.markdown :global(img),
+.markdown :global(video),
+.markdown :global(iframe),
+.markdown :global(table) {
+  max-width: 100%;
 }
 
 .footerActions {
@@ -707,6 +751,18 @@
 }
 
 @media (max-width: 640px) {
+  .headerInner {
+    padding: 12px;
+  }
+
+  .main {
+    padding: 16px 12px 64px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
   .focusModeCard {
     width: min(520px, 98vw);
     max-height: 94vh;

@@ -1334,6 +1334,7 @@ function buildConfigArtifacts() {
       ThemeModeDefault: "dark",
       ActiveNavigation: true,
       FocusMode: true,
+      FooterEnabled: true,
       IconImageMenuHeader: "/icon.svg",
       IconImageMenuHeaderLight: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
       IconImageMenuHeaderDark: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",

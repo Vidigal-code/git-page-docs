@@ -1,0 +1,49 @@
+.footer {
+  width: 100%;
+  border-top: var(--header-border, 1px solid var(--card-border));
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--header-background, var(--card-background)) 92%, var(--primary) 8%),
+      color-mix(in srgb, var(--header-background, var(--card-background)) 92%, var(--secondary) 8%)
+    );
+  padding: 12px 18px;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.link {
+  color: var(--secondary);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

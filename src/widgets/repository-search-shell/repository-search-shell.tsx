@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { FaGithubAlt, FaGithubSquare } from "react-icons/fa";
 import type { LanguageCode, LayoutItem, LoadedDocsData, ThemeTemplate } from "@/entities/docs/model/types";
+import { SiteFooter } from "@/shared/ui/site-footer";
 import styles from "./repository-search-shell.module.css";
 
 function resolveThemeByMode(layouts: LayoutItem[], active: LayoutItem, mode: "light" | "dark"): LayoutItem {
@@ -124,6 +125,8 @@ export function RepositorySearchShell({
   }[language];
 
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
+  const footerEnabled = data.config.site.FooterEnabled !== false;
+  const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
 
   // Handle modetheme from URL on mount
   useEffect(() => {
@@ -254,6 +257,7 @@ export function RepositorySearchShell({
           </button>
         </div>
       </section>
+      {footerEnabled && <SiteFooter language={language} projectUrl={projectFooterUrl} />}
     </main>
   );
 }
