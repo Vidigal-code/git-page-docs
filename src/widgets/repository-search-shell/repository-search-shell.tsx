@@ -95,9 +95,6 @@ export function RepositorySearchShell({
   const activeLayout = data.layoutsConfig.layouts.find((layout) => layout.id === activeThemeId) ?? data.layoutsConfig.layouts[0];
   const activeTheme = data.themes[activeLayout?.id];
   const cssVars = useMemo(() => toCssVars(activeTheme), [activeTheme]);
-  const hideThemeSelector = Boolean(data.config.site.HideThemeSelector);
-  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
-  const nextMode = activeLayout?.mode === "dark" ? "light" : "dark";
 
   const iconImage =
     (activeLayout?.mode === "dark"
@@ -116,8 +113,6 @@ export function RepositorySearchShell({
     fontSize: headerReactIconSize?.trim() || undefined,
   };
 
-  const darkModeLabel = getLangMenuLabel(data, language, "darkMode", "Dark mode");
-  const lightModeLabel = getLangMenuLabel(data, language, "lightMode", "Light mode");
   const ownerLabel = getLangMenuLabel(data, language, "searchOwnerLabel", "Owner");
   const repoLabel = getLangMenuLabel(data, language, "searchRepoLabel", "Repository");
   const searchLabel = getLangMenuLabel(data, language, "searchButtonLabel", "Search");
@@ -195,32 +190,6 @@ export function RepositorySearchShell({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount to sync from hash
   }, []);
 
-  function updateModethemeInUrl(mode: "dark" | "light") {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("modetheme", mode);
-    const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : `${pathname}?modetheme=${mode}`);
-  }
-
-  function onThemeChange(nextThemeId: string) {
-    setActiveThemeId(nextThemeId);
-    const layout = data.layoutsConfig.layouts.find((l) => l.id === nextThemeId);
-    if (layout?.mode === "dark" || layout?.mode === "light") {
-      updateModethemeInUrl(layout.mode);
-    }
-  }
-
-  function onToggleMode() {
-    if (!activeLayout) {
-      return;
-    }
-    const nextLayout = resolveThemeByMode(data.layoutsConfig.layouts, activeLayout, nextMode);
-    setActiveThemeId(nextLayout.id);
-    if (nextLayout.mode === "dark" || nextLayout.mode === "light") {
-      updateModethemeInUrl(nextLayout.mode);
-    }
-  }
-
   function onSearch() {
     const owner = ownerInput.trim();
     const repo = repoInput.trim();
@@ -261,21 +230,6 @@ export function RepositorySearchShell({
             </select>
           )}
 
-          {!hideThemeSelector && (
-            <select className={styles.select} value={activeThemeId} onChange={(event) => onThemeChange(event.target.value)}>
-              {data.layoutsConfig.layouts.map((layout) => (
-                <option key={layout.id} value={layout.id}>
-                  {layout.name}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {canToggleMode && (
-            <button className={styles.button} onClick={onToggleMode} aria-label={nextMode === "dark" ? darkModeLabel : lightModeLabel}>
-              {nextMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-            </button>
-          )}
         </div>
 
         <div className={styles.form}>
