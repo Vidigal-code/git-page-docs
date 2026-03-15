@@ -2143,7 +2143,11 @@ jobs:
               nestedPathPrefix = parts.slice(2).join('/');
             }
           } catch {}
-          const prefix = nestedPathPrefix ? './' + nestedPathPrefix.replace(/^\/+|\/+$/g, '') + '/' : './';
+          const normalizedNestedPathPrefix = nestedPathPrefix
+            .split('/')
+            .filter(Boolean)
+            .join('/');
+          const prefix = normalizedNestedPathPrefix ? './' + normalizedNestedPathPrefix + '/' : './';
           const redirectTarget = prefix + 'v/' + defaultVersion + '/?lang=' + defaultLang;
           const html = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTarget + '"/><script>window.location.replace("' + redirectTarget + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
           fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), html);
