@@ -723,7 +723,16 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       if (urlVersion && !validUrlVersion) {
         // Remove invalid version from query to avoid inconsistent state.
         params.delete("version");
-        replaceUrlWithoutNavigation(pathname, params);
+        if (typeof window !== "undefined") {
+          const currentPath = window.location.pathname || "/";
+          const qs = params.toString();
+          const nextUrl = qs ? `${currentPath}?${qs}` : currentPath;
+          window.history.replaceState({}, "", nextUrl);
+        } else {
+          const qs = params.toString();
+          const nextUrl = qs ? `${pathname}?${qs}` : pathname;
+          router.replace(nextUrl);
+        }
       }
       return;
     }
