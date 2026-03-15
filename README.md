@@ -37,18 +37,6 @@ Shortcut syntax also supported:
 npx gitpagedocs --push --your-user --your-repository
 ```
 
-Publish with custom subpath (example `docs`):
-
-```bash
-npx gitpagedocs --push --owner your-user --repo your-repository --path docs
-```
-
-Force root path (no extra subpath):
-
-```bash
-npx gitpagedocs --push --owner your-user --repo your-repository --notpath
-```
-
 ## Layout Strategy
 
 `gitpagedocs` supports two layout strategies:
@@ -209,7 +197,5 @@ Supported for compatibility:
 - `--serve`
 - `--full`
 - `--push` (setup + workflow + git push automation)
-- `--path <segment>` (publish docs under `/<repo>/<segment>/...`)
-- `--notpath` (publish docs under `/<repo>/...`)
 
 These flags do not change the artifact type. Output remains `gitpagedocs/`.

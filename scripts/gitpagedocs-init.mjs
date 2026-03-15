@@ -1647,10 +1647,9 @@ function buildConfigArtifacts(options = {}) {
   const useOfficialLayouts = !useLocalLayoutConfig;
   const githubOwner = options.githubOwner;
   const githubRepo = options.githubRepo;
-  const pagesPath = normalizePagesPath(options.pagesPath);
   const repositorySearchHome = githubOwner && githubRepo ? false : true;
   const renderingUrl = githubOwner && githubRepo
-    ? `https://${githubOwner}.github.io/${githubRepo}${pagesPath ? `/${pagesPath}` : ""}/`
+    ? `https://${githubOwner}.github.io/${githubRepo}/`
     : "https://vidigal-code.github.io/git-page-docs/";
   const projectLink = githubOwner && githubRepo
     ? `https://github.com/${githubOwner}/${githubRepo}`
@@ -2000,7 +1999,7 @@ function buildConfigArtifacts(options = {}) {
 
 function parseCliOptions(argv, env) {
   const args = argv.slice(2);
-  const knownFlags = new Set(["--build", "--serve", "--layoutconfig", "--full", "--push", "--notpath"]);
+  const knownFlags = new Set(["--build", "--serve", "--layoutconfig", "--full", "--push"]);
   const readOptionValue = (optionName) => {
     const equalsArg = args.find((arg) => arg.startsWith(`${optionName}=`));
     if (equalsArg) {
@@ -2018,8 +2017,6 @@ function parseCliOptions(argv, env) {
 
   let githubOwner = readOptionValue("--owner");
   let githubRepo = readOptionValue("--repo");
-  const pagesPathRaw = readOptionValue("--path");
-  const disablePagesPath = args.includes("--notpath");
   const fallbackDashedArgs = args
     .filter((arg) => arg.startsWith("--"))
     .filter((arg) => !knownFlags.has(arg))
@@ -2049,8 +2046,6 @@ function parseCliOptions(argv, env) {
     shouldPush,
     githubOwner,
     githubRepo,
-    pagesPath: disablePagesPath ? "" : pagesPathRaw,
-    disablePagesPath,
   };
 }
 
@@ -2060,16 +2055,8 @@ function sanitizeSegment(value) {
   return /^[A-Za-z0-9._-]+$/.test(normalized) ? normalized : "";
 }
 
-function normalizePagesPath(value) {
-  if (!value) return "";
-  const normalized = value.trim().replace(/^\/+|\/+$/g, "");
-  if (!normalized) return "";
-  return /^[A-Za-z0-9._/-]+$/.test(normalized) ? normalized : "";
-}
-
-async function ensureGitHubPagesWorkflow(options = {}) {
+async function ensureGitHubPagesWorkflow() {
   const currentBranch = getCurrentGitBranch();
-  const pagesPath = normalizePagesPath(options.pagesPath);
   const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
   const workflowContent = `name: Deploy GitPageDocs
 
@@ -2120,7 +2107,6 @@ jobs:
         env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_PAGES_PATH: "${pagesPath}"
 
       - name: Force root URL to docs entrypoint
         run: |
@@ -2132,23 +2118,7 @@ jobs:
           const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
           const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.0';
           const defaultLang = cfg?.site?.defaultLanguage || 'en';
-          const rendering = cfg?.site?.rendering || '';
-          let nestedPathPrefix = '';
-          try {
-            const parsed = new URL(rendering);
-            const parts = parsed.pathname.split('/').filter(Boolean);
-            if (/github\\.io$/i.test(parsed.hostname) && parts.length >= 2) {
-              nestedPathPrefix = parts.slice(1).join('/');
-            } else if (parts.length >= 3) {
-              nestedPathPrefix = parts.slice(2).join('/');
-            }
-          } catch {}
-          const normalizedNestedPathPrefix = nestedPathPrefix
-            .split('/')
-            .filter(Boolean)
-            .join('/');
-          const prefix = normalizedNestedPathPrefix ? './' + normalizedNestedPathPrefix + '/' : './';
-          const redirectTarget = prefix + 'v/' + defaultVersion + '/?lang=' + defaultLang;
+          const redirectTarget = './v/' + defaultVersion + '/?lang=' + defaultLang;
           const html = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTarget + '"/><script>window.location.replace("' + redirectTarget + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
           fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), html);
           NODE
@@ -2329,11 +2299,10 @@ async function run() {
     useLocalLayoutConfig: options.useLocalLayoutConfig,
     githubOwner: sanitizeSegment(options.githubOwner),
     githubRepo: sanitizeSegment(options.githubRepo),
-    pagesPath: normalizePagesPath(options.pagesPath),
   });
   await writeConfigOnlyOutput(options.outputDir, artifacts, options);
   if (options.shouldPush) {
-    await ensureGitHubPagesWorkflow({ pagesPath: normalizePagesPath(options.pagesPath) });
+    await ensureGitHubPagesWorkflow();
     runGitPushForGeneratedArtifacts(options);
   }
 
@@ -2345,9 +2314,7 @@ async function run() {
     console.log("Using official remote layouts config by default (no local gitpagedocs/layouts generated).");
   }
   if (options.githubOwner && options.githubRepo) {
-    const pagesPath = normalizePagesPath(options.pagesPath);
-    const pathSuffix = pagesPath ? `/${pagesPath}` : "";
-    console.log(`Configured rendering URL: https://${options.githubOwner}.github.io/${options.githubRepo}${pathSuffix}/`);
+    console.log(`Configured rendering URL: https://${options.githubOwner}.github.io/${options.githubRepo}/`);
     console.log(
       `Official viewer remains available: https://vidigal-code.github.io/git-page-docs/${options.githubOwner}/${options.githubRepo}?modetheme=light&lang=pt`,
     );
