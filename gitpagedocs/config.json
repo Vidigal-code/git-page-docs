@@ -26,9 +26,9 @@
     "IconProjectLinkReactIconesTagColorDark": "White",
     "IconProjectLinkReactIconesTagColorLight": "black",
     "IconProjectLinkReactIconesTagSize": "25px",
-    "layoutsConfigPathOficial": true,
-    "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates",
-    "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
+    "layoutsConfigPathOficial": false,
+    "layoutsConfigPathTemplatesOficial": "",
+    "layoutsConfigPathOficialUrl": "",
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
     "langmenu": {
       "pt": {
