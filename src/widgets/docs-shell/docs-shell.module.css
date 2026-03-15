@@ -500,17 +500,22 @@
   background: rgba(2, 6, 23, 0.66);
   display: grid;
   place-items: start center;
-  padding-top: 10vh;
+  padding: 10vh 12px 12px;
   z-index: 40;
+  overflow-y: auto;
 }
 
 .quickNavCard {
-  width: min(640px, 92vw);
+  width: min(640px, 100%);
   background: var(--card-background);
   border: 1px solid var(--card-border);
   border-radius: 14px;
   box-shadow: var(--card-shadow);
   padding: 14px;
+  max-height: calc(100dvh - 24px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .quickNavHeader {
@@ -548,6 +553,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: calc(100dvh - 240px);
 }
 
 .quickNavItemActive {
@@ -628,6 +636,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 0;
 }
 
 .focusModeHeader {
@@ -653,6 +662,7 @@
   background: color-mix(in srgb, var(--background) 86%, transparent);
   overflow-wrap: anywhere;
   word-break: break-word;
+  min-width: 0;
 }
 
 .focusModeFooter {
@@ -744,6 +754,19 @@
     width: 100%;
   }
 
+  .quickNavOverlay {
+    padding: 8vh 10px 10px;
+  }
+
+  .quickNavCard {
+    width: min(640px, 98vw);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .quickNavList {
+    max-height: calc(100dvh - 250px);
+  }
+
   .focusModeCard {
     width: min(780px, 96vw);
     max-height: calc(100dvh - 24px);
@@ -755,6 +778,38 @@
 }
 
 @media (max-width: 640px) {
+  .quickNavOverlay {
+    padding: 8px;
+    place-items: start center;
+  }
+
+  .quickNavCard {
+    width: 100%;
+    max-height: calc(100dvh - 16px);
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .quickNavHeader {
+    margin-bottom: 8px;
+  }
+
+  .quickNavInput {
+    height: 40px;
+    margin-bottom: 8px;
+  }
+
+  .quickNavList {
+    max-height: calc(100dvh - 220px);
+  }
+
+  .quickNavFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
   .headerInner {
     padding: 12px;
   }
