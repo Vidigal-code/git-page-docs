@@ -5,47 +5,14 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { FaGithubAlt, FaGithubSquare } from "react-icons/fa";
-import type { LanguageCode, LayoutItem, LoadedDocsData, ThemeTemplate } from "@/entities/docs/model/types";
+import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
+import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
+import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
+import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
+import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
+import { RepositorySearchForm } from "@/features/repository-search-form/ui/repository-search-form";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import styles from "./repository-search-shell.module.css";
-
-function resolveThemeByMode(layouts: LayoutItem[], active: LayoutItem, mode: "light" | "dark"): LayoutItem {
-  if (!active.supportsLightAndDarkModes || !active.supportsLightAndDarkModesReference) {
-    return active;
-  }
-
-  return (
-    layouts.find(
-      (item) => item.supportsLightAndDarkModesReference === active.supportsLightAndDarkModesReference && item.mode === mode,
-    ) ?? active
-  );
-}
-
-function toCssVars(theme: ThemeTemplate | undefined): CSSProperties {
-  const colors = theme?.colors ?? {};
-  const header = (theme?.components.header as { backgroundColor?: string; borderBottom?: string } | undefined) ?? {};
-  return {
-    ["--background" as string]: colors.background ?? "#0b0f15",
-    ["--primary" as string]: colors.primary ?? "#7c3aed",
-    ["--secondary" as string]: colors.secondary ?? "#22d3ee",
-    ["--text" as string]: colors.text ?? "#e2e8f0",
-    ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
-    ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
-    ["--card-border" as string]: colors.cardBorder ?? "#334155",
-    ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? "#0f172a",
-    ["--header-border" as string]: header.borderBottom ?? `1px solid ${colors.cardBorder ?? "#334155"}`,
-  };
-}
-
-function getLanguageLabel(data: LoadedDocsData, selectedLanguage: LanguageCode, target: LanguageCode): string {
-  const labels = data.config.site.langmenu[selectedLanguage];
-  return labels?.[target] ?? target.toUpperCase();
-}
-
-function getLangMenuLabel(data: LoadedDocsData, selectedLanguage: LanguageCode, key: string, fallback: string): string {
-  const labels = data.config.site.langmenu[selectedLanguage] as Record<string, string> | undefined;
-  return labels?.[key] ?? fallback;
-}
 
 function resolveHeaderReactIcon(tag: string | undefined, mode: "light" | "dark" | undefined): React.ReactNode {
   const normalizedTag = (tag ?? "").trim();
@@ -86,7 +53,7 @@ export function RepositorySearchShell({
 
   const activeLayout = data.layoutsConfig.layouts.find((layout) => layout.id === activeThemeId) ?? data.layoutsConfig.layouts[0];
   const activeTheme = data.themes[activeLayout?.id];
-  const cssVars = useMemo(() => toCssVars(activeTheme), [activeTheme]);
+  const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
   const iconImage =
     (activeLayout?.mode === "dark"
@@ -105,9 +72,9 @@ export function RepositorySearchShell({
     fontSize: headerReactIconSize?.trim() || undefined,
   };
 
-  const ownerLabel = getLangMenuLabel(data, language, "searchOwnerLabel", "Owner");
-  const repoLabel = getLangMenuLabel(data, language, "searchRepoLabel", "Repository");
-  const searchLabel = getLangMenuLabel(data, language, "searchButtonLabel", "Search");
+  const ownerLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchOwnerLabel", "Owner");
+  const repoLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchRepoLabel", "Repository");
+  const searchLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchButtonLabel", "Search");
 
   const localizedMessage = {
     pt: "GitPageDocs Não instalado.",
@@ -179,13 +146,13 @@ export function RepositorySearchShell({
 
         <div className={styles.controls}>
           {searchLanguages.length > 1 && (
-            <select className={styles.select} value={String(language)} onChange={(event) => setLanguage(event.target.value as LanguageCode)}>
-              {searchLanguages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {getLanguageLabel(data, language, lang)}
-                </option>
-              ))}
-            </select>
+            <LanguageSelector
+              languages={searchLanguages}
+              value={language}
+              onChange={setLanguage}
+              className={styles.select}
+              getLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
+            />
           )}
           <select className={styles.select} value={activeThemeId} onChange={(event) => setActiveThemeId(event.target.value)}>
             {data.layoutsConfig.layouts.map((layout) => (
@@ -197,25 +164,21 @@ export function RepositorySearchShell({
 
         </div>
 
-        <div className={styles.form}>
-          <input
-            className={styles.input}
-            value={ownerInput}
-            onChange={(event) => setOwnerInput(event.target.value)}
-            placeholder={ownerLabel}
-            aria-label={ownerLabel}
-          />
-          <input
-            className={styles.input}
-            value={repoInput}
-            onChange={(event) => setRepoInput(event.target.value)}
-            placeholder={repoLabel}
-            aria-label={repoLabel}
-          />
-          <button className={styles.button} onClick={onSearch}>
-            {searchLabel}
-          </button>
-        </div>
+        <RepositorySearchForm
+          owner={ownerInput}
+          repo={repoInput}
+          ownerLabel={ownerLabel}
+          repoLabel={repoLabel}
+          searchLabel={searchLabel}
+          onOwnerChange={setOwnerInput}
+          onRepoChange={setRepoInput}
+          onSubmit={onSearch}
+          classNames={{
+            form: styles.form,
+            input: styles.input,
+            button: styles.button,
+          }}
+        />
       </section>
       {footerEnabled && <SiteFooter language={language} projectUrl={projectFooterUrl} />}
     </main>

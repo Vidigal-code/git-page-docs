@@ -1,139 +1,37 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { FiChevronDown, FiChevronRight, FiX } from "react-icons/fi";
+import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
+import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
+import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
+import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
+import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type {
   HeaderMenuItem,
   HeaderMenuLocalizedContent,
   LanguageCode,
-  LayoutItem,
   LoadedDocsData,
-  ThemeTemplate,
 } from "@/entities/docs/model/types";
+import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
+import { QuickNavigationTrigger } from "@/features/quick-navigation/ui/quick-navigation-trigger";
+import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
+import { VersionSelector } from "@/features/version-selector/ui/version-selector";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
+import { useDocsPreferences } from "./model/use-docs-preferences";
+import { useFocusMode } from "./model/use-focus-mode";
+import { useQuickNavigation } from "./model/use-quick-navigation";
+import { useVersionRouting } from "./model/use-version-routing";
 import styles from "./docs-shell.module.css";
-
-function getLanguageLabel(data: LoadedDocsData, selectedLanguage: LanguageCode, target: LanguageCode): string {
-  const labels = data.config.site.langmenu[selectedLanguage];
-  return labels?.[target] ?? target.toUpperCase();
-}
-
-function getLangMenuLabel(
-  data: LoadedDocsData,
-  selectedLanguage: LanguageCode,
-  key: string,
-  fallback: string,
-): string {
-  const labels = data.config.site.langmenu[selectedLanguage] as Record<string, string> | undefined;
-  return labels?.[key] ?? fallback;
-}
 
 function getRouteIndexByPath(data: LoadedDocsData, language: LanguageCode, filePath: string): number {
   return data.config.routes.findIndex((route) => route.path[language] === filePath);
 }
 
-function resolveThemeByMode(layouts: LayoutItem[], active: LayoutItem, mode: "light" | "dark"): LayoutItem {
-  if (!active.supportsLightAndDarkModes || !active.supportsLightAndDarkModesReference) {
-    return active;
-  }
-  const maybePair = layouts.find(
-    (item) => item.supportsLightAndDarkModesReference === active.supportsLightAndDarkModesReference && item.mode === mode,
-  );
-  return maybePair ?? active;
-}
-
-function toCssVars(theme: ThemeTemplate | undefined): React.CSSProperties {
-  const colors = theme?.colors ?? {};
-  const button = (theme?.components.button as
-    | {
-        borderRadius?: string;
-        border?: string;
-        hoverGlow?: string;
-      }
-    | undefined) ?? { borderRadius: "10px", border: "1px solid #334155" };
-  const select = (theme?.components.select as
-    | {
-        borderRadius?: string;
-        border?: string;
-        backgroundColor?: string;
-      }
-    | undefined) ?? { borderRadius: "10px", border: "1px solid #334155", backgroundColor: "#0f172a" };
-  const card = (theme?.components.card as
-    | {
-        borderRadius?: string;
-        boxShadow?: string;
-      }
-    | undefined) ?? { borderRadius: "16px", boxShadow: "0 18px 60px rgba(0, 0, 0, 0.35)" };
-  const headerControls = (theme?.components.headerControls as
-    | {
-        common?: {
-          borderRadius?: string;
-          border?: string;
-          backgroundColor?: string;
-        };
-      }
-    | undefined)?.common;
-
-  return {
-    ["--background" as string]: colors.background ?? "#0b0f15",
-    ["--primary" as string]: colors.primary ?? "#7c3aed",
-    ["--secondary" as string]: colors.secondary ?? "#22d3ee",
-    ["--text" as string]: colors.text ?? "#e2e8f0",
-    ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
-    ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
-    ["--card-border" as string]: colors.cardBorder ?? "#334155",
-    ["--header-background" as string]:
-      (theme?.components.header as { backgroundColor?: string } | undefined)?.backgroundColor ?? "#0b1220",
-    ["--header-border" as string]:
-      (theme?.components.header as { borderBottom?: string } | undefined)?.borderBottom ?? "1px solid #334155",
-    ["--card-shadow" as string]: card.boxShadow,
-    ["--card-radius" as string]: card.borderRadius,
-    ["--control-radius" as string]: headerControls?.borderRadius ?? button.borderRadius ?? "10px",
-    ["--control-border" as string]: headerControls?.border ?? button.border ?? "1px solid #334155",
-    ["--control-background" as string]: headerControls?.backgroundColor ?? select.backgroundColor ?? "#0f172a",
-    ["--select-radius" as string]: select.borderRadius ?? "10px",
-    ["--select-border" as string]: select.border ?? "1px solid #334155",
-    ["--button-radius" as string]: button.borderRadius ?? "10px",
-    ["--button-border" as string]: button.border ?? "1px solid #334155",
-    ["--button-glow" as string]: button.hoverGlow ?? "0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent)",
-  };
-}
-
-function resolveTranslation(
-  entry: Record<string, string> | undefined,
-  language: LanguageCode,
-  fallback: string,
-): string {
-  return entry?.[language] ?? entry?.en ?? fallback;
-}
-
-function buildLanguageStorageKey(siteName: string): string {
-  return `git-page-docs:language:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
-function buildVersionStorageKey(siteName: string): string {
-  return `git-page-docs:version:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
-function buildThemeModeStorageKey(siteName: string): string {
-  return `git-page-docs:mode:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
-function buildThemeLayoutStorageKey(siteName: string): string {
-  return `git-page-docs:theme:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
-function buildVersionPath(basePath: string | undefined, versionId: string): string {
-  const cleanedBase = (basePath ?? "").replace(/\/+$/, "");
-  if (!cleanedBase) {
-    return `/v/${versionId}`;
-  }
-  return `${cleanedBase}/v/${versionId}`;
-}
 
 interface MenuEntry {
   key: string;
@@ -187,36 +85,6 @@ function buildVersionLinkOptions(activeVersion: LoadedDocsData["activeVersion"])
   return options;
 }
 
-function splitMarkdownHtmlIntoPages(html: string): string[] {
-  const content = html.trim();
-  if (!content) {
-    return [];
-  }
-
-  const headingRegex = /<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/gi;
-  const headingMatches = Array.from(content.matchAll(headingRegex));
-  if (!headingMatches.length) {
-    return [content];
-  }
-
-  const pages: string[] = [];
-  const firstHeadingIndex = headingMatches[0]?.index ?? 0;
-  const intro = content.slice(0, firstHeadingIndex).trim();
-  if (intro) {
-    pages.push(intro);
-  }
-
-  headingMatches.forEach((match, index) => {
-    const start = match.index ?? 0;
-    const end = headingMatches[index + 1]?.index ?? content.length;
-    const sectionHtml = content.slice(start, end).trim();
-    if (sectionHtml) {
-      pages.push(sectionHtml);
-    }
-  });
-
-  return pages.length ? pages : [content];
-}
 
 function buildLocalizedSubmenuTree(
   submenus: HeaderMenuLocalizedContent[],
@@ -331,26 +199,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const defaultLanguage = data.config.site.defaultLanguage;
-  const languageStorageKey = buildLanguageStorageKey(data.config.site.name);
-  const versionStorageKey = buildVersionStorageKey(data.config.site.name);
-  const themeModeStorageKey = buildThemeModeStorageKey(data.config.site.name);
-  const themeLayoutStorageKey = buildThemeLayoutStorageKey(data.config.site.name);
+  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey, languageRestoredRef, themeModeRestoredRef } =
+    useDocsPreferences(data.config.site.name);
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
   const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
   const [routeIndex, setRouteIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [quickNavOpen, setQuickNavOpen] = useState(false);
-  const [focusModeOpen, setFocusModeOpen] = useState(false);
-  const [focusModePageIndex, setFocusModePageIndex] = useState(0);
-  const [quickNavActiveIndex, setQuickNavActiveIndex] = useState(0);
   const [versionLinksPopupOpen, setVersionLinksPopupOpen] = useState(false);
-  const [quickNavQuery, setQuickNavQuery] = useState("");
   const [expandedMenuMap, setExpandedMenuMap] = useState<Record<string, boolean>>({});
-  const languageRestoredRef = useRef(false);
-  const themeModeRestoredRef = useRef(false);
-  const quickNavListRef = useRef<HTMLDivElement | null>(null);
-  const quickNavItemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
   const initialThemeBase =
@@ -374,7 +231,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const languageCount = data.availableLanguages.length;
   const isLanguageSelectVisible = languageCount > 1;
 
-  const cssVars = useMemo(() => toCssVars(activeTheme), [activeTheme]);
+  const cssVars = useMemo(() => toDocsShellCssVars(activeTheme), [activeTheme]);
   const previousLabel = resolveTranslation(
     data.config.translations?.navigation?.previous,
     language,
@@ -411,57 +268,39 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     color: projectLinkReactIconColor?.trim() || undefined,
     fontSize: projectLinkReactIconSize?.trim() || undefined,
   };
-  const menuOpenLabel = getLangMenuLabel(
-    data,
+  const menuOpenLabel = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
     language,
     "menuOpen",
     resolveTranslation(data.config.translations?.navigation?.menuOpen, language, "Menu"),
   );
-  const menuCloseLabel = getLangMenuLabel(
-    data,
+  const menuCloseLabel = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
     language,
     "menuClose",
     resolveTranslation(data.config.translations?.navigation?.menuClose, language, "Close"),
   );
-  const quickNavLabel = getLangMenuLabel(data, language, "quickNavigation", "Ctrl+K");
-  const quickNavPlaceholder = getLangMenuLabel(data, language, "typeToNavigate", "Type to navigate...");
-  const noNavigationResults = getLangMenuLabel(data, language, "noNavigationResults", "No navigation results.");
-  const navigateHintLabel = getLangMenuLabel(data, language, "navigateHint", "Navigate");
-  const selectHintLabel = getLangMenuLabel(data, language, "selectHint", "Select");
-  const escHintLabel = getLangMenuLabel(data, language, "escHint", "ESC");
-  const closeHintLabel = getLangMenuLabel(data, language, "closeHint", menuCloseLabel);
-  const darkModeLabel = getLangMenuLabel(data, language, "darkMode", "Dark mode");
-  const lightModeLabel = getLangMenuLabel(data, language, "lightMode", "Light mode");
-  const versionLabel = getLangMenuLabel(data, language, "versionLabel", "Version");
-  const focusModeLabel = getLangMenuLabel(data, language, "focusMode", "Focus mode");
-  const versionLinksLabel = getLangMenuLabel(data, language, "versionLinksLabel", "Repository links");
-  const branchLabel = getLangMenuLabel(data, language, "branchLabel", "Branch");
-  const releaseLabel = getLangMenuLabel(data, language, "releaseLabel", "Release");
-  const commitLabel = getLangMenuLabel(data, language, "commitLabel", "Commit");
-  const projectLabel = getLangMenuLabel(data, language, "projectLabel", "Project");
+  const quickNavLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "quickNavigation", "Ctrl+K");
+  const quickNavPlaceholder = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "typeToNavigate", "Type to navigate...");
+  const noNavigationResults = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "noNavigationResults", "No navigation results.");
+  const navigateHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "navigateHint", "Navigate");
+  const selectHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "selectHint", "Select");
+  const escHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "escHint", "ESC");
+  const closeHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "closeHint", menuCloseLabel);
+  const darkModeLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "darkMode", "Dark mode");
+  const lightModeLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "lightMode", "Light mode");
+  const versionLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "versionLabel", "Version");
+  const focusModeLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusMode", "Focus mode");
+  const versionLinksLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "versionLinksLabel", "Repository links");
+  const branchLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "branchLabel", "Branch");
+  const releaseLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "releaseLabel", "Release");
+  const commitLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "commitLabel", "Commit");
+  const projectLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "projectLabel", "Project");
   const showVersionSelector = data.availableVersions.length > 1;
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
-  const versionFromPath = useMemo(() => {
-    const match = pathname.match(/\/v\/([^/]+)\/?$/);
-    return match?.[1];
-  }, [pathname]);
   const versionFromQuery = searchParams.get("version");
-  const selectedVersionValue = useMemo(() => {
-    const isKnownVersion = (versionId: string | null | undefined) =>
-      Boolean(versionId && data.availableVersions.some((version) => version.id === versionId));
-    if (isKnownVersion(versionFromPath)) {
-      return versionFromPath as string;
-    }
-    if (isKnownVersion(versionFromQuery)) {
-      return versionFromQuery as string;
-    }
-    if (isKnownVersion(data.activeVersionId)) {
-      return data.activeVersionId as string;
-    }
-    return data.availableVersions[0]?.id ?? "";
-  }, [versionFromPath, versionFromQuery, data.activeVersionId, data.availableVersions]);
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -477,21 +316,42 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   );
 
   const headerMenuEntries = useMemo(() => flattenMenuTree(headerMenuTree), [headerMenuTree]);
-
-  const filteredQuickNavEntries = useMemo(() => {
-    const normalizedQuery = quickNavQuery.trim().toLowerCase();
-    if (!normalizedQuery) {
-      return headerMenuEntries;
-    }
-    return headerMenuEntries.filter((entry) => entry.searchLabel.toLowerCase().includes(normalizedQuery));
-  }, [headerMenuEntries, quickNavQuery]);
-
-  const focusModePages = useMemo(() => splitMarkdownHtmlIntoPages(markdownHtml), [markdownHtml]);
-  const safeFocusModePageIndex =
-    focusModePageIndex >= 0 && focusModePageIndex < focusModePages.length ? focusModePageIndex : 0;
-  const focusModeCurrentHtml = focusModePages[safeFocusModePageIndex] ?? markdownHtml;
-  const canFocusModeGoPrevious = safeFocusModePageIndex > 0;
-  const canFocusModeGoNext = safeFocusModePageIndex < focusModePages.length - 1;
+  const {
+    quickNavOpen,
+    setQuickNavOpen,
+    quickNavQuery,
+    setQuickNavQuery,
+    quickNavActiveIndex,
+    setQuickNavActiveIndex,
+    quickNavListRef,
+    quickNavItemRefs,
+    filteredQuickNavEntries,
+    openQuickNavigation: openQuickNavigationInternal,
+    closeQuickNavigation: closeQuickNavigationInternal,
+  } = useQuickNavigation(headerMenuEntries);
+  const {
+    focusModeOpen,
+    setFocusModeOpen,
+    focusModePages,
+    safeFocusModePageIndex,
+    focusModeCurrentHtml,
+    canFocusModeGoPrevious,
+    canFocusModeGoNext,
+    openFocusMode: openFocusModeInternal,
+    closeFocusMode: closeFocusModeInternal,
+    onFocusModeNavigate: onFocusModeNavigateInternal,
+  } = useFocusMode(markdownHtml);
+  const { versionFromPath, selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
+    pathname,
+    versionFromQuery,
+    activeVersionId: data.activeVersionId,
+    availableVersions: data.availableVersions,
+    isLanguageSelectVisible,
+    isRemoteRepositorySession,
+    language,
+    getCurrentSearchParams,
+    routerReplace: router.replace,
+  });
 
   const linearNavigationEntries = useMemo(() => {
     const seen = new Set<string>();
@@ -521,35 +381,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setMenuOpen(false);
     setVersionLinksPopupOpen(false);
     setFocusModeOpen(false);
-    setQuickNavOpen(true);
-    setQuickNavQuery("");
-    setQuickNavActiveIndex(0);
+    openQuickNavigationInternal();
   }
 
   function closeQuickNavigation() {
-    setQuickNavOpen(false);
-    setQuickNavQuery("");
-    setQuickNavActiveIndex(0);
+    closeQuickNavigationInternal();
   }
-
-  useEffect(() => {
-    if (!quickNavOpen) {
-      return;
-    }
-    const list = quickNavListRef.current;
-    const activeButton = quickNavItemRefs.current[quickNavActiveIndex];
-    if (!list || !activeButton) {
-      return;
-    }
-    activeButton.scrollIntoView({ block: "nearest" });
-  }, [quickNavOpen, quickNavActiveIndex, filteredQuickNavEntries.length]);
-
-  useEffect(() => {
-    if (!quickNavOpen) {
-      return;
-    }
-    quickNavListRef.current?.scrollTo({ top: 0, behavior: "auto" });
-  }, [quickNavOpen, quickNavQuery]);
 
   useEffect(() => {
     if (!activeNavigation) {
@@ -577,7 +414,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [activeNavigation, quickNavOpen, focusModeOpen]);
+  }, [activeNavigation, quickNavOpen, focusModeOpen, setFocusModeOpen, setQuickNavOpen, setQuickNavQuery]);
 
   useEffect(() => {
     const langFromQuery = searchParams.get("lang") as LanguageCode | null;
@@ -585,7 +422,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       setLanguage(langFromQuery);
       languageRestoredRef.current = true;
     }
-  }, [searchParams, data.availableLanguages]);
+  }, [searchParams, data.availableLanguages, languageRestoredRef]);
 
   useEffect(() => {
     if (languageRestoredRef.current) {
@@ -606,7 +443,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
 
     languageRestoredRef.current = true;
-  }, [languageStorageKey, data.availableLanguages]);
+  }, [languageStorageKey, data.availableLanguages, languageRestoredRef]);
 
   useEffect(() => {
     if (!languageRestoredRef.current) {
@@ -618,7 +455,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-  }, [language, languageStorageKey]);
+  }, [language, languageStorageKey, languageRestoredRef]);
 
   useEffect(() => {
     if (themeModeRestoredRef.current) {
@@ -652,7 +489,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
 
     themeModeRestoredRef.current = true;
-  }, [themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId, searchParams]);
+  }, [themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId, searchParams, themeModeRestoredRef]);
 
   useEffect(() => {
     if (!themeModeRestoredRef.current || !activeLayout?.mode) {
@@ -664,7 +501,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors.
     }
-  }, [themeModeStorageKey, activeLayout?.mode]);
+  }, [themeModeStorageKey, activeLayout?.mode, themeModeRestoredRef]);
 
   useEffect(() => {
     if (!themeModeRestoredRef.current || !activeThemeId) {
@@ -676,7 +513,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors.
     }
-  }, [themeLayoutStorageKey, activeThemeId]);
+  }, [themeLayoutStorageKey, activeThemeId, themeModeRestoredRef]);
 
   useEffect(() => {
     function syncThemeFromStorage() {
@@ -858,42 +695,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-    if (isRemoteRepositorySession) {
-      if (typeof window !== "undefined") {
-        const currentUrl = new URL(window.location.href);
-        const cleanPath = currentUrl.pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        currentUrl.pathname = buildVersionPath(cleanPath, versionId);
-        currentUrl.searchParams.set("lang", String(language));
-        currentUrl.searchParams.delete("version");
-        window.location.assign(currentUrl.toString());
-      } else {
-        const params = getCurrentSearchParams();
-        params.delete("version");
-        params.set("lang", String(language));
-        const cleanPath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        const targetPath = buildVersionPath(cleanPath, versionId);
-        const qs = params.toString();
-        const nextUrl = qs ? `${targetPath}?${qs}` : targetPath;
-        router.replace(nextUrl);
-      }
-      return;
-    }
-    const base = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-    const params = getCurrentSearchParams();
-    params.delete("version");
-    if (data.availableLanguages.length > 1) {
-      params.set("lang", language);
-    } else {
-      params.delete("lang");
-    }
-    const target = buildVersionPath(base, versionId);
-    const qs = params.toString();
-    const nextUrl = qs ? `${target}?${qs}` : target;
-    if (typeof window !== "undefined") {
-      window.location.assign(nextUrl);
-      return;
-    }
-    router.replace(nextUrl);
+    onVersionChangeInternal(versionId);
   }
 
   function onLanguageChange(newLang: LanguageCode) {
@@ -927,22 +729,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setMenuOpen(false);
     setQuickNavOpen(false);
     setVersionLinksPopupOpen(false);
-    setFocusModePageIndex(0);
-    setFocusModeOpen(true);
+    openFocusModeInternal();
   }
 
   function closeFocusMode() {
-    setFocusModeOpen(false);
+    closeFocusModeInternal();
   }
 
   function onFocusModeNavigate(offset: -1 | 1) {
-    setFocusModePageIndex((prev) => {
-      const next = prev + offset;
-      if (next < 0 || next >= focusModePages.length) {
-        return prev;
-      }
-      return next;
-    });
+    onFocusModeNavigateInternal(offset);
   }
 
   function openVersionLink(url: string) {
@@ -1116,37 +911,26 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 </button>
               )}
               {activeNavigation && (
-                <button className={styles.button} onClick={openQuickNavigation}>
-                  {quickNavLabel}
-                </button>
+                <QuickNavigationTrigger className={styles.button} label={quickNavLabel} onClick={openQuickNavigation} />
               )}
               {showVersionSelector && (
-                <select
+                <VersionSelector
                   className={styles.select}
+                  versions={data.availableVersions}
                   value={selectedVersionValue}
-                  onChange={(event) => onVersionChange(event.target.value)}
-                  aria-label={versionLabel}
-                >
-                  {data.availableVersions.map((version) => (
-                    <option key={version.id} value={version.id}>
-                      {`${versionLabel} ${version.id}`}
-                    </option>
-                  ))}
-                </select>
+                  onChange={onVersionChange}
+                  ariaLabel={versionLabel}
+                />
               )}
               {isLanguageSelectVisible && (
-                <select
+                <LanguageSelector
                   className={styles.select}
-                  value={String(language)}
-                  onChange={(event) => onLanguageChange(event.target.value as LanguageCode)}
-                  aria-label="Language selector"
-                >
-                  {data.availableLanguages.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {getLanguageLabel(data, language, lang)}
-                    </option>
-                  ))}
-                </select>
+                  languages={data.availableLanguages}
+                  value={language}
+                  onChange={onLanguageChange}
+                  getLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
+                  ariaLabel="Language selector"
+                />
               )}
 
               {!hideThemeSelector && (
@@ -1164,16 +948,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 </select>
               )}
 
-              {canToggleMode && (
-                <button
-                  className={`${styles.button} ${styles.modeIconButton}`}
-                  onClick={onToggleMode}
-                  aria-label={nextMode === "dark" ? darkModeLabel : lightModeLabel}
-                  title={nextMode === "dark" ? darkModeLabel : lightModeLabel}
-                >
-                  {nextMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-                </button>
-              )}
+              <ThemeModeToggle
+                className={`${styles.button} ${styles.modeIconButton}`}
+                isDarkMode={nextMode === "dark"}
+                canToggle={canToggleMode}
+                label={nextMode === "dark" ? darkModeLabel : lightModeLabel}
+                onToggle={onToggleMode}
+              />
             </div>
           </div>
         </header>
@@ -1250,39 +1031,28 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
               )}
 
               {activeNavigation && (
-                <button className={styles.button} onClick={openQuickNavigation}>
-                  {quickNavLabel}
-                </button>
+                <QuickNavigationTrigger className={styles.button} label={quickNavLabel} onClick={openQuickNavigation} />
               )}
 
               {showVersionSelector && (
-                <select
+                <VersionSelector
                   className={styles.select}
+                  versions={data.availableVersions}
                   value={selectedVersionValue}
-                  onChange={(event) => onVersionChange(event.target.value)}
-                  aria-label={versionLabel}
-                >
-                  {data.availableVersions.map((version) => (
-                    <option key={version.id} value={version.id}>
-                      {`${versionLabel} ${version.id}`}
-                    </option>
-                  ))}
-                </select>
+                  onChange={onVersionChange}
+                  ariaLabel={versionLabel}
+                />
               )}
 
               {isLanguageSelectVisible && (
-                <select
+                <LanguageSelector
                   className={styles.select}
-                  value={String(language)}
-                  onChange={(event) => onLanguageChange(event.target.value as LanguageCode)}
-                  aria-label="Language selector"
-                >
-                  {data.availableLanguages.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {getLanguageLabel(data, language, lang)}
-                    </option>
-                  ))}
-                </select>
+                  languages={data.availableLanguages}
+                  value={language}
+                  onChange={onLanguageChange}
+                  getLabel={(lang) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang)}
+                  ariaLabel="Language selector"
+                />
               )}
 
               {!hideThemeSelector && (
@@ -1300,16 +1070,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 </select>
               )}
 
-              {canToggleMode && (
-                <button
-                  className={`${styles.button} ${styles.modeIconButton}`}
-                  onClick={onToggleMode}
-                  aria-label={nextMode === "dark" ? darkModeLabel : lightModeLabel}
-                  title={nextMode === "dark" ? darkModeLabel : lightModeLabel}
-                >
-                  {nextMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-                </button>
-              )}
+              <ThemeModeToggle
+                className={`${styles.button} ${styles.modeIconButton}`}
+                isDarkMode={nextMode === "dark"}
+                canToggle={canToggleMode}
+                label={nextMode === "dark" ? darkModeLabel : lightModeLabel}
+                onToggle={onToggleMode}
+              />
             </div>
           </aside>
         </div>

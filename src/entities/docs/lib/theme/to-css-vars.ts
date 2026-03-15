@@ -1,0 +1,75 @@
+import type { ThemeTemplate } from "@/entities/docs/model/types";
+import type { CSSProperties } from "react";
+
+export function toDocsShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+  const colors = theme?.colors ?? {};
+  const button = (theme?.components.button as
+    | {
+        borderRadius?: string;
+        border?: string;
+        hoverGlow?: string;
+      }
+    | undefined) ?? { borderRadius: "10px", border: "1px solid #334155" };
+  const select = (theme?.components.select as
+    | {
+        borderRadius?: string;
+        border?: string;
+        backgroundColor?: string;
+      }
+    | undefined) ?? { borderRadius: "10px", border: "1px solid #334155", backgroundColor: "#0f172a" };
+  const card = (theme?.components.card as
+    | {
+        borderRadius?: string;
+        boxShadow?: string;
+      }
+    | undefined) ?? { borderRadius: "16px", boxShadow: "0 18px 60px rgba(0, 0, 0, 0.35)" };
+  const headerControls = (theme?.components.headerControls as
+    | {
+        common?: {
+          borderRadius?: string;
+          border?: string;
+          backgroundColor?: string;
+        };
+      }
+    | undefined)?.common;
+
+  return {
+    ["--background" as string]: colors.background ?? "#0b0f15",
+    ["--primary" as string]: colors.primary ?? "#7c3aed",
+    ["--secondary" as string]: colors.secondary ?? "#22d3ee",
+    ["--text" as string]: colors.text ?? "#e2e8f0",
+    ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
+    ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
+    ["--card-border" as string]: colors.cardBorder ?? "#334155",
+    ["--header-background" as string]:
+      (theme?.components.header as { backgroundColor?: string } | undefined)?.backgroundColor ?? "#0b1220",
+    ["--header-border" as string]:
+      (theme?.components.header as { borderBottom?: string } | undefined)?.borderBottom ?? "1px solid #334155",
+    ["--card-shadow" as string]: card.boxShadow,
+    ["--card-radius" as string]: card.borderRadius,
+    ["--control-radius" as string]: headerControls?.borderRadius ?? button.borderRadius ?? "10px",
+    ["--control-border" as string]: headerControls?.border ?? button.border ?? "1px solid #334155",
+    ["--control-background" as string]: headerControls?.backgroundColor ?? select.backgroundColor ?? "#0f172a",
+    ["--select-radius" as string]: select.borderRadius ?? "10px",
+    ["--select-border" as string]: select.border ?? "1px solid #334155",
+    ["--button-radius" as string]: button.borderRadius ?? "10px",
+    ["--button-border" as string]: button.border ?? "1px solid #334155",
+    ["--button-glow" as string]: button.hoverGlow ?? "0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent)",
+  };
+}
+
+export function toSearchShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+  const colors = theme?.colors ?? {};
+  const header = (theme?.components.header as { backgroundColor?: string; borderBottom?: string } | undefined) ?? {};
+  return {
+    ["--background" as string]: colors.background ?? "#0b0f15",
+    ["--primary" as string]: colors.primary ?? "#7c3aed",
+    ["--secondary" as string]: colors.secondary ?? "#22d3ee",
+    ["--text" as string]: colors.text ?? "#e2e8f0",
+    ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
+    ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
+    ["--card-border" as string]: colors.cardBorder ?? "#334155",
+    ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? "#0f172a",
+    ["--header-border" as string]: header.borderBottom ?? `1px solid ${colors.cardBorder ?? "#334155"}`,
+  };
+}

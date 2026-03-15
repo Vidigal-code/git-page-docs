@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { LanguageCode } from "@/entities/docs/model/types";
 import styles from "./site-footer.module.css";
 
 interface SiteFooterProps {
-  language: LanguageCode;
+  language: string;
   projectUrl: string;
 }
 
@@ -24,7 +23,7 @@ const COPY = {
   },
 } as const;
 
-function resolveLanguage(language: LanguageCode): keyof typeof COPY {
+function resolveLanguage(language: string): keyof typeof COPY {
   return language === "pt" || language === "es" ? language : "en";
 }
 

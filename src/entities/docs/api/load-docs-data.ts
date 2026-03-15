@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
+import { buildGithubRawCandidates, ensureTrailingSlash, toRawGithubUrl } from "@/entities/docs/lib/remote/github-url";
 import {
   type GitPageDocsConfig,
   type LanguageCode,
@@ -170,27 +171,6 @@ async function tryFetchText(url: string): Promise<string | null> {
   }
 }
 
-function toRawGithubUrl(url: string): string {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname !== "github.com") {
-      return url;
-    }
-    const parts = parsed.pathname.split("/").filter(Boolean);
-    const blobOrTreeIndex = parts.findIndex((part) => part === "blob" || part === "tree");
-    if (parts.length >= 5 && blobOrTreeIndex === 2) {
-      const owner = parts[0];
-      const repo = parts[1];
-      const branch = parts[3];
-      const filePath = parts.slice(4).join("/");
-      return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
-    }
-  } catch {
-    return url;
-  }
-  return url;
-}
-
 async function readRemoteJson<T>(url: string): Promise<T | null> {
   const rawUrl = toRawGithubUrl(url);
   const text = await tryFetchText(rawUrl);
@@ -214,10 +194,6 @@ async function readRemoteJsonFromRepo<T>(owner: string, repo: string, relativePa
   } catch {
     return null;
   }
-}
-
-function ensureTrailingSlash(value: string): string {
-  return value.endsWith("/") ? value : `${value}/`;
 }
 
 function buildRepoRawBase(owner: string, repo: string, relativeBasePath: string): string {
@@ -254,18 +230,6 @@ function buildRemoteTemplateUrl(layoutFile: string, remoteTemplatesBaseUrl: stri
   const fileWithoutTemplatesPrefix = normalizedFile.replace(/^templates\//i, "");
   const filePath = baseEndsWithTemplates ? fileWithoutTemplatesPrefix : normalizedFile;
   return new URL(filePath, normalizedBase).toString();
-}
-
-function buildGithubRawCandidates(owner: string, repo: string, relativePath: string): string[] {
-  const safePath = relativePath.replace(/^\/+/, "");
-  return [
-    `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${safePath}`,
-    `https://raw.githubusercontent.com/${owner}/${repo}/main/${safePath}`,
-    `https://raw.githubusercontent.com/${owner}/${repo}/master/${safePath}`,
-    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@HEAD/${safePath}`,
-    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@main/${safePath}`,
-    `https://cdn.jsdelivr.net/gh/${owner}/${repo}@master/${safePath}`,
-  ];
 }
 
 async function readRemoteText(owner: string, repo: string, relativePath: string): Promise<string | null> {
