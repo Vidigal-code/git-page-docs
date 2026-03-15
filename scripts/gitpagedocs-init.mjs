@@ -1777,12 +1777,6 @@ function buildConfigArtifacts(options = {}) {
       layoutsConfigPathOficial: useOfficialLayouts,
       layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",
-      preRenderRepositories: [
-        { owner: "Vidigal-code", repo: "git-page-docs" },
-        { owner: "Vidigal-code", repo: "git-page-link-create" },
-        { owner: "Vidigal-code", repo: "git-page-docs-example" },
-        { owner: "Vidigal-code", repo: "energy-bill-ai-parser" },
-      ],
       rendering: "https://vidigal-code.github.io/git-page-docs/",
       langmenu: {
         pt: {

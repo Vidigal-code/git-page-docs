@@ -27,10 +27,6 @@ export interface SiteConfig {
   layoutsConfigPathOficial?: boolean;
   layoutsConfigPathOficialUrl?: string;
   layoutsConfigPathTemplatesOficial?: string;
-  preRenderRepositories?: Array<{
-    owner: string;
-    repo: string;
-  }>;
   layoutsConfigPath?: string;
   layoutsConfigPathTemplates?: string;
   rendering: string;
