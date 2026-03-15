@@ -144,7 +144,7 @@ export function DocsShellControls({
         </a>
       )}
       {!!versionLinkOptionsWithLabels.length && (
-        <button className={styles.button} onClick={onOpenVersionLinksPopup} aria-label={versionLinksLabel} title={versionLinksLabel}>
+        <button className={`${styles.button} ${styles.headerIconButton}`} onClick={onOpenVersionLinksPopup} aria-label={versionLinksLabel} title={versionLinksLabel}>
           {useReactVersionLinksIcon ? (
             <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
           ) : versionLinksIconImage ? (
@@ -155,7 +155,7 @@ export function DocsShellControls({
         </button>
       )}
       {showInfoButton && (
-        <button className={styles.button} onClick={onOpenInfoPopup} aria-label={lastUpdateLabel} title={lastUpdateLabel}>
+        <button className={`${styles.button} ${styles.headerIconButton}`} onClick={onOpenInfoPopup} aria-label={lastUpdateLabel} title={lastUpdateLabel}>
           {useReactInfoIcon ? (
             <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
           ) : infoIconImage ? (
