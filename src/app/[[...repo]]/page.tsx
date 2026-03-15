@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { loadDocsData } from "@/entities/docs/api/load-docs-data";
@@ -12,6 +11,24 @@ interface PageProps {
 
 // For static export, avoid awaiting searchParams (triggers dynamic)
 export const dynamic = "force-static";
+
+function parseOwnerRepoFromUrl(input: string | undefined): { owner?: string; repo?: string } {
+  if (!input) return {};
+  try {
+    const normalized = input
+      .replace(/^git\+/, "")
+      .replace(/^git@github\.com:/, "https://github.com/")
+      .replace(/\.git$/, "");
+    const parsed = new URL(normalized);
+    const parts = parsed.pathname.split("/").filter(Boolean);
+    if (parts.length >= 2) {
+      return { owner: parts[0], repo: parts[1] };
+    }
+  } catch {
+    return {};
+  }
+  return {};
+}
 
 function parseRepoAndVersion(repoSlug: string[] | undefined): { owner?: string; repo?: string; version?: string } {
   if (!repoSlug?.length) return {};
@@ -50,11 +67,25 @@ export async function generateStaticParams() {
       }
     };
     if (config?.site?.ProjectLink) {
-      const parsed = new URL(config.site.ProjectLink);
-      const parts = parsed.pathname.split("/").filter(Boolean);
-      if (parts.length >= 2) {
-        addRepoWithVersions(parts[0], parts[1]);
+      const fromProjectLink = parseOwnerRepoFromUrl(config.site.ProjectLink);
+      if (fromProjectLink.owner && fromProjectLink.repo) {
+        addRepoWithVersions(fromProjectLink.owner, fromProjectLink.repo);
       }
+    }
+
+    // Ensure the official repository route is pre-rendered even when ProjectLink is not set.
+    const packageJsonPath = path.join(process.cwd(), "package.json");
+    const packageRaw = await fs.readFile(packageJsonPath, "utf-8");
+    const packageJson = JSON.parse(packageRaw) as { repository?: { url?: string } | string; homepage?: string };
+    const repositoryUrl =
+      typeof packageJson.repository === "string" ? packageJson.repository : packageJson.repository?.url;
+    const fromRepository = parseOwnerRepoFromUrl(repositoryUrl);
+    if (fromRepository.owner && fromRepository.repo) {
+      addRepoWithVersions(fromRepository.owner, fromRepository.repo);
+    }
+    const fromHomepage = parseOwnerRepoFromUrl(packageJson.homepage);
+    if (fromHomepage.owner && fromHomepage.repo) {
+      addRepoWithVersions(fromHomepage.owner, fromHomepage.repo);
     }
   } catch {}
   return params;
@@ -67,11 +98,7 @@ export default async function DocsPage({ params }: PageProps) {
   const data = await loadDocsData(slugForLoad, version);
 
   const repositoryNotUsingGitPageDocs = Boolean(data.activeRepository.requested && data.activeRepository.hasGitPageDocs === false);
-  if (!data.showRepositorySearchHome && !repositoryNotUsingGitPageDocs && !data.config.routes.length) {
-    notFound();
-  }
-
-  if (data.showRepositorySearchHome || repositoryNotUsingGitPageDocs) {
+  if (data.showRepositorySearchHome || repositoryNotUsingGitPageDocs || !data.config.routes.length) {
     return <RepositorySearchShell data={data} repositoryNotUsingGitPageDocs={repositoryNotUsingGitPageDocs} />;
   }
 
