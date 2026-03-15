@@ -97,8 +97,6 @@ function buildFallbackLayoutsAndThemes(): {
   };
 }
 
-const STANDALONE_LAYOUT_IDS = ["aurora-dark", "aurora-light", "default", "github-dark", "github-light"];
-
 export async function loadStandaloneLayoutsAndThemes(): Promise<{
   layoutsConfig: LayoutsConfig;
   themes: Record<string, ThemeTemplate>;
@@ -109,21 +107,23 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
     if (!layoutsConfig?.layouts?.length) {
       return buildFallbackLayoutsAndThemes();
     }
-    const standaloneLayouts = layoutsConfig.layouts.filter((l) => STANDALONE_LAYOUT_IDS.includes(l.id));
-    const layoutsToLoad = standaloneLayouts.length > 0 ? standaloneLayouts : layoutsConfig.layouts.slice(0, 6);
+    const layoutsToLoad = layoutsConfig.layouts;
     const templatesBaseUrl = ensureTrailingSlash(
       rawLayoutsUrl.slice(0, rawLayoutsUrl.lastIndexOf("/") + 1) + "templates/",
     );
     const themes: Record<string, ThemeTemplate> = {};
-    await Promise.all(
+    const results = await Promise.allSettled(
       layoutsToLoad.map(async (layout: LayoutItem) => {
         const templateUrl = buildRemoteTemplateUrl(layout.file, templatesBaseUrl);
         const template = await fetchUrlJson<ThemeTemplate>(templateUrl);
-        if (template) {
-          themes[layout.id] = template;
-        }
+        return { layout, template };
       }),
     );
+    for (const result of results) {
+      if (result.status === "fulfilled" && result.value.template) {
+        themes[result.value.layout.id] = result.value.template;
+      }
+    }
     if (Object.keys(themes).length === 0) {
       return buildFallbackLayoutsAndThemes();
     }

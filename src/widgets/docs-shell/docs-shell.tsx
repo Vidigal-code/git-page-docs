@@ -9,6 +9,8 @@ import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation
 import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LoadedDocsData } from "@/entities/docs/model/types";
+import { getBasePath } from "@/shared/lib/base-path";
+import { resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
@@ -147,13 +149,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const focusModeEnabled = Boolean(data.config.site.FocusMode);
   const versionLinkOptions = useMemo(() => buildVersionLinkOptions(data.activeVersion), [data.activeVersion]);
   const fallbackProjectLink = data.activeVersion?.ProjectLink?.trim() || data.config.site.ProjectLink?.trim();
-  const iconImage =
+  const basePathForAssets = getBasePath();
+  const rawIconImage =
     (activeLayout?.mode === "dark"
       ? data.config.site.IconImageMenuHeaderDark?.trim()
       : data.config.site.IconImageMenuHeaderLight?.trim()) ||
     data.config.site.IconImageMenuHeader?.trim() ||
     data.config.site.SiteIconPath?.trim();
-  const headerName = data.config.site.SiteHeaderName?.trim() || data.config.site.name;
+  const iconImage = resolveIconPath(rawIconImage, basePathForAssets);
+  const headerName = resolveHeaderName(data.config.site.SiteHeaderName, data.config.site.name);
   const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
   const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
   const headerReactIconColor =

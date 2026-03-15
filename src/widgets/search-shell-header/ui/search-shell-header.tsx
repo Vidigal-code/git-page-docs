@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
@@ -43,9 +46,50 @@ export function SearchShellHeader({
   headerReactIconStyle,
   getLanguageLabel,
 }: SearchShellHeaderProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const homeHref = basePath ? `${basePath}/` : "/";
   const darkModeLabel = "Dark mode";
   const lightModeLabel = "Light mode";
+  const menuOpenLabel = "Open menu";
+  const menuCloseLabel = "Close menu";
+
+  const controls = (
+    <>
+      {layouts.length > 1 && (
+        <select
+          className={styles.select}
+          value={activeThemeId}
+          onChange={(e) => onThemeChange(e.target.value)}
+          aria-label="Theme selector"
+        >
+          {layouts.map((layout) => (
+            <option key={layout.id} value={layout.id}>
+              {layout.name}
+            </option>
+          ))}
+        </select>
+      )}
+
+      <ThemeModeToggle
+        className={styles.modeIconButton}
+        isDarkMode={nextModeIsDark}
+        canToggle={canToggleMode}
+        label={nextModeIsDark ? darkModeLabel : lightModeLabel}
+        onToggle={onToggleMode}
+      />
+
+      {languages.length > 1 && (
+        <LanguageSelector
+          className={styles.select}
+          languages={languages}
+          value={language}
+          onChange={onLanguageChange}
+          getLabel={getLanguageLabel}
+          ariaLabel="Language selector"
+        />
+      )}
+    </>
+  );
 
   return (
     <header className={styles.header}>
@@ -65,44 +109,47 @@ export function SearchShellHeader({
             )}
             <strong>{siteName}</strong>
           </Link>
+          <button
+            type="button"
+            className={styles.mobileToggle}
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? menuCloseLabel : menuOpenLabel}
+            title={menuOpen ? menuCloseLabel : menuOpenLabel}
+          >
+            {menuOpen ? "✕" : "☰"}
+          </button>
         </div>
 
-        <div className={styles.headerRight}>
-          {layouts.length > 1 && (
-            <select
-              className={styles.select}
-              value={activeThemeId}
-              onChange={(e) => onThemeChange(e.target.value)}
-              aria-label="Theme selector"
-            >
-              {layouts.map((layout) => (
-                <option key={layout.id} value={layout.id}>
-                  {layout.name}
-                </option>
-              ))}
-            </select>
-          )}
-
-          <ThemeModeToggle
-            className={styles.modeIconButton}
-            isDarkMode={nextModeIsDark}
-            canToggle={canToggleMode}
-            label={nextModeIsDark ? darkModeLabel : lightModeLabel}
-            onToggle={onToggleMode}
-          />
-
-          {languages.length > 1 && (
-            <LanguageSelector
-              className={styles.select}
-              languages={languages}
-              value={language}
-              onChange={onLanguageChange}
-              getLabel={getLanguageLabel}
-              ariaLabel="Language selector"
-            />
-          )}
-        </div>
+        <div className={styles.headerRight}>{controls}</div>
       </div>
+
+      {menuOpen && (
+        <div
+          className={styles.mobileDrawerOverlay}
+          onClick={() => setMenuOpen(false)}
+          onKeyDown={(e) => e.key === "Escape" && setMenuOpen(false)}
+        >
+          <aside
+            className={styles.mobileDrawer}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            <div className={styles.mobileDrawerHeader}>
+              <strong>{siteName}</strong>
+              <button
+                type="button"
+                className={styles.mobileDrawerClose}
+                onClick={() => setMenuOpen(false)}
+                aria-label={menuCloseLabel}
+                title={menuCloseLabel}
+              >
+                ✕
+              </button>
+            </div>
+            <div className={styles.mobileControls}>{controls}</div>
+          </aside>
+        </div>
+      )}
     </header>
   );
 }

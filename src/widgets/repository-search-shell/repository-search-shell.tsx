@@ -10,6 +10,7 @@ import { RepositorySearchForm } from "@/features/repository-search-form/ui/repos
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
 import { getBasePath } from "@/shared/lib/base-path";
+import { resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
 import styles from "./repository-search-shell.module.css";
 
 export function RepositorySearchShell({
@@ -42,13 +43,15 @@ export function RepositorySearchShell({
   const activeTheme = data.themes[activeLayout?.id];
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
-  const iconImage =
+  const basePath = getBasePath();
+  const rawIconImage =
     (activeLayout?.mode === "dark"
       ? data.config.site.IconImageMenuHeaderDark?.trim()
       : data.config.site.IconImageMenuHeaderLight?.trim()) ||
     data.config.site.IconImageMenuHeader?.trim() ||
     data.config.site.SiteIconPath?.trim();
-  const headerName = data.config.site.SiteHeaderName?.trim() || data.config.site.name;
+  const iconImage = resolveIconPath(rawIconImage, basePath);
+  const headerName = resolveHeaderName(data.config.site.SiteHeaderName, data.config.site.name);
   const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
   const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
   const headerReactIconColor =
@@ -123,7 +126,6 @@ export function RepositorySearchShell({
     setActiveThemeId(paired.id);
   }
 
-  const basePath = getBasePath();
   const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
   const nextModeIsDark = activeLayout?.mode === "dark";
 
@@ -140,7 +142,7 @@ export function RepositorySearchShell({
       nextModeIsDark={nextModeIsDark}
       canToggleMode={canToggleMode}
       onToggleMode={onToggleMode}
-      iconImage={iconImage || undefined}
+      iconImage={iconImage}
       useReactHeaderIcon={useReactHeaderIcon}
       reactHeaderIconTag={reactHeaderIconTag}
       headerReactIconStyle={headerReactIconStyle}

@@ -1,0 +1,86 @@
+.section {
+  width: min(760px, 100%);
+  max-width: 100%;
+  border-radius: 16px;
+  padding: clamp(18px, 3vw, 32px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.4);
+  background: var(--card-background, #0f172a);
+  border: 1px solid var(--card-border, #334155);
+  box-sizing: border-box;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
+.input {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #f1f5f9;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #7c3aed;
+  color: #f1f5f9;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.buttonFull {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #7c3aed;
+  color: #f1f5f9;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  display: block;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.link {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 16px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: #1e293b;
+  color: #f1f5f9;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .section {
+    padding: clamp(14px, 2.5vw, 24px);
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .form .button {
+    width: 100%;
+  }
+}

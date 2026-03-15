@@ -20,6 +20,14 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .headerInner {
+    padding: 12px 14px;
+  }
 }
 
 .headerLeft {
@@ -93,4 +101,105 @@
 
 .modeIconButton:hover {
   color: var(--secondary);
+}
+
+.mobileToggle {
+  display: none;
+  width: 42px;
+  min-width: 42px;
+  height: 38px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--control-radius, 10px);
+  border: var(--control-border, 1px solid var(--card-border));
+  background: var(--control-background, var(--card-background));
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.mobileToggle:hover {
+  color: var(--secondary);
+}
+
+.mobileDrawerOverlay {
+  display: none;
+}
+
+.mobileDrawer {
+  width: min(320px, 90vw);
+  max-width: 100%;
+  height: 100vh;
+  margin-left: auto;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--card-background) 96%, transparent),
+      color-mix(in srgb, var(--background) 88%, transparent)
+    );
+  border-left: 1px solid var(--card-border);
+  padding: 18px 16px;
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.45);
+  overflow-y: auto;
+}
+
+.mobileDrawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mobileDrawerClose {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--control-radius, 10px);
+  border: var(--control-border, 1px solid var(--card-border));
+  background: var(--control-background, var(--card-background));
+  color: var(--text);
+  cursor: pointer;
+}
+
+.mobileDrawerClose:hover {
+  color: var(--secondary);
+}
+
+.mobileControls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobileControls .select,
+.mobileControls .modeIconButton {
+  width: 100%;
+}
+
+.mobileControls .modeIconButton {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .mobileToggle {
+    display: inline-flex;
+  }
+
+  .headerRight {
+    display: none;
+  }
+
+  .mobileDrawerOverlay {
+    position: fixed;
+    inset: 0;
+    display: block;
+    background: rgba(2, 6, 23, 0.6);
+    z-index: 50;
+  }
 }

@@ -125,11 +125,25 @@
 }
 
 @media (max-width: 760px) {
+  .page {
+    padding: 14px 10px 0;
+  }
+
   .form {
     grid-template-columns: 1fr;
   }
 
   .button {
     width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 10px 8px 0;
+  }
+
+  .card {
+    padding: clamp(14px, 2.5vw, 20px);
   }
 }

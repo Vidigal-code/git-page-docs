@@ -6,9 +6,11 @@ import type { LoadedDocsData } from "@/entities/docs/model/types";
 import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
 import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import { getBasePath } from "@/shared/lib/base-path";
+import { resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
 import { useStandaloneShellConfig } from "@/widgets/search-shell-header/model/use-standalone-shell-config";
+import notFoundStyles from "./not-found.module.css";
 import { DocsShell } from "@/widgets/docs-shell/docs-shell";
 
 const NOT_INSTALLED = {
@@ -215,11 +217,11 @@ export default function NotFound() {
   }, [isCheckingOrLoading]);
 
   const basePath = getBasePath();
-  const headerName =
-    standaloneConfig?.siteConfig?.SiteHeaderName?.trim() ||
-    standaloneConfig?.siteConfig?.name ||
-    "git-page-docs";
-  const iconImage = standaloneConfig?.siteConfig?.SiteIconPath?.trim() || "/icon.svg";
+  const headerName = resolveHeaderName(
+    standaloneConfig?.siteConfig?.SiteHeaderName,
+    standaloneConfig?.siteConfig?.name
+  );
+  const iconImage = resolveIconPath(standaloneConfig?.siteConfig?.SiteIconPath, basePath);
   const header = standaloneConfig ? (
     <SearchShellHeader
       siteName={headerName}
@@ -257,7 +259,7 @@ export default function NotFound() {
   if (!mounted) {
     return (
       <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-        <section style={styles.section}>
+        <section className={notFoundStyles.section}>
           <p style={styles.loading}>Loading...</p>
         </section>
       </SearchShellLayout>
@@ -274,7 +276,7 @@ export default function NotFound() {
     const progressWidth = loaderDots === 1 ? "34%" : loaderDots === 2 ? "68%" : "100%";
     return (
       <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-        <section style={styles.section}>
+        <section className={notFoundStyles.section}>
           <h1 style={styles.title}>{loadingTitle}</h1>
           <p style={styles.description}>
             {lang === "pt"
@@ -294,7 +296,7 @@ export default function NotFound() {
   if (Boolean(isRepoPath) && repoStatus === "installed" && appLoadFailed) {
     return (
       <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-        <section style={styles.section}>
+        <section className={notFoundStyles.section}>
           <h1 style={styles.title}>{lang === "pt" ? "Não foi possível carregar agora" : lang === "es" ? "No se pudo cargar ahora" : "Could not load right now"}</h1>
           <p style={styles.description}>
             {lang === "pt"
@@ -305,7 +307,7 @@ export default function NotFound() {
           </p>
           <button
             type="button"
-            style={styles.button}
+            className={notFoundStyles.buttonFull}
             onClick={() => {
               setRepoStatus("checking");
             }}
@@ -331,14 +333,14 @@ export default function NotFound() {
 
   return (
     <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-      <section style={styles.section}>
+      <section className={notFoundStyles.section}>
         {(repoStatus === "not_installed" || !isRepoPath) && <p style={styles.code}>404</p>}
         <h1 style={styles.title}>{message}</h1>
         <p style={styles.description}>{prompt}</p>
 
         {isRepoPath && (
           <form
-            style={styles.form}
+            className={notFoundStyles.form}
             onSubmit={(e) => {
               e.preventDefault();
               const form = e.target as HTMLFormElement;
@@ -359,21 +361,21 @@ export default function NotFound() {
               name="owner"
               placeholder={lang === "pt" ? "Usuário (ex: Vidigal-code)" : lang === "es" ? "Usuario (ej: Vidigal-code)" : "Owner (ex: Vidigal-code)"}
               defaultValue={pathOwner ?? ""}
-              style={styles.input}
+              className={notFoundStyles.input}
             />
             <input
               name="repo"
               placeholder={lang === "pt" ? "Repositório (ex: git-page-link-create)" : lang === "es" ? "Repositorio (ej: git-page-link-create)" : "Repository (ex: git-page-link-create)"}
               defaultValue={pathRepo ?? ""}
-              style={styles.input}
+              className={notFoundStyles.input}
             />
-            <button type="submit" style={styles.button}>
+            <button type="submit" className={notFoundStyles.button}>
               {lang === "pt" ? "Buscar" : lang === "es" ? "Buscar" : "Search"}
             </button>
           </form>
         )}
 
-        <a href={basePath ? `${basePath}/` : "/"} style={styles.link}>
+        <a href={basePath ? `${basePath}/` : "/"} className={notFoundStyles.link}>
           {returnLabel}
         </a>
       </section>
@@ -382,14 +384,6 @@ export default function NotFound() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  section: {
-    width: "min(760px, 100%)",
-    borderRadius: "16px",
-    padding: "clamp(18px, 3vw, 32px)",
-    boxShadow: "0 18px 60px rgba(0, 0, 0, 0.4)",
-    background: "var(--card-background, #0f172a)",
-    border: "1px solid var(--card-border, #334155)",
-  },
   loading: {
     margin: 0,
     color: "#94a3b8",
@@ -422,39 +416,5 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     background: "linear-gradient(90deg, #7c3aed, #22d3ee)",
     transition: "width 220ms ease",
-  },
-  form: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr auto",
-    gap: "12px",
-    marginTop: 20,
-    marginBottom: 16,
-  },
-  input: {
-    padding: "10px 16px",
-    borderRadius: 10,
-    border: "1px solid #334155",
-    background: "#1e293b",
-    color: "#f1f5f9",
-  },
-  button: {
-    padding: "10px 16px",
-    borderRadius: 10,
-    border: "1px solid #334155",
-    background: "#7c3aed",
-    color: "#f1f5f9",
-    fontWeight: 600,
-    cursor: "pointer",
-  },
-  link: {
-    display: "inline-block",
-    marginTop: 8,
-    padding: "10px 16px",
-    border: "1px solid #334155",
-    borderRadius: 10,
-    background: "#1e293b",
-    color: "#f1f5f9",
-    fontWeight: 600,
-    textDecoration: "none",
   },
 };
