@@ -454,6 +454,26 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       return "";
     }
   }, [data.config.site.rendering]);
+  const runtimeBasePath = useMemo(() => {
+    if (typeof window === "undefined") {
+      return configuredRenderingPath;
+    }
+
+    const currentPath = window.location.pathname;
+    const currentParts = currentPath.split("/").filter(Boolean);
+    const hostname = window.location.hostname.toLowerCase();
+
+    // On GitHub Pages, the first segment is the project base path.
+    if (hostname.endsWith("github.io") && currentParts.length >= 2) {
+      return `/${currentParts[0]}`;
+    }
+
+    if (configuredRenderingPath && currentPath.toLowerCase().startsWith(configuredRenderingPath.toLowerCase())) {
+      return configuredRenderingPath;
+    }
+
+    return "";
+  }, [configuredRenderingPath]);
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
@@ -751,15 +771,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
 
     const normalizedPath = nextPathname.startsWith("/") ? nextPathname : `/${nextPathname}`;
-    const currentPath = window.location.pathname;
-    const currentPathLower = currentPath.toLowerCase();
-    const configuredPathLower = configuredRenderingPath.toLowerCase();
+    const runtimeBasePathLower = runtimeBasePath.toLowerCase();
 
-    if (configuredRenderingPath && (currentPathLower.startsWith(configuredPathLower) || window.location.host.endsWith("github.io"))) {
-      if (normalizedPath.toLowerCase().startsWith(configuredPathLower)) {
+    if (runtimeBasePath) {
+      if (normalizedPath.toLowerCase().startsWith(runtimeBasePathLower)) {
         return normalizedPath;
       }
-      return `${configuredRenderingPath}${normalizedPath}`;
+      return `${runtimeBasePath}${normalizedPath}`;
     }
 
     return normalizedPath;
