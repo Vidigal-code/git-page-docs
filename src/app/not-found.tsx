@@ -387,20 +387,24 @@ const styles: Record<string, React.CSSProperties> = {
   loading: {
     margin: 0,
     color: "#94a3b8",
+    textAlign: "center",
   },
   code: {
     margin: 0,
     color: "#94a3b8",
     fontWeight: 600,
+    textAlign: "center",
   },
   title: {
     marginTop: 8,
     marginBottom: 12,
+    textAlign: "center",
   },
   description: {
     marginTop: 0,
     color: "#cbd5e1",
     lineHeight: 1.6,
+    textAlign: "center",
   },
   loadingTrack: {
     width: "100%",

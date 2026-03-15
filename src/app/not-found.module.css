@@ -7,6 +7,7 @@
   background: var(--card-background, #0f172a);
   border: 1px solid var(--card-border, #334155);
   box-sizing: border-box;
+  text-align: center;
 }
 
 .form {
@@ -15,6 +16,7 @@
   gap: 12px;
   margin-top: 20px;
   margin-bottom: 16px;
+  text-align: left;
 }
 
 .input {
@@ -73,6 +75,7 @@
 @media (max-width: 760px) {
   .section {
     padding: clamp(14px, 2.5vw, 24px);
+    margin: 0 10px;
   }
 
   .form {
@@ -82,5 +85,22 @@
 
   .form .button {
     width: 100%;
+  }
+
+  .form input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 14px 12px;
+    margin: 0 8px;
+  }
+
+  .form {
+    margin-top: 16px;
+    margin-bottom: 12px;
   }
 }
