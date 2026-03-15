@@ -405,12 +405,12 @@ export default function NotFound() {
 const styles: Record<string, React.CSSProperties> = {
   loading: {
     margin: 0,
-    color: "#94a3b8",
+    color: "var(--text-secondary)",
     textAlign: "center",
   },
   code: {
     margin: 0,
-    color: "#94a3b8",
+    color: "var(--text-secondary)",
     fontWeight: 600,
     textAlign: "center",
   },
@@ -418,10 +418,11 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: 8,
     marginBottom: 12,
     textAlign: "center",
+    color: "var(--text)",
   },
   description: {
     marginTop: 0,
-    color: "#cbd5e1",
+    color: "var(--text-secondary)",
     lineHeight: 1.6,
     textAlign: "center",
   },
@@ -429,15 +430,15 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     height: 8,
     borderRadius: 999,
-    border: "1px solid #334155",
-    background: "#0b1322",
+    border: "1px solid var(--card-border)",
+    background: "color-mix(in srgb, var(--background) 90%, var(--primary) 10%)",
     overflow: "hidden",
     marginTop: 8,
   },
   loadingBar: {
     height: "100%",
     borderRadius: 999,
-    background: "linear-gradient(90deg, #7c3aed, #22d3ee)",
+    background: "linear-gradient(90deg, var(--primary), var(--secondary))",
     transition: "width 220ms ease",
   },
 };

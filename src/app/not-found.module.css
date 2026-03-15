@@ -3,9 +3,14 @@
   max-width: 100%;
   border-radius: 16px;
   padding: clamp(18px, 3vw, 32px);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.4);
-  background: var(--card-background, #0f172a);
-  border: 1px solid var(--card-border, #334155);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--card-background) 94%, var(--primary) 6%),
+      color-mix(in srgb, var(--card-background) 92%, var(--secondary) 8%)
+    );
+  border: 1px solid var(--card-border);
   box-sizing: border-box;
   text-align: center;
 }
@@ -22,23 +27,23 @@
 .input {
   padding: 10px 16px;
   border-radius: 10px;
-  border: 1px solid #334155;
-  background: #1e293b;
-  color: #f1f5f9;
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  color: var(--text);
   font-size: 1rem;
   box-sizing: border-box;
 }
 
 .input::placeholder {
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .button {
   padding: 10px 16px;
   border-radius: 10px;
-  border: 1px solid #334155;
-  background: #7c3aed;
-  color: #f1f5f9;
+  border: 1px solid var(--card-border);
+  background: var(--primary);
+  color: var(--text);
   font-weight: 600;
   cursor: pointer;
 }
@@ -46,9 +51,9 @@
 .buttonFull {
   padding: 10px 16px;
   border-radius: 10px;
-  border: 1px solid #334155;
-  background: #7c3aed;
-  color: #f1f5f9;
+  border: 1px solid var(--card-border);
+  background: var(--primary);
+  color: var(--text);
   font-weight: 600;
   cursor: pointer;
   width: 100%;
@@ -62,10 +67,10 @@
   width: 100%;
   margin-top: 8px;
   padding: 10px 16px;
-  border: 1px solid #334155;
+  border: 1px solid var(--card-border);
   border-radius: 10px;
-  background: #1e293b;
-  color: #f1f5f9;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  color: var(--text);
   font-weight: 600;
   text-decoration: none;
   text-align: center;
