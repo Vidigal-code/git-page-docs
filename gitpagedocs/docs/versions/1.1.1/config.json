@@ -170,14 +170,14 @@
     {
       "id": 2,
       "title": {
-        "pt": "Visão geral do projeto",
-        "en": "Project overview",
-        "es": "Visión general del proyecto"
+        "pt": "Código fonte",
+        "en": "Source code",
+        "es": "Código fuente"
       },
       "description": {
-        "pt": "Stack, objetivo e estrutura do Git Page Docs",
-        "en": "Stack, goals and structure of Git Page Docs",
-        "es": "Stack, objetivos y estructura de Git Page Docs"
+        "pt": "Visualizar código-fonte do projeto",
+        "en": "View project source code",
+        "es": "Ver código fuente del proyecto"
       },
       "titleCss": "font-size: 1.85rem; font-weight: 700;",
       "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
@@ -189,17 +189,17 @@
       "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
       "descriptionPosition": "center",
       "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/source-viewer.html",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/source-viewer.html",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/source-viewer.html"
+      },
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
       "container": "full",
-      "browseAll": false,
-      "url": {
-        "pt": "https://github.com/Vidigal-code/git-page-docs",
-        "en": "https://github.com/Vidigal-code/git-page-docs",
-        "es": "https://github.com/Vidigal-code/git-page-docs"
-      }
+      "browseAll": false
     }
   ],
   "routes-video": [
@@ -445,16 +445,16 @@
     {
       "id": 2,
       "pt": {
-        "title": "GitHub (URL)",
-        "path-click": "url:https://github.com/Vidigal-code/git-page-docs"
+        "title": "Código fonte",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/source-viewer.html"
       },
       "en": {
-        "title": "GitHub (URL)",
-        "path-click": "url:https://github.com/Vidigal-code/git-page-docs"
+        "title": "Source code",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/source-viewer.html"
       },
       "es": {
-        "title": "GitHub (URL)",
-        "path-click": "url:https://github.com/Vidigal-code/git-page-docs"
+        "title": "Código fuente",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/source-viewer.html"
       }
     }
   ],

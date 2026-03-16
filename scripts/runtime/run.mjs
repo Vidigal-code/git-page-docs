@@ -11,6 +11,7 @@ export async function runCli(params) {
     useLocalLayoutConfig: options.useLocalLayoutConfig,
     githubOwner: sanitizeSegment(options.githubOwner),
     githubRepo: sanitizeSegment(options.githubRepo),
+    root,
   });
 
   await writeConfigOnlyOutput({

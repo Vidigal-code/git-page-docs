@@ -43,6 +43,7 @@ function parseDocFileToKey(fileName) {
 
 function parseHtmlFileToKey(fileName) {
   if (fileName === "getting-started.html") return "gettingStarted";
+  if (fileName === "source-viewer.html") return "sourceViewer";
   return undefined;
 }
 
