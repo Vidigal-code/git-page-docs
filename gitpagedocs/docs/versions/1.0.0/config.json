@@ -31,7 +31,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true
+      "browseAll": false
     },
     {
       "id": 2,
@@ -64,7 +64,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true
+      "browseAll": false
     },
     {
       "id": 3,
@@ -97,7 +97,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true
+      "browseAll": false
     },
     {
       "id": 4,
@@ -130,7 +130,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true
+      "browseAll": false
     }
   ],
   "routes-html": [
@@ -165,7 +165,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true
+      "browseAll": false
     },
     {
       "id": 2,
@@ -194,7 +194,7 @@
       "marginBottom": "",
       "blockLink": true,
       "container": "full",
-      "browseAll": true,
+      "browseAll": false,
       "url": {
         "pt": "https://github.com/Vidigal-code/git-page-docs",
         "en": "https://github.com/Vidigal-code/git-page-docs",
@@ -229,7 +229,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -269,7 +269,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -309,7 +309,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -349,7 +349,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
