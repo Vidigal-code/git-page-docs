@@ -72,18 +72,21 @@
   overflow-y: visible;
 }
 
-/* Mobile: scroll-y, no overflow, responsive, centered */
+/* Mobile: routes extend full width, centered, stacked, never overflow */
 @media (max-width: 767px) {
   .wrapper {
     flex-direction: column;
     align-items: center;
     overflow: hidden;
     max-width: 100%;
+    width: 100%;
   }
 
   .positionLeft .tocAside,
-  .positionRight .tocAside {
+  .positionRight .tocAside,
+  .positionCenter .tocAside {
     width: 100%;
+    max-width: 100%;
   }
 
   .positionRight .content {
@@ -103,7 +106,7 @@
   }
 
   .tocScroll {
-    max-height: var(--toc-scroll-max-height-mobile, 220px);
+    max-height: var(--toc-scroll-max-height-mobile, min(45vh, 280px));
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -116,6 +119,8 @@
 
   .content {
     min-width: 0;
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;

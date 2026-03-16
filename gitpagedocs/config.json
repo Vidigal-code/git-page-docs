@@ -67,7 +67,7 @@
     "IconPreviewProjectLinkImgHeight": 20,
     "RouteguideBrandPositionDefault": "center",
     "TocScrollMaxHeightDesktop": "min(65vh, 400px)",
-    "TocScrollMaxHeightMobile": "220px",
+    "TocScrollMaxHeightMobile": "min(45vh, 280px)",
     "layoutsConfigPathOficial": true,
     "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates",
     "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",

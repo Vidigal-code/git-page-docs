@@ -35,13 +35,15 @@
   .toc {
     text-align: center;
     margin-top: 0.5rem;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     background: color-mix(in srgb, var(--background) 95%, var(--primary) 5%);
-    border-radius: 8px;
+    border-radius: var(--card-radius, 10px);
     border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 }
 
@@ -81,6 +83,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     max-width: 100%;
     min-width: 0;
   }
@@ -93,16 +96,21 @@
     min-width: 0;
     text-align: center;
     padding-left: 0 !important;
+    box-sizing: border-box;
   }
 
   .link {
     display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 0.4rem 0.75rem;
     border-radius: 4px;
     background: color-mix(in srgb, var(--background) 90%, var(--primary) 10%);
     text-align: center;
     overflow-wrap: break-word;
     word-break: break-word;
+    overflow-x: hidden;
   }
 
   .link.active {

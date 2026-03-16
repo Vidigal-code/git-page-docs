@@ -2,7 +2,7 @@ import type { SiteConfig, ThemeTemplate } from "@/entities/docs/model/types";
 import type { CSSProperties } from "react";
 
 const TOC_SCROLL_MAX_HEIGHT_DESKTOP_DEFAULT = "min(65vh, 400px)";
-const TOC_SCROLL_MAX_HEIGHT_MOBILE_DEFAULT = "220px";
+const TOC_SCROLL_MAX_HEIGHT_MOBILE_DEFAULT = "min(45vh, 280px)";
 
 const DEFAULT_COLORS = {
   background: "#0b0f15",
