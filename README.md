@@ -211,9 +211,9 @@ All routes for accessing documentation files on the official site or self-hosted
 | `lang` | `en`, `pt`, `es` | UI and content language |
 | `modetheme` | `dark`, `light` | Theme mode |
 | `version` | e.g. `1.0.0` | Version (alternative to path) |
-| `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `nome`) |
+| `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `name`) |
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
-| `nome` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
+| `name` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
 | `mdfull` | `en`, `pt`, `es` | Markdown fullscreen mode |
 | `file` | path (with `mdfull` or `htmlfull`) | File to show in fullscreen |
 | `videofull` | `en`, `pt`, `es` | Video fullscreen mode |
@@ -233,19 +233,19 @@ All routes for accessing documentation files on the official site or self-hosted
 - Introduction to Git:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=4  
 
-**By slug (`nome`)**
+**By slug (`name`)**
 
 - Getting Started:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=getting-started  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=getting-started  
 - Project overview:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=project-overview  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=project-overview  
 
 **HTML pages** (by slug; pages combine MD + HTML when they share the same route id)
 
 - Getting Started (HTML):  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=getting-started  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=getting-started  
 - Source code viewer:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=source-viewer  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=source-viewer  
 
 **Video pages** (route id 1–4; pages combine MD + HTML + Video by id)
 

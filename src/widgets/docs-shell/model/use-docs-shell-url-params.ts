@@ -49,7 +49,7 @@ export function useDocsShellUrlParams(
   useEffect(() => {
     const menuLang = searchParams.get("menu") as LanguageCode | null;
     const menuId = searchParams.get("id");
-    const menuNome = searchParams.get("nome");
+    const menuSlug = searchParams.get("name") ?? searchParams.get("nome");
     const mdHash = typeof window !== "undefined" && window.location.hash ? window.location.hash.slice(1) : "";
     const mdfull = searchParams.get("mdfull");
     const mdfullFile = searchParams.get("file");
@@ -80,7 +80,7 @@ export function useDocsShellUrlParams(
       }
     }
 
-    if (menuLang && (menuId || menuNome)) {
+    if (menuLang && (menuId || menuSlug)) {
       let pathClick: string | null = null;
       let ancestorKeys: string[] = [];
 
@@ -92,8 +92,8 @@ export function useDocsShellUrlParams(
             pathClick = (route.path as Record<string, string>)[menuLang] ?? (route.path as Record<string, string>).en ?? null;
           }
         }
-      } else if (menuNome) {
-        pathClick = findPathClickBySlug(data, menuNome, menuLang);
+      } else if (menuSlug) {
+        pathClick = findPathClickBySlug(data, menuSlug, menuLang);
       }
 
       if (pathClick) {

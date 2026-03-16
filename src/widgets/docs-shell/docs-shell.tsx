@@ -208,7 +208,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     params.delete("id");
     const qs = params.toString();
     const appPath = pathname ?? "/";
-    router.replace(qs ? `${appPath}?${qs}` : appPath);
+    if (typeof window !== "undefined") {
+      const nextUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
+      window.history.replaceState({}, "", nextUrl);
+    } else {
+      router.replace(qs ? `${appPath}?${qs}` : appPath);
+    }
   }, [pathname, router]);
 
   const versionFromQuery = searchParams.get("version");

@@ -173,7 +173,11 @@ export function DocsShellUrlFullscreenOverlay({
       <button
         type="button"
         className={styles.fullscreenCloseButton}
-        onClick={onClose}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClose();
+        }}
         aria-label={menuCloseLabel}
         title={menuCloseLabel}
       >
