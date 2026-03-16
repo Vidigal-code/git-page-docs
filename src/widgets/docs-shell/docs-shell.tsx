@@ -206,8 +206,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     params.delete("file");
     params.delete("slug");
     params.delete("id");
-    replaceUrlParams(params);
-  }, [replaceUrlParams]);
+    const qs = params.toString();
+    const appPath = pathname ?? "/";
+    router.replace(qs ? `${appPath}?${qs}` : appPath);
+  }, [pathname, router]);
 
   const versionFromQuery = searchParams.get("version");
   const isRemoteRepositorySession = data.activeRepository.source === "remote";

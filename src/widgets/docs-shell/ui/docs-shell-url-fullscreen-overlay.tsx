@@ -144,6 +144,9 @@ export function DocsShellUrlFullscreenOverlay({
           data={data}
           language={overlayLanguage}
           isDarkMode={isDarkMode}
+          contentTypeFilter={
+            params.type === "md" || params.type === "html" || params.type === "video" ? params.type : undefined
+          }
           fullscreenCloseLabel={menuCloseLabel}
           fullscreenExpandLabel={fullscreenExpandLabel}
           previousLabel={previousLabel}

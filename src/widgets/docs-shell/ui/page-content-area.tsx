@@ -30,6 +30,8 @@ interface PageContentAreaProps {
   data: LoadedDocsData;
   language: LanguageCode;
   isDarkMode?: boolean;
+  /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull) */
+  contentTypeFilter?: "md" | "html" | "video";
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
   previousLabel: string;
@@ -79,6 +81,7 @@ export function PageContentArea({
   homePathClick,
   homeAncestorKeys = [],
   routeGuideIconConfig,
+  contentTypeFilter,
 }: PageContentAreaProps) {
   if (!currentPage) {
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
@@ -92,6 +95,7 @@ export function PageContentArea({
   const hierarchy = data.config.hierarchyPage ?? { md: 0, html: 1, video: 2 };
   const types = (["md", "html", "video"] as const)
     .filter((t) => currentPage[t])
+    .filter((t) => !contentTypeFilter || t === contentTypeFilter)
     .sort((a, b) => (hierarchy[a] ?? 999) - (hierarchy[b] ?? 999));
 
   const mdConfig = currentPage.md?.config;
