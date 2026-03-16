@@ -41,6 +41,7 @@ jobs:
         env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GITPAGEDOCS_REPOSITORY_SEARCH: "true"
 
       - name: Add .nojekyll
         run: touch out/.nojekyll 2>/dev/null || mkdir -p out && touch out/.nojekyll

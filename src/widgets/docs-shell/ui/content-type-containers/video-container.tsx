@@ -53,7 +53,6 @@ export function VideoContainer({
   fullscreenExpandLabel,
   isDarkMode = false,
   browseNav,
-  sectionId,
 }: VideoContainerProps) {
   const type = String(videoType).toLowerCase();
   const embedUrl = getEmbedUrl(videoType, pathVideo, language);

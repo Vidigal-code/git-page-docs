@@ -52,7 +52,6 @@ export function HtmlContainer({
   fullscreenExpandLabel,
   isDarkMode = false,
   browseNav,
-  sectionId,
 }: HtmlContainerProps) {
   const blockLink = config?.blockLink !== false;
   const srcdoc = useMemo(
