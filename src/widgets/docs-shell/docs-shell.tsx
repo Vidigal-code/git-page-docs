@@ -1,69 +1,57 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
+import { useCallback, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
-import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
-import { toFullPath } from "@/shared/lib/base-path";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LoadedDocsData } from "@/entities/docs/model/types";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
+import { useDocsShellKeyboard } from "./model/use-docs-shell-keyboard";
+import { useDocsShellLinearNav } from "./model/use-docs-shell-linear-nav";
+import { useDocsShellPopups } from "./model/use-docs-shell-popups";
+import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
+import { useDocsShellUrl } from "./model/use-docs-shell-url";
+import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
-import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
 import { useFocusMode } from "./model/use-focus-mode";
-import { buildUnifiedHeaderMenuTree, flattenMenuTree, getPageIndexByPathClick } from "./model/menu-tree";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { DocsShellControls } from "./ui/docs-shell-controls";
-import { DocsShellHeader } from "./ui/docs-shell-header";
 import { DocsShellFocusOverlay } from "./ui/docs-shell-focus-overlay";
+import { DocsShellHeader } from "./ui/docs-shell-header";
+import { DocsShellInfoOverlay } from "./ui/docs-shell-info-overlay";
 import { DocsShellMobileDrawer } from "./ui/docs-shell-mobile-drawer";
 import { DocsShellQuickNavOverlay } from "./ui/docs-shell-quick-nav-overlay";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
-import { DocsShellInfoOverlay } from "./ui/docs-shell-info-overlay";
 import { DocsShellVersionLinksOverlay } from "./ui/docs-shell-version-links-overlay";
 import { PageContentArea } from "./ui/page-content-area";
 import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
-  const router = useRouter();
-  const pathname = usePathname();
+  const { getCurrentSearchParams, replaceUrlWithoutNavigation, pathname, router } = useDocsShellUrl();
   const searchParams = useSearchParams();
+  const {
+    menuOpen,
+    setMenuOpen,
+    sidebarOpen,
+    setSidebarOpen,
+    versionLinksPopupOpen,
+    setVersionLinksPopupOpen,
+    infoPopupOpen,
+    setInfoPopupOpen,
+  } = useDocsShellPopups();
+
+  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(
+    data.config.site.name,
+  );
   const defaultLanguage = data.config.site.defaultLanguage;
-  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(data.config.site.name);
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [versionLinksPopupOpen, setVersionLinksPopupOpen] = useState(false);
-  const [infoPopupOpen, setInfoPopupOpen] = useState(false);
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
-  const languageCount = data.availableLanguages.length;
-  const isLanguageSelectVisible = languageCount > 1;
-
-  function getCurrentSearchParams(): URLSearchParams {
-    if (typeof window !== "undefined") {
-      return new URLSearchParams(window.location.search);
-    }
-    return new URLSearchParams(searchParams.toString());
-  }
-
-  function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
-    if (typeof window !== "undefined") {
-      const appPath = nextPathname || pathname || "/";
-      const qs = params.toString();
-      const nextUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
-      window.history.replaceState({}, "", nextUrl);
-      return;
-    }
-    const normalizedPath = nextPathname || pathname || "/";
-    const qs = params.toString();
-    router.replace(qs ? `${normalizedPath}?${qs}` : normalizedPath);
-  }
+  const isLanguageSelectVisible = data.availableLanguages.length > 1;
 
   const { language, onLanguageChange } = useDocsShellLanguageState({
     defaultLanguage,
@@ -74,6 +62,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     getCurrentSearchParams,
     replaceUrlWithoutNavigation,
   });
+
   const {
     activeThemeId,
     activeLayout,
@@ -92,6 +81,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     getCurrentSearchParams,
     replaceUrlWithoutNavigation,
   });
+
   const {
     pageIndex,
     setPageIndex,
@@ -113,69 +103,23 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setSidebarOpen,
     setMenuOpen,
   });
+
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
   const currentPage = data.pages?.[safePageIndex];
-  const markdownHtml = currentPage?.md?.markdownByLanguage[language] ?? data.docs?.[safePageIndex]?.markdownByLanguage[language] ?? "<p>Document not found for this language.</p>";
-  const activeTheme = data.themes[activeLayout?.id];
-  const hideThemeSelector = data.config.site.HideThemeSelector;
-  const cssVars = useMemo(() => toDocsShellCssVars(activeTheme), [activeTheme]);
-  const previousLabel = resolveTranslation(
-    data.config.translations?.navigation?.previous,
-    language,
-    "Previous",
-  );
-  const nextLabel = resolveTranslation(data.config.translations?.navigation?.next, language, "Next");
-  const browsePrevLabel = resolveTranslation(
-    data.config.translations?.navigation?.browsePrev,
-    language,
-    previousLabel,
-  );
-  const browseNextLabel = resolveTranslation(
-    data.config.translations?.navigation?.browseNext,
-    language,
-    nextLabel,
-  );
-  const menuOpenLabel = getLangMenuLabelFromMenu(
-    data.config.site.langmenu,
-    language,
-    "menuOpen",
-    resolveTranslation(data.config.translations?.navigation?.menuOpen, language, "Menu"),
-  );
-  const menuCloseLabel = getLangMenuLabelFromMenu(
-    data.config.site.langmenu,
-    language,
-    "menuClose",
-    resolveTranslation(data.config.translations?.navigation?.menuClose, language, "Close"),
-  );
-  const quickNavPlaceholder = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "typeToNavigate", "Type to navigate...");
-  const noNavigationResults = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "noNavigationResults", "No navigation results.");
-  const navigateHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "navigateHint", "Navigate");
-  const selectHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "selectHint", "Select");
-  const escHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "escHint", "ESC");
-  const closeHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "closeHint", menuCloseLabel);
-  const isRemoteRepositorySession = data.activeRepository.source === "remote";
-  const versionFromQuery = searchParams.get("version");
+  const markdownHtml =
+    currentPage?.md?.markdownByLanguage[language] ??
+    data.docs?.[safePageIndex]?.markdownByLanguage[language] ??
+    "<p>Document not found for this language.</p>";
 
-  const headerMenuTree = useMemo(
-    () => buildUnifiedHeaderMenuTree(data, language, safePageIndex),
-    [data, language, safePageIndex],
-  );
+  const {
+    headerMenuTree,
+    headerMenuEntries,
+    linearNavigationEntries,
+    currentLinearNavigationIndex,
+    canGoPrevious,
+    canGoNext,
+  } = useDocsShellLinearNav(data, language, safePageIndex);
 
-  const headerMenuEntries = useMemo(() => flattenMenuTree(headerMenuTree), [headerMenuTree]);
-  const linearNavigationEntries = useMemo(() => {
-    const seenPages = new Set<number>();
-    return headerMenuEntries.filter((entry) => {
-      if (!entry.pathClick) return false;
-      const pageIdx = getPageIndexByPathClick(data, entry.pathClick);
-      if (pageIdx < 0 || seenPages.has(pageIdx)) return false;
-      seenPages.add(pageIdx);
-      return true;
-    });
-  }, [headerMenuEntries, data]);
-  const currentLinearNavigationIndex = useMemo(
-    () => linearNavigationEntries.findIndex((entry) => getPageIndexByPathClick(data, entry.pathClick) === safePageIndex),
-    [linearNavigationEntries, data, safePageIndex],
-  );
   const {
     quickNavOpen,
     setQuickNavOpen,
@@ -189,6 +133,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     openQuickNavigation: openQuickNavigationInternal,
     closeQuickNavigation: closeQuickNavigationInternal,
   } = useQuickNavigation(headerMenuEntries);
+
   const {
     focusModeOpen,
     setFocusModeOpen,
@@ -199,6 +144,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     closeFocusMode: closeFocusModeInternal,
     onFocusModeNavigate: onFocusModeNavigateInternal,
   } = useFocusMode(markdownHtml);
+
+  const versionFromQuery = searchParams.get("version");
+  const isRemoteRepositorySession = data.activeRepository.source === "remote";
   const { selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
     pathname,
     versionFromQuery,
@@ -220,19 +168,57 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     canToggleMode,
     nextMode === "dark",
   );
-  const {
-    iconImage,
-    headerName,
-    useReactIcon: useReactHeaderIcon,
-    reactIconTag: reactHeaderIconTag,
-    reactIconStyle: headerReactIconStyle,
-    iconImgWidth: iconImageMenuHeaderImgWidth,
-    iconImgHeight: iconImageMenuHeaderImgHeight,
-  } = headerIconConfig;
 
-  const canGoPrevious = currentLinearNavigationIndex > 0;
-  const canGoNext =
-    currentLinearNavigationIndex >= 0 && currentLinearNavigationIndex < linearNavigationEntries.length - 1;
+  useDocsShellVersionSync({
+    showVersionSelector: controlsConfig.showVersionSelector,
+    isRemoteRepositorySession,
+    pathname,
+    versionStorageKey,
+    availableVersions: data.availableVersions,
+    routerReplace: router.replace,
+  });
+
+  useDocsShellKeyboard({
+    activeNavigation: controlsConfig.activeNavigation,
+    quickNavOpen,
+    focusModeOpen,
+    setMenuOpen,
+    setFocusModeOpen,
+    setQuickNavOpen,
+    setQuickNavQuery,
+  });
+
+  const onMenuClick = useCallback(
+    (pathClick: string, ancestorKeys: string[] = []) => {
+      onMenuClickState(pathClick, ancestorKeys);
+      setQuickNavOpen(false);
+      setFocusModeOpen(false);
+      setQuickNavQuery("");
+    },
+    [onMenuClickState, setQuickNavOpen, setFocusModeOpen, setQuickNavQuery],
+  );
+
+  const goToLinearNavigation = useCallback(
+    (offset: -1 | 1) => {
+      if (currentLinearNavigationIndex < 0) return;
+      const targetEntry = linearNavigationEntries[currentLinearNavigationIndex + offset];
+      if (!targetEntry) return;
+      onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys);
+    },
+    [currentLinearNavigationIndex, linearNavigationEntries, onMenuClick],
+  );
+
+  const onVersionChange = useCallback(
+    (versionId: string) => {
+      try {
+        window.localStorage.setItem(versionStorageKey, versionId);
+      } catch {
+        // Ignore
+      }
+      onVersionChangeInternal(versionId);
+    },
+    [versionStorageKey, onVersionChangeInternal],
+  );
 
   function openQuickNavigation() {
     setMenuOpen(false);
@@ -241,133 +227,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setFocusModeOpen(false);
     openQuickNavigationInternal();
   }
-
-  function closeQuickNavigation() {
-    closeQuickNavigationInternal();
-  }
-
-  useEffect(() => {
-    if (!controlsConfig.activeNavigation) {
-      return;
-    }
-
-    function onKeyDown(event: KeyboardEvent) {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setMenuOpen(false);
-        setFocusModeOpen(false);
-        setQuickNavOpen((prev) => !prev);
-        if (!quickNavOpen) {
-          setQuickNavQuery("");
-        }
-      }
-
-      if (event.key === "Escape" && focusModeOpen) {
-        event.preventDefault();
-        setFocusModeOpen(false);
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [controlsConfig.activeNavigation, quickNavOpen, focusModeOpen, setFocusModeOpen, setQuickNavOpen, setQuickNavQuery]);
-
-  useEffect(() => {
-    if (!controlsConfig.showVersionSelector) return;
-    const params = new URLSearchParams(searchParams.toString());
-    const urlVersion = params.get("version");
-    const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
-    const pathVersionMatch = pathname.match(/\/v\/([^/]+)\/?$/);
-    const versionFromPath = pathVersionMatch?.[1];
-    const hasVersionInConfig = (versionId: string | null | undefined) =>
-      Boolean(versionId && data.availableVersions.some((v) => v.id === versionId));
-
-    if (isRemoteRepositorySession) {
-      const validUrlVersion = hasVersionInConfig(urlVersion) ? urlVersion : undefined;
-      const validPathVersion = hasVersionInConfig(versionFromPath) ? versionFromPath : undefined;
-
-      if (validUrlVersion && validUrlVersion !== validPathVersion) {
-        const appBase = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        params.delete("version");
-        const targetAppPath = buildVersionPath(appBase, validUrlVersion);
-        const qs = params.toString();
-        const nextUrl = qs ? `${targetAppPath}?${qs}` : targetAppPath;
-        if (typeof window !== "undefined") {
-          window.location.replace(qs ? `${toFullPath(targetAppPath)}?${qs}` : toFullPath(targetAppPath));
-        } else {
-          router.replace(nextUrl);
-        }
-        return;
-      }
-
-      if (urlVersion && !validUrlVersion) {
-        params.delete("version");
-        if (typeof window !== "undefined") {
-          const qs = params.toString();
-          const nextUrl = qs ? `${toFullPath(pathname)}?${qs}` : toFullPath(pathname);
-          window.history.replaceState({}, "", nextUrl);
-        } else {
-          const qs = params.toString();
-          router.replace(qs ? `${pathname}?${qs}` : pathname);
-        }
-      }
-      return;
-    }
-
-    params.delete("version");
-    if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
-      const appBase = pathname.replace(/\/$/, "") || pathname;
-      const target = `${appBase}/v/${urlVersion}`;
-      const qs = params.toString();
-      router.replace(qs ? `${target}?${qs}` : target);
-      return;
-    }
-    try {
-      const savedVersion = window.localStorage.getItem(versionStorageKey);
-      if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
-        const appBase = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "") || pathname;
-        const target = buildVersionPath(appBase, savedVersion);
-        const qs = params.toString();
-        router.replace(qs ? `${target}?${qs}` : target);
-      }
-    } catch {
-      // Ignore localStorage errors (private mode / blocked storage).
-    }
-  }, [controlsConfig.showVersionSelector, isRemoteRepositorySession, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
-
-  function onMenuClick(pathClick: string, ancestorKeys: string[] = []) {
-    onMenuClickState(pathClick, ancestorKeys);
-    setQuickNavOpen(false);
-    setFocusModeOpen(false);
-    setQuickNavQuery("");
-  }
-
-  function onVersionChange(versionId: string) {
-    try {
-      window.localStorage.setItem(versionStorageKey, versionId);
-    } catch {
-      // Ignore localStorage errors (private mode / blocked storage).
-    }
-    onVersionChangeInternal(versionId);
-  }
-
-  function goToLinearNavigation(offset: -1 | 1) {
-    if (currentLinearNavigationIndex < 0) {
-      return;
-    }
-    const targetEntry = linearNavigationEntries[currentLinearNavigationIndex + offset];
-    if (!targetEntry) {
-      return;
-    }
-    onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys);
-  }
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [pageIndex]);
 
   function openVersionLinksPopup() {
     setMenuOpen(false);
@@ -393,17 +252,64 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     openFocusModeInternal();
   }
 
-  function closeFocusMode() {
-    closeFocusModeInternal();
-  }
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pageIndex]);
 
-  function onFocusModeNavigate(offset: -1 | 1) {
-    onFocusModeNavigateInternal(offset);
-  }
+  const activeTheme = data.themes[activeLayout?.id];
+  const cssVars = useMemo(() => toDocsShellCssVars(activeTheme), [activeTheme]);
+  const previousLabel = resolveTranslation(data.config.translations?.navigation?.previous, language, "Previous");
+  const nextLabel = resolveTranslation(data.config.translations?.navigation?.next, language, "Next");
+  const browsePrevLabel = resolveTranslation(
+    data.config.translations?.navigation?.browsePrev,
+    language,
+    previousLabel,
+  );
+  const browseNextLabel = resolveTranslation(data.config.translations?.navigation?.browseNext, language, nextLabel);
+  const menuOpenLabel = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "menuOpen",
+    resolveTranslation(data.config.translations?.navigation?.menuOpen, language, "Menu"),
+  );
+  const menuCloseLabel = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "menuClose",
+    resolveTranslation(data.config.translations?.navigation?.menuClose, language, "Close"),
+  );
+  const quickNavPlaceholder = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "typeToNavigate",
+    "Type to navigate...",
+  );
+  const noNavigationResults = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "noNavigationResults",
+    "No navigation results.",
+  );
+  const navigateHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "navigateHint", "Navigate");
+  const selectHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "selectHint", "Select");
+  const escHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "escHint", "ESC");
+  const closeHintLabel = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "closeHint",
+    menuCloseLabel,
+  );
 
-  function openVersionLink(url: string) {
-    window.open(url, "_blank", "noreferrer");
-  }
+  const {
+    iconImage,
+    headerName,
+    useReactIcon: useReactHeaderIcon,
+    reactIconTag: reactHeaderIconTag,
+    reactIconStyle: headerReactIconStyle,
+    iconImgWidth: iconImageMenuHeaderImgWidth,
+    iconImgHeight: iconImageMenuHeaderImgHeight,
+  } = headerIconConfig;
 
   const controlsProps = {
     ...controlsConfig,
@@ -473,7 +379,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             language={language}
             isDarkMode={nextMode === "dark"}
             fullscreenCloseLabel={menuCloseLabel}
-            fullscreenExpandLabel={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "showMenu", "Fullscreen")}
+            fullscreenExpandLabel={getLangMenuLabelFromMenu(
+              data.config.site.langmenu,
+              language,
+              "showMenu",
+              "Fullscreen",
+            )}
             previousLabel={previousLabel}
             nextLabel={nextLabel}
             browsePrevLabel={browsePrevLabel}
@@ -500,15 +411,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           )}
         </main>
         {footerEnabled && (
-              <SiteFooter
-                language={language}
-                projectLabel={footerConfig.projectLabel}
-                linkName={footerConfig.linkName}
-                linkUrl={footerConfig.linkUrl}
-                dateMode={footerConfig.dateMode}
-                dateCustom={footerConfig.dateCustom}
-              />
-            )}
+          <SiteFooter
+            language={language}
+            projectLabel={footerConfig.projectLabel}
+            linkName={footerConfig.linkName}
+            linkUrl={footerConfig.linkUrl}
+            dateMode={footerConfig.dateMode}
+            dateCustom={footerConfig.dateCustom}
+          />
+        )}
       </div>
 
       <DocsShellMobileDrawer
@@ -537,7 +448,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         noNavigationResults={noNavigationResults}
         quickNavListRef={quickNavListRef}
         quickNavItemRefs={quickNavItemRefs}
-        onClose={closeQuickNavigation}
+        onClose={closeQuickNavigationInternal}
         onQueryChange={setQuickNavQuery}
         onActiveIndexChange={setQuickNavActiveIndex}
         onMenuClick={onMenuClick}
@@ -552,8 +463,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         focusModeCurrentHtml={focusModeCurrentHtml}
         canFocusModeGoPrevious={canFocusModeGoPrevious}
         canFocusModeGoNext={canFocusModeGoNext}
-        onClose={closeFocusMode}
-        onNavigate={onFocusModeNavigate}
+        onClose={closeFocusModeInternal}
+        onNavigate={onFocusModeNavigateInternal}
       />
 
       <DocsShellVersionLinksOverlay
@@ -562,7 +473,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         menuCloseLabel={menuCloseLabel}
         options={controlsConfig.versionLinkOptionsWithLabels}
         onClose={() => setVersionLinksPopupOpen(false)}
-        onOpenVersionLink={openVersionLink}
+        onOpenVersionLink={(url) => window.open(url, "_blank", "noreferrer")}
       />
 
       <DocsShellInfoOverlay
