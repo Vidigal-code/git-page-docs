@@ -75,22 +75,30 @@ export function DocsShellUrlFullscreenOverlay({
   routeGuideIconConfig,
   onClose,
 }: DocsShellUrlFullscreenOverlayProps) {
+  const fullscreenInnerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!isOpen || !params) return;
     const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
     if (hash) {
       const el = document.getElementById(hash);
+      const container = fullscreenInnerRef.current;
       if (el) {
-        const timer = setTimeout(
-          () => el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }),
-          150,
-        );
+        const timer = setTimeout(() => {
+          if (container && container.contains(el)) {
+            const scrollPadding = 80;
+            const elTop = el.getBoundingClientRect().top;
+            const containerTop = container.getBoundingClientRect().top;
+            const scrollOffset = elTop - containerTop + container.scrollTop - scrollPadding;
+            container.scrollTo({ top: Math.max(0, scrollOffset), behavior: "smooth" });
+          } else {
+            el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+          }
+        }, 150);
         return () => clearTimeout(timer);
       }
     }
   }, [isOpen, params]);
-
-  const fullscreenInnerRef = useRef<HTMLDivElement>(null);
 
   if (!isOpen || !params) {
     return null;
