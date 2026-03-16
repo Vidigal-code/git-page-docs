@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { checkRepositoryHasGitPageDocs, loadRemoteDocsData, parseSupportedLanguage } from "@/entities/docs/api/load-remote-docs-data-client";
-import type { LoadedDocsData } from "@/entities/docs/model/types";
-import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
-import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
+import {
+  checkRepositoryHasGitPageDocs,
+  getLanguageLabelFromMenu,
+  loadRemoteDocsData,
+  parseSupportedLanguage,
+  resolveThemeByMode,
+  toSearchShellCssVars,
+} from "@/widgets/not-found-shell/model/use-not-found-remote";
+import type { LoadedDocsData } from "@/widgets/not-found-shell/model/use-not-found-remote";
+import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
-import { resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
+import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
 import { useStandaloneShellConfig } from "@/widgets/search-shell-header/model/use-standalone-shell-config";
@@ -49,7 +55,6 @@ type ParsedPath = { owner: string; repo: string; version?: string; language: Sup
 
 const MIN_LOADING_TRANSITION_MS = 700;
 const SEARCH_LANGUAGES: SupportedLanguage[] = ["en", "pt", "es"];
-const PROJECT_FOOTER_URL = "https://github.com/Vidigal-code/git-page-docs";
 
 function parsePathFromLocation(): ParsedPath | null {
   if (typeof window === "undefined") {
@@ -110,9 +115,13 @@ export default function NotFound() {
     setActiveThemeId(paired.id);
   }
 
-  function getLanguageLabel(langCode: string): string {
-    return langCode === "pt" ? "Português" : langCode === "es" ? "Español" : "English";
-  }
+  const FALLBACK_LANGMENU = {
+    en: { en: "English", pt: "Português", es: "Español" },
+    pt: { en: "English", pt: "Português", es: "Español" },
+    es: { en: "English", pt: "Português", es: "Español" },
+  } as const;
+  const getLanguageLabel = (targetLang: string) =>
+    getLanguageLabelFromMenu(standaloneConfig?.siteConfig?.langmenu ?? FALLBACK_LANGMENU, lang, targetLang);
 
   useEffect(() => {
     setMounted(true);
@@ -218,27 +227,20 @@ export default function NotFound() {
 
   const basePath = getBasePath();
   const siteConfig = standaloneConfig?.siteConfig;
-  const headerName = resolveHeaderName(siteConfig?.SiteHeaderName, siteConfig?.name);
-
-  const rawIconImage = siteConfig
-    ? (nextModeIsDark
-        ? siteConfig.IconImageMenuHeaderDarkImg?.trim() || siteConfig.IconImageMenuHeaderDark?.trim()
-        : siteConfig.IconImageMenuHeaderLightImg?.trim() || siteConfig.IconImageMenuHeaderLight?.trim()) ||
-      siteConfig.IconImageMenuHeader?.trim() ||
-      siteConfig.SiteIconPath?.trim()
-    : undefined;
-  const iconImage = resolveIconPath(rawIconImage, basePath);
-  const iconImgWidth = Number(siteConfig?.IconImageMenuHeaderImgWidth) || 20;
-  const iconImgHeight = Number(siteConfig?.IconImageMenuHeaderImgHeight) || 20;
-  const useReactHeaderIcon = Boolean(siteConfig?.IconImageMenuHeaderReactIcones);
-  const reactHeaderIconTag = siteConfig?.IconImageMenuHeaderReactIconesTag;
-  const headerReactIconStyle: React.CSSProperties = {
-    color: (nextModeIsDark
-      ? siteConfig?.IconImageMenuHeaderReactIconesTagColorDark
-      : siteConfig?.IconImageMenuHeaderReactIconesTagColorLight
-    )?.trim() || undefined,
-    fontSize: siteConfig?.IconImageMenuHeaderReactIconesTagSize?.trim() || undefined,
-  };
+  const headerIconConfig = useMemo(
+    () =>
+      resolveHeaderIconConfig(siteConfig ?? undefined, nextModeIsDark ? "dark" : "light", basePath),
+    [siteConfig, nextModeIsDark, basePath],
+  );
+  const {
+    iconImage,
+    headerName,
+    useReactIcon: useReactHeaderIcon,
+    reactIconTag: reactHeaderIconTag,
+    reactIconStyle: headerReactIconStyle,
+    iconImgWidth,
+    iconImgHeight,
+  } = headerIconConfig;
 
   const header = standaloneConfig ? (
     <SearchShellHeader

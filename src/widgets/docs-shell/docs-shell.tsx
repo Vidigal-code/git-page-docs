@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
 import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LoadedDocsData } from "@/entities/docs/model/types";
-import { getBasePath } from "@/shared/lib/base-path";
-import { resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
+import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
+import { useDocsShellConfig } from "./model/use-docs-shell-config";
 import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
@@ -22,6 +20,7 @@ import { buildHeaderMenuTree, flattenMenuTree, getRouteIndexByPath } from "./mod
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { DocsShellControls } from "./ui/docs-shell-controls";
+import { DocsShellHeader } from "./ui/docs-shell-header";
 import { DocsShellFocusOverlay } from "./ui/docs-shell-focus-overlay";
 import { DocsShellMobileDrawer } from "./ui/docs-shell-mobile-drawer";
 import { DocsShellQuickNavOverlay } from "./ui/docs-shell-quick-nav-overlay";
@@ -29,35 +28,6 @@ import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellInfoOverlay } from "./ui/docs-shell-info-overlay";
 import { DocsShellVersionLinksOverlay } from "./ui/docs-shell-version-links-overlay";
 import styles from "./docs-shell.module.css";
-
-interface VersionLinkOption {
-  id: "branch" | "release" | "commit";
-  label: string;
-  url: string;
-}
-
-function buildVersionLinkOptions(activeVersion: LoadedDocsData["activeVersion"]): VersionLinkOption[] {
-  if (!activeVersion) {
-    return [];
-  }
-
-  const options: VersionLinkOption[] = [];
-  const branch = activeVersion.branch?.trim();
-  const release = activeVersion.release?.trim();
-  const commit = activeVersion.commit?.trim();
-
-  if (branch) {
-    options.push({ id: "branch", label: "Branch", url: branch });
-  }
-  if (release) {
-    options.push({ id: "release", label: "Release", url: release });
-  }
-  if (commit) {
-    options.push({ id: "commit", label: "Commit", url: commit });
-  }
-
-  return options;
-}
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
   const router = useRouter();
@@ -145,41 +115,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     "Previous",
   );
   const nextLabel = resolveTranslation(data.config.translations?.navigation?.next, language, "Next Markdown");
-  const activeNavigation = Boolean(data.config.site.ActiveNavigation);
-  const focusModeEnabled = Boolean(data.config.site.FocusMode);
-  const versionLinkOptions = useMemo(() => buildVersionLinkOptions(data.activeVersion), [data.activeVersion]);
-  const fallbackProjectLink = data.activeVersion?.ProjectLink?.trim() || data.config.site.ProjectLink?.trim();
-  const basePathForAssets = getBasePath();
-  const rawIconImage =
-    (activeLayout?.mode === "dark"
-      ? data.config.site.IconImageMenuHeaderDarkImg?.trim() || data.config.site.IconImageMenuHeaderDark?.trim()
-      : data.config.site.IconImageMenuHeaderLightImg?.trim() || data.config.site.IconImageMenuHeaderLight?.trim()) ||
-    data.config.site.IconImageMenuHeader?.trim() ||
-    data.config.site.SiteIconPath?.trim();
-  const iconImage = resolveIconPath(rawIconImage, basePathForAssets);
-  const headerName = resolveHeaderName(data.config.site.SiteHeaderName, data.config.site.name);
-  const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
-  const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
-  const headerReactIconColor =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconImageMenuHeaderReactIconesTagColorDark
-      : data.config.site.IconImageMenuHeaderReactIconesTagColorLight;
-  const headerReactIconSize = data.config.site.IconImageMenuHeaderReactIconesTagSize;
-  const headerReactIconStyle: React.CSSProperties = {
-    color: headerReactIconColor?.trim() || undefined,
-    fontSize: headerReactIconSize?.trim() || undefined,
-  };
-  const useReactProjectLinkIcon = Boolean(data.config.site.IconProjectLinkReactIcones);
-  const projectLinkReactIconTag = data.config.site.IconProjectLinkReactIconesTag;
-  const projectLinkReactIconColor =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconProjectLinkReactIconesTagColorDark
-      : data.config.site.IconProjectLinkReactIconesTagColorLight;
-  const projectLinkReactIconSize = data.config.site.IconProjectLinkReactIconesTagSize;
-  const projectLinkReactIconStyle: React.CSSProperties = {
-    color: projectLinkReactIconColor?.trim() || undefined,
-    fontSize: projectLinkReactIconSize?.trim() || undefined,
-  };
   const menuOpenLabel = getLangMenuLabelFromMenu(
     data.config.site.langmenu,
     language,
@@ -192,97 +127,18 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     "menuClose",
     resolveTranslation(data.config.translations?.navigation?.menuClose, language, "Close"),
   );
-  const quickNavLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "quickNavigation", "Ctrl+K");
   const quickNavPlaceholder = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "typeToNavigate", "Type to navigate...");
   const noNavigationResults = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "noNavigationResults", "No navigation results.");
   const navigateHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "navigateHint", "Navigate");
   const selectHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "selectHint", "Select");
   const escHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "escHint", "ESC");
   const closeHintLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "closeHint", menuCloseLabel);
-  const darkModeLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "darkMode", "Dark mode");
-  const lightModeLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "lightMode", "Light mode");
-  const versionLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "versionLabel", "Version");
-  const focusModeLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusMode", "Focus mode");
-  const versionLinksLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "versionLinksLabel", "Repository links");
-  const lastUpdateLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "lastUpdateVersionLabel", "Last update version");
-  const branchLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "branchLabel", "Branch");
-  const releaseLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "releaseLabel", "Release");
-  const commitLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "commitLabel", "Commit");
-  const projectLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "projectLabel", "Project");
-  const updateDate = data.activeVersion?.UpdateDate?.trim() ?? "";
-  const previewProjectUrl = data.activeVersion?.PreviewProject?.trim() ?? "";
-  const showInfoButton = Boolean(updateDate);
-  const showPreviewButton = Boolean(previewProjectUrl);
-  const useReactVersionLinksIcon = Boolean(data.config.site.IconVersionLinksReactIcones);
-  const versionLinksIconTag = data.config.site.IconVersionLinksReactIconesTag;
-  const versionLinksIconColor =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconVersionLinksReactIconesTagColorDark
-      : data.config.site.IconVersionLinksReactIconesTagColorLight;
-  const versionLinksIconSize = data.config.site.IconVersionLinksReactIconesTagSize;
-  const versionLinksIconStyle: React.CSSProperties = {
-    color: versionLinksIconColor?.trim() || undefined,
-    fontSize: versionLinksIconSize?.trim() || undefined,
-  };
-  const versionLinksIconImage =
-    (activeLayout?.mode === "dark"
-      ? data.config.site.IconVersionLinksDarkImg?.trim() || data.config.site.IconVersionLinksHeaderDark?.trim()
-      : data.config.site.IconVersionLinksLightImg?.trim() || data.config.site.IconVersionLinksLight?.trim()) || undefined;
-  const useReactInfoIcon = Boolean(data.config.site.IconInfoHeaderMenuReactIcones);
-  const infoIconTag = data.config.site.IconInfoHeaderMenuReactIconesTag;
-  const infoIconColor =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconInfoHeaderMenuReactIconesTagColorDark
-      : data.config.site.IconInfoHeaderMenuReactIconesTagColorLight;
-  const infoIconSize = data.config.site.IconInfoHeaderMenuReactIconesTagSize;
-  const infoIconStyle: React.CSSProperties = {
-    color: infoIconColor?.trim() || undefined,
-    fontSize: infoIconSize?.trim() || undefined,
-  };
-  const infoIconImage =
-    (activeLayout?.mode === "dark"
-      ? data.config.site.IconInfoHeaderMenuDarkImg?.trim() || data.config.site.IconInfoHeaderMenuHeaderDark?.trim()
-      : data.config.site.IconInfoHeaderMenuLightImg?.trim() || data.config.site.IconInfoHeaderMenuLight?.trim()) || undefined;
-  const useReactPreviewIcon = Boolean(data.config.site.IconPreviewProjectLinkReactIcones);
-  const previewIconTag = data.config.site.IconPreviewProjectLinkReactIconesTag;
-  const previewIconColor =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconPreviewProjectLinkReactIconesTagColorDark
-      : data.config.site.IconPreviewProjectLinkReactIconesTagColorLight;
-  const previewIconSize = data.config.site.IconPreviewProjectLinkReactIconesTagSize;
-  const previewIconStyle: React.CSSProperties = {
-    color: previewIconColor?.trim() || undefined,
-    fontSize: previewIconSize?.trim() || undefined,
-  };
-  const previewIconImage =
-    (activeLayout?.mode === "dark"
-      ? data.config.site.IconPreviewProjectLinkDarkImg?.trim() || data.config.site.IconPreviewProjectLinkHeaderDark?.trim()
-      : data.config.site.IconPreviewProjectLinkLightImg?.trim() || data.config.site.IconPreviewProjectLinkLight?.trim()) || undefined;
-  const iconImageMenuHeaderImgWidth = Number(data.config.site.IconImageMenuHeaderImgWidth) || 20;
-  const iconImageMenuHeaderImgHeight = Number(data.config.site.IconImageMenuHeaderImgHeight) || 20;
-  const versionLinksIconImgWidth = Number(data.config.site.IconVersionLinksImgWidth) || 20;
-  const versionLinksIconImgHeight = Number(data.config.site.IconVersionLinksImgHeight) || 20;
-  const infoIconImgWidth = Number(data.config.site.IconInfoHeaderMenuImgWidth) || 20;
-  const infoIconImgHeight = Number(data.config.site.IconInfoHeaderMenuImgHeight) || 20;
-  const previewIconImgWidth = Number(data.config.site.IconPreviewProjectLinkImgWidth) || 20;
-  const previewIconImgHeight = Number(data.config.site.IconPreviewProjectLinkImgHeight) || 20;
-  const showVersionSelector = data.availableVersions.length > 1;
-  const footerEnabled = data.config.site.FooterEnabled !== false;
-  const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
   const versionFromQuery = searchParams.get("version");
 
   const headerMenuTree = useMemo(
     () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
     [data, language, safeRouteIndex],
-  );
-  const versionLinkOptionsWithLabels = useMemo(
-    () =>
-      versionLinkOptions.map((option) => ({
-        ...option,
-        label: option.id === "branch" ? branchLabel : option.id === "release" ? releaseLabel : commitLabel,
-      })),
-    [versionLinkOptions, branchLabel, releaseLabel, commitLabel],
   );
 
   const headerMenuEntries = useMemo(() => flattenMenuTree(headerMenuTree), [headerMenuTree]);
@@ -321,6 +177,25 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     routerReplace: router.replace,
   });
 
+  const { headerIconConfig, controlsConfig, footerEnabled } = useDocsShellConfig(
+    data,
+    activeLayout,
+    language,
+    selectedVersionValue,
+    activeThemeId,
+    canToggleMode,
+    nextMode === "dark",
+  );
+  const {
+    iconImage,
+    headerName,
+    useReactIcon: useReactHeaderIcon,
+    reactIconTag: reactHeaderIconTag,
+    reactIconStyle: headerReactIconStyle,
+    iconImgWidth: iconImageMenuHeaderImgWidth,
+    iconImgHeight: iconImageMenuHeaderImgHeight,
+  } = headerIconConfig;
+
   const linearNavigationEntries = useMemo(() => {
     const seen = new Set<string>();
     return headerMenuEntries.filter((entry) => {
@@ -358,7 +233,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   }
 
   useEffect(() => {
-    if (!activeNavigation) {
+    if (!controlsConfig.activeNavigation) {
       return;
     }
 
@@ -383,10 +258,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [activeNavigation, quickNavOpen, focusModeOpen, setFocusModeOpen, setQuickNavOpen, setQuickNavQuery]);
+  }, [controlsConfig.activeNavigation, quickNavOpen, focusModeOpen, setFocusModeOpen, setQuickNavOpen, setQuickNavQuery]);
 
   useEffect(() => {
-    if (!showVersionSelector) return;
+    if (!controlsConfig.showVersionSelector) return;
     const params = new URLSearchParams(searchParams.toString());
     const urlVersion = params.get("version");
     const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
@@ -452,7 +327,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     } catch {
       // Ignore localStorage errors (private mode / blocked storage).
     }
-  }, [showVersionSelector, isRemoteRepositorySession, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
+  }, [controlsConfig.showVersionSelector, isRemoteRepositorySession, searchParams, versionStorageKey, data.availableVersions, data.availableLanguages, pathname, router]);
 
   function onMenuClick(pathClick: string, ancestorKeys: string[] = []) {
     onMenuClickState(pathClick, ancestorKeys);
@@ -518,55 +393,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   }
 
   const controlsProps = {
-    fallbackProjectLink,
-    projectLabel,
-    useReactProjectLinkIcon,
-    projectLinkReactIconTag,
-    projectLinkReactIconStyle,
-    versionLinkOptionsWithLabels,
-    versionLinksLabel,
-    useReactVersionLinksIcon,
-    versionLinksIconTag,
-    versionLinksIconStyle,
-    versionLinksIconImage,
-    versionLinksIconImgWidth,
-    versionLinksIconImgHeight,
-    infoIconImgWidth,
-    infoIconImgHeight,
-    previewIconImgWidth,
-    previewIconImgHeight,
-    showInfoButton,
-    updateDate,
-    lastUpdateLabel,
-    useReactInfoIcon,
-    infoIconTag,
-    infoIconStyle,
-    infoIconImage,
-    showPreviewButton,
-    previewProjectUrl,
-    useReactPreviewIcon,
-    previewIconTag,
-    previewIconStyle,
-    previewIconImage,
-    focusModeEnabled,
-    focusModeLabel,
-    activeNavigation,
-    quickNavLabel,
-    showVersionSelector,
-    availableVersions: data.availableVersions,
-    selectedVersionValue,
-    versionLabel,
-    isLanguageSelectVisible,
-    availableLanguages: data.availableLanguages,
-    language,
-    languageLabelResolver: (lang: string) => getLanguageLabelFromMenu(data.config.site.langmenu, language, lang),
-    hideThemeSelector,
-    activeThemeId,
-    layouts: data.layoutsConfig.layouts,
-    canToggleMode,
-    nextModeIsDark: nextMode === "dark",
-    darkModeLabel,
-    lightModeLabel,
+    ...controlsConfig,
     onOpenVersionLinksPopup: openVersionLinksPopup,
     onOpenInfoPopup: openInfoPopup,
     onOpenFocusMode: openFocusMode,
@@ -610,42 +437,21 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       )}
 
       <div className={styles.contentArea}>
-        <header className={styles.header}>
-          <div className={styles.headerInner}>
-            <div className={styles.headerLeft}>
-              {useReactHeaderIcon ? (
-                <span className={styles.headerReactIcon} style={headerReactIconStyle}>
-                  <ReactIconByTag
-                    tag={reactHeaderIconTag}
-                    fallback={activeLayout?.mode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-                  />
-                </span>
-              ) : iconImage ? (
-                <Image
-                  src={iconImage}
-                  alt={headerName}
-                  width={iconImageMenuHeaderImgWidth}
-                  height={iconImageMenuHeaderImgHeight}
-                  className={styles.headerIcon}
-                  unoptimized
-                />
-              ) : null}
-              <strong>{headerName}</strong>
-              <button
-                className={`${styles.button} ${styles.mobileToggle}`}
-                onClick={() => setMenuOpen((v) => !v)}
-                aria-label={menuOpen ? menuCloseLabel : menuOpenLabel}
-                title={menuOpen ? menuCloseLabel : menuOpenLabel}
-              >
-                {menuOpen ? "✕" : "☰"}
-              </button>
-            </div>
-
-            <div className={styles.headerRight}>
-              <DocsShellControls {...controlsProps} />
-            </div>
-          </div>
-        </header>
+        <DocsShellHeader
+          headerName={headerName}
+          iconImage={iconImage}
+          useReactHeaderIcon={useReactHeaderIcon}
+          reactHeaderIconTag={reactHeaderIconTag}
+          headerReactIconStyle={headerReactIconStyle}
+          iconImgWidth={iconImageMenuHeaderImgWidth}
+          iconImgHeight={iconImageMenuHeaderImgHeight}
+          menuOpen={menuOpen}
+          menuOpenLabel={menuOpenLabel}
+          menuCloseLabel={menuCloseLabel}
+          onToggleMenu={() => setMenuOpen((v) => !v)}
+          activeLayoutMode={activeLayout?.mode}
+          controls={<DocsShellControls {...controlsProps} />}
+        />
 
         <main className={styles.main}>
           <article className={styles.card}>
@@ -663,7 +469,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             )}
           </article>
         </main>
-        {footerEnabled && <SiteFooter language={language} projectUrl={projectFooterUrl} />}
+        {footerEnabled && <SiteFooter language={language} projectUrl={PROJECT_FOOTER_URL} />}
       </div>
 
       <DocsShellMobileDrawer
@@ -679,7 +485,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       />
 
       <DocsShellQuickNavOverlay
-        isOpen={activeNavigation && quickNavOpen}
+        isOpen={controlsConfig.activeNavigation && quickNavOpen}
         quickNavPlaceholder={quickNavPlaceholder}
         menuCloseLabel={menuCloseLabel}
         quickNavQuery={quickNavQuery}
@@ -699,8 +505,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       />
 
       <DocsShellFocusOverlay
-        isOpen={focusModeEnabled && focusModeOpen}
-        focusModeLabel={focusModeLabel}
+        isOpen={controlsConfig.focusModeEnabled && focusModeOpen}
+        focusModeLabel={controlsConfig.focusModeLabel}
         menuCloseLabel={menuCloseLabel}
         previousLabel={previousLabel}
         nextLabel={nextLabel}
@@ -713,17 +519,17 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
       <DocsShellVersionLinksOverlay
         isOpen={versionLinksPopupOpen}
-        versionLinksLabel={versionLinksLabel}
+        versionLinksLabel={controlsConfig.versionLinksLabel}
         menuCloseLabel={menuCloseLabel}
-        options={versionLinkOptionsWithLabels}
+        options={controlsConfig.versionLinkOptionsWithLabels}
         onClose={() => setVersionLinksPopupOpen(false)}
         onOpenVersionLink={openVersionLink}
       />
 
       <DocsShellInfoOverlay
         isOpen={infoPopupOpen}
-        lastUpdateLabel={lastUpdateLabel}
-        updateDate={updateDate}
+        lastUpdateLabel={controlsConfig.lastUpdateLabel}
+        updateDate={controlsConfig.updateDate}
         menuCloseLabel={menuCloseLabel}
         onClose={() => setInfoPopupOpen(false)}
       />

@@ -6,11 +6,12 @@ import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/d
 import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
 import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
-import { RepositorySearchForm } from "@/features/repository-search-form/ui/repository-search-form";
+import { RepositorySearchForm } from "@/features/repository-search-form";
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
+import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
-import { resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
+import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./repository-search-shell.module.css";
 
 export function RepositorySearchShell({
@@ -44,27 +45,19 @@ export function RepositorySearchShell({
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
   const basePath = getBasePath();
-  const rawIconImage =
-    (activeLayout?.mode === "dark"
-      ? data.config.site.IconImageMenuHeaderDarkImg?.trim() || data.config.site.IconImageMenuHeaderDark?.trim()
-      : data.config.site.IconImageMenuHeaderLightImg?.trim() || data.config.site.IconImageMenuHeaderLight?.trim()) ||
-    data.config.site.IconImageMenuHeader?.trim() ||
-    data.config.site.SiteIconPath?.trim();
-  const iconImage = resolveIconPath(rawIconImage, basePath);
-  const iconImageMenuHeaderImgWidth = Number(data.config.site.IconImageMenuHeaderImgWidth) || 20;
-  const iconImageMenuHeaderImgHeight = Number(data.config.site.IconImageMenuHeaderImgHeight) || 20;
-  const headerName = resolveHeaderName(data.config.site.SiteHeaderName, data.config.site.name);
-  const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
-  const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
-  const headerReactIconColor =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconImageMenuHeaderReactIconesTagColorDark
-      : data.config.site.IconImageMenuHeaderReactIconesTagColorLight;
-  const headerReactIconSize = data.config.site.IconImageMenuHeaderReactIconesTagSize;
-  const headerReactIconStyle: CSSProperties = {
-    color: headerReactIconColor?.trim() || undefined,
-    fontSize: headerReactIconSize?.trim() || undefined,
-  };
+  const headerIconConfig = useMemo(
+    () => resolveHeaderIconConfig(data.config.site, activeLayout?.mode ?? "dark", basePath),
+    [data.config.site, activeLayout?.mode, basePath],
+  );
+  const {
+    iconImage,
+    headerName,
+    useReactIcon: useReactHeaderIcon,
+    reactIconTag: reactHeaderIconTag,
+    reactIconStyle: headerReactIconStyle,
+    iconImgWidth: iconImageMenuHeaderImgWidth,
+    iconImgHeight: iconImageMenuHeaderImgHeight,
+  } = headerIconConfig;
 
   const ownerLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchOwnerLabel", "Owner");
   const repoLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchRepoLabel", "Repository");
@@ -84,7 +77,6 @@ export function RepositorySearchShell({
 
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
   const footerEnabled = data.config.site.FooterEnabled !== false;
-  const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
 
   // Local-only theme for search page (does not affect docs shell state).
   useEffect(() => {
@@ -158,7 +150,7 @@ export function RepositorySearchShell({
     <SearchShellLayout
       header={header}
       footerEnabled={footerEnabled}
-      projectFooterUrl={projectFooterUrl}
+      projectFooterUrl={PROJECT_FOOTER_URL}
       language={language}
       style={cssVars}
     >

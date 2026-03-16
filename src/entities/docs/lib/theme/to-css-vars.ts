@@ -1,7 +1,31 @@
 import type { ThemeTemplate } from "@/entities/docs/model/types";
 import type { CSSProperties } from "react";
 
+const DEFAULT_COLORS = {
+  background: "#0b0f15",
+  primary: "#7c3aed",
+  secondary: "#22d3ee",
+  text: "#e2e8f0",
+  textSecondary: "#94a3b8",
+  cardBackground: "#0f172a",
+  cardBorder: "#334155",
+} as const;
+
+export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+  const colors = theme?.colors ?? {};
+  return {
+    ["--background" as string]: colors.background ?? DEFAULT_COLORS.background,
+    ["--primary" as string]: colors.primary ?? DEFAULT_COLORS.primary,
+    ["--secondary" as string]: colors.secondary ?? DEFAULT_COLORS.secondary,
+    ["--text" as string]: colors.text ?? DEFAULT_COLORS.text,
+    ["--text-secondary" as string]: colors.textSecondary ?? DEFAULT_COLORS.textSecondary,
+    ["--card-background" as string]: colors.cardBackground ?? DEFAULT_COLORS.cardBackground,
+    ["--card-border" as string]: colors.cardBorder ?? DEFAULT_COLORS.cardBorder,
+  };
+}
+
 export function toDocsShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+  const base = toBaseThemeCssVars(theme);
   const colors = theme?.colors ?? {};
   const button = (theme?.components.button as
     | {
@@ -34,13 +58,7 @@ export function toDocsShellCssVars(theme: ThemeTemplate | undefined): CSSPropert
     | undefined)?.common;
 
   return {
-    ["--background" as string]: colors.background ?? "#0b0f15",
-    ["--primary" as string]: colors.primary ?? "#7c3aed",
-    ["--secondary" as string]: colors.secondary ?? "#22d3ee",
-    ["--text" as string]: colors.text ?? "#e2e8f0",
-    ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
-    ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
-    ["--card-border" as string]: colors.cardBorder ?? "#334155",
+    ...base,
     ["--header-background" as string]:
       (theme?.components.header as { backgroundColor?: string } | undefined)?.backgroundColor ?? "#0b1220",
     ["--header-border" as string]:
@@ -59,17 +77,12 @@ export function toDocsShellCssVars(theme: ThemeTemplate | undefined): CSSPropert
 }
 
 export function toSearchShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+  const base = toBaseThemeCssVars(theme);
   const colors = theme?.colors ?? {};
   const header = (theme?.components.header as { backgroundColor?: string; borderBottom?: string } | undefined) ?? {};
   return {
-    ["--background" as string]: colors.background ?? "#0b0f15",
-    ["--primary" as string]: colors.primary ?? "#7c3aed",
-    ["--secondary" as string]: colors.secondary ?? "#22d3ee",
-    ["--text" as string]: colors.text ?? "#e2e8f0",
-    ["--text-secondary" as string]: colors.textSecondary ?? "#94a3b8",
-    ["--card-background" as string]: colors.cardBackground ?? "#0f172a",
-    ["--card-border" as string]: colors.cardBorder ?? "#334155",
-    ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? "#0f172a",
-    ["--header-border" as string]: header.borderBottom ?? `1px solid ${colors.cardBorder ?? "#334155"}`,
+    ...base,
+    ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? DEFAULT_COLORS.cardBackground,
+    ["--header-border" as string]: header.borderBottom ?? `1px solid ${colors.cardBorder ?? DEFAULT_COLORS.cardBorder}`,
   };
 }

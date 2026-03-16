@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
-import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
+import { LanguageSelector } from "@/features/language-selector";
+import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { LanguageCode, LayoutItem } from "@/entities/docs/model/types";
 import styles from "../search-shell-header.module.css";

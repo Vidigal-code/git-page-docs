@@ -1,17 +1,12 @@
 import Image from "next/image";
-import { LanguageSelector } from "@/features/language-selector/ui/language-selector";
-import { QuickNavigationTrigger } from "@/features/quick-navigation/ui/quick-navigation-trigger";
-import { ThemeModeToggle } from "@/features/theme-switcher/ui/theme-mode-toggle";
-import { VersionSelector } from "@/features/version-selector/ui/version-selector";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { LanguageSelector } from "@/features/language-selector";
+import { QuickNavigationTrigger } from "@/features/quick-navigation";
+import { ThemeModeToggle } from "@/features/theme-switcher";
+import { VersionSelector } from "@/features/version-selector";
+import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
 import type { LanguageCode, LayoutItem, VersionEntry } from "@/entities/docs/model/types";
+import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import styles from "../docs-shell.module.css";
-
-interface VersionLinkOption {
-  id: "branch" | "release" | "commit";
-  label: string;
-  url: string;
-}
 
 interface DocsShellControlsProps {
   fallbackProjectLink: string | undefined;
