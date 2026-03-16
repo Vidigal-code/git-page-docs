@@ -332,7 +332,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   }, [pageIndex]);
 
   const activeTheme = data.themes[activeLayout?.id];
-  const cssVars = useMemo(() => toDocsShellCssVars(activeTheme), [activeTheme]);
+  const cssVars = useMemo(
+    () => toDocsShellCssVars(activeTheme, data.config.site),
+    [activeTheme, data.config.site],
+  );
   const previousLabel = resolveTranslation(data.config.translations?.navigation?.previous, language, "Previous");
   const nextLabel = resolveTranslation(data.config.translations?.navigation?.next, language, "Next");
   const browsePrevLabel = resolveTranslation(

@@ -39,6 +39,9 @@
     background: color-mix(in srgb, var(--background) 95%, var(--primary) 5%);
     border-radius: 8px;
     border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 }
 
@@ -78,6 +81,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .item {

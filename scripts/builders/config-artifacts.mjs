@@ -193,6 +193,8 @@ export function buildConfigArtifacts(options = {}) {
       IconPreviewProjectLinkImgWidth: 20,
       IconPreviewProjectLinkImgHeight: 20,
       RouteguideBrandPositionDefault: "center",
+      TocScrollMaxHeightDesktop: "min(65vh, 400px)",
+      TocScrollMaxHeightMobile: "220px",
       layoutsConfigPathOficial: useOfficialLayouts,
       layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",

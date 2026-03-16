@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FiX } from "react-icons/fi";
 import { MdFullscreen } from "react-icons/md";
+import { TocScrollContainerProvider } from "@/features/route-guide/model/toc-scroll-context";
 import styles from "../../docs-shell.module.css";
 
 const DEFAULT_CONTAINER_MARGIN = "0";
@@ -72,6 +73,7 @@ export function ContentContainerWrapper({
   browseNavPosition = "top",
 }: ContentContainerWrapperProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const fullscreenInnerRef = useRef<HTMLDivElement>(null);
   const marginTopVal = marginTop?.trim() || DEFAULT_CONTAINER_MARGIN;
   const marginBottomVal = marginBottom?.trim() || DEFAULT_CONTAINER_MARGIN;
 
@@ -124,7 +126,11 @@ export function ContentContainerWrapper({
           >
             <FiX aria-hidden />
           </button>
-          <div className={styles.contentContainerFullscreenInner}>{children}</div>
+          <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
+            <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
+              {children}
+            </TocScrollContainerProvider>
+          </div>
         </div>
       )}
     </div>

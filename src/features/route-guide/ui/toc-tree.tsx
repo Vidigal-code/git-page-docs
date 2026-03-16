@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTocScrollContainer } from "../model/toc-scroll-context";
 import type { HeadingItem } from "@/entities/docs/lib/markdown/extract-headings";
 import styles from "./toc-tree.module.css";
 
@@ -12,6 +13,7 @@ interface TocTreeProps {
 
 export function TocTree({ headings, activeId, className }: TocTreeProps) {
   const [active, setActive] = useState(activeId || "");
+  const scrollContainerRef = useTocScrollContainer();
 
   useEffect(() => {
     setActive(activeId || "");
@@ -19,6 +21,8 @@ export function TocTree({ headings, activeId, className }: TocTreeProps) {
 
   useEffect(() => {
     if (headings.length === 0) return;
+
+    const root = scrollContainerRef?.current ?? null;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -29,7 +33,7 @@ export function TocTree({ headings, activeId, className }: TocTreeProps) {
           }
         }
       },
-      { rootMargin: "-80px 0px -80% 0px", threshold: 0 }
+      { root, rootMargin: "-80px 0px -80% 0px", threshold: 0 }
     );
 
     headings.forEach((h) => {
@@ -38,7 +42,7 @@ export function TocTree({ headings, activeId, className }: TocTreeProps) {
     });
 
     return () => observer.disconnect();
-  }, [headings]);
+  }, [headings, scrollContainerRef]);
 
   if (headings.length === 0) return null;
 

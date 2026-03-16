@@ -1,5 +1,8 @@
-import type { ThemeTemplate } from "@/entities/docs/model/types";
+import type { SiteConfig, ThemeTemplate } from "@/entities/docs/model/types";
 import type { CSSProperties } from "react";
+
+const TOC_SCROLL_MAX_HEIGHT_DESKTOP_DEFAULT = "min(65vh, 400px)";
+const TOC_SCROLL_MAX_HEIGHT_MOBILE_DEFAULT = "220px";
 
 const DEFAULT_COLORS = {
   background: "#0b0f15",
@@ -27,7 +30,10 @@ export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSPropert
   };
 }
 
-export function toDocsShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+export function toDocsShellCssVars(
+  theme: ThemeTemplate | undefined,
+  site?: SiteConfig,
+): CSSProperties {
   const base = toBaseThemeCssVars(theme);
   const colors = theme?.colors ?? {};
   const button = (theme?.components.button as
@@ -76,6 +82,10 @@ export function toDocsShellCssVars(theme: ThemeTemplate | undefined): CSSPropert
     ["--button-radius" as string]: button.borderRadius ?? "10px",
     ["--button-border" as string]: button.border ?? "1px solid #334155",
     ["--button-glow" as string]: button.hoverGlow ?? "0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent)",
+    ["--toc-scroll-max-height-desktop" as string]:
+      site?.TocScrollMaxHeightDesktop ?? TOC_SCROLL_MAX_HEIGHT_DESKTOP_DEFAULT,
+    ["--toc-scroll-max-height-mobile" as string]:
+      site?.TocScrollMaxHeightMobile ?? TOC_SCROLL_MAX_HEIGHT_MOBILE_DEFAULT,
   };
 }
 

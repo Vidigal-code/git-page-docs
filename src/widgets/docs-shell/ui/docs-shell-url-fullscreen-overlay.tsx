@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FiX } from "react-icons/fi";
+import { TocScrollContainerProvider } from "@/features/route-guide/model/toc-scroll-context";
 import { PageContentArea } from "./page-content-area";
 import type {
   LoadedDocsData,
@@ -89,6 +90,8 @@ export function DocsShellUrlFullscreenOverlay({
     }
   }, [isOpen, params]);
 
+  const fullscreenInnerRef = useRef<HTMLDivElement>(null);
+
   if (!isOpen || !params) {
     return null;
   }
@@ -134,8 +137,9 @@ export function DocsShellUrlFullscreenOverlay({
       >
         <FiX aria-hidden />
       </button>
-      <div className={styles.contentContainerFullscreenInner}>
-        <PageContentArea
+      <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
+        <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
+          <PageContentArea
           currentPage={currentPage}
           data={data}
           language={overlayLanguage}
@@ -162,6 +166,7 @@ export function DocsShellUrlFullscreenOverlay({
           homeAncestorKeys={homeAncestorKeys}
           routeGuideIconConfig={routeGuideIconConfig}
         />
+        </TocScrollContainerProvider>
       </div>
     </div>
   );

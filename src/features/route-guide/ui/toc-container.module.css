@@ -60,7 +60,7 @@
 .tocScroll {
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: min(65vh, 400px);
+  max-height: var(--toc-scroll-max-height-desktop, min(65vh, 400px));
   min-width: 0;
   -webkit-overflow-scrolling: touch;
 }
@@ -72,10 +72,11 @@
   overflow-y: visible;
 }
 
-/* Mobile: scroll-y, no overflow, responsive */
+/* Mobile: scroll-y, no overflow, responsive, centered */
 @media (max-width: 767px) {
   .wrapper {
     flex-direction: column;
+    align-items: center;
     overflow: hidden;
     max-width: 100%;
   }
@@ -102,7 +103,7 @@
   }
 
   .tocScroll {
-    max-height: 220px;
+    max-height: var(--toc-scroll-max-height-mobile, 220px);
     width: 100%;
     max-width: 100%;
     min-width: 0;
