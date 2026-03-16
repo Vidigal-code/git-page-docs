@@ -32,6 +32,8 @@ interface PageContentAreaProps {
   isDarkMode?: boolean;
   /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull) */
   contentTypeFilter?: "md" | "html" | "video";
+  /** When true, content is inside URL fullscreen overlay - hide expand button, overlay provides close */
+  isUrlFullscreen?: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
   previousLabel: string;
@@ -82,6 +84,7 @@ export function PageContentArea({
   homeAncestorKeys = [],
   routeGuideIconConfig,
   contentTypeFilter,
+  isUrlFullscreen = false,
 }: PageContentAreaProps) {
   if (!currentPage) {
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
@@ -172,7 +175,7 @@ export function PageContentArea({
               config={currentMd.config}
               language={language}
               isDarkMode={isDarkMode}
-              fullscreenEnabled={currentMd.fullscreenEnabled}
+              fullscreenEnabled={isUrlFullscreen ? false : currentMd.fullscreenEnabled}
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={mdBrowseNav}
@@ -195,7 +198,7 @@ export function PageContentArea({
               config={currentHtml.config}
               language={language}
               isDarkMode={isDarkMode}
-              fullscreenEnabled={currentHtml.fullscreenEnabled}
+              fullscreenEnabled={isUrlFullscreen ? false : currentHtml.fullscreenEnabled}
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={htmlBrowseNav}
@@ -211,7 +214,7 @@ export function PageContentArea({
               language={language}
               config={currentVideo.config}
               isDarkMode={isDarkMode}
-              fullscreenEnabled={currentVideo.fullscreenEnabled}
+              fullscreenEnabled={isUrlFullscreen ? false : currentVideo.fullscreenEnabled}
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={videoBrowseNav}

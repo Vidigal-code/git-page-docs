@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FiX } from "react-icons/fi";
 import { TocScrollContainerProvider } from "@/features/route-guide/model/toc-scroll-context";
 import { PageContentArea } from "./page-content-area";
@@ -100,6 +100,40 @@ export function DocsShellUrlFullscreenOverlay({
     }
   }, [isOpen, params]);
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose],
+  );
+
+  useEffect(() => {
+    if (!isOpen) return;
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, handleKeyDown]);
+
+  const handleHashLinkClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = (e.target as HTMLElement).closest('a[href^="#"]');
+    if (!target || !(target instanceof HTMLAnchorElement)) return;
+    const href = target.getAttribute("href");
+    if (!href || href === "#") return;
+    const id = href.slice(1);
+    const el = document.getElementById(id);
+    const container = fullscreenInnerRef.current;
+    if (el && container?.contains(el)) {
+      e.preventDefault();
+      const scrollPadding = 80;
+      const elTop = el.getBoundingClientRect().top;
+      const containerTop = container.getBoundingClientRect().top;
+      const scrollOffset = elTop - containerTop + container.scrollTop - scrollPadding;
+      container.scrollTo({ top: Math.max(0, scrollOffset), behavior: "smooth" });
+      if (typeof window !== "undefined") {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${id}`);
+      }
+    }
+  }, []);
+
   if (!isOpen || !params) {
     return null;
   }
@@ -145,7 +179,11 @@ export function DocsShellUrlFullscreenOverlay({
       >
         <FiX aria-hidden />
       </button>
-      <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
+      <div
+        ref={fullscreenInnerRef}
+        className={styles.contentContainerFullscreenInner}
+        onClick={handleHashLinkClick}
+      >
         <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
           <PageContentArea
           currentPage={currentPage}
@@ -155,6 +193,7 @@ export function DocsShellUrlFullscreenOverlay({
           contentTypeFilter={
             params.type === "md" || params.type === "html" || params.type === "video" ? params.type : undefined
           }
+          isUrlFullscreen={true}
           fullscreenCloseLabel={menuCloseLabel}
           fullscreenExpandLabel={fullscreenExpandLabel}
           previousLabel={previousLabel}
