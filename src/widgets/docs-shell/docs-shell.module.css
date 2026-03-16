@@ -439,8 +439,12 @@
 
 .markdown :global(h1),
 .markdown :global(h2),
-.markdown :global(h3) {
+.markdown :global(h3),
+.markdown :global(h4),
+.markdown :global(h5),
+.markdown :global(h6) {
   color: var(--text);
+  scroll-margin-top: 5rem;
 }
 
 .markdown :global(a) {
@@ -596,6 +600,15 @@
   display: flex;
   min-height: 80vh;
   aspect-ratio: unset;
+}
+
+@media (max-width: 767px) {
+  .htmlWrapper,
+  .htmlWrapperExternalLink {
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .htmlIframe,

@@ -84,6 +84,8 @@ export interface SiteConfig {
   IconRouteGuideReactIconesTagSize?: string;
   IconRouteGuideImgWidth?: number;
   IconRouteGuideImgHeight?: number;
+  /** Default TOC position when RouteguideBrand is true. "center" | "left" | "right" */
+  RouteguideBrandPositionDefault?: "center" | "left" | "right";
   layoutsConfigPathOficial?: boolean;
   layoutsConfigPathOficialUrl?: string;
   layoutsConfigPathTemplatesOficial?: string;

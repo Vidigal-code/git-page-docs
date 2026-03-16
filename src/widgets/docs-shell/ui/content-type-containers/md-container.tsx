@@ -8,7 +8,8 @@ import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-ass
 import { extractHeadingsFromHtml } from "@/entities/docs/lib/markdown/extract-headings";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
-import { RouteGuideBreadcrumb, TocTree } from "@/features/route-guide";
+import { RouteGuideBreadcrumb, TocContainer } from "@/features/route-guide";
+import type { TocPosition } from "@/features/route-guide";
 import styles from "../../docs-shell.module.css";
 
 function getContainerStyle(container: ContentTypeRouteConfig["container"]): React.CSSProperties {
@@ -36,6 +37,8 @@ interface MdContainerProps {
   homePathClick?: string;
   homeAncestorKeys?: string[];
   routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
+  /** Default TOC position when not set in config. */
+  tocPositionDefault?: TocPosition;
 }
 
 export function MdContainer({
@@ -53,6 +56,7 @@ export function MdContainer({
   homePathClick,
   homeAncestorKeys = [],
   routeGuideIconConfig,
+  tocPositionDefault = "center",
 }: MdContainerProps) {
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
@@ -76,20 +80,31 @@ export function MdContainer({
       config && "RouteGuideSpeciFicbrand" in config ? (config.RouteGuideSpeciFicbrand ?? []) : [];
     return extractHeadingsFromHtml(html, specificIds);
   }, [routeguideBrand, html, config]);
-  const toc = routeguideBrand && headings.length > 0 ? <TocTree headings={headings} /> : null;
+
+  const tocPosition: TocPosition =
+    (config && "RouteguideBrandPosition" in config ? config.RouteguideBrandPosition : null) ??
+    tocPositionDefault ??
+    "center";
+
+  const markdownContent = (
+    <article className={styles.card}>
+      <div className={styles.markdown} style={containerStyle} dangerouslySetInnerHTML={{ __html: html }} />
+    </article>
+  );
 
   const header = (
     <>
       {breadcrumb}
       <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />
-      {toc}
     </>
   );
-  const content = (
-    <article className={styles.card}>
-      <div className={styles.markdown} style={containerStyle} dangerouslySetInnerHTML={{ __html: html }} />
-    </article>
-  );
+
+  const content =
+    routeguideBrand && headings.length > 0 ? (
+      <TocContainer headings={headings} position={tocPosition} markdownContent={markdownContent} />
+    ) : (
+      markdownContent
+    );
 
   return (
     <ContentContainerWrapper

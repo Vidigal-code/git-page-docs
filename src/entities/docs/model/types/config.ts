@@ -48,6 +48,8 @@ export interface ContentTypeRouteConfig {
   RouteguideBrand?: boolean;
   /** Specific heading IDs to include in TOC. Empty = all headings. */
   RouteGuideSpeciFicbrand?: string[];
+  /** TOC position: "center" | "left" | "right". Desktop only; mobile always center. */
+  RouteguideBrandPosition?: "center" | "left" | "right";
   /** For routes-video: slug per language for URL identification (e.g. ?videofull=pt&slug=copilot) */
   videoSlug?: Record<LanguageCode, string>;
 }

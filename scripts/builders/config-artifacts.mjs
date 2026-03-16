@@ -192,6 +192,7 @@ export function buildConfigArtifacts(options = {}) {
       IconPreviewProjectLinkReactIconesTagSize: "25px",
       IconPreviewProjectLinkImgWidth: 20,
       IconPreviewProjectLinkImgHeight: 20,
+      RouteguideBrandPositionDefault: "center",
       layoutsConfigPathOficial: useOfficialLayouts,
       layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",

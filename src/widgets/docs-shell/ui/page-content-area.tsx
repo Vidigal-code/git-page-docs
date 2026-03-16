@@ -178,6 +178,7 @@ export function PageContentArea({
               homePathClick={homePathClick}
               homeAncestorKeys={homeAncestorKeys}
               routeGuideIconConfig={routeGuideIconConfig}
+              tocPositionDefault={data.config.site?.RouteguideBrandPositionDefault ?? "center"}
             />
           );
         }

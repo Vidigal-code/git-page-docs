@@ -1,0 +1,87 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* Center: TOC above content, full width, stacked */
+.positionCenter {
+  flex-direction: column;
+}
+
+.positionCenter .tocAside {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Left: TOC left, content right */
+.positionLeft {
+  flex-direction: row;
+}
+
+.positionLeft .tocAside {
+  flex-shrink: 0;
+}
+
+/* Right: content left, TOC right */
+.positionRight {
+  flex-direction: row;
+}
+
+.positionRight .content {
+  order: -1;
+}
+
+.positionRight .tocAside {
+  flex-shrink: 0;
+}
+
+.tocAside {
+  background: color-mix(in srgb, var(--background) 95%, var(--primary) 5%);
+  border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.tocScroll {
+  overflow-y: auto;
+  max-height: min(65vh, 400px);
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}
+
+/* Mobile: always center, full width, TOC items stacked vertically */
+@media (max-width: 767px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .positionLeft .tocAside,
+  .positionRight .tocAside {
+    width: 100%;
+  }
+
+  .positionRight .content {
+    order: unset;
+  }
+
+  .tocAside {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tocScroll {
+    max-height: 220px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}

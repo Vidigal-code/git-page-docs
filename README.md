@@ -189,6 +189,85 @@ GITPAGEDOCS_REPOSITORY_SEARCH=true
 - `npm run start` -> `next start` (after `prestart` build)
 - `npm run lint` -> `eslint .`
 
+## URL Routes and Query Parameters
+
+All routes for accessing documentation files on the official site or self-hosted GitHub Pages.
+
+### Path structure
+
+| Pattern | Description |
+|--------|-------------|
+| `/` | Repository search home (when `repositorySearchHome=true`) |
+| `/{owner}/{repo}/` | Docs for `owner/repo`, default version |
+| `/{owner}/{repo}/v/{version}/` | Docs for `owner/repo`, specific version |
+| `/v/{version}/` | Docs for the project’s own repo, specific version |
+
+**Base URL (official site):** `https://vidigal-code.github.io/git-page-docs/`
+
+### Query parameters
+
+| Parameter | Values | Description |
+|-----------|--------|-------------|
+| `lang` | `en`, `pt`, `es` | UI and content language |
+| `modetheme` | `dark`, `light` | Theme mode |
+| `version` | e.g. `1.0.0` | Version (alternative to path) |
+| `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `nome`) |
+| `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
+| `nome` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
+| `mdfull` | `en`, `pt`, `es` | Markdown fullscreen mode |
+| `file` | path (with `mdfull` or `htmlfull`) | File to show in fullscreen |
+| `videofull` | `en`, `pt`, `es` | Video fullscreen mode |
+| `slug` | video slug (with `videofull`) | Video identifier |
+| `#heading-id` | anchor | Scroll to heading in markdown |
+
+### Example URLs (git-page-docs, English)
+
+**Markdown pages**
+
+- Getting Started (v1.0.0):  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&modetheme=dark&menu=en&id=1  
+- Project overview:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=2  
+- GitHub issues and projects:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=3  
+- Introduction to Git:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=4  
+
+**By slug (`nome`)**
+
+- Getting Started:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=getting-started  
+- Project overview:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=project-overview  
+
+**HTML pages** (by slug; pages combine MD + HTML when they share the same route id)
+
+- Getting Started (HTML):  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=getting-started  
+- Source code viewer:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&nome=source-viewer  
+
+**Video pages** (route id 1–4; pages combine MD + HTML + Video by id)
+
+- Video 1:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=1  
+
+**Fullscreen modes**
+
+- Markdown fullscreen:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?mdfull=en&file=gitpagedocs/docs/versions/1.0.0/en/getting-started.md  
+- HTML fullscreen:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?htmlfull=en&file=gitpagedocs/docs/versions/1.0.0/en/source-viewer.html  
+- Video fullscreen:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?videofull=en&id=1  
+
+**Other versions**
+
+- v1.1.0:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.0/?lang=en  
+- v1.1.1:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.1/?lang=en  
+
 ## Compatibility Flags
 
 Supported for compatibility:

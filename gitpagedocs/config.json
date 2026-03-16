@@ -65,6 +65,7 @@
     "IconPreviewProjectLinkReactIconesTagSize": "25px",
     "IconPreviewProjectLinkImgWidth": 20,
     "IconPreviewProjectLinkImgHeight": 20,
+    "RouteguideBrandPositionDefault": "center",
     "layoutsConfigPathOficial": true,
     "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates",
     "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
