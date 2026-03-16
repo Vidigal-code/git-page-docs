@@ -11,9 +11,17 @@ interface TocContainerProps {
   position: TocPosition;
   markdownContent: React.ReactNode;
   useDefaultScrollBehavior?: boolean;
+  /** Rendered inside the markdown content area (e.g. fullscreen button) */
+  contentActions?: React.ReactNode;
 }
 
-export function TocContainer({ headings, position, markdownContent, useDefaultScrollBehavior = false }: TocContainerProps) {
+export function TocContainer({
+  headings,
+  position,
+  markdownContent,
+  useDefaultScrollBehavior = false,
+  contentActions,
+}: TocContainerProps) {
   if (headings.length === 0) {
     return <>{markdownContent}</>;
   }
@@ -26,6 +34,13 @@ export function TocContainer({ headings, position, markdownContent, useDefaultSc
     </aside>
   );
 
+  const contentWithActions = (
+    <div className={`${styles.content} ${contentActions ? styles.contentWithActions : ""}`}>
+      {markdownContent}
+      {contentActions}
+    </div>
+  );
+
   return (
     <div
       className={`${styles.wrapper} ${styles[`position${position.charAt(0).toUpperCase() + position.slice(1)}`]}`}
@@ -33,7 +48,7 @@ export function TocContainer({ headings, position, markdownContent, useDefaultSc
     >
       {position === "left" && toc}
       {position === "center" && toc}
-      <div className={styles.content}>{markdownContent}</div>
+      {contentWithActions}
       {position === "right" && toc}
     </div>
   );

@@ -22,7 +22,8 @@ export interface BrowseNavProps {
 
 interface ContentContainerWrapperProps {
   header?: React.ReactNode;
-  children: React.ReactNode;
+  /** Content, or function to inject fullscreen button into content (e.g. for TOC + MD layout) */
+  children: React.ReactNode | ((fullscreenButton: React.ReactNode) => React.ReactNode);
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
@@ -94,22 +95,28 @@ export function ContentContainerWrapper({
     );
   }
 
+  const fullscreenButton = (
+    <button
+      type="button"
+      className={styles.fullscreenButtonInside}
+      onClick={() => setIsFullscreen(true)}
+      aria-label={fullscreenExpandLabel}
+      title={fullscreenExpandLabel}
+    >
+      <MdFullscreen aria-hidden />
+    </button>
+  );
+
+  const resolvedChildren =
+    typeof children === "function"
+      ? (children as (btn: React.ReactNode) => React.ReactNode)(fullscreenButton)
+      : [fullscreenButton, children];
+
   return (
     <div className={styles.contentContainerWrapper} style={wrapperStyle}>
       {header}
       {showTopNav && <BrowseNavBar browseNav={browseNav} />}
-      <div className={styles.contentContainerWithButton}>
-        <button
-          type="button"
-          className={styles.fullscreenButtonInside}
-          onClick={() => setIsFullscreen(true)}
-          aria-label={fullscreenExpandLabel}
-          title={fullscreenExpandLabel}
-        >
-          <MdFullscreen aria-hidden />
-        </button>
-        {children}
-      </div>
+      <div className={styles.contentContainerWithButton}>{resolvedChildren}</div>
       {isFullscreen && (
         <div
           className={styles.contentContainerFullscreen}

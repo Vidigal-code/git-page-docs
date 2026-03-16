@@ -104,16 +104,32 @@ export function MdContainer({
   );
 
   const content =
-    routeguideBrand && headings.length > 0 ? (
-      <TocContainer
-        headings={headings}
-        position={tocPosition}
-        markdownContent={markdownContent}
-        useDefaultScrollBehavior={useDefaultScrollBehavior}
-      />
-    ) : (
-      markdownContent
-    );
+    fullscreenEnabled
+      ? (fullscreenButton: React.ReactNode) =>
+          routeguideBrand && headings.length > 0 ? (
+            <TocContainer
+              headings={headings}
+              position={tocPosition}
+              markdownContent={markdownContent}
+              useDefaultScrollBehavior={useDefaultScrollBehavior}
+              contentActions={fullscreenButton}
+            />
+          ) : (
+            <div style={{ position: "relative" }}>
+              {markdownContent}
+              {fullscreenButton}
+            </div>
+          )
+      : routeguideBrand && headings.length > 0 ? (
+          <TocContainer
+            headings={headings}
+            position={tocPosition}
+            markdownContent={markdownContent}
+            useDefaultScrollBehavior={useDefaultScrollBehavior}
+          />
+        ) : (
+          markdownContent
+        );
 
   return (
     <ContentContainerWrapper

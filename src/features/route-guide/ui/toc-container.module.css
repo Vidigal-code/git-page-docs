@@ -72,6 +72,10 @@
   overflow-y: visible;
 }
 
+.contentWithActions {
+  position: relative;
+}
+
 /* Mobile: routes extend full width, centered, stacked, never overflow */
 @media (max-width: 767px) {
   .wrapper {
