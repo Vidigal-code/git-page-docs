@@ -51,13 +51,14 @@ export function useDocsShellUrlParams(
     const menuId = searchParams.get("id");
     const menuSlug = searchParams.get("name") ?? searchParams.get("nome");
     const mdHash = typeof window !== "undefined" && window.location.hash ? window.location.hash.slice(1) : "";
-    const mdfull = searchParams.get("mdfull");
-    const mdfullFile = searchParams.get("file");
-    const videofull = searchParams.get("videofull");
-    const videofullId = searchParams.get("id");
-    const videofullSlug = searchParams.get("slug");
-    const htmlfull = searchParams.get("htmlfull");
-    const htmlfullFile = searchParams.get("file");
+    const urlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : searchParams;
+    const mdfull = urlParams.get("mdfull");
+    const mdfullFile = urlParams.get("file");
+    const videofull = urlParams.get("videofull");
+    const videofullId = urlParams.get("id");
+    const videofullSlug = urlParams.get("slug");
+    const htmlfull = urlParams.get("htmlfull");
+    const htmlfullFile = urlParams.get("file");
 
     if (onFullscreenRequest) {
       if (mdfull && mdfullFile) {

@@ -198,7 +198,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   );
 
   const closeUrlFullscreen = useCallback(() => {
-    setUrlFullscreenParams(null);
     const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
     params.delete("mdfull");
     params.delete("htmlfull");
@@ -209,11 +208,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     const qs = params.toString();
     const appPath = pathname ?? "/";
     if (typeof window !== "undefined") {
-      const nextUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
-      window.history.replaceState({}, "", nextUrl);
+      const fullUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
+      window.history.replaceState({}, "", fullUrl);
     } else {
       router.replace(qs ? `${appPath}?${qs}` : appPath);
     }
+    setUrlFullscreenParams(null);
   }, [pathname, router]);
 
   const versionFromQuery = searchParams.get("version");

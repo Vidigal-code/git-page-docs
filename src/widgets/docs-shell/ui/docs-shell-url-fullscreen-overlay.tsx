@@ -113,16 +113,26 @@ export function DocsShellUrlFullscreenOverlay({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, handleKeyDown]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isOpen]);
+
   const handleHashLinkClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const target = (e.target as HTMLElement).closest('a[href^="#"]');
     if (!target || !(target instanceof HTMLAnchorElement)) return;
     const href = target.getAttribute("href");
     if (!href || href === "#") return;
+    e.preventDefault();
+    e.stopPropagation();
     const id = href.slice(1);
     const el = document.getElementById(id);
     const container = fullscreenInnerRef.current;
     if (el && container?.contains(el)) {
-      e.preventDefault();
       const scrollPadding = 80;
       const elTop = el.getBoundingClientRect().top;
       const containerTop = container.getBoundingClientRect().top;
@@ -186,7 +196,7 @@ export function DocsShellUrlFullscreenOverlay({
       <div
         ref={fullscreenInnerRef}
         className={styles.contentContainerFullscreenInner}
-        onClick={handleHashLinkClick}
+        onClickCapture={handleHashLinkClick}
       >
         <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
           <PageContentArea
