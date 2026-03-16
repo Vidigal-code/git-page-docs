@@ -84,7 +84,8 @@
     display: block;
     margin: 0.25rem 0;
     width: 100%;
-    max-width: 280px;
+    max-width: 100%;
+    min-width: 0;
     text-align: center;
     padding-left: 0 !important;
   }

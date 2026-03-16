@@ -62,6 +62,7 @@
   overflow-x: hidden;
   max-height: min(65vh, 400px);
   min-width: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .content {
@@ -71,10 +72,12 @@
   overflow-y: visible;
 }
 
-/* Mobile: always center, full width, TOC items stacked vertically, no overflow */
+/* Mobile: scroll-y, no overflow, responsive */
 @media (max-width: 767px) {
   .wrapper {
     flex-direction: column;
+    overflow: hidden;
+    max-width: 100%;
   }
 
   .positionLeft .tocAside,
@@ -95,6 +98,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
   }
 
   .tocScroll {
@@ -106,6 +110,7 @@
     justify-content: center;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   .content {

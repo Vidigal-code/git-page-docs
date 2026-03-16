@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
@@ -18,8 +18,8 @@ import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
-import { getBreadcrumbTrail } from "./model/menu-tree";
-import { getBasePath } from "@/shared/lib/base-path";
+import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick } from "./model/menu-tree";
+import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useQuickNavigation } from "./model/use-quick-navigation";
@@ -32,11 +32,25 @@ import { DocsShellMobileDrawer } from "./ui/docs-shell-mobile-drawer";
 import { DocsShellQuickNavOverlay } from "./ui/docs-shell-quick-nav-overlay";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellVersionLinksOverlay } from "./ui/docs-shell-version-links-overlay";
+import { DocsShellUrlFullscreenOverlay } from "./ui/docs-shell-url-fullscreen-overlay";
 import { PageContentArea } from "./ui/page-content-area";
+import type { FullscreenParams } from "./model/use-docs-shell-url-params";
 import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
   const { getCurrentSearchParams, replaceUrlWithoutNavigation, pathname, router } = useDocsShellUrl();
+
+  const replaceUrlParams = useCallback(
+    (params: URLSearchParams) => {
+      if (typeof window !== "undefined") {
+        const appPath = pathname ?? "/";
+        const qs = params.toString();
+        const nextUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
+        window.history.replaceState({}, "", nextUrl);
+      }
+    },
+    [pathname],
+  );
   const searchParams = useSearchParams();
   const {
     menuOpen,
@@ -150,6 +164,51 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     onFocusModeNavigate: onFocusModeNavigateInternal,
   } = useFocusMode(markdownHtml);
 
+  const [urlFullscreenParams, setUrlFullscreenParams] = useState<FullscreenParams | null>(null);
+
+  const onFullscreenRequest = useCallback(
+    (params: FullscreenParams) => {
+      let pathClick: string | null = null;
+      const lang = params.lang ?? language;
+      if (params.type === "md" && params.file) {
+        pathClick = params.file;
+      } else if (params.type === "html" && params.file) {
+        pathClick = params.file;
+      } else if (params.type === "video" && params.id != null) {
+        pathClick = `page:${params.id}`;
+      } else if (params.type === "video" && params.slug) {
+        const entry = Object.entries(data.pathToPageMap ?? {}).find(
+          ([k, v]) => v.contentType === "video" && k.toLowerCase().includes(params.slug!.toLowerCase()),
+        );
+        pathClick = entry?.[0] ?? null;
+      }
+      if (pathClick) {
+        const pageIdx = getPageIndexByPathClick(data, pathClick);
+        if (pageIdx >= 0) {
+          const tree = buildUnifiedHeaderMenuTree(data, lang, pageIdx);
+          const trail = getBreadcrumbTrail(tree, pathClick);
+          const ancestorKeys = trail.length > 0 ? trail[trail.length - 1].ancestorKeys : [];
+          setPageIndex(pageIdx);
+          expandAncestors(ancestorKeys);
+        }
+      }
+      setUrlFullscreenParams(params);
+    },
+    [data, language, setPageIndex, expandAncestors],
+  );
+
+  const closeUrlFullscreen = useCallback(() => {
+    setUrlFullscreenParams(null);
+    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    params.delete("mdfull");
+    params.delete("htmlfull");
+    params.delete("videofull");
+    params.delete("file");
+    params.delete("slug");
+    params.delete("id");
+    replaceUrlParams(params);
+  }, [replaceUrlParams]);
+
   const versionFromQuery = searchParams.get("version");
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
   const { selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
@@ -180,6 +239,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     language,
     setPageIndex,
     expandAncestors,
+    undefined,
+    onFullscreenRequest,
   );
 
   useDocsShellVersionSync({
@@ -521,6 +582,41 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         updateDate={controlsConfig.updateDate}
         menuCloseLabel={menuCloseLabel}
         onClose={() => setInfoPopupOpen(false)}
+      />
+
+      <DocsShellUrlFullscreenOverlay
+        isOpen={Boolean(urlFullscreenParams)}
+        params={urlFullscreenParams}
+        data={data}
+        language={language}
+        isDarkMode={nextMode === "dark"}
+        menuCloseLabel={menuCloseLabel}
+        fullscreenExpandLabel={getLangMenuLabelFromMenu(
+          data.config.site.langmenu,
+          language,
+          "showMenu",
+          "Fullscreen",
+        )}
+        previousLabel={previousLabel}
+        nextLabel={nextLabel}
+        browsePrevLabel={browsePrevLabel}
+        browseNextLabel={browseNextLabel}
+        mdBrowseIndex={mdBrowseIndex}
+        htmlBrowseIndex={htmlBrowseIndex}
+        videoBrowseIndex={videoBrowseIndex}
+        setMdBrowseIndex={setMdBrowseIndex}
+        setHtmlBrowseIndex={setHtmlBrowseIndex}
+        setVideoBrowseIndex={setVideoBrowseIndex}
+        mdItems={mdItems}
+        htmlItems={htmlItems}
+        videoItems={videoItems}
+        routeGuideEnabled={routeGuideEnabled}
+        breadcrumbTrail={breadcrumbTrail}
+        onMenuClick={onMenuClick}
+        homePathClick={homePathClick}
+        homeAncestorKeys={homeAncestorKeys}
+        routeGuideIconConfig={routeGuideIconConfig}
+        onClose={closeUrlFullscreen}
       />
     </div>
   );
