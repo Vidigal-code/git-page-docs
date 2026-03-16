@@ -18,7 +18,7 @@ export function TocContainer({ headings, position, markdownContent }: TocContain
   }
 
   const toc = (
-    <aside className={styles.tocAside} aria-label="Table of contents">
+    <aside className={styles.tocAside} aria-label="Table of contents" data-position={position}>
       <div className={styles.tocScroll}>
         <TocTree headings={headings} />
       </div>

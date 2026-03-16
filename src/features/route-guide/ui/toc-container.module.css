@@ -1,5 +1,7 @@
 .wrapper {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
   gap: 1.5rem;
 }
@@ -7,14 +9,21 @@
 /* Center: TOC above content, full width, stacked - always respected */
 .positionCenter {
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: flex-start;
+  width: 100%;
 }
 
-.positionCenter .tocAside {
+.positionCenter .tocAside,
+.positionCenter .content {
   width: 100%;
   max-width: 100%;
-  align-self: stretch;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.positionCenter .content {
+  flex: 1 1 auto;
 }
 
 /* Left: TOC left, content right */
@@ -42,21 +51,27 @@
 .tocAside {
   background: color-mix(in srgb, var(--background) 95%, var(--primary) 5%);
   border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
-  border-radius: 10px;
+  border-radius: var(--card-radius, 10px);
   padding: 1rem 1.25rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tocScroll {
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: min(65vh, 400px);
+  min-width: 0;
 }
 
 .content {
   min-width: 0;
   flex: 1;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
-/* Mobile: always center, full width, TOC items stacked vertically */
+/* Mobile: always center, full width, TOC items stacked vertically, no overflow */
 @media (max-width: 767px) {
   .wrapper {
     flex-direction: column;
@@ -75,6 +90,7 @@
     margin: 0 auto;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -84,7 +100,18 @@
   .tocScroll {
     max-height: 220px;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     display: flex;
     justify-content: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .content {
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
   }
 }

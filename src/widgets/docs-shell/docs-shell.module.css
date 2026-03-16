@@ -593,6 +593,17 @@
 /* Fullscreen: TOC center layout respected, scroll container for TOC navigation */
 .contentContainerFullscreenInner [data-toc-wrapper] {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.contentContainerFullscreenInner .markdown {
+  min-width: 0;
+}
+
+.contentContainerFullscreenInner .markdown :global(pre) {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .htmlWrapper,
