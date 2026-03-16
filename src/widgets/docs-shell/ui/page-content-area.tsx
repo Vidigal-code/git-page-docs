@@ -1,22 +1,27 @@
 "use client";
 
-import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
-import type { ContentTypeRouteConfig, RouteConfig } from "@/entities/docs/model/types";
-
-function isBrowseAllEnabled(config: ContentTypeRouteConfig | RouteConfig | undefined): boolean {
-  return Boolean(config && "browseAll" in config && config.browseAll === true);
-}
 import type {
+  ContentTypeRouteConfig,
   LanguageCode,
   LoadedDocsData,
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedPage,
   LoadedVideoContent,
+  RouteConfig,
 } from "@/entities/docs/model/types";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
+import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
 import { HtmlContainer, MdContainer, VideoContainer } from "./content-type-containers";
 import styles from "../docs-shell.module.css";
+
+function isBrowseAllEnabled(config: ContentTypeRouteConfig | RouteConfig | undefined): boolean {
+  return Boolean(config && "browseAll" in config && config.browseAll === true);
+}
+
+function shouldShowBrowseNav(browseAllEnabled: boolean, itemsCount: number): boolean {
+  return browseAllEnabled && itemsCount > 1;
+}
 
 interface PageContentAreaProps {
   currentPage: LoadedPage | undefined;
@@ -98,8 +103,7 @@ export function PageContentArea({
 
   const prevL = browsePrevLabel ?? previousLabel;
   const nextL = browseNextLabel ?? nextLabel;
-  const mdBrowseNav =
-    mdBrowseAll && mdItems.length > 1
+  const mdBrowseNav = shouldShowBrowseNav(mdBrowseAll, mdItems.length)
       ? {
           onPrev: () => setMdBrowseIndex((i) => Math.max(0, i - 1)),
           onNext: () => setMdBrowseIndex((i) => Math.min(mdItems.length - 1, i + 1)),
@@ -112,8 +116,7 @@ export function PageContentArea({
           contentTypeLabel: mdLabel,
         }
       : undefined;
-  const htmlBrowseNav =
-    htmlBrowseAll && htmlItems.length > 1
+  const htmlBrowseNav = shouldShowBrowseNav(htmlBrowseAll, htmlItems.length)
       ? {
           onPrev: () => setHtmlBrowseIndex((i) => Math.max(0, i - 1)),
           onNext: () => setHtmlBrowseIndex((i) => Math.min(htmlItems.length - 1, i + 1)),
@@ -126,8 +129,7 @@ export function PageContentArea({
           contentTypeLabel: htmlLabel,
         }
       : undefined;
-  const videoBrowseNav =
-    videoBrowseAll && videoItems.length > 1
+  const videoBrowseNav = shouldShowBrowseNav(videoBrowseAll, videoItems.length)
       ? {
           onPrev: () => setVideoBrowseIndex((i) => Math.max(0, i - 1)),
           onNext: () => setVideoBrowseIndex((i) => Math.min(videoItems.length - 1, i + 1)),

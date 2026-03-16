@@ -1913,7 +1913,7 @@ function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles, descr
     marginBottom = "",
     blockLink = true,
     container,
-    browseAll = true,
+    browseAll = false,
   } = options;
   const videoTypeByLang = typeof videoType === "string" ? { pt: videoType, en: videoType, es: videoType } : videoType;
   const pathVideoByLang = typeof pathVideo === "string" ? { pt: pathVideo, en: pathVideo, es: pathVideo } : pathVideo;
@@ -1959,7 +1959,7 @@ function buildMdRoute(versionId, routeId, pathByLang, titles, descriptions, opti
     marginBottom = "",
     blockLink = true,
     container,
-    browseAll = true,
+    browseAll = false,
   } = options;
   const out = {
     id: routeId,

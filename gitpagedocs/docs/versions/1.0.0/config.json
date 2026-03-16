@@ -229,7 +229,7 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
