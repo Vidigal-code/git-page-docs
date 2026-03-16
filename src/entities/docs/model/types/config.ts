@@ -44,6 +44,12 @@ export interface ContentTypeRouteConfig {
   url?: Record<LanguageCode, string>;
   /** If true, container shows prev/next buttons to browse all items of that type. */
   browseAll?: boolean;
+  /** If true, show TOC tree of headings (#h1-#h6). If false, hide (for large MD). */
+  RouteguideBrand?: boolean;
+  /** Specific heading IDs to include in TOC. Empty = all headings. */
+  RouteGuideSpeciFicbrand?: string[];
+  /** For routes-video: slug per language for URL identification (e.g. ?videofull=pt&slug=copilot) */
+  videoSlug?: Record<LanguageCode, string>;
 }
 
 export interface RouteConfig {

@@ -31,7 +31,9 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": false
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": []
     },
     {
       "id": 2,
@@ -64,7 +66,9 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": false
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": []
     },
     {
       "id": 3,
@@ -97,7 +101,9 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": false
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": []
     },
     {
       "id": 4,
@@ -130,7 +136,9 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": false
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": []
     }
   ],
   "routes-html": [
@@ -165,7 +173,9 @@
       "marginTop": "",
       "marginBottom": "",
       "blockLink": true,
-      "browseAll": false
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": []
     },
     {
       "id": 2,
@@ -199,7 +209,9 @@
       "marginBottom": "",
       "blockLink": true,
       "container": "full",
-      "browseAll": false
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": []
     }
   ],
   "routes-video": [

@@ -73,6 +73,17 @@ export interface SiteConfig {
   IconPreviewProjectLinkReactIconesTagColorDark?: string;
   IconPreviewProjectLinkReactIconesTagColorLight?: string;
   IconPreviewProjectLinkReactIconesTagSize?: string;
+  /** If true, show breadcrumb (icon > ancestor > current) above MD container */
+  RouteGuide?: boolean;
+  IconRouteGuideLightImg?: string;
+  IconRouteGuideDarkImg?: string;
+  IconRouteGuideReactIcones?: boolean;
+  IconRouteGuideReactIconesTag?: string;
+  IconRouteGuideReactIconesTagColorDark?: string;
+  IconRouteGuideReactIconesTagColorLight?: string;
+  IconRouteGuideReactIconesTagSize?: string;
+  IconRouteGuideImgWidth?: number;
+  IconRouteGuideImgHeight?: number;
   layoutsConfigPathOficial?: boolean;
   layoutsConfigPathOficialUrl?: string;
   layoutsConfigPathTemplatesOficial?: string;

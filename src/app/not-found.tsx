@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import {
   checkRepositoryHasGitPageDocs,
   getLanguageLabelFromMenu,
   loadRemoteDocsData,
   parseSupportedLanguage,
-  resolveThemeByMode,
   toSearchShellCssVars,
 } from "@/widgets/not-found-shell/model/use-not-found-remote";
 import type { LoadedDocsData } from "@/widgets/not-found-shell/model/use-not-found-remote";
@@ -16,6 +15,7 @@ import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
 import { useStandaloneShellConfig } from "@/widgets/search-shell-header/model/use-standalone-shell-config";
+import { useStandaloneShellPreferences } from "@/widgets/search-shell-header/model/use-standalone-shell-preferences";
 import notFoundStyles from "./not-found.module.css";
 import { DocsShell } from "@/widgets/docs-shell/docs-shell";
 
@@ -77,12 +77,21 @@ function parsePathFromLocation(): ParsedPath | null {
   return { owner, repo, version, language };
 }
 
-export default function NotFound() {
+function NotFoundFallback() {
+  return (
+    <SearchShellLayout header={null} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language="en" style={{}}>
+      <section className={notFoundStyles.section}>
+        <p style={{ margin: 0, color: "var(--text-secondary)", textAlign: "center" }}>Loading...</p>
+      </section>
+    </SearchShellLayout>
+  );
+}
+
+function NotFoundContent() {
   const [mounted, setMounted] = useState(false);
   const [pathOwner, setPathOwner] = useState<string | null>(null);
   const [pathRepo, setPathRepo] = useState<string | null>(null);
   const [pathVersion, setPathVersion] = useState<string | undefined>(undefined);
-  const [lang, setLang] = useState<SupportedLanguage>("en");
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
   const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
   const [appLoading, setAppLoading] = useState(false);
@@ -93,27 +102,29 @@ export default function NotFound() {
   const { config: standaloneConfig } = useStandaloneShellConfig();
   const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
   const themes = standaloneConfig?.themes ?? {};
-  const [activeThemeId, setActiveThemeId] = useState("");
+  const siteName = standaloneConfig?.siteConfig?.name ?? "GitPageDocs";
+  const initialThemeBaseId = layouts.find((l) => l.id === "aurora-dark")?.id ?? layouts[0]?.id;
 
-  useEffect(() => {
-    if (layouts.length > 0 && !activeThemeId) {
-      const preferred = layouts.find((l) => l.id === "aurora-dark") ?? layouts[0];
-      setActiveThemeId(preferred.id);
-    }
-  }, [layouts, activeThemeId]);
+  const {
+    language: lang,
+    onLanguageChange,
+    activeThemeId,
+    onThemeChange,
+    onToggleMode,
+    activeLayout,
+    nextModeIsDark,
+    canToggleMode,
+  } = useStandaloneShellPreferences({
+    siteName,
+    defaultLanguage: "en",
+    availableLanguages: SEARCH_LANGUAGES,
+    layouts,
+    configuredDefaultMode: "dark",
+    initialThemeBaseId,
+  });
 
-  const activeLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
   const activeTheme = themes[activeLayout?.id ?? ""];
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
-  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
-  const nextModeIsDark = activeLayout?.mode === "dark";
-
-  function onToggleMode() {
-    if (!activeLayout?.supportsLightAndDarkModes) return;
-    const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
-    const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
-    setActiveThemeId(paired.id);
-  }
 
   const FALLBACK_LANGMENU = {
     en: { en: "English", pt: "Português", es: "Español" },
@@ -133,7 +144,6 @@ export default function NotFound() {
       setPathOwner(parsed.owner);
       setPathRepo(parsed.repo);
       setPathVersion(parsed.version);
-      setLang(parsed.language);
     }
     syncFromCurrentLocation();
     if (typeof window !== "undefined") {
@@ -176,7 +186,7 @@ export default function NotFound() {
     setLoadedData(null);
     setAppLoading(true);
     setAppLoadFailed(false);
-    loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang)
+    loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang as SupportedLanguage)
       .then((data) => {
         if (cancelled) return;
         if (data) {
@@ -248,10 +258,10 @@ export default function NotFound() {
       basePath={basePath}
       language={lang}
       languages={SEARCH_LANGUAGES}
-      onLanguageChange={(l) => setLang(l as SupportedLanguage)}
+      onLanguageChange={(l) => onLanguageChange(l as SupportedLanguage)}
       activeThemeId={activeThemeId}
       layouts={layouts}
-      onThemeChange={setActiveThemeId}
+      onThemeChange={onThemeChange}
       nextModeIsDark={nextModeIsDark}
       canToggleMode={canToggleMode}
       onToggleMode={onToggleMode}
@@ -269,13 +279,13 @@ export default function NotFound() {
       basePath={basePath}
       language={lang}
       languages={SEARCH_LANGUAGES}
-      onLanguageChange={(l) => setLang(l as SupportedLanguage)}
-      activeThemeId=""
-      layouts={[]}
-      onThemeChange={() => {}}
-      nextModeIsDark={true}
-      canToggleMode={false}
-      onToggleMode={() => {}}
+      onLanguageChange={(l) => onLanguageChange(l as SupportedLanguage)}
+      activeThemeId={activeThemeId}
+      layouts={layouts}
+      onThemeChange={onThemeChange}
+      nextModeIsDark={nextModeIsDark}
+      canToggleMode={canToggleMode}
+      onToggleMode={onToggleMode}
       iconImage={iconImage}
       iconImgWidth={iconImgWidth}
       iconImgHeight={iconImgHeight}
@@ -346,17 +356,18 @@ export default function NotFound() {
     );
   }
 
+  const safeLang = lang as SupportedLanguage;
   const message = isRepoPath
     ? repoStatus === "installed"
-      ? INSTALLED_NOT_PRERENDERED[lang]
-      : NOT_INSTALLED[lang]
+      ? INSTALLED_NOT_PRERENDERED[safeLang]
+      : NOT_INSTALLED[safeLang]
     : "Page not found";
   const prompt = isRepoPath
     ? repoStatus === "installed"
-      ? INSTALLED_PROMPT[lang]
-      : SEARCH_PROMPT[lang]
+      ? INSTALLED_PROMPT[safeLang]
+      : SEARCH_PROMPT[safeLang]
     : "The requested page does not exist.";
-  const returnLabel = RETURN_HOME[lang];
+  const returnLabel = RETURN_HOME[safeLang];
 
   return (
     <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
@@ -407,6 +418,14 @@ export default function NotFound() {
         </a>
       </section>
     </SearchShellLayout>
+  );
+}
+
+export default function NotFound() {
+  return (
+    <Suspense fallback={<NotFoundFallback />}>
+      <NotFoundContent />
+    </Suspense>
   );
 }
 

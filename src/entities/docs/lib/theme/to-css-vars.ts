@@ -21,6 +21,9 @@ export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSPropert
     ["--text-secondary" as string]: colors.textSecondary ?? DEFAULT_COLORS.textSecondary,
     ["--card-background" as string]: colors.cardBackground ?? DEFAULT_COLORS.cardBackground,
     ["--card-border" as string]: colors.cardBorder ?? DEFAULT_COLORS.cardBorder,
+    ["--scrollbar-track" as string]: colors.scrollbarTrack ?? "transparent",
+    ["--scrollbar-thumb" as string]: colors.scrollbarThumb ?? "color-mix(in srgb, var(--text-secondary) 40%, transparent)",
+    ["--scrollbar-thumb-hover" as string]: colors.scrollbarThumbHover ?? "color-mix(in srgb, var(--text-secondary) 60%, transparent)",
   };
 }
 

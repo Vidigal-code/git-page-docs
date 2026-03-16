@@ -91,6 +91,15 @@ export function useDocsShellNavigationState({
     return expandedMenuMap[nodeKey] ?? true;
   }
 
+  function expandAncestors(ancestorKeys: string[]) {
+    if (ancestorKeys.length === 0) return;
+    setExpandedMenuMap((prev) => {
+      const next = { ...prev };
+      ancestorKeys.forEach((k) => { next[k] = true; });
+      return next;
+    });
+  }
+
   return {
     pageIndex,
     setPageIndex,
@@ -108,5 +117,6 @@ export function useDocsShellNavigationState({
     mdItems,
     htmlItems,
     videoItems,
+    expandAncestors,
   };
 }

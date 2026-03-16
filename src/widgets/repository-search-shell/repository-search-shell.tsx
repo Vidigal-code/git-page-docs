@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
 import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
 import { RepositorySearchForm } from "@/features/repository-search-form";
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
+import { useStandaloneShellPreferences } from "@/widgets/search-shell-header/model/use-standalone-shell-preferences";
 import { buildFooterConfigFromData } from "@/entities/docs/lib/footer/build-footer-config";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
@@ -23,26 +23,36 @@ export function RepositorySearchShell({
   repositoryNotUsingGitPageDocs: boolean;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const defaultLanguage = data.config.site.defaultLanguage;
-  const [language, setLanguage] = useState<LanguageCode>(defaultLanguage);
+  const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
+  const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
+  const siteName = data.config.site.name ?? "GitPageDocs";
+
+  const {
+    language,
+    onLanguageChange,
+    activeThemeId,
+    onThemeChange,
+    onToggleMode,
+    activeLayout,
+    nextModeIsDark,
+    canToggleMode,
+  } = useStandaloneShellPreferences({
+    siteName,
+    defaultLanguage,
+    availableLanguages: repositoryNotUsingGitPageDocs ? (["en", "pt", "es"] as LanguageCode[]) : data.availableLanguages,
+    layouts: data.layoutsConfig.layouts,
+    configuredDefaultMode,
+    initialThemeBaseId,
+  });
+
   const [ownerInput, setOwnerInput] = useState(data.activeRepository.owner ?? "");
   const [repoInput, setRepoInput] = useState(data.activeRepository.repo ?? "");
   const searchLanguages: LanguageCode[] = repositoryNotUsingGitPageDocs
     ? (["en", "pt", "es"] as LanguageCode[])
     : data.availableLanguages;
 
-  const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
-  const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
-  const initialThemeBase =
-    data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
-  const initialThemeId = initialThemeBase
-    ? resolveThemeByMode(data.layoutsConfig.layouts, initialThemeBase, configuredDefaultMode).id
-    : "";
-  const [activeThemeId, setActiveThemeId] = useState(initialThemeId);
-
-  const activeLayout = data.layoutsConfig.layouts.find((layout) => layout.id === activeThemeId) ?? data.layoutsConfig.layouts[0];
-  const activeTheme = data.themes[activeLayout?.id];
+  const activeTheme = data.themes[activeLayout?.id ?? ""];
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
   const basePath = getBasePath();
@@ -79,17 +89,6 @@ export function RepositorySearchShell({
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
   const footerEnabled = data.config.site.FooterEnabled !== false;
 
-  // Local-only theme for search page (does not affect docs shell state).
-  useEffect(() => {
-    const urlMode = searchParams.get("modetheme");
-    const targetMode = urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
-    const base = data.layoutsConfig.layouts.find((layout) => layout.id === initialThemeBaseId) ?? data.layoutsConfig.layouts[0];
-    if (base) {
-      const resolved = resolveThemeByMode(data.layoutsConfig.layouts, base, targetMode);
-      setActiveThemeId(resolved.id);
-    }
-  }, [searchParams, configuredDefaultMode, data.layoutsConfig.layouts, initialThemeBaseId]);
-
   // Handle repository identification via URL hash (#/owner/repo) on mount only
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
@@ -114,26 +113,16 @@ export function RepositorySearchShell({
     router.push(`/${owner}/${repo}`);
   }
 
-  function onToggleMode() {
-    if (!activeLayout?.supportsLightAndDarkModes) return;
-    const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
-    const paired = resolveThemeByMode(data.layoutsConfig.layouts, activeLayout, nextMode);
-    setActiveThemeId(paired.id);
-  }
-
-  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
-  const nextModeIsDark = activeLayout?.mode === "dark";
-
   const header = (
     <SearchShellHeader
       siteName={headerName}
       basePath={basePath}
       language={language}
       languages={searchLanguages}
-      onLanguageChange={setLanguage}
+      onLanguageChange={onLanguageChange}
       activeThemeId={activeThemeId}
       layouts={data.layoutsConfig.layouts}
-      onThemeChange={setActiveThemeId}
+      onThemeChange={onThemeChange}
       nextModeIsDark={nextModeIsDark}
       canToggleMode={canToggleMode}
       onToggleMode={onToggleMode}

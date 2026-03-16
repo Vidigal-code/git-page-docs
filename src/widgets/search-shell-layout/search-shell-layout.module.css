@@ -30,3 +30,21 @@
     padding: 12px 8px;
   }
 }
+
+.wrapper ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.wrapper ::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, transparent);
+}
+
+.wrapper ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, color-mix(in srgb, var(--text-secondary) 40%, transparent));
+  border-radius: 4px;
+}
+
+.wrapper ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, color-mix(in srgb, var(--text-secondary) 60%, transparent));
+}

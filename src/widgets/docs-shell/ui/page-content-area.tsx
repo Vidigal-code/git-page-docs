@@ -12,6 +12,8 @@ import type {
 } from "@/entities/docs/model/types";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
+import type { BreadcrumbItem } from "@/widgets/docs-shell/model/menu-tree";
+import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { HtmlContainer, MdContainer, VideoContainer } from "./content-type-containers";
 import styles from "../docs-shell.module.css";
 
@@ -43,6 +45,12 @@ interface PageContentAreaProps {
   mdItems: BrowseItem<LoadedMdContent>[];
   htmlItems: BrowseItem<LoadedHtmlContent>[];
   videoItems: BrowseItem<LoadedVideoContent>[];
+  routeGuideEnabled?: boolean;
+  breadcrumbTrail?: BreadcrumbItem[];
+  onMenuClick?: (pathClick: string, ancestorKeys: string[]) => void;
+  homePathClick?: string;
+  homeAncestorKeys?: string[];
+  routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
 }
 
 export function PageContentArea({
@@ -65,6 +73,12 @@ export function PageContentArea({
   mdItems,
   htmlItems,
   videoItems,
+  routeGuideEnabled = false,
+  breadcrumbTrail = [],
+  onMenuClick,
+  homePathClick,
+  homeAncestorKeys = [],
+  routeGuideIconConfig,
 }: PageContentAreaProps) {
   if (!currentPage) {
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
@@ -158,6 +172,12 @@ export function PageContentArea({
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={mdBrowseNav}
+              routeGuideEnabled={routeGuideEnabled}
+              breadcrumbTrail={breadcrumbTrail}
+              onBreadcrumbClick={onMenuClick}
+              homePathClick={homePathClick}
+              homeAncestorKeys={homeAncestorKeys}
+              routeGuideIconConfig={routeGuideIconConfig}
             />
           );
         }

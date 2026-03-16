@@ -17,6 +17,10 @@ import { useDocsShellUrl } from "./model/use-docs-shell-url";
 import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
+import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
+import { getBreadcrumbTrail } from "./model/menu-tree";
+import { getBasePath } from "@/shared/lib/base-path";
+import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
@@ -88,6 +92,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     onMenuClick: onMenuClickState,
     toggleNode,
     isNodeExpanded,
+    expandAncestors,
     mdBrowseIndex,
     htmlBrowseIndex,
     videoBrowseIndex,
@@ -167,6 +172,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     activeThemeId,
     canToggleMode,
     nextMode === "dark",
+  );
+
+  useDocsShellUrlParams(
+    searchParams,
+    data,
+    language,
+    setPageIndex,
+    expandAncestors,
   );
 
   useDocsShellVersionSync({
@@ -311,6 +324,26 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     iconImgHeight: iconImageMenuHeaderImgHeight,
   } = headerIconConfig;
 
+  const routeGuideEnabled = Boolean(data.config.site.RouteGuide);
+  const currentPagePath =
+    currentPage?.md?.config?.path?.[language as keyof typeof currentPage.md.config.path] ??
+    currentPage?.html?.config?.path?.[language] ??
+    (currentPage?.html?.config?.url
+      ? `url:${currentPage.html.config.url[language] ?? currentPage.html.config.url.en}`
+      : null) ??
+    (currentPage?.video ? `page:${currentPage.id}` : null) ??
+    "";
+  const breadcrumbTrail = useMemo(
+    () => (routeGuideEnabled && currentPagePath ? getBreadcrumbTrail(headerMenuTree, currentPagePath) : []),
+    [routeGuideEnabled, currentPagePath, headerMenuTree],
+  );
+  const homePathClick = linearNavigationEntries[0]?.pathClick;
+  const homeAncestorKeys = linearNavigationEntries[0]?.ancestorKeys ?? [];
+  const routeGuideIconConfig = useMemo(
+    () => resolveRouteGuideIconConfig(data.config.site, nextMode === "dark", getBasePath()),
+    [data.config.site, nextMode],
+  );
+
   const controlsProps = {
     ...controlsConfig,
     onOpenVersionLinksPopup: openVersionLinksPopup,
@@ -398,6 +431,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             mdItems={mdItems}
             htmlItems={htmlItems}
             videoItems={videoItems}
+            routeGuideEnabled={routeGuideEnabled}
+            breadcrumbTrail={breadcrumbTrail}
+            onMenuClick={onMenuClick}
+            homePathClick={homePathClick}
+            homeAncestorKeys={homeAncestorKeys}
+            routeGuideIconConfig={routeGuideIconConfig}
           />
           {linearNavigationEntries.length > 1 && (
             <div className={styles.footerActions}>
