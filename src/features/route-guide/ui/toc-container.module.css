@@ -4,14 +4,17 @@
   gap: 1.5rem;
 }
 
-/* Center: TOC above content, full width, stacked */
+/* Center: TOC above content, full width, stacked - always respected */
 .positionCenter {
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .positionCenter .tocAside {
   width: 100%;
   max-width: 100%;
+  align-self: stretch;
 }
 
 /* Left: TOC left, content right */

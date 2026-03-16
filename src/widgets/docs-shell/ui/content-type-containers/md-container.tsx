@@ -81,10 +81,11 @@ export function MdContainer({
     return extractHeadingsFromHtml(html, specificIds);
   }, [routeguideBrand, html, config]);
 
+  const validPositions: TocPosition[] = ["center", "left", "right"];
+  const fromConfig = config && "RouteguideBrandPosition" in config ? config.RouteguideBrandPosition : undefined;
   const tocPosition: TocPosition =
-    (config && "RouteguideBrandPosition" in config ? config.RouteguideBrandPosition : null) ??
-    tocPositionDefault ??
-    "center";
+    (fromConfig && validPositions.includes(fromConfig as TocPosition) ? (fromConfig as TocPosition) : null) ??
+    (validPositions.includes(tocPositionDefault) ? tocPositionDefault : "center");
 
   const markdownContent = (
     <article className={styles.card}>

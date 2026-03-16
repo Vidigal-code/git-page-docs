@@ -26,7 +26,10 @@ export function TocContainer({ headings, position, markdownContent }: TocContain
   );
 
   return (
-    <div className={`${styles.wrapper} ${styles[`position${position.charAt(0).toUpperCase() + position.slice(1)}`]}`}>
+    <div
+      className={`${styles.wrapper} ${styles[`position${position.charAt(0).toUpperCase() + position.slice(1)}`]}`}
+      data-toc-wrapper
+    >
       {position === "left" && toc}
       {position === "center" && toc}
       <div className={styles.content}>{markdownContent}</div>

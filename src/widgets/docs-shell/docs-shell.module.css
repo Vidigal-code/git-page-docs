@@ -579,13 +579,20 @@
 .contentContainerFullscreenInner {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
   max-width: 100%;
 }
 
 .contentContainerFullscreenInner .card {
   max-width: 100%;
+}
+
+/* Fullscreen: TOC center layout respected, scroll container for TOC navigation */
+.contentContainerFullscreenInner [data-toc-wrapper] {
+  width: 100%;
 }
 
 .htmlWrapper,
@@ -603,11 +610,20 @@
 }
 
 @media (max-width: 767px) {
-  .htmlWrapper,
+  .htmlWrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: 280px;
+    max-height: 70vh;
+  }
+
   .htmlWrapperExternalLink {
     overflow-x: auto;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    min-height: 280px;
+    max-height: 75vh;
   }
 }
 

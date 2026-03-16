@@ -58,7 +58,8 @@ export function TocTree({ headings, activeId, className }: TocTreeProps) {
               className={`${styles.link} ${active === h.id ? styles.active : ""}`}
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth" });
+                const el = document.getElementById(h.id);
+                el?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
               }}
             >
               {h.text}

@@ -97,6 +97,12 @@ body{font-family:ui-sans-serif,system-ui,sans-serif;background:#0d1117;color:#e6
 .content .line-num{display:inline-block;width:40px;color:#484f58;text-align:right;margin-right:16px;user-select:none}
 .content .line{display:block;min-height:1.6em}
 .content .empty{color:#8b949e;padding:24px;font-style:italic}
+@media(max-width:767px){
+  body{overflow:auto;-webkit-overflow-scrolling:touch}
+  .layout{flex-direction:column;height:auto;min-height:calc(100vh - 49px)}
+  .sidebar{width:100%;max-width:100%;min-width:unset;max-height:220px;overflow-y:auto;overflow-x:auto;flex-shrink:0}
+  .content{min-height:400px;overflow-x:auto;overflow-y:auto}
+}
 </style>
 </head>
 <body>
