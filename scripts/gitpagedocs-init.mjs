@@ -1113,7 +1113,16 @@ Principais chaves:
 - \`docsVersion\`: versao inicial selecionada
 - \`ActiveNavigation\`: habilita comportamento de anterior/proximo
 - \`FocusMode\`: habilita modo foco/leitura
-- \`IconImageMenuHeader\`: icone principal
+- \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamanho do icone principal
+- \`IconImageMenuHeaderLightImg\`, \`IconImageMenuHeaderDarkImg\`: icone principal (light/dark)
+- \`IconProjectLinkImgWidth\`, \`IconProjectLinkImgHeight\`: tamanho do icone link do projeto
+- \`IconProjectLinkLightImg\`, \`IconProjectLinkDarkImg\`: icone link do projeto
+- \`IconVersionLinksImgWidth\`, \`IconVersionLinksImgHeight\`: tamanho do icone links de versao
+- \`IconVersionLinksLightImg\`, \`IconVersionLinksDarkImg\`: icone links de versao
+- \`IconInfoHeaderMenuImgWidth\`, \`IconInfoHeaderMenuImgHeight\`: tamanho do icone info
+- \`IconInfoHeaderMenuLightImg\`, \`IconInfoHeaderMenuDarkImg\`: icone info
+- \`IconPreviewProjectLinkImgWidth\`, \`IconPreviewProjectLinkImgHeight\`: tamanho do icone preview
+- \`IconPreviewProjectLinkLightImg\`, \`IconPreviewProjectLinkDarkImg\`: icone preview
 - \`layoutsConfigPath\`: fallback remoto para layouts
 - \`rendering\`: URL canonica publicada
 
@@ -1356,7 +1365,16 @@ Claves principales:
 - \`docsVersion\`: version seleccionada por defecto
 - \`ActiveNavigation\`: habilita anterior/siguiente
 - \`FocusMode\`: habilita modo foco/lectura
-- \`IconImageMenuHeader\`: icono principal
+- \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamano del icono principal
+- \`IconImageMenuHeaderLightImg\`, \`IconImageMenuHeaderDarkImg\`: icono principal (light/dark)
+- \`IconProjectLinkImgWidth\`, \`IconProjectLinkImgHeight\`: tamano del icono enlace del proyecto
+- \`IconProjectLinkLightImg\`, \`IconProjectLinkDarkImg\`: icono enlace del proyecto
+- \`IconVersionLinksImgWidth\`, \`IconVersionLinksImgHeight\`: tamano del icono enlaces de version
+- \`IconVersionLinksLightImg\`, \`IconVersionLinksDarkImg\`: icono enlaces de version
+- \`IconInfoHeaderMenuImgWidth\`, \`IconInfoHeaderMenuImgHeight\`: tamano del icono info
+- \`IconInfoHeaderMenuLightImg\`, \`IconInfoHeaderMenuDarkImg\`: icono info
+- \`IconPreviewProjectLinkImgWidth\`, \`IconPreviewProjectLinkImgHeight\`: tamano del icono preview
+- \`IconPreviewProjectLinkLightImg\`, \`IconPreviewProjectLinkDarkImg\`: icono preview
 - \`layoutsConfigPath\`: fallback remoto de layouts
 - \`rendering\`: URL canonica publicada
 
@@ -1762,37 +1780,51 @@ function buildConfigArtifacts(options = {}) {
       FooterEnabled: true,
       SiteIconPath: "/icon.svg",
       SiteHeaderName: "Git Pages Docs",
-      IconImageMenuHeaderLight: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
-      IconImageMenuHeaderDark: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
+      IconImageMenuHeaderImgWidth: 20,
+      IconImageMenuHeaderImgHeight: 20,
+      IconImageMenuHeaderLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+      IconImageMenuHeaderDarkImg: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconImageMenuHeaderReactIcones: true,
       IconImageMenuHeaderReactIconesTag: "FaGithubAlt",
       IconImageMenuHeaderReactIconesTagColorDark: "White",
       IconImageMenuHeaderReactIconesTagColorLight: "black",
       IconImageMenuHeaderReactIconesTagSize: "25px",
+      IconProjectLinkLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+      IconProjectLinkDarkImg: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconProjectLinkReactIcones: true,
       IconProjectLinkReactIconesTag: "FaGithubAlt",
       IconProjectLinkReactIconesTagColorDark: "White",
       IconProjectLinkReactIconesTagColorLight: "black",
       IconProjectLinkReactIconesTagSize: "25px",
+      IconProjectLinkImgWidth: 20,
+      IconProjectLinkImgHeight: 20,
+      IconVersionLinksLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+      IconVersionLinksDarkImg: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconVersionLinksReactIcones: true,
       IconVersionLinksReactIconesTag: "FaCodeBranch",
       IconVersionLinksReactIconesTagColorDark: "White",
       IconVersionLinksReactIconesTagColorLight: "black",
       IconVersionLinksReactIconesTagSize: "25px",
+      IconVersionLinksImgWidth: 20,
+      IconVersionLinksImgHeight: 20,
+      IconInfoHeaderMenuLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+      IconInfoHeaderMenuDarkImg: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconInfoHeaderMenuReactIcones: true,
       IconInfoHeaderMenuReactIconesTag: "BsInfoSquareFill",
-      IconInfoHeaderMenuLight: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
-      IconInfoHeaderMenuHeaderDark: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconInfoHeaderMenuReactIconesTagColorDark: "White",
       IconInfoHeaderMenuReactIconesTagColorLight: "black",
       IconInfoHeaderMenuReactIconesTagSize: "25px",
+      IconInfoHeaderMenuImgWidth: 20,
+      IconInfoHeaderMenuImgHeight: 20,
+      IconPreviewProjectLinkLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+      IconPreviewProjectLinkDarkImg: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconPreviewProjectLinkReactIcones: true,
       IconPreviewProjectLinkReactIconesTag: "CiGlobe",
-      IconPreviewProjectLinkLight: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
-      IconPreviewProjectLinkHeaderDark: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconPreviewProjectLinkReactIconesTagColorDark: "White",
       IconPreviewProjectLinkReactIconesTagColorLight: "black",
       IconPreviewProjectLinkReactIconesTagSize: "25px",
+      IconPreviewProjectLinkImgWidth: 20,
+      IconPreviewProjectLinkImgHeight: 20,
       layoutsConfigPathOficial: useOfficialLayouts,
       layoutsConfigPathTemplatesOficial: useOfficialLayouts ? OFFICIAL_LAYOUTS_TEMPLATES_URL : "",
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",

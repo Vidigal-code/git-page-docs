@@ -25,6 +25,12 @@ interface DocsShellControlsProps {
   versionLinksIconTag: string | undefined;
   versionLinksIconStyle: React.CSSProperties;
   versionLinksIconImage: string | undefined;
+  versionLinksIconImgWidth: number;
+  versionLinksIconImgHeight: number;
+  infoIconImgWidth: number;
+  infoIconImgHeight: number;
+  previewIconImgWidth: number;
+  previewIconImgHeight: number;
   showInfoButton: boolean;
   updateDate: string;
   lastUpdateLabel: string;
@@ -79,6 +85,12 @@ export function DocsShellControls({
   versionLinksIconTag,
   versionLinksIconStyle,
   versionLinksIconImage,
+  versionLinksIconImgWidth,
+  versionLinksIconImgHeight,
+  infoIconImgWidth,
+  infoIconImgHeight,
+  previewIconImgWidth,
+  previewIconImgHeight,
   showInfoButton,
   updateDate,
   lastUpdateLabel,
@@ -148,7 +160,7 @@ export function DocsShellControls({
           {useReactVersionLinksIcon ? (
             <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
           ) : versionLinksIconImage ? (
-            <Image src={versionLinksIconImage} alt="" width={24} height={24} className={styles.headerIcon} unoptimized />
+            <Image src={versionLinksIconImage} alt="" width={versionLinksIconImgWidth} height={versionLinksIconImgHeight} className={styles.headerIcon} unoptimized />
           ) : (
             <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
           )}
@@ -159,7 +171,7 @@ export function DocsShellControls({
           {useReactInfoIcon ? (
             <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
           ) : infoIconImage ? (
-            <Image src={infoIconImage} alt="" width={24} height={24} className={styles.headerIcon} unoptimized />
+            <Image src={infoIconImage} alt="" width={infoIconImgWidth} height={infoIconImgHeight} className={styles.headerIcon} unoptimized />
           ) : (
             <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
           )}
@@ -177,7 +189,7 @@ export function DocsShellControls({
           {useReactPreviewIcon ? (
             <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
           ) : previewIconImage ? (
-            <Image src={previewIconImage} alt="" width={24} height={24} className={styles.headerIcon} unoptimized />
+            <Image src={previewIconImage} alt="" width={previewIconImgWidth} height={previewIconImgHeight} className={styles.headerIcon} unoptimized />
           ) : (
             <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
           )}

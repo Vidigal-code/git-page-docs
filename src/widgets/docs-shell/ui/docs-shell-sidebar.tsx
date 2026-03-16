@@ -12,6 +12,8 @@ interface DocsShellSidebarProps {
   headerReactIconStyle: React.CSSProperties;
   activeLayoutMode: "dark" | "light" | undefined;
   iconImage: string | undefined;
+  iconImgWidth: number;
+  iconImgHeight: number;
   menuNodes: MenuNode[];
   menuCloseLabel: string;
   onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
@@ -27,6 +29,8 @@ export function DocsShellSidebar({
   headerReactIconStyle,
   activeLayoutMode,
   iconImage,
+  iconImgWidth,
+  iconImgHeight,
   menuNodes,
   menuCloseLabel,
   onMenuClick,
@@ -42,7 +46,7 @@ export function DocsShellSidebar({
             <ReactIconByTag tag={reactHeaderIconTag} fallback={activeLayoutMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />} />
           </span>
         ) : iconImage ? (
-          <Image src={iconImage} alt={siteName} width={28} height={28} className={styles.brandIcon} unoptimized />
+          <Image src={iconImage} alt={siteName} width={iconImgWidth} height={iconImgHeight} className={styles.brandIcon} unoptimized />
         ) : null}
         <span>{siteName}</span>
       </div>

@@ -16,7 +16,16 @@ Principais chaves:
 - `docsVersion`: versao inicial selecionada
 - `ActiveNavigation`: habilita comportamento de anterior/proximo
 - `FocusMode`: habilita modo foco/leitura
-- `IconImageMenuHeader`: icone principal
+- `IconImageMenuHeaderImgWidth`, `IconImageMenuHeaderImgHeight`: tamanho do icone principal
+- `IconImageMenuHeaderLightImg`, `IconImageMenuHeaderDarkImg`: icone principal (light/dark)
+- `IconProjectLinkImgWidth`, `IconProjectLinkImgHeight`: tamanho do icone link do projeto
+- `IconProjectLinkLightImg`, `IconProjectLinkDarkImg`: icone link do projeto
+- `IconVersionLinksImgWidth`, `IconVersionLinksImgHeight`: tamanho do icone links de versao
+- `IconVersionLinksLightImg`, `IconVersionLinksDarkImg`: icone links de versao
+- `IconInfoHeaderMenuImgWidth`, `IconInfoHeaderMenuImgHeight`: tamanho do icone info
+- `IconInfoHeaderMenuLightImg`, `IconInfoHeaderMenuDarkImg`: icone info
+- `IconPreviewProjectLinkImgWidth`, `IconPreviewProjectLinkImgHeight`: tamanho do icone preview
+- `IconPreviewProjectLinkLightImg`, `IconPreviewProjectLinkDarkImg`: icone preview
 - `layoutsConfigPath`: fallback remoto para layouts
 - `rendering`: URL canonica publicada
 

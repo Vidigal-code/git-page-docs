@@ -16,7 +16,16 @@ Claves principales:
 - `docsVersion`: version seleccionada por defecto
 - `ActiveNavigation`: habilita anterior/siguiente
 - `FocusMode`: habilita modo foco/lectura
-- `IconImageMenuHeader`: icono principal
+- `IconImageMenuHeaderImgWidth`, `IconImageMenuHeaderImgHeight`: tamano del icono principal
+- `IconImageMenuHeaderLightImg`, `IconImageMenuHeaderDarkImg`: icono principal (light/dark)
+- `IconProjectLinkImgWidth`, `IconProjectLinkImgHeight`: tamano del icono enlace del proyecto
+- `IconProjectLinkLightImg`, `IconProjectLinkDarkImg`: icono enlace del proyecto
+- `IconVersionLinksImgWidth`, `IconVersionLinksImgHeight`: tamano del icono enlaces de version
+- `IconVersionLinksLightImg`, `IconVersionLinksDarkImg`: icono enlaces de version
+- `IconInfoHeaderMenuImgWidth`, `IconInfoHeaderMenuImgHeight`: tamano del icono info
+- `IconInfoHeaderMenuLightImg`, `IconInfoHeaderMenuDarkImg`: icono info
+- `IconPreviewProjectLinkImgWidth`, `IconPreviewProjectLinkImgHeight`: tamano del icono preview
+- `IconPreviewProjectLinkLightImg`, `IconPreviewProjectLinkDarkImg`: icono preview
 - `layoutsConfigPath`: fallback remoto de layouts
 - `rendering`: URL canonica publicada
 

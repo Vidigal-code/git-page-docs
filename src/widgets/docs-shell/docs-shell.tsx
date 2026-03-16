@@ -152,8 +152,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const basePathForAssets = getBasePath();
   const rawIconImage =
     (activeLayout?.mode === "dark"
-      ? data.config.site.IconImageMenuHeaderDark?.trim()
-      : data.config.site.IconImageMenuHeaderLight?.trim()) ||
+      ? data.config.site.IconImageMenuHeaderDarkImg?.trim() || data.config.site.IconImageMenuHeaderDark?.trim()
+      : data.config.site.IconImageMenuHeaderLightImg?.trim() || data.config.site.IconImageMenuHeaderLight?.trim()) ||
     data.config.site.IconImageMenuHeader?.trim() ||
     data.config.site.SiteIconPath?.trim();
   const iconImage = resolveIconPath(rawIconImage, basePathForAssets);
@@ -225,9 +225,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     fontSize: versionLinksIconSize?.trim() || undefined,
   };
   const versionLinksIconImage =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconVersionLinksHeaderDark?.trim()
-      : data.config.site.IconVersionLinksLight?.trim();
+    (activeLayout?.mode === "dark"
+      ? data.config.site.IconVersionLinksDarkImg?.trim() || data.config.site.IconVersionLinksHeaderDark?.trim()
+      : data.config.site.IconVersionLinksLightImg?.trim() || data.config.site.IconVersionLinksLight?.trim()) || undefined;
   const useReactInfoIcon = Boolean(data.config.site.IconInfoHeaderMenuReactIcones);
   const infoIconTag = data.config.site.IconInfoHeaderMenuReactIconesTag;
   const infoIconColor =
@@ -240,9 +240,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     fontSize: infoIconSize?.trim() || undefined,
   };
   const infoIconImage =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconInfoHeaderMenuHeaderDark?.trim()
-      : data.config.site.IconInfoHeaderMenuLight?.trim();
+    (activeLayout?.mode === "dark"
+      ? data.config.site.IconInfoHeaderMenuDarkImg?.trim() || data.config.site.IconInfoHeaderMenuHeaderDark?.trim()
+      : data.config.site.IconInfoHeaderMenuLightImg?.trim() || data.config.site.IconInfoHeaderMenuLight?.trim()) || undefined;
   const useReactPreviewIcon = Boolean(data.config.site.IconPreviewProjectLinkReactIcones);
   const previewIconTag = data.config.site.IconPreviewProjectLinkReactIconesTag;
   const previewIconColor =
@@ -255,9 +255,17 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     fontSize: previewIconSize?.trim() || undefined,
   };
   const previewIconImage =
-    activeLayout?.mode === "dark"
-      ? data.config.site.IconPreviewProjectLinkHeaderDark?.trim()
-      : data.config.site.IconPreviewProjectLinkLight?.trim();
+    (activeLayout?.mode === "dark"
+      ? data.config.site.IconPreviewProjectLinkDarkImg?.trim() || data.config.site.IconPreviewProjectLinkHeaderDark?.trim()
+      : data.config.site.IconPreviewProjectLinkLightImg?.trim() || data.config.site.IconPreviewProjectLinkLight?.trim()) || undefined;
+  const iconImageMenuHeaderImgWidth = Number(data.config.site.IconImageMenuHeaderImgWidth) || 20;
+  const iconImageMenuHeaderImgHeight = Number(data.config.site.IconImageMenuHeaderImgHeight) || 20;
+  const versionLinksIconImgWidth = Number(data.config.site.IconVersionLinksImgWidth) || 20;
+  const versionLinksIconImgHeight = Number(data.config.site.IconVersionLinksImgHeight) || 20;
+  const infoIconImgWidth = Number(data.config.site.IconInfoHeaderMenuImgWidth) || 20;
+  const infoIconImgHeight = Number(data.config.site.IconInfoHeaderMenuImgHeight) || 20;
+  const previewIconImgWidth = Number(data.config.site.IconPreviewProjectLinkImgWidth) || 20;
+  const previewIconImgHeight = Number(data.config.site.IconPreviewProjectLinkImgHeight) || 20;
   const showVersionSelector = data.availableVersions.length > 1;
   const footerEnabled = data.config.site.FooterEnabled !== false;
   const projectFooterUrl = "https://github.com/Vidigal-code/git-page-docs";
@@ -521,6 +529,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     versionLinksIconTag,
     versionLinksIconStyle,
     versionLinksIconImage,
+    versionLinksIconImgWidth,
+    versionLinksIconImgHeight,
+    infoIconImgWidth,
+    infoIconImgHeight,
+    previewIconImgWidth,
+    previewIconImgHeight,
     showInfoButton,
     updateDate,
     lastUpdateLabel,
@@ -572,6 +586,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         headerReactIconStyle={headerReactIconStyle}
         activeLayoutMode={activeLayout?.mode}
         iconImage={iconImage}
+        iconImgWidth={iconImageMenuHeaderImgWidth}
+        iconImgHeight={iconImageMenuHeaderImgHeight}
         menuNodes={headerMenuTree}
         menuCloseLabel={menuCloseLabel}
         onMenuClick={onMenuClick}
@@ -608,8 +624,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
                 <Image
                   src={iconImage}
                   alt={headerName}
-                  width={28}
-                  height={28}
+                  width={iconImageMenuHeaderImgWidth}
+                  height={iconImageMenuHeaderImgHeight}
                   className={styles.headerIcon}
                   unoptimized
                 />

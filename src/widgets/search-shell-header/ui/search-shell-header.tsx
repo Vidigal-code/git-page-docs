@@ -22,6 +22,8 @@ interface SearchShellHeaderProps {
   canToggleMode: boolean;
   onToggleMode: () => void;
   iconImage?: string;
+  iconImgWidth?: number;
+  iconImgHeight?: number;
   useReactHeaderIcon?: boolean;
   reactHeaderIconTag?: string;
   headerReactIconStyle?: React.CSSProperties;
@@ -41,6 +43,8 @@ export function SearchShellHeader({
   canToggleMode,
   onToggleMode,
   iconImage,
+  iconImgWidth = 20,
+  iconImgHeight = 20,
   useReactHeaderIcon,
   reactHeaderIconTag,
   headerReactIconStyle,
@@ -101,7 +105,7 @@ export function SearchShellHeader({
                 <ReactIconByTag tag={reactHeaderIconTag} />
               </span>
             ) : iconImage ? (
-              <Image src={iconImage} alt="" width={28} height={28} className={styles.brandIcon} unoptimized />
+              <Image src={iconImage} alt="" width={iconImgWidth} height={iconImgHeight} className={styles.brandIcon} unoptimized />
             ) : (
               <span className={styles.brandReactIcon} style={headerReactIconStyle}>
                 <ReactIconByTag tag="FaGithubSquare" />

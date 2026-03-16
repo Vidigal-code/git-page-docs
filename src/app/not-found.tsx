@@ -222,12 +222,14 @@ export default function NotFound() {
 
   const rawIconImage = siteConfig
     ? (nextModeIsDark
-        ? siteConfig.IconImageMenuHeaderDark?.trim()
-        : siteConfig.IconImageMenuHeaderLight?.trim()) ||
+        ? siteConfig.IconImageMenuHeaderDarkImg?.trim() || siteConfig.IconImageMenuHeaderDark?.trim()
+        : siteConfig.IconImageMenuHeaderLightImg?.trim() || siteConfig.IconImageMenuHeaderLight?.trim()) ||
       siteConfig.IconImageMenuHeader?.trim() ||
       siteConfig.SiteIconPath?.trim()
     : undefined;
   const iconImage = resolveIconPath(rawIconImage, basePath);
+  const iconImgWidth = Number(siteConfig?.IconImageMenuHeaderImgWidth) || 20;
+  const iconImgHeight = Number(siteConfig?.IconImageMenuHeaderImgHeight) || 20;
   const useReactHeaderIcon = Boolean(siteConfig?.IconImageMenuHeaderReactIcones);
   const reactHeaderIconTag = siteConfig?.IconImageMenuHeaderReactIconesTag;
   const headerReactIconStyle: React.CSSProperties = {
@@ -252,6 +254,8 @@ export default function NotFound() {
       canToggleMode={canToggleMode}
       onToggleMode={onToggleMode}
       iconImage={iconImage}
+      iconImgWidth={iconImgWidth}
+      iconImgHeight={iconImgHeight}
       useReactHeaderIcon={useReactHeaderIcon}
       reactHeaderIconTag={reactHeaderIconTag}
       headerReactIconStyle={headerReactIconStyle}
@@ -271,6 +275,8 @@ export default function NotFound() {
       canToggleMode={false}
       onToggleMode={() => {}}
       iconImage={iconImage}
+      iconImgWidth={iconImgWidth}
+      iconImgHeight={iconImgHeight}
       getLanguageLabel={getLanguageLabel}
     />
   );

@@ -140,6 +140,10 @@ export interface OfficialSiteConfig {
   SiteHeaderName?: string;
   SiteIconPath?: string;
   name?: string;
+  IconImageMenuHeaderImgWidth?: string | number;
+  IconImageMenuHeaderImgHeight?: string | number;
+  IconImageMenuHeaderLightImg?: string;
+  IconImageMenuHeaderDarkImg?: string;
   IconImageMenuHeaderLight?: string;
   IconImageMenuHeaderDark?: string;
   IconImageMenuHeader?: string;

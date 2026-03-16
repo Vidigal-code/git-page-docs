@@ -46,11 +46,13 @@ export function RepositorySearchShell({
   const basePath = getBasePath();
   const rawIconImage =
     (activeLayout?.mode === "dark"
-      ? data.config.site.IconImageMenuHeaderDark?.trim()
-      : data.config.site.IconImageMenuHeaderLight?.trim()) ||
+      ? data.config.site.IconImageMenuHeaderDarkImg?.trim() || data.config.site.IconImageMenuHeaderDark?.trim()
+      : data.config.site.IconImageMenuHeaderLightImg?.trim() || data.config.site.IconImageMenuHeaderLight?.trim()) ||
     data.config.site.IconImageMenuHeader?.trim() ||
     data.config.site.SiteIconPath?.trim();
   const iconImage = resolveIconPath(rawIconImage, basePath);
+  const iconImageMenuHeaderImgWidth = Number(data.config.site.IconImageMenuHeaderImgWidth) || 20;
+  const iconImageMenuHeaderImgHeight = Number(data.config.site.IconImageMenuHeaderImgHeight) || 20;
   const headerName = resolveHeaderName(data.config.site.SiteHeaderName, data.config.site.name);
   const useReactHeaderIcon = Boolean(data.config.site.IconImageMenuHeaderReactIcones);
   const reactHeaderIconTag = data.config.site.IconImageMenuHeaderReactIconesTag;
@@ -143,6 +145,8 @@ export function RepositorySearchShell({
       canToggleMode={canToggleMode}
       onToggleMode={onToggleMode}
       iconImage={iconImage}
+      iconImgWidth={iconImageMenuHeaderImgWidth}
+      iconImgHeight={iconImageMenuHeaderImgHeight}
       useReactHeaderIcon={useReactHeaderIcon}
       reactHeaderIconTag={reactHeaderIconTag}
       headerReactIconStyle={headerReactIconStyle}
