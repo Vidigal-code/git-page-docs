@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
 import type { LanguageCode } from "@/entities/docs/model/types";
+import { isFrameBlockedUrl } from "@/shared/lib/is-frame-blocked-url";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
 import styles from "../../docs-shell.module.css";
@@ -62,12 +63,35 @@ export function HtmlContainer({
   const containerStyle = getContainerStyle(config?.container);
   const externalUrl = url ?? config?.url?.[language] ?? config?.url?.en;
   const useExternalUrl = Boolean(externalUrl);
+  const isBlocked = useExternalUrl && isFrameBlockedUrl(externalUrl ?? undefined);
 
   const header = <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
   const content = (
     <article className={styles.card}>
       <div className={styles.htmlWrapper} style={containerStyle}>
-        {useExternalUrl ? (
+        {isBlocked ? (
+          <div className={styles.externalLinkCard}>
+            <p className={styles.externalLinkMessage}>
+              {language === "pt"
+                ? "Esta página não pode ser incorporada. Abra em uma nova aba para visualizar."
+                : language === "es"
+                  ? "Esta página no puede incrustarse. Ábrela en una nueva pestaña para verla."
+                  : "This page cannot be embedded. Open it in a new tab to view."}
+            </p>
+            <a
+              href={externalUrl ?? ""}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.externalLinkButton}
+            >
+              {language === "pt"
+                ? "Abrir em nova aba"
+                : language === "es"
+                  ? "Abrir en nueva pestaña"
+                  : "Open in new tab"}
+            </a>
+          </div>
+        ) : useExternalUrl ? (
           <iframe
             title="HTML content"
             className={styles.htmlIframe}

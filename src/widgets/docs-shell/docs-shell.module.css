@@ -601,6 +601,43 @@
   border-radius: 8px;
 }
 
+.externalLinkCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 240px;
+  padding: 24px;
+  background: color-mix(in srgb, var(--card-background) 60%, var(--background));
+  border: 1px dashed var(--card-border);
+  border-radius: 8px;
+}
+
+.externalLinkMessage {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+  opacity: 0.9;
+  text-align: center;
+}
+
+.externalLinkButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.externalLinkButton:hover {
+  opacity: 0.9;
+}
+
 .videoNative {
   width: 100%;
   max-width: 100%;
