@@ -39,6 +39,8 @@ interface MdContainerProps {
   routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
   /** Default TOC position when not set in config. */
   tocPositionDefault?: TocPosition;
+  /** When true, TOC links use default anchor behavior (for fullscreen mode) */
+  useDefaultScrollBehavior?: boolean;
 }
 
 export function MdContainer({
@@ -57,6 +59,7 @@ export function MdContainer({
   homeAncestorKeys = [],
   routeGuideIconConfig,
   tocPositionDefault = "center",
+  useDefaultScrollBehavior = false,
 }: MdContainerProps) {
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
@@ -102,7 +105,12 @@ export function MdContainer({
 
   const content =
     routeguideBrand && headings.length > 0 ? (
-      <TocContainer headings={headings} position={tocPosition} markdownContent={markdownContent} />
+      <TocContainer
+        headings={headings}
+        position={tocPosition}
+        markdownContent={markdownContent}
+        useDefaultScrollBehavior={useDefaultScrollBehavior}
+      />
     ) : (
       markdownContent
     );

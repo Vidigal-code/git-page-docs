@@ -77,29 +77,6 @@ export function DocsShellUrlFullscreenOverlay({
 }: DocsShellUrlFullscreenOverlayProps) {
   const fullscreenInnerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isOpen || !params) return;
-    const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
-    if (hash) {
-      const el = document.getElementById(hash);
-      const container = fullscreenInnerRef.current;
-      if (el) {
-        const timer = setTimeout(() => {
-          if (container && container.contains(el)) {
-            const scrollPadding = 80;
-            const elTop = el.getBoundingClientRect().top;
-            const containerTop = container.getBoundingClientRect().top;
-            const scrollOffset = elTop - containerTop + container.scrollTop - scrollPadding;
-            container.scrollTo({ top: Math.max(0, scrollOffset), behavior: "smooth" });
-          } else {
-            el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
-          }
-        }, 150);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [isOpen, params]);
-
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -121,28 +98,6 @@ export function DocsShellUrlFullscreenOverlay({
       document.body.style.overflow = prevOverflow;
     };
   }, [isOpen]);
-
-  const handleHashLinkClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const target = (e.target as HTMLElement).closest('a[href^="#"]');
-    if (!target || !(target instanceof HTMLAnchorElement)) return;
-    const href = target.getAttribute("href");
-    if (!href || href === "#") return;
-    e.preventDefault();
-    e.stopPropagation();
-    const id = href.slice(1);
-    const el = document.getElementById(id);
-    const container = fullscreenInnerRef.current;
-    if (el && container?.contains(el)) {
-      const scrollPadding = 80;
-      const elTop = el.getBoundingClientRect().top;
-      const containerTop = container.getBoundingClientRect().top;
-      const scrollOffset = elTop - containerTop + container.scrollTop - scrollPadding;
-      container.scrollTo({ top: Math.max(0, scrollOffset), behavior: "smooth" });
-      if (typeof window !== "undefined") {
-        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${id}`);
-      }
-    }
-  }, []);
 
   if (!isOpen || !params) {
     return null;
@@ -193,11 +148,7 @@ export function DocsShellUrlFullscreenOverlay({
       >
         <FiX aria-hidden />
       </button>
-      <div
-        ref={fullscreenInnerRef}
-        className={styles.contentContainerFullscreenInner}
-        onClickCapture={handleHashLinkClick}
-      >
+      <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
         <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
           <PageContentArea
           currentPage={currentPage}

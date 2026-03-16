@@ -10,9 +10,10 @@ interface TocContainerProps {
   headings: HeadingItem[];
   position: TocPosition;
   markdownContent: React.ReactNode;
+  useDefaultScrollBehavior?: boolean;
 }
 
-export function TocContainer({ headings, position, markdownContent }: TocContainerProps) {
+export function TocContainer({ headings, position, markdownContent, useDefaultScrollBehavior = false }: TocContainerProps) {
   if (headings.length === 0) {
     return <>{markdownContent}</>;
   }
@@ -20,7 +21,7 @@ export function TocContainer({ headings, position, markdownContent }: TocContain
   const toc = (
     <aside className={styles.tocAside} aria-label="Table of contents" data-position={position}>
       <div className={styles.tocScroll}>
-        <TocTree headings={headings} />
+        <TocTree headings={headings} useDefaultScrollBehavior={useDefaultScrollBehavior} />
       </div>
     </aside>
   );

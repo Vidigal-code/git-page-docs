@@ -9,9 +9,11 @@ interface TocTreeProps {
   headings: HeadingItem[];
   activeId?: string;
   className?: string;
+  /** When true, use default anchor behavior instead of custom scroll (for fullscreen mode) */
+  useDefaultScrollBehavior?: boolean;
 }
 
-export function TocTree({ headings, activeId, className }: TocTreeProps) {
+export function TocTree({ headings, activeId, className, useDefaultScrollBehavior = false }: TocTreeProps) {
   const [active, setActive] = useState(activeId || "");
   const scrollContainerRef = useTocScrollContainer();
 
@@ -60,21 +62,25 @@ export function TocTree({ headings, activeId, className }: TocTreeProps) {
             <a
               href={`#${h.id}`}
               className={`${styles.link} ${active === h.id ? styles.active : ""}`}
-              onClick={(e) => {
-                e.preventDefault();
-                const el = document.getElementById(h.id);
-                if (!el) return;
-                const container = scrollContainerRef?.current;
-                if (container && container.contains(el)) {
-                  const scrollPadding = 80;
-                  const elTop = el.getBoundingClientRect().top;
-                  const containerTop = container.getBoundingClientRect().top;
-                  const scrollOffset = elTop - containerTop + container.scrollTop - scrollPadding;
-                  container.scrollTo({ top: Math.max(0, scrollOffset), behavior: "smooth" });
-                } else {
-                  el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
-                }
-              }}
+              {...(useDefaultScrollBehavior
+                ? {}
+                : {
+                    onClick: (e: React.MouseEvent) => {
+                      e.preventDefault();
+                      const el = document.getElementById(h.id);
+                      if (!el) return;
+                      const container = scrollContainerRef?.current;
+                      if (container && container.contains(el)) {
+                        const scrollPadding = 80;
+                        const elTop = el.getBoundingClientRect().top;
+                        const containerTop = container.getBoundingClientRect().top;
+                        const scrollOffset = elTop - containerTop + container.scrollTop - scrollPadding;
+                        container.scrollTo({ top: Math.max(0, scrollOffset), behavior: "smooth" });
+                      } else {
+                        el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+                      }
+                    },
+                  })}
             >
               {h.text}
             </a>
