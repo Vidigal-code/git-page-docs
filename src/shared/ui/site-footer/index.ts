@@ -1,1 +1,1 @@
-export { SiteFooter } from "./site-footer";
+export { SiteFooter, type FooterConfig, type FooterDateMode } from "./site-footer";

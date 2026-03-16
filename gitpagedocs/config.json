@@ -13,6 +13,11 @@
     "ActiveNavigation": true,
     "FocusMode": true,
     "FooterEnabled": true,
+    "FooterLinkName": "GitPageDocs",
+    "FooterLinkUrl": "https://github.com/Vidigal-code/git-page-docs",
+    "FooterDateMode": "browser",
+    "FooterDateCustom": "",
+    "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
     "SiteIconPath": "/icon.svg",
     "SiteHeaderName": "Git Pages Docs",
     "IconImageMenuHeaderImgWidth": 20,
@@ -63,13 +68,14 @@
     "layoutsConfigPathOficial": true,
     "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates",
     "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
-    "repositorySearchHome": true,
+    "repositorySearchHome": false,
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
     "langmenu": {
       "pt": {
         "pt": "Portugues",
         "en": "Ingles",
         "es": "Espanhol",
+        "footerLabel": "Projeto",
         "menuOpen": "Menu",
         "menuClose": "Fechar",
         "showMenu": "Abrir menu",
@@ -82,6 +88,9 @@
         "noNavigationResults": "Nenhum resultado de navegacao.",
         "focusMode": "Modo foco",
         "versionLinksLabel": "Links do repositorio",
+        "titleHeaderMenuMd": "Markdown",
+        "titleHeaderMenuVideo": "Vídeo",
+        "titleHeaderMenuHtml": "Páginas",
         "lastUpdateVersionLabel": "Ultima versao de atualizacao",
         "darkMode": "Modo escuro",
         "lightMode": "Modo claro"
@@ -90,6 +99,7 @@
         "pt": "Portuguese",
         "en": "English",
         "es": "Spanish",
+        "footerLabel": "Project",
         "menuOpen": "Menu",
         "menuClose": "Close",
         "showMenu": "Show menu",
@@ -102,6 +112,9 @@
         "noNavigationResults": "No navigation results.",
         "focusMode": "Focus mode",
         "versionLinksLabel": "Repository links",
+        "titleHeaderMenuMd": "Markdown",
+        "titleHeaderMenuVideo": "Video",
+        "titleHeaderMenuHtml": "Pages",
         "lastUpdateVersionLabel": "Last update version",
         "darkMode": "Dark mode",
         "lightMode": "Light mode"
@@ -110,6 +123,7 @@
         "pt": "Portugues",
         "en": "Ingles",
         "es": "Espanol",
+        "footerLabel": "Proyecto",
         "menuOpen": "Menu",
         "menuClose": "Cerrar",
         "showMenu": "Abrir menu",
@@ -122,6 +136,9 @@
         "noNavigationResults": "Sin resultados de navegacion.",
         "focusMode": "Modo foco",
         "versionLinksLabel": "Enlaces del repositorio",
+        "titleHeaderMenuMd": "Markdown",
+        "titleHeaderMenuVideo": "Vídeo",
+        "titleHeaderMenuHtml": "Páginas",
         "lastUpdateVersionLabel": "Ultima version de actualizacion",
         "darkMode": "Modo oscuro",
         "lightMode": "Modo claro"
@@ -190,9 +207,9 @@
         "es": "Volver"
       },
       "next": {
-        "pt": "Avancar markdown",
-        "en": "Next Markdown",
-        "es": "Avanzar markdown"
+        "pt": "Proximo",
+        "en": "Next",
+        "es": "Siguiente"
       },
       "menuOpen": {
         "pt": "Menu",
@@ -203,6 +220,23 @@
         "pt": "Fechar",
         "en": "Close",
         "es": "Cerrar"
+      },
+      "browsePrev": {
+        "pt": "Anterior",
+        "en": "Previous",
+        "es": "Anterior"
+      },
+      "browseNext": {
+        "pt": "Proximo",
+        "en": "Next",
+        "es": "Siguiente"
+      }
+    },
+    "footer": {
+      "footerLabel": {
+        "pt": "Projeto",
+        "en": "Project",
+        "es": "Proyecto"
       }
     }
   }

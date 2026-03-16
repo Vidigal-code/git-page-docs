@@ -8,12 +8,19 @@ import type {
   LayoutItem,
   LayoutsConfig,
   LoadedDocsData,
+  LoadedPage,
+  PathToPageEntry,
   RouteConfig,
   ThemeTemplate,
   VersionEntry,
 } from "@/entities/docs/model/types";
 
-type VersionConfig = { routes?: RouteConfig[]; "menus-header"?: HeaderMenuItem[] };
+type VersionConfig = {
+  routes?: RouteConfig[];
+  "menus-header"?: HeaderMenuItem[];
+  "routes-md"?: RouteConfig[];
+  "menus-header-md"?: HeaderMenuItem[];
+};
 export type SupportedLanguage = "en" | "pt" | "es";
 
 const REQUEST_TIMEOUT_MS = 12000;
@@ -156,12 +163,15 @@ async function fetchUrlJson<T>(url: string): Promise<T | null> {
   }
 }
 
-function getAvailableLanguages(routes: RouteConfig[], fallbackLanguage: LanguageCode): LanguageCode[] {
-  const firstRoute = routes[0];
-  if (!firstRoute) {
+function getAvailableLanguages(
+  routes: Array<{ path?: Record<LanguageCode, string> }>,
+  fallbackLanguage: LanguageCode,
+): LanguageCode[] {
+  const firstWithPath = routes.find((r) => r.path && Object.keys(r.path).length > 0);
+  if (!firstWithPath?.path) {
     return [fallbackLanguage];
   }
-  return Object.keys(firstRoute.path);
+  return Object.keys(firstWithPath.path);
 }
 
 function resolveActiveVersion(
@@ -327,18 +337,17 @@ export async function loadRemoteDocsData(
   const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);
   const activeVersionId = activeVersion?.id;
 
-  let routes = config.routes ?? [];
-  let menusHeader = config["menus-header"] ?? [];
+  let routes = config["routes-md"] ?? config.routes ?? [];
+  let menusHeader = config["menus-header-md"] ?? config["menus-header"] ?? [];
   if (activeVersion) {
     const versionConfig = await loadVersionConfig(owner, repo, activeVersion);
-    if (versionConfig?.routes?.length) {
-      routes = versionConfig.routes;
-    }
-    if (versionConfig?.["menus-header"]?.length) {
-      menusHeader = versionConfig["menus-header"];
-    }
+    if (versionConfig?.["routes-md"]?.length) routes = versionConfig["routes-md"];
+    else if (versionConfig?.routes?.length) routes = versionConfig.routes;
+    if (versionConfig?.["menus-header-md"]?.length) menusHeader = versionConfig["menus-header-md"];
+    else if (versionConfig?.["menus-header"]?.length) menusHeader = versionConfig["menus-header"];
   }
 
+  const routesWithPath = routes.filter((r): r is RouteConfig => Boolean(r.path && Object.keys(r.path).length > 0));
   const availableLanguages = getAvailableLanguages(routes, config.site.defaultLanguage);
   const preferredLanguage = availableLanguages.includes(selectedLanguage)
     ? selectedLanguage
@@ -346,22 +355,24 @@ export async function loadRemoteDocsData(
       ? config.site.defaultLanguage
       : availableLanguages[0] ?? "en";
 
+  const routesForConfig: RouteConfig[] = routesWithPath.map((r) => ({ id: r.id, path: r.path }));
+
   const effectiveConfig: GitPageDocsConfig = {
     ...config,
     site: {
       ...config.site,
       defaultLanguage: preferredLanguage,
     },
-    routes,
+    routes: routesForConfig,
     "menus-header": menusHeader,
   };
 
   const docs = await Promise.all(
-    routes.map(async (route) => {
+    routesWithPath.map(async (route) => {
       const markdownByLanguage: Record<LanguageCode, string> = {};
       await Promise.all(
         availableLanguages.map(async (langCode) => {
-          const markdownPath = route.path[langCode];
+          const markdownPath = route.path![langCode];
           if (!markdownPath) {
             markdownByLanguage[langCode] = "<p>Missing language file path in config.</p>";
             return;
@@ -379,6 +390,19 @@ export async function loadRemoteDocsData(
     }),
   );
 
+  const pathToPageMap: Record<string, PathToPageEntry> = {};
+  const pages: LoadedPage[] = docs.map((doc, idx) => {
+    const route = routesWithPath[idx];
+    availableLanguages.forEach((lang) => {
+      const pathVal = route.path[lang];
+      if (pathVal) pathToPageMap[pathVal] = { pageIndex: idx, contentType: "md" };
+    });
+    return {
+      id: route.id,
+      md: { routeId: route.id, config: route, markdownByLanguage: doc.markdownByLanguage, fullscreenEnabled: true },
+    };
+  });
+
   let layoutsConfig: LayoutsConfig;
   let themes: Record<string, ThemeTemplate>;
   try {
@@ -394,6 +418,8 @@ export async function loadRemoteDocsData(
   return {
     config: effectiveConfig,
     docs,
+    pages,
+    pathToPageMap,
     showRepositorySearchHome: false,
     availableVersions: versions,
     activeVersionId,

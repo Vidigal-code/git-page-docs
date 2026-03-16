@@ -35,6 +35,14 @@ function parseDocFileToKey(fileName) {
   if (fileName === "architecture.md") return "architecture";
   if (fileName === "themes.md") return "themes";
   if (fileName === "faq.md") return "faq";
+  if (fileName === "project-overview.md") return "projectOverview";
+  if (fileName === "github-issues-projects.md") return "githubIssuesProjects";
+  if (fileName === "git-introduction.md") return "gitIntroduction";
+  return undefined;
+}
+
+function parseHtmlFileToKey(fileName) {
+  if (fileName === "getting-started.html") return "gettingStarted";
   return undefined;
 }
 
@@ -105,8 +113,8 @@ export async function writeConfigOnlyOutput(options) {
   }
 
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
-    const versionRoutes = versionConfig.routes ?? [];
-    for (const route of versionRoutes) {
+    const versionRoutesMd = versionConfig["routes-md"] ?? versionConfig.routes ?? [];
+    for (const route of versionRoutesMd) {
       for (const docPath of Object.values(route.path ?? {})) {
         const fileName = path.basename(docPath);
         const key = parseDocFileToKey(fileName);
@@ -115,6 +123,20 @@ export async function writeConfigOnlyOutput(options) {
         if (!content) continue;
         const versionedContent = withVersionBadge(content, versionId, language);
         await writeText(root, normalizeToOutputPath(outputDir, docPath), versionedContent);
+      }
+    }
+
+    const versionRoutesHtml = versionConfig["routes-html"] ?? [];
+    const docsHtml = artifacts.docsHtml ?? {};
+    for (const route of versionRoutesHtml) {
+      if (route.url) continue;
+      for (const docPath of Object.values(route.path ?? {})) {
+        const fileName = path.basename(docPath);
+        const key = parseHtmlFileToKey(fileName);
+        const language = extractLanguageFromPath(docPath);
+        const content = key && language ? docsHtml[key]?.[language] : undefined;
+        if (!content) continue;
+        await writeText(root, normalizeToOutputPath(outputDir, docPath), content);
       }
     }
 

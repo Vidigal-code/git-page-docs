@@ -38,9 +38,22 @@ Behavior:
 
 ## Navigation
 
-- `routes`: markdown paths per language
+- `routes`: markdown paths per language (legacy)
 - `menus-header`: hierarchical menu model
 - `translations`: UI labels
+
+## Content types (version config)
+
+Version configs support multiple content types:
+
+- `routes-md`: Markdown routes with optional `title`, `description` (centered via `titlePosition`, `descriptionPosition`)
+- `routes-html`: HTML page paths per language
+- `routes-video`: Video config with `video.videoType` (youtube, vimeo, mp4, etc.) and `video.pathVideo`
+- `menus-header-md`, `menus-header-html`, `menus-header-video`: menus per type
+- `hierarchyPage`: container order on page `{ md: 0, html: 1, video: 2 }`
+- `hierarchyMenu`: menu section order `{ md: 0, html: 1, video: 2 }`
+
+Each route can include `title`, `description` (per language), `titleCss`, `titlePosition: "center"`, `descriptionPosition: "center"`, `titleIsVisible`, `descriptionIsVisible`.
 
 ## Environment variables
 

@@ -84,9 +84,10 @@ export function resolveHeaderIconConfig(
 }
 
 /**
- * Resolves the icon path for use in headers and metadata.
- * SiteIconPath like "gitpagedocs/icon.svg" is not served in static export;
- * we use the fallback (public/icon.svg) which is deployed at /icon.svg or {basePath}/icon.svg.
+ * Resolves the icon path for use in headers, metadata, and Image components.
+ * For local icons: returns basePath + "/icon.svg" when basePath exists (GitHub Pages);
+ * otherwise "/icon.svg". Remote URLs (http/https) are returned as-is.
+ * Ensures correct favicon and asset paths on GitHub Pages for all repositories.
  */
 export function resolveIconPath(siteIconPath: string | undefined, basePath: string): string {
   const trimmed = siteIconPath?.trim();
@@ -95,9 +96,6 @@ export function resolveIconPath(siteIconPath: string | undefined, basePath: stri
   }
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
     return trimmed;
-  }
-  if (trimmed === FALLBACK_ICON_PATH || trimmed === "/icon.svg") {
-    return basePath ? `${basePath}${FALLBACK_ICON_PATH}` : trimmed;
   }
   return basePath ? `${basePath}${FALLBACK_ICON_PATH}` : FALLBACK_ICON_PATH;
 }

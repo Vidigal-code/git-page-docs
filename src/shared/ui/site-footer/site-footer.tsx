@@ -3,51 +3,61 @@
 import { useEffect, useState } from "react";
 import styles from "./site-footer.module.css";
 
-interface SiteFooterProps {
+export type FooterDateMode = "browser" | "year" | "custom";
+
+export interface FooterConfig {
+  projectLabel: string;
+  linkName: string;
+  linkUrl: string;
+  dateMode?: FooterDateMode;
+  dateCustom?: string;
+}
+
+export interface SiteFooterProps {
   language: string;
-  projectUrl: string;
+  projectLabel: string;
+  linkName: string;
+  linkUrl: string;
+  dateMode?: FooterDateMode;
+  dateCustom?: string;
 }
 
-const COPY = {
-  en: {
-    project: "Project",
-    date: "Browser date",
-  },
-  pt: {
-    project: "Projeto",
-    date: "Data do navegador",
-  },
-  es: {
-    project: "Proyecto",
-    date: "Fecha del navegador",
-  },
-} as const;
-
-function resolveLanguage(language: string): keyof typeof COPY {
-  return language === "pt" || language === "es" ? language : "en";
-}
-
-export function SiteFooter({ language, projectUrl }: SiteFooterProps) {
-  const lang = resolveLanguage(language);
-  const copy = COPY[lang];
-  const [browserDate, setBrowserDate] = useState("--/--/----");
+export function SiteFooter({
+  language,
+  projectLabel,
+  linkName,
+  linkUrl,
+  dateMode = "browser",
+  dateCustom = "",
+}: SiteFooterProps) {
+  const [dateText, setDateText] = useState("--/--/----");
 
   useEffect(() => {
-    setBrowserDate(new Date().toLocaleDateString());
-  }, []);
+    if (dateMode === "browser") {
+      setDateText(new Date().toLocaleDateString());
+    } else if (dateMode === "year") {
+      setDateText(String(new Date().getFullYear()));
+    } else {
+      setDateText("");
+    }
+  }, [dateMode]);
+
+  const showDate = dateMode === "custom" ? dateCustom : dateText;
 
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <span className={styles.item}>
-          {copy.project}:{" "}
-          <a className={styles.link} href={projectUrl} target="_blank" rel="noreferrer">
-            git-page-docs
+          {projectLabel}:{" "}
+          <a className={styles.link} href={linkUrl} target="_blank" rel="noreferrer">
+            {linkName}
           </a>
         </span>
-        <span className={styles.item}>
-          <span suppressHydrationWarning>{browserDate}</span>
-        </span>
+        {showDate && (
+          <span className={styles.item}>
+            <span suppressHydrationWarning>{showDate}</span>
+          </span>
+        )}
       </div>
     </footer>
   );

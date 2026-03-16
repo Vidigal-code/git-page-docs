@@ -1,78 +1,370 @@
 {
-  "routes": [
-    {
-      "id": 0,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/index.md",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/index.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/index.md"
-      }
-    },
+  "routes-md": [
     {
       "id": 1,
+      "title": {
+        "pt": "Primeiros passos",
+        "en": "Getting Started",
+        "es": "Primeros pasos"
+      },
+      "description": {
+        "pt": "Configure o repositório do zero",
+        "en": "Configure repository from zero",
+        "es": "Configura el repositorio desde cero"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
       "path": {
         "pt": "gitpagedocs/docs/versions/1.1.1/pt/getting-started.md",
         "en": "gitpagedocs/docs/versions/1.1.1/en/getting-started.md",
         "es": "gitpagedocs/docs/versions/1.1.1/es/getting-started.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true
+    },
+    {
+      "id": 2,
+      "title": {
+        "pt": "Visão geral do projeto",
+        "en": "Project overview",
+        "es": "Visión general del proyecto"
+      },
+      "description": {
+        "pt": "Stack, objetivo e estrutura do Git Page Docs",
+        "en": "Stack, goals and structure of Git Page Docs",
+        "es": "Stack, objetivos y estructura de Git Page Docs"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/project-overview.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/project-overview.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/project-overview.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true
+    },
+    {
+      "id": 3,
+      "title": {
+        "pt": "GitHub Issues e Projects",
+        "en": "GitHub issues and projects",
+        "es": "GitHub issues y projects"
+      },
+      "description": {
+        "pt": "Como usar Issues e Projects no GitHub",
+        "en": "How to use GitHub Issues and Projects",
+        "es": "Cómo usar GitHub Issues y Projects"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/github-issues-projects.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/github-issues-projects.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/github-issues-projects.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true
+    },
+    {
+      "id": 4,
+      "title": {
+        "pt": "Introdução ao Git",
+        "en": "Introduction to Git",
+        "es": "Introducción a Git"
+      },
+      "description": {
+        "pt": "Conceitos básicos de Git para iniciantes",
+        "en": "Basic Git concepts for beginners",
+        "es": "Conceptos básicos de Git para principiantes"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/git-introduction.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/git-introduction.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/git-introduction.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true
+    }
+  ],
+  "routes-html": [
+    {
+      "id": 1,
+      "title": {
+        "pt": "Primeiros passos",
+        "en": "Getting Started",
+        "es": "Primeros pasos"
+      },
+      "description": {
+        "pt": "Configure o repositório do zero",
+        "en": "Configure repository from zero",
+        "es": "Configura el repositorio desde cero"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/getting-started.html",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/getting-started.html",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/getting-started.html"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true
+    },
+    {
+      "id": 2,
+      "title": {
+        "pt": "Visão geral do projeto",
+        "en": "Project overview",
+        "es": "Visión general del proyecto"
+      },
+      "description": {
+        "pt": "Stack, objetivo e estrutura do Git Page Docs",
+        "en": "Stack, goals and structure of Git Page Docs",
+        "es": "Stack, objetivos y estructura de Git Page Docs"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "container": "full",
+      "browseAll": true,
+      "url": {
+        "pt": "https://github.com/Vidigal-code/git-page-docs",
+        "en": "https://github.com/Vidigal-code/git-page-docs",
+        "es": "https://github.com/Vidigal-code/git-page-docs"
+      }
+    }
+  ],
+  "routes-video": [
+    {
+      "id": 1,
+      "title": {
+        "pt": "Interactive vs non-interactive modes | Copilot CLI for beginners",
+        "en": "Interactive vs non-interactive modes | Copilot CLI for beginners",
+        "es": "Interactive vs non-interactive modes | Copilot CLI for beginners"
+      },
+      "description": {
+        "pt": "Quer saber a forma mais rápida de usar o GitHub Copilot no terminal? Neste tutorial, exploramos os dois modos principais do Copilot CLI.",
+        "en": "Want to know the fastest way to prompt GitHub Copilot from your terminal? In this beginner tutorial, we explore the two main modes of the Copilot CLI. Discover how to use the interactive mode to have GitHub Copilot run your project locally or use the non-interactive mode with the -p flag for quick summaries without leaving your shell context.",
+        "es": "¿Quieres conocer la forma más rápida de usar GitHub Copilot desde tu terminal? En este tutorial exploramos los dos modos principales del Copilot CLI."
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true,
+      "video": {
+        "videoType": {
+          "pt": "youtube",
+          "en": "youtube",
+          "es": "youtube"
+        },
+        "pathVideo": {
+          "pt": "bdIJkGr2NV0",
+          "en": "bdIJkGr2NV0",
+          "es": "bdIJkGr2NV0"
+        }
       }
     },
     {
       "id": 2,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/configuration.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/configuration.md"
+      "title": {
+        "pt": "How to use GitHub issues and projects | GitHub for Beginners",
+        "en": "How to use GitHub issues and projects | GitHub for Beginners",
+        "es": "How to use GitHub issues and projects | GitHub for Beginners"
+      },
+      "description": {
+        "pt": "Aprenda a usar GitHub Issues e Projects para gerenciar seu trabalho.",
+        "en": "Learn how to use GitHub Issues and Projects to manage your work effectively.",
+        "es": "Aprende a usar GitHub Issues y Projects para gestionar tu trabajo."
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true,
+      "video": {
+        "videoType": {
+          "pt": "youtube",
+          "en": "youtube",
+          "es": "youtube"
+        },
+        "pathVideo": {
+          "pt": "c67GaAkf1BE",
+          "en": "c67GaAkf1BE",
+          "es": "c67GaAkf1BE"
+        }
       }
     },
     {
       "id": 3,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/deployment.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/deployment.md"
+      "title": {
+        "pt": "How I built an AI Python tutor with the GitHub Copilot SDK",
+        "en": "How I built an AI Python tutor with the GitHub Copilot SDK",
+        "es": "How I built an AI Python tutor with the GitHub Copilot SDK"
+      },
+      "description": {
+        "pt": "Construindo um tutor de Python com IA usando o GitHub Copilot SDK.",
+        "en": "Building an AI Python tutor using the GitHub Copilot SDK.",
+        "es": "Construyendo un tutor de Python con IA usando el GitHub Copilot SDK."
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true,
+      "video": {
+        "videoType": {
+          "pt": "youtube",
+          "en": "youtube",
+          "es": "youtube"
+        },
+        "pathVideo": {
+          "pt": "N3my6W_Rdwg",
+          "en": "N3my6W_Rdwg",
+          "es": "N3my6W_Rdwg"
+        }
       }
     },
     {
       "id": 4,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/architecture.md",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/architecture.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/architecture.md"
-      }
-    },
-    {
-      "id": 5,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/themes.md",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/themes.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/themes.md"
-      }
-    },
-    {
-      "id": 6,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/faq.md",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/faq.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/faq.md"
+      "title": {
+        "pt": "A brief introduction to Git for beginners | GitHub",
+        "en": "A brief introduction to Git for beginners | GitHub",
+        "es": "A brief introduction to Git for beginners | GitHub"
+      },
+      "description": {
+        "pt": "Introdução ao Git para iniciantes.",
+        "en": "A brief introduction to Git for beginners.",
+        "es": "Una breve introducción a Git para principiantes."
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": true,
+      "video": {
+        "videoType": {
+          "pt": "youtube",
+          "en": "youtube",
+          "es": "youtube"
+        },
+        "pathVideo": {
+          "pt": "r8jQ9hVA2qs",
+          "en": "r8jQ9hVA2qs",
+          "es": "r8jQ9hVA2qs"
+        }
       }
     }
   ],
-  "menus-header": [
-    {
-      "id": 0,
-      "pt": {
-        "title": "Inicio",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/index.md"
-      },
-      "en": {
-        "title": "Home",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/en/index.md"
-      },
-      "es": {
-        "title": "Inicio",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/es/index.md"
-      }
-    },
+  "menus-header-md": [
     {
       "id": 1,
       "pt": {
@@ -91,74 +383,151 @@
     {
       "id": 2,
       "pt": {
-        "title": "Configuracao",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md",
-        "submenus": [
-          {
-            "title": "Arquitetura",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/pt/architecture.md"
-          },
-          {
-            "title": "Temas e layouts",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/pt/themes.md"
-          },
-          {
-            "title": "FAQ",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/pt/faq.md"
-          }
-        ]
+        "title": "Visão geral do projeto",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/project-overview.md"
       },
       "en": {
-        "title": "Configuration",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/en/configuration.md",
-        "submenus": [
-          {
-            "title": "Architecture",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/en/architecture.md"
-          },
-          {
-            "title": "Themes and layouts",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/en/themes.md"
-          },
-          {
-            "title": "FAQ",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/en/faq.md"
-          }
-        ]
+        "title": "Project overview",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/project-overview.md"
       },
       "es": {
-        "title": "Configuracion",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/es/configuration.md",
-        "submenus": [
-          {
-            "title": "Arquitectura",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/es/architecture.md"
-          },
-          {
-            "title": "Temas y layouts",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/es/themes.md"
-          },
-          {
-            "title": "FAQ",
-            "path-click": "gitpagedocs/docs/versions/1.1.1/es/faq.md"
-          }
-        ]
+        "title": "Visión general del proyecto",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/project-overview.md"
       }
     },
     {
       "id": 3,
       "pt": {
-        "title": "Publicacao",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md"
+        "title": "GitHub Issues e Projects",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/github-issues-projects.md"
       },
       "en": {
-        "title": "Deployment",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/en/deployment.md"
+        "title": "GitHub issues and projects",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/github-issues-projects.md"
       },
       "es": {
-        "title": "Publicacion",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/es/deployment.md"
+        "title": "GitHub issues y projects",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/github-issues-projects.md"
+      }
+    },
+    {
+      "id": 4,
+      "pt": {
+        "title": "Introdução ao Git",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/git-introduction.md"
+      },
+      "en": {
+        "title": "Introduction to Git",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/git-introduction.md"
+      },
+      "es": {
+        "title": "Introducción a Git",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/git-introduction.md"
       }
     }
-  ]
+  ],
+  "menus-header-html": [
+    {
+      "id": 1,
+      "pt": {
+        "title": "Primeiros passos (HTML)",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/getting-started.html"
+      },
+      "en": {
+        "title": "Getting Started (HTML)",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/getting-started.html"
+      },
+      "es": {
+        "title": "Primeros pasos (HTML)",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/getting-started.html"
+      }
+    },
+    {
+      "id": 2,
+      "pt": {
+        "title": "GitHub (URL)",
+        "path-click": "url:https://github.com/Vidigal-code/git-page-docs"
+      },
+      "en": {
+        "title": "GitHub (URL)",
+        "path-click": "url:https://github.com/Vidigal-code/git-page-docs"
+      },
+      "es": {
+        "title": "GitHub (URL)",
+        "path-click": "url:https://github.com/Vidigal-code/git-page-docs"
+      }
+    }
+  ],
+  "menus-header-video": [
+    {
+      "id": 1,
+      "pt": {
+        "title": "Interactive vs non-interactive modes | C...",
+        "path-click": "page:1"
+      },
+      "en": {
+        "title": "Interactive vs non-interactive modes | C...",
+        "path-click": "page:1"
+      },
+      "es": {
+        "title": "Interactive vs non-interactive modes | C...",
+        "path-click": "page:1"
+      }
+    },
+    {
+      "id": 2,
+      "pt": {
+        "title": "How to use GitHub issues and projects | ...",
+        "path-click": "page:2"
+      },
+      "en": {
+        "title": "How to use GitHub issues and projects | ...",
+        "path-click": "page:2"
+      },
+      "es": {
+        "title": "How to use GitHub issues and projects | ...",
+        "path-click": "page:2"
+      }
+    },
+    {
+      "id": 3,
+      "pt": {
+        "title": "How I built an AI Python tutor with the ...",
+        "path-click": "page:3"
+      },
+      "en": {
+        "title": "How I built an AI Python tutor with the ...",
+        "path-click": "page:3"
+      },
+      "es": {
+        "title": "How I built an AI Python tutor with the ...",
+        "path-click": "page:3"
+      }
+    },
+    {
+      "id": 4,
+      "pt": {
+        "title": "A brief introduction to Git for beginner...",
+        "path-click": "page:4"
+      },
+      "en": {
+        "title": "A brief introduction to Git for beginner...",
+        "path-click": "page:4"
+      },
+      "es": {
+        "title": "A brief introduction to Git for beginner...",
+        "path-click": "page:4"
+      }
+    }
+  ],
+  "hierarchyPage": {
+    "md": 0,
+    "html": 1,
+    "video": 2
+  },
+  "hierarchyMenu": {
+    "md": 0,
+    "html": 1,
+    "video": 2
+  }
 }

@@ -8,6 +8,7 @@ const basePath = `/${repositoryName}`;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  optimizePackageImports: ["react-icons"],
   output: isGithubPagesBuild ? "export" : undefined,
   trailingSlash: emulateGithubPagesRuntime,
   basePath: emulateGithubPagesRuntime ? basePath : undefined,

@@ -5,9 +5,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
 import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
+import { toFullPath } from "@/shared/lib/base-path";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LoadedDocsData } from "@/entities/docs/model/types";
-import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
@@ -16,7 +16,7 @@ import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
 import { useFocusMode } from "./model/use-focus-mode";
-import { buildHeaderMenuTree, flattenMenuTree, getRouteIndexByPath } from "./model/menu-tree";
+import { buildUnifiedHeaderMenuTree, flattenMenuTree, getPageIndexByPathClick } from "./model/menu-tree";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { DocsShellControls } from "./ui/docs-shell-controls";
@@ -27,6 +27,7 @@ import { DocsShellQuickNavOverlay } from "./ui/docs-shell-quick-nav-overlay";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellInfoOverlay } from "./ui/docs-shell-info-overlay";
 import { DocsShellVersionLinksOverlay } from "./ui/docs-shell-version-links-overlay";
+import { PageContentArea } from "./ui/page-content-area";
 import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
@@ -53,16 +54,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   function replaceUrlWithoutNavigation(nextPathname: string, params: URLSearchParams): void {
     if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname || "/";
+      const appPath = nextPathname || pathname || "/";
       const qs = params.toString();
-      const nextUrl = qs ? `${currentPath}?${qs}` : currentPath;
+      const nextUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
       window.history.replaceState({}, "", nextUrl);
       return;
     }
     const normalizedPath = nextPathname || pathname || "/";
     const qs = params.toString();
-    const nextUrl = qs ? `${normalizedPath}?${qs}` : normalizedPath;
-    router.replace(nextUrl);
+    router.replace(qs ? `${normalizedPath}?${qs}` : normalizedPath);
   }
 
   const { language, onLanguageChange } = useDocsShellLanguageState({
@@ -93,19 +93,29 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     replaceUrlWithoutNavigation,
   });
   const {
-    routeIndex,
+    pageIndex,
+    setPageIndex,
     onMenuClick: onMenuClickState,
     toggleNode,
     isNodeExpanded,
+    mdBrowseIndex,
+    htmlBrowseIndex,
+    videoBrowseIndex,
+    setMdBrowseIndex,
+    setHtmlBrowseIndex,
+    setVideoBrowseIndex,
+    mdItems,
+    htmlItems,
+    videoItems,
   } = useDocsShellNavigationState({
     data,
     language,
     setSidebarOpen,
     setMenuOpen,
   });
-  const safeRouteIndex = routeIndex >= 0 && routeIndex < data.docs.length ? routeIndex : 0;
-  const currentDoc = data.docs[safeRouteIndex];
-  const markdownHtml = currentDoc?.markdownByLanguage[language] ?? "<p>Document not found for this language.</p>";
+  const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
+  const currentPage = data.pages?.[safePageIndex];
+  const markdownHtml = currentPage?.md?.markdownByLanguage[language] ?? data.docs?.[safePageIndex]?.markdownByLanguage[language] ?? "<p>Document not found for this language.</p>";
   const activeTheme = data.themes[activeLayout?.id];
   const hideThemeSelector = data.config.site.HideThemeSelector;
   const cssVars = useMemo(() => toDocsShellCssVars(activeTheme), [activeTheme]);
@@ -114,7 +124,17 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     language,
     "Previous",
   );
-  const nextLabel = resolveTranslation(data.config.translations?.navigation?.next, language, "Next Markdown");
+  const nextLabel = resolveTranslation(data.config.translations?.navigation?.next, language, "Next");
+  const browsePrevLabel = resolveTranslation(
+    data.config.translations?.navigation?.browsePrev,
+    language,
+    previousLabel,
+  );
+  const browseNextLabel = resolveTranslation(
+    data.config.translations?.navigation?.browseNext,
+    language,
+    nextLabel,
+  );
   const menuOpenLabel = getLangMenuLabelFromMenu(
     data.config.site.langmenu,
     language,
@@ -137,11 +157,25 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const versionFromQuery = searchParams.get("version");
 
   const headerMenuTree = useMemo(
-    () => buildHeaderMenuTree(data.config["menus-header"] ?? [], data, language, safeRouteIndex),
-    [data, language, safeRouteIndex],
+    () => buildUnifiedHeaderMenuTree(data, language, safePageIndex),
+    [data, language, safePageIndex],
   );
 
   const headerMenuEntries = useMemo(() => flattenMenuTree(headerMenuTree), [headerMenuTree]);
+  const linearNavigationEntries = useMemo(() => {
+    const seenPages = new Set<number>();
+    return headerMenuEntries.filter((entry) => {
+      if (!entry.pathClick) return false;
+      const pageIdx = getPageIndexByPathClick(data, entry.pathClick);
+      if (pageIdx < 0 || seenPages.has(pageIdx)) return false;
+      seenPages.add(pageIdx);
+      return true;
+    });
+  }, [headerMenuEntries, data]);
+  const currentLinearNavigationIndex = useMemo(
+    () => linearNavigationEntries.findIndex((entry) => getPageIndexByPathClick(data, entry.pathClick) === safePageIndex),
+    [linearNavigationEntries, data, safePageIndex],
+  );
   const {
     quickNavOpen,
     setQuickNavOpen,
@@ -177,7 +211,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     routerReplace: router.replace,
   });
 
-  const { headerIconConfig, controlsConfig, footerEnabled } = useDocsShellConfig(
+  const { headerIconConfig, controlsConfig, footerEnabled, footerConfig } = useDocsShellConfig(
     data,
     activeLayout,
     language,
@@ -196,26 +230,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     iconImgHeight: iconImageMenuHeaderImgHeight,
   } = headerIconConfig;
 
-  const linearNavigationEntries = useMemo(() => {
-    const seen = new Set<string>();
-    return headerMenuEntries.filter((entry) => {
-      if (!entry.pathClick || seen.has(entry.pathClick)) {
-        return false;
-      }
-      const hasRoute = getRouteIndexByPath(data, language, entry.pathClick) >= 0;
-      if (!hasRoute) {
-        return false;
-      }
-      seen.add(entry.pathClick);
-      return true;
-    });
-  }, [headerMenuEntries, data, language]);
-
-  const currentRoutePath = data.config.routes[safeRouteIndex]?.path[language] ?? "";
-  const currentLinearNavigationIndex = useMemo(
-    () => linearNavigationEntries.findIndex((entry) => entry.pathClick === currentRoutePath),
-    [linearNavigationEntries, currentRoutePath],
-  );
   const canGoPrevious = currentLinearNavigationIndex > 0;
   const canGoNext =
     currentLinearNavigationIndex >= 0 && currentLinearNavigationIndex < linearNavigationEntries.length - 1;
@@ -275,14 +289,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       const validPathVersion = hasVersionInConfig(versionFromPath) ? versionFromPath : undefined;
 
       if (validUrlVersion && validUrlVersion !== validPathVersion) {
-        const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname;
-        const basePath = currentPathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+        const appBase = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
         params.delete("version");
-        const target = buildVersionPath(basePath, validUrlVersion);
+        const targetAppPath = buildVersionPath(appBase, validUrlVersion);
         const qs = params.toString();
-        const nextUrl = qs ? `${target}?${qs}` : target;
+        const nextUrl = qs ? `${targetAppPath}?${qs}` : targetAppPath;
         if (typeof window !== "undefined") {
-          window.location.replace(nextUrl);
+          window.location.replace(qs ? `${toFullPath(targetAppPath)}?${qs}` : toFullPath(targetAppPath));
         } else {
           router.replace(nextUrl);
         }
@@ -290,17 +303,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       }
 
       if (urlVersion && !validUrlVersion) {
-        // Remove invalid version from query to avoid inconsistent state.
         params.delete("version");
         if (typeof window !== "undefined") {
-          const currentPath = window.location.pathname || "/";
           const qs = params.toString();
-          const nextUrl = qs ? `${currentPath}?${qs}` : currentPath;
+          const nextUrl = qs ? `${toFullPath(pathname)}?${qs}` : toFullPath(pathname);
           window.history.replaceState({}, "", nextUrl);
         } else {
           const qs = params.toString();
-          const nextUrl = qs ? `${pathname}?${qs}` : pathname;
-          router.replace(nextUrl);
+          router.replace(qs ? `${pathname}?${qs}` : pathname);
         }
       }
       return;
@@ -308,9 +318,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
     params.delete("version");
     if (urlVersion && data.availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
-      const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname;
-      const base = currentPathname.replace(/\/$/, "");
-      const target = `${base}/v/${urlVersion}`;
+      const appBase = pathname.replace(/\/$/, "") || pathname;
+      const target = `${appBase}/v/${urlVersion}`;
       const qs = params.toString();
       router.replace(qs ? `${target}?${qs}` : target);
       return;
@@ -318,9 +327,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     try {
       const savedVersion = window.localStorage.getItem(versionStorageKey);
       if (savedVersion && data.availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
-        const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname;
-        const base = currentPathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        const target = buildVersionPath(base || currentPathname, savedVersion);
+        const appBase = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "") || pathname;
+        const target = buildVersionPath(appBase, savedVersion);
         const qs = params.toString();
         router.replace(qs ? `${target}?${qs}` : target);
       }
@@ -355,6 +363,11 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     }
     onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys);
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pageIndex]);
 
   function openVersionLinksPopup() {
     setMenuOpen(false);
@@ -454,22 +467,48 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         />
 
         <main className={styles.main}>
-          <article className={styles.card}>
-            <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: markdownHtml }} />
-
-            {linearNavigationEntries.length > 1 && (
-              <div className={styles.footerActions}>
-                <button className={styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious}>
-                  {previousLabel}
-                </button>
-                <button className={styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext}>
-                  {nextLabel}
-                </button>
-              </div>
-            )}
-          </article>
+          <PageContentArea
+            currentPage={currentPage}
+            data={data}
+            language={language}
+            isDarkMode={nextMode === "dark"}
+            fullscreenCloseLabel={menuCloseLabel}
+            fullscreenExpandLabel={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "showMenu", "Fullscreen")}
+            previousLabel={previousLabel}
+            nextLabel={nextLabel}
+            browsePrevLabel={browsePrevLabel}
+            browseNextLabel={browseNextLabel}
+            mdBrowseIndex={mdBrowseIndex}
+            htmlBrowseIndex={htmlBrowseIndex}
+            videoBrowseIndex={videoBrowseIndex}
+            setMdBrowseIndex={setMdBrowseIndex}
+            setHtmlBrowseIndex={setHtmlBrowseIndex}
+            setVideoBrowseIndex={setVideoBrowseIndex}
+            mdItems={mdItems}
+            htmlItems={htmlItems}
+            videoItems={videoItems}
+          />
+          {linearNavigationEntries.length > 1 && (
+            <div className={styles.footerActions}>
+              <button className={styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious}>
+                {previousLabel}
+              </button>
+              <button className={styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext}>
+                {nextLabel}
+              </button>
+            </div>
+          )}
         </main>
-        {footerEnabled && <SiteFooter language={language} projectUrl={PROJECT_FOOTER_URL} />}
+        {footerEnabled && (
+              <SiteFooter
+                language={language}
+                projectLabel={footerConfig.projectLabel}
+                linkName={footerConfig.linkName}
+                linkUrl={footerConfig.linkUrl}
+                dateMode={footerConfig.dateMode}
+                dateCustom={footerConfig.dateCustom}
+              />
+            )}
       </div>
 
       <DocsShellMobileDrawer

@@ -8,6 +8,7 @@ import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
 import { RepositorySearchForm } from "@/features/repository-search-form";
 import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
+import { buildFooterConfigFromData } from "@/shared/lib/build-footer-config";
 import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
@@ -153,6 +154,7 @@ export function RepositorySearchShell({
       projectFooterUrl={PROJECT_FOOTER_URL}
       language={language}
       style={cssVars}
+      footerConfig={buildFooterConfigFromData(data, language)}
     >
       <section className={styles.card}>
         <h1 className={styles.title}>{repositoryNotUsingGitPageDocs ? localizedMessage : "GitPageDocs"}</h1>

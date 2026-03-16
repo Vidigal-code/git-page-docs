@@ -51,7 +51,8 @@ export function SearchShellHeader({
   getLanguageLabel,
 }: SearchShellHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const homeHref = basePath ? `${basePath}/` : "/";
+  // Use "/" so Next.js Link adds basePath automatically when configured (avoids hydration mismatch)
+  const homeHref = "/";
   const darkModeLabel = "Dark mode";
   const lightModeLabel = "Light mode";
   const menuOpenLabel = "Open menu";

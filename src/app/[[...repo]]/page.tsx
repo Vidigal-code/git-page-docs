@@ -46,34 +46,47 @@ function parseRepoAndVersion(repoSlug: string[] | undefined): { owner?: string; 
 
 export async function generateStaticParams() {
   const params: { repo: string[] }[] = [{ repo: [] }];
+  const defaultVersions = ["1.0.0", "1.1.0", "1.1.1"];
+  let versions = defaultVersions;
+
+  const addVersionPaths = (vids: string[]) => {
+    for (const vid of vids) {
+      if (!params.some((p) => p.repo?.length >= 2 && p.repo[0] === "v" && p.repo[1] === vid)) {
+        params.push({ repo: ["v", vid] });
+      }
+    }
+  };
+
+  const addRepoWithVersions = (owner: string, repo: string, vids: string[]) => {
+    if (!params.some((p) => p.repo?.length >= 2 && p.repo[0] === owner && p.repo[1] === repo)) {
+      params.push({ repo: [owner, repo] });
+    }
+    for (const vid of vids) {
+      if (
+        !params.some(
+          (p) =>
+            p.repo?.length >= 4 && p.repo[0] === owner && p.repo[1] === repo && p.repo[2] === "v" && p.repo[3] === vid,
+        )
+      ) {
+        params.push({ repo: [owner, repo, "v", vid] });
+      }
+    }
+  };
+
   try {
     const configPath = path.join(process.cwd(), "gitpagedocs/config.json");
     const raw = await fs.readFile(configPath, "utf-8");
     const config = JSON.parse(raw);
-    const versions = config?.VersionControl?.versions?.map((v: { id: string }) => v.id) ?? [];
-    for (const vid of versions) {
-      if (!params.some((p) => p.repo[0] === "v" && p.repo[1] === vid)) {
-        params.push({ repo: ["v", vid] });
-      }
-    }
-    const addRepoWithVersions = (owner: string, repo: string) => {
-      if (!params.some((p) => p.repo[0] === owner && p.repo[1] === repo)) {
-        params.push({ repo: [owner, repo] });
-      }
-      for (const vid of versions) {
-        if (!params.some((p) => p.repo[0] === owner && p.repo[1] === repo && p.repo[2] === "v" && p.repo[3] === vid)) {
-          params.push({ repo: [owner, repo, "v", vid] });
-        }
-      }
-    };
+    versions = config?.VersionControl?.versions?.map((v: { id: string }) => v.id) ?? defaultVersions;
+    addVersionPaths(versions);
+
     if (config?.site?.ProjectLink) {
       const fromProjectLink = parseOwnerRepoFromUrl(config.site.ProjectLink);
       if (fromProjectLink.owner && fromProjectLink.repo) {
-        addRepoWithVersions(fromProjectLink.owner, fromProjectLink.repo);
+        addRepoWithVersions(fromProjectLink.owner, fromProjectLink.repo, versions);
       }
     }
 
-    // Ensure the official repository route is pre-rendered even when ProjectLink is not set.
     const packageJsonPath = path.join(process.cwd(), "package.json");
     const packageRaw = await fs.readFile(packageJsonPath, "utf-8");
     const packageJson = JSON.parse(packageRaw) as { repository?: { url?: string } | string; homepage?: string };
@@ -81,13 +94,32 @@ export async function generateStaticParams() {
       typeof packageJson.repository === "string" ? packageJson.repository : packageJson.repository?.url;
     const fromRepository = parseOwnerRepoFromUrl(repositoryUrl);
     if (fromRepository.owner && fromRepository.repo) {
-      addRepoWithVersions(fromRepository.owner, fromRepository.repo);
+      addRepoWithVersions(fromRepository.owner, fromRepository.repo, versions);
     }
     const fromHomepage = parseOwnerRepoFromUrl(packageJson.homepage);
     if (fromHomepage.owner && fromHomepage.repo) {
-      addRepoWithVersions(fromHomepage.owner, fromHomepage.repo);
+      addRepoWithVersions(fromHomepage.owner, fromHomepage.repo, versions);
     }
-  } catch {}
+  } catch {
+    addVersionPaths(versions);
+    try {
+      const packageJsonPath = path.join(process.cwd(), "package.json");
+      const packageRaw = await fs.readFile(packageJsonPath, "utf-8");
+      const packageJson = JSON.parse(packageRaw) as { repository?: { url?: string } | string; homepage?: string };
+      const fromRepository = parseOwnerRepoFromUrl(
+        typeof packageJson.repository === "string" ? packageJson.repository : packageJson.repository?.url,
+      );
+      const fromHomepage = parseOwnerRepoFromUrl(packageJson.homepage);
+      if (fromRepository.owner && fromRepository.repo) {
+        addRepoWithVersions(fromRepository.owner, fromRepository.repo, versions);
+      }
+      if (fromHomepage.owner && fromHomepage.repo) {
+        addRepoWithVersions(fromHomepage.owner, fromHomepage.repo, versions);
+      }
+    } catch {
+      addRepoWithVersions("Vidigal-code", "git-page-docs", versions);
+    }
+  }
   return params;
 }
 

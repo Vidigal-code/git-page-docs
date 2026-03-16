@@ -833,6 +833,62 @@ Local repository search is controlled by:
 
 On GitHub Pages builds (\`GITHUB_ACTIONS=true\`), repository-search home is enabled.
 `,
+    projectOverview: `# Project Overview
+
+Git Page Docs is powered by Next.js 15, React 19, TypeScript, and Node.js. It builds multilingual documentation for GitHub Pages.
+
+## Stack
+
+- Next.js 15 with App Router
+- React 19
+- TypeScript
+- Static export for GitHub Pages
+- gray-matter, marked for Markdown
+- react-icons
+- ESLint
+
+## Goals
+
+- Generate and maintain a \`gitpagedocs/\` folder with config and versioned content
+- Support Markdown, HTML (local or URL), and video embeds
+- Multilingual: en, pt, es
+- Theme system with JSON templates
+- Local and GitHub Pages execution
+`,
+    githubIssuesProjects: `# GitHub Issues and Projects
+
+Learn how to use GitHub Issues and Projects to manage your work.
+
+## Issues
+
+- Track bugs, features, and tasks
+- Assignees, labels, milestones
+- Discussions and linked PRs
+
+## Projects
+
+- Kanban boards
+- Tables and roadmaps
+- Custom fields and automation
+`,
+    gitIntroduction: `# Introduction to Git
+
+Basic Git concepts for beginners.
+
+## Key concepts
+
+- **Repository**: A project folder tracked by Git
+- **Commit**: A snapshot of changes
+- **Branch**: Alternative line of development
+- **Remote**: Shared repository (e.g. on GitHub)
+
+## Common commands
+
+- \`git init\` - Initialize a repo
+- \`git add\` - Stage changes
+- \`git commit\` - Create a snapshot
+- \`git push\` - Send to remote
+`,
     configuration: `# Configuration
 
 Runtime configuration lives in \`gitpagedocs/config.json\`.
@@ -873,9 +929,37 @@ Behavior:
 
 ## Navigation
 
-- \`routes\`: markdown paths per language
+- \`routes\`: markdown paths per language (legacy)
 - \`menus-header\`: hierarchical menu model
 - \`translations\`: UI labels
+
+## Content types (version config)
+
+Version configs support multiple content types:
+
+- \`routes-md\`: Markdown routes with optional \`title\`, \`description\` (centered via \`titlePosition\`, \`descriptionPosition\`)
+- \`routes-html\`: HTML page paths per language
+- \`routes-video\`: Video config with \`video.videoType\` (youtube, vimeo, mp4, etc.) and \`video.pathVideo\`
+- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`: menus per type
+- \`hierarchyPage\`: container order on page \`{ md: 0, html: 1, video: 2 }\`
+- \`hierarchyMenu\`: menu section order \`{ md: 0, html: 1, video: 2 }\`
+
+Each route can include \`title\`, \`description\` (per language), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
+
+## Route-level variables (blockLink, container, url, browseAll)
+
+Per-route options for \`routes-md\`, \`routes-html\`, and \`routes-video\`:
+
+- **\`blockLink\`** (default: true) – For HTML: if true, links open in a new tab (\`target="_blank"\`); if false, links open in the same context.
+- **\`container\`** – \`"full"\` = auto-extend height; number (e.g. \`500\`) = fixed height in px with overflow auto. Applies to md, html, and video containers.
+- **\`url\`** – For \`routes-html\` only: \`Record<LanguageCode, string>\` with external URLs. When set, the iframe uses \`src={url}\` instead of local HTML via \`srcDoc\`. Routes with \`url\` do not generate local HTML files.
+- **\`browseAll\`** (default: false) – If true, the container shows Previous/Next buttons to browse all items of that type without changing the page.
+
+## Content types: path vs url (HTML)
+
+- **Markdown (\`routes-md\`)**: always uses \`path\` pointing to local \`.md\` files.
+- **HTML (\`routes-html\`)**: uses \`path\` for local \`.html\` files or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated.
+- **Video (\`routes-video\`)**: uses \`video.pathVideo\` and \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
 ## Environment variables
 
@@ -1095,6 +1179,21 @@ No ambiente local, o controle e por variavel:
 
 Em build de GitHub Pages (\`GITHUB_ACTIONS=true\`), a busca de repositorio fica sempre ativa.
 `,
+    projectOverview: `# Visao geral do projeto
+
+Git Page Docs e alimentado por Next.js 15, React 19, TypeScript e Node.js. Gera documentacao multilinguagem para GitHub Pages.
+
+## Stack
+
+- Next.js 15
+- React 19
+- TypeScript
+- Node.js 20+
+
+## Objetivo
+
+Construir documentacao multilinguagem para repositorios GitHub com suporte a versoes, temas e conteudo md/html/video.
+`,
     configuration: `# Configuracao
 
 A configuracao de runtime fica em \`gitpagedocs/config.json\`.
@@ -1136,9 +1235,37 @@ Principais chaves:
 
 ## Navegacao e rotas
 
-- \`routes\`: caminhos markdown por idioma
+- \`routes\`: caminhos markdown por idioma (legado)
 - \`menus-header\`: menu hierarquico
 - \`translations\`: labels de UI para not-found e navegacao
+
+## Tipos de conteudo (config de versao)
+
+Configs de versao suportam multiplos tipos:
+
+- \`routes-md\`: Rotas markdown com \`title\`, \`description\` (centralizados via \`titlePosition\`, \`descriptionPosition\`)
+- \`routes-html\`: Caminhos de paginas HTML por idioma
+- \`routes-video\`: Config de video com \`video.videoType\` (youtube, vimeo, mp4, etc.) e \`video.pathVideo\`
+- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`: menus por tipo
+- \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, html: 1, video: 2 }\`
+- \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, html: 1, video: 2 }\`
+
+Cada rota pode incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
+
+## Variaveis por rota (blockLink, container, url, browseAll)
+
+Opcoes por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
+
+- **\`blockLink\`** (padrao: true) – Para HTML: se true, links abrem em nova aba (\`target="_blank"\`); se false, no proprio contexto.
+- **\`container\`** – \`"full"\` = altura automatica; numero (ex: \`500\`) = altura fixa em px com overflow auto. Aplica-se a md, html e video.
+- **\`url\`** – Apenas em \`routes-html\`: \`Record<LanguageCode, string>\` com URLs externas. Quando definido, o iframe usa \`src={url}\` em vez de HTML local via \`srcDoc\`. Rotas com \`url\` nao geram arquivos HTML locais.
+- **\`browseAll\`** (padrao: false) – Se true, o container mostra botoes Anterior/Proximo para navegar entre todos os itens daquele tipo.
+
+## Tipos de conteudo: path vs url (HTML)
+
+- **Markdown (\`routes-md\`)**: usa \`path\` apontando para arquivos \`.md\` locais.
+- **HTML (\`routes-html\`)**: usa \`path\` para arquivos \`.html\` locais ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a pagina externa; nenhum arquivo local e gerado.
+- **Video (\`routes-video\`)**: usa \`video.pathVideo\` e \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
 ## Variaveis de ambiente
 
@@ -1210,6 +1337,27 @@ O projeto e organizado por fronteiras de feature e responsabilidades do runtime.
 - fallback de carga para layouts/templates
 - carregamento de markdown por idioma com fallback de erro
 - sincronizacao de linguagem/versao/tema via localStorage
+`,
+    githubIssuesProjects: `# GitHub Issues e Projects
+
+Aprenda a usar GitHub Issues e Projects para gerenciar seu trabalho.
+
+## Conceitos
+
+- Issues para rastrear tarefas e bugs
+- Projects para visualizar e organizar o trabalho
+- Workflows recomendados para equipes
+`,
+    gitIntroduction: `# Introducao ao Git
+
+Conceitos basicos de Git para iniciantes.
+
+## Comandos essenciais
+
+- \`git init\` - iniciar repositorio
+- \`git add\` - preparar alteracoes
+- \`git commit\` - registrar commit
+- \`git push\` - enviar para remoto
 `,
     themes: `# Temas e layouts
 
@@ -1347,6 +1495,21 @@ En local, se controla por variable:
 
 En build de GitHub Pages (\`GITHUB_ACTIONS=true\`), la busqueda de repositorio siempre esta activa.
 `,
+    projectOverview: `# Vision general del proyecto
+
+Git Page Docs esta impulsado por Next.js 15, React 19, TypeScript y Node.js. Genera documentacion multilingue para GitHub Pages.
+
+## Stack
+
+- Next.js 15
+- React 19
+- TypeScript
+- Node.js 20+
+
+## Objetivo
+
+Construir documentacion multilingue para repositorios GitHub con soporte para versiones, temas y contenido md/html/video.
+`,
     configuration: `# Configuracion
 
 La configuracion de runtime esta en \`gitpagedocs/config.json\`.
@@ -1388,9 +1551,37 @@ Claves principales:
 
 ## Navegacion y rutas
 
-- \`routes\`: rutas markdown por idioma
+- \`routes\`: rutas markdown por idioma (legado)
 - \`menus-header\`: menu jerarquico
 - \`translations\`: etiquetas UI para not-found y navegacion
+
+## Tipos de contenido (config de version)
+
+Los configs de version soportan multiples tipos:
+
+- \`routes-md\`: Rutas markdown con \`title\`, \`description\` (centrados via \`titlePosition\`, \`descriptionPosition\`)
+- \`routes-html\`: Rutas de paginas HTML por idioma
+- \`routes-video\`: Config de video con \`video.videoType\` (youtube, vimeo, mp4, etc.) y \`video.pathVideo\`
+- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`: menus por tipo
+- \`hierarchyPage\`: orden de contenedores en la pagina \`{ md: 0, html: 1, video: 2 }\`
+- \`hierarchyMenu\`: orden de secciones del menu \`{ md: 0, html: 1, video: 2 }\`
+
+Cada ruta puede incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
+
+## Variables por ruta (blockLink, container, url, browseAll)
+
+Opciones por ruta en \`routes-md\`, \`routes-html\` y \`routes-video\`:
+
+- **\`blockLink\`** (defecto: true) – Para HTML: si true, los enlaces abren en nueva pestaña (\`target="_blank"\`); si false, en el mismo contexto.
+- **\`container\`** – \`"full"\` = altura automatica; numero (ej: \`500\`) = altura fija en px con overflow auto. Se aplica a md, html y video.
+- **\`url\`** – Solo en \`routes-html\`: \`Record<LanguageCode, string>\` con URLs externas. Al definirse, el iframe usa \`src={url}\` en vez de HTML local via \`srcDoc\`. Las rutas con \`url\` no generan archivos HTML locales.
+- **\`browseAll\`** (defecto: false) – Si true, el contenedor muestra botones Anterior/Siguiente para navegar entre todos los items de ese tipo.
+
+## Tipos de contenido: path vs url (HTML)
+
+- **Markdown (\`routes-md\`)**: usa \`path\` apuntando a archivos \`.md\` locales.
+- **HTML (\`routes-html\`)**: usa \`path\` para archivos \`.html\` locales o \`url\` para URLs externas. Con \`url\`, el iframe carga la pagina externa; no se genera archivo local.
+- **Video (\`routes-video\`)**: usa \`video.pathVideo\` y \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
 ## Variables de entorno
 
@@ -1462,6 +1653,27 @@ El proyecto esta organizado por fronteras de feature y responsabilidades de runt
 - fallback de carga para layouts/templates
 - carga de markdown por idioma con fallback de error
 - sincronizacion de idioma/version/tema via localStorage
+`,
+    githubIssuesProjects: `# GitHub Issues y Projects
+
+Aprende a usar GitHub Issues y Projects para gestionar tu trabajo.
+
+## Conceptos
+
+- Issues para rastrear tareas y bugs
+- Projects para visualizar y organizar el trabajo
+- Flujos recomendados para equipos
+`,
+    gitIntroduction: `# Introduccion a Git
+
+Conceptos basicos de Git para principiantes.
+
+## Comandos esenciales
+
+- \`git init\` - iniciar repositorio
+- \`git add\` - preparar cambios
+- \`git commit\` - registrar commit
+- \`git push\` - enviar a remoto
 `,
     themes: `# Temas y layouts
 
@@ -1601,6 +1813,191 @@ function createThemeTemplate(layout) {
   };
 }
 
+const DEFAULT_HIERARCHY = { md: 0, html: 1, video: 2 };
+
+const ROUTE_META_ID1 = {
+  titles: { pt: "Primeiros passos", en: "Getting Started", es: "Primeros pasos" },
+  descriptions: { pt: "Configure o repositório do zero", en: "Configure repository from zero", es: "Configura el repositorio desde cero" },
+};
+
+const ROUTE_META_ID2 = {
+  titles: { pt: "Visão geral do projeto", en: "Project overview", es: "Visión general del proyecto" },
+  descriptions: { pt: "Stack, objetivo e estrutura do Git Page Docs", en: "Stack, goals and structure of Git Page Docs", es: "Stack, objetivos y estructura de Git Page Docs" },
+};
+
+const ROUTE_META_ID3 = {
+  titles: { pt: "GitHub Issues e Projects", en: "GitHub issues and projects", es: "GitHub issues y projects" },
+  descriptions: { pt: "Como usar Issues e Projects no GitHub", en: "How to use GitHub Issues and Projects", es: "Cómo usar GitHub Issues y Projects" },
+};
+
+const ROUTE_META_ID4 = {
+  titles: { pt: "Introdução ao Git", en: "Introduction to Git", es: "Introducción a Git" },
+  descriptions: { pt: "Conceitos básicos de Git para iniciantes", en: "Basic Git concepts for beginners", es: "Conceptos básicos de Git para principiantes" },
+};
+
+const VIDEO_META_ID1 = {
+  title: { pt: "Interactive vs non-interactive modes | Copilot CLI for beginners", en: "Interactive vs non-interactive modes | Copilot CLI for beginners", es: "Interactive vs non-interactive modes | Copilot CLI for beginners" },
+  description: {
+    pt: "Quer saber a forma mais rápida de usar o GitHub Copilot no terminal? Neste tutorial, exploramos os dois modos principais do Copilot CLI.",
+    en: "Want to know the fastest way to prompt GitHub Copilot from your terminal? In this beginner tutorial, we explore the two main modes of the Copilot CLI. Discover how to use the interactive mode to have GitHub Copilot run your project locally or use the non-interactive mode with the -p flag for quick summaries without leaving your shell context.",
+    es: "¿Quieres conocer la forma más rápida de usar GitHub Copilot desde tu terminal? En este tutorial exploramos los dos modos principales del Copilot CLI.",
+  },
+};
+
+const VIDEO_META_ID2 = {
+  title: { pt: "How to use GitHub issues and projects | GitHub for Beginners", en: "How to use GitHub issues and projects | GitHub for Beginners", es: "How to use GitHub issues and projects | GitHub for Beginners" },
+  description: {
+    pt: "Aprenda a usar GitHub Issues e Projects para gerenciar seu trabalho.",
+    en: "Learn how to use GitHub Issues and Projects to manage your work effectively.",
+    es: "Aprende a usar GitHub Issues y Projects para gestionar tu trabajo.",
+  },
+};
+
+const VIDEO_META_ID3 = {
+  title: { pt: "How I built an AI Python tutor with the GitHub Copilot SDK", en: "How I built an AI Python tutor with the GitHub Copilot SDK", es: "How I built an AI Python tutor with the GitHub Copilot SDK" },
+  description: {
+    pt: "Construindo um tutor de Python com IA usando o GitHub Copilot SDK.",
+    en: "Building an AI Python tutor using the GitHub Copilot SDK.",
+    es: "Construyendo un tutor de Python con IA usando el GitHub Copilot SDK.",
+  },
+};
+
+const VIDEO_META_ID4 = {
+  title: { pt: "A brief introduction to Git for beginners | GitHub", en: "A brief introduction to Git for beginners | GitHub", es: "A brief introduction to Git for beginners | GitHub" },
+  description: {
+    pt: "Introdução ao Git para iniciantes.",
+    en: "A brief introduction to Git for beginners.",
+    es: "Una breve introducción a Git para principiantes.",
+  },
+};
+
+const HTML_PAGES = {
+  gettingStarted: {
+    pt: `<!DOCTYPE html>
+<html lang="pt">
+<head><meta charset="UTF-8"/><title>Primeiros passos</title><style>body{font-family:system-ui;max-width:720px;margin:2rem auto;padding:0 1rem;line-height:1.6}h1{color:#0ea5e9}p{color:#334155}</style></head>
+<body><h1>Primeiros passos</h1><p>Esta é uma página HTML de teste. Configure o repositório do zero usando os passos na documentação Markdown.</p></body>
+</html>`,
+    en: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><title>Getting Started</title><style>body{font-family:system-ui;max-width:720px;margin:2rem auto;padding:0 1rem;line-height:1.6}h1{color:#0ea5e9}p{color:#334155}</style></head>
+<body><h1>Getting Started</h1><p>This is a test HTML page. Configure your repository from zero using the steps in the Markdown documentation.</p></body>
+</html>`,
+    es: `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"/><title>Primeros pasos</title><style>body{font-family:system-ui;max-width:720px;margin:2rem auto;padding:0 1rem;line-height:1.6}h1{color:#0ea5e9}p{color:#334155}</style></head>
+<body><h1>Primeros pasos</h1><p>Esta es una página HTML de prueba. Configura el repositorio desde cero usando los pasos en la documentación Markdown.</p></body>
+</html>`,
+  },
+};
+
+function buildHtmlRoute(versionId, routeId, pathByLang, titles, descriptions, options = {}) {
+  const base = buildMdRoute(versionId, routeId, pathByLang, titles, descriptions, options);
+  return { ...base };
+}
+
+function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles, descriptions, options = {}) {
+  const {
+    titleCss = "font-size: 1.85rem; font-weight: 700;",
+    titleDarkCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+    titleLightCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+    titlePosition = "center",
+    titleIsVisible = true,
+    descriptionCss = "font-size: 1.2rem; font-weight: 500;",
+    descriptionDarkCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+    descriptionLightCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+    descriptionPosition = "center",
+    descriptionIsVisible = true,
+    fullscreenEnabled = true,
+    marginTop = "",
+    marginBottom = "",
+    blockLink = true,
+    container,
+    browseAll = true,
+  } = options;
+  const videoTypeByLang = typeof videoType === "string" ? { pt: videoType, en: videoType, es: videoType } : videoType;
+  const pathVideoByLang = typeof pathVideo === "string" ? { pt: pathVideo, en: pathVideo, es: pathVideo } : pathVideo;
+  const obj = {
+    id: routeId,
+    title: titles ?? { pt: "Vídeo", en: "Video", es: "Vídeo" },
+    description: descriptions ?? { pt: "Descrição do vídeo", en: "Video description", es: "Descripción del vídeo" },
+    titleCss,
+    titleDarkCss,
+    titleLightCss,
+    titlePosition,
+    titleIsVisible,
+    descriptionCss,
+    descriptionDarkCss,
+    descriptionLightCss,
+    descriptionPosition,
+    descriptionIsVisible,
+    fullscreenEnabled,
+    marginTop,
+    marginBottom,
+    blockLink,
+    browseAll,
+    video: { videoType: videoTypeByLang, pathVideo: pathVideoByLang },
+  };
+  if (container !== undefined) obj.container = container;
+  return obj;
+}
+
+function buildMdRoute(versionId, routeId, pathByLang, titles, descriptions, options = {}) {
+  const {
+    titleCss = "font-size: 1.85rem; font-weight: 700;",
+    titleDarkCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+    titleLightCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+    titlePosition = "center",
+    titleIsVisible = true,
+    descriptionCss = "font-size: 1.2rem; font-weight: 500;",
+    descriptionDarkCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+    descriptionLightCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+    descriptionPosition = "center",
+    descriptionIsVisible = true,
+    fullscreenEnabled = true,
+    marginTop = "",
+    marginBottom = "",
+    blockLink = true,
+    container,
+    browseAll = true,
+  } = options;
+  const out = {
+    id: routeId,
+    title: titles ?? { pt: "Documentação", en: "Documentation", es: "Documentación" },
+    description: descriptions ?? { pt: "Descrição da página", en: "Page description", es: "Descripción de la página" },
+    titleCss,
+    titleDarkCss,
+    titleLightCss,
+    titlePosition,
+    titleIsVisible,
+    descriptionCss,
+    descriptionDarkCss,
+    descriptionLightCss,
+    descriptionPosition,
+    descriptionIsVisible,
+    path: pathByLang,
+    fullscreenEnabled,
+    marginTop,
+    marginBottom,
+    blockLink,
+    container,
+    browseAll,
+  };
+  if (container !== undefined) out.container = container;
+  return out;
+}
+
+function buildHtmlRouteWithUrl(versionId, routeId, urlByLang, titles, descriptions, options = {}) {
+  const base = buildMdRoute(versionId, routeId, {}, titles, descriptions, { ...options, path: undefined });
+  delete base.path;
+  return {
+    ...base,
+    url: urlByLang,
+    blockLink: options.blockLink !== false,
+    container: options.container ?? "full",
+  };
+}
+
 function buildConfigArtifacts(options = {}) {
   const useLocalLayoutConfig = Boolean(options.useLocalLayoutConfig);
   const useOfficialLayouts = !useLocalLayoutConfig;
@@ -1613,159 +2010,99 @@ function buildConfigArtifacts(options = {}) {
   const projectLink = githubOwner && githubRepo
     ? `https://github.com/${githubOwner}/${githubRepo}`
     : "https://github.com/Vidigal-code/git-page-docs";
-  const versionRoutes_1_0_0 = [
-    {
-      id: 0,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/index.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/index.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/index.md",
-      },
-    },
-    {
-      id: 1,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/getting-started.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/getting-started.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/getting-started.md",
-      },
-    },
-    {
-      id: 2,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/configuration.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/configuration.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/configuration.md",
-      },
-    },
-    {
-      id: 3,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/deployment.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/deployment.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/deployment.md",
-      },
-    },
-    {
-      id: 4,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/architecture.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/architecture.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/architecture.md",
-      },
-    },
-    {
-      id: 5,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/themes.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/themes.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/themes.md",
-      },
-    },
-    {
-      id: 6,
-      path: {
-        pt: "gitpagedocs/docs/versions/1.0.0/pt/faq.md",
-        en: "gitpagedocs/docs/versions/1.0.0/en/faq.md",
-        es: "gitpagedocs/docs/versions/1.0.0/es/faq.md",
-      },
-    },
-  ];
+  const ROUTE_PATHS = {
+    1: { pt: "getting-started.md", en: "getting-started.md", es: "getting-started.md" },
+    2: { pt: "project-overview.md", en: "project-overview.md", es: "project-overview.md" },
+    3: { pt: "github-issues-projects.md", en: "github-issues-projects.md", es: "github-issues-projects.md" },
+    4: { pt: "git-introduction.md", en: "git-introduction.md", es: "git-introduction.md" },
+  };
+  const HTML_PATHS = {
+    1: { pt: "getting-started.html", en: "getting-started.html", es: "getting-started.html" },
+  };
+  const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4 };
+  const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
+  const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
 
-  const versionRoutes_1_1_0 = [
-    { id: 0, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/index.md", en: "gitpagedocs/docs/versions/1.1.0/en/index.md", es: "gitpagedocs/docs/versions/1.1.0/es/index.md" } },
-    { id: 1, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/getting-started.md", en: "gitpagedocs/docs/versions/1.1.0/en/getting-started.md", es: "gitpagedocs/docs/versions/1.1.0/es/getting-started.md" } },
-    { id: 2, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/configuration.md", en: "gitpagedocs/docs/versions/1.1.0/en/configuration.md", es: "gitpagedocs/docs/versions/1.1.0/es/configuration.md" } },
-    { id: 3, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/deployment.md", en: "gitpagedocs/docs/versions/1.1.0/en/deployment.md", es: "gitpagedocs/docs/versions/1.1.0/es/deployment.md" } },
-    { id: 4, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/architecture.md", en: "gitpagedocs/docs/versions/1.1.0/en/architecture.md", es: "gitpagedocs/docs/versions/1.1.0/es/architecture.md" } },
-    { id: 5, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/themes.md", en: "gitpagedocs/docs/versions/1.1.0/en/themes.md", es: "gitpagedocs/docs/versions/1.1.0/es/themes.md" } },
-    { id: 6, path: { pt: "gitpagedocs/docs/versions/1.1.0/pt/faq.md", en: "gitpagedocs/docs/versions/1.1.0/en/faq.md", es: "gitpagedocs/docs/versions/1.1.0/es/faq.md" } },
-  ];
+  function buildVersionMdRoutesSimple(versionId) {
+    const base = `gitpagedocs/docs/versions/${versionId}`;
+    return [1, 2, 3, 4].map((id) => {
+      const paths = ROUTE_PATHS[id];
+      const meta = ROUTE_METAS[id];
+      const pathByLang = {
+        pt: `${base}/pt/${paths.pt}`,
+        en: `${base}/en/${paths.en}`,
+        es: `${base}/es/${paths.es}`,
+      };
+      return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions);
+    });
+  }
 
-  const versionRoutes_1_1_1 = [
-    { id: 0, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/index.md", en: "gitpagedocs/docs/versions/1.1.1/en/index.md", es: "gitpagedocs/docs/versions/1.1.1/es/index.md" } },
-    { id: 1, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/getting-started.md", en: "gitpagedocs/docs/versions/1.1.1/en/getting-started.md", es: "gitpagedocs/docs/versions/1.1.1/es/getting-started.md" } },
-    { id: 2, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/configuration.md", en: "gitpagedocs/docs/versions/1.1.1/en/configuration.md", es: "gitpagedocs/docs/versions/1.1.1/es/configuration.md" } },
-    { id: 3, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/deployment.md", en: "gitpagedocs/docs/versions/1.1.1/en/deployment.md", es: "gitpagedocs/docs/versions/1.1.1/es/deployment.md" } },
-    { id: 4, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/architecture.md", en: "gitpagedocs/docs/versions/1.1.1/en/architecture.md", es: "gitpagedocs/docs/versions/1.1.1/es/architecture.md" } },
-    { id: 5, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/themes.md", en: "gitpagedocs/docs/versions/1.1.1/en/themes.md", es: "gitpagedocs/docs/versions/1.1.1/es/themes.md" } },
-    { id: 6, path: { pt: "gitpagedocs/docs/versions/1.1.1/pt/faq.md", en: "gitpagedocs/docs/versions/1.1.1/en/faq.md", es: "gitpagedocs/docs/versions/1.1.1/es/faq.md" } },
-  ];
+  function buildVersionHtmlRoutesSimple(versionId) {
+    const base = `gitpagedocs/docs/versions/${versionId}`;
+    const pathByLang1 = {
+      pt: `${base}/pt/${HTML_PATHS[1].pt}`,
+      en: `${base}/en/${HTML_PATHS[1].en}`,
+      es: `${base}/es/${HTML_PATHS[1].es}`,
+    };
+    const urlByLang = {
+      pt: "https://github.com/Vidigal-code/git-page-docs",
+      en: "https://github.com/Vidigal-code/git-page-docs",
+      es: "https://github.com/Vidigal-code/git-page-docs",
+    };
+    return [
+      buildHtmlRoute(versionId, 1, pathByLang1, ROUTE_META_ID1.titles, ROUTE_META_ID1.descriptions),
+      buildHtmlRouteWithUrl(versionId, 2, urlByLang, ROUTE_META_ID2.titles, ROUTE_META_ID2.descriptions, { container: "full", blockLink: true }),
+    ];
+  }
 
-  const versionMenus_1_0_0 = [
-    {
-      id: 0,
-      pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.0.0/pt/index.md" },
-      en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.0.0/en/index.md" },
-      es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.0.0/es/index.md" },
-    },
-    {
-      id: 1,
-      pt: { title: "Primeiros passos", "path-click": "gitpagedocs/docs/versions/1.0.0/pt/getting-started.md" },
-      en: { title: "Getting Started", "path-click": "gitpagedocs/docs/versions/1.0.0/en/getting-started.md" },
-      es: { title: "Primeros pasos", "path-click": "gitpagedocs/docs/versions/1.0.0/es/getting-started.md" },
-    },
-    {
-      id: 2,
-      pt: {
-        title: "Configuracao",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/pt/configuration.md",
-        submenus: [
-          { title: "Arquitetura", "path-click": "gitpagedocs/docs/versions/1.0.0/pt/architecture.md" },
-          { title: "Temas e layouts", "path-click": "gitpagedocs/docs/versions/1.0.0/pt/themes.md" },
-          { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.0.0/pt/faq.md" },
-        ],
-      },
-      en: {
-        title: "Configuration",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/en/configuration.md",
-        submenus: [
-          { title: "Architecture", "path-click": "gitpagedocs/docs/versions/1.0.0/en/architecture.md" },
-          { title: "Themes and layouts", "path-click": "gitpagedocs/docs/versions/1.0.0/en/themes.md" },
-          { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.0.0/en/faq.md" },
-        ],
-      },
-      es: {
-        title: "Configuracion",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/es/configuration.md",
-        submenus: [
-          { title: "Arquitectura", "path-click": "gitpagedocs/docs/versions/1.0.0/es/architecture.md" },
-          { title: "Temas y layouts", "path-click": "gitpagedocs/docs/versions/1.0.0/es/themes.md" },
-          { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.0.0/es/faq.md" },
-        ],
-      },
-    },
-    {
-      id: 3,
-      pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.0.0/pt/deployment.md" },
-      en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.0.0/en/deployment.md" },
-      es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.0.0/es/deployment.md" },
-    },
-  ];
+  function buildVersionVideoRoutesSimple(versionId) {
+    return [1, 2, 3, 4].map((id) =>
+      buildVideoRoute(
+        versionId,
+        id,
+        "youtube",
+        VIDEO_IDS[id - 1],
+        VIDEO_METAS[id].title,
+        VIDEO_METAS[id].description,
+      ),
+    );
+  }
 
-  const versionMenus_1_1_0 = [
-    { id: 0, pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/index.md" }, en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.1.0/en/index.md" }, es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.0/es/index.md" } },
-    { id: 1, pt: { title: "Primeiros passos", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/getting-started.md" }, en: { title: "Getting Started", "path-click": "gitpagedocs/docs/versions/1.1.0/en/getting-started.md" }, es: { title: "Primeros pasos", "path-click": "gitpagedocs/docs/versions/1.1.0/es/getting-started.md" } },
-    {
-      id: 2,
-      pt: { title: "Configuracao", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/configuration.md", submenus: [{ title: "Arquitetura", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/architecture.md" }, { title: "Temas e layouts", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/faq.md" }] },
-      en: { title: "Configuration", "path-click": "gitpagedocs/docs/versions/1.1.0/en/configuration.md", submenus: [{ title: "Architecture", "path-click": "gitpagedocs/docs/versions/1.1.0/en/architecture.md" }, { title: "Themes and layouts", "path-click": "gitpagedocs/docs/versions/1.1.0/en/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.0/en/faq.md" }] },
-      es: { title: "Configuracion", "path-click": "gitpagedocs/docs/versions/1.1.0/es/configuration.md", submenus: [{ title: "Arquitectura", "path-click": "gitpagedocs/docs/versions/1.1.0/es/architecture.md" }, { title: "Temas y layouts", "path-click": "gitpagedocs/docs/versions/1.1.0/es/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.0/es/faq.md" }] },
-    },
-    { id: 3, pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.1.0/pt/deployment.md" }, en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.1.0/en/deployment.md" }, es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.1.0/es/deployment.md" } },
-  ];
+  function buildVersionMenusSimple(versionId) {
+    const base = `gitpagedocs/docs/versions/${versionId}`;
+    const menuMd = [1, 2, 3, 4].map((id) => ({
+      id: id,
+      pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
+      en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
+      es: { title: ROUTE_METAS[id].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[id].es}` },
+    }));
+    const menuHtml = [
+      { id: 1, pt: { title: "Primeiros passos (HTML)", "path-click": `${base}/pt/getting-started.html` }, en: { title: "Getting Started (HTML)", "path-click": `${base}/en/getting-started.html` }, es: { title: "Primeros pasos (HTML)", "path-click": `${base}/es/getting-started.html` } },
+      { id: 2, pt: { title: "GitHub (URL)", "path-click": "url:https://github.com/Vidigal-code/git-page-docs" }, en: { title: "GitHub (URL)", "path-click": "url:https://github.com/Vidigal-code/git-page-docs" }, es: { title: "GitHub (URL)", "path-click": "url:https://github.com/Vidigal-code/git-page-docs" } },
+    ];
+    const menuVideo = [1, 2, 3, 4].map((id) => ({
+      id: id,
+      pt: { title: VIDEO_METAS[id].title.pt.slice(0, 40) + "...", "path-click": `page:${id}` },
+      en: { title: VIDEO_METAS[id].title.en.slice(0, 40) + "...", "path-click": `page:${id}` },
+      es: { title: VIDEO_METAS[id].title.es.slice(0, 40) + "...", "path-click": `page:${id}` },
+    }));
+    return { md: menuMd, html: menuHtml, video: menuVideo };
+  }
 
-  const versionMenus_1_1_1 = [
-    { id: 0, pt: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/index.md" }, en: { title: "Home", "path-click": "gitpagedocs/docs/versions/1.1.1/en/index.md" }, es: { title: "Inicio", "path-click": "gitpagedocs/docs/versions/1.1.1/es/index.md" } },
-    { id: 1, pt: { title: "Primeiros passos", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/getting-started.md" }, en: { title: "Getting Started", "path-click": "gitpagedocs/docs/versions/1.1.1/en/getting-started.md" }, es: { title: "Primeros pasos", "path-click": "gitpagedocs/docs/versions/1.1.1/es/getting-started.md" } },
-    {
-      id: 2,
-      pt: { title: "Configuracao", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md", submenus: [{ title: "Arquitetura", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/architecture.md" }, { title: "Temas e layouts", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/faq.md" }] },
-      en: { title: "Configuration", "path-click": "gitpagedocs/docs/versions/1.1.1/en/configuration.md", submenus: [{ title: "Architecture", "path-click": "gitpagedocs/docs/versions/1.1.1/en/architecture.md" }, { title: "Themes and layouts", "path-click": "gitpagedocs/docs/versions/1.1.1/en/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.1/en/faq.md" }] },
-      es: { title: "Configuracion", "path-click": "gitpagedocs/docs/versions/1.1.1/es/configuration.md", submenus: [{ title: "Arquitectura", "path-click": "gitpagedocs/docs/versions/1.1.1/es/architecture.md" }, { title: "Temas y layouts", "path-click": "gitpagedocs/docs/versions/1.1.1/es/themes.md" }, { title: "FAQ", "path-click": "gitpagedocs/docs/versions/1.1.1/es/faq.md" }] },
-    },
-    { id: 3, pt: { title: "Publicacao", "path-click": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md" }, en: { title: "Deployment", "path-click": "gitpagedocs/docs/versions/1.1.1/en/deployment.md" }, es: { title: "Publicacion", "path-click": "gitpagedocs/docs/versions/1.1.1/es/deployment.md" } },
-  ];
+  const versionRoutes_1_0_0_md = buildVersionMdRoutesSimple("1.0.0");
+  const versionRoutes_1_0_0_html = buildVersionHtmlRoutesSimple("1.0.0");
+  const versionRoutes_1_0_0_video = buildVersionVideoRoutesSimple("1.0.0");
+  const versionMenus_1_0_0 = buildVersionMenusSimple("1.0.0");
+
+  const versionRoutes_1_1_0_md = buildVersionMdRoutesSimple("1.1.0");
+  const versionRoutes_1_1_0_html = buildVersionHtmlRoutesSimple("1.1.0");
+  const versionRoutes_1_1_0_video = buildVersionVideoRoutesSimple("1.1.0");
+  const versionMenus_1_1_0 = buildVersionMenusSimple("1.1.0");
+
+  const versionRoutes_1_1_1_md = buildVersionMdRoutesSimple("1.1.1");
+  const versionRoutes_1_1_1_html = buildVersionHtmlRoutesSimple("1.1.1");
+  const versionRoutes_1_1_1_video = buildVersionVideoRoutesSimple("1.1.1");
+  const versionMenus_1_1_1 = buildVersionMenusSimple("1.1.1");
 
   const rootConfig = {
     site: {
@@ -1778,6 +2115,11 @@ function buildConfigArtifacts(options = {}) {
       ActiveNavigation: true,
       FocusMode: true,
       FooterEnabled: true,
+      FooterLinkName: "GitPageDocs",
+      FooterLinkUrl: projectLink,
+      FooterDateMode: "browser",
+      FooterDateCustom: "",
+      ProjectLink: projectLink,
       SiteIconPath: "/icon.svg",
       SiteHeaderName: "Git Pages Docs",
       IconImageMenuHeaderImgWidth: 20,
@@ -1835,6 +2177,7 @@ function buildConfigArtifacts(options = {}) {
           pt: "Portugues",
           en: "Ingles",
           es: "Espanhol",
+          footerLabel: "Projeto",
           menuOpen: "Menu",
           menuClose: "Fechar",
           showMenu: "Abrir menu",
@@ -1847,6 +2190,9 @@ function buildConfigArtifacts(options = {}) {
           noNavigationResults: "Nenhum resultado de navegacao.",
           focusMode: "Modo foco",
           versionLinksLabel: "Links do repositorio",
+          titleHeaderMenuMd: "Markdown",
+          titleHeaderMenuVideo: "Vídeo",
+          titleHeaderMenuHtml: "Páginas",
           lastUpdateVersionLabel: "Ultima versao de atualizacao",
           darkMode: "Modo escuro",
           lightMode: "Modo claro",
@@ -1855,6 +2201,7 @@ function buildConfigArtifacts(options = {}) {
           pt: "Portuguese",
           en: "English",
           es: "Spanish",
+          footerLabel: "Project",
           menuOpen: "Menu",
           menuClose: "Close",
           showMenu: "Show menu",
@@ -1867,6 +2214,9 @@ function buildConfigArtifacts(options = {}) {
           noNavigationResults: "No navigation results.",
           focusMode: "Focus mode",
           versionLinksLabel: "Repository links",
+          titleHeaderMenuMd: "Markdown",
+          titleHeaderMenuVideo: "Video",
+          titleHeaderMenuHtml: "Pages",
           lastUpdateVersionLabel: "Last update version",
           darkMode: "Dark mode",
           lightMode: "Light mode",
@@ -1875,6 +2225,7 @@ function buildConfigArtifacts(options = {}) {
           pt: "Portugues",
           en: "Ingles",
           es: "Espanol",
+          footerLabel: "Proyecto",
           menuOpen: "Menu",
           menuClose: "Cerrar",
           showMenu: "Abrir menu",
@@ -1887,6 +2238,9 @@ function buildConfigArtifacts(options = {}) {
           noNavigationResults: "Sin resultados de navegacion.",
           focusMode: "Modo foco",
           versionLinksLabel: "Enlaces del repositorio",
+          titleHeaderMenuMd: "Markdown",
+          titleHeaderMenuVideo: "Vídeo",
+          titleHeaderMenuHtml: "Páginas",
           lastUpdateVersionLabel: "Ultima version de actualizacion",
           darkMode: "Modo oscuro",
           lightMode: "Modo claro",
@@ -1955,9 +2309,9 @@ function buildConfigArtifacts(options = {}) {
           es: "Volver",
         },
         next: {
-          pt: "Avancar markdown",
-          en: "Next Markdown",
-          es: "Avanzar markdown",
+          pt: "Proximo",
+          en: "Next",
+          es: "Siguiente",
         },
         menuOpen: {
           pt: "Menu",
@@ -1968,6 +2322,23 @@ function buildConfigArtifacts(options = {}) {
           pt: "Fechar",
           en: "Close",
           es: "Cerrar",
+        },
+        browsePrev: {
+          pt: "Anterior",
+          en: "Previous",
+          es: "Anterior",
+        },
+        browseNext: {
+          pt: "Proximo",
+          en: "Next",
+          es: "Siguiente",
+        },
+      },
+      footer: {
+        footerLabel: {
+          pt: "Projeto",
+          en: "Project",
+          es: "Proyecto",
         },
       },
     },
@@ -1981,18 +2352,37 @@ function buildConfigArtifacts(options = {}) {
     layoutsConfig,
     fallbackLayoutsConfig,
     docs: DOCS,
+    docsHtml: HTML_PAGES,
     versionConfigs: {
       "1.0.0": {
-        routes: versionRoutes_1_0_0,
-        "menus-header": versionMenus_1_0_0,
+        "routes-md": versionRoutes_1_0_0_md,
+        "routes-html": versionRoutes_1_0_0_html,
+        "routes-video": versionRoutes_1_0_0_video,
+        "menus-header-md": versionMenus_1_0_0.md,
+        "menus-header-html": versionMenus_1_0_0.html,
+        "menus-header-video": versionMenus_1_0_0.video,
+        hierarchyPage: DEFAULT_HIERARCHY,
+        hierarchyMenu: DEFAULT_HIERARCHY,
       },
       "1.1.0": {
-        routes: versionRoutes_1_1_0,
-        "menus-header": versionMenus_1_1_0,
+        "routes-md": versionRoutes_1_1_0_md,
+        "routes-html": versionRoutes_1_1_0_html,
+        "routes-video": versionRoutes_1_1_0_video,
+        "menus-header-md": versionMenus_1_1_0.md,
+        "menus-header-html": versionMenus_1_1_0.html,
+        "menus-header-video": versionMenus_1_1_0.video,
+        hierarchyPage: DEFAULT_HIERARCHY,
+        hierarchyMenu: DEFAULT_HIERARCHY,
       },
       "1.1.1": {
-        routes: versionRoutes_1_1_1,
-        "menus-header": versionMenus_1_1_1,
+        "routes-md": versionRoutes_1_1_1_md,
+        "routes-html": versionRoutes_1_1_1_html,
+        "routes-video": versionRoutes_1_1_1_video,
+        "menus-header-md": versionMenus_1_1_1.md,
+        "menus-header-html": versionMenus_1_1_1.html,
+        "menus-header-video": versionMenus_1_1_1.video,
+        hierarchyPage: DEFAULT_HIERARCHY,
+        hierarchyMenu: DEFAULT_HIERARCHY,
       },
     },
   };

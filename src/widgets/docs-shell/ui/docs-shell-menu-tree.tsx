@@ -14,6 +14,18 @@ export function DocsShellMenuTree({ nodes, keyPrefix, onMenuClick, onToggleNode,
   return nodes.map((node) => {
     const hasChildren = node.children.length > 0;
     const expanded = isNodeExpanded(node.key);
+    const isSectionHeader = node.isSectionHeader === true;
+
+    if (isSectionHeader) {
+      return (
+        <div key={`${keyPrefix}-${node.key}`} className={styles.menuNode}>
+          <div className={styles.menuNodeRow}>
+            <span className={styles.menuSectionLabel}>{node.title}</span>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div key={`${keyPrefix}-${node.key}`} className={styles.menuNode}>
         <div className={styles.menuNodeRow}>

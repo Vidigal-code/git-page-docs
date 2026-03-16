@@ -3,6 +3,7 @@ import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/d
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
 import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
 import type { LayoutItem, LoadedDocsData, VersionEntry } from "@/entities/docs/model/types";
+import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 
@@ -180,9 +181,36 @@ export function useDocsShellConfig(
     ],
   );
 
+  const fallbackLinkUrl =
+    data.activeVersion?.ProjectLink?.trim() || site.ProjectLink?.trim() || PROJECT_FOOTER_URL;
+  const footerConfig = useMemo(
+    () => ({
+      projectLabel: resolveTranslation(
+        data.config.translations?.footer?.footerLabel,
+        language,
+        getLangMenuLabelFromMenu(site.langmenu, language, "footerLabel", "Project"),
+      ),
+      linkName: site.FooterLinkName?.trim() || "GitPageDocs",
+      linkUrl: site.FooterLinkUrl?.trim() || fallbackLinkUrl,
+      dateMode: (site.FooterDateMode === "year" || site.FooterDateMode === "custom" ? site.FooterDateMode : "browser") as "browser" | "year" | "custom",
+      dateCustom: site.FooterDateCustom?.trim() || "",
+    }),
+    [
+      data.config.translations?.footer?.footerLabel,
+      site.langmenu,
+      site.FooterLinkName,
+      site.FooterLinkUrl,
+      site.FooterDateMode,
+      site.FooterDateCustom,
+      language,
+      fallbackLinkUrl,
+    ],
+  );
+
   return {
     headerIconConfig,
     controlsConfig,
     footerEnabled: data.config.site.FooterEnabled !== false,
+    footerConfig,
   };
 }

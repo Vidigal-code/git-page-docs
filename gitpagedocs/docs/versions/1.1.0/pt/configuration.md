@@ -39,9 +39,22 @@ Principais chaves:
 
 ## Navegacao e rotas
 
-- `routes`: caminhos markdown por idioma
+- `routes`: caminhos markdown por idioma (legado)
 - `menus-header`: menu hierarquico
 - `translations`: labels de UI para not-found e navegacao
+
+## Tipos de conteudo (config de versao)
+
+Configs de versao suportam multiplos tipos:
+
+- `routes-md`: Rotas markdown com `title`, `description` (centralizados via `titlePosition`, `descriptionPosition`)
+- `routes-html`: Caminhos de paginas HTML por idioma
+- `routes-video`: Config de video com `video.videoType` (youtube, vimeo, mp4, etc.) e `video.pathVideo`
+- `menus-header-md`, `menus-header-html`, `menus-header-video`: menus por tipo
+- `hierarchyPage`: ordem dos containers na pagina `{ md: 0, html: 1, video: 2 }`
+- `hierarchyMenu`: ordem das secoes do menu `{ md: 0, html: 1, video: 2 }`
+
+Cada rota pode incluir `title`, `description` (por idioma), `titleCss`, `titlePosition: "center"`, `descriptionPosition: "center"`, `titleIsVisible`, `descriptionIsVisible`.
 
 ## Variaveis de ambiente
 

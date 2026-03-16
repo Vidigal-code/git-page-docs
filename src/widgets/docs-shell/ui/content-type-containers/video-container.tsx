@@ -1,0 +1,134 @@
+"use client";
+
+import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
+import type { LanguageCode } from "@/entities/docs/model/types";
+import { getEmbedUrl, isNativeAudio, isNativeVideo } from "@/entities/docs/lib/video/embed-url";
+import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
+import styles from "../../docs-shell.module.css";
+
+function getContainerStyle(container: ContentTypeRouteConfig["container"]): React.CSSProperties {
+  if (container === "full") {
+    return { minHeight: "80vh", overflow: "auto" };
+  }
+  if (typeof container === "number" && container > 0) {
+    return { height: container, overflow: "auto" };
+  }
+  return {};
+}
+
+function parseCssToStyle(css: string | undefined): React.CSSProperties {
+  if (!css) return {};
+  const out: Record<string, string> = {};
+  css.split(";").forEach((part) => {
+    const idx = part.indexOf(":");
+    if (idx < 0) return;
+    const k = part.slice(0, idx).trim();
+    const v = part.slice(idx + 1).trim();
+    if (!k || !v) return;
+    const camel = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    out[camel] = v;
+  });
+  return out as React.CSSProperties;
+}
+
+interface VideoContainerProps {
+  videoType: string;
+  pathVideo: string;
+  language: LanguageCode;
+  config?: ContentTypeRouteConfig;
+  fullscreenEnabled?: boolean;
+  fullscreenCloseLabel: string;
+  fullscreenExpandLabel: string;
+  isDarkMode?: boolean;
+  browseNav?: BrowseNavProps;
+}
+
+export function VideoContainer({
+  videoType,
+  pathVideo,
+  language,
+  config,
+  fullscreenEnabled = false,
+  fullscreenCloseLabel,
+  fullscreenExpandLabel,
+  isDarkMode = false,
+  browseNav,
+  sectionId,
+}: VideoContainerProps) {
+  const type = String(videoType).toLowerCase();
+  const embedUrl = getEmbedUrl(videoType, pathVideo, language);
+
+  const title = config?.title?.[language] ?? config?.title?.en;
+  const description = config?.description?.[language] ?? config?.description?.en;
+  const titleIsVisible = config?.titleIsVisible ?? false;
+  const descriptionIsVisible = config?.descriptionIsVisible ?? false;
+  const titleCss = isDarkMode ? config?.titleDarkCss ?? config?.titleCss : config?.titleLightCss ?? config?.titleCss;
+  const descCss = isDarkMode ? config?.descriptionDarkCss ?? config?.descriptionCss : config?.descriptionLightCss ?? config?.descriptionCss;
+
+  const mediaElement = (() => {
+    if (isNativeAudio(type)) {
+      return (
+        <div className={styles.videoWrapper}>
+          <audio controls className={styles.videoNative} src={embedUrl}>
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      );
+    }
+    if (isNativeVideo(type)) {
+      return (
+        <div className={styles.videoWrapper}>
+          <video controls className={styles.videoNative} src={embedUrl} style={{ width: "100%", maxWidth: "100%" }}>
+            Your browser does not support the video element.
+          </video>
+        </div>
+      );
+    }
+    return (
+      <div className={styles.videoWrapper}>
+        <iframe
+          title="Video embed"
+          className={styles.videoIframe}
+          src={embedUrl}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
+    );
+  })();
+
+  const content = (
+    <article className={styles.card}>
+      {titleIsVisible && title && (
+        <h1
+          className={styles.contentTitleVideoInside}
+          style={{ textAlign: "center", ...parseCssToStyle(titleCss) }}
+        >
+          {title}
+        </h1>
+      )}
+      {mediaElement}
+      {descriptionIsVisible && description && (
+        <h3
+          className={styles.contentDescriptionVideoInside}
+          style={{ textAlign: "center", ...parseCssToStyle(descCss) }}
+        >
+          {description}
+        </h3>
+      )}
+    </article>
+  );
+
+  return (
+    <ContentContainerWrapper
+      fullscreenEnabled={fullscreenEnabled}
+      fullscreenCloseLabel={fullscreenCloseLabel}
+      fullscreenExpandLabel={fullscreenExpandLabel}
+      marginTop={config?.marginTop}
+      marginBottom={config?.marginBottom}
+      browseNav={browseNav}
+    >
+      {content}
+    </ContentContainerWrapper>
+  );
+}

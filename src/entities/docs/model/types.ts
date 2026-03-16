@@ -11,6 +11,10 @@ export interface SiteConfig {
   ActiveNavigation?: boolean;
   FocusMode?: boolean;
   FooterEnabled?: boolean;
+  FooterLinkName?: string;
+  FooterLinkUrl?: string;
+  FooterDateMode?: "browser" | "year" | "custom";
+  FooterDateCustom?: string;
   SiteIconPath?: string;
   SiteHeaderName?: string;
   IconImageMenuHeaderImgWidth?: string | number;
@@ -77,6 +81,64 @@ export interface SiteConfig {
   langmenu: Record<LanguageCode, Record<LanguageCode, string>>;
 }
 
+export type ContentType = "md" | "html" | "video";
+
+export type VideoType =
+  | "youtube"
+  | "vimeo"
+  | "linkedin"
+  | "instagram"
+  | "x"
+  | "tiktok"
+  | "mp4"
+  | "webm"
+  | "ogg"
+  | "avi"
+  | "mp3"
+  | "wav";
+
+export interface HierarchyConfig {
+  md: number;
+  html: number;
+  video: number;
+}
+
+export interface VideoRouteConfig {
+  videoType: Record<LanguageCode, string>;
+  pathVideo: Record<LanguageCode, string>;
+}
+
+export interface ContentTypeRouteConfig {
+  id: number;
+  title?: Record<LanguageCode, string>;
+  titleCss?: string;
+  titleDarkCss?: string;
+  titleLightCss?: string;
+  titlePosition?: string;
+  titleIsVisible?: boolean;
+  description?: Record<LanguageCode, string>;
+  descriptionCss?: string;
+  descriptionDarkCss?: string;
+  descriptionLightCss?: string;
+  descriptionPosition?: string;
+  descriptionIsVisible?: boolean;
+  path?: Record<LanguageCode, string>;
+  video?: VideoRouteConfig;
+  fullscreenEnabled?: boolean;
+  /** CSS value (e.g. "16px", "1rem"). When empty, uses default. Controls container margin-top. */
+  marginTop?: string;
+  /** CSS value (e.g. "16px", "1rem"). When empty, uses default. Controls container margin-bottom. */
+  marginBottom?: string;
+  /** If true (default), HTML links open in new tab. If false, render in same context. */
+  blockLink?: boolean;
+  /** "full" = auto-extend height; number = fixed height in px with overflow auto. */
+  container?: "full" | number;
+  /** For routes-html: external URL per language. When set, iframe uses src instead of srcDoc. */
+  url?: Record<LanguageCode, string>;
+  /** If true, container shows prev/next buttons to browse all items of that type. */
+  browseAll?: boolean;
+}
+
 export interface RouteConfig {
   id: number;
   path: Record<LanguageCode, string>;
@@ -98,6 +160,14 @@ export interface GitPageDocsConfig {
   site: SiteConfig;
   routes: RouteConfig[];
   "menus-header": HeaderMenuItem[];
+  "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
+  "routes-html"?: ContentTypeRouteConfig[];
+  "routes-video"?: ContentTypeRouteConfig[];
+  "menus-header-md"?: HeaderMenuItem[];
+  "menus-header-html"?: HeaderMenuItem[];
+  "menus-header-video"?: HeaderMenuItem[];
+  hierarchyPage?: HierarchyConfig;
+  hierarchyMenu?: HierarchyConfig;
   VersionControl?: VersionControlConfig;
   translations?: UiTranslationsConfig;
 }
@@ -133,6 +203,11 @@ export interface UiTranslationsConfig {
     next?: UiTranslationEntry;
     menuOpen?: UiTranslationEntry;
     menuClose?: UiTranslationEntry;
+    browsePrev?: UiTranslationEntry;
+    browseNext?: UiTranslationEntry;
+  };
+  footer?: {
+    footerLabel?: UiTranslationEntry;
   };
 }
 
@@ -174,9 +249,45 @@ export interface DocsContent {
   markdownByLanguage: Record<LanguageCode, string>;
 }
 
+export interface LoadedMdContent {
+  routeId: number;
+  config: ContentTypeRouteConfig | RouteConfig;
+  markdownByLanguage: Record<LanguageCode, string>;
+  fullscreenEnabled?: boolean;
+}
+
+export interface LoadedHtmlContent {
+  routeId: number;
+  config: ContentTypeRouteConfig;
+  htmlByLanguage: Record<LanguageCode, string>;
+  fullscreenEnabled?: boolean;
+}
+
+export interface LoadedVideoContent {
+  routeId: number;
+  config: ContentTypeRouteConfig;
+  videoTypeByLanguage: Record<LanguageCode, string>;
+  pathVideoByLanguage: Record<LanguageCode, string>;
+  fullscreenEnabled?: boolean;
+}
+
+export interface LoadedPage {
+  id: number;
+  md?: LoadedMdContent;
+  html?: LoadedHtmlContent;
+  video?: LoadedVideoContent;
+}
+
+export interface PathToPageEntry {
+  pageIndex: number;
+  contentType: ContentType;
+}
+
 export interface LoadedDocsData {
   config: GitPageDocsConfig;
   docs: DocsContent[];
+  pages: LoadedPage[];
+  pathToPageMap: Record<string, PathToPageEntry>;
   showRepositorySearchHome?: boolean;
   availableVersions: VersionEntry[];
   activeVersionId?: string;
