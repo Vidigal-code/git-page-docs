@@ -1,6 +1,11 @@
 "use client";
 
 import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
+import type { ContentTypeRouteConfig, RouteConfig } from "@/entities/docs/model/types";
+
+function isBrowseAllEnabled(config: ContentTypeRouteConfig | RouteConfig | undefined): boolean {
+  return Boolean(config && "browseAll" in config && config.browseAll === true);
+}
 import type {
   LanguageCode,
   LoadedDocsData,
@@ -73,9 +78,9 @@ export function PageContentArea({
   const mdConfig = currentPage.md?.config;
   const htmlConfig = currentPage.html?.config;
   const videoConfig = currentPage.video?.config;
-  const mdBrowseAll = (mdConfig && "browseAll" in mdConfig && mdConfig.browseAll) ?? false;
-  const htmlBrowseAll = (htmlConfig && "browseAll" in htmlConfig && htmlConfig.browseAll) ?? false;
-  const videoBrowseAll = (videoConfig && "browseAll" in videoConfig && videoConfig.browseAll) ?? false;
+  const mdBrowseAll = isBrowseAllEnabled(mdConfig);
+  const htmlBrowseAll = isBrowseAllEnabled(htmlConfig);
+  const videoBrowseAll = isBrowseAllEnabled(videoConfig);
 
   const currentMd = mdBrowseAll && mdItems.length > 0
     ? mdItems[Math.min(mdBrowseIndex, mdItems.length - 1)]?.content

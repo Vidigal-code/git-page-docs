@@ -11,6 +11,49 @@ import styles from "../../docs-shell.module.css";
 const BASE_TARGET_BLANK = "<base target=\"_blank\" />";
 const BASE_TARGET_SELF = "<base target=\"_self\" />";
 
+const EXTERNAL_LINK_LABELS: Record<string, { message: string; button: string }> = {
+  pt: {
+    message: "Esta página não pode ser incorporada. Abra em uma nova aba para visualizar.",
+    button: "Abrir em nova aba",
+  },
+  es: {
+    message: "Esta página no puede incrustarse. Ábrela en una nueva pestaña para verla.",
+    button: "Abrir en nueva pestaña",
+  },
+  en: {
+    message: "This page cannot be embedded. Open it in a new tab to view.",
+    button: "Open in new tab",
+  },
+};
+
+function getExternalLinkLabels(lang: string) {
+  return EXTERNAL_LINK_LABELS[lang] ?? EXTERNAL_LINK_LABELS.en;
+}
+
+interface ExternalLinkFallbackProps {
+  url: string;
+  language: string;
+  messageClassName: string;
+  buttonClassName: string;
+}
+
+function ExternalLinkFallback({
+  url,
+  language,
+  messageClassName,
+  buttonClassName,
+}: ExternalLinkFallbackProps) {
+  const { message, button } = getExternalLinkLabels(language);
+  return (
+    <div className={styles.externalLinkCard}>
+      <p className={messageClassName}>{message}</p>
+      <a href={url} target="_blank" rel="noopener noreferrer" className={buttonClassName}>
+        {button}
+      </a>
+    </div>
+  );
+}
+
 function injectBaseTarget(html: string, blockLink: boolean): string {
   const baseTag = blockLink ? BASE_TARGET_BLANK : BASE_TARGET_SELF;
   const lower = html.toLowerCase();
@@ -66,31 +109,19 @@ export function HtmlContainer({
   const isBlocked = useExternalUrl && isFrameBlockedUrl(externalUrl ?? undefined);
 
   const header = <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
+  const wrapperClass = isBlocked
+    ? `${styles.htmlWrapper} ${styles.htmlWrapperExternalLink}`
+    : styles.htmlWrapper;
   const content = (
     <article className={styles.card}>
-      <div className={styles.htmlWrapper} style={containerStyle}>
+      <div className={wrapperClass} style={containerStyle}>
         {isBlocked ? (
-          <div className={styles.externalLinkCard}>
-            <p className={styles.externalLinkMessage}>
-              {language === "pt"
-                ? "Esta página não pode ser incorporada. Abra em uma nova aba para visualizar."
-                : language === "es"
-                  ? "Esta página no puede incrustarse. Ábrela en una nueva pestaña para verla."
-                  : "This page cannot be embedded. Open it in a new tab to view."}
-            </p>
-            <a
-              href={externalUrl ?? ""}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.externalLinkButton}
-            >
-              {language === "pt"
-                ? "Abrir em nova aba"
-                : language === "es"
-                  ? "Abrir en nueva pestaña"
-                  : "Open in new tab"}
-            </a>
-          </div>
+          <ExternalLinkFallback
+            url={externalUrl ?? ""}
+            language={language}
+            messageClassName={styles.externalLinkMessage}
+            buttonClassName={styles.externalLinkButton}
+          />
         ) : useExternalUrl ? (
           <iframe
             title="HTML content"

@@ -592,6 +592,12 @@
   aspect-ratio: 16 / 9;
 }
 
+.htmlWrapperExternalLink {
+  display: flex;
+  min-height: 80vh;
+  aspect-ratio: unset;
+}
+
 .htmlIframe,
 .videoIframe {
   width: 100%;
@@ -603,11 +609,13 @@
 
 .externalLinkCard {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  min-height: 240px;
+  width: 100%;
+  min-height: 100%;
   padding: 24px;
   background: color-mix(in srgb, var(--card-background) 60%, var(--background));
   border: 1px dashed var(--card-border);
