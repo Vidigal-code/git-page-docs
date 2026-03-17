@@ -34,11 +34,16 @@ function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): nu
   return idx >= 0 ? idx : 0;
 }
 
+export interface OnMenuClickOptions {
+  fromLinearNav?: boolean;
+}
+
 interface UseDocsShellNavigationStateArgs {
   data: LoadedDocsData;
   language: LanguageCode;
   setSidebarOpen: (open: boolean) => void;
   setMenuOpen: (open: boolean) => void;
+  blockSidebarOpenOnNav?: boolean;
 }
 
 export function useDocsShellNavigationState({
@@ -46,6 +51,7 @@ export function useDocsShellNavigationState({
   language,
   setSidebarOpen,
   setMenuOpen,
+  blockSidebarOpenOnNav = false,
 }: UseDocsShellNavigationStateArgs) {
   const [pageIndex, setPageIndex] = useState(0);
   const [expandedMenuMap, setExpandedMenuMap] = useState<Record<string, boolean>>({});
@@ -68,7 +74,7 @@ export function useDocsShellNavigationState({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync browse indices when page or items change
   }, [pageIndex, pages.length, mdItems.length, htmlItems.length, videoItems.length, audioItems.length]);
 
-  function onMenuClick(pathClick: string, ancestorKeys: string[] = []) {
+  function onMenuClick(pathClick: string, ancestorKeys: string[] = [], options: OnMenuClickOptions = {}) {
     const idx = getPageIndexByPathClick(data, pathClick);
     if (idx >= 0) {
       setPageIndex(idx);
@@ -82,7 +88,10 @@ export function useDocsShellNavigationState({
         return nextMap;
       });
     }
-    setSidebarOpen(true);
+    const skipSidebarOpen = options.fromLinearNav === true && blockSidebarOpenOnNav;
+    if (!skipSidebarOpen) {
+      setSidebarOpen(true);
+    }
     setMenuOpen(false);
   }
 

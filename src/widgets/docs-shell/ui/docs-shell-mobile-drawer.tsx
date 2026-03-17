@@ -1,4 +1,6 @@
+import Image from "next/image";
 import type { MenuNode } from "../model/menu-tree";
+import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { DocsShellControls } from "./docs-shell-controls";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
 import styles from "../docs-shell.module.css";
@@ -13,6 +15,7 @@ interface DocsShellMobileDrawerProps {
   onToggleNode: (nodeKey: string) => void;
   isNodeExpanded: (nodeKey: string) => boolean;
   controls: React.ComponentProps<typeof DocsShellControls>;
+  navMenuCloseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
 }
 
 export function DocsShellMobileDrawer({
@@ -25,6 +28,7 @@ export function DocsShellMobileDrawer({
   onToggleNode,
   isNodeExpanded,
   controls,
+  navMenuCloseIcon,
 }: DocsShellMobileDrawerProps) {
   if (!isOpen) {
     return null;
@@ -35,7 +39,21 @@ export function DocsShellMobileDrawer({
         <div className={styles.mobileDrawerHeader}>
           <strong>{siteName}</strong>
           <button className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>
-            ✕
+            {navMenuCloseIcon?.useReactIcon ? (
+              <span style={navMenuCloseIcon.reactIconStyle}>
+                <ReactIconByTag tag={navMenuCloseIcon.reactIconTag} style={navMenuCloseIcon.reactIconStyle} />
+              </span>
+            ) : navMenuCloseIcon?.iconImage ? (
+              <Image
+                src={navMenuCloseIcon.iconImage}
+                alt=""
+                width={navMenuCloseIcon.iconImgWidth}
+                height={navMenuCloseIcon.iconImgHeight}
+                unoptimized
+              />
+            ) : (
+              "✕"
+            )}
           </button>
         </div>
         <nav className={styles.mobileMenu}>

@@ -73,6 +73,46 @@ export interface SiteConfig {
   IconPreviewProjectLinkReactIconesTagColorDark?: string;
   IconPreviewProjectLinkReactIconesTagColorLight?: string;
   IconPreviewProjectLinkReactIconesTagSize?: string;
+  /** Nav menu toggle: open button icon */
+  IconNavMenuOpenLightImg?: string;
+  IconNavMenuOpenDarkImg?: string;
+  IconNavMenuOpenReactIcones?: boolean;
+  IconNavMenuOpenReactIconesTag?: string;
+  IconNavMenuOpenReactIconesTagColorDark?: string;
+  IconNavMenuOpenReactIconesTagColorLight?: string;
+  IconNavMenuOpenReactIconesTagSize?: string;
+  IconNavMenuOpenImgWidth?: string | number;
+  IconNavMenuOpenImgHeight?: string | number;
+  /** Nav menu toggle: close button icon */
+  IconNavMenuCloseLightImg?: string;
+  IconNavMenuCloseDarkImg?: string;
+  IconNavMenuCloseReactIcones?: boolean;
+  IconNavMenuCloseReactIconesTag?: string;
+  IconNavMenuCloseReactIconesTagColorDark?: string;
+  IconNavMenuCloseReactIconesTagColorLight?: string;
+  IconNavMenuCloseReactIconesTagSize?: string;
+  IconNavMenuCloseImgWidth?: string | number;
+  IconNavMenuCloseImgHeight?: string | number;
+  /** Block menu on nav toggle: active (blocking) state icon */
+  IconNavMenuBlockActiveLightImg?: string;
+  IconNavMenuBlockActiveDarkImg?: string;
+  IconNavMenuBlockActiveReactIcones?: boolean;
+  IconNavMenuBlockActiveReactIconesTag?: string;
+  IconNavMenuBlockActiveReactIconesTagColorDark?: string;
+  IconNavMenuBlockActiveReactIconesTagColorLight?: string;
+  IconNavMenuBlockActiveReactIconesTagSize?: string;
+  IconNavMenuBlockActiveImgWidth?: string | number;
+  IconNavMenuBlockActiveImgHeight?: string | number;
+  /** Block menu on nav toggle: inactive state icon */
+  IconNavMenuBlockInactiveLightImg?: string;
+  IconNavMenuBlockInactiveDarkImg?: string;
+  IconNavMenuBlockInactiveReactIcones?: boolean;
+  IconNavMenuBlockInactiveReactIconesTag?: string;
+  IconNavMenuBlockInactiveReactIconesTagColorDark?: string;
+  IconNavMenuBlockInactiveReactIconesTagColorLight?: string;
+  IconNavMenuBlockInactiveReactIconesTagSize?: string;
+  IconNavMenuBlockInactiveImgWidth?: string | number;
+  IconNavMenuBlockInactiveImgHeight?: string | number;
   /** If true, show breadcrumb (icon > ancestor > current) above MD container */
   RouteGuide?: boolean;
   IconRouteGuideLightImg?: string;

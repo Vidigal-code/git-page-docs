@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
+import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellHeaderProps {
@@ -16,6 +18,9 @@ interface DocsShellHeaderProps {
   menuCloseLabel: string;
   onToggleMenu: () => void;
   activeLayoutMode: "dark" | "light" | undefined;
+  navMenuConfig: NavMenuConfig;
+  blockMenuOnNav: boolean;
+  setBlockMenuOnNav: (v: boolean) => void;
   controls: React.ReactNode;
 }
 
@@ -32,8 +37,12 @@ export function DocsShellHeader({
   menuCloseLabel,
   onToggleMenu,
   activeLayoutMode,
+  navMenuConfig,
+  blockMenuOnNav,
+  setBlockMenuOnNav,
   controls,
 }: DocsShellHeaderProps) {
+  const menuToggleIcon = menuOpen ? navMenuConfig.navMenuCloseIcon : navMenuConfig.navMenuOpenIcon;
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
@@ -62,8 +71,31 @@ export function DocsShellHeader({
             aria-label={menuOpen ? menuCloseLabel : menuOpenLabel}
             title={menuOpen ? menuCloseLabel : menuOpenLabel}
           >
-            {menuOpen ? "✕" : "☰"}
+            {menuToggleIcon.useReactIcon ? (
+              <span style={menuToggleIcon.reactIconStyle}>
+                <ReactIconByTag tag={menuToggleIcon.reactIconTag} style={menuToggleIcon.reactIconStyle} />
+              </span>
+            ) : menuToggleIcon.iconImage ? (
+              <Image
+                src={menuToggleIcon.iconImage}
+                alt=""
+                width={menuToggleIcon.iconImgWidth}
+                height={menuToggleIcon.iconImgHeight}
+                unoptimized
+              />
+            ) : (
+              menuOpen ? "✕" : "☰"
+            )}
           </button>
+          <NavMenuBlockToggle
+            blockMenuOnNav={blockMenuOnNav}
+            onToggle={() => setBlockMenuOnNav(!blockMenuOnNav)}
+            activeIcon={navMenuConfig.navMenuBlockActiveIcon}
+            inactiveIcon={navMenuConfig.navMenuBlockInactiveIcon}
+            labelActive={navMenuConfig.blockMenuOnNavLabelActive}
+            labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
+            className={`${styles.button} ${styles.mobileToggle}`}
+          />
         </div>
 
         <div className={styles.headerRight}>{controls}</div>

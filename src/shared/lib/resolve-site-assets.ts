@@ -16,3 +16,11 @@ export {
   type RouteGuideIconConfigInput,
   type ResolvedRouteGuideIconConfig,
 } from "./resolve-route-guide-icon";
+export {
+  resolveNavMenuOpenIconConfig,
+  resolveNavMenuCloseIconConfig,
+  resolveNavMenuBlockActiveIconConfig,
+  resolveNavMenuBlockInactiveIconConfig,
+  type NavMenuIconConfigInput,
+  type ResolvedNavMenuIconConfig,
+} from "./resolve-nav-menu-icon";

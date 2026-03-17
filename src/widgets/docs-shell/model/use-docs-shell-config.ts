@@ -5,7 +5,13 @@ import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/d
 import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
 import type { LayoutItem, LoadedDocsData, LoadedPage, VersionEntry } from "@/entities/docs/model/types";
 import { getBasePath } from "@/shared/lib/base-path";
-import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
+import {
+  resolveHeaderIconConfig,
+  resolveNavMenuOpenIconConfig,
+  resolveNavMenuCloseIconConfig,
+  resolveNavMenuBlockActiveIconConfig,
+  resolveNavMenuBlockInactiveIconConfig,
+} from "@/shared/lib/resolve-site-assets";
 
 export interface DocsShellControlsConfig {
   fallbackProjectLink: string | undefined;
@@ -70,6 +76,15 @@ export interface DocsShellControlsConfig {
   audioPlaylistTitle: string;
   audioPlaylistDescription: string;
   audioPopoverCloseLabel: string;
+}
+
+export interface NavMenuConfig {
+  navMenuOpenIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuBlockActiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuBlockInactiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  blockMenuOnNavLabelActive: string;
+  blockMenuOnNavLabelInactive: string;
 }
 
 export function useDocsShellConfig(
@@ -224,9 +239,24 @@ export function useDocsShellConfig(
     [data, language],
   );
 
+  const navMenuConfig = useMemo((): NavMenuConfig => {
+    const site = data.config.site;
+    const mode = (activeLayout?.mode ?? "dark") as "dark" | "light";
+    const basePath = getBasePath();
+    return {
+      navMenuOpenIcon: resolveNavMenuOpenIconConfig(site, mode, basePath),
+      navMenuCloseIcon: resolveNavMenuCloseIconConfig(site, mode, basePath),
+      navMenuBlockActiveIcon: resolveNavMenuBlockActiveIconConfig(site, mode, basePath),
+      navMenuBlockInactiveIcon: resolveNavMenuBlockInactiveIconConfig(site, mode, basePath),
+      blockMenuOnNavLabelActive: getLangMenuLabelFromMenu(site.langmenu, language, "blockMenuOnNavActive", "Block menu on navigation"),
+      blockMenuOnNavLabelInactive: getLangMenuLabelFromMenu(site.langmenu, language, "blockMenuOnNavInactive", "Allow menu on navigation"),
+    };
+  }, [data.config.site, activeLayout?.mode, language]);
+
   return {
     headerIconConfig,
     controlsConfig,
+    navMenuConfig,
     footerEnabled: data.config.site.FooterEnabled !== false,
     footerConfig,
   };

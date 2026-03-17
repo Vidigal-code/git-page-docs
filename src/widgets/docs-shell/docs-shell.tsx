@@ -25,6 +25,7 @@ import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
+import { useNavMenuBlockPreference, NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { DocsShellControls, type DocsShellControlsProps } from "./ui/docs-shell-controls";
@@ -69,6 +70,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(
     data.config.site.name,
   );
+  const { blockMenuOnNav, setBlockMenuOnNav } = useNavMenuBlockPreference(data.config.site.name);
   const defaultLanguage = data.config.site.defaultLanguage;
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
@@ -127,6 +129,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     language,
     setSidebarOpen,
     setMenuOpen,
+    blockSidebarOpenOnNav: blockMenuOnNav,
   });
 
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
@@ -290,7 +293,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     routerReplace: router.replace,
   });
 
-  const { headerIconConfig, controlsConfig, footerEnabled, footerConfig } = useDocsShellConfig(
+  const { headerIconConfig, controlsConfig, navMenuConfig, footerEnabled, footerConfig } = useDocsShellConfig(
     data,
     activeLayout,
     language,
@@ -332,8 +335,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   });
 
   const onMenuClick = useCallback(
-    (pathClick: string, ancestorKeys: string[] = []) => {
-      onMenuClickState(pathClick, ancestorKeys);
+    (pathClick: string, ancestorKeys: string[] = [], options?: { fromLinearNav?: boolean }) => {
+      onMenuClickState(pathClick, ancestorKeys, options);
       setQuickNavOpen(false);
       setFocusModeOpen(false);
       setQuickNavQuery("");
@@ -350,7 +353,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       if (currentLinearNavigationIndex < 0) return;
       const targetEntry = linearNavigationEntries[currentLinearNavigationIndex + offset];
       if (!targetEntry) return;
-      onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys);
+      onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys, { fromLinearNav: true });
     },
     [currentLinearNavigationIndex, linearNavigationEntries, onMenuClick],
   );
@@ -540,6 +543,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         onToggleMenu={() => setMenuOpen((v) => !v)}
         activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
         controlsProps={controlsProps}
+        navMenuConfig={navMenuConfig}
+        blockMenuOnNav={blockMenuOnNav}
+        setBlockMenuOnNav={setBlockMenuOnNav}
         currentPage={currentPage}
         data={data}
         language={language}
@@ -586,6 +592,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         toggleNode={toggleNode}
         isNodeExpanded={isNodeExpanded}
         controlsProps={controlsProps}
+        navMenuConfig={navMenuConfig}
         controlsConfig={controlsConfig}
         versionLinksPopupOpen={versionLinksPopupOpen}
         setVersionLinksPopupOpen={setVersionLinksPopupOpen}
@@ -662,6 +669,9 @@ function DocsShellMainContent(props: {
   onToggleMenu: () => void;
   activeLayoutMode?: string;
   controlsProps: DocsShellControlsProps;
+  navMenuConfig: import("./model/use-docs-shell-config").NavMenuConfig;
+  blockMenuOnNav: boolean;
+  setBlockMenuOnNav: (v: boolean) => void;
   currentPage: LoadedPage | undefined;
   data: LoadedDocsData;
   language: string;
@@ -762,6 +772,9 @@ function DocsShellMainContent(props: {
         menuCloseLabel={menuCloseLabel}
         onToggleMenu={props.onToggleMenu}
         activeLayoutMode={activeLayoutMode as "light" | "dark" | undefined}
+        navMenuConfig={props.navMenuConfig}
+        blockMenuOnNav={props.blockMenuOnNav}
+        setBlockMenuOnNav={props.setBlockMenuOnNav}
         controls={<DocsShellControls {...controlsProps} />}
       />
 
@@ -833,6 +846,7 @@ function DocsShellOverlays(props: {
   toggleNode: (key: string) => void;
   isNodeExpanded: (key: string) => boolean;
   controlsProps: DocsShellControlsProps;
+  navMenuConfig: import("./model/use-docs-shell-config").NavMenuConfig;
   controlsConfig: { activeNavigation: boolean; focusModeEnabled: boolean; focusModeLabel: string; versionLinksLabel: string; versionLinkOptionsWithLabels: unknown[]; lastUpdateLabel: string; updateDate: string };
   versionLinksPopupOpen: boolean;
   setVersionLinksPopupOpen: (v: boolean) => void;
@@ -904,6 +918,7 @@ function DocsShellOverlays(props: {
         onToggleNode={props.toggleNode}
         isNodeExpanded={props.isNodeExpanded}
         controls={controlsProps}
+        navMenuCloseIcon={props.navMenuConfig.navMenuCloseIcon}
       />
       <DocsShellQuickNavOverlay
         isOpen={controlsConfig.activeNavigation && props.quickNavOpen}
