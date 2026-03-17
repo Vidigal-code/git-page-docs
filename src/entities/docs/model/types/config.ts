@@ -24,7 +24,7 @@ export interface AudioRouteConfig {
 /** Single track for site.audioTracks or route.audio.tracks (background music player) */
 export interface AudioTrackConfig {
   url: string;
-  type: string; // mp3 | wav | ogg | youtube | vimeo | mp4 | webm
+  type: string; // mp3 | wav | ogg | aac | m4a | flac | opus | weba | wma | youtube | vimeo | spotify | mp4 | webm
   title?: Record<LanguageCode, string>;
 }
 

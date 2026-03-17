@@ -2,18 +2,19 @@ import { getEmbedUrl } from "@/entities/docs/lib/video/embed-url";
 import type { AudioTrackConfig } from "@/entities/docs/model/types";
 import type { LanguageCode } from "@/entities/docs/model/types";
 import { getBasePath } from "@/shared/lib/base-path";
-
-const NATIVE_AUDIO = new Set(["mp3", "wav", "ogg"]);
-const NATIVE_VIDEO_AS_AUDIO = new Set(["mp4", "webm"]);
-const EMBED_TYPES = new Set(["youtube", "vimeo"]);
+import {
+  isNativeAudio,
+  isNativeVideoAsAudio,
+  isAudioEmbed,
+} from "@/shared/lib/media-types";
 
 export function isNativePlayableTrack(type: string): boolean {
   const t = String(type).toLowerCase();
-  return NATIVE_AUDIO.has(t) || NATIVE_VIDEO_AS_AUDIO.has(t);
+  return isNativeAudio(t) || isNativeVideoAsAudio(t);
 }
 
 export function isEmbedTrack(type: string): boolean {
-  return EMBED_TYPES.has(String(type).toLowerCase());
+  return isAudioEmbed(String(type));
 }
 
 /**

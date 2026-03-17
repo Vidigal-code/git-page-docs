@@ -21,6 +21,24 @@ export interface NavMenuIconConfigInput {
   IconNavMenuCloseReactIconesTagSize?: string;
   IconNavMenuCloseImgWidth?: string | number;
   IconNavMenuCloseImgHeight?: string | number;
+  IconNavMenuMobileCloseLightImg?: string;
+  IconNavMenuMobileCloseDarkImg?: string;
+  IconNavMenuMobileCloseReactIcones?: boolean;
+  IconNavMenuMobileCloseReactIconesTag?: string;
+  IconNavMenuMobileCloseReactIconesTagColorDark?: string;
+  IconNavMenuMobileCloseReactIconesTagColorLight?: string;
+  IconNavMenuMobileCloseReactIconesTagSize?: string;
+  IconNavMenuMobileCloseImgWidth?: string | number;
+  IconNavMenuMobileCloseImgHeight?: string | number;
+  IconNavMenuMobileOpenLightImg?: string;
+  IconNavMenuMobileOpenDarkImg?: string;
+  IconNavMenuMobileOpenReactIcones?: boolean;
+  IconNavMenuMobileOpenReactIconesTag?: string;
+  IconNavMenuMobileOpenReactIconesTagColorDark?: string;
+  IconNavMenuMobileOpenReactIconesTagColorLight?: string;
+  IconNavMenuMobileOpenReactIconesTagSize?: string;
+  IconNavMenuMobileOpenImgWidth?: string | number;
+  IconNavMenuMobileOpenImgHeight?: string | number;
   IconNavMenuBlockActiveLightImg?: string;
   IconNavMenuBlockActiveDarkImg?: string;
   IconNavMenuBlockActiveReactIcones?: boolean;
@@ -147,6 +165,76 @@ export function resolveNavMenuCloseIconConfig(
     "IconNavMenuCloseImgHeight",
     "IoClose",
   );
+}
+
+function hasMobileOpenConfig(site: NavMenuIconConfigInput | undefined): boolean {
+  if (!site) return false;
+  return Boolean(
+    site.IconNavMenuMobileOpenLightImg?.trim() ||
+      site.IconNavMenuMobileOpenDarkImg?.trim() ||
+      site.IconNavMenuMobileOpenReactIcones ||
+      site.IconNavMenuMobileOpenReactIconesTag?.trim()
+  );
+}
+
+export function resolveNavMenuMobileOpenIconConfig(
+  site: NavMenuIconConfigInput | undefined,
+  mode: "dark" | "light",
+  basePath: string
+): ResolvedNavMenuIconConfig {
+  if (hasMobileOpenConfig(site)) {
+    return resolveIconFromSite(
+      site,
+      mode,
+      basePath,
+      "IconNavMenuMobileOpenLightImg",
+      "IconNavMenuMobileOpenDarkImg",
+      "IconNavMenuMobileOpenReactIcones",
+      "IconNavMenuMobileOpenReactIconesTag",
+      "IconNavMenuMobileOpenReactIconesTagColorDark",
+      "IconNavMenuMobileOpenReactIconesTagColorLight",
+      "IconNavMenuMobileOpenReactIconesTagSize",
+      "IconNavMenuMobileOpenImgWidth",
+      "IconNavMenuMobileOpenImgHeight",
+      "FaBars",
+    );
+  }
+  return resolveNavMenuOpenIconConfig(site, mode, basePath);
+}
+
+function hasMobileCloseConfig(site: NavMenuIconConfigInput | undefined): boolean {
+  if (!site) return false;
+  return Boolean(
+    site.IconNavMenuMobileCloseLightImg?.trim() ||
+      site.IconNavMenuMobileCloseDarkImg?.trim() ||
+      site.IconNavMenuMobileCloseReactIcones ||
+      site.IconNavMenuMobileCloseReactIconesTag?.trim()
+  );
+}
+
+export function resolveNavMenuMobileCloseIconConfig(
+  site: NavMenuIconConfigInput | undefined,
+  mode: "dark" | "light",
+  basePath: string
+): ResolvedNavMenuIconConfig {
+  if (hasMobileCloseConfig(site)) {
+    return resolveIconFromSite(
+      site,
+      mode,
+      basePath,
+      "IconNavMenuMobileCloseLightImg",
+      "IconNavMenuMobileCloseDarkImg",
+      "IconNavMenuMobileCloseReactIcones",
+      "IconNavMenuMobileCloseReactIconesTag",
+      "IconNavMenuMobileCloseReactIconesTagColorDark",
+      "IconNavMenuMobileCloseReactIconesTagColorLight",
+      "IconNavMenuMobileCloseReactIconesTagSize",
+      "IconNavMenuMobileCloseImgWidth",
+      "IconNavMenuMobileCloseImgHeight",
+      "IoClose",
+    );
+  }
+  return resolveNavMenuCloseIconConfig(site, mode, basePath);
 }
 
 export function resolveNavMenuBlockActiveIconConfig(

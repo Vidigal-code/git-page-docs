@@ -9,6 +9,8 @@ import {
   resolveHeaderIconConfig,
   resolveNavMenuOpenIconConfig,
   resolveNavMenuCloseIconConfig,
+  resolveNavMenuMobileOpenIconConfig,
+  resolveNavMenuMobileCloseIconConfig,
   resolveNavMenuBlockActiveIconConfig,
   resolveNavMenuBlockInactiveIconConfig,
 } from "@/shared/lib/resolve-site-assets";
@@ -81,6 +83,8 @@ export interface DocsShellControlsConfig {
 export interface NavMenuConfig {
   navMenuOpenIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   navMenuCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuMobileOpenIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuMobileCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   navMenuBlockActiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   navMenuBlockInactiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   blockMenuOnNavLabelActive: string;
@@ -246,6 +250,8 @@ export function useDocsShellConfig(
     return {
       navMenuOpenIcon: resolveNavMenuOpenIconConfig(site, mode, basePath),
       navMenuCloseIcon: resolveNavMenuCloseIconConfig(site, mode, basePath),
+      navMenuMobileOpenIcon: resolveNavMenuMobileOpenIconConfig(site, mode, basePath),
+      navMenuMobileCloseIcon: resolveNavMenuMobileCloseIconConfig(site, mode, basePath),
       navMenuBlockActiveIcon: resolveNavMenuBlockActiveIconConfig(site, mode, basePath),
       navMenuBlockInactiveIcon: resolveNavMenuBlockInactiveIconConfig(site, mode, basePath),
       blockMenuOnNavLabelActive: getLangMenuLabelFromMenu(site.langmenu, language, "blockMenuOnNavActive", "Block menu on navigation"),

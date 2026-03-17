@@ -918,7 +918,7 @@ function DocsShellOverlays(props: {
         onToggleNode={props.toggleNode}
         isNodeExpanded={props.isNodeExpanded}
         controls={controlsProps}
-        navMenuCloseIcon={props.navMenuConfig.navMenuCloseIcon}
+        navMenuCloseIcon={props.navMenuConfig.navMenuMobileCloseIcon}
       />
       <DocsShellQuickNavOverlay
         isOpen={controlsConfig.activeNavigation && props.quickNavOpen}

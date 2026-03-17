@@ -93,6 +93,26 @@ export interface SiteConfig {
   IconNavMenuCloseReactIconesTagSize?: string;
   IconNavMenuCloseImgWidth?: string | number;
   IconNavMenuCloseImgHeight?: string | number;
+  /** Nav menu mobile drawer: open button / hamburger (override; falls back to IconNavMenuOpen) */
+  IconNavMenuMobileOpenLightImg?: string;
+  IconNavMenuMobileOpenDarkImg?: string;
+  IconNavMenuMobileOpenReactIcones?: boolean;
+  IconNavMenuMobileOpenReactIconesTag?: string;
+  IconNavMenuMobileOpenReactIconesTagColorDark?: string;
+  IconNavMenuMobileOpenReactIconesTagColorLight?: string;
+  IconNavMenuMobileOpenReactIconesTagSize?: string;
+  IconNavMenuMobileOpenImgWidth?: string | number;
+  IconNavMenuMobileOpenImgHeight?: string | number;
+  /** Nav menu mobile drawer: close button (override; falls back to IconNavMenuClose) */
+  IconNavMenuMobileCloseLightImg?: string;
+  IconNavMenuMobileCloseDarkImg?: string;
+  IconNavMenuMobileCloseReactIcones?: boolean;
+  IconNavMenuMobileCloseReactIconesTag?: string;
+  IconNavMenuMobileCloseReactIconesTagColorDark?: string;
+  IconNavMenuMobileCloseReactIconesTagColorLight?: string;
+  IconNavMenuMobileCloseReactIconesTagSize?: string;
+  IconNavMenuMobileCloseImgWidth?: string | number;
+  IconNavMenuMobileCloseImgHeight?: string | number;
   /** Block menu on nav toggle: active (blocking) state icon */
   IconNavMenuBlockActiveLightImg?: string;
   IconNavMenuBlockActiveDarkImg?: string;

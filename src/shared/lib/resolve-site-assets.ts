@@ -19,6 +19,8 @@ export {
 export {
   resolveNavMenuOpenIconConfig,
   resolveNavMenuCloseIconConfig,
+  resolveNavMenuMobileOpenIconConfig,
+  resolveNavMenuMobileCloseIconConfig,
   resolveNavMenuBlockActiveIconConfig,
   resolveNavMenuBlockInactiveIconConfig,
   type NavMenuIconConfigInput,

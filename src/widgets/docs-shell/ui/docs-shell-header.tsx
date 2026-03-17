@@ -42,7 +42,9 @@ export function DocsShellHeader({
   setBlockMenuOnNav,
   controls,
 }: DocsShellHeaderProps) {
-  const menuToggleIcon = menuOpen ? navMenuConfig.navMenuCloseIcon : navMenuConfig.navMenuOpenIcon;
+  const menuToggleIcon = menuOpen
+    ? navMenuConfig.navMenuMobileCloseIcon
+    : navMenuConfig.navMenuMobileOpenIcon;
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>

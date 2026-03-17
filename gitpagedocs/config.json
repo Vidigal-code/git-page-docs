@@ -83,6 +83,24 @@
     "IconNavMenuCloseReactIconesTagSize": "25px",
     "IconNavMenuCloseImgWidth": 20,
     "IconNavMenuCloseImgHeight": 20,
+    "IconNavMenuMobileOpenLightImg": "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+    "IconNavMenuMobileOpenDarkImg": "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
+    "IconNavMenuMobileOpenReactIcones": true,
+    "IconNavMenuMobileOpenReactIconesTag": "FaBars",
+    "IconNavMenuMobileOpenReactIconesTagColorDark": "White",
+    "IconNavMenuMobileOpenReactIconesTagColorLight": "black",
+    "IconNavMenuMobileOpenReactIconesTagSize": "25px",
+    "IconNavMenuMobileOpenImgWidth": 20,
+    "IconNavMenuMobileOpenImgHeight": 20,
+    "IconNavMenuMobileCloseLightImg": "https://cdn-icons-png.flaticon.com/256/25/25231.png",
+    "IconNavMenuMobileCloseDarkImg": "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
+    "IconNavMenuMobileCloseReactIcones": true,
+    "IconNavMenuMobileCloseReactIconesTag": "IoClose",
+    "IconNavMenuMobileCloseReactIconesTagColorDark": "White",
+    "IconNavMenuMobileCloseReactIconesTagColorLight": "black",
+    "IconNavMenuMobileCloseReactIconesTagSize": "25px",
+    "IconNavMenuMobileCloseImgWidth": 20,
+    "IconNavMenuMobileCloseImgHeight": 20,
     "IconNavMenuBlockActiveLightImg": "https://cdn-icons-png.flaticon.com/256/25/25231.png",
     "IconNavMenuBlockActiveDarkImg": "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
     "IconNavMenuBlockActiveReactIcones": true,
@@ -114,6 +132,15 @@
           "pt": "Rádio",
           "en": "Radio",
           "es": "Radio"
+        }
+      },
+      {
+        "url": "https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh",
+        "type": "spotify",
+        "title": {
+          "pt": "Spotify",
+          "en": "Spotify",
+          "es": "Spotify"
         }
       }
     ],
