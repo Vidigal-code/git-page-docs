@@ -46,9 +46,9 @@ function buildVersionHtmlRoutes(versionId) {
     es: `${base}/es/${HTML_PATHS[1].es}`,
   };
   const pathByLangSource = {
-    pt: `${base}/pt/source-viewer.html`,
-    en: `${base}/en/source-viewer.html`,
-    es: `${base}/es/source-viewer.html`,
+    pt: `${base}/pt/source-viewer`,
+    en: `${base}/en/source-viewer`,
+    es: `${base}/es/source-viewer`,
   };
   return [
     buildHtmlRoute(versionId, 1, pathByLang1, ROUTE_META_ID1.titles, ROUTE_META_ID1.descriptions),
@@ -83,15 +83,15 @@ function buildVersionMenus(versionId) {
   const menuHtml = [
     {
       id: 1,
-      pt: { title: "Primeiros passos (HTML)", "path-click": `${base}/pt/getting-started.html` },
-      en: { title: "Getting Started (HTML)", "path-click": `${base}/en/getting-started.html` },
-      es: { title: "Primeros pasos (HTML)", "path-click": `${base}/es/getting-started.html` },
+      pt: { title: "Primeiros passos (HTML)", "path-click": `${base}/pt/getting-started` },
+      en: { title: "Getting Started (HTML)", "path-click": `${base}/en/getting-started` },
+      es: { title: "Primeros pasos (HTML)", "path-click": `${base}/es/getting-started` },
     },
     {
       id: 2,
-      pt: { title: "Código fonte", "path-click": `${base}/pt/source-viewer.html` },
-      en: { title: "Source code", "path-click": `${base}/en/source-viewer.html` },
-      es: { title: "Código fuente", "path-click": `${base}/es/source-viewer.html` },
+      pt: { title: "Código fonte", "path-click": `${base}/pt/source-viewer` },
+      en: { title: "Source code", "path-click": `${base}/en/source-viewer` },
+      es: { title: "Código fuente", "path-click": `${base}/es/source-viewer` },
     },
   ];
   const menuVideo = [1, 2, 3, 4].map((id) => ({

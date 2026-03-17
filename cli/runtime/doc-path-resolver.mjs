@@ -15,8 +15,9 @@ export function parseDocFileToKey(fileName) {
 }
 
 export function parseHtmlFileToKey(fileName) {
-  if (fileName === "getting-started.html") return "gettingStarted";
-  if (fileName === "source-viewer.html") return "sourceViewer";
+  const base = fileName.replace(/\.html$/, "");
+  if (base === "getting-started") return "gettingStarted";
+  if (base === "source-viewer") return "sourceViewer";
   return undefined;
 }
 

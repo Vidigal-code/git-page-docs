@@ -8,7 +8,7 @@ export const ROUTE_PATHS = {
 };
 
 export const HTML_PATHS = {
-  1: { pt: "getting-started.html", en: "getting-started.html", es: "getting-started.html" },
+  1: { pt: "getting-started", en: "getting-started", es: "getting-started" },
 };
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];

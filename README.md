@@ -5,6 +5,27 @@
 It generates and maintains a `gitpagedocs/` folder with config and versioned markdown files.  
 It does **not** generate `index.html` or `index.js`.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Layout Strategy](#layout-strategy)
+- [Use Official Site or Your Own GitHub Pages](#use-official-site-or-your-own-github-pages)
+- [Self-Hosted GitHub Pages Setup](#self-hosted-github-pages-setup)
+- [Generated Structure](#generated-structure)
+- [Configuration Keys](#configuration-keys-layout-source)
+- [Repository Search Behavior](#repository-search-behavior)
+- [Scripts](#scripts)
+- [URL Routes and Query Parameters](#url-routes-and-query-parameters)
+- [CLI Options](#cli-options)
+- [Configuration File Format](#configuration-file-format)
+- [License](#license)
+
+## Prerequisites
+
+- **Node.js** 18+ (recommended 20+)
+- **npm** 9+
+
 ## Quick Start
 
 Install in your project:
@@ -76,7 +97,7 @@ docker run -p 3000:80 gitpagedocshome
 
 ### 1) Default mode (`npx gitpagedocs`)
 
-- `gitpagedocs/config.json` is generated with official layout source enabled.
+- `gitpagedocs/config.json` (or `config.js` / `config.ts`) is generated with official layout source enabled.
 - Layouts/templates are loaded from the official repository URLs:
   - `https://github.com/Vidigal-code/git-page-docs/tree/main/gitpagedocs/layouts`
 - Best option if you want to focus only on writing docs.
@@ -122,7 +143,7 @@ npx gitpagedocs --layoutconfig
 
 ### 2) Configure runtime URL (`site.rendering`)
 
-Set `gitpagedocs/config.json` `site.rendering` to your GitHub Pages URL:
+Set `gitpagedocs/config.json` (or `config.js` / `config.ts`) `site.rendering` to your GitHub Pages URL:
 
 ```text
 https://<your-user>.github.io/<your-repository>/
@@ -165,14 +186,15 @@ Default mode:
 ```text
 gitpagedocs/
   config.json
+  icon.svg
   docs/
     versions/
       1.0.0/config.json
       1.0.0/{en,pt,es}/*.md
-      1.1.0/config.json
-      1.1.0/{en,pt,es}/*.md
-      1.1.1/config.json
-      1.1.1/{en,pt,es}/*.md
+      1.0.0/{en,pt,es}/getting-started    # HTML (no .html extension)
+      1.0.0/{en,pt,es}/source-viewer      # Source code viewer (GitHub-style)
+      1.1.0/...
+      1.1.1/...
 ```
 
 Local layout mode adds:
@@ -186,7 +208,7 @@ gitpagedocs/layouts/
 
 ## Configuration Keys (Layout Source)
 
-Main layout source keys in `gitpagedocs/config.json`:
+Main layout source keys in `gitpagedocs/config.json` (or `config.js` / `config.ts`):
 
 - `layoutsConfigPathOficial`
 - `layoutsConfigPathOficialUrl`
@@ -214,14 +236,15 @@ GITPAGEDOCS_REPOSITORY_SEARCH=true
 
 ## Scripts
 
-- `npm run gitpagedocs` -> runs `node scripts/gitpagedocs-init.mjs`
-- `npm run gitpagedocs:full` -> compatibility alias for the same generator
-- `npm run gitpagedocs:home` -> generates `gitpagedocshome/` (static site + .env + Dockerfile + README)
-- `npm run build` -> generate `gitpagedocs/` + `next build`
-- `npm run build:prebuilt` -> generate + build + copy `out/` to `prebuilt/`
-- `npm run dev` -> `next dev`
-- `npm run start` -> `next start` (after `prestart` build)
-- `npm run lint` -> `eslint .`
+- `npm run gitpagedocs` — runs `node cli/index.mjs` (generate config and docs)
+- `npm run gitpagedocs:full` — compatibility alias for the same CLI
+- `npm run gitpagedocs:home` — generates `gitpagedocshome/` (static site + .env + Dockerfile + README)
+- `npm run build` — generate `gitpagedocs/` + copy icon to `public/` + `next build`
+- `npm run build:prebuilt` — generate + build + copy `out/` to `prebuilt/`
+- `npm run dev` — `next dev`
+- `npm run start` — `node cli/start.mjs` (spawns `next start`; runs after `prestart` build)
+- `npm run lint` — `eslint .`
+- `npm run clean` — remove `.next/`
 
 ## URL Routes and Query Parameters
 
@@ -250,9 +273,11 @@ All routes for accessing documentation files on the official site or self-hosted
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
 | `name` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
 | `mdfull` | `en`, `pt`, `es` | Markdown fullscreen mode |
+| `htmlfull` | `en`, `pt`, `es` | HTML fullscreen mode |
 | `file` | path (with `mdfull` or `htmlfull`) | File to show in fullscreen |
 | `videofull` | `en`, `pt`, `es` | Video fullscreen mode |
-| `slug` | video slug (with `videofull`) | Video identifier |
+| `audiofull` | `en`, `pt`, `es` | Audio fullscreen mode |
+| `slug` | video/audio slug (with `videofull` or `audiofull`) | Video/audio identifier |
 | `#heading-id` | anchor | Scroll to heading in markdown |
 
 ### Example URLs (git-page-docs, English)
@@ -292,7 +317,7 @@ All routes for accessing documentation files on the official site or self-hosted
 - Markdown fullscreen:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?mdfull=en&file=gitpagedocs/docs/versions/1.0.0/en/getting-started.md  
 - HTML fullscreen:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?htmlfull=en&file=gitpagedocs/docs/versions/1.0.0/en/source-viewer.html  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?htmlfull=en&file=gitpagedocs/docs/versions/1.0.0/en/source-viewer  
 - Video fullscreen:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?videofull=en&id=1  
 
@@ -310,15 +335,35 @@ All routes for accessing documentation files on the official site or self-hosted
 - v1.1.1:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.1/?lang=en&theme=aurora-dark  
 
-## Compatibility Flags
+## CLI Options
 
-Supported for compatibility:
+| Option | Description |
+|--------|-------------|
+| `--owner <user>` | GitHub owner (e.g. `Vidigal-code`) |
+| `--repo <repo>` | GitHub repository (e.g. `git-page-docs`) |
+| `--path <subpath>` | Subpath for docs (e.g. `docs`, `git-page-docs`) |
+| `--output <dir>` | Output directory (default: `gitpagedocs` or `gitpagedocshome` with `--home`) |
+| `--search true\|false` | Enable/disable repository search (mainly for `--home`) |
+| `--layoutconfig` | Generate local layout templates in `gitpagedocs/layouts/` |
+| `--push` | Create workflow, commit artifacts, push to origin |
+| `--home` | Standalone distribution in `gitpagedocshome/` (static site + .env + Dockerfile + README) |
+| `--interactive` / `-i` | Run in interactive mode (prompts for options) |
+| `--build` | Compatibility flag (no change to output) |
+| `--serve` | Compatibility flag |
+| `--full` | Compatibility flag |
 
-- `--build`
-- `--serve`
-- `--full`
-- `--push` (setup + workflow + git push automation)
-- `--path <subpath>` (optional; put docs under a subpath, e.g. `docs` or `git-page-docs`)
-- `--home` (standalone distribution in `gitpagedocshome/` with static site, `.env`, `Dockerfile`, and `README`)
+Shortcut syntax: `npx gitpagedocs --push --<owner> --<repo>` (e.g. `--Vidigal-code --git-page-docs`) is equivalent to `--owner <owner> --repo <repo>`.
 
-With `--home`, output is `gitpagedocshome/` instead of `gitpagedocs/`. Otherwise, output remains `gitpagedocs/`.
+With `--home`, output is `gitpagedocshome/` (or `--output` value). Otherwise, output remains `gitpagedocs/` (or `--output` value).
+
+## Configuration File Format
+
+Runtime supports three config file formats (in order of precedence):
+
+- `gitpagedocs/config.json`
+- `gitpagedocs/config.js` (CommonJS `module.exports` or ESM `export default`)
+- `gitpagedocs/config.ts` (TypeScript; exports default object)
+
+## License
+
+ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details.

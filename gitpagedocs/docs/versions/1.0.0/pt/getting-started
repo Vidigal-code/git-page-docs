@@ -1,0 +1,5 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head><meta charset="UTF-8"/><title>Primeiros passos</title><style>body{font-family:system-ui;max-width:720px;margin:2rem auto;padding:0 1rem;line-height:1.6}h1{color:#0ea5e9}p{color:#334155}</style></head>
+<body><h1>Primeiros passos</h1><p>Esta é uma página HTML de teste. Configure o repositório do zero usando os passos na documentação Markdown.</p></body>
+</html>

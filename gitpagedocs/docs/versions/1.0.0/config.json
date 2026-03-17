@@ -189,9 +189,9 @@
       "descriptionPosition": "center",
       "descriptionIsVisible": true,
       "path": {
-        "pt": "gitpagedocs/docs/versions/1.0.0/pt/getting-started.html",
-        "en": "gitpagedocs/docs/versions/1.0.0/en/getting-started.html",
-        "es": "gitpagedocs/docs/versions/1.0.0/es/getting-started.html"
+        "pt": "gitpagedocs/docs/versions/1.0.0/pt/getting-started",
+        "en": "gitpagedocs/docs/versions/1.0.0/en/getting-started",
+        "es": "gitpagedocs/docs/versions/1.0.0/es/getting-started"
       },
       "fullscreenEnabled": true,
       "marginTop": "",
@@ -226,9 +226,9 @@
       "descriptionPosition": "center",
       "descriptionIsVisible": true,
       "path": {
-        "pt": "gitpagedocs/docs/versions/1.0.0/pt/source-viewer.html",
-        "en": "gitpagedocs/docs/versions/1.0.0/en/source-viewer.html",
-        "es": "gitpagedocs/docs/versions/1.0.0/es/source-viewer.html"
+        "pt": "gitpagedocs/docs/versions/1.0.0/pt/source-viewer",
+        "en": "gitpagedocs/docs/versions/1.0.0/en/source-viewer",
+        "es": "gitpagedocs/docs/versions/1.0.0/es/source-viewer"
       },
       "fullscreenEnabled": true,
       "marginTop": "",
@@ -471,30 +471,30 @@
       "id": 1,
       "pt": {
         "title": "Primeiros passos (HTML)",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/pt/getting-started.html"
+        "path-click": "gitpagedocs/docs/versions/1.0.0/pt/getting-started"
       },
       "en": {
         "title": "Getting Started (HTML)",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/en/getting-started.html"
+        "path-click": "gitpagedocs/docs/versions/1.0.0/en/getting-started"
       },
       "es": {
         "title": "Primeros pasos (HTML)",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/es/getting-started.html"
+        "path-click": "gitpagedocs/docs/versions/1.0.0/es/getting-started"
       }
     },
     {
       "id": 2,
       "pt": {
         "title": "Código fonte",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/pt/source-viewer.html"
+        "path-click": "gitpagedocs/docs/versions/1.0.0/pt/source-viewer"
       },
       "en": {
         "title": "Source code",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/en/source-viewer.html"
+        "path-click": "gitpagedocs/docs/versions/1.0.0/en/source-viewer"
       },
       "es": {
         "title": "Código fuente",
-        "path-click": "gitpagedocs/docs/versions/1.0.0/es/source-viewer.html"
+        "path-click": "gitpagedocs/docs/versions/1.0.0/es/source-viewer"
       }
     }
   ],

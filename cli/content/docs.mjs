@@ -202,7 +202,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 ## Content types: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: always uses \`path\` pointing to local \`.md\` files.
-- **HTML (\`routes-html\`)**: uses \`path\` for local \`.html\` files or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated.
+- **HTML (\`routes-html\`)**: uses \`path\` for local HTML files (no \`.html\` extension in config, e.g. \`source-viewer\`, \`getting-started\`) or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated.
 - **Video (\`routes-video\`)**: uses \`video.pathVideo\` and \`video.videoType\` (youtube, vimeo, mp4, etc.).
 - **Audio (\`routes-audio\`)**: uses \`audio.pathAudio\` and \`audio.audioType\` (youtube, mp3, etc.). No autoplay by default.
 
