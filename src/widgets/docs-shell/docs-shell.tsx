@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
@@ -165,9 +165,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   } = useFocusMode(markdownHtml);
 
   const [urlFullscreenParams, setUrlFullscreenParams] = useState<FullscreenParams | null>(null);
+  const skipUrlFullscreenFromInlineRef = useRef(false);
 
   const onFullscreenRequest = useCallback(
     (params: FullscreenParams) => {
+      if (skipUrlFullscreenFromInlineRef.current) {
+        skipUrlFullscreenFromInlineRef.current = false;
+        return;
+      }
       let pathClick: string | null = null;
       const lang = params.lang ?? language;
       if (params.type === "md" && params.file) {
@@ -218,6 +223,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   const handleInlineFullscreenOpen = useCallback(
     (params: FullscreenParams) => {
+      skipUrlFullscreenFromInlineRef.current = true;
       const current = getCurrentSearchParams();
       if (params.type === "md" && params.file) {
         current.set("mdfull", params.lang);
@@ -247,6 +253,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       params.delete("id");
     }
     replaceUrlWithoutNavigation(pathname ?? "/", params);
+    setUrlFullscreenParams(null);
   }, [pathname, replaceUrlWithoutNavigation]);
 
   const versionFromQuery = searchParams.get("version");
