@@ -235,6 +235,7 @@ export function AudioPlayerPopover({
             data-active={playing || undefined}
           >
             {renderIcon(playing ? pauseIcon : playIcon, playing ? <FaPause aria-hidden /> : <CiPlay1 aria-hidden />)}
+            <span>{playStatusLabel}</span>
           </button>
           <button
             type="button"
@@ -244,6 +245,7 @@ export function AudioPlayerPopover({
             title={restartLabel}
           >
             {renderIcon(restartIcon, <FiRefreshCw aria-hidden />)}
+            <span>{restartLabel}</span>
           </button>
           <button
             type="button"
@@ -254,6 +256,7 @@ export function AudioPlayerPopover({
             data-active={loopEnabled || undefined}
           >
             {renderIcon(loopEnabled ? loopOnIcon : loopOffIcon, <FiRepeat aria-hidden />)}
+            <span>{loopStatusLabel}</span>
           </button>
         </div>
       </div>

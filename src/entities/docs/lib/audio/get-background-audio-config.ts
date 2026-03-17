@@ -10,6 +10,7 @@ export interface ResolvedBackgroundAudioConfig {
   autoPlayOnLoad: boolean;
   loopEnabled: boolean;
   allowUserChoice: boolean;
+  sequentialPlayback: boolean;
 }
 
 function isPageRouteAudioConfig(
@@ -53,6 +54,7 @@ export function getBackgroundAudioConfig(
       autoPlayOnLoad: pageAudio.autoPlayOnLoad ?? site.audioAutoPlayOnLoad ?? false,
       loopEnabled: pageAudio.loopEnabled ?? site.audioLoopEnabled ?? false,
       allowUserChoice: pageAudio.allowUserChoice ?? site.audioAllowUserChoice ?? true,
+      sequentialPlayback: pageAudio.sequentialPlayback ?? site.audioSequentialPlayback ?? false,
     };
   }
 
@@ -65,5 +67,6 @@ export function getBackgroundAudioConfig(
     autoPlayOnLoad: site.audioAutoPlayOnLoad ?? false,
     loopEnabled: site.audioLoopEnabled ?? false,
     allowUserChoice: site.audioAllowUserChoice ?? true,
+    sequentialPlayback: site.audioSequentialPlayback ?? false,
   };
 }

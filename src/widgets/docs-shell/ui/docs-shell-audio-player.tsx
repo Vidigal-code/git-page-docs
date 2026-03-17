@@ -71,6 +71,7 @@ export function DocsShellAudioPlayer({
     playing,
     popoverOpen,
     audioRef,
+    onNativeEnded,
     audioSrc,
     embedUrl,
     restartKey,
@@ -94,6 +95,7 @@ export function DocsShellAudioPlayer({
     autoPlayOnLoad: config.autoPlayOnLoad,
     loopEnabled: config.loopEnabled,
     allowUserChoice: config.allowUserChoice,
+    sequentialPlayback: config.sequentialPlayback,
   });
 
   const isEmbed = currentTrack && embedUrl;
@@ -164,6 +166,7 @@ export function DocsShellAudioPlayer({
           ref={audioRef}
           src={audioSrc}
           loop={loopEnabled}
+          onEnded={onNativeEnded}
           playsInline
           style={{ display: "none" }}
           aria-hidden

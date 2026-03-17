@@ -1,5 +1,20 @@
 import type { AudioTrackConfig, LanguageCode } from "@/entities/docs/model/types";
 
+/** Friendly display names for embed platform types */
+const PLATFORM_DISPLAY_NAMES: Record<string, string> = {
+  youtube: "YouTube",
+  vimeo: "Vimeo",
+  spotify: "Spotify",
+  linkedin: "LinkedIn",
+  instagram: "Instagram",
+  soundcloud: "SoundCloud",
+  bandcamp: "Bandcamp",
+  deezer: "Deezer",
+  x: "X",
+  twitter: "X",
+  tiktok: "TikTok",
+};
+
 function getRawTrackSourceLabel(track: AudioTrackConfig): string {
   try {
     const url = track.url?.trim() || "";
@@ -11,6 +26,11 @@ function getRawTrackSourceLabel(track: AudioTrackConfig): string {
   } catch {
     return track.url || "";
   }
+}
+
+function getPlatformDisplayName(type: string): string | null {
+  const normalized = String(type).toLowerCase();
+  return PLATFORM_DISPLAY_NAMES[normalized] ?? null;
 }
 
 export interface GetDisplaySourceLabelInput {
@@ -40,6 +60,11 @@ export function getDisplaySourceLabel(input: GetDisplaySourceLabelInput): string
   const trackSource = track.sourceLabel?.[langKey] ?? track.sourceLabel?.en;
   if (trackSource?.trim()) {
     return trackSource.trim();
+  }
+
+  const platformName = getPlatformDisplayName(track.type ?? "");
+  if (platformName) {
+    return platformName;
   }
 
   return getRawTrackSourceLabel(track);

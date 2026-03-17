@@ -982,7 +982,7 @@
 .audioPlayerPopoverOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.72);
+  background: color-mix(in srgb, var(--background) 75%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1067,7 +1067,7 @@
 .focusModeOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.72);
+  background: color-mix(in srgb, var(--background) 75%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1130,6 +1130,16 @@
 
 .audioPlayerPopoverFooter {
   justify-content: flex-start;
+}
+
+.audioPlayerPopoverFooter button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  width: auto;
+  min-width: auto;
+  white-space: nowrap;
 }
 
 .audioPlayerPopoverFooter button[data-active] {
@@ -1371,12 +1381,41 @@
     height: 44px;
   }
 
+  .focusModeOverlay,
   .audioPlayerPopoverOverlay {
     padding: 8px;
     padding-top: max(8px, env(safe-area-inset-top, 0px));
     padding-right: max(8px, env(safe-area-inset-right, 0px));
     padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
     padding-left: max(8px, env(safe-area-inset-left, 0px));
+  }
+
+  .focusModeCard {
+    width: 100%;
+    max-width: calc(100% - 16px);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .focusModeHeader {
+    justify-content: center;
+  }
+
+  .focusModeBody {
+    text-align: center;
+  }
+
+  .audioPlayerPopoverFooter {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .audioPlayerPopoverFooter button {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
   }
 
   .audioPlayerPopoverCard {

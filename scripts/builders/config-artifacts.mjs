@@ -289,6 +289,7 @@ export function buildConfigArtifacts(options = {}) {
       audioPlayerEnabled: true,
       audioAutoPlayOnLoad: false,
       audioLoopEnabled: false,
+      audioSequentialPlayback: false,
       audioPopoverHideSource: false,
       audioPopoverShowMinutes: true,
       audioTracks: [

@@ -156,6 +156,8 @@ export interface SiteConfig {
   audioLoopEnabled?: boolean;
   /** Background music: allow user to choose track from playlist (when 2+ tracks) */
   audioAllowUserChoice?: boolean;
+  /** Background music: when true, advance to next track when current ends (native tracks only) */
+  audioSequentialPlayback?: boolean;
   /** Background music: site-level tracks (used when no per-page audio) */
   audioTracks?: { url: string; type: string; title?: Record<string, string> }[];
   IconAudioPlayReactIcones?: boolean;

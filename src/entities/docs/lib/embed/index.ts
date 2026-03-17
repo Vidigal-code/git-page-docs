@@ -6,6 +6,10 @@ import { resolveSpotifyEmbed } from "./resolvers/spotify-resolver";
 import { resolveLinkedInEmbed } from "./resolvers/linkedin-resolver";
 import { resolveInstagramEmbed } from "./resolvers/instagram-resolver";
 import { resolveSoundCloudEmbed } from "./resolvers/soundcloud-resolver";
+import { resolveBandcampEmbed } from "./resolvers/bandcamp-resolver";
+import { resolveDeezerEmbed } from "./resolvers/deezer-resolver";
+import { resolveXEmbed } from "./resolvers/x-resolver";
+import { resolveTiktokEmbed } from "./resolvers/tiktok-resolver";
 
 const AUDIO_EMBED_RESOLVERS: Record<string, (url: string, lang: LanguageCode) => string> = {
   youtube: resolveYoutubeEmbed,
@@ -14,6 +18,11 @@ const AUDIO_EMBED_RESOLVERS: Record<string, (url: string, lang: LanguageCode) =>
   linkedin: resolveLinkedInEmbed,
   instagram: resolveInstagramEmbed,
   soundcloud: resolveSoundCloudEmbed,
+  bandcamp: resolveBandcampEmbed,
+  deezer: resolveDeezerEmbed,
+  x: resolveXEmbed,
+  twitter: resolveXEmbed,
+  tiktok: resolveTiktokEmbed,
 };
 
 /**

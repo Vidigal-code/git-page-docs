@@ -22,6 +22,7 @@ interface UseAudioPlayerOptions {
   autoPlayOnLoad: boolean;
   loopEnabled: boolean;
   allowUserChoice: boolean;
+  sequentialPlayback: boolean;
 }
 
 export function useAudioPlayer({
@@ -30,6 +31,7 @@ export function useAudioPlayer({
   autoPlayOnLoad,
   loopEnabled: initialLoopEnabled,
   allowUserChoice,
+  sequentialPlayback,
 }: UseAudioPlayerOptions) {
   const [playing, setPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -109,6 +111,12 @@ export function useAudioPlayer({
 
   const closePopover = useCallback(() => setPopoverOpen(false), []);
 
+  const onNativeEnded = useCallback(() => {
+    if (sequentialPlayback && currentIndex + 1 < tracks.length) {
+      selectTrack(currentIndex + 1);
+    }
+  }, [sequentialPlayback, currentIndex, tracks.length, selectTrack]);
+
   const restart = useCallback(() => {
     if (!currentTrack) return;
     if (isNativePlayableTrack(currentTrack.type)) {
@@ -187,6 +195,7 @@ export function useAudioPlayer({
     currentTrack,
     popoverOpen,
     audioRef,
+    onNativeEnded,
     audioSrc,
     embedUrl,
     restartKey,
