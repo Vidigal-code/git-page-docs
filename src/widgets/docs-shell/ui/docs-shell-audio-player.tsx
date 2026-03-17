@@ -158,7 +158,7 @@ export function DocsShellAudioPlayer({
         bodyClassName={styles.focusModeBody}
         footerClassName={`${styles.focusModeFooter} ${styles.audioPlayerPopoverFooter}`}
         closeButtonClassName={`${styles.button} ${styles.focusModeCloseButton}`}
-        controlButtonClassName={`${styles.button} ${styles.focusModeCloseButton}`}
+        controlButtonClassName={`${styles.button} ${styles.audioPlayerPopoverControlButton}`}
         themeVarsStyle={themeVarsStyle}
       />
       {isNative && (

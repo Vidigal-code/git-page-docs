@@ -1,6 +1,13 @@
 import { existsSync, rmSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  parseDocFileToKey,
+  parseHtmlFileToKey,
+  extractLanguageFromPath,
+  withVersionBadge,
+  normalizeToOutputPath,
+} from "./doc-path-resolver.mjs";
 
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -20,60 +27,6 @@ export async function writeText(root, relativePath, data) {
   const absolutePath = path.join(root, relativePath);
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, data, "utf-8");
-}
-
-function normalizeToOutputPath(outputDir, configPath) {
-  const normalized = configPath.replace(/^gitpagedocs\//, "");
-  return `${outputDir}/${normalized}`;
-}
-
-function parseDocFileToKey(fileName) {
-  if (fileName === "index.md") return "index";
-  if (fileName === "getting-started.md") return "gettingStarted";
-  if (fileName === "configuration.md") return "configuration";
-  if (fileName === "deployment.md") return "deployment";
-  if (fileName === "architecture.md") return "architecture";
-  if (fileName === "themes.md") return "themes";
-  if (fileName === "faq.md") return "faq";
-  if (fileName === "project-overview.md") return "projectOverview";
-  if (fileName === "github-issues-projects.md") return "githubIssuesProjects";
-  if (fileName === "git-introduction.md") return "gitIntroduction";
-  return undefined;
-}
-
-function parseHtmlFileToKey(fileName) {
-  if (fileName === "getting-started.html") return "gettingStarted";
-  if (fileName === "source-viewer.html") return "sourceViewer";
-  return undefined;
-}
-
-function extractLanguageFromPath(docPath) {
-  const match = docPath.match(/\/(pt|en|es)\//);
-  return match?.[1];
-}
-
-function withVersionBadge(content, versionId, language) {
-  const normalized = typeof content === "string" ? content : "";
-  if (!normalized.trim()) {
-    return normalized;
-  }
-
-  const alreadyTagged =
-    normalized.includes(`Version: ${versionId}`) ||
-    normalized.includes(`Versao: ${versionId}`) ||
-    normalized.includes(`Version (ES): ${versionId}`);
-  if (alreadyTagged) {
-    return normalized;
-  }
-
-  const label =
-    language === "pt"
-      ? `> Versao: ${versionId}`
-      : language === "es"
-        ? `> Version (ES): ${versionId}`
-        : `> Version: ${versionId}`;
-
-  return `${normalized.trimEnd()}\n\n${label}\n`;
 }
 
 export async function writeConfigOnlyOutput(options) {

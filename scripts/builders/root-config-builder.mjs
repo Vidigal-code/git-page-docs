@@ -1,173 +1,37 @@
-/** Orchestrate build of config artifacts for gitpagedocs */
+/** Build root config for gitpagedocs */
 
 import { OFFICIAL_LAYOUTS_CONFIG_URL, OFFICIAL_LAYOUTS_TEMPLATES_URL } from "../data/urls.mjs";
-import { LAYOUTS, FALLBACK_LAYOUTS } from "../data/layouts.mjs";
 import { DOCS } from "../content/docs.mjs";
-import { HTML_PAGES } from "../content/html-pages.mjs";
-import {
-  ROUTE_META_ID1,
-  ROUTE_META_ID2,
-  ROUTE_META_ID3,
-  ROUTE_META_ID4,
-  VIDEO_META_ID1,
-  VIDEO_META_ID2,
-  VIDEO_META_ID3,
-  VIDEO_META_ID4,
-  AUDIO_META,
-  DEFAULT_HIERARCHY,
-} from "../data/route-metas.mjs";
-import { buildMdRoute, buildHtmlRoute, buildVideoRoute, buildAudioRoute } from "./route-builders.mjs";
-import { generateSourceViewerHtml } from "./source-viewer.mjs";
+import { DOC_VERSIONS } from "../data/version-constants.mjs";
 
-export function buildConfigArtifacts(options = {}) {
+export function buildRootConfig(options = {}) {
   const useLocalLayoutConfig = Boolean(options.useLocalLayoutConfig);
   const useOfficialLayouts = !useLocalLayoutConfig;
   const githubOwner = options.githubOwner;
   const githubRepo = options.githubRepo;
-  const root = options.root ?? process.cwd();
   const repositorySearchHome = githubOwner && githubRepo ? false : true;
-  const renderingUrl = githubOwner && githubRepo
-    ? `https://${githubOwner}.github.io/${githubRepo}/`
-    : "https://vidigal-code.github.io/git-page-docs/";
-  const projectLink = githubOwner && githubRepo
-    ? `https://github.com/${githubOwner}/${githubRepo}`
-    : "https://github.com/Vidigal-code/git-page-docs";
-  const ROUTE_PATHS = {
-    1: { pt: "getting-started.md", en: "getting-started.md", es: "getting-started.md" },
-    2: { pt: "project-overview.md", en: "project-overview.md", es: "project-overview.md" },
-    3: { pt: "github-issues-projects.md", en: "github-issues-projects.md", es: "github-issues-projects.md" },
-    4: { pt: "git-introduction.md", en: "git-introduction.md", es: "git-introduction.md" },
-  };
-  const HTML_PATHS = {
-    1: { pt: "getting-started.html", en: "getting-started.html", es: "getting-started.html" },
-  };
-  const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4 };
-  const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
-  const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
-  const AUDIO_YOUTUBE_ID = "xAR6N9N8e6U";
+  const renderingUrl =
+    githubOwner && githubRepo
+      ? `https://${githubOwner}.github.io/${githubRepo}/`
+      : "https://vidigal-code.github.io/git-page-docs/";
+  const projectLink =
+    githubOwner && githubRepo
+      ? `https://github.com/${githubOwner}/${githubRepo}`
+      : "https://github.com/Vidigal-code/git-page-docs";
 
-  const PAGE2_AUDIO = {
-    enabled: true,
-    autoPlayOnLoad: true,
-    loopEnabled: false,
-    tracks: [
-      {
-        url: "https://www.youtube.com/watch?v=0w80F8FffQ4",
-        type: "youtube",
-        title: { pt: "Música página 2", en: "Page 2 music", es: "Música página 2" },
-      },
-    ],
-  };
+  const versionEntries = DOC_VERSIONS.map((id) => ({
+    id,
+    path: `gitpagedocs/docs/versions/${id}/config.json`,
+    ProjectLink: projectLink,
+    PathConfig: `gitpagedocs/docs/versions/${id}/config.json`,
+    PreviewProject: "",
+    UpdateDate: "",
+    branch: "",
+    release: "",
+    commit: "",
+  }));
 
-  function buildVersionMdRoutesSimple(versionId) {
-    const base = `gitpagedocs/docs/versions/${versionId}`;
-    return [1, 2, 3, 4].map((id) => {
-      const paths = ROUTE_PATHS[id];
-      const meta = ROUTE_METAS[id];
-      const pathByLang = {
-        pt: `${base}/pt/${paths.pt}`,
-        en: `${base}/en/${paths.en}`,
-        es: `${base}/es/${paths.es}`,
-      };
-      const options = id === 2 ? { audio: PAGE2_AUDIO } : {};
-      return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions, options);
-    });
-  }
-
-  const SOURCE_VIEWER_META = {
-    titles: { pt: "Código fonte", en: "Source code", es: "Código fuente" },
-    descriptions: { pt: "Visualizar código-fonte do projeto", en: "View project source code", es: "Ver código fuente del proyecto" },
-  };
-  function buildVersionHtmlRoutesSimple(versionId) {
-    const base = `gitpagedocs/docs/versions/${versionId}`;
-    const pathByLang1 = {
-      pt: `${base}/pt/${HTML_PATHS[1].pt}`,
-      en: `${base}/en/${HTML_PATHS[1].en}`,
-      es: `${base}/es/${HTML_PATHS[1].es}`,
-    };
-    const pathByLangSource = {
-      pt: `${base}/pt/source-viewer.html`,
-      en: `${base}/en/source-viewer.html`,
-      es: `${base}/es/source-viewer.html`,
-    };
-    return [
-      buildHtmlRoute(versionId, 1, pathByLang1, ROUTE_META_ID1.titles, ROUTE_META_ID1.descriptions),
-      buildHtmlRoute(versionId, 2, pathByLangSource, SOURCE_VIEWER_META.titles, SOURCE_VIEWER_META.descriptions, { container: "full", blockLink: true }),
-    ];
-  }
-
-  function buildVersionVideoRoutesSimple(versionId) {
-    return [1, 2, 3, 4].map((id) =>
-      buildVideoRoute(
-        versionId,
-        id,
-        "youtube",
-        VIDEO_IDS[id - 1],
-        VIDEO_METAS[id].title,
-        VIDEO_METAS[id].description,
-      ),
-    );
-  }
-
-  function buildVersionAudioRoutesSimple(versionId) {
-    return [1, 2, 3, 4].map((id) =>
-      buildAudioRoute(
-        versionId,
-        id,
-        "youtube",
-        AUDIO_YOUTUBE_ID,
-        AUDIO_META.title,
-        AUDIO_META.description,
-      ),
-    );
-  }
-
-  function buildVersionMenusSimple(versionId) {
-    const base = `gitpagedocs/docs/versions/${versionId}`;
-    const menuMd = [1, 2, 3, 4].map((id) => ({
-      id: id,
-      pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
-      en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
-      es: { title: ROUTE_METAS[id].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[id].es}` },
-    }));
-    const menuHtml = [
-      { id: 1, pt: { title: "Primeiros passos (HTML)", "path-click": `${base}/pt/getting-started.html` }, en: { title: "Getting Started (HTML)", "path-click": `${base}/en/getting-started.html` }, es: { title: "Primeros pasos (HTML)", "path-click": `${base}/es/getting-started.html` } },
-      { id: 2, pt: { title: "Código fonte", "path-click": `${base}/pt/source-viewer.html` }, en: { title: "Source code", "path-click": `${base}/en/source-viewer.html` }, es: { title: "Código fuente", "path-click": `${base}/es/source-viewer.html` } },
-    ];
-    const menuVideo = [1, 2, 3, 4].map((id) => ({
-      id: id,
-      pt: { title: VIDEO_METAS[id].title.pt.slice(0, 40) + "...", "path-click": `page:${id}` },
-      en: { title: VIDEO_METAS[id].title.en.slice(0, 40) + "...", "path-click": `page:${id}` },
-      es: { title: VIDEO_METAS[id].title.es.slice(0, 40) + "...", "path-click": `page:${id}` },
-    }));
-    const menuAudio = [1, 2, 3, 4].map((id) => ({
-      id: id,
-      pt: { title: AUDIO_META.title.pt.slice(0, 40) + "...", "path-click": `page:${id}` },
-      en: { title: AUDIO_META.title.en.slice(0, 40) + "...", "path-click": `page:${id}` },
-      es: { title: AUDIO_META.title.es.slice(0, 40) + "...", "path-click": `page:${id}` },
-    }));
-    return { md: menuMd, html: menuHtml, video: menuVideo, audio: menuAudio };
-  }
-
-  const versionRoutes_1_0_0_md = buildVersionMdRoutesSimple("1.0.0");
-  const versionRoutes_1_0_0_html = buildVersionHtmlRoutesSimple("1.0.0");
-  const versionRoutes_1_0_0_video = buildVersionVideoRoutesSimple("1.0.0");
-  const versionRoutes_1_0_0_audio = buildVersionAudioRoutesSimple("1.0.0");
-  const versionMenus_1_0_0 = buildVersionMenusSimple("1.0.0");
-
-  const versionRoutes_1_1_0_md = buildVersionMdRoutesSimple("1.1.0");
-  const versionRoutes_1_1_0_html = buildVersionHtmlRoutesSimple("1.1.0");
-  const versionRoutes_1_1_0_video = buildVersionVideoRoutesSimple("1.1.0");
-  const versionRoutes_1_1_0_audio = buildVersionAudioRoutesSimple("1.1.0");
-  const versionMenus_1_1_0 = buildVersionMenusSimple("1.1.0");
-
-  const versionRoutes_1_1_1_md = buildVersionMdRoutesSimple("1.1.1");
-  const versionRoutes_1_1_1_html = buildVersionHtmlRoutesSimple("1.1.1");
-  const versionRoutes_1_1_1_video = buildVersionVideoRoutesSimple("1.1.1");
-  const versionRoutes_1_1_1_audio = buildVersionAudioRoutesSimple("1.1.1");
-  const versionMenus_1_1_1 = buildVersionMenusSimple("1.1.1");
-
-  const rootConfig = {
+  return {
     site: {
       name: "Git Pages Docs",
       defaultLanguage: "en",
@@ -200,7 +64,6 @@ export function buildConfigArtifacts(options = {}) {
       IconProjectLinkReactIconesTag: "FaGithubAlt",
       IconProjectLinkReactIconesTagColorDark: "White",
       IconProjectLinkReactIconesTagColorLight: "black",
-      IconProjectLinkReactIconesTagSize: "25px",
       IconProjectLinkImgWidth: 20,
       IconProjectLinkImgHeight: 20,
       IconVersionLinksLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
@@ -499,11 +362,7 @@ export function buildConfigArtifacts(options = {}) {
       },
     },
     VersionControl: {
-      versions: [
-        { id: "1.0.0", path: "gitpagedocs/docs/versions/1.0.0/config.json", ProjectLink: projectLink, PathConfig: "gitpagedocs/docs/versions/1.0.0/config.json", PreviewProject: "", UpdateDate: "", branch: "", release: "", commit: "" },
-        { id: "1.1.0", path: "gitpagedocs/docs/versions/1.1.0/config.json", ProjectLink: projectLink, PathConfig: "gitpagedocs/docs/versions/1.1.0/config.json", PreviewProject: "", UpdateDate: "", branch: "", release: "", commit: "" },
-        { id: "1.1.1", path: "gitpagedocs/docs/versions/1.1.1/config.json", ProjectLink: projectLink, PathConfig: "gitpagedocs/docs/versions/1.1.1/config.json", PreviewProject: "", UpdateDate: "", branch: "", release: "", commit: "" },
-      ],
+      versions: versionEntries,
     },
     translations: {
       notFound: {
@@ -524,55 +383,6 @@ export function buildConfigArtifacts(options = {}) {
         browseNext: { pt: "Proximo", en: "Next", es: "Siguiente" },
       },
       footer: { footerLabel: { pt: "Projeto", en: "Project", es: "Proyecto" } },
-    },
-  };
-
-  const layoutsConfig = { layouts: LAYOUTS };
-  const fallbackLayoutsConfig = { layouts: FALLBACK_LAYOUTS };
-
-  const sourceViewerHtml = generateSourceViewerHtml(root);
-  const docsHtml = {
-    ...HTML_PAGES,
-    sourceViewer: { pt: sourceViewerHtml, en: sourceViewerHtml, es: sourceViewerHtml },
-  };
-
-  return {
-    rootConfig,
-    layoutsConfig,
-    fallbackLayoutsConfig,
-    docs: DOCS,
-    docsHtml,
-    versionConfigs: {
-      "1.0.0": {
-        "routes-md": versionRoutes_1_0_0_md,
-        "routes-html": versionRoutes_1_0_0_html,
-        "routes-video": versionRoutes_1_0_0_video,
-        "menus-header-md": versionMenus_1_0_0.md,
-        "menus-header-html": versionMenus_1_0_0.html,
-        "menus-header-video": versionMenus_1_0_0.video,
-        hierarchyPage: DEFAULT_HIERARCHY,
-        hierarchyMenu: DEFAULT_HIERARCHY,
-      },
-      "1.1.0": {
-        "routes-md": versionRoutes_1_1_0_md,
-        "routes-html": versionRoutes_1_1_0_html,
-        "routes-video": versionRoutes_1_1_0_video,
-        "menus-header-md": versionMenus_1_1_0.md,
-        "menus-header-html": versionMenus_1_1_0.html,
-        "menus-header-video": versionMenus_1_1_0.video,
-        hierarchyPage: DEFAULT_HIERARCHY,
-        hierarchyMenu: DEFAULT_HIERARCHY,
-      },
-      "1.1.1": {
-        "routes-md": versionRoutes_1_1_1_md,
-        "routes-html": versionRoutes_1_1_1_html,
-        "routes-video": versionRoutes_1_1_1_video,
-        "menus-header-md": versionMenus_1_1_1.md,
-        "menus-header-html": versionMenus_1_1_1.html,
-        "menus-header-video": versionMenus_1_1_1.video,
-        hierarchyPage: DEFAULT_HIERARCHY,
-        hierarchyMenu: DEFAULT_HIERARCHY,
-      },
     },
   };
 }

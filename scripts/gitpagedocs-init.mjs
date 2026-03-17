@@ -3,7 +3,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCli } from "./runtime/run.mjs";
-import { buildConfigArtifacts } from "./builders/config-artifacts.mjs";
+import { buildConfigArtifacts } from "./builders/config-orchestrator.mjs";
 import { createThemeTemplate } from "./builders/theme-template.mjs";
 import { LAYOUTS } from "./data/layouts.mjs";
 

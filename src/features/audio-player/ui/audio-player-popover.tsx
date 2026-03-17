@@ -181,22 +181,36 @@ export function AudioPlayerPopover({
 
         <div className={bodyClassName}>
           {currentTrack && (
-            <div style={{ marginBottom: "12px", padding: "10px 12px", borderRadius: "8px", background: "color-mix(in srgb, var(--background) 60%, transparent)" }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "4px" }}>{nowPlayingLabel}</div>
-              <div style={{ fontWeight: 600, marginBottom: "4px" }}>{getTrackLabel(currentTrack, language)}</div>
+            <div
+              style={{
+                marginBottom: "12px",
+                padding: "10px 12px",
+                borderRadius: "8px",
+                background: "color-mix(in srgb, var(--primary) 8%, var(--card-background))",
+                border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
+              }}
+            >
+              <div style={{ fontSize: "0.85rem", color: "var(--text)", opacity: 0.85, marginBottom: "4px" }}>
+                {nowPlayingLabel}
+              </div>
+              <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: "4px" }}>
+                {getTrackLabel(currentTrack, language)}
+              </div>
               {displaySource != null && (
-                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                <div style={{ fontSize: "0.8rem", color: "var(--text)", opacity: 0.8 }}>
                   {sourceLabel}: {displaySource}
                 </div>
               )}
               {showMinutes && isNativeTrack && (
-                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "0.8rem", color: "var(--text)", opacity: 0.8, marginTop: "4px" }}>
                   {formattedTime} / {formattedDuration}
                 </div>
               )}
             </div>
           )}
-          {description && <p style={{ margin: "0 0 12px", fontSize: "0.9rem", opacity: 0.9 }}>{description}</p>}
+          {description && (
+            <p style={{ margin: "0 0 12px", fontSize: "0.9rem", color: "var(--text)", opacity: 0.9 }}>{description}</p>
+          )}
           <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
             {tracks.map((track, index) => {
               const label = getTrackLabel(track, language);
@@ -211,10 +225,11 @@ export function AudioPlayerPopover({
                       padding: "10px 16px",
                       textAlign: "left",
                       borderRadius: "8px",
-                      border: isActive ? "1px solid var(--secondary)" : "1px solid transparent",
-                      background: isActive ? "color-mix(in srgb, var(--secondary) 10%, transparent)" : "transparent",
+                      border: isActive ? "1px solid var(--secondary)" : "1px solid var(--card-border)",
+                      background: isActive ? "color-mix(in srgb, var(--secondary) 12%, var(--card-background))" : "transparent",
                       cursor: "pointer",
                       fontWeight: 500,
+                      color: "var(--text)",
                     }}
                   >
                     {label}
