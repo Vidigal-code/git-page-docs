@@ -12,8 +12,8 @@ import type {
   LoadedAudioContent,
 } from "@/entities/docs/model/types";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
-import type { BrowseItem } from "../model/use-docs-shell-navigation-state";
-import type { BreadcrumbItem } from "../model/menu-tree";
+import type { BrowseItem } from "@/entities/docs/model/navigation";
+import type { BreadcrumbItem } from "@/entities/docs/model/menu";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "../docs-shell.module.css";
 

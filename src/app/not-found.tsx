@@ -8,6 +8,7 @@ import {
   parseSupportedLanguage,
   toSearchShellCssVars,
 } from "@/widgets/not-found-shell/model/use-not-found-remote";
+import { parseRepoPathFromLocation } from "@/shared/lib/parse-repo-path";
 import type { LoadedDocsData } from "@/widgets/not-found-shell/model/use-not-found-remote";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
@@ -51,31 +52,9 @@ const RETURN_HOME = {
 
 type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
 type SupportedLanguage = "en" | "pt" | "es";
-type ParsedPath = { owner: string; repo: string; version?: string; language: SupportedLanguage };
 
 const MIN_LOADING_TRANSITION_MS = 700;
 const SEARCH_LANGUAGES: SupportedLanguage[] = ["en", "pt", "es"];
-
-function parsePathFromLocation(): ParsedPath | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  const path = window.location.pathname;
-  const searchParams = new URLSearchParams(window.location.search);
-  const base = getBasePath();
-  const withoutBase = base ? path.slice(base.length) : path;
-  const parts = withoutBase.split("/").filter(Boolean);
-  if (parts.length < 2) {
-    return null;
-  }
-  const owner = parts[0];
-  const repo = parts[1];
-  const versionFromPath = parts.length >= 4 && parts[2] === "v" ? parts[3] : undefined;
-  const versionFromQuery = searchParams.get("version") ?? undefined;
-  const language = parseSupportedLanguage(searchParams.get("lang"));
-  const version = versionFromPath || versionFromQuery;
-  return { owner, repo, version, language };
-}
 
 function NotFoundFallback() {
   return (
@@ -137,7 +116,7 @@ function NotFoundContent() {
   useEffect(() => {
     setMounted(true);
     function syncFromCurrentLocation() {
-      const parsed = parsePathFromLocation();
+      const parsed = parseRepoPathFromLocation(parseSupportedLanguage);
       if (!parsed) {
         return;
       }

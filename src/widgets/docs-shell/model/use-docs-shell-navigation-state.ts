@@ -8,12 +8,10 @@ import type {
   LoadedVideoContent,
   LoadedAudioContent,
 } from "@/entities/docs/model/types";
+import type { BrowseItem } from "@/entities/docs/model/navigation";
 import { getPageIndexByPathClick } from "./menu-tree";
 
-export interface BrowseItem<T> {
-  pageIndex: number;
-  content: T;
-}
+export type { BrowseItem };
 
 function getMdItems(pages: LoadedPage[]): BrowseItem<LoadedMdContent>[] {
   return pages.flatMap((p, i) => (p.md ? [{ pageIndex: i, content: p.md }] : []));

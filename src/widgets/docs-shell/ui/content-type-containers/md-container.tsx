@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
 import type { LanguageCode } from "@/entities/docs/model/types";
-import type { BreadcrumbItem } from "@/widgets/docs-shell/model/menu-tree";
+import type { BreadcrumbItem } from "@/entities/docs/model/menu";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { extractHeadingsFromHtml } from "@/entities/docs/lib/markdown/extract-headings";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";

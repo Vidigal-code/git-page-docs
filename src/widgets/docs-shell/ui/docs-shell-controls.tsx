@@ -1,16 +1,15 @@
-import Image from "next/image";
 import type { ResolvedBackgroundAudioConfig } from "@/entities/docs/lib/audio";
-import { DocsShellAudioPlayer } from "./docs-shell-audio-player";
+import { DocsShellControlsAudio } from "./docs-shell-controls-audio";
+import { DocsShellControlsIcons } from "./docs-shell-controls-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { QuickNavigationTrigger } from "@/features/quick-navigation";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { VersionSelector } from "@/features/version-selector";
 import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
 import type { LanguageCode, LayoutItem, VersionEntry } from "@/entities/docs/model/types";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import styles from "../docs-shell.module.css";
 
-interface DocsShellControlsProps {
+export interface DocsShellControlsProps {
   fallbackProjectLink: string | undefined;
   projectLabel: string;
   useReactProjectLinkIcon: boolean;
@@ -153,81 +152,53 @@ export function DocsShellControls({
 }: DocsShellControlsProps) {
   return (
     <>
-      {fallbackProjectLink && (
-        <a
-          href={fallbackProjectLink}
-          target="_blank"
-          rel="noreferrer"
-          className={`${styles.button} ${styles.githubLinkButton}`}
-          aria-label={projectLabel}
-          title={projectLabel}
-        >
-          {useReactProjectLinkIcon ? (
-            <ReactIconByTag tag={projectLinkReactIconTag} style={projectLinkReactIconStyle} />
-          ) : (
-            <svg viewBox="0 0 24 24" aria-hidden className={styles.githubIcon}>
-              <path
-                fill="currentColor"
-                d="M12 2C6.48 2 2 6.58 2 12.24c0 4.53 2.87 8.37 6.85 9.72.5.1.68-.22.68-.5 0-.24-.01-.9-.01-1.77-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.93.85.09-.67.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.74-.1-.26-.45-1.31.1-2.73 0 0 .84-.28 2.75 1.05A9.32 9.32 0 0 1 12 6.88a9.3 9.3 0 0 1 2.5.35c1.9-1.33 2.74-1.05 2.74-1.05.54 1.42.2 2.47.1 2.73.64.71 1.03 1.62 1.03 2.74 0 3.94-2.33 4.8-4.56 5.06.36.31.68.92.68 1.86 0 1.35-.01 2.43-.01 2.76 0 .27.18.6.69.49A10.22 10.22 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z"
-              />
-            </svg>
-          )}
-        </a>
-      )}
-      {!!versionLinkOptionsWithLabels.length && (
-        <button className={`${styles.button} ${styles.headerIconButton}`} onClick={onOpenVersionLinksPopup} aria-label={versionLinksLabel} title={versionLinksLabel}>
-          {useReactVersionLinksIcon ? (
-            <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
-          ) : versionLinksIconImage ? (
-            <Image src={versionLinksIconImage} alt="" width={versionLinksIconImgWidth} height={versionLinksIconImgHeight} className={styles.headerIcon} unoptimized />
-          ) : (
-            <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
-          )}
-        </button>
-      )}
-      {showInfoButton && (
-        <button className={`${styles.button} ${styles.headerIconButton}`} onClick={onOpenInfoPopup} aria-label={lastUpdateLabel} title={lastUpdateLabel}>
-          {useReactInfoIcon ? (
-            <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
-          ) : infoIconImage ? (
-            <Image src={infoIconImage} alt="" width={infoIconImgWidth} height={infoIconImgHeight} className={styles.headerIcon} unoptimized />
-          ) : (
-            <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
-          )}
-        </button>
-      )}
-      {showPreviewButton && previewProjectUrl && (
-        <a
-          href={previewProjectUrl}
-          target="_blank"
-          rel="noreferrer"
-          className={`${styles.button} ${styles.githubLinkButton}`}
-          aria-label="Preview"
-          title="Preview"
-        >
-          {useReactPreviewIcon ? (
-            <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
-          ) : previewIconImage ? (
-            <Image src={previewIconImage} alt="" width={previewIconImgWidth} height={previewIconImgHeight} className={styles.headerIcon} unoptimized />
-          ) : (
-            <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
-          )}
-        </a>
-      )}
-      {showAudioPlayer && audioPlayerConfig && (
-        <DocsShellAudioPlayer
-          config={audioPlayerConfig}
-          language={language}
-          playIconTag={audioPlayIconTag}
-          pauseIconTag={audioPauseIconTag}
-          iconStyle={audioPlayIconStyle}
-          playLabel={audioPlayLabel ?? "Play"}
-          pauseLabel={audioPauseLabel ?? "Pause"}
-          playlistTitle={audioPlaylistTitle ?? "Choose track"}
-          playlistDescription={audioPlaylistDescription ?? ""}
-          closeLabel={audioPopoverCloseLabel ?? "Close"}
-        />
-      )}
+      <DocsShellControlsIcons
+        fallbackProjectLink={fallbackProjectLink}
+        projectLabel={projectLabel}
+        useReactProjectLinkIcon={useReactProjectLinkIcon}
+        projectLinkReactIconTag={projectLinkReactIconTag}
+        projectLinkReactIconStyle={projectLinkReactIconStyle}
+        versionLinkOptionsWithLabels={versionLinkOptionsWithLabels}
+        versionLinksLabel={versionLinksLabel}
+        useReactVersionLinksIcon={useReactVersionLinksIcon}
+        versionLinksIconTag={versionLinksIconTag}
+        versionLinksIconStyle={versionLinksIconStyle}
+        versionLinksIconImage={versionLinksIconImage}
+        versionLinksIconImgWidth={versionLinksIconImgWidth}
+        versionLinksIconImgHeight={versionLinksIconImgHeight}
+        infoIconImgWidth={infoIconImgWidth}
+        infoIconImgHeight={infoIconImgHeight}
+        previewIconImgWidth={previewIconImgWidth}
+        previewIconImgHeight={previewIconImgHeight}
+        showInfoButton={showInfoButton}
+        lastUpdateLabel={lastUpdateLabel}
+        useReactInfoIcon={useReactInfoIcon}
+        infoIconTag={infoIconTag}
+        infoIconStyle={infoIconStyle}
+        infoIconImage={infoIconImage}
+        showPreviewButton={showPreviewButton}
+        previewProjectUrl={previewProjectUrl}
+        useReactPreviewIcon={useReactPreviewIcon}
+        previewIconTag={previewIconTag}
+        previewIconStyle={previewIconStyle}
+        previewIconImage={previewIconImage}
+        onOpenVersionLinksPopup={onOpenVersionLinksPopup}
+        onOpenInfoPopup={onOpenInfoPopup}
+      />
+      <DocsShellControlsAudio
+        showAudioPlayer={showAudioPlayer}
+        audioPlayerConfig={audioPlayerConfig}
+        language={language}
+        audioPlayIconTag={audioPlayIconTag}
+        audioPlayIconStyle={audioPlayIconStyle}
+        audioPauseIconTag={audioPauseIconTag}
+        audioPauseIconStyle={audioPauseIconStyle}
+        audioPlayLabel={audioPlayLabel}
+        audioPauseLabel={audioPauseLabel}
+        audioPlaylistTitle={audioPlaylistTitle}
+        audioPlaylistDescription={audioPlaylistDescription}
+        audioPopoverCloseLabel={audioPopoverCloseLabel}
+      />
       {focusModeEnabled && (
         <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>
           {focusModeLabel}

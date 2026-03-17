@@ -5,8 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
-import type { LoadedDocsData } from "@/entities/docs/model/types";
-import { SiteFooter } from "@/shared/ui/site-footer";
+import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
+import type { LoadedDocsData, LoadedPage } from "@/entities/docs/model/types";
+import type { BreadcrumbItem, MenuNode } from "@/entities/docs/model/menu";
+import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
 import { useDocsShellKeyboard } from "./model/use-docs-shell-keyboard";
@@ -18,13 +20,14 @@ import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
+import type { MenuEntry } from "./model/menu-tree";
 import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick, getUrlParamsForPathClick } from "./model/menu-tree";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
-import { DocsShellControls } from "./ui/docs-shell-controls";
+import { DocsShellControls, type DocsShellControlsProps } from "./ui/docs-shell-controls";
 import { DocsShellFocusOverlay } from "./ui/docs-shell-focus-overlay";
 import { DocsShellHeader } from "./ui/docs-shell-header";
 import { DocsShellInfoOverlay } from "./ui/docs-shell-info-overlay";
@@ -498,7 +501,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         useReactHeaderIcon={useReactHeaderIcon}
         reactHeaderIconTag={reactHeaderIconTag}
         headerReactIconStyle={headerReactIconStyle}
-        activeLayoutMode={activeLayout?.mode}
+        activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
         iconImage={iconImage}
         iconImgWidth={iconImageMenuHeaderImgWidth}
         iconImgHeight={iconImageMenuHeaderImgHeight}
@@ -523,159 +526,24 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         </div>
       )}
 
-      <div className={styles.contentArea}>
-        <DocsShellHeader
-          headerName={headerName}
-          iconImage={iconImage}
-          useReactHeaderIcon={useReactHeaderIcon}
-          reactHeaderIconTag={reactHeaderIconTag}
-          headerReactIconStyle={headerReactIconStyle}
-          iconImgWidth={iconImageMenuHeaderImgWidth}
-          iconImgHeight={iconImageMenuHeaderImgHeight}
-          menuOpen={menuOpen}
-          menuOpenLabel={menuOpenLabel}
-          menuCloseLabel={menuCloseLabel}
-          onToggleMenu={() => setMenuOpen((v) => !v)}
-          activeLayoutMode={activeLayout?.mode}
-          controls={<DocsShellControls {...controlsProps} />}
-        />
-
-        <main className={styles.main}>
-          <PageContentArea
-            currentPage={currentPage}
-            data={data}
-            language={language}
-            isDarkMode={nextMode === "dark"}
-            fullscreenCloseLabel={menuCloseLabel}
-            fullscreenExpandLabel={getLangMenuLabelFromMenu(
-              data.config.site.langmenu,
-              language,
-              "showMenu",
-              "Fullscreen",
-            )}
-            previousLabel={previousLabel}
-            nextLabel={nextLabel}
-            browsePrevLabel={browsePrevLabel}
-            browseNextLabel={browseNextLabel}
-            mdBrowseIndex={mdBrowseIndex}
-            htmlBrowseIndex={htmlBrowseIndex}
-            videoBrowseIndex={videoBrowseIndex}
-            audioBrowseIndex={audioBrowseIndex}
-            setMdBrowseIndex={setMdBrowseIndex}
-            setHtmlBrowseIndex={setHtmlBrowseIndex}
-            setVideoBrowseIndex={setVideoBrowseIndex}
-            setAudioBrowseIndex={setAudioBrowseIndex}
-            mdItems={mdItems}
-            htmlItems={htmlItems}
-            videoItems={videoItems}
-            audioItems={audioItems}
-            routeGuideEnabled={routeGuideEnabled}
-            breadcrumbTrail={breadcrumbTrail}
-            onMenuClick={onMenuClick}
-            homePathClick={homePathClick}
-            homeAncestorKeys={homeAncestorKeys}
-            routeGuideIconConfig={routeGuideIconConfig}
-            onFullscreenOpen={handleInlineFullscreenOpen}
-            onFullscreenClose={handleInlineFullscreenClose}
-          />
-          {linearNavigationEntries.length > 1 && (
-            <div className={styles.footerActions}>
-              <button className={styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious}>
-                {previousLabel}
-              </button>
-              <button className={styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext}>
-                {nextLabel}
-              </button>
-            </div>
-          )}
-        </main>
-        {footerEnabled && (
-          <SiteFooter
-            language={language}
-            projectLabel={footerConfig.projectLabel}
-            linkName={footerConfig.linkName}
-            linkUrl={footerConfig.linkUrl}
-            dateMode={footerConfig.dateMode}
-            dateCustom={footerConfig.dateCustom}
-          />
-        )}
-      </div>
-
-      <DocsShellMobileDrawer
-        isOpen={menuOpen}
-        siteName={headerName}
-        menuNodes={headerMenuTree}
+      <DocsShellMainContent
+        headerName={headerName}
+        iconImage={iconImage}
+        useReactHeaderIcon={useReactHeaderIcon}
+        reactHeaderIconTag={reactHeaderIconTag}
+        headerReactIconStyle={headerReactIconStyle}
+        iconImgWidth={iconImageMenuHeaderImgWidth}
+        iconImgHeight={iconImageMenuHeaderImgHeight}
+        menuOpen={menuOpen}
+        menuOpenLabel={menuOpenLabel}
         menuCloseLabel={menuCloseLabel}
-        onClose={() => setMenuOpen(false)}
-        onMenuClick={onMenuClick}
-        onToggleNode={toggleNode}
-        isNodeExpanded={isNodeExpanded}
-        controls={controlsProps}
-      />
-
-      <DocsShellQuickNavOverlay
-        isOpen={controlsConfig.activeNavigation && quickNavOpen}
-        quickNavPlaceholder={quickNavPlaceholder}
-        menuCloseLabel={menuCloseLabel}
-        quickNavQuery={quickNavQuery}
-        filteredQuickNavEntries={filteredQuickNavEntries}
-        quickNavActiveIndex={quickNavActiveIndex}
-        navigateHintLabel={navigateHintLabel}
-        selectHintLabel={selectHintLabel}
-        escHintLabel={escHintLabel}
-        closeHintLabel={closeHintLabel}
-        noNavigationResults={noNavigationResults}
-        quickNavListRef={quickNavListRef}
-        quickNavItemRefs={quickNavItemRefs}
-        onClose={closeQuickNavigationInternal}
-        onQueryChange={setQuickNavQuery}
-        onActiveIndexChange={setQuickNavActiveIndex}
-        onMenuClick={onMenuClick}
-      />
-
-      <DocsShellFocusOverlay
-        isOpen={controlsConfig.focusModeEnabled && focusModeOpen}
-        focusModeLabel={controlsConfig.focusModeLabel}
-        menuCloseLabel={menuCloseLabel}
-        previousLabel={previousLabel}
-        nextLabel={nextLabel}
-        focusModeCurrentHtml={focusModeCurrentHtml}
-        canFocusModeGoPrevious={canFocusModeGoPrevious}
-        canFocusModeGoNext={canFocusModeGoNext}
-        onClose={closeFocusModeInternal}
-        onNavigate={onFocusModeNavigateInternal}
-      />
-
-      <DocsShellVersionLinksOverlay
-        isOpen={versionLinksPopupOpen}
-        versionLinksLabel={controlsConfig.versionLinksLabel}
-        menuCloseLabel={menuCloseLabel}
-        options={controlsConfig.versionLinkOptionsWithLabels}
-        onClose={() => setVersionLinksPopupOpen(false)}
-        onOpenVersionLink={(url) => window.open(url, "_blank", "noreferrer")}
-      />
-
-      <DocsShellInfoOverlay
-        isOpen={infoPopupOpen}
-        lastUpdateLabel={controlsConfig.lastUpdateLabel}
-        updateDate={controlsConfig.updateDate}
-        menuCloseLabel={menuCloseLabel}
-        onClose={() => setInfoPopupOpen(false)}
-      />
-
-      <DocsShellUrlFullscreenOverlay
-        isOpen={Boolean(urlFullscreenParams)}
-        params={urlFullscreenParams}
+        onToggleMenu={() => setMenuOpen((v) => !v)}
+        activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
+        controlsProps={controlsProps}
+        currentPage={currentPage}
         data={data}
         language={language}
-        isDarkMode={nextMode === "dark"}
-        menuCloseLabel={menuCloseLabel}
-        fullscreenExpandLabel={getLangMenuLabelFromMenu(
-          data.config.site.langmenu,
-          language,
-          "showMenu",
-          "Fullscreen",
-        )}
+        nextMode={nextMode}
         previousLabel={previousLabel}
         nextLabel={nextLabel}
         browsePrevLabel={browsePrevLabel}
@@ -698,8 +566,423 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         homePathClick={homePathClick}
         homeAncestorKeys={homeAncestorKeys}
         routeGuideIconConfig={routeGuideIconConfig}
-        onClose={closeUrlFullscreen}
+        onFullscreenOpen={handleInlineFullscreenOpen}
+        onFullscreenClose={handleInlineFullscreenClose}
+        linearNavigationEntries={linearNavigationEntries}
+        canGoPrevious={canGoPrevious}
+        canGoNext={canGoNext}
+        goToLinearNavigation={goToLinearNavigation}
+        footerEnabled={footerEnabled}
+        footerConfig={footerConfig}
+      />
+
+      <DocsShellOverlays
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        headerName={headerName}
+        headerMenuTree={headerMenuTree}
+        menuCloseLabel={menuCloseLabel}
+        onMenuClick={onMenuClick}
+        toggleNode={toggleNode}
+        isNodeExpanded={isNodeExpanded}
+        controlsProps={controlsProps}
+        controlsConfig={controlsConfig}
+        versionLinksPopupOpen={versionLinksPopupOpen}
+        setVersionLinksPopupOpen={setVersionLinksPopupOpen}
+        infoPopupOpen={infoPopupOpen}
+        setInfoPopupOpen={setInfoPopupOpen}
+        quickNavOpen={quickNavOpen}
+        quickNavPlaceholder={quickNavPlaceholder}
+        quickNavQuery={quickNavQuery}
+        filteredQuickNavEntries={filteredQuickNavEntries}
+        quickNavActiveIndex={quickNavActiveIndex}
+        navigateHintLabel={navigateHintLabel}
+        selectHintLabel={selectHintLabel}
+        escHintLabel={escHintLabel}
+        closeHintLabel={closeHintLabel}
+        noNavigationResults={noNavigationResults}
+        quickNavListRef={quickNavListRef}
+        quickNavItemRefs={quickNavItemRefs}
+        closeQuickNavigation={closeQuickNavigationInternal}
+        setQuickNavQuery={setQuickNavQuery}
+        setQuickNavActiveIndex={setQuickNavActiveIndex}
+        focusModeOpen={focusModeOpen}
+        focusModeLabel={controlsConfig.focusModeLabel}
+        previousLabel={previousLabel}
+        nextLabel={nextLabel}
+        focusModeCurrentHtml={focusModeCurrentHtml}
+        canFocusModeGoPrevious={canFocusModeGoPrevious}
+        canFocusModeGoNext={canFocusModeGoNext}
+        closeFocusMode={closeFocusModeInternal}
+        onFocusModeNavigate={onFocusModeNavigateInternal}
+        versionLinksLabel={controlsConfig.versionLinksLabel}
+        versionLinkOptionsWithLabels={controlsConfig.versionLinkOptionsWithLabels}
+        lastUpdateLabel={controlsConfig.lastUpdateLabel}
+        updateDate={controlsConfig.updateDate}
+        urlFullscreenParams={urlFullscreenParams}
+        data={data}
+        language={language}
+        mdBrowseIndex={mdBrowseIndex}
+        htmlBrowseIndex={htmlBrowseIndex}
+        videoBrowseIndex={videoBrowseIndex}
+        audioBrowseIndex={audioBrowseIndex}
+        setMdBrowseIndex={setMdBrowseIndex}
+        setHtmlBrowseIndex={setHtmlBrowseIndex}
+        setVideoBrowseIndex={setVideoBrowseIndex}
+        setAudioBrowseIndex={setAudioBrowseIndex}
+        mdItems={mdItems}
+        htmlItems={htmlItems}
+        videoItems={videoItems}
+        audioItems={audioItems}
+        routeGuideEnabled={routeGuideEnabled}
+        breadcrumbTrail={breadcrumbTrail}
+        homePathClick={homePathClick}
+        homeAncestorKeys={homeAncestorKeys}
+        routeGuideIconConfig={routeGuideIconConfig}
+        nextMode={nextMode}
+        browsePrevLabel={browsePrevLabel}
+        browseNextLabel={browseNextLabel}
+        closeUrlFullscreen={closeUrlFullscreen}
       />
     </div>
+  );
+}
+
+function DocsShellMainContent(props: {
+  headerName: string;
+  iconImage: string | undefined;
+  useReactHeaderIcon: boolean;
+  reactHeaderIconTag: string | undefined;
+  headerReactIconStyle: React.CSSProperties;
+  iconImgWidth: number;
+  iconImgHeight: number;
+  menuOpen: boolean;
+  menuOpenLabel: string;
+  menuCloseLabel: string;
+  onToggleMenu: () => void;
+  activeLayoutMode?: string;
+  controlsProps: DocsShellControlsProps;
+  currentPage: LoadedPage | undefined;
+  data: LoadedDocsData;
+  language: string;
+  nextMode: string;
+  previousLabel: string;
+  nextLabel: string;
+  browsePrevLabel: string;
+  browseNextLabel: string;
+  mdBrowseIndex: number;
+  htmlBrowseIndex: number;
+  videoBrowseIndex: number;
+  audioBrowseIndex: number;
+  setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
+  mdItems: unknown[];
+  htmlItems: unknown[];
+  videoItems: unknown[];
+  audioItems: unknown[];
+  routeGuideEnabled: boolean;
+  breadcrumbTrail: BreadcrumbItem[];
+  onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
+  homePathClick: string | undefined;
+  homeAncestorKeys: string[];
+  routeGuideIconConfig: ReturnType<typeof resolveRouteGuideIconConfig>;
+  onFullscreenOpen: (params: FullscreenParams) => void;
+  onFullscreenClose: () => void;
+  linearNavigationEntries: { pathClick: string; ancestorKeys: string[] }[];
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+  goToLinearNavigation: (offset: -1 | 1) => void;
+  footerEnabled: boolean;
+  footerConfig: FooterConfig;
+}) {
+  const {
+    headerName,
+    iconImage,
+    useReactHeaderIcon,
+    reactHeaderIconTag,
+    headerReactIconStyle,
+    iconImgWidth,
+    iconImgHeight,
+    menuOpen,
+    menuOpenLabel,
+    menuCloseLabel,
+    onToggleMenu,
+    activeLayoutMode,
+    controlsProps,
+    currentPage,
+    data,
+    language,
+    nextMode,
+    previousLabel,
+    nextLabel,
+    browsePrevLabel,
+    browseNextLabel,
+    mdBrowseIndex,
+    htmlBrowseIndex,
+    videoBrowseIndex,
+    audioBrowseIndex,
+    setMdBrowseIndex,
+    setHtmlBrowseIndex,
+    setVideoBrowseIndex,
+    setAudioBrowseIndex,
+    mdItems,
+    htmlItems,
+    videoItems,
+    audioItems,
+    routeGuideEnabled,
+    breadcrumbTrail,
+    onMenuClick,
+    homePathClick,
+    homeAncestorKeys,
+    routeGuideIconConfig,
+    onFullscreenOpen,
+    onFullscreenClose,
+    linearNavigationEntries,
+    canGoPrevious,
+    canGoNext,
+    goToLinearNavigation,
+    footerEnabled,
+    footerConfig,
+  } = props;
+
+  return (
+    <div className={styles.contentArea}>
+      <DocsShellHeader
+        headerName={headerName}
+        iconImage={iconImage}
+        useReactHeaderIcon={useReactHeaderIcon}
+        reactHeaderIconTag={reactHeaderIconTag}
+        headerReactIconStyle={headerReactIconStyle}
+        iconImgWidth={iconImgWidth}
+        iconImgHeight={iconImgHeight}
+        menuOpen={menuOpen}
+        menuOpenLabel={menuOpenLabel}
+        menuCloseLabel={menuCloseLabel}
+        onToggleMenu={props.onToggleMenu}
+        activeLayoutMode={activeLayoutMode as "light" | "dark" | undefined}
+        controls={<DocsShellControls {...controlsProps} />}
+      />
+
+      <main className={styles.main}>
+        <PageContentArea
+          currentPage={currentPage}
+          data={data}
+          language={language}
+          isDarkMode={nextMode === "dark"}
+          fullscreenCloseLabel={menuCloseLabel}
+          fullscreenExpandLabel={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "showMenu", "Fullscreen")}
+          previousLabel={previousLabel}
+          nextLabel={nextLabel}
+          browsePrevLabel={browsePrevLabel}
+          browseNextLabel={browseNextLabel}
+          mdBrowseIndex={mdBrowseIndex}
+          htmlBrowseIndex={htmlBrowseIndex}
+          videoBrowseIndex={videoBrowseIndex}
+          audioBrowseIndex={audioBrowseIndex}
+          setMdBrowseIndex={setMdBrowseIndex}
+          setHtmlBrowseIndex={setHtmlBrowseIndex}
+          setVideoBrowseIndex={setVideoBrowseIndex}
+          setAudioBrowseIndex={setAudioBrowseIndex}
+          mdItems={mdItems as Parameters<typeof PageContentArea>[0]["mdItems"]}
+          htmlItems={htmlItems as Parameters<typeof PageContentArea>[0]["htmlItems"]}
+          videoItems={videoItems as Parameters<typeof PageContentArea>[0]["videoItems"]}
+          audioItems={audioItems as Parameters<typeof PageContentArea>[0]["audioItems"]}
+          routeGuideEnabled={routeGuideEnabled}
+          breadcrumbTrail={breadcrumbTrail}
+          onMenuClick={onMenuClick}
+          homePathClick={homePathClick}
+          homeAncestorKeys={homeAncestorKeys}
+          routeGuideIconConfig={routeGuideIconConfig}
+          onFullscreenOpen={onFullscreenOpen}
+          onFullscreenClose={onFullscreenClose}
+        />
+        {linearNavigationEntries.length > 1 && (
+          <div className={styles.footerActions}>
+            <button className={styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious}>
+              {previousLabel}
+            </button>
+            <button className={styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext}>
+              {nextLabel}
+            </button>
+          </div>
+        )}
+      </main>
+      {footerEnabled && (
+        <SiteFooter
+          language={language}
+          projectLabel={footerConfig.projectLabel}
+          linkName={footerConfig.linkName}
+          linkUrl={footerConfig.linkUrl}
+          dateMode={footerConfig.dateMode}
+          dateCustom={footerConfig.dateCustom}
+        />
+      )}
+    </div>
+  );
+}
+
+function DocsShellOverlays(props: {
+  menuOpen: boolean;
+  setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  headerName: string;
+  headerMenuTree: MenuNode[];
+  menuCloseLabel: string;
+  onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
+  toggleNode: (key: string) => void;
+  isNodeExpanded: (key: string) => boolean;
+  controlsProps: DocsShellControlsProps;
+  controlsConfig: { activeNavigation: boolean; focusModeEnabled: boolean; focusModeLabel: string; versionLinksLabel: string; versionLinkOptionsWithLabels: unknown[]; lastUpdateLabel: string; updateDate: string };
+  versionLinksPopupOpen: boolean;
+  setVersionLinksPopupOpen: (v: boolean) => void;
+  infoPopupOpen: boolean;
+  setInfoPopupOpen: (v: boolean) => void;
+  quickNavOpen: boolean;
+  quickNavPlaceholder: string;
+  quickNavQuery: string;
+  filteredQuickNavEntries: MenuEntry[];
+  quickNavActiveIndex: number;
+  navigateHintLabel: string;
+  selectHintLabel: string;
+  escHintLabel: string;
+  closeHintLabel: string;
+  noNavigationResults: string;
+  quickNavListRef: React.RefObject<HTMLDivElement | null>;
+  quickNavItemRefs: React.RefObject<Array<HTMLButtonElement | null>>;
+  closeQuickNavigation: () => void;
+  setQuickNavQuery: (q: string) => void;
+  setQuickNavActiveIndex: (nextIndex: number | ((prev: number) => number)) => void;
+  focusModeOpen: boolean;
+  focusModeLabel: string;
+  previousLabel: string;
+  nextLabel: string;
+  focusModeCurrentHtml: string;
+  canFocusModeGoPrevious: boolean;
+  canFocusModeGoNext: boolean;
+  closeFocusMode: () => void;
+  onFocusModeNavigate: (offset: -1 | 1) => void;
+  versionLinksLabel: string;
+  versionLinkOptionsWithLabels: VersionLinkOption[];
+  lastUpdateLabel: string;
+  updateDate: string;
+  urlFullscreenParams: FullscreenParams | null;
+  data: LoadedDocsData;
+  language: string;
+  mdBrowseIndex: number;
+  htmlBrowseIndex: number;
+  videoBrowseIndex: number;
+  audioBrowseIndex: number;
+  setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
+  mdItems: unknown[];
+  htmlItems: unknown[];
+  videoItems: unknown[];
+  audioItems: unknown[];
+  routeGuideEnabled: boolean;
+  breadcrumbTrail: BreadcrumbItem[];
+  homePathClick: string | undefined;
+  homeAncestorKeys: string[];
+  routeGuideIconConfig: ReturnType<typeof resolveRouteGuideIconConfig>;
+  closeUrlFullscreen: () => void;
+  nextMode: string;
+  browsePrevLabel: string;
+  browseNextLabel: string;
+}) {
+  const { controlsProps, controlsConfig } = props;
+  return (
+    <>
+      <DocsShellMobileDrawer
+        isOpen={props.menuOpen}
+        siteName={props.headerName}
+        menuNodes={props.headerMenuTree}
+        menuCloseLabel={props.menuCloseLabel}
+        onClose={() => props.setMenuOpen(false)}
+        onMenuClick={props.onMenuClick}
+        onToggleNode={props.toggleNode}
+        isNodeExpanded={props.isNodeExpanded}
+        controls={controlsProps}
+      />
+      <DocsShellQuickNavOverlay
+        isOpen={controlsConfig.activeNavigation && props.quickNavOpen}
+        quickNavPlaceholder={props.quickNavPlaceholder}
+        menuCloseLabel={props.menuCloseLabel}
+        quickNavQuery={props.quickNavQuery}
+        filteredQuickNavEntries={props.filteredQuickNavEntries}
+        quickNavActiveIndex={props.quickNavActiveIndex}
+        navigateHintLabel={props.navigateHintLabel}
+        selectHintLabel={props.selectHintLabel}
+        escHintLabel={props.escHintLabel}
+        closeHintLabel={props.closeHintLabel}
+        noNavigationResults={props.noNavigationResults}
+        quickNavListRef={props.quickNavListRef}
+        quickNavItemRefs={props.quickNavItemRefs}
+        onClose={props.closeQuickNavigation}
+        onQueryChange={props.setQuickNavQuery}
+        onActiveIndexChange={props.setQuickNavActiveIndex}
+        onMenuClick={props.onMenuClick}
+      />
+      <DocsShellFocusOverlay
+        isOpen={controlsConfig.focusModeEnabled && props.focusModeOpen}
+        focusModeLabel={props.focusModeLabel}
+        menuCloseLabel={props.menuCloseLabel}
+        previousLabel={props.previousLabel}
+        nextLabel={props.nextLabel}
+        focusModeCurrentHtml={props.focusModeCurrentHtml}
+        canFocusModeGoPrevious={props.canFocusModeGoPrevious}
+        canFocusModeGoNext={props.canFocusModeGoNext}
+        onClose={props.closeFocusMode}
+        onNavigate={props.onFocusModeNavigate}
+      />
+      <DocsShellVersionLinksOverlay
+        isOpen={props.versionLinksPopupOpen}
+        versionLinksLabel={props.versionLinksLabel}
+        menuCloseLabel={props.menuCloseLabel}
+        options={props.versionLinkOptionsWithLabels}
+        onClose={() => props.setVersionLinksPopupOpen(false)}
+        onOpenVersionLink={(url) => window.open(url, "_blank", "noreferrer")}
+      />
+      <DocsShellInfoOverlay
+        isOpen={props.infoPopupOpen}
+        lastUpdateLabel={props.lastUpdateLabel}
+        updateDate={props.updateDate}
+        menuCloseLabel={props.menuCloseLabel}
+        onClose={() => props.setInfoPopupOpen(false)}
+      />
+      <DocsShellUrlFullscreenOverlay
+        isOpen={Boolean(props.urlFullscreenParams)}
+        params={props.urlFullscreenParams}
+        data={props.data}
+        language={props.language}
+        isDarkMode={props.nextMode === "dark"}
+        menuCloseLabel={props.menuCloseLabel}
+        fullscreenExpandLabel={getLangMenuLabelFromMenu(props.data.config.site.langmenu, props.language, "showMenu", "Fullscreen")}
+        previousLabel={props.previousLabel}
+        nextLabel={props.nextLabel}
+        browsePrevLabel={props.browsePrevLabel}
+        browseNextLabel={props.browseNextLabel}
+        mdBrowseIndex={props.mdBrowseIndex}
+        htmlBrowseIndex={props.htmlBrowseIndex}
+        videoBrowseIndex={props.videoBrowseIndex}
+        audioBrowseIndex={props.audioBrowseIndex}
+        setMdBrowseIndex={props.setMdBrowseIndex}
+        setHtmlBrowseIndex={props.setHtmlBrowseIndex}
+        setVideoBrowseIndex={props.setVideoBrowseIndex}
+        setAudioBrowseIndex={props.setAudioBrowseIndex}
+        mdItems={props.mdItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["mdItems"]}
+        htmlItems={props.htmlItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["htmlItems"]}
+        videoItems={props.videoItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["videoItems"]}
+        audioItems={props.audioItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["audioItems"]}
+        routeGuideEnabled={props.routeGuideEnabled}
+        breadcrumbTrail={props.breadcrumbTrail}
+        onMenuClick={props.onMenuClick}
+        homePathClick={props.homePathClick}
+        homeAncestorKeys={props.homeAncestorKeys}
+        routeGuideIconConfig={props.routeGuideIconConfig}
+        onClose={props.closeUrlFullscreen}
+      />
+    </>
   );
 }

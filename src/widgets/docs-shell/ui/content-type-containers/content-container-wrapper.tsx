@@ -4,21 +4,13 @@ import { useState, useRef } from "react";
 import { FiX } from "react-icons/fi";
 import { MdFullscreen } from "react-icons/md";
 import { TocScrollContainerProvider } from "@/features/route-guide/model/toc-scroll-context";
+import { PageContentBrowseNav, type BrowseNavConfig } from "../page-content-browse-nav";
 import styles from "../../docs-shell.module.css";
 
 const DEFAULT_CONTAINER_MARGIN = "0";
 
-export interface BrowseNavProps {
-  onPrev: () => void;
-  onNext: () => void;
-  prevLabel: string;
-  nextLabel: string;
-  canPrev: boolean;
-  canNext: boolean;
-  currentIndex: number;
-  total: number;
-  contentTypeLabel?: string;
-}
+/** @deprecated Use BrowseNavConfig from page-content-browse-nav. Kept for backward compatibility. */
+export type BrowseNavProps = BrowseNavConfig;
 
 export interface ResolveChildrenOptions {
   contentOnly?: boolean;
@@ -41,35 +33,6 @@ interface ContentContainerWrapperProps {
   marginBottom?: string;
   browseNav?: BrowseNavProps;
   browseNavPosition?: "top" | "bottom" | "both";
-}
-
-function BrowseNavBar({ browseNav }: { browseNav: BrowseNavProps }) {
-  const countText = `${browseNav.currentIndex + 1}/${browseNav.total}`;
-  return (
-    <div className={styles.browseNavBar}>
-      <button
-        type="button"
-        className={styles.button}
-        onClick={browseNav.onPrev}
-        disabled={!browseNav.canPrev}
-        aria-label={browseNav.prevLabel}
-      >
-        {browseNav.prevLabel}
-      </button>
-      <span className={styles.browseCount} aria-live="polite">
-        {browseNav.contentTypeLabel ? `${browseNav.contentTypeLabel} ${countText}` : countText}
-      </span>
-      <button
-        type="button"
-        className={styles.button}
-        onClick={browseNav.onNext}
-        disabled={!browseNav.canNext}
-        aria-label={browseNav.nextLabel}
-      >
-        {browseNav.nextLabel}
-      </button>
-    </div>
-  );
 }
 
 export function ContentContainerWrapper({
@@ -106,7 +69,7 @@ export function ContentContainerWrapper({
     return (
       <div className={styles.contentContainerWrapper} style={wrapperStyle}>
         {header}
-        {showTopNav && <BrowseNavBar browseNav={browseNav} />}
+        {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
         <div className={styles.contentContainerWithButton}>{resolveChildren(null)}</div>
       </div>
     );
@@ -140,7 +103,7 @@ export function ContentContainerWrapper({
   return (
     <div className={styles.contentContainerWrapper} style={wrapperStyle}>
       {header}
-      {showTopNav && <BrowseNavBar browseNav={browseNav} />}
+      {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
       <div className={styles.contentContainerWithButton}>{resolvedChildren}</div>
       {isFullscreen && (
         <div

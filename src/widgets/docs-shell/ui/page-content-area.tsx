@@ -14,19 +14,15 @@ import type {
 } from "@/entities/docs/model/types";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
-import type { BreadcrumbItem } from "@/widgets/docs-shell/model/menu-tree";
+import type { BrowseItem } from "@/entities/docs/model/navigation";
+import type { BreadcrumbItem } from "@/entities/docs/model/menu";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
+import {
+  isBrowseAllEnabled,
+  buildBrowseNavConfig,
+} from "./page-content-browse-nav";
 import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
 import styles from "../docs-shell.module.css";
-
-function isBrowseAllEnabled(config: ContentTypeRouteConfig | RouteConfig | undefined): boolean {
-  return Boolean(config && "browseAll" in config && config.browseAll === true);
-}
-
-function shouldShowBrowseNav(browseAllEnabled: boolean, itemsCount: number): boolean {
-  return browseAllEnabled && itemsCount > 1;
-}
 
 interface PageContentAreaProps {
   currentPage: LoadedPage | undefined;
@@ -181,58 +177,42 @@ export function PageContentArea({
 
   const prevL = browsePrevLabel ?? previousLabel;
   const nextL = browseNextLabel ?? nextLabel;
-  const mdBrowseNav = shouldShowBrowseNav(mdBrowseAll, mdItems.length)
-      ? {
-          onPrev: () => setMdBrowseIndex((i) => Math.max(0, i - 1)),
-          onNext: () => setMdBrowseIndex((i) => Math.min(mdItems.length - 1, i + 1)),
-          prevLabel: prevL,
-          nextLabel: nextL,
-          canPrev: mdBrowseIndex > 0,
-          canNext: mdBrowseIndex < mdItems.length - 1,
-          currentIndex: mdBrowseIndex,
-          total: mdItems.length,
-          contentTypeLabel: mdLabel,
-        }
-      : undefined;
-  const htmlBrowseNav = shouldShowBrowseNav(htmlBrowseAll, htmlItems.length)
-      ? {
-          onPrev: () => setHtmlBrowseIndex((i) => Math.max(0, i - 1)),
-          onNext: () => setHtmlBrowseIndex((i) => Math.min(htmlItems.length - 1, i + 1)),
-          prevLabel: prevL,
-          nextLabel: nextL,
-          canPrev: htmlBrowseIndex > 0,
-          canNext: htmlBrowseIndex < htmlItems.length - 1,
-          currentIndex: htmlBrowseIndex,
-          total: htmlItems.length,
-          contentTypeLabel: htmlLabel,
-        }
-      : undefined;
-  const videoBrowseNav = shouldShowBrowseNav(videoBrowseAll, videoItems.length)
-      ? {
-          onPrev: () => setVideoBrowseIndex((i) => Math.max(0, i - 1)),
-          onNext: () => setVideoBrowseIndex((i) => Math.min(videoItems.length - 1, i + 1)),
-          prevLabel: prevL,
-          nextLabel: nextL,
-          canPrev: videoBrowseIndex > 0,
-          canNext: videoBrowseIndex < videoItems.length - 1,
-          currentIndex: videoBrowseIndex,
-          total: videoItems.length,
-          contentTypeLabel: videoLabel,
-        }
-      : undefined;
-  const audioBrowseNav = shouldShowBrowseNav(audioBrowseAll, audioItems.length)
-      ? {
-          onPrev: () => setAudioBrowseIndex((i) => Math.max(0, i - 1)),
-          onNext: () => setAudioBrowseIndex((i) => Math.min(audioItems.length - 1, i + 1)),
-          prevLabel: prevL,
-          nextLabel: nextL,
-          canPrev: audioBrowseIndex > 0,
-          canNext: audioBrowseIndex < audioItems.length - 1,
-          currentIndex: audioBrowseIndex,
-          total: audioItems.length,
-          contentTypeLabel: audioLabel,
-        }
-      : undefined;
+  const mdBrowseNav = buildBrowseNavConfig({
+    browseAllEnabled: mdBrowseAll,
+    itemsCount: mdItems.length,
+    currentIndex: mdBrowseIndex,
+    setIndex: setMdBrowseIndex,
+    prevLabel: prevL,
+    nextLabel: nextL,
+    contentTypeLabel: mdLabel,
+  });
+  const htmlBrowseNav = buildBrowseNavConfig({
+    browseAllEnabled: htmlBrowseAll,
+    itemsCount: htmlItems.length,
+    currentIndex: htmlBrowseIndex,
+    setIndex: setHtmlBrowseIndex,
+    prevLabel: prevL,
+    nextLabel: nextL,
+    contentTypeLabel: htmlLabel,
+  });
+  const videoBrowseNav = buildBrowseNavConfig({
+    browseAllEnabled: videoBrowseAll,
+    itemsCount: videoItems.length,
+    currentIndex: videoBrowseIndex,
+    setIndex: setVideoBrowseIndex,
+    prevLabel: prevL,
+    nextLabel: nextL,
+    contentTypeLabel: videoLabel,
+  });
+  const audioBrowseNav = buildBrowseNavConfig({
+    browseAllEnabled: audioBrowseAll,
+    itemsCount: audioItems.length,
+    currentIndex: audioBrowseIndex,
+    setIndex: setAudioBrowseIndex,
+    prevLabel: prevL,
+    nextLabel: nextL,
+    contentTypeLabel: audioLabel,
+  });
 
   return (
     <div className={styles.contentBlocksStack}>

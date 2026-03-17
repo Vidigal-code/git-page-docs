@@ -6,12 +6,11 @@ import type {
   RouteConfig,
 } from "@/entities/docs/model/types";
 import { readJsonFile } from "./io/file-reader";
-import { readRemoteJsonFromRepo } from "./io/remote-fetcher";
-import { parseOwnerRepoFromRenderingUrl } from "./utils/url-utils";
 import { getLanguages, hasPath } from "./utils/route-utils";
 import { resolveActiveVersionId, loadVersionConfig } from "./version/resolve-version";
 import { loadLayoutsAndThemes } from "./layouts/load-layouts";
 import { loadPages } from "./content/load-pages";
+import { resolveDocsSource } from "./resolve-docs-source";
 
 const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
 const DEFAULT_HIERARCHY: HierarchyConfig = { md: 0, html: 1, video: 2, audio: 3 };
@@ -25,78 +24,20 @@ function isLocalRuntime(): boolean {
 
 export async function loadDocsData(slug: string[] | undefined, selectedVersionId?: string): Promise<LoadedDocsData> {
   const localConfig = await readJsonFile<GitPageDocsConfig>(DEFAULT_CONFIG_PATH);
+  const {
+    source,
+    owner,
+    repo,
+    config: baseConfig,
+    hasGitPageDocs,
+    showRepositorySearchHome,
+    isRepositoryRouteRequest,
+  } = await resolveDocsSource(slug, localConfig, selectedVersionId);
+
   const local = isLocalRuntime();
-  const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
-  const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
-  const repositorySearchEnabled = isGithubPagesBuild || repositorySearchEnabledByEnv;
-  const renderingRef = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
-  const projectRef = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
-  const buildRepositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1]?.toLowerCase();
-  const isOfficialSearchAggregatorRepo =
-    renderingRef.repo?.toLowerCase() === "git-page-docs" ||
-    projectRef.repo?.toLowerCase() === "git-page-docs" ||
-    buildRepositoryName === "git-page-docs";
 
-  const requestedOwner = slug?.[0];
-  const requestedRepo = slug?.[1];
-  const isRepositoryRouteRequest = Boolean(repositorySearchEnabled && requestedOwner && requestedRepo);
-  const repositorySearchHomeEnabled = (() => {
-    if (isGithubPagesBuild && !isOfficialSearchAggregatorRepo) {
-      return false;
-    }
-    if (typeof localConfig.site.repositorySearchHome === "boolean") {
-      return localConfig.site.repositorySearchHome;
-    }
-    if (isGithubPagesBuild) {
-      return isOfficialSearchAggregatorRepo;
-    }
-    return true;
-  })();
-  const showRepositorySearchHome = Boolean(
-    repositorySearchEnabled && repositorySearchHomeEnabled && !requestedOwner && !requestedRepo && !selectedVersionId,
-  );
-  const renderingFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
-  const projectLinkFallback = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
-
-  let source: "local" | "remote" = "local";
-  let owner: string | undefined;
-  let repo: string | undefined;
-
-  const isLocalRepo = Boolean(
-    requestedOwner &&
-    requestedRepo &&
-    ((requestedOwner.toLowerCase() === projectLinkFallback.owner?.toLowerCase() &&
-      requestedRepo.toLowerCase() === projectLinkFallback.repo?.toLowerCase()) ||
-      (requestedOwner.toLowerCase() === renderingFallback.owner?.toLowerCase() &&
-        requestedRepo.toLowerCase() === renderingFallback.repo?.toLowerCase())),
-  );
-
-  if (repositorySearchEnabled && requestedOwner && requestedRepo && !isLocalRepo) {
-    source = "remote";
-    owner = requestedOwner;
-    repo = requestedRepo;
-  }
-
-  let config = localConfig;
-  let hasGitPageDocs = true;
-
-  if (isLocalRepo) {
-    source = "local";
-    owner = requestedOwner;
-    repo = requestedRepo;
-  }
-  if (owner && repo) {
-    const remoteConfig = await readRemoteJsonFromRepo<GitPageDocsConfig>(owner, repo, DEFAULT_CONFIG_PATH);
-    if (remoteConfig) {
-      config = remoteConfig;
-    } else if (isRepositoryRouteRequest) {
-      hasGitPageDocs = false;
-      config = localConfig;
-    }
-  }
-
-  const availableVersions = config.VersionControl?.versions ?? [];
-  const activeVersionId = resolveActiveVersionId(availableVersions, selectedVersionId, config.site.docsVersion);
+  const availableVersions = baseConfig.VersionControl?.versions ?? [];
+  const activeVersionId = resolveActiveVersionId(availableVersions, selectedVersionId, baseConfig.site.docsVersion);
   const activeVersion = activeVersionId
     ? availableVersions.find((version) => version.id === activeVersionId)
     : undefined;
@@ -104,16 +45,16 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   let routesMd: (ContentTypeRouteConfig | RouteConfig)[] =
     showRepositorySearchHome || (isRepositoryRouteRequest && !hasGitPageDocs)
       ? []
-      : (config["routes-md"] ?? config.routes ?? []);
-  let routesHtml: ContentTypeRouteConfig[] = config["routes-html"] ?? [];
-  let routesVideo: ContentTypeRouteConfig[] = config["routes-video"] ?? [];
-  let routesAudio: ContentTypeRouteConfig[] = config["routes-audio"] ?? [];
-  let menusHeaderMd = config["menus-header-md"] ?? config["menus-header"] ?? [];
-  let menusHeaderHtml = config["menus-header-html"] ?? [];
-  let menusHeaderVideo = config["menus-header-video"] ?? [];
-  let menusHeaderAudio = config["menus-header-audio"] ?? [];
-  let hierarchyPage = config.hierarchyPage ?? DEFAULT_HIERARCHY;
-  let hierarchyMenu = config.hierarchyMenu ?? DEFAULT_HIERARCHY;
+      : (baseConfig["routes-md"] ?? baseConfig.routes ?? []);
+  let routesHtml: ContentTypeRouteConfig[] = baseConfig["routes-html"] ?? [];
+  let routesVideo: ContentTypeRouteConfig[] = baseConfig["routes-video"] ?? [];
+  let routesAudio: ContentTypeRouteConfig[] = baseConfig["routes-audio"] ?? [];
+  let menusHeaderMd = baseConfig["menus-header-md"] ?? baseConfig["menus-header"] ?? [];
+  let menusHeaderHtml = baseConfig["menus-header-html"] ?? [];
+  let menusHeaderVideo = baseConfig["menus-header-video"] ?? [];
+  let menusHeaderAudio = baseConfig["menus-header-audio"] ?? [];
+  let hierarchyPage = baseConfig.hierarchyPage ?? DEFAULT_HIERARCHY;
+  let hierarchyMenu = baseConfig.hierarchyMenu ?? DEFAULT_HIERARCHY;
 
   if (activeVersionId) {
     const versionEntry = activeVersion;
@@ -145,7 +86,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const menusHeader = menusHeaderMd;
 
   const effectiveConfig: GitPageDocsConfig = {
-    ...config,
+    ...baseConfig,
     routes,
     "menus-header": menusHeader,
     "routes-md": routesMd,
