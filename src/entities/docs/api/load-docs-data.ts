@@ -5,14 +5,13 @@ import type {
   LoadedDocsData,
   RouteConfig,
 } from "@/entities/docs/model/types";
-import { readJsonFile } from "./io/file-reader";
+import { loadRootConfig } from "./io/config-loader";
 import { getLanguages, hasPath } from "./utils/route-utils";
 import { resolveActiveVersionId, loadVersionConfig } from "./version/resolve-version";
 import { loadLayoutsAndThemes } from "./layouts/load-layouts";
 import { loadPages } from "./content/load-pages";
 import { resolveDocsSource } from "./resolve-docs-source";
 
-const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
 const DEFAULT_HIERARCHY: HierarchyConfig = { md: 0, html: 1, video: 2, audio: 3 };
 
 function isLocalRuntime(): boolean {
@@ -23,7 +22,7 @@ function isLocalRuntime(): boolean {
 }
 
 export async function loadDocsData(slug: string[] | undefined, selectedVersionId?: string): Promise<LoadedDocsData> {
-  const localConfig = await readJsonFile<GitPageDocsConfig>(DEFAULT_CONFIG_PATH);
+  const localConfig = await loadRootConfig<GitPageDocsConfig>();
   const {
     source,
     owner,

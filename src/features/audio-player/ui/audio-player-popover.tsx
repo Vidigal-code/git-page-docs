@@ -174,7 +174,6 @@ export function AudioPlayerPopover({
             onClick={onClose}
             aria-label={closeLabel}
             title={closeLabel}
-            style={{ marginBottom: "5px" }}
           >
             {closeButtonContent}
           </button>

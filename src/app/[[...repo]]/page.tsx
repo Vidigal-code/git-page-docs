@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { loadDocsData } from "@/entities/docs/api/load-docs-data";
+import { loadRootConfig } from "@/entities/docs/api/io/config-loader";
 import { DocsShell } from "@/widgets/docs-shell/docs-shell";
 import { RepositorySearchShell } from "@/widgets/repository-search-shell/repository-search-shell";
 
@@ -74,9 +75,10 @@ export async function generateStaticParams() {
   };
 
   try {
-    const configPath = path.join(process.cwd(), "gitpagedocs/config.json");
-    const raw = await fs.readFile(configPath, "utf-8");
-    const config = JSON.parse(raw);
+    const config = await loadRootConfig<{
+      VersionControl?: { versions?: { id: string }[] };
+      site?: { ProjectLink?: string };
+    }>();
     versions = config?.VersionControl?.versions?.map((v: { id: string }) => v.id) ?? defaultVersions;
     addVersionPaths(versions);
 

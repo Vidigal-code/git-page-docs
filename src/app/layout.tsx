@@ -1,16 +1,13 @@
-import path from "node:path";
-import { readFile } from "node:fs/promises";
 import type { Metadata } from "next";
 import { FALLBACK_HEADER_NAME, resolveHeaderName, resolveIconPath } from "@/shared/lib/resolve-site-assets";
+import { loadRootConfig } from "@/entities/docs/api/io/config-loader";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   let siteName = FALLBACK_HEADER_NAME;
   let iconPath = "/icon.svg";
   try {
-    const configPath = path.join(process.cwd(), "gitpagedocs/config.json");
-    const raw = await readFile(configPath, "utf-8");
-    const config = JSON.parse(raw) as { site?: { SiteHeaderName?: string; SiteIconPath?: string; name?: string } };
+    const config = await loadRootConfig<{ site?: { SiteHeaderName?: string; SiteIconPath?: string; name?: string } }>();
     siteName = resolveHeaderName(config?.site?.SiteHeaderName, config?.site?.name);
     const basePath = (process.env.NEXT_PUBLIC_GITPAGEDOCS_BASE_PATH ?? "").trim();
     iconPath = resolveIconPath(config?.site?.SiteIconPath, basePath);
