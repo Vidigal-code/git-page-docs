@@ -22,5 +22,9 @@ export async function resolveOptions(argv, env) {
     return promptConfigOnlyOptions(parsed);
   }
 
+  if (parsed.mode === "config-only" && parsed.useLocalLayoutConfig === undefined) {
+    parsed.useLocalLayoutConfig = false;
+  }
+
   return parsed;
 }

@@ -3,7 +3,15 @@
 import inquirer from "inquirer";
 import { DEFAULTS } from "../options/schema.mjs";
 
+function isCiOrNonTty() {
+  if (process.env.CI === "true") return true;
+  if (process.env.GITHUB_ACTIONS === "true") return true;
+  if (process.stdin && !process.stdin.isTTY) return true;
+  return false;
+}
+
 export function shouldRunInteractive(argv) {
+  if (isCiOrNonTty()) return false;
   const args = argv.slice(2);
   if (args.includes("--interactive") || args.includes("-i")) return true;
   if (args.length === 0) return true;
