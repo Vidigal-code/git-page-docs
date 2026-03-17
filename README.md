@@ -209,7 +209,8 @@ All routes for accessing documentation files on the official site or self-hosted
 | Parameter | Values | Description |
 |-----------|--------|-------------|
 | `lang` | `en`, `pt`, `es` | UI and content language |
-| `modetheme` | `dark`, `light` | Theme mode |
+| `theme` | layout id (e.g. `aurora-dark`, `aurora-light`) | Active theme; always reflected in URL |
+| `modetheme` | `dark`, `light` | Theme mode (legacy; `theme` takes precedence) |
 | `version` | e.g. `1.0.0` | Version (alternative to path) |
 | `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `name`) |
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
@@ -224,8 +225,8 @@ All routes for accessing documentation files on the official site or self-hosted
 
 **Markdown pages**
 
-- Getting Started (v1.0.0):  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&modetheme=dark&menu=en&id=1  
+- Getting Started (v1.0.0, aurora-dark theme):  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&theme=aurora-dark&menu=en&id=1  
 - Project overview:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=2  
 - GitHub issues and projects:  
@@ -261,12 +262,19 @@ All routes for accessing documentation files on the official site or self-hosted
 - Video fullscreen:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?videofull=en&id=1  
 
+**Theme selection**
+
+- aurora-dark (default dark):  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?theme=aurora-dark  
+- aurora-light:  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?theme=aurora-light  
+
 **Other versions**
 
 - v1.1.0:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.0/?lang=en  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.0/?lang=en&theme=aurora-dark  
 - v1.1.1:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.1/?lang=en  
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.1/?lang=en&theme=aurora-dark  
 
 ## Compatibility Flags
 

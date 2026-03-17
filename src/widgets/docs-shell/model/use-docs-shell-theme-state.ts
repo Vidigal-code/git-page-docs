@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
 import type { LayoutItem } from "@/entities/docs/model/types";
+import { THEME_URL_PARAM } from "@/shared/config/constants";
 
 interface UseDocsShellThemeStateArgs {
   layouts: LayoutItem[];
@@ -39,6 +40,15 @@ export function useDocsShellThemeState({
       return;
     }
     try {
+      const urlThemeId = searchParams.get(THEME_URL_PARAM);
+      const layoutFromUrl = urlThemeId ? layouts.find((layout) => layout.id === urlThemeId) : null;
+      if (layoutFromUrl) {
+        queueMicrotask(() => {
+          setActiveThemeId(layoutFromUrl.id);
+          setThemeModeRestored(true);
+        });
+        return;
+      }
       const urlMode = searchParams.get("modetheme");
       const savedMode = window.localStorage.getItem(themeModeStorageKey);
       const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
@@ -86,6 +96,19 @@ export function useDocsShellThemeState({
   }, [themeLayoutStorageKey, activeThemeId, themeModeRestored]);
 
   useEffect(() => {
+    if (!themeModeRestored || !activeThemeId || !activeLayout?.mode) {
+      return;
+    }
+    const params = getCurrentSearchParams();
+    const currentTheme = params.get(THEME_URL_PARAM);
+    if (currentTheme !== activeThemeId) {
+      params.set(THEME_URL_PARAM, activeThemeId);
+      params.set("modetheme", activeLayout.mode);
+      replaceUrlWithoutNavigation(pathname, params);
+    }
+  }, [themeModeRestored, activeThemeId, activeLayout?.mode, pathname, getCurrentSearchParams, replaceUrlWithoutNavigation]);
+
+  useEffect(() => {
     function syncThemeFromStorage() {
       try {
         const savedMode = window.localStorage.getItem(themeModeStorageKey);
@@ -125,18 +148,17 @@ export function useDocsShellThemeState({
     };
   }, [themeModeStorageKey, configuredDefaultMode, layouts, activeThemeId]);
 
-  function updateModethemeInUrl(mode: "dark" | "light") {
+  function syncThemeToUrl(themeId: string, mode?: "dark" | "light") {
     const params = getCurrentSearchParams();
-    params.set("modetheme", mode);
+    params.set(THEME_URL_PARAM, themeId);
+    if (mode) params.set("modetheme", mode);
     replaceUrlWithoutNavigation(pathname, params);
   }
 
   function onThemeChange(themeId: string) {
     setActiveThemeId(themeId);
     const layout = layouts.find((item) => item.id === themeId);
-    if (layout?.mode === "dark" || layout?.mode === "light") {
-      updateModethemeInUrl(layout.mode);
-    }
+    syncThemeToUrl(themeId, layout?.mode === "dark" || layout?.mode === "light" ? layout.mode : undefined);
   }
 
   function onToggleMode() {
@@ -145,9 +167,7 @@ export function useDocsShellThemeState({
     }
     const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
     setActiveThemeId(paired.id);
-    if (paired.mode === "dark" || paired.mode === "light") {
-      updateModethemeInUrl(paired.mode);
-    }
+    syncThemeToUrl(paired.id, paired.mode === "dark" || paired.mode === "light" ? paired.mode : undefined);
   }
 
   return { activeThemeId, activeLayout, nextMode, canToggleMode, onThemeChange, onToggleMode };

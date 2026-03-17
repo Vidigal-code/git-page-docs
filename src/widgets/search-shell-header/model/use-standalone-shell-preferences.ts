@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
+import { THEME_URL_PARAM } from "@/shared/config/constants";
 import { toFullPath } from "@/shared/lib/base-path";
 import type { LanguageCode, LayoutItem } from "@/entities/docs/model/types";
 
@@ -101,11 +102,17 @@ export function useStandaloneShellPreferences({
     setLanguageRestored(true);
   }, [searchParams, availableLanguages, languageStorageKey, languageRestored]);
 
-  // Restore theme from URL → localStorage (once)
+  // Restore theme from URL (theme param) → localStorage (once)
   useEffect(() => {
     if (themeRestored) return;
+    const urlThemeId = searchParams.get(THEME_URL_PARAM);
+    const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
+    if (layoutFromUrl) {
+      setActiveThemeId(layoutFromUrl.id);
+      setThemeRestored(true);
+      return;
+    }
     const urlMode = searchParams.get("modetheme");
-    const targetMode = urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
     try {
       const savedMode = window.localStorage.getItem(themeModeStorageKey);
       const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
@@ -146,6 +153,20 @@ export function useStandaloneShellPreferences({
     }
   }, [themeRestored, activeThemeId, layouts, themeModeStorageKey, themeLayoutStorageKey]);
 
+  // Always reflect theme in URL after restore
+  useEffect(() => {
+    if (!themeRestored || !activeThemeId) return;
+    const activeLayout = layouts.find((l) => l.id === activeThemeId);
+    if (!activeLayout?.mode) return;
+    const params = getCurrentSearchParams();
+    if (params.get(THEME_URL_PARAM) !== activeThemeId) {
+      params.set(THEME_URL_PARAM, activeThemeId);
+      params.set("modetheme", activeLayout.mode);
+      replaceUrl(getCurrentPathname(), params);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync once when restored
+  }, [themeRestored, activeThemeId]);
+
   function onLanguageChange(newLang: LanguageCode) {
     setLanguage(newLang);
     const params = getCurrentSearchParams();
@@ -153,14 +174,17 @@ export function useStandaloneShellPreferences({
     replaceUrl(getCurrentPathname(), params);
   }
 
+  function syncThemeToUrl(themeId: string, mode?: "dark" | "light") {
+    const params = getCurrentSearchParams();
+    params.set(THEME_URL_PARAM, themeId);
+    if (mode) params.set("modetheme", mode);
+    replaceUrl(getCurrentPathname(), params);
+  }
+
   function onThemeChange(themeId: string) {
     setActiveThemeId(themeId);
     const layout = layouts.find((l) => l.id === themeId);
-    if (layout?.mode === "dark" || layout?.mode === "light") {
-      const params = getCurrentSearchParams();
-      params.set("modetheme", layout.mode);
-      replaceUrl(getCurrentPathname(), params);
-    }
+    syncThemeToUrl(themeId, layout?.mode === "dark" || layout?.mode === "light" ? layout.mode : undefined);
   }
 
   function onToggleMode() {
@@ -169,11 +193,7 @@ export function useStandaloneShellPreferences({
     const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
     const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
     setActiveThemeId(paired.id);
-    if (paired.mode === "dark" || paired.mode === "light") {
-      const params = getCurrentSearchParams();
-      params.set("modetheme", paired.mode);
-      replaceUrl(getCurrentPathname(), params);
-    }
+    syncThemeToUrl(paired.id, paired.mode === "dark" || paired.mode === "light" ? paired.mode : undefined);
   }
 
   const activeLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
