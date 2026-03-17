@@ -1128,6 +1128,10 @@
   gap: 10px;
 }
 
+.audioPlayerPopoverFooter {
+  justify-content: flex-start;
+}
+
 @media (max-width: 1024px) {
   .wrapper {
     grid-template-columns: 1fr;

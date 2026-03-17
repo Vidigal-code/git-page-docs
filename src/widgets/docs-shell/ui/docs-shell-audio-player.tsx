@@ -121,10 +121,13 @@ export function DocsShellAudioPlayer({
         restartIcon={restartIcon}
         loopOnIcon={loopOnIcon}
         loopOffIcon={loopOffIcon}
-        overlayClassName={styles.audioPlayerPopoverOverlay}
-        cardClassName={styles.audioPlayerPopoverCard}
-        closeButtonClassName={styles.audioPlayerPopoverCloseButton}
-        controlButtonClassName={styles.audioPlayerPopoverControlButton}
+        overlayClassName={styles.focusModeOverlay}
+        cardClassName={styles.focusModeCard}
+        headerClassName={styles.focusModeHeader}
+        bodyClassName={styles.focusModeBody}
+        footerClassName={`${styles.focusModeFooter} ${styles.audioPlayerPopoverFooter}`}
+        closeButtonClassName={`${styles.button} ${styles.focusModeCloseButton}`}
+        controlButtonClassName={`${styles.button} ${styles.focusModeCloseButton}`}
       />
       {isNative && (
         <audio
