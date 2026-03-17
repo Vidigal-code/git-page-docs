@@ -228,6 +228,12 @@ export interface SiteConfig {
   IconAudioPlayerPopoverLoopOffReactIconesTagSize?: string;
   IconAudioPlayerPopoverLoopOffImgWidth?: string | number;
   IconAudioPlayerPopoverLoopOffImgHeight?: string | number;
+  /** If true, hide the "File: ID" line in the audio popover Now playing block */
+  audioPopoverHideSource?: boolean;
+  /** Custom source label for all tracks (Record<pt|en|es, string>). Empty = use track ID or track.sourceLabel */
+  audioPopoverSourceCustomLabel?: Record<string, string>;
+  /** If true, show elapsed time / duration (minutes:seconds) for native tracks */
+  audioPopoverShowMinutes?: boolean;
   /** TOC scroll max-height desktop, e.g. "min(65vh, 400px)" */
   TocScrollMaxHeightDesktop?: string;
   /** TOC scroll max-height mobile, e.g. "220px" */

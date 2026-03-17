@@ -14,8 +14,15 @@ export const NATIVE_AUDIO_TYPES = new Set([
 /** Video formats that can be played as audio (stripped of visuals) */
 export const NATIVE_VIDEO_AS_AUDIO_TYPES = new Set(["mp4", "webm"]);
 
-/** Embed providers that support real audio (YouTube, Vimeo, Spotify) */
-export const AUDIO_EMBED_TYPES = new Set(["youtube", "vimeo", "spotify"]);
+/** Embed providers that support real audio (YouTube, Vimeo, Spotify, LinkedIn, Instagram, SoundCloud) */
+export const AUDIO_EMBED_TYPES = new Set([
+  "youtube",
+  "vimeo",
+  "spotify",
+  "linkedin",
+  "instagram",
+  "soundcloud",
+]);
 
 /** Native video formats for video playback */
 export const NATIVE_VIDEO_TYPES = new Set(["mp4", "webm", "ogg", "avi"]);

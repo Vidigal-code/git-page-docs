@@ -27,6 +27,13 @@ export interface DocsShellControlsAudioProps {
   audioPopoverLoopOnLabel?: string;
   audioPopoverLoopOffLabel?: string;
   audioPopoverSourceLabel?: string;
+  audioPopoverHideSource?: boolean;
+  audioPopoverSourceCustomLabel?: Record<string, string>;
+  audioPopoverShowMinutes?: boolean;
+  audioPopoverStatusPlayingLabel?: string;
+  audioPopoverStatusPausedLabel?: string;
+  audioPopoverStatusLoopOnLabel?: string;
+  audioPopoverStatusLoopOffLabel?: string;
 }
 
 export function DocsShellControlsAudio({
@@ -54,6 +61,13 @@ export function DocsShellControlsAudio({
   audioPopoverLoopOnLabel = "Loop on",
   audioPopoverLoopOffLabel = "Loop off",
   audioPopoverSourceLabel = "File",
+  audioPopoverHideSource = false,
+  audioPopoverSourceCustomLabel,
+  audioPopoverShowMinutes = true,
+  audioPopoverStatusPlayingLabel,
+  audioPopoverStatusPausedLabel,
+  audioPopoverStatusLoopOnLabel,
+  audioPopoverStatusLoopOffLabel,
 }: DocsShellControlsAudioProps) {
   if (!showAudioPlayer || !audioPlayerConfig) {
     return null;
@@ -83,6 +97,13 @@ export function DocsShellControlsAudio({
       loopOnLabel={audioPopoverLoopOnLabel}
       loopOffLabel={audioPopoverLoopOffLabel}
       sourceLabel={audioPopoverSourceLabel}
+      hideSource={audioPopoverHideSource}
+      customSourceLabel={audioPopoverSourceCustomLabel}
+      showMinutes={audioPopoverShowMinutes}
+      statusPlayingLabel={audioPopoverStatusPlayingLabel}
+      statusPausedLabel={audioPopoverStatusPausedLabel}
+      statusLoopOnLabel={audioPopoverStatusLoopOnLabel}
+      statusLoopOffLabel={audioPopoverStatusLoopOffLabel}
     />
   );
 }

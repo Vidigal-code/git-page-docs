@@ -24,8 +24,10 @@ export interface AudioRouteConfig {
 /** Single track for site.audioTracks or route.audio.tracks (background music player) */
 export interface AudioTrackConfig {
   url: string;
-  type: string; // mp3 | wav | ogg | aac | m4a | flac | opus | weba | wma | youtube | vimeo | spotify | mp4 | webm
+  type: string; // mp3 | wav | ogg | aac | m4a | flac | opus | weba | wma | youtube | vimeo | spotify | linkedin | instagram | soundcloud | mp4 | webm
   title?: Record<LanguageCode, string>;
+  /** Custom source label per language (override of "File" / "Arquivo" display) */
+  sourceLabel?: Record<LanguageCode, string>;
 }
 
 /** Per-route background audio (routes-md, routes-html, routes-video) */

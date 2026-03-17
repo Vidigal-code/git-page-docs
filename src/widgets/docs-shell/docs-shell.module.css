@@ -1132,6 +1132,11 @@
   justify-content: flex-start;
 }
 
+.audioPlayerPopoverFooter button[data-active] {
+  border-color: var(--secondary);
+  box-shadow: var(--button-glow);
+}
+
 @media (max-width: 1024px) {
   .wrapper {
     grid-template-columns: 1fr;

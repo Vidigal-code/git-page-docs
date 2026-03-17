@@ -27,6 +27,13 @@ interface DocsShellAudioPlayerProps {
   loopOnLabel?: string;
   loopOffLabel?: string;
   sourceLabel?: string;
+  hideSource?: boolean;
+  customSourceLabel?: Record<string, string>;
+  showMinutes?: boolean;
+  statusPlayingLabel?: string;
+  statusPausedLabel?: string;
+  statusLoopOnLabel?: string;
+  statusLoopOffLabel?: string;
 }
 
 export function DocsShellAudioPlayer({
@@ -52,6 +59,13 @@ export function DocsShellAudioPlayer({
   loopOnLabel = "Loop on",
   loopOffLabel = "Loop off",
   sourceLabel = "File",
+  hideSource = false,
+  customSourceLabel,
+  showMinutes = true,
+  statusPlayingLabel,
+  statusPausedLabel,
+  statusLoopOnLabel,
+  statusLoopOffLabel,
 }: DocsShellAudioPlayerProps) {
   const {
     playing,
@@ -71,6 +85,9 @@ export function DocsShellAudioPlayer({
     currentTrack,
     tracks,
     language: lang,
+    formattedTime,
+    formattedDuration,
+    isNativeTrack,
   } = useAudioPlayer({
     tracks: config.tracks,
     language,
@@ -117,6 +134,16 @@ export function DocsShellAudioPlayer({
         sourceLabel={sourceLabel}
         playLabel={playLabel}
         pauseLabel={pauseLabel}
+        hideSource={hideSource}
+        customSourceLabel={customSourceLabel}
+        showMinutes={showMinutes}
+        formattedTime={formattedTime}
+        formattedDuration={formattedDuration}
+        isNativeTrack={isNativeTrack}
+        statusPlayingLabel={statusPlayingLabel}
+        statusPausedLabel={statusPausedLabel}
+        statusLoopOnLabel={statusLoopOnLabel}
+        statusLoopOffLabel={statusLoopOffLabel}
         closeIcon={closeIcon}
         playIcon={playIcon}
         pauseIcon={pauseIcon}

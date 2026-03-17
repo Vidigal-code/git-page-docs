@@ -124,14 +124,16 @@
     "audioPlayerEnabled": true,
     "audioAutoPlayOnLoad": false,
     "audioLoopEnabled": false,
+    "audioPopoverHideSource": false,
+    "audioPopoverShowMinutes": true,
     "audioTracks": [
       {
         "url": "https://www.youtube.com/watch?v=xAR6N9N8e6U",
         "type": "youtube",
         "title": {
-          "pt": "Rádio",
-          "en": "Radio",
-          "es": "Radio"
+          "pt": "Youtube",
+          "en": "Youtube",
+          "es": "Youtube"
         }
       },
       {
@@ -250,7 +252,11 @@
         "audioPopoverRestart": "Reiniciar",
         "audioPopoverLoopOn": "Ativar loop",
         "audioPopoverLoopOff": "Desativar loop",
-        "audioPopoverSource": "Arquivo"
+        "audioPopoverSource": "Arquivo",
+        "audioPopoverStatusPlaying": "Tocando",
+        "audioPopoverStatusPaused": "Pausado",
+        "audioPopoverStatusLoopOn": "Loop ativado",
+        "audioPopoverStatusLoopOff": "Loop desativado"
       },
       "en": {
         "pt": "Portuguese",
@@ -286,7 +292,11 @@
         "audioPopoverRestart": "Restart",
         "audioPopoverLoopOn": "Loop on",
         "audioPopoverLoopOff": "Loop off",
-        "audioPopoverSource": "File"
+        "audioPopoverSource": "File",
+        "audioPopoverStatusPlaying": "Playing",
+        "audioPopoverStatusPaused": "Paused",
+        "audioPopoverStatusLoopOn": "Loop on",
+        "audioPopoverStatusLoopOff": "Loop off"
       },
       "es": {
         "pt": "Portugues",
@@ -319,6 +329,10 @@
         "audioPopoverLoopOn": "Activar loop",
         "audioPopoverLoopOff": "Desactivar loop",
         "audioPopoverSource": "Archivo",
+        "audioPopoverStatusPlaying": "Reproduciendo",
+        "audioPopoverStatusPaused": "Pausado",
+        "audioPopoverStatusLoopOn": "Loop activado",
+        "audioPopoverStatusLoopOff": "Loop desactivado",
         "audioPlayLabel": "Reproducir música de fondo",
         "audioPauseLabel": "Pausar música de fondo",
         "audioPlaylistTitle": "Elegir pista",

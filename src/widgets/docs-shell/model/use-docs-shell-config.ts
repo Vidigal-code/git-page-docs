@@ -95,6 +95,13 @@ export interface DocsShellControlsConfig {
   audioPopoverLoopOnLabel: string;
   audioPopoverLoopOffLabel: string;
   audioPopoverSourceLabel: string;
+  audioPopoverHideSource: boolean;
+  audioPopoverSourceCustomLabel: Record<string, string> | undefined;
+  audioPopoverShowMinutes: boolean;
+  audioPopoverStatusPlayingLabel: string;
+  audioPopoverStatusPausedLabel: string;
+  audioPopoverStatusLoopOnLabel: string;
+  audioPopoverStatusLoopOffLabel: string;
 }
 
 export interface NavMenuConfig {
@@ -248,6 +255,13 @@ export function useDocsShellConfig(
       audioPopoverLoopOnLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverLoopOn", "Loop on"),
       audioPopoverLoopOffLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverLoopOff", "Loop off"),
       audioPopoverSourceLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverSource", "File"),
+      audioPopoverHideSource: Boolean(site.audioPopoverHideSource),
+      audioPopoverSourceCustomLabel: site.audioPopoverSourceCustomLabel,
+      audioPopoverShowMinutes: site.audioPopoverShowMinutes !== false,
+      audioPopoverStatusPlayingLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverStatusPlaying", "Playing"),
+      audioPopoverStatusPausedLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverStatusPaused", "Paused"),
+      audioPopoverStatusLoopOnLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverStatusLoopOn", "Loop on"),
+      audioPopoverStatusLoopOffLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverStatusLoopOff", "Loop off"),
     }),
     [
       data.activeVersion,

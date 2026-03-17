@@ -9,6 +9,13 @@ import {
   isNativePlayableTrack,
 } from "./get-audio-src";
 
+function formatTime(seconds: number): string {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 interface UseAudioPlayerOptions {
   tracks: AudioTrackConfig[];
   language: string;
@@ -29,6 +36,8 @@ export function useAudioPlayer({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [loopEnabled, setLoopEnabled] = useState(initialLoopEnabled);
   const [restartKey, setRestartKey] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentTrack = tracks[currentIndex] ?? null;
@@ -132,6 +141,38 @@ export function useAudioPlayer({
     return () => clearTimeout(t);
   }, [autoPlayOnLoad, currentTrack, loopEnabled, tracks.length]);
 
+  const isNativeTrack = Boolean(currentTrack && isNativePlayableTrack(currentTrack.type));
+
+  useEffect(() => {
+    if (!isNativeTrack || !currentTrack) {
+      setCurrentTime(0);
+      setDuration(0);
+      return;
+    }
+    const el = audioRef.current;
+    if (!el) return;
+
+    const onTimeUpdate = () => setCurrentTime(el.currentTime);
+    const onLoadedMetadata = () => setDuration(el.duration);
+    const onDurationChange = () => setDuration(el.duration);
+    const onCanPlay = () => setDuration(el.duration);
+
+    setCurrentTime(el.currentTime);
+    setDuration(el.duration);
+
+    el.addEventListener("timeupdate", onTimeUpdate);
+    el.addEventListener("loadedmetadata", onLoadedMetadata);
+    el.addEventListener("durationchange", onDurationChange);
+    el.addEventListener("canplay", onCanPlay);
+
+    return () => {
+      el.removeEventListener("timeupdate", onTimeUpdate);
+      el.removeEventListener("loadedmetadata", onLoadedMetadata);
+      el.removeEventListener("durationchange", onDurationChange);
+      el.removeEventListener("canplay", onCanPlay);
+    };
+  }, [currentIndex, currentTrack, isNativeTrack]);
+
   const audioSrc = currentTrack
     ? getAudioSrc(currentTrack, language as LanguageCode)
     : "";
@@ -160,5 +201,10 @@ export function useAudioPlayer({
     needsPopoverForPlay,
     tracks,
     language,
+    currentTime,
+    duration,
+    formattedTime: formatTime(currentTime),
+    formattedDuration: isNativeTrack ? formatTime(duration) : "—:—",
+    isNativeTrack,
   };
 }

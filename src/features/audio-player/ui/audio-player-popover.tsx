@@ -8,6 +8,7 @@ import { CiPlay1 } from "react-icons/ci";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { AudioTrackConfig } from "@/entities/docs/model/types";
+import { getDisplaySourceLabel } from "../lib/get-display-source-label";
 
 function renderIcon(icon: ResolvedNavMenuIconConfig | undefined, fallback: React.ReactNode) {
   if (!icon) return fallback;
@@ -37,19 +38,6 @@ function getTrackLabel(track: AudioTrackConfig, language: string): string {
   return title?.[language] ?? title?.en ?? track.url;
 }
 
-function getTrackSourceLabel(track: AudioTrackConfig): string {
-  try {
-    const url = track.url?.trim() || "";
-    if (url.startsWith("http") || url.startsWith("//")) {
-      const path = url.split("/").pop()?.split("?")[0];
-      return path || url;
-    }
-    return url.split("/").pop() || url;
-  } catch {
-    return track.url || "";
-  }
-}
-
 interface AudioPlayerPopoverProps {
   isOpen: boolean;
   tracks: AudioTrackConfig[];
@@ -73,6 +61,16 @@ interface AudioPlayerPopoverProps {
   sourceLabel: string;
   playLabel: string;
   pauseLabel: string;
+  hideSource?: boolean;
+  customSourceLabel?: Record<string, string>;
+  showMinutes?: boolean;
+  formattedTime?: string;
+  formattedDuration?: string;
+  isNativeTrack?: boolean;
+  statusPlayingLabel?: string;
+  statusPausedLabel?: string;
+  statusLoopOnLabel?: string;
+  statusLoopOffLabel?: string;
   closeIcon?: ResolvedNavMenuIconConfig;
   playIcon?: ResolvedNavMenuIconConfig;
   pauseIcon?: ResolvedNavMenuIconConfig;
@@ -114,6 +112,16 @@ export function AudioPlayerPopover({
   sourceLabel,
   playLabel,
   pauseLabel,
+  hideSource = false,
+  customSourceLabel,
+  showMinutes = true,
+  formattedTime = "0:00",
+  formattedDuration = "—:—",
+  isNativeTrack = false,
+  statusPlayingLabel,
+  statusPausedLabel,
+  statusLoopOnLabel,
+  statusLoopOffLabel,
   closeIcon,
   playIcon,
   pauseIcon,
@@ -133,6 +141,18 @@ export function AudioPlayerPopover({
   if (!isOpen || !tracks.length) return null;
 
   const closeButtonContent = renderIcon(closeIcon, <FiX aria-hidden />);
+
+  const displaySource =
+    currentTrack &&
+    getDisplaySourceLabel({
+      track: currentTrack,
+      language,
+      hideSource,
+      customLabel: customSourceLabel,
+    });
+
+  const playStatusLabel = playing ? (statusPausedLabel ?? pauseLabel) : (statusPlayingLabel ?? playLabel);
+  const loopStatusLabel = loopEnabled ? (statusLoopOffLabel ?? loopOffLabel) : (statusLoopOnLabel ?? loopOnLabel);
 
   const overlay = (
     <div
@@ -164,9 +184,16 @@ export function AudioPlayerPopover({
             <div style={{ marginBottom: "12px", padding: "10px 12px", borderRadius: "8px", background: "color-mix(in srgb, var(--background) 60%, transparent)" }}>
               <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "4px" }}>{nowPlayingLabel}</div>
               <div style={{ fontWeight: 600, marginBottom: "4px" }}>{getTrackLabel(currentTrack, language)}</div>
-              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                {sourceLabel}: {getTrackSourceLabel(currentTrack)}
-              </div>
+              {displaySource != null && (
+                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  {sourceLabel}: {displaySource}
+                </div>
+              )}
+              {showMinutes && isNativeTrack && (
+                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                  {formattedTime} / {formattedDuration}
+                </div>
+              )}
             </div>
           )}
           {description && <p style={{ margin: "0 0 12px", fontSize: "0.9rem", opacity: 0.9 }}>{description}</p>}
@@ -203,8 +230,9 @@ export function AudioPlayerPopover({
             type="button"
             className={controlButtonClassName}
             onClick={playing ? onPause : onPlay}
-            aria-label={playing ? pauseLabel : playLabel}
-            title={playing ? pauseLabel : playLabel}
+            aria-label={playStatusLabel}
+            title={playStatusLabel}
+            data-active={playing || undefined}
           >
             {renderIcon(playing ? pauseIcon : playIcon, playing ? <FaPause aria-hidden /> : <CiPlay1 aria-hidden />)}
           </button>
@@ -221,8 +249,9 @@ export function AudioPlayerPopover({
             type="button"
             className={controlButtonClassName}
             onClick={onToggleLoop}
-            aria-label={loopEnabled ? loopOffLabel : loopOnLabel}
-            title={loopEnabled ? loopOffLabel : loopOnLabel}
+            aria-label={loopStatusLabel}
+            title={loopStatusLabel}
+            data-active={loopEnabled || undefined}
           >
             {renderIcon(loopEnabled ? loopOnIcon : loopOffIcon, <FiRepeat aria-hidden />)}
           </button>

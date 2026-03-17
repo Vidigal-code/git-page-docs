@@ -289,11 +289,13 @@ export function buildConfigArtifacts(options = {}) {
       audioPlayerEnabled: true,
       audioAutoPlayOnLoad: false,
       audioLoopEnabled: false,
+      audioPopoverHideSource: false,
+      audioPopoverShowMinutes: true,
       audioTracks: [
         {
           url: "https://www.youtube.com/watch?v=xAR6N9N8e6U",
           type: "youtube",
-          title: { pt: "Rádio", en: "Radio", es: "Radio" },
+          title: { pt: "Youtube", en: "Youtube", es: "Youtube" },
         },
         {
           url: "https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh",
@@ -408,6 +410,10 @@ export function buildConfigArtifacts(options = {}) {
           audioPopoverLoopOn: "Ativar loop",
           audioPopoverLoopOff: "Desativar loop",
           audioPopoverSource: "Arquivo",
+          audioPopoverStatusPlaying: "Tocando",
+          audioPopoverStatusPaused: "Pausado",
+          audioPopoverStatusLoopOn: "Loop ativado",
+          audioPopoverStatusLoopOff: "Loop desativado",
         },
         en: {
           pt: "Portuguese",
@@ -444,6 +450,10 @@ export function buildConfigArtifacts(options = {}) {
           audioPopoverLoopOn: "Loop on",
           audioPopoverLoopOff: "Loop off",
           audioPopoverSource: "File",
+          audioPopoverStatusPlaying: "Playing",
+          audioPopoverStatusPaused: "Paused",
+          audioPopoverStatusLoopOn: "Loop on",
+          audioPopoverStatusLoopOff: "Loop off",
         },
         es: {
           pt: "Portugues",
@@ -476,6 +486,10 @@ export function buildConfigArtifacts(options = {}) {
           audioPopoverLoopOn: "Activar loop",
           audioPopoverLoopOff: "Desactivar loop",
           audioPopoverSource: "Archivo",
+          audioPopoverStatusPlaying: "Reproduciendo",
+          audioPopoverStatusPaused: "Pausado",
+          audioPopoverStatusLoopOn: "Loop activado",
+          audioPopoverStatusLoopOff: "Loop desactivado",
           audioPlayLabel: "Reproducir música de fondo",
           audioPauseLabel: "Pausar música de fondo",
           audioPlaylistTitle: "Elegir pista",

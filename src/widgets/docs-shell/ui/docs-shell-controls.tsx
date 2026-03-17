@@ -82,6 +82,13 @@ export interface DocsShellControlsProps {
   audioPopoverLoopOnLabel?: string;
   audioPopoverLoopOffLabel?: string;
   audioPopoverSourceLabel?: string;
+  audioPopoverHideSource?: boolean;
+  audioPopoverSourceCustomLabel?: Record<string, string>;
+  audioPopoverShowMinutes?: boolean;
+  audioPopoverStatusPlayingLabel?: string;
+  audioPopoverStatusPausedLabel?: string;
+  audioPopoverStatusLoopOnLabel?: string;
+  audioPopoverStatusLoopOffLabel?: string;
   onOpenVersionLinksPopup: () => void;
   onOpenInfoPopup: () => void;
   onOpenFocusMode: () => void;
@@ -165,6 +172,13 @@ export function DocsShellControls({
   audioPopoverLoopOnLabel,
   audioPopoverLoopOffLabel,
   audioPopoverSourceLabel,
+  audioPopoverHideSource,
+  audioPopoverSourceCustomLabel,
+  audioPopoverShowMinutes,
+  audioPopoverStatusPlayingLabel,
+  audioPopoverStatusPausedLabel,
+  audioPopoverStatusLoopOnLabel,
+  audioPopoverStatusLoopOffLabel,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
   onOpenFocusMode,
@@ -234,6 +248,13 @@ export function DocsShellControls({
         audioPopoverLoopOnLabel={audioPopoverLoopOnLabel}
         audioPopoverLoopOffLabel={audioPopoverLoopOffLabel}
         audioPopoverSourceLabel={audioPopoverSourceLabel}
+        audioPopoverHideSource={audioPopoverHideSource}
+        audioPopoverSourceCustomLabel={audioPopoverSourceCustomLabel}
+        audioPopoverShowMinutes={audioPopoverShowMinutes}
+        audioPopoverStatusPlayingLabel={audioPopoverStatusPlayingLabel}
+        audioPopoverStatusPausedLabel={audioPopoverStatusPausedLabel}
+        audioPopoverStatusLoopOnLabel={audioPopoverStatusLoopOnLabel}
+        audioPopoverStatusLoopOffLabel={audioPopoverStatusLoopOffLabel}
       />
       {focusModeEnabled && (
         <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>
