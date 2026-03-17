@@ -106,12 +106,12 @@ export function MdContainer({
     </>
   );
 
-  const showToc = !contentOnly && routeguideBrand && headings.length > 0;
-
   const content =
     fullscreenEnabled
-      ? (fullscreenButton: React.ReactNode) =>
-          showToc ? (
+      ? (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
+          const hideToc = contentOnly || options?.contentOnly;
+          const showToc = !hideToc && routeguideBrand && headings.length > 0;
+          return showToc ? (
             <TocContainer
               headings={headings}
               position={tocPosition}
@@ -124,8 +124,12 @@ export function MdContainer({
               {markdownContent}
               {fullscreenButton}
             </div>
-          )
-      : showToc ? (
+          );
+        }
+      : (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
+          const hideToc = contentOnly || options?.contentOnly;
+          const showToc = !hideToc && routeguideBrand && headings.length > 0;
+          return showToc ? (
           <TocContainer
             headings={headings}
             position={tocPosition}
@@ -135,6 +139,7 @@ export function MdContainer({
         ) : (
           markdownContent
         );
+        };
 
   return (
     <ContentContainerWrapper

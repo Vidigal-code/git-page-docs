@@ -20,10 +20,16 @@ export interface BrowseNavProps {
   contentTypeLabel?: string;
 }
 
+export interface ResolveChildrenOptions {
+  contentOnly?: boolean;
+}
+
 interface ContentContainerWrapperProps {
   header?: React.ReactNode;
   /** Content, or function to inject fullscreen button into content (e.g. for TOC + MD layout) */
-  children: React.ReactNode | ((fullscreenButton: React.ReactNode) => React.ReactNode);
+  children:
+    | React.ReactNode
+    | ((fullscreenButton: React.ReactNode, options?: ResolveChildrenOptions) => React.ReactNode);
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
@@ -85,8 +91,10 @@ export function ContentContainerWrapper({
 
   const showTopNav = browseNav && (browseNavPosition === "top" || browseNavPosition === "both");
 
-  const resolveChildren = (btn: React.ReactNode | null) =>
-    typeof children === "function" ? (children as (b: React.ReactNode) => React.ReactNode)(btn) : children;
+  const resolveChildren = (btn: React.ReactNode | null, options?: ResolveChildrenOptions) =>
+    typeof children === "function"
+      ? (children as (b: React.ReactNode, o?: ResolveChildrenOptions) => React.ReactNode)(btn, options)
+      : children;
 
   if (!fullscreenEnabled) {
     return (
@@ -111,7 +119,7 @@ export function ContentContainerWrapper({
   );
 
   const resolvedChildren =
-    typeof children === "function" ? resolveChildren(fullscreenButton) : [fullscreenButton, children];
+    typeof children === "function" ? resolveChildren(fullscreenButton, { contentOnly: false }) : [fullscreenButton, children];
 
   return (
     <div className={styles.contentContainerWrapper} style={wrapperStyle}>
@@ -136,7 +144,7 @@ export function ContentContainerWrapper({
           </button>
           <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
             <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
-              {resolveChildren(null)}
+              {resolveChildren(null, { contentOnly: true })}
             </TocScrollContainerProvider>
           </div>
         </div>
