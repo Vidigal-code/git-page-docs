@@ -33,6 +33,10 @@ interface ContentContainerWrapperProps {
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
+  /** Called before opening fullscreen (e.g. to update URL for sharing) */
+  onBeforeFullscreen?: () => void;
+  /** Called before closing fullscreen (e.g. to clear URL params) */
+  onAfterFullscreen?: () => void;
   marginTop?: string;
   marginBottom?: string;
   browseNav?: BrowseNavProps;
@@ -74,6 +78,8 @@ export function ContentContainerWrapper({
   fullscreenEnabled = false,
   fullscreenCloseLabel,
   fullscreenExpandLabel,
+  onBeforeFullscreen,
+  onAfterFullscreen,
   marginTop,
   marginBottom,
   browseNav,
@@ -110,7 +116,10 @@ export function ContentContainerWrapper({
     <button
       type="button"
       className={styles.fullscreenButtonInside}
-      onClick={() => setIsFullscreen(true)}
+      onClick={() => {
+        onBeforeFullscreen?.();
+        setIsFullscreen(true);
+      }}
       aria-label={fullscreenExpandLabel}
       title={fullscreenExpandLabel}
     >
@@ -136,7 +145,10 @@ export function ContentContainerWrapper({
           <button
             type="button"
             className={styles.fullscreenCloseButton}
-            onClick={() => setIsFullscreen(false)}
+            onClick={() => {
+              onAfterFullscreen?.();
+              setIsFullscreen(false);
+            }}
             aria-label={fullscreenCloseLabel}
             title={fullscreenCloseLabel}
           >

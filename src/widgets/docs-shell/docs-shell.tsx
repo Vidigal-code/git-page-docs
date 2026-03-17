@@ -18,7 +18,7 @@ import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
 import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
-import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick } from "./model/menu-tree";
+import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick, getUrlParamsForPathClick } from "./model/menu-tree";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
@@ -216,6 +216,39 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setUrlFullscreenParams(null);
   }, [pathname, router]);
 
+  const handleInlineFullscreenOpen = useCallback(
+    (params: FullscreenParams) => {
+      const current = getCurrentSearchParams();
+      if (params.type === "md" && params.file) {
+        current.set("mdfull", params.lang);
+        current.set("file", params.file);
+      } else if (params.type === "html" && params.file) {
+        current.set("htmlfull", params.lang);
+        current.set("file", params.file);
+      } else if (params.type === "video") {
+        current.set("videofull", params.lang);
+        if (params.id != null) current.set("id", String(params.id));
+        if (params.slug) current.set("slug", params.slug);
+      }
+      replaceUrlWithoutNavigation(pathname ?? "/", current);
+    },
+    [getCurrentSearchParams, replaceUrlWithoutNavigation, pathname],
+  );
+
+  const handleInlineFullscreenClose = useCallback(() => {
+    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    const hadVideoFullscreen = params.has("videofull");
+    params.delete("mdfull");
+    params.delete("htmlfull");
+    params.delete("videofull");
+    params.delete("file");
+    params.delete("slug");
+    if (hadVideoFullscreen) {
+      params.delete("id");
+    }
+    replaceUrlWithoutNavigation(pathname ?? "/", params);
+  }, [pathname, replaceUrlWithoutNavigation]);
+
   const versionFromQuery = searchParams.get("version");
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
   const { selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
@@ -275,8 +308,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       setQuickNavOpen(false);
       setFocusModeOpen(false);
       setQuickNavQuery("");
+      if (pathClick && typeof window !== "undefined") {
+        const params = getUrlParamsForPathClick(data, pathClick, language, getCurrentSearchParams());
+        replaceUrlWithoutNavigation(pathname ?? "/", params);
+      }
     },
-    [onMenuClickState, setQuickNavOpen, setFocusModeOpen, setQuickNavQuery],
+    [onMenuClickState, setQuickNavOpen, setFocusModeOpen, setQuickNavQuery, data, language, pathname, getCurrentSearchParams, replaceUrlWithoutNavigation],
   );
 
   const goToLinearNavigation = useCallback(
@@ -508,6 +545,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             homePathClick={homePathClick}
             homeAncestorKeys={homeAncestorKeys}
             routeGuideIconConfig={routeGuideIconConfig}
+            onFullscreenOpen={handleInlineFullscreenOpen}
+            onFullscreenClose={handleInlineFullscreenClose}
           />
           {linearNavigationEntries.length > 1 && (
             <div className={styles.footerActions}>

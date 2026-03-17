@@ -43,6 +43,10 @@ interface MdContainerProps {
   useDefaultScrollBehavior?: boolean;
   /** When true, show only markdown content (hide routes/TOC) - for fullscreen mode */
   contentOnly?: boolean;
+  /** Called when fullscreen is about to open (for URL sync) */
+  onFullscreenOpen?: () => void;
+  /** Called when fullscreen is about to close (for URL sync) */
+  onFullscreenClose?: () => void;
 }
 
 export function MdContainer({
@@ -63,6 +67,8 @@ export function MdContainer({
   tocPositionDefault = "center",
   useDefaultScrollBehavior = false,
   contentOnly = false,
+  onFullscreenOpen,
+  onFullscreenClose,
 }: MdContainerProps) {
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
@@ -147,6 +153,8 @@ export function MdContainer({
       fullscreenEnabled={fullscreenEnabled}
       fullscreenCloseLabel={fullscreenCloseLabel}
       fullscreenExpandLabel={fullscreenExpandLabel}
+      onBeforeFullscreen={onFullscreenOpen}
+      onAfterFullscreen={onFullscreenClose}
       marginTop={config?.marginTop}
       marginBottom={config?.marginBottom}
       browseNav={browseNav}

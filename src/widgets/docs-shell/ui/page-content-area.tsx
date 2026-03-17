@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import type {
   ContentTypeRouteConfig,
   LanguageCode,
@@ -10,6 +11,7 @@ import type {
   LoadedVideoContent,
   RouteConfig,
 } from "@/entities/docs/model/types";
+import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
 import type { BreadcrumbItem } from "@/widgets/docs-shell/model/menu-tree";
@@ -55,6 +57,10 @@ interface PageContentAreaProps {
   homePathClick?: string;
   homeAncestorKeys?: string[];
   routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
+  /** Called when fullscreen opens (for URL sync so user can share). */
+  onFullscreenOpen?: (params: FullscreenParams) => void;
+  /** Called when fullscreen closes (for URL sync). */
+  onFullscreenClose?: () => void;
 }
 
 export function PageContentArea({
@@ -85,7 +91,54 @@ export function PageContentArea({
   routeGuideIconConfig,
   contentTypeFilter,
   isUrlFullscreen = false,
+  onFullscreenOpen,
+  onFullscreenClose,
 }: PageContentAreaProps) {
+  const hierarchy = data.config.hierarchyPage ?? { md: 0, html: 1, video: 2 };
+  const mdConfig = currentPage?.md?.config;
+  const htmlConfig = currentPage?.html?.config;
+  const videoConfig = currentPage?.video?.config;
+  const mdBrowseAll = isBrowseAllEnabled(mdConfig);
+  const htmlBrowseAll = isBrowseAllEnabled(htmlConfig);
+  const videoBrowseAll = isBrowseAllEnabled(videoConfig);
+
+  const currentMd =
+    currentPage &&
+    (mdBrowseAll && mdItems.length > 0
+      ? mdItems[Math.min(mdBrowseIndex, mdItems.length - 1)]?.content
+      : currentPage.md);
+  const currentHtml =
+    currentPage &&
+    (htmlBrowseAll && htmlItems.length > 0
+      ? htmlItems[Math.min(htmlBrowseIndex, htmlItems.length - 1)]?.content
+      : currentPage.html);
+  const currentVideo =
+    currentPage &&
+    (videoBrowseAll && videoItems.length > 0
+      ? videoItems[Math.min(videoBrowseIndex, videoItems.length - 1)]?.content
+      : currentPage.video);
+
+  const mdFullscreenOpen = useCallback(() => {
+    if (!currentMd || isUrlFullscreen) return;
+    const pathRec = (currentMd.config as { path?: Record<string, string> })?.path;
+    const file = pathRec?.[language];
+    if (file) onFullscreenOpen?.({ type: "md", lang: language, file });
+  }, [currentMd, language, isUrlFullscreen, onFullscreenOpen]);
+
+  const htmlFullscreenOpen = useCallback(() => {
+    if (!currentHtml || isUrlFullscreen) return;
+    const cfg = currentHtml.config as { path?: Record<string, string>; url?: Record<string, string> };
+    const file = cfg?.path?.[language] ?? cfg?.url?.[language];
+    if (file) onFullscreenOpen?.({ type: "html", lang: language, file });
+  }, [currentHtml, language, isUrlFullscreen, onFullscreenOpen]);
+
+  const videoFullscreenOpen = useCallback(() => {
+    if (!currentVideo || isUrlFullscreen) return;
+    const cfg = currentVideo.config as ContentTypeRouteConfig;
+    const slug = cfg?.videoSlug?.[language];
+    onFullscreenOpen?.({ type: "video", lang: language, id: currentVideo.routeId, slug });
+  }, [currentVideo, language, isUrlFullscreen, onFullscreenOpen]);
+
   if (!currentPage) {
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
     return (
@@ -95,28 +148,10 @@ export function PageContentArea({
     );
   }
 
-  const hierarchy = data.config.hierarchyPage ?? { md: 0, html: 1, video: 2 };
   const types = (["md", "html", "video"] as const)
     .filter((t) => currentPage[t])
     .filter((t) => !contentTypeFilter || t === contentTypeFilter)
     .sort((a, b) => (hierarchy[a] ?? 999) - (hierarchy[b] ?? 999));
-
-  const mdConfig = currentPage.md?.config;
-  const htmlConfig = currentPage.html?.config;
-  const videoConfig = currentPage.video?.config;
-  const mdBrowseAll = isBrowseAllEnabled(mdConfig);
-  const htmlBrowseAll = isBrowseAllEnabled(htmlConfig);
-  const videoBrowseAll = isBrowseAllEnabled(videoConfig);
-
-  const currentMd = mdBrowseAll && mdItems.length > 0
-    ? mdItems[Math.min(mdBrowseIndex, mdItems.length - 1)]?.content
-    : currentPage.md;
-  const currentHtml = htmlBrowseAll && htmlItems.length > 0
-    ? htmlItems[Math.min(htmlBrowseIndex, htmlItems.length - 1)]?.content
-    : currentPage.html;
-  const currentVideo = videoBrowseAll && videoItems.length > 0
-    ? videoItems[Math.min(videoBrowseIndex, videoItems.length - 1)]?.content
-    : currentPage.video;
 
   const mdLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuMd", "Markdown");
   const htmlLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuHtml", "Pages");
@@ -188,6 +223,8 @@ export function PageContentArea({
               homeAncestorKeys={homeAncestorKeys}
               routeGuideIconConfig={routeGuideIconConfig}
               tocPositionDefault={data.config.site?.RouteguideBrandPositionDefault ?? "center"}
+              onFullscreenOpen={mdFullscreenOpen}
+              onFullscreenClose={onFullscreenClose}
             />
           );
         }
@@ -204,6 +241,8 @@ export function PageContentArea({
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={htmlBrowseNav}
+              onFullscreenOpen={htmlFullscreenOpen}
+              onFullscreenClose={onFullscreenClose}
             />
           );
         }
@@ -220,6 +259,8 @@ export function PageContentArea({
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={videoBrowseNav}
+              onFullscreenOpen={videoFullscreenOpen}
+              onFullscreenClose={onFullscreenClose}
             />
           );
         }

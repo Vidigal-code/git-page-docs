@@ -84,6 +84,10 @@ interface HtmlContainerProps {
   fullscreenExpandLabel: string;
   isDarkMode?: boolean;
   browseNav?: BrowseNavProps;
+  /** Called when fullscreen is about to open (for URL sync) */
+  onFullscreenOpen?: () => void;
+  /** Called when fullscreen is about to close (for URL sync) */
+  onFullscreenClose?: () => void;
 }
 
 export function HtmlContainer({
@@ -96,6 +100,8 @@ export function HtmlContainer({
   fullscreenExpandLabel,
   isDarkMode = false,
   browseNav,
+  onFullscreenOpen,
+  onFullscreenClose,
 }: HtmlContainerProps) {
   const blockLink = config?.blockLink !== false;
   const srcdoc = useMemo(
@@ -149,6 +155,8 @@ export function HtmlContainer({
       fullscreenEnabled={fullscreenEnabled}
       fullscreenCloseLabel={fullscreenCloseLabel}
       fullscreenExpandLabel={fullscreenExpandLabel}
+      onBeforeFullscreen={onFullscreenOpen}
+      onAfterFullscreen={onFullscreenClose}
       marginTop={config?.marginTop}
       marginBottom={config?.marginBottom}
       browseNav={browseNav}

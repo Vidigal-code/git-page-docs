@@ -41,6 +41,10 @@ interface VideoContainerProps {
   fullscreenExpandLabel: string;
   isDarkMode?: boolean;
   browseNav?: BrowseNavProps;
+  /** Called when fullscreen is about to open (for URL sync) */
+  onFullscreenOpen?: () => void;
+  /** Called when fullscreen is about to close (for URL sync) */
+  onFullscreenClose?: () => void;
 }
 
 export function VideoContainer({
@@ -53,6 +57,8 @@ export function VideoContainer({
   fullscreenExpandLabel,
   isDarkMode = false,
   browseNav,
+  onFullscreenOpen,
+  onFullscreenClose,
 }: VideoContainerProps) {
   const type = String(videoType).toLowerCase();
   const embedUrl = getEmbedUrl(videoType, pathVideo, language);
@@ -123,6 +129,8 @@ export function VideoContainer({
       fullscreenEnabled={fullscreenEnabled}
       fullscreenCloseLabel={fullscreenCloseLabel}
       fullscreenExpandLabel={fullscreenExpandLabel}
+      onBeforeFullscreen={onFullscreenOpen}
+      onAfterFullscreen={onFullscreenClose}
       marginTop={config?.marginTop}
       marginBottom={config?.marginBottom}
       browseNav={browseNav}

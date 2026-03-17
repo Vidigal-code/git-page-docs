@@ -218,3 +218,42 @@ export function getBreadcrumbTrail(nodes: MenuNode[], pathClick: string): Breadc
   const found = findBreadcrumbTrailRecurse(nodes, pathClick, [], []);
   return found ?? [];
 }
+
+/**
+ * Extracts slug from path for URL (e.g. "path/getting-started.md" -> "getting-started")
+ */
+function extractSlugFromPath(path: string): string {
+  const basename = path.split("/").pop() ?? "";
+  return basename.replace(/\.(md|html)$/i, "").toLowerCase();
+}
+
+/**
+ * Returns URL search params for the given pathClick (for shareable links)
+ */
+export function getUrlParamsForPathClick(
+  data: LoadedDocsData,
+  pathClick: string,
+  language: LanguageCode,
+  existingParams?: URLSearchParams,
+): URLSearchParams {
+  const params = new URLSearchParams(existingParams?.toString() ?? (typeof window !== "undefined" ? window.location.search : ""));
+  params.set("menu", language);
+
+  const routeIdx = data.config.routes.findIndex((r) => {
+    const paths = r.path as Record<string, string>;
+    return paths && Object.values(paths).includes(pathClick);
+  });
+  if (routeIdx >= 0) {
+    const route = data.config.routes[routeIdx];
+    params.set("id", String(route.id));
+    params.delete("name");
+    params.delete("nome");
+  } else {
+    const slug = extractSlugFromPath(pathClick);
+    if (slug) {
+      params.set("name", slug);
+      params.delete("id");
+    }
+  }
+  return params;
+}
