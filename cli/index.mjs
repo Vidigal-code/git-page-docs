@@ -15,6 +15,7 @@ const ROOT = process.cwd();
 const PKG_ROOT = path.join(SCRIPT_DIR, "..");
 const PREBUILT_DIR = path.join(PKG_ROOT, "prebuilt");
 
+/** Clean architecture layers: presentation -> application -> infrastructure */
 const params = {
   root: ROOT,
   pkgRoot: PKG_ROOT,

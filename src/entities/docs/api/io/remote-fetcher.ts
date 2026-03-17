@@ -1,5 +1,5 @@
 import { buildGithubRawCandidates, ensureTrailingSlash, toRawGithubUrl } from "@/entities/docs/lib/remote/github-url";
-import { readLocalText } from "./file-reader";
+import type { RemoteFetcher } from "./types";
 
 export async function tryFetchText(url: string): Promise<string | null> {
   try {
@@ -56,3 +56,8 @@ export async function readRemoteJsonFromRepo<T>(owner: string, repo: string, rel
     return null;
   }
 }
+
+export const defaultRemoteFetcher: RemoteFetcher = {
+  readRemoteText,
+  readRemoteJsonFromRepo,
+};

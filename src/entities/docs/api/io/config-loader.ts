@@ -2,13 +2,12 @@ import path from "node:path";
 import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { readFile } from "node:fs/promises";
-
-const CONFIG_BASE = "gitpagedocs/config";
-const EXTENSIONS = [".json", ".js", ".ts"] as const;
+import { CONFIG_BASE, CONFIG_EXTENSIONS } from "@/shared/config/constants";
+import type { ConfigLoader } from "./types";
 
 export function resolveConfigPath(cwd: string = process.cwd()): string | null {
   const base = path.join(cwd, CONFIG_BASE);
-  for (const ext of EXTENSIONS) {
+  for (const ext of CONFIG_EXTENSIONS) {
     const fullPath = base + ext;
     if (existsSync(fullPath)) return fullPath;
   }
@@ -36,7 +35,12 @@ async function loadLocalConfig<T>(resolvedPath: string): Promise<T> {
 export async function loadRootConfig<T>(cwd: string = process.cwd()): Promise<T> {
   const resolvedPath = resolveConfigPath(cwd);
   if (!resolvedPath) {
-    throw new Error(`No config file found. Expected one of: ${EXTENSIONS.map((e) => CONFIG_BASE + e).join(", ")}`);
+    throw new Error(`No config file found. Expected one of: ${CONFIG_EXTENSIONS.map((e) => CONFIG_BASE + e).join(", ")}`);
   }
   return loadLocalConfig<T>(resolvedPath);
 }
+
+export const defaultConfigLoader: ConfigLoader = {
+  loadRootConfig,
+  resolveConfigPath,
+};

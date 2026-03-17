@@ -1,54 +1,57 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
-import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
 import type { LoadedDocsData, LoadedPage } from "@/entities/docs/model/types";
 import type { BreadcrumbItem, MenuNode } from "@/entities/docs/model/menu";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
 import { useDocsShellKeyboard } from "./model/use-docs-shell-keyboard";
 import { useDocsShellLinearNav } from "./model/use-docs-shell-linear-nav";
-import { useDocsShellPopups } from "./model/use-docs-shell-popups";
-import { useDocsShellThemeState } from "./model/use-docs-shell-theme-state";
+import { useDocsShellState } from "./model/use-docs-shell-state";
+import { useDocsShellFullscreen } from "./model/use-docs-shell-fullscreen";
 import { useDocsShellUrl } from "./model/use-docs-shell-url";
 import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLabels } from "./model/use-docs-shell-labels";
-import { useDocsShellLanguageState } from "./model/use-docs-shell-language-state";
-import { useDocsShellNavigationState } from "./model/use-docs-shell-navigation-state";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
 import type { MenuEntry } from "./model/menu-tree";
-import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick, getUrlParamsForPathClick } from "./model/menu-tree";
+import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getUrlParamsForPathClick } from "./model/menu-tree";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
-import { DocsShellControls, type DocsShellControlsProps } from "./ui/docs-shell-controls";
+import { DocsShellControls } from "./ui/docs-shell-controls";
 import { CollapsedNavRail } from "./ui/docs-shell-collapsed-rail";
 import { DocsShellMainContent } from "./ui/docs-shell-main-content";
 import { DocsShellOverlays } from "./ui/docs-shell-overlays";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
-import type { FullscreenParams } from "./model/use-docs-shell-url-params";
+import { DocsShellProvider } from "./model/docs-shell-context";
 import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
   const { getCurrentSearchParams, replaceUrlWithoutNavigation, pathname, router } = useDocsShellUrl();
-
-  const replaceUrlParams = useCallback(
-    (params: URLSearchParams) => {
-      if (typeof window !== "undefined") {
-        const appPath = pathname ?? "/";
-        const qs = params.toString();
-        const nextUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
-        window.history.replaceState({}, "", nextUrl);
-      }
-    },
-    [pathname],
-  );
   const searchParams = useSearchParams();
+
+  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(
+    data.config.site.name,
+  );
+  const { blockMenuOnNav, setBlockMenuOnNav } = useNavMenuBlockPreference(data.config.site.name);
+  const isLanguageSelectVisible = data.availableLanguages.length > 1;
+
+  const state = useDocsShellState(data, {
+    languageStorageKey,
+    themeModeStorageKey,
+    themeLayoutStorageKey,
+    blockMenuOnNav,
+    searchParams,
+    pathname,
+    getCurrentSearchParams,
+    replaceUrlWithoutNavigation,
+  });
+
   const {
     menuOpen,
     setMenuOpen,
@@ -58,47 +61,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     setVersionLinksPopupOpen,
     infoPopupOpen,
     setInfoPopupOpen,
-  } = useDocsShellPopups();
-
-  const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(
-    data.config.site.name,
-  );
-  const { blockMenuOnNav, setBlockMenuOnNav } = useNavMenuBlockPreference(data.config.site.name);
-  const defaultLanguage = data.config.site.defaultLanguage;
-  const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
-  const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
-  const isLanguageSelectVisible = data.availableLanguages.length > 1;
-
-  const { language, onLanguageChange } = useDocsShellLanguageState({
-    defaultLanguage,
-    availableLanguages: data.availableLanguages,
-    languageStorageKey,
-    searchParams,
-    pathname,
-    getCurrentSearchParams,
-    replaceUrlWithoutNavigation,
-  });
-
-  const {
-    activeThemeId,
-    activeLayout,
-    nextMode,
-    canToggleMode,
-    onThemeChange,
-    onToggleMode,
-  } = useDocsShellThemeState({
-    layouts: data.layoutsConfig.layouts,
-    configuredDefaultMode,
-    initialThemeBaseId,
-    searchParams,
-    themeModeStorageKey,
-    themeLayoutStorageKey,
-    pathname,
-    getCurrentSearchParams,
-    replaceUrlWithoutNavigation,
-  });
-
-  const {
     pageIndex,
     setPageIndex,
     onMenuClick: onMenuClickState,
@@ -117,12 +79,31 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     htmlItems,
     videoItems,
     audioItems,
-  } = useDocsShellNavigationState({
+    language,
+    onLanguageChange,
+    activeThemeId,
+    activeLayout,
+    nextMode,
+    canToggleMode,
+    onThemeChange,
+    onToggleMode,
+  } = state;
+
+  const {
+    urlFullscreenParams,
+    onFullscreenRequest,
+    closeUrlFullscreen,
+    handleInlineFullscreenOpen,
+    handleInlineFullscreenClose,
+  } = useDocsShellFullscreen({
     data,
     language,
-    setSidebarOpen,
-    setMenuOpen,
-    blockSidebarOpenOnNav: blockMenuOnNav,
+    pathname,
+    getCurrentSearchParams,
+    replaceUrlWithoutNavigation,
+    setPageIndex,
+    expandAncestors,
+    routerReplace: router.replace,
   });
 
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
@@ -165,112 +146,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     closeFocusMode: closeFocusModeInternal,
     onFocusModeNavigate: onFocusModeNavigateInternal,
   } = useFocusMode(markdownHtml);
-
-  const [urlFullscreenParams, setUrlFullscreenParams] = useState<FullscreenParams | null>(null);
-  const skipUrlFullscreenFromInlineRef = useRef(false);
-
-  const onFullscreenRequest = useCallback(
-    (params: FullscreenParams) => {
-      if (skipUrlFullscreenFromInlineRef.current) {
-        return;
-      }
-      let pathClick: string | null = null;
-      const lang = params.lang ?? language;
-      if (params.type === "md" && params.file) {
-        pathClick = params.file;
-      } else if (params.type === "html" && params.file) {
-        pathClick = params.file;
-      } else if (params.type === "video" && params.id != null) {
-        pathClick = `page:${params.id}`;
-      } else if (params.type === "video" && params.slug) {
-        const entry = Object.entries(data.pathToPageMap ?? {}).find(
-          ([k, v]) => v.contentType === "video" && k.toLowerCase().includes(params.slug!.toLowerCase()),
-        );
-        pathClick = entry?.[0] ?? null;
-      } else if (params.type === "audio" && params.id != null) {
-        pathClick = `page:${params.id}`;
-      } else if (params.type === "audio" && params.slug) {
-        const entry = Object.entries(data.pathToPageMap ?? {}).find(
-          ([k, v]) => v.contentType === "audio" && k.toLowerCase().includes(params.slug!.toLowerCase()),
-        );
-        pathClick = entry?.[0] ?? null;
-      }
-      if (pathClick) {
-        const pageIdx = getPageIndexByPathClick(data, pathClick);
-        if (pageIdx >= 0) {
-          const tree = buildUnifiedHeaderMenuTree(data, lang, pageIdx);
-          const trail = getBreadcrumbTrail(tree, pathClick);
-          const ancestorKeys = trail.length > 0 ? trail[trail.length - 1].ancestorKeys : [];
-          setPageIndex(pageIdx);
-          expandAncestors(ancestorKeys);
-        }
-      }
-      setUrlFullscreenParams(params);
-    },
-    [data, language, setPageIndex, expandAncestors],
-  );
-
-  const closeUrlFullscreen = useCallback(() => {
-    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-    params.delete("mdfull");
-    params.delete("htmlfull");
-    params.delete("videofull");
-    params.delete("audiofull");
-    params.delete("file");
-    params.delete("slug");
-    params.delete("id");
-    const qs = params.toString();
-    const appPath = pathname ?? "/";
-    if (typeof window !== "undefined") {
-      const fullUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
-      window.history.replaceState({}, "", fullUrl);
-    } else {
-      router.replace(qs ? `${appPath}?${qs}` : appPath);
-    }
-    setUrlFullscreenParams(null);
-  }, [pathname, router]);
-
-  const handleInlineFullscreenOpen = useCallback(
-    (params: FullscreenParams) => {
-      skipUrlFullscreenFromInlineRef.current = true;
-      const current = getCurrentSearchParams();
-      if (params.type === "md" && params.file) {
-        current.set("mdfull", params.lang);
-        current.set("file", params.file);
-      } else if (params.type === "html" && params.file) {
-        current.set("htmlfull", params.lang);
-        current.set("file", params.file);
-      } else if (params.type === "video") {
-        current.set("videofull", params.lang);
-        if (params.id != null) current.set("id", String(params.id));
-        if (params.slug) current.set("slug", params.slug);
-      } else if (params.type === "audio") {
-        current.set("audiofull", params.lang);
-        if (params.id != null) current.set("id", String(params.id));
-        if (params.slug) current.set("slug", params.slug);
-      }
-      replaceUrlWithoutNavigation(pathname ?? "/", current);
-    },
-    [getCurrentSearchParams, replaceUrlWithoutNavigation, pathname],
-  );
-
-  const handleInlineFullscreenClose = useCallback(() => {
-    skipUrlFullscreenFromInlineRef.current = false;
-    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-    const hadVideoFullscreen = params.has("videofull");
-    const hadAudioFullscreen = params.has("audiofull");
-    params.delete("mdfull");
-    params.delete("htmlfull");
-    params.delete("videofull");
-    params.delete("audiofull");
-    params.delete("file");
-    params.delete("slug");
-    if (hadVideoFullscreen || hadAudioFullscreen) {
-      params.delete("id");
-    }
-    replaceUrlWithoutNavigation(pathname ?? "/", params);
-    setUrlFullscreenParams(null);
-  }, [pathname, replaceUrlWithoutNavigation]);
 
   const versionFromQuery = searchParams.get("version");
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
@@ -438,6 +313,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     [data.config.site, nextMode],
   );
 
+  const contextValue = {
+    data,
+    language,
+    currentPage,
+    labels,
+    routeGuideConfig: { enabled: routeGuideEnabled },
+  };
+
   const controlsProps = {
     ...controlsConfig,
     themeVarsStyle: cssVars,
@@ -452,7 +335,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   };
 
   return (
-    <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
+    <DocsShellProvider value={contextValue}>
+      <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
       <DocsShellSidebar
         siteName={headerName}
         useReactHeaderIcon={useReactHeaderIcon}
@@ -614,5 +498,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         closeUrlFullscreen={closeUrlFullscreen}
       />
     </div>
+    </DocsShellProvider>
   );
 }

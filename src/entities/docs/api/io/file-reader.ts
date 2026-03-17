@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import type { FileReader } from "./types";
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -42,3 +43,7 @@ export async function tryReadJsonFile<T>(filePath: string): Promise<T | null> {
     return null;
   }
 }
+
+export const defaultFileReader: FileReader = {
+  readLocalText,
+};

@@ -1,15 +1,7 @@
 import type { GitPageDocsConfig } from "@/entities/docs/model/types";
 import { readRemoteJsonFromRepo } from "./io/remote-fetcher";
 import { parseOwnerRepoFromRenderingUrl } from "./utils/url-utils";
-
-const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
-
-function isLocalRuntime(): boolean {
-  if (process.env.NODE_ENV !== "production") {
-    return true;
-  }
-  return process.env.VERCEL_ENV === "development";
-}
+import { DEFAULT_CONFIG_PATH } from "@/shared/config/constants";
 
 export interface ResolvedDocsSource {
   source: "local" | "remote";
@@ -26,7 +18,6 @@ export async function resolveDocsSource(
   localConfig: GitPageDocsConfig,
   selectedVersionId?: string,
 ): Promise<ResolvedDocsSource> {
-  const local = isLocalRuntime();
   const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
   const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
   const repositorySearchEnabled = isGithubPagesBuild || repositorySearchEnabledByEnv;

@@ -7,4 +7,5 @@ export {
   type BreadcrumbItem,
   getBreadcrumbTrail,
 } from "./model/menu";
+export { getRouteIndexByPath, getPageIndexByPathClick, getUrlParamsForPathClick } from "./model/menu-utils";
 export type { BrowseItem } from "./model/navigation";
