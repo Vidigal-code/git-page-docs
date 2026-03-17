@@ -6,6 +6,7 @@ export interface DocsShellControlsAudioProps {
   showAudioPlayer?: boolean;
   audioPlayerConfig?: ResolvedBackgroundAudioConfig | null;
   language: LanguageCode;
+  themeVarsStyle?: React.CSSProperties;
   audioPlayIconTag?: string;
   audioPlayIconStyle?: React.CSSProperties;
   audioPauseIconTag?: string;
@@ -32,6 +33,7 @@ export function DocsShellControlsAudio({
   showAudioPlayer,
   audioPlayerConfig,
   language,
+  themeVarsStyle,
   audioPlayIconTag,
   audioPlayIconStyle,
   audioPauseIconTag,
@@ -61,6 +63,7 @@ export function DocsShellControlsAudio({
     <DocsShellAudioPlayer
       config={audioPlayerConfig}
       language={language}
+      themeVarsStyle={themeVarsStyle}
       playIconTag={audioPlayIconTag}
       pauseIconTag={audioPauseIconTag}
       iconStyle={audioPlayIconStyle}

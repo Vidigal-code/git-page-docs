@@ -7,6 +7,7 @@ import styles from "../docs-shell.module.css";
 interface DocsShellAudioPlayerProps {
   config: ResolvedBackgroundAudioConfig;
   language: string;
+  themeVarsStyle?: React.CSSProperties;
   playIconTag?: string;
   pauseIconTag?: string;
   iconStyle?: React.CSSProperties;
@@ -31,6 +32,7 @@ interface DocsShellAudioPlayerProps {
 export function DocsShellAudioPlayer({
   config,
   language,
+  themeVarsStyle,
   playIconTag = "CiPlay1",
   pauseIconTag = "FaPause",
   iconStyle,
@@ -128,6 +130,7 @@ export function DocsShellAudioPlayer({
         footerClassName={`${styles.focusModeFooter} ${styles.audioPlayerPopoverFooter}`}
         closeButtonClassName={`${styles.button} ${styles.focusModeCloseButton}`}
         controlButtonClassName={`${styles.button} ${styles.focusModeCloseButton}`}
+        themeVarsStyle={themeVarsStyle}
       />
       {isNative && (
         <audio

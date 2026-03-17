@@ -487,6 +487,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   const controlsProps = {
     ...controlsConfig,
+    themeVarsStyle: cssVars,
     onOpenVersionLinksPopup: openVersionLinksPopup,
     onOpenInfoPopup: openInfoPopup,
     onOpenFocusMode: openFocusMode,

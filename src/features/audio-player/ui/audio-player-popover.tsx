@@ -87,6 +87,8 @@ interface AudioPlayerPopoverProps {
   footerClassName?: string;
   closeButtonClassName?: string;
   controlButtonClassName?: string;
+  /** Theme CSS variables - required when rendered via portal to body so the popover inherits them */
+  themeVarsStyle?: React.CSSProperties;
 }
 
 export function AudioPlayerPopover({
@@ -126,12 +128,13 @@ export function AudioPlayerPopover({
   footerClassName,
   closeButtonClassName,
   controlButtonClassName,
+  themeVarsStyle,
 }: AudioPlayerPopoverProps) {
   if (!isOpen || !tracks.length) return null;
 
   const closeButtonContent = renderIcon(closeIcon, <FiX aria-hidden />);
 
-  const content = (
+  const overlay = (
     <div
       className={overlayClassName}
       onClick={onClose}
@@ -227,6 +230,10 @@ export function AudioPlayerPopover({
       </div>
     </div>
   );
+
+  const content = themeVarsStyle ? (
+    <div style={themeVarsStyle}>{overlay}</div>
+  ) : overlay;
 
   return typeof document !== "undefined"
     ? createPortal(content, document.body)

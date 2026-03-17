@@ -61,6 +61,7 @@ export interface DocsShellControlsProps {
   lightModeLabel: string;
   showAudioPlayer?: boolean;
   audioPlayerConfig?: ResolvedBackgroundAudioConfig | null;
+  themeVarsStyle?: React.CSSProperties;
   audioPlayIconTag?: string;
   audioPlayIconStyle?: React.CSSProperties;
   audioPauseIconTag?: string;
@@ -143,6 +144,7 @@ export function DocsShellControls({
   lightModeLabel,
   showAudioPlayer,
   audioPlayerConfig,
+  themeVarsStyle,
   audioPlayIconTag,
   audioPlayIconStyle,
   audioPauseIconTag,
@@ -211,6 +213,7 @@ export function DocsShellControls({
         showAudioPlayer={showAudioPlayer}
         audioPlayerConfig={audioPlayerConfig}
         language={language}
+        themeVarsStyle={themeVarsStyle}
         audioPlayIconTag={audioPlayIconTag}
         audioPlayIconStyle={audioPlayIconStyle}
         audioPauseIconTag={audioPauseIconTag}
