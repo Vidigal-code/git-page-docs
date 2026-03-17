@@ -14,9 +14,14 @@ const localBasePath =
     ? "/" + localPathRaw.replace(/^\/+|\/+$/g, "")
     : undefined;
 
+// Treat empty string as "not set" so fallback to /repositoryName is used for project sites
 const basePath =
   localBasePath ??
-  (basePathFromEnv !== undefined ? basePathFromEnv : emulateGithubPagesRuntime ? `/${repositoryName}` : undefined);
+  (basePathFromEnv !== undefined && basePathFromEnv !== ""
+    ? basePathFromEnv
+    : emulateGithubPagesRuntime
+      ? `/${repositoryName}`
+      : undefined);
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

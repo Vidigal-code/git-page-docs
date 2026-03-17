@@ -26,11 +26,16 @@ export const ROUTE_META_ID2 = {
 };
 
 export const ROUTE_META_ID3 = {
+  titles: { pt: "Funcionalidades", en: "Functionalities", es: "Funcionalidades" },
+  descriptions: { pt: "CLI, opções, configuração e recursos", en: "CLI, options, configuration and features", es: "CLI, opciones, configuración y funciones" },
+};
+
+export const ROUTE_META_ID4 = {
   titles: { pt: "GitHub Issues e Projects", en: "GitHub issues and projects", es: "GitHub issues y projects" },
   descriptions: { pt: "Como usar Issues e Projects no GitHub", en: "How to use GitHub Issues and Projects", es: "Cómo usar GitHub Issues y Projects" },
 };
 
-export const ROUTE_META_ID4 = {
+export const ROUTE_META_ID5 = {
   titles: { pt: "Introdução ao Git", en: "Introduction to Git", es: "Introducción a Git" },
   descriptions: { pt: "Conceitos básicos de Git para iniciantes", en: "Basic Git concepts for beginners", es: "Conceptos básicos de Git para principiantes" },
 };

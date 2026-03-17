@@ -6,7 +6,15 @@ function sanitizeDocsPath(docsPath) {
 
 export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, docsPath = "") {
   const pathSegment = sanitizeDocsPath(docsPath);
-  const basePathEnv = pathSegment ? `"/${pathSegment}"` : '""';
+  const buildEnvBlock =
+    pathSegment
+      ? `        env:
+          GITHUB_ACTIONS: "true"
+          GITHUB_REPOSITORY: \${{ github.repository }}
+          GITPAGEDOCS_BASE_PATH: "/${pathSegment}"`
+      : `        env:
+          GITHUB_ACTIONS: "true"
+          GITHUB_REPOSITORY: \${{ github.repository }}`;
   const currentBranch = getCurrentGitBranch();
   const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
   const workflowContent = `name: Deploy GitPageDocs
@@ -64,24 +72,25 @@ jobs:
       - name: Build static site with target repository path
         run: npx next build
         working-directory: .gitpagedocs-runtime
-        env:
-          GITHUB_ACTIONS: "true"
-          GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_BASE_PATH: ${basePathEnv}
+${buildEnvBlock}
 
       - name: Force root URL to docs entrypoint
+        env:
+          GITHUB_REPOSITORY: \${{ github.repository }}
         run: |
           node <<'NODE'
           const fs = require('fs');
           const path = require('path');
-          const pathSegment = '${pathSegment}';
+          const pathSegment = ${JSON.stringify(pathSegment)};
+          const repoName = (process.env.GITHUB_REPOSITORY || '').split('/')[1] || '';
+          const effectiveBase = pathSegment || repoName;
           const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
           if (!fs.existsSync(cfgPath)) process.exit(0);
           const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
           const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.0';
           const defaultLang = cfg?.site?.defaultLanguage || 'en';
-          const redirectTargetRoot = pathSegment
-            ? './' + pathSegment + '/v/' + defaultVersion + '/?lang=' + defaultLang
+          const redirectTargetRoot = effectiveBase
+            ? './' + effectiveBase + '/v/' + defaultVersion + '/?lang=' + defaultLang
             : './v/' + defaultVersion + '/?lang=' + defaultLang;
           const redirectTargetProject = './v/' + defaultVersion + '/?lang=' + defaultLang;
           const rootHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetRoot + '"/><script>window.location.replace("' + redirectTargetRoot + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';

@@ -2,7 +2,6 @@
 
 import { LAYOUTS, FALLBACK_LAYOUTS } from "../data/layouts.mjs";
 import { DOCS } from "../content/docs.mjs";
-import { HTML_PAGES } from "../content/html-pages.mjs";
 import { DOC_VERSIONS } from "../data/version-constants.mjs";
 import { buildRootConfig } from "./root-config-builder.mjs";
 import { buildVersionConfig } from "./version-config-builder.mjs";
@@ -22,7 +21,6 @@ export function buildConfigArtifacts(options = {}) {
 
   const sourceViewerHtml = generateSourceViewerHtml(root);
   const docsHtml = {
-    ...HTML_PAGES,
     sourceViewer: { pt: sourceViewerHtml, en: sourceViewerHtml, es: sourceViewerHtml },
   };
 

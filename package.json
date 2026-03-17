@@ -1,6 +1,6 @@
 {
   "name": "gitpagedocs",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
   "main": "cli/index.mjs",
   "bin": {
@@ -22,6 +22,7 @@
     "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
     "gitpagedocs": "node cli/index.mjs",
+    "gitpagedocs:config": "node cli/index.mjs",
     "gitpagedocs:full": "node cli/index.mjs",
     "gitpagedocs:home": "node cli/index.mjs --home"
   },

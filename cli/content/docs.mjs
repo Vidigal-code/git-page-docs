@@ -98,6 +98,73 @@ Git Page Docs is powered by Next.js 15, React 19, TypeScript, and Node.js. It bu
 - Theme system with JSON templates
 - Local and GitHub Pages execution
 `,
+    functionalities: `# Functionalities
+
+Complete reference of CLI options, configuration keys, and runtime features.
+
+## CLI commands
+
+| Command | Description |
+|---------|--------------|
+| \`npx gitpagedocs\` | Generate config and docs in \`gitpagedocs/\` |
+| \`npx gitpagedocs --layoutconfig\` | Also generate local layouts/templates |
+| \`npx gitpagedocs --home\` | Standalone distribution (\`gitpagedocshome/\`) |
+| \`npx gitpagedocs --push --owner X --repo Y\` | Setup workflow, commit, push |
+| \`npx gitpagedocs --interactive\` / \`-i\` | Interactive mode with prompts |
+
+## CLI options
+
+| Option | Description |
+|--------|-------------|
+| \`--owner <user>\` | GitHub owner |
+| \`--repo <repo>\` | GitHub repository |
+| \`--path <subpath>\` | Docs subpath (e.g. \`docs\`); without it, base path = repo name for correct CSS/JS on project sites |
+| \`--output <dir>\` | Output directory (default: \`gitpagedocs\`) |
+| \`--search true|false\` | Enable/disable repository search (\`--home\`) |
+| \`--layoutconfig\` | Generate \`gitpagedocs/layouts/\` |
+| \`--push\` | Create workflow, commit artifacts, push |
+| \`--home\` | Generate \`gitpagedocshome/\` (static + .env + Dockerfile) |
+
+## Generated output
+
+- \`gitpagedocs/config.json\` – root config
+- \`gitpagedocs/icon.svg\` – default icon
+- \`gitpagedocs/docs/versions/<ver>/config.json\` – per-version routes
+- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – markdown docs
+- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` – GitHub-style source code viewer
+- \`gitpagedocs/layouts/\` – only with \`--layoutconfig\`
+
+## Content types
+
+| Type | Config key | Description |
+|------|------------|-------------|
+| Markdown | \`routes-md\` | .md files with \`path\` per language |
+| HTML | \`routes-html\` | \`path\` (e.g. source-viewer) or \`url\` for external |
+| Video | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
+| Audio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
+
+## Source code viewer
+
+The CLI generates a **Source code** page per version. It scans \`src/\`, \`cli/\`, and root files (README.md, package.json, next.config.ts, etc.) and builds a GitHub-style dark viewer with:
+
+- File tree sidebar with folder collapse/expand
+- Search filter for files
+- Syntax highlighting (TypeScript, JavaScript, JSON, CSS, Markdown)
+- Copy button, line numbers
+- README.md preview/code toggle
+- Expand all / Collapse all controls
+
+## Config keys (site)
+
+- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
+- \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
+- \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+
+## Environment variables
+
+- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – repository search (local)
+- \`GITHUB_ACTIONS\` – GitHub Pages build mode
+`,
     githubIssuesProjects: `# GitHub Issues and Projects
 
 Learn how to use GitHub Issues and Projects to manage your work.
@@ -202,7 +269,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 ## Content types: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: always uses \`path\` pointing to local \`.md\` files.
-- **HTML (\`routes-html\`)**: uses \`path\` for local HTML files (no \`.html\` extension in config, e.g. \`source-viewer\`, \`getting-started\`) or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated.
+- **HTML (\`routes-html\`)**: uses \`path\` for local HTML files (no \`.html\` extension in config, e.g. \`source-viewer\`) or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated. The CLI generates a **Source code** viewer (GitHub-style) per version.
 - **Video (\`routes-video\`)**: uses \`video.pathVideo\` and \`video.videoType\` (youtube, vimeo, mp4, etc.).
 - **Audio (\`routes-audio\`)**: uses \`audio.pathAudio\` and \`audio.audioType\` (youtube, mp3, etc.). No autoplay by default.
 
@@ -439,6 +506,73 @@ Git Page Docs e alimentado por Next.js 15, React 19, TypeScript e Node.js. Gera 
 
 Construir documentacao multilinguagem para repositorios GitHub com suporte a versoes, temas e conteudo md/html/video.
 `,
+    functionalities: `# Funcionalidades
+
+Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runtime.
+
+## Comandos da CLI
+
+| Comando | Descricao |
+|---------|------------|
+| \`npx gitpagedocs\` | Gera config e docs em \`gitpagedocs/\` |
+| \`npx gitpagedocs --layoutconfig\` | Tambem gera layouts/templates locais |
+| \`npx gitpagedocs --home\` | Distribuicao standalone (\`gitpagedocshome/\`) |
+| \`npx gitpagedocs --push --owner X --repo Y\` | Configura workflow, commit, push |
+| \`npx gitpagedocs --interactive\` / \`-i\` | Modo interativo com prompts |
+
+## Opcoes da CLI
+
+| Opcao | Descricao |
+|-------|-----------|
+| \`--owner <user>\` | Owner do GitHub |
+| \`--repo <repo>\` | Repositorio GitHub |
+| \`--path <subpath>\` | Subcaminho dos docs (ex: \`docs\`); sem ele, base path = nome do repo para CSS/JS em project sites |
+| \`--output <dir>\` | Diretorio de saida (padrao: \`gitpagedocs\`) |
+| \`--search true|false\` | Habilita/desabilita busca de repositorio (\`--home\`) |
+| \`--layoutconfig\` | Gera \`gitpagedocs/layouts/\` |
+| \`--push\` | Cria workflow, commit de artefatos, push |
+| \`--home\` | Gera \`gitpagedocshome/\` (estatico + .env + Dockerfile) |
+
+## Saida gerada
+
+- \`gitpagedocs/config.json\` – config raiz
+- \`gitpagedocs/icon.svg\` – icone padrao
+- \`gitpagedocs/docs/versions/<ver>/config.json\` – rotas por versao
+- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – docs em markdown
+- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` – visualizador de codigo (estilo GitHub)
+- \`gitpagedocs/layouts/\` – apenas com \`--layoutconfig\`
+
+## Tipos de conteudo
+
+| Tipo | Chave config | Descricao |
+|------|--------------|-----------|
+| Markdown | \`routes-md\` | Arquivos .md com \`path\` por idioma |
+| HTML | \`routes-html\` | \`path\` (ex: source-viewer) ou \`url\` externa |
+| Video | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
+| Audio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
+
+## Visualizador de codigo fonte
+
+A CLI gera uma pagina **Codigo fonte** por versao. Escaneia \`src/\`, \`cli/\` e arquivos raiz (README.md, package.json, next.config.ts, etc.) e constroi um visualizador estilo GitHub em modo escuro com:
+
+- Arvore de arquivos na lateral com expandir/recolher pastas
+- Filtro de busca
+- Destaque de sintaxe (TypeScript, JavaScript, JSON, CSS, Markdown)
+- Botao copiar, numeros de linha
+- Alternar preview/codigo do README.md
+- Controles Expandir tudo / Recolher tudo
+
+## Chaves de config (site)
+
+- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
+- \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
+- \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+
+## Variaveis de ambiente
+
+- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busca de repositorio (local)
+- \`GITHUB_ACTIONS\` – modo build GitHub Pages
+`,
     configuration: `# Configuracao
 
 A configuracao de runtime fica em \`gitpagedocs/config.json\`.
@@ -510,7 +644,7 @@ Opcoes por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
 ## Tipos de conteudo: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: usa \`path\` apontando para arquivos \`.md\` locais.
-- **HTML (\`routes-html\`)**: usa \`path\` para arquivos \`.html\` locais ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a pagina externa; nenhum arquivo local e gerado.
+- **HTML (\`routes-html\`)**: usa \`path\` para arquivos HTML locais (sem extensao .html no config, ex: \`source-viewer\`) ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a pagina externa; nenhum arquivo local e gerado. A CLI gera um visualizador **Codigo fonte** (estilo GitHub) por versao.
 - **Video (\`routes-video\`)**: usa \`video.pathVideo\` e \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
 ## Variaveis de ambiente
@@ -756,6 +890,73 @@ Git Page Docs esta impulsado por Next.js 15, React 19, TypeScript y Node.js. Gen
 
 Construir documentacion multilingue para repositorios GitHub con soporte para versiones, temas y contenido md/html/video.
 `,
+    functionalities: `# Funcionalidades
+
+Referencia completa de opciones CLI, claves de configuracion y funciones del runtime.
+
+## Comandos CLI
+
+| Comando | Descripcion |
+|---------|-------------|
+| \`npx gitpagedocs\` | Genera config y docs en \`gitpagedocs/\` |
+| \`npx gitpagedocs --layoutconfig\` | Tambien genera layouts/templates locales |
+| \`npx gitpagedocs --home\` | Distribucion standalone (\`gitpagedocshome/\`) |
+| \`npx gitpagedocs --push --owner X --repo Y\` | Configura workflow, commit, push |
+| \`npx gitpagedocs --interactive\` / \`-i\` | Modo interactivo con prompts |
+
+## Opciones CLI
+
+| Opcion | Descripcion |
+|--------|-------------|
+| \`--owner <user>\` | Owner de GitHub |
+| \`--repo <repo>\` | Repositorio GitHub |
+| \`--path <subpath>\` | Subruta de docs (ej: \`docs\`); sin ella, base path = nombre del repo para CSS/JS en project sites |
+| \`--output <dir>\` | Directorio de salida (default: \`gitpagedocs\`) |
+| \`--search true|false\` | Habilita/deshabilita busqueda de repositorio (\`--home\`) |
+| \`--layoutconfig\` | Genera \`gitpagedocs/layouts/\` |
+| \`--push\` | Crea workflow, commit de artefactos, push |
+| \`--home\` | Genera \`gitpagedocshome/\` (estatico + .env + Dockerfile) |
+
+## Salida generada
+
+- \`gitpagedocs/config.json\` – config raiz
+- \`gitpagedocs/icon.svg\` – icono por defecto
+- \`gitpagedocs/docs/versions/<ver>/config.json\` – rutas por version
+- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – docs en markdown
+- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` – visor de codigo (estilo GitHub)
+- \`gitpagedocs/layouts/\` – solo con \`--layoutconfig\`
+
+## Tipos de contenido
+
+| Tipo | Clave config | Descripcion |
+|------|--------------|-------------|
+| Markdown | \`routes-md\` | Archivos .md con \`path\` por idioma |
+| HTML | \`routes-html\` | \`path\` (ej: source-viewer) o \`url\` externa |
+| Video | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
+| Audio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
+
+## Visor de codigo fuente
+
+La CLI genera una pagina **Codigo fuente** por version. Escanea \`src/\`, \`cli/\` y archivos raiz (README.md, package.json, next.config.ts, etc.) y construye un visor estilo GitHub en modo oscuro con:
+
+- Arbol de archivos en barra lateral con expandir/colapsar carpetas
+- Filtro de busqueda
+- Resaltado de sintaxis (TypeScript, JavaScript, JSON, CSS, Markdown)
+- Boton copiar, numeros de linea
+- Alternar vista previa/codigo del README.md
+- Controles Expandir todo / Colapsar todo
+
+## Claves de config (site)
+
+- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
+- \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
+- \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+
+## Variables de entorno
+
+- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busqueda de repositorio (local)
+- \`GITHUB_ACTIONS\` – modo build GitHub Pages
+`,
     configuration: `# Configuracion
 
 La configuracion de runtime esta en \`gitpagedocs/config.json\`.
@@ -827,7 +1028,7 @@ Opciones por ruta en \`routes-md\`, \`routes-html\` y \`routes-video\`:
 ## Tipos de contenido: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: usa \`path\` apuntando a archivos \`.md\` locales.
-- **HTML (\`routes-html\`)**: usa \`path\` para archivos \`.html\` locales o \`url\` para URLs externas. Con \`url\`, el iframe carga la pagina externa; no se genera archivo local.
+- **HTML (\`routes-html\`)**: usa \`path\` para archivos HTML locales (sin extension .html en config, ej: \`source-viewer\`) o \`url\` para URLs externas. Con \`url\`, el iframe carga la pagina externa; no se genera archivo local. La CLI genera un visor **Codigo fuente** (estilo GitHub) por version.
 - **Video (\`routes-video\`)**: usa \`video.pathVideo\` y \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
 ## Variables de entorno

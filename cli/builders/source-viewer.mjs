@@ -1,4 +1,4 @@
-/** Generate GitHub-style source code viewer HTML from src/ and README.md */
+/** Generate GitHub-style source code viewer HTML from src/, cli/, and root config files */
 
 import path from "node:path";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
@@ -19,7 +19,9 @@ function buildTreeFromKeys(fileKeys) {
   return root;
 }
 
-function collectSourceFiles(root) {
+const ROOT_FILES = ["README.md", "package.json", "package-lock.json", "next.config.ts", "tsconfig.json", ".eslintrc.json"];
+
+function collectSourceFiles(projectRoot) {
   const files = {};
   function scan(dir, prefix = "") {
     if (!existsSync(dir)) return;
@@ -33,21 +35,26 @@ function collectSourceFiles(root) {
         scan(fullPath, rel);
       } else {
         try {
-          files[rel] = readFileSync(fullPath, "utf-8");
+          const content = readFileSync(fullPath, "utf-8");
+          files[rel] = content;
         } catch {
-          // skip binary or unreadable files
+          /* skip binary or unreadable */
         }
       }
     }
   }
-  const readmePath = path.join(root, "README.md");
-  if (existsSync(readmePath)) {
-    try {
-      files["README.md"] = readFileSync(readmePath, "utf-8");
-    } catch {}
+  for (const f of ROOT_FILES) {
+    const p = path.join(projectRoot, f);
+    if (existsSync(p)) {
+      try {
+        files[f] = readFileSync(p, "utf-8");
+      } catch {}
+    }
   }
-  const srcDir = path.join(root, "src");
-  scan(srcDir, "src");
+  const srcDir = path.join(projectRoot, "src");
+  const cliDir = path.join(projectRoot, "cli");
+  if (existsSync(srcDir)) scan(srcDir, "src");
+  if (existsSync(cliDir)) scan(cliDir, "cli");
   return files;
 }
 
@@ -112,6 +119,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 .sidebar .folder.collapsed .chevron{transform:rotate(-90deg)}
 .sidebar .children{margin-left:4px}
 .sidebar .children.hidden{display:none}
+.sidebar .search-wrap{padding:8px;border-bottom:1px solid var(--github-border-muted)}
+.sidebar .search-input{width:100%;padding:6px 10px;font-size:12px;border:1px solid var(--github-border);border-radius:6px;background:var(--github-bg);color:var(--github-fg);outline:none}
+.sidebar .search-input:focus{border-color:var(--github-accent)}
+.sidebar .search-input::placeholder{color:var(--github-fg-muted)}
+.sidebar .tree-actions{display:flex;gap:4px;padding:4px 8px;border-bottom:1px solid var(--github-border-muted)}
+.sidebar .tree-btn{padding:4px 8px;font-size:11px;border:1px solid var(--github-border);border-radius:4px;background:var(--github-bg-tertiary);color:var(--github-fg-muted);cursor:pointer}
+.sidebar .tree-btn:hover{color:var(--github-fg);background:var(--github-border)}
 
 /* Content - GitHub file view */
 .content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--github-bg)}
@@ -150,7 +164,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
   <span class="file-name" id="breadcrumbFile">-</span>
 </div>
 <div class="layout">
-<aside class="sidebar" id="tree"></aside>
+<aside class="sidebar">
+  <div class="search-wrap"><input type="text" class="search-input" id="searchInput" placeholder="Filter files..." autocomplete="off"/></div>
+  <div class="tree-actions"><button class="tree-btn" id="expandAll">Expand all</button><button class="tree-btn" id="collapseAll">Collapse all</button></div>
+  <div id="tree"></div>
+</aside>
 <main class="content">
   <div class="file-header" id="fileHeader" style="display:none">
     <span class="file-path" id="headerPath"></span>
@@ -169,12 +187,12 @@ var raw=el?el.textContent:"{}";
 var data=JSON.parse(raw);
 var files=data.files||{}, keys=data.fileKeys||[], treeData=data.tree||{};
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function getLang(path){
-  if(path.endsWith(".ts")||path.endsWith(".tsx"))return"typescript";
-  if(path.endsWith(".js")||path.endsWith(".mjs")||path.endsWith(".cjs"))return"javascript";
-  if(path.endsWith(".json"))return"json";
-  if(path.endsWith(".css"))return"css";
-  if(path.endsWith(".md"))return"markdown";
+function getLang(p){
+  if(p.endsWith(".ts")||p.endsWith(".tsx"))return"typescript";
+  if(p.endsWith(".js")||p.endsWith(".mjs")||p.endsWith(".cjs"))return"javascript";
+  if(p.endsWith(".json"))return"json";
+  if(p.endsWith(".css"))return"css";
+  if(p.endsWith(".md"))return"markdown";
   return"";
 }
 var viewMode="code";
@@ -257,22 +275,52 @@ function renderTree(node, parentEl, indent){
     }
   }
 }
-function buildTree(){
-  var tree=document.getElementById("tree");
-  if(Object.keys(treeData).length>0){
-    renderTree(treeData,tree,0);
+function buildTreeFromKeys(keys){
+  var root={};
+  keys.forEach(function(key){
+    var parts=key.split("/");
+    var curr=root;
+    for(var i=0;i<parts.length;i++){
+      var part=parts[i];
+      var isLast=i===parts.length-1;
+      if(!curr[part])curr[part]=isLast?{path:key}:{};
+      if(isLast)curr[part].path=key;
+      else curr=curr[part];
+    }
+  });
+  return root;
+}
+function buildTree(filterQuery){
+  var treeEl=document.getElementById("tree");
+  treeEl.innerHTML="";
+  var filteredKeys=filterQuery?keys.filter(function(k){return k.toLowerCase().indexOf(filterQuery.toLowerCase())>=0;}):keys;
+  var data=filteredKeys.length?buildTreeFromKeys(filteredKeys):{};
+  if(Object.keys(data).length>0){
+    renderTree(data,treeEl,0);
   }else{
-    keys.sort();
-    keys.forEach(function(k){
+    filteredKeys.sort();
+    filteredKeys.forEach(function(k){
       var div=document.createElement("div");
       div.className="file";
       div.dataset.path=k;
-      div.innerHTML='<span class="icon">'+fileIcon()+'</span>'+esc(k);
+      div.innerHTML='<span class="icon">'+fileIcon()+'</span>'+esc(k.split("/").pop());
       div.onclick=function(){selectFile(k)};
-      tree.appendChild(div);
+      treeEl.appendChild(div);
     });
   }
 }
+document.getElementById("searchInput").oninput=function(){
+  var q=this.value.trim();
+  buildTree(q);
+};
+document.getElementById("expandAll").onclick=function(){
+  document.querySelectorAll(".sidebar .folder.collapsed").forEach(function(f){f.classList.remove("collapsed")});
+  document.querySelectorAll(".sidebar .children.hidden").forEach(function(c){c.classList.remove("hidden")});
+};
+document.getElementById("collapseAll").onclick=function(){
+  document.querySelectorAll(".sidebar .folder").forEach(function(f){f.classList.add("collapsed")});
+  document.querySelectorAll(".sidebar .children").forEach(function(c){c.classList.add("hidden")});
+};
 buildTree();
 })();
 </script>

@@ -2,7 +2,6 @@
 
 import {
   ROUTE_PATHS,
-  HTML_PATHS,
   VIDEO_IDS,
   PAGE2_AUDIO,
   SOURCE_VIEWER_META,
@@ -12,6 +11,7 @@ import {
   ROUTE_META_ID2,
   ROUTE_META_ID3,
   ROUTE_META_ID4,
+  ROUTE_META_ID5,
   VIDEO_META_ID1,
   VIDEO_META_ID2,
   VIDEO_META_ID3,
@@ -20,12 +20,12 @@ import {
 } from "../data/route-metas.mjs";
 import { buildMdRoute, buildHtmlRoute, buildVideoRoute } from "./route-builders.mjs";
 
-const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4 };
+const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4, 5: ROUTE_META_ID5 };
 const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
 
 function buildVersionMdRoutes(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  return [1, 2, 3, 4].map((id) => {
+  return [1, 2, 3, 4, 5].map((id) => {
     const paths = ROUTE_PATHS[id];
     const meta = ROUTE_METAS[id];
     const pathByLang = {
@@ -40,19 +40,13 @@ function buildVersionMdRoutes(versionId) {
 
 function buildVersionHtmlRoutes(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  const pathByLang1 = {
-    pt: `${base}/pt/${HTML_PATHS[1].pt}`,
-    en: `${base}/en/${HTML_PATHS[1].en}`,
-    es: `${base}/es/${HTML_PATHS[1].es}`,
-  };
   const pathByLangSource = {
     pt: `${base}/pt/source-viewer`,
     en: `${base}/en/source-viewer`,
     es: `${base}/es/source-viewer`,
   };
   return [
-    buildHtmlRoute(versionId, 1, pathByLang1, ROUTE_META_ID1.titles, ROUTE_META_ID1.descriptions),
-    buildHtmlRoute(versionId, 2, pathByLangSource, SOURCE_VIEWER_META.titles, SOURCE_VIEWER_META.descriptions, {
+    buildHtmlRoute(versionId, 1, pathByLangSource, SOURCE_VIEWER_META.titles, SOURCE_VIEWER_META.descriptions, {
       container: "full",
       blockLink: true,
     }),
@@ -74,7 +68,7 @@ function buildVersionVideoRoutes(versionId) {
 
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  const menuMd = [1, 2, 3, 4].map((id) => ({
+  const menuMd = [1, 2, 3, 4, 5].map((id) => ({
     id: id,
     pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
     en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
@@ -83,12 +77,6 @@ function buildVersionMenus(versionId) {
   const menuHtml = [
     {
       id: 1,
-      pt: { title: "Primeiros passos (HTML)", "path-click": `${base}/pt/getting-started` },
-      en: { title: "Getting Started (HTML)", "path-click": `${base}/en/getting-started` },
-      es: { title: "Primeros pasos (HTML)", "path-click": `${base}/es/getting-started` },
-    },
-    {
-      id: 2,
       pt: { title: "Código fonte", "path-click": `${base}/pt/source-viewer` },
       en: { title: "Source code", "path-click": `${base}/en/source-viewer` },
       es: { title: "Código fuente", "path-click": `${base}/es/source-viewer` },

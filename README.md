@@ -169,11 +169,10 @@ npm start
 - Enable Pages for your repository (Settings -> Pages).
 - Use the repository workflow to build/deploy static output.
 - Optional one-command bootstrap:
-  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs at `https://<owner>.github.io/<repo>/v/<version>/`
+  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs at `https://<owner>.github.io/<repo>/<repo>/v/<version>/?lang=en` (e.g. `https://vidigal-code.github.io/energy-bill-ai-parser/energy-bill-ai-parser/v/1.0.0/?lang=en`); root redirects there; base path uses repo name so CSS/JS load correctly
   - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/v/<version>/`
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
   - The generated workflow clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds, and deploys to your GitHub Pages URL.
-  - Root URL redirects to docs entrypoint (`/v/<version>`), so `https://<owner>.github.io/<repo>/` opens docs directly.
   - The workflow trigger uses your current git branch automatically.
   - After push, CLI also attempts to switch repository Pages source to **GitHub Actions** using `gh api` (if GitHub CLI is available and authenticated).
 
@@ -191,7 +190,6 @@ gitpagedocs/
     versions/
       1.0.0/config.json
       1.0.0/{en,pt,es}/*.md
-      1.0.0/{en,pt,es}/getting-started    # HTML (no .html extension)
       1.0.0/{en,pt,es}/source-viewer      # Source code viewer (GitHub-style)
       1.1.0/...
       1.1.1/...
@@ -300,10 +298,8 @@ All routes for accessing documentation files on the official site or self-hosted
 - Project overview:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=project-overview  
 
-**HTML pages** (by slug; pages combine MD + HTML when they share the same route id)
+**HTML pages** (by slug)
 
-- Getting Started (HTML):  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=getting-started  
 - Source code viewer:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=source-viewer  
 
@@ -341,7 +337,7 @@ All routes for accessing documentation files on the official site or self-hosted
 |--------|-------------|
 | `--owner <user>` | GitHub owner (e.g. `Vidigal-code`) |
 | `--repo <repo>` | GitHub repository (e.g. `git-page-docs`) |
-| `--path <subpath>` | Subpath for docs (e.g. `docs`, `git-page-docs`) |
+| `--path <subpath>` | Subpath for docs (e.g. `docs`); without it, base path = repo name for correct asset loading on project sites |
 | `--output <dir>` | Output directory (default: `gitpagedocs` or `gitpagedocshome` with `--home`) |
 | `--search true\|false` | Enable/disable repository search (mainly for `--home`) |
 | `--layoutconfig` | Generate local layout templates in `gitpagedocs/layouts/` |

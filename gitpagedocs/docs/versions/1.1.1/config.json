@@ -93,6 +93,43 @@
     {
       "id": 3,
       "title": {
+        "pt": "Funcionalidades",
+        "en": "Functionalities",
+        "es": "Funcionalidades"
+      },
+      "description": {
+        "pt": "CLI, opções, configuração e recursos",
+        "en": "CLI, options, configuration and features",
+        "es": "CLI, opciones, configuración y funciones"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/functionalities.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/functionalities.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/functionalities.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 4,
+      "title": {
         "pt": "GitHub Issues e Projects",
         "en": "GitHub issues and projects",
         "es": "GitHub issues y projects"
@@ -128,7 +165,7 @@
       "RouteguideBrandContainerTop": false
     },
     {
-      "id": 4,
+      "id": 5,
       "title": {
         "pt": "Introdução ao Git",
         "en": "Introduction to Git",
@@ -168,43 +205,6 @@
   "routes-html": [
     {
       "id": 1,
-      "title": {
-        "pt": "Primeiros passos",
-        "en": "Getting Started",
-        "es": "Primeros pasos"
-      },
-      "description": {
-        "pt": "Configure o repositório do zero",
-        "en": "Configure repository from zero",
-        "es": "Configura el repositorio desde cero"
-      },
-      "titleCss": "font-size: 1.85rem; font-weight: 700;",
-      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
-      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
-      "titlePosition": "center",
-      "titleIsVisible": true,
-      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
-      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
-      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
-      "descriptionPosition": "center",
-      "descriptionIsVisible": true,
-      "path": {
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/getting-started",
-        "en": "gitpagedocs/docs/versions/1.1.1/en/getting-started",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/getting-started"
-      },
-      "fullscreenEnabled": true,
-      "marginTop": "",
-      "marginBottom": "",
-      "blockLink": true,
-      "browseAll": false,
-      "RouteguideBrand": true,
-      "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
-    },
-    {
-      "id": 2,
       "title": {
         "pt": "Código fonte",
         "en": "Source code",
@@ -438,6 +438,21 @@
     {
       "id": 3,
       "pt": {
+        "title": "Funcionalidades",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/functionalities.md"
+      },
+      "en": {
+        "title": "Functionalities",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/functionalities.md"
+      },
+      "es": {
+        "title": "Funcionalidades",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/functionalities.md"
+      }
+    },
+    {
+      "id": 4,
+      "pt": {
         "title": "GitHub Issues e Projects",
         "path-click": "gitpagedocs/docs/versions/1.1.1/pt/github-issues-projects.md"
       },
@@ -451,7 +466,7 @@
       }
     },
     {
-      "id": 4,
+      "id": 5,
       "pt": {
         "title": "Introdução ao Git",
         "path-click": "gitpagedocs/docs/versions/1.1.1/pt/git-introduction.md"
@@ -469,21 +484,6 @@
   "menus-header-html": [
     {
       "id": 1,
-      "pt": {
-        "title": "Primeiros passos (HTML)",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/getting-started"
-      },
-      "en": {
-        "title": "Getting Started (HTML)",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/en/getting-started"
-      },
-      "es": {
-        "title": "Primeros pasos (HTML)",
-        "path-click": "gitpagedocs/docs/versions/1.1.1/es/getting-started"
-      }
-    },
-    {
-      "id": 2,
       "pt": {
         "title": "Código fonte",
         "path-click": "gitpagedocs/docs/versions/1.1.1/pt/source-viewer"

@@ -9,6 +9,7 @@ export function parseDocFileToKey(fileName) {
   if (fileName === "themes.md") return "themes";
   if (fileName === "faq.md") return "faq";
   if (fileName === "project-overview.md") return "projectOverview";
+  if (fileName === "functionalities.md") return "functionalities";
   if (fileName === "github-issues-projects.md") return "githubIssuesProjects";
   if (fileName === "git-introduction.md") return "gitIntroduction";
   return undefined;
@@ -16,7 +17,6 @@ export function parseDocFileToKey(fileName) {
 
 export function parseHtmlFileToKey(fileName) {
   const base = fileName.replace(/\.html$/, "");
-  if (base === "getting-started") return "gettingStarted";
   if (base === "source-viewer") return "sourceViewer";
   return undefined;
 }

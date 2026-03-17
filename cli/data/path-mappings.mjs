@@ -3,12 +3,9 @@
 export const ROUTE_PATHS = {
   1: { pt: "getting-started.md", en: "getting-started.md", es: "getting-started.md" },
   2: { pt: "project-overview.md", en: "project-overview.md", es: "project-overview.md" },
-  3: { pt: "github-issues-projects.md", en: "github-issues-projects.md", es: "github-issues-projects.md" },
-  4: { pt: "git-introduction.md", en: "git-introduction.md", es: "git-introduction.md" },
-};
-
-export const HTML_PATHS = {
-  1: { pt: "getting-started", en: "getting-started", es: "getting-started" },
+  3: { pt: "functionalities.md", en: "functionalities.md", es: "functionalities.md" },
+  4: { pt: "github-issues-projects.md", en: "github-issues-projects.md", es: "github-issues-projects.md" },
+  5: { pt: "git-introduction.md", en: "git-introduction.md", es: "git-introduction.md" },
 };
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
