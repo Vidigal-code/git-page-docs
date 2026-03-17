@@ -104,10 +104,10 @@ export function ContentContainerWrapper({
 
   if (!fullscreenEnabled) {
     return (
-      <div style={wrapperStyle}>
+      <div className={styles.contentContainerWrapper} style={wrapperStyle}>
         {header}
         {showTopNav && <BrowseNavBar browseNav={browseNav} />}
-        {resolveChildren(null)}
+        <div className={styles.contentContainerWithButton}>{resolveChildren(null)}</div>
       </div>
     );
   }

@@ -82,6 +82,8 @@ interface HtmlContainerProps {
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
+  /** When true, hide header (title/description) - e.g. in URL fullscreen overlay */
+  hideHeader?: boolean;
   isDarkMode?: boolean;
   browseNav?: BrowseNavProps;
   /** Called when fullscreen is about to open (for URL sync) */
@@ -102,6 +104,7 @@ export function HtmlContainer({
   browseNav,
   onFullscreenOpen,
   onFullscreenClose,
+  hideHeader = false,
 }: HtmlContainerProps) {
   const blockLink = config?.blockLink !== false;
   const srcdoc = useMemo(
@@ -114,7 +117,7 @@ export function HtmlContainer({
   const useExternalUrl = Boolean(externalUrl);
   const isBlocked = useExternalUrl && isFrameBlockedUrl(externalUrl ?? undefined);
 
-  const header = <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
+  const header = hideHeader ? null : <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
   const wrapperClass = isBlocked
     ? `${styles.htmlWrapper} ${styles.htmlWrapperExternalLink}`
     : styles.htmlWrapper;

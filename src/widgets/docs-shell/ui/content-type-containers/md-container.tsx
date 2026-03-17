@@ -111,7 +111,7 @@ export function MdContainer({
   const header = (
     <>
       {breadcrumb}
-      <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />
+      {!contentOnly && <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />}
     </>
   );
 

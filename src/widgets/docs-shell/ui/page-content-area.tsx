@@ -244,6 +244,7 @@ export function PageContentArea({
               browseNav={htmlBrowseNav}
               onFullscreenOpen={htmlFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
+              hideHeader={isUrlFullscreen}
             />
           );
         }
@@ -262,6 +263,7 @@ export function PageContentArea({
               browseNav={videoBrowseNav}
               onFullscreenOpen={videoFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
+              hideTitleDescription={isUrlFullscreen}
             />
           );
         }

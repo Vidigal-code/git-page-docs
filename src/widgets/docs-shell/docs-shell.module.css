@@ -385,6 +385,7 @@
   padding: 22px;
   box-shadow: var(--card-shadow);
   width: 100%;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -485,12 +486,21 @@
   display: flex;
   flex-direction: column;
   gap: 48px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.contentBlocksStack > * {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .contentContainerWrapper {
   position: relative;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
 }
 
 .contentContainerWithButton {

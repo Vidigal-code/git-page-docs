@@ -170,7 +170,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const onFullscreenRequest = useCallback(
     (params: FullscreenParams) => {
       if (skipUrlFullscreenFromInlineRef.current) {
-        skipUrlFullscreenFromInlineRef.current = false;
         return;
       }
       let pathClick: string | null = null;
@@ -242,6 +241,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   );
 
   const handleInlineFullscreenClose = useCallback(() => {
+    skipUrlFullscreenFromInlineRef.current = false;
     const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
     const hadVideoFullscreen = params.has("videofull");
     params.delete("mdfull");

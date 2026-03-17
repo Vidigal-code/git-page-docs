@@ -40,6 +40,8 @@ interface VideoContainerProps {
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
   isDarkMode?: boolean;
+  /** When true, hide title and description - e.g. in URL fullscreen overlay */
+  hideTitleDescription?: boolean;
   browseNav?: BrowseNavProps;
   /** Called when fullscreen is about to open (for URL sync) */
   onFullscreenOpen?: () => void;
@@ -59,6 +61,7 @@ export function VideoContainer({
   browseNav,
   onFullscreenOpen,
   onFullscreenClose,
+  hideTitleDescription = false,
 }: VideoContainerProps) {
   const type = String(videoType).toLowerCase();
   const embedUrl = getEmbedUrl(videoType, pathVideo, language);
@@ -104,7 +107,7 @@ export function VideoContainer({
 
   const content = (
     <article className={styles.card}>
-      {titleIsVisible && title && (
+      {!hideTitleDescription && titleIsVisible && title && (
         <h1
           className={styles.contentTitleVideoInside}
           style={{ textAlign: "center", ...parseCssToStyle(titleCss) }}
@@ -113,7 +116,7 @@ export function VideoContainer({
         </h1>
       )}
       {mediaElement}
-      {descriptionIsVisible && description && (
+      {!hideTitleDescription && descriptionIsVisible && description && (
         <h3
           className={styles.contentDescriptionVideoInside}
           style={{ textAlign: "center", ...parseCssToStyle(descCss) }}
