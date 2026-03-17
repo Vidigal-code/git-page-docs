@@ -31,6 +31,16 @@ Generate docs, configure GitHub Pages URL, create workflow, and push:
 npx gitpagedocs --push --owner your-user --repo your-repository
 ```
 
+Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/1.0.0/?lang=en`.
+
+Optional `--path` to serve docs in a subpath:
+
+```bash
+npx gitpagedocs --push --owner your-user --repo your-repository --path git-page-docs
+```
+
+Then docs are at `https://your-user.github.io/your-repository/git-page-docs/v/1.0.0/?lang=en`.
+
 Shortcut syntax also supported:
 
 ```bash
@@ -115,13 +125,13 @@ npm start
 - Enable Pages for your repository (Settings -> Pages).
 - Use the repository workflow to build/deploy static output.
 - Optional one-command bootstrap:
-  - `npx gitpagedocs --push --owner your-user --repo your-repository`
+  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs at `https://<owner>.github.io/<repo>/v/<version>/`
+  - `npx gitpagedocs --push --owner your-user --repo your-repository --path <subpath>` — docs at `https://<owner>.github.io/<repo>/<subpath>/v/<version>/`
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
-  - The generated workflow is self-sufficient: it clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds with your repository path, and deploys to your own GitHub Pages URL.
-  - In `--push` mode, root URL opens docs directly (search home is disabled via `site.repositorySearchHome=false`).
-  - The generated Pages workflow also forces root `index.html` redirect to your docs entrypoint (`/v/<version>`), so `https://<owner>.github.io/<repo>/` opens docs directly.
-  - The workflow trigger is generated for your current git branch automatically, so it works in repositories that do not use `main`.
-  - After push, CLI also attempts to switch repository Pages source to **GitHub Actions** automatically using `gh api` (if GitHub CLI is available and authenticated).
+  - The generated workflow clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds, and deploys to your GitHub Pages URL.
+  - Root URL redirects to docs entrypoint (`/v/<version>`), so `https://<owner>.github.io/<repo>/` opens docs directly.
+  - The workflow trigger uses your current git branch automatically.
+  - After push, CLI also attempts to switch repository Pages source to **GitHub Actions** using `gh api` (if GitHub CLI is available and authenticated).
 
 When built with `GITHUB_ACTIONS=true`, the runtime enables GitHub Pages behavior.
 
@@ -284,5 +294,6 @@ Supported for compatibility:
 - `--serve`
 - `--full`
 - `--push` (setup + workflow + git push automation)
+- `--path <subpath>` (optional; put docs under a subpath, e.g. `git-page-docs`)
 
 These flags do not change the artifact type. Output remains `gitpagedocs/`.

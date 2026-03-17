@@ -18,11 +18,13 @@ export function parseCliOptions(argv, env) {
 
   let githubOwner = readOptionValue("--owner");
   let githubRepo = readOptionValue("--repo");
+  const docsPath = readOptionValue("--path");
   const fallbackDashedArgs = args
     .filter((arg) => arg.startsWith("--"))
     .filter((arg) => !knownFlags.has(arg))
     .filter((arg) => !arg.startsWith("--owner"))
     .filter((arg) => !arg.startsWith("--repo"))
+    .filter((arg) => !arg.startsWith("--path"))
     .map((arg) => arg.replace(/^--/, "").trim())
     .filter(Boolean);
   if (!githubOwner && fallbackDashedArgs[0]) {
@@ -47,6 +49,7 @@ export function parseCliOptions(argv, env) {
     shouldPush,
     githubOwner,
     githubRepo,
+    docsPath: docsPath ? docsPath.trim() : "",
   };
 }
 

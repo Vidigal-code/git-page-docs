@@ -1,4 +1,12 @@
-export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText) {
+function sanitizeDocsPath(docsPath) {
+  if (!docsPath || typeof docsPath !== "string") return "";
+  const segment = docsPath.replace(/^\/+|\/+$/g, "").trim();
+  return /^[A-Za-z0-9._-]+$/.test(segment) ? segment : "";
+}
+
+export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, docsPath = "") {
+  const pathSegment = sanitizeDocsPath(docsPath);
+  const basePathEnv = pathSegment ? `"/${pathSegment}"` : '""';
   const currentBranch = getCurrentGitBranch();
   const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
   const workflowContent = `name: Deploy GitPageDocs
@@ -59,27 +67,31 @@ jobs:
         env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
+          GITPAGEDOCS_BASE_PATH: ${basePathEnv}
 
       - name: Force root URL to docs entrypoint
         run: |
           node <<'NODE'
           const fs = require('fs');
           const path = require('path');
-          const repository = process.env.GITHUB_REPOSITORY || '';
-          const repositoryName = repository.split('/')[1] || 'git-page-docs';
+          const pathSegment = '${pathSegment}';
           const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
           if (!fs.existsSync(cfgPath)) process.exit(0);
           const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
           const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.0';
           const defaultLang = cfg?.site?.defaultLanguage || 'en';
-          const redirectTargetRoot = './' + repositoryName + '/v/' + defaultVersion + '/?lang=' + defaultLang;
+          const redirectTargetRoot = pathSegment
+            ? './' + pathSegment + '/v/' + defaultVersion + '/?lang=' + defaultLang
+            : './v/' + defaultVersion + '/?lang=' + defaultLang;
           const redirectTargetProject = './v/' + defaultVersion + '/?lang=' + defaultLang;
           const rootHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetRoot + '"/><script>window.location.replace("' + redirectTargetRoot + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
           fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), rootHtml);
-          const projectHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetProject + '"/><script>window.location.replace("' + redirectTargetProject + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
-          const projectIndexPath = path.join('.gitpagedocs-runtime', 'out', repositoryName, 'index.html');
-          if (fs.existsSync(path.dirname(projectIndexPath))) {
-            fs.writeFileSync(projectIndexPath, projectHtml);
+          if (pathSegment) {
+            const projectIndexPath = path.join('.gitpagedocs-runtime', 'out', pathSegment, 'index.html');
+            if (fs.existsSync(path.dirname(projectIndexPath))) {
+              const projectHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetProject + '"/><script>window.location.replace("' + redirectTargetProject + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
+              fs.writeFileSync(projectIndexPath, projectHtml);
+            }
           }
           NODE
 

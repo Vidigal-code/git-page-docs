@@ -28,6 +28,7 @@ export async function runCli(params) {
     await ensureGitHubPagesWorkflow(
       () => getCurrentGitBranch(root),
       (relativePath, content) => writeText(root, relativePath, content),
+      options.docsPath || "",
     );
     runGitPushForGeneratedArtifacts(options, root, sanitizeSegment);
   }
