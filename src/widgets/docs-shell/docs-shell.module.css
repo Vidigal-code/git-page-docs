@@ -51,8 +51,10 @@
       color-mix(in srgb, var(--background) 86%, transparent)
     );
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 }
 
 .brand {

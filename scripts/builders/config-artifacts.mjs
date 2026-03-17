@@ -341,7 +341,7 @@ export function buildConfigArtifacts(options = {}) {
       IconAudioPlayerPopoverRestartLightImg: "https://cdn-icons-png.flaticon.com/256/25/25231.png",
       IconAudioPlayerPopoverRestartDarkImg: "https://i.pinimg.com/736x/ac/b3/51/acb3513e5a2664ba59bec11222863a40.jpg",
       IconAudioPlayerPopoverRestartReactIcones: true,
-      IconAudioPlayerPopoverRestartReactIconesTag: "IoReload",
+      IconAudioPlayerPopoverRestartReactIconesTag: "FiRefreshCw",
       IconAudioPlayerPopoverRestartReactIconesTagColorDark: "White",
       IconAudioPlayerPopoverRestartReactIconesTagColorLight: "black",
       IconAudioPlayerPopoverRestartReactIconesTagSize: "25px",

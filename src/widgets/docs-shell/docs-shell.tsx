@@ -520,16 +520,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       />
 
       {!sidebarOpen && (
-        <div className={styles.collapsedNavRail}>
-          <button
-            className={`${styles.button} ${styles.sidebarRailButton}`}
-            onClick={() => setSidebarOpen(true)}
-            aria-label={menuOpenLabel}
-            title={menuOpenLabel}
-          >
-            ❯❯
-          </button>
-        </div>
+        <CollapsedNavRail
+          menuOpenLabel={menuOpenLabel}
+          onExpand={() => setSidebarOpen(true)}
+          blockMenuOnNav={blockMenuOnNav}
+          setBlockMenuOnNav={setBlockMenuOnNav}
+          navMenuConfig={navMenuConfig}
+        />
       )}
 
       <DocsShellMainContent
@@ -652,6 +649,42 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         browseNextLabel={browseNextLabel}
         closeUrlFullscreen={closeUrlFullscreen}
       />
+    </div>
+  );
+}
+
+function CollapsedNavRail({
+  menuOpenLabel,
+  onExpand,
+  blockMenuOnNav,
+  setBlockMenuOnNav,
+  navMenuConfig,
+}: {
+  menuOpenLabel: string;
+  onExpand: () => void;
+  blockMenuOnNav: boolean;
+  setBlockMenuOnNav: (v: boolean) => void;
+  navMenuConfig: import("./model/use-docs-shell-config").NavMenuConfig;
+}) {
+  return (
+    <div className={styles.collapsedNavRail}>
+      <NavMenuBlockToggle
+        blockMenuOnNav={blockMenuOnNav}
+        onToggle={() => setBlockMenuOnNav(!blockMenuOnNav)}
+        activeIcon={navMenuConfig.navMenuBlockActiveIcon}
+        inactiveIcon={navMenuConfig.navMenuBlockInactiveIcon}
+        labelActive={navMenuConfig.blockMenuOnNavLabelActive}
+        labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
+        className={`${styles.button} ${styles.sidebarRailButton}`}
+      />
+      <button
+        className={`${styles.button} ${styles.sidebarRailButton}`}
+        onClick={onExpand}
+        aria-label={menuOpenLabel}
+        title={menuOpenLabel}
+      >
+        ❯❯
+      </button>
     </div>
   );
 }

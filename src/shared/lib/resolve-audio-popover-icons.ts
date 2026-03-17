@@ -127,7 +127,7 @@ export function resolveAudioPlayerPopoverRestartIconConfig(
   mode: "dark" | "light",
   basePath: string
 ): ResolvedNavMenuIconConfig {
-  return resolveAudioPopoverIcon(site, mode, basePath, "IconAudioPlayerPopoverRestart", "IoReload");
+  return resolveAudioPopoverIcon(site, mode, basePath, "IconAudioPlayerPopoverRestart", "FiRefreshCw");
 }
 
 export function resolveAudioPlayerPopoverLoopOnIconConfig(

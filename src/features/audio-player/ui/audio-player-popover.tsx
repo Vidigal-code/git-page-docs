@@ -2,7 +2,9 @@
 
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { FiX } from "react-icons/fi";
+import { FiRefreshCw, FiRepeat, FiX } from "react-icons/fi";
+import { FaPause } from "react-icons/fa";
+import { CiPlay1 } from "react-icons/ci";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { AudioTrackConfig } from "@/entities/docs/model/types";
@@ -173,7 +175,7 @@ export function AudioPlayerPopover({
             aria-label={playing ? pauseLabel : playLabel}
             title={playing ? pauseLabel : playLabel}
           >
-            {renderIcon(playing ? pauseIcon : playIcon, null)}
+            {renderIcon(playing ? pauseIcon : playIcon, playing ? <FaPause aria-hidden /> : <CiPlay1 aria-hidden />)}
           </button>
           <button
             type="button"
@@ -182,7 +184,7 @@ export function AudioPlayerPopover({
             aria-label={restartLabel}
             title={restartLabel}
           >
-            {renderIcon(restartIcon, null)}
+            {renderIcon(restartIcon, <FiRefreshCw aria-hidden />)}
           </button>
           <button
             type="button"
@@ -191,7 +193,7 @@ export function AudioPlayerPopover({
             aria-label={loopEnabled ? loopOffLabel : loopOnLabel}
             title={loopEnabled ? loopOffLabel : loopOnLabel}
           >
-            {renderIcon(loopEnabled ? loopOnIcon : loopOffIcon, null)}
+            {renderIcon(loopEnabled ? loopOnIcon : loopOffIcon, <FiRepeat aria-hidden />)}
           </button>
         </div>
 
