@@ -22,6 +22,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteGuideSpeciFicbrand = [],
     RouteguideBrandPosition = "center",
     RouteguideBrandContainerTop = false,
+    audio,
   } = options;
   const out = {
     id: routeId,
@@ -50,6 +51,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrandContainerTop,
   };
   if (container !== undefined) out.container = container;
+  if (audio !== undefined) out.audio = audio;
   return out;
 }
 
@@ -99,6 +101,52 @@ export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles
     blockLink,
     browseAll,
     video: { videoType: videoTypeByLang, pathVideo: pathVideoByLang },
+  };
+  if (container !== undefined) obj.container = container;
+  return obj;
+}
+
+export function buildAudioRoute(versionId, routeId, audioType, pathAudio, titles, descriptions, options = {}) {
+  const {
+    titleCss = "font-size: 1.85rem; font-weight: 700;",
+    titleDarkCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+    titleLightCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+    titlePosition = "center",
+    titleIsVisible = true,
+    descriptionCss = "font-size: 1.2rem; font-weight: 500;",
+    descriptionDarkCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+    descriptionLightCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+    descriptionPosition = "center",
+    descriptionIsVisible = true,
+    fullscreenEnabled = true,
+    marginTop = "",
+    marginBottom = "",
+    blockLink = true,
+    container,
+    browseAll = false,
+  } = options;
+  const audioTypeByLang = typeof audioType === "string" ? { pt: audioType, en: audioType, es: audioType } : audioType;
+  const pathAudioByLang = typeof pathAudio === "string" ? { pt: pathAudio, en: pathAudio, es: pathAudio } : pathAudio;
+  const obj = {
+    id: routeId,
+    title: titles ?? { pt: "Áudio", en: "Audio", es: "Áudio" },
+    description: descriptions ?? { pt: "Descrição do áudio", en: "Audio description", es: "Descripción del audio" },
+    titleCss,
+    titleDarkCss,
+    titleLightCss,
+    titlePosition,
+    titleIsVisible,
+    descriptionCss,
+    descriptionDarkCss,
+    descriptionLightCss,
+    descriptionPosition,
+    descriptionIsVisible,
+    fullscreenEnabled,
+    marginTop,
+    marginBottom,
+    blockLink,
+    browseAll,
+    audio: { audioType: audioTypeByLang, pathAudio: pathAudioByLang },
   };
   if (container !== undefined) obj.container = container;
   return obj;

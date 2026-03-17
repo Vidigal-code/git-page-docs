@@ -9,6 +9,7 @@ import type {
   LoadedMdContent,
   LoadedPage,
   LoadedVideoContent,
+  LoadedAudioContent,
   RouteConfig,
 } from "@/entities/docs/model/types";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
@@ -16,7 +17,7 @@ import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import type { BrowseItem } from "@/widgets/docs-shell/model/use-docs-shell-navigation-state";
 import type { BreadcrumbItem } from "@/widgets/docs-shell/model/menu-tree";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import { HtmlContainer, MdContainer, VideoContainer } from "./content-type-containers";
+import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
 import styles from "../docs-shell.module.css";
 
 function isBrowseAllEnabled(config: ContentTypeRouteConfig | RouteConfig | undefined): boolean {
@@ -32,8 +33,8 @@ interface PageContentAreaProps {
   data: LoadedDocsData;
   language: LanguageCode;
   isDarkMode?: boolean;
-  /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull) */
-  contentTypeFilter?: "md" | "html" | "video";
+  /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull/audiofull) */
+  contentTypeFilter?: "md" | "html" | "video" | "audio";
   /** When true, content is inside URL fullscreen overlay - hide expand button, overlay provides close */
   isUrlFullscreen?: boolean;
   fullscreenCloseLabel: string;
@@ -45,12 +46,15 @@ interface PageContentAreaProps {
   mdBrowseIndex: number;
   htmlBrowseIndex: number;
   videoBrowseIndex: number;
+  audioBrowseIndex: number;
   setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
   setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
   setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
   mdItems: BrowseItem<LoadedMdContent>[];
   htmlItems: BrowseItem<LoadedHtmlContent>[];
   videoItems: BrowseItem<LoadedVideoContent>[];
+  audioItems: BrowseItem<LoadedAudioContent>[];
   routeGuideEnabled?: boolean;
   breadcrumbTrail?: BreadcrumbItem[];
   onMenuClick?: (pathClick: string, ancestorKeys: string[]) => void;
@@ -77,12 +81,15 @@ export function PageContentArea({
   mdBrowseIndex,
   htmlBrowseIndex,
   videoBrowseIndex,
+  audioBrowseIndex,
   setMdBrowseIndex,
   setHtmlBrowseIndex,
   setVideoBrowseIndex,
+  setAudioBrowseIndex,
   mdItems,
   htmlItems,
   videoItems,
+  audioItems,
   routeGuideEnabled = false,
   breadcrumbTrail = [],
   onMenuClick,
@@ -94,13 +101,15 @@ export function PageContentArea({
   onFullscreenOpen,
   onFullscreenClose,
 }: PageContentAreaProps) {
-  const hierarchy = data.config.hierarchyPage ?? { md: 0, html: 1, video: 2 };
+  const hierarchy = data.config.hierarchyPage ?? { md: 0, html: 1, video: 2, audio: 3 };
   const mdConfig = currentPage?.md?.config;
   const htmlConfig = currentPage?.html?.config;
   const videoConfig = currentPage?.video?.config;
+  const audioConfig = currentPage?.audio?.config;
   const mdBrowseAll = isBrowseAllEnabled(mdConfig);
   const htmlBrowseAll = isBrowseAllEnabled(htmlConfig);
   const videoBrowseAll = isBrowseAllEnabled(videoConfig);
+  const audioBrowseAll = isBrowseAllEnabled(audioConfig);
 
   const currentMd =
     currentPage &&
@@ -117,6 +126,11 @@ export function PageContentArea({
     (videoBrowseAll && videoItems.length > 0
       ? videoItems[Math.min(videoBrowseIndex, videoItems.length - 1)]?.content
       : currentPage.video);
+  const currentAudio =
+    currentPage &&
+    (audioBrowseAll && audioItems.length > 0
+      ? audioItems[Math.min(audioBrowseIndex, audioItems.length - 1)]?.content
+      : currentPage.audio);
 
   const mdFullscreenOpen = useCallback(() => {
     if (!currentMd || isUrlFullscreen) return;
@@ -139,6 +153,13 @@ export function PageContentArea({
     onFullscreenOpen?.({ type: "video", lang: language, id: currentVideo.routeId, slug });
   }, [currentVideo, language, isUrlFullscreen, onFullscreenOpen]);
 
+  const audioFullscreenOpen = useCallback(() => {
+    if (!currentAudio || isUrlFullscreen) return;
+    const cfg = currentAudio.config as ContentTypeRouteConfig;
+    const slug = cfg?.audioSlug?.[language];
+    onFullscreenOpen?.({ type: "audio", lang: language, id: currentAudio.routeId, slug });
+  }, [currentAudio, language, isUrlFullscreen, onFullscreenOpen]);
+
   if (!currentPage) {
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
     return (
@@ -148,7 +169,7 @@ export function PageContentArea({
     );
   }
 
-  const types = (["md", "html", "video"] as const)
+  const types = (["md", "html", "video", "audio"] as const)
     .filter((t) => currentPage[t])
     .filter((t) => !contentTypeFilter || t === contentTypeFilter)
     .sort((a, b) => (hierarchy[a] ?? 999) - (hierarchy[b] ?? 999));
@@ -156,6 +177,7 @@ export function PageContentArea({
   const mdLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuMd", "Markdown");
   const htmlLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuHtml", "Pages");
   const videoLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuVideo", "Video");
+  const audioLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuAudio", "Audio");
 
   const prevL = browsePrevLabel ?? previousLabel;
   const nextL = browseNextLabel ?? nextLabel;
@@ -196,6 +218,19 @@ export function PageContentArea({
           currentIndex: videoBrowseIndex,
           total: videoItems.length,
           contentTypeLabel: videoLabel,
+        }
+      : undefined;
+  const audioBrowseNav = shouldShowBrowseNav(audioBrowseAll, audioItems.length)
+      ? {
+          onPrev: () => setAudioBrowseIndex((i) => Math.max(0, i - 1)),
+          onNext: () => setAudioBrowseIndex((i) => Math.min(audioItems.length - 1, i + 1)),
+          prevLabel: prevL,
+          nextLabel: nextL,
+          canPrev: audioBrowseIndex > 0,
+          canNext: audioBrowseIndex < audioItems.length - 1,
+          currentIndex: audioBrowseIndex,
+          total: audioItems.length,
+          contentTypeLabel: audioLabel,
         }
       : undefined;
 
@@ -262,6 +297,25 @@ export function PageContentArea({
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={videoBrowseNav}
               onFullscreenOpen={videoFullscreenOpen}
+              onFullscreenClose={onFullscreenClose}
+              hideTitleDescription={isUrlFullscreen}
+            />
+          );
+        }
+        if (t === "audio" && currentAudio) {
+          return (
+            <AudioContainer
+              key="audio"
+              audioType={currentAudio.audioTypeByLanguage[language] ?? "youtube"}
+              pathAudio={currentAudio.pathAudioByLanguage[language] ?? ""}
+              language={language}
+              config={currentAudio.config}
+              isDarkMode={isDarkMode}
+              fullscreenEnabled={isUrlFullscreen ? false : currentAudio.fullscreenEnabled}
+              fullscreenExpandLabel={fullscreenExpandLabel}
+              fullscreenCloseLabel={fullscreenCloseLabel}
+              browseNav={audioBrowseNav}
+              onFullscreenOpen={audioFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
               hideTitleDescription={isUrlFullscreen}
             />

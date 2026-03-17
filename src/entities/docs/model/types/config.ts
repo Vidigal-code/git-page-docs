@@ -2,17 +2,39 @@ import type { LanguageCode } from "./site";
 import type { VersionControlConfig } from "./version";
 import type { SiteConfig, UiTranslationsConfig } from "./site";
 
-export type ContentType = "md" | "html" | "video";
+export type ContentType = "md" | "html" | "video" | "audio";
 
 export interface HierarchyConfig {
   md: number;
   html: number;
   video: number;
+  audio?: number;
 }
 
 export interface VideoRouteConfig {
   videoType: Record<LanguageCode, string>;
   pathVideo: Record<LanguageCode, string>;
+}
+
+export interface AudioRouteConfig {
+  audioType: Record<LanguageCode, string>;
+  pathAudio: Record<LanguageCode, string>;
+}
+
+/** Single track for site.audioTracks or route.audio.tracks (background music player) */
+export interface AudioTrackConfig {
+  url: string;
+  type: string; // mp3 | wav | ogg | youtube | vimeo | mp4 | webm
+  title?: Record<LanguageCode, string>;
+}
+
+/** Per-route background audio (routes-md, routes-html, routes-video) */
+export interface PageRouteAudioConfig {
+  enabled?: boolean;
+  autoPlayOnLoad?: boolean;
+  loopEnabled?: boolean;
+  allowUserChoice?: boolean;
+  tracks: AudioTrackConfig[];
 }
 
 export interface ContentTypeRouteConfig {
@@ -31,6 +53,8 @@ export interface ContentTypeRouteConfig {
   descriptionIsVisible?: boolean;
   path?: Record<LanguageCode, string>;
   video?: VideoRouteConfig;
+  /** routes-audio: AudioRouteConfig. routes-md/html/video: PageRouteAudioConfig (background music). Discriminate by "tracks" vs "pathAudio". */
+  audio?: AudioRouteConfig | PageRouteAudioConfig;
   fullscreenEnabled?: boolean;
   /** CSS value (e.g. "16px", "1rem"). When empty, uses default. Controls container margin-top. */
   marginTop?: string;
@@ -54,6 +78,8 @@ export interface ContentTypeRouteConfig {
   RouteguideBrandContainerTop?: boolean;
   /** For routes-video: slug per language for URL identification (e.g. ?videofull=pt&slug=copilot) */
   videoSlug?: Record<LanguageCode, string>;
+  /** For routes-audio: slug per language for URL identification (e.g. ?audiofull=pt&slug=...) */
+  audioSlug?: Record<LanguageCode, string>;
 }
 
 export interface RouteConfig {
@@ -80,9 +106,11 @@ export interface GitPageDocsConfig {
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
+  "routes-audio"?: ContentTypeRouteConfig[];
   "menus-header-md"?: HeaderMenuItem[];
   "menus-header-html"?: HeaderMenuItem[];
   "menus-header-video"?: HeaderMenuItem[];
+  "menus-header-audio"?: HeaderMenuItem[];
   hierarchyPage?: HierarchyConfig;
   hierarchyMenu?: HierarchyConfig;
   VersionControl?: VersionControlConfig;

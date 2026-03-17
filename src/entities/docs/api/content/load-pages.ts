@@ -8,13 +8,14 @@ import type {
 import { readLocalText } from "../io/file-reader";
 import { readRemoteText } from "../io/remote-fetcher";
 import { markdownToHtml } from "../utils/markdown";
-import { hasPath, hasVideo } from "../utils/route-utils";
+import { hasPath, hasVideo, hasAudio } from "../utils/route-utils";
 
 export async function loadPages(options: {
   sortedIds: number[];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
+  routesAudio: ContentTypeRouteConfig[];
   languages: LanguageCode[];
   source: "local" | "remote";
   owner?: string;
@@ -22,7 +23,7 @@ export async function loadPages(options: {
 }): Promise<{ pages: LoadedPage[]; pathToPageMap: Record<string, PathToPageEntry> }> {
   const pathToPageMap: Record<string, PathToPageEntry> = {};
   const pages: LoadedPage[] = [];
-  const { sortedIds, routesMd, routesHtml, routesVideo, languages, source, owner, repo } = options;
+  const { sortedIds, routesMd, routesHtml, routesVideo, routesAudio, languages, source, owner, repo } = options;
 
   for (let pageIndex = 0; pageIndex < sortedIds.length; pageIndex++) {
     const id = sortedIds[pageIndex];
@@ -114,6 +115,23 @@ export async function loadPages(options: {
       languages.forEach((lang) => {
         const url = pathVideoByLanguage[lang];
         if (url) pathToPageMap[url] = { pageIndex, contentType: "video" };
+      });
+    }
+
+    const audioRoute = routesAudio.find((r) => r.id === id && hasAudio(r));
+    if (audioRoute && hasAudio(audioRoute)) {
+      const audioTypeByLanguage: Record<LanguageCode, string> = {};
+      const pathAudioByLanguage: Record<LanguageCode, string> = {};
+      languages.forEach((lang) => {
+        audioTypeByLanguage[lang] = audioRoute.audio!.audioType[lang] ?? audioRoute.audio!.audioType.en ?? "youtube";
+        pathAudioByLanguage[lang] = audioRoute.audio!.pathAudio[lang] ?? audioRoute.audio!.pathAudio.en ?? "";
+      });
+      const fullscreenEnabled = audioRoute.fullscreenEnabled ?? true;
+      page.audio = { routeId: id, config: audioRoute, audioTypeByLanguage, pathAudioByLanguage, fullscreenEnabled };
+      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "audio" };
+      languages.forEach((lang) => {
+        const url = pathAudioByLanguage[lang];
+        if (url) pathToPageMap[url] = { pageIndex, contentType: "audio" };
       });
     }
 

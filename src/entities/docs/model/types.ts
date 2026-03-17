@@ -5,6 +5,9 @@ export type {
   ContentType,
   HierarchyConfig,
   VideoRouteConfig,
+  AudioRouteConfig,
+  AudioTrackConfig,
+  PageRouteAudioConfig,
   ContentTypeRouteConfig,
   RouteConfig,
   HeaderMenuItem,
@@ -17,6 +20,7 @@ export type {
   LoadedMdContent,
   LoadedHtmlContent,
   LoadedVideoContent,
+  LoadedAudioContent,
   LoadedPage,
   PathToPageEntry,
 } from "./types/content";

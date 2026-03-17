@@ -67,6 +67,30 @@
     "IconPreviewProjectLinkImgHeight": 20,
     "RouteguideBrandPositionDefault": "center",
     "RouteguideBrandContainerTopDefault": false,
+    "audioPlayerEnabled": true,
+    "audioAutoPlayOnLoad": false,
+    "audioLoopEnabled": false,
+    "audioTracks": [
+      {
+        "url": "https://www.youtube.com/watch?v=xAR6N9N8e6U",
+        "type": "youtube",
+        "title": {
+          "pt": "Rádio",
+          "en": "Radio",
+          "es": "Radio"
+        }
+      }
+    ],
+    "IconAudioPlayReactIcones": true,
+    "IconAudioPlayReactIconesTag": "CiPlay1",
+    "IconAudioPlayReactIconesTagColorDark": "White",
+    "IconAudioPlayReactIconesTagColorLight": "black",
+    "IconAudioPlayReactIconesTagSize": "25px",
+    "IconAudioPauseReactIcones": true,
+    "IconAudioPauseReactIconesTag": "FaPause",
+    "IconAudioPauseReactIconesTagColorDark": "White",
+    "IconAudioPauseReactIconesTagColorLight": "black",
+    "IconAudioPauseReactIconesTagSize": "25px",
     "TocScrollMaxHeightDesktop": "min(65vh, 400px)",
     "TocScrollMaxHeightMobile": "min(45vh, 280px)",
     "layoutsConfigPathOficial": true,
@@ -94,10 +118,15 @@
         "versionLinksLabel": "Links do repositorio",
         "titleHeaderMenuMd": "Markdown",
         "titleHeaderMenuVideo": "Vídeo",
+        "titleHeaderMenuAudio": "Áudio",
         "titleHeaderMenuHtml": "Páginas",
         "lastUpdateVersionLabel": "Ultima versao de atualizacao",
         "darkMode": "Modo escuro",
-        "lightMode": "Modo claro"
+        "lightMode": "Modo claro",
+        "audioPlayLabel": "Reproduzir música de fundo",
+        "audioPauseLabel": "Pausar música de fundo",
+        "audioPlaylistTitle": "Escolher faixa",
+        "audioPlaylistDescription": "Selecione uma faixa para reproduzir da playlist."
       },
       "en": {
         "pt": "Portuguese",
@@ -118,10 +147,15 @@
         "versionLinksLabel": "Repository links",
         "titleHeaderMenuMd": "Markdown",
         "titleHeaderMenuVideo": "Video",
+        "titleHeaderMenuAudio": "Audio",
         "titleHeaderMenuHtml": "Pages",
         "lastUpdateVersionLabel": "Last update version",
         "darkMode": "Dark mode",
-        "lightMode": "Light mode"
+        "lightMode": "Light mode",
+        "audioPlayLabel": "Play background music",
+        "audioPauseLabel": "Pause background music",
+        "audioPlaylistTitle": "Choose track",
+        "audioPlaylistDescription": "Select a track to play from the playlist."
       },
       "es": {
         "pt": "Portugues",
@@ -142,10 +176,15 @@
         "versionLinksLabel": "Enlaces del repositorio",
         "titleHeaderMenuMd": "Markdown",
         "titleHeaderMenuVideo": "Vídeo",
+        "titleHeaderMenuAudio": "Áudio",
         "titleHeaderMenuHtml": "Páginas",
         "lastUpdateVersionLabel": "Ultima version de actualizacion",
         "darkMode": "Modo oscuro",
-        "lightMode": "Modo claro"
+        "lightMode": "Modo claro",
+        "audioPlayLabel": "Reproducir música de fondo",
+        "audioPauseLabel": "Pausar música de fondo",
+        "audioPlaylistTitle": "Elegir pista",
+        "audioPlaylistDescription": "Seleccione una pista para reproducir de la playlist."
       }
     }
   },

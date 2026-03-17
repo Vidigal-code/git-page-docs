@@ -9,6 +9,7 @@ import type {
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedVideoContent,
+  LoadedAudioContent,
 } from "@/entities/docs/model/types";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { BrowseItem } from "../model/use-docs-shell-navigation-state";
@@ -31,12 +32,15 @@ interface DocsShellUrlFullscreenOverlayProps {
   mdBrowseIndex: number;
   htmlBrowseIndex: number;
   videoBrowseIndex: number;
+  audioBrowseIndex: number;
   setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
   setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
   setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
+  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
   mdItems: BrowseItem<LoadedMdContent>[];
   htmlItems: BrowseItem<LoadedHtmlContent>[];
   videoItems: BrowseItem<LoadedVideoContent>[];
+  audioItems: BrowseItem<LoadedAudioContent>[];
   routeGuideEnabled?: boolean;
   breadcrumbTrail?: BreadcrumbItem[];
   onMenuClick?: (pathClick: string, ancestorKeys: string[]) => void;
@@ -61,12 +65,15 @@ export function DocsShellUrlFullscreenOverlay({
   mdBrowseIndex,
   htmlBrowseIndex,
   videoBrowseIndex,
+  audioBrowseIndex,
   setMdBrowseIndex,
   setHtmlBrowseIndex,
   setVideoBrowseIndex,
+  setAudioBrowseIndex,
   mdItems,
   htmlItems,
   videoItems,
+  audioItems,
   routeGuideEnabled = false,
   breadcrumbTrail = [],
   onMenuClick,
@@ -123,6 +130,17 @@ export function DocsShellUrlFullscreenOverlay({
         return entry?.[1]?.pageIndex ?? 0;
       }
     }
+    if (params.type === "audio") {
+      if (params.id != null) {
+        return data.pathToPageMap?.[`page:${params.id}`]?.pageIndex ?? 0;
+      }
+      if (params.slug) {
+        const entry = Object.entries(data.pathToPageMap ?? {}).find(
+          ([k, v]) => v.contentType === "audio" && k.toLowerCase().includes(params.slug!.toLowerCase()),
+        );
+        return entry?.[1]?.pageIndex ?? 0;
+      }
+    }
     return 0;
   })();
 
@@ -156,7 +174,9 @@ export function DocsShellUrlFullscreenOverlay({
           language={overlayLanguage}
           isDarkMode={isDarkMode}
           contentTypeFilter={
-            params.type === "md" || params.type === "html" || params.type === "video" ? params.type : undefined
+            params.type === "md" || params.type === "html" || params.type === "video" || params.type === "audio"
+              ? params.type
+              : undefined
           }
           isUrlFullscreen={true}
           fullscreenCloseLabel={menuCloseLabel}
@@ -168,12 +188,15 @@ export function DocsShellUrlFullscreenOverlay({
           mdBrowseIndex={mdBrowseIndex}
           htmlBrowseIndex={htmlBrowseIndex}
           videoBrowseIndex={videoBrowseIndex}
+          audioBrowseIndex={audioBrowseIndex}
           setMdBrowseIndex={setMdBrowseIndex}
           setHtmlBrowseIndex={setHtmlBrowseIndex}
           setVideoBrowseIndex={setVideoBrowseIndex}
+          setAudioBrowseIndex={setAudioBrowseIndex}
           mdItems={mdItems}
           htmlItems={htmlItems}
           videoItems={videoItems}
+          audioItems={audioItems}
           routeGuideEnabled={routeGuideEnabled}
           breadcrumbTrail={breadcrumbTrail}
           onMenuClick={onMenuClick}

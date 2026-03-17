@@ -110,12 +110,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     mdBrowseIndex,
     htmlBrowseIndex,
     videoBrowseIndex,
+    audioBrowseIndex,
     setMdBrowseIndex,
     setHtmlBrowseIndex,
     setVideoBrowseIndex,
+    setAudioBrowseIndex,
     mdItems,
     htmlItems,
     videoItems,
+    audioItems,
   } = useDocsShellNavigationState({
     data,
     language,
@@ -185,6 +188,13 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           ([k, v]) => v.contentType === "video" && k.toLowerCase().includes(params.slug!.toLowerCase()),
         );
         pathClick = entry?.[0] ?? null;
+      } else if (params.type === "audio" && params.id != null) {
+        pathClick = `page:${params.id}`;
+      } else if (params.type === "audio" && params.slug) {
+        const entry = Object.entries(data.pathToPageMap ?? {}).find(
+          ([k, v]) => v.contentType === "audio" && k.toLowerCase().includes(params.slug!.toLowerCase()),
+        );
+        pathClick = entry?.[0] ?? null;
       }
       if (pathClick) {
         const pageIdx = getPageIndexByPathClick(data, pathClick);
@@ -206,6 +216,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     params.delete("mdfull");
     params.delete("htmlfull");
     params.delete("videofull");
+    params.delete("audiofull");
     params.delete("file");
     params.delete("slug");
     params.delete("id");
@@ -234,6 +245,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         current.set("videofull", params.lang);
         if (params.id != null) current.set("id", String(params.id));
         if (params.slug) current.set("slug", params.slug);
+      } else if (params.type === "audio") {
+        current.set("audiofull", params.lang);
+        if (params.id != null) current.set("id", String(params.id));
+        if (params.slug) current.set("slug", params.slug);
       }
       replaceUrlWithoutNavigation(pathname ?? "/", current);
     },
@@ -244,12 +259,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     skipUrlFullscreenFromInlineRef.current = false;
     const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
     const hadVideoFullscreen = params.has("videofull");
+    const hadAudioFullscreen = params.has("audiofull");
     params.delete("mdfull");
     params.delete("htmlfull");
     params.delete("videofull");
+    params.delete("audiofull");
     params.delete("file");
     params.delete("slug");
-    if (hadVideoFullscreen) {
+    if (hadVideoFullscreen || hadAudioFullscreen) {
       params.delete("id");
     }
     replaceUrlWithoutNavigation(pathname ?? "/", params);
@@ -278,12 +295,14 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     activeThemeId,
     canToggleMode,
     nextMode === "dark",
+    currentPage,
   );
 
   useDocsShellUrlParams(
     searchParams,
     data,
     language,
+    pageIndex,
     setPageIndex,
     expandAncestors,
     undefined,
@@ -447,6 +466,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       ? `url:${currentPage.html.config.url[language] ?? currentPage.html.config.url.en}`
       : null) ??
     (currentPage?.video ? `page:${currentPage.id}` : null) ??
+    (currentPage?.audio ? `page:${currentPage.id}` : null) ??
     "";
   const breadcrumbTrail = useMemo(
     () => (routeGuideEnabled && currentPagePath ? getBreadcrumbTrail(headerMenuTree, currentPagePath) : []),
@@ -540,12 +560,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             mdBrowseIndex={mdBrowseIndex}
             htmlBrowseIndex={htmlBrowseIndex}
             videoBrowseIndex={videoBrowseIndex}
+            audioBrowseIndex={audioBrowseIndex}
             setMdBrowseIndex={setMdBrowseIndex}
             setHtmlBrowseIndex={setHtmlBrowseIndex}
             setVideoBrowseIndex={setVideoBrowseIndex}
+            setAudioBrowseIndex={setAudioBrowseIndex}
             mdItems={mdItems}
             htmlItems={htmlItems}
             videoItems={videoItems}
+            audioItems={audioItems}
             routeGuideEnabled={routeGuideEnabled}
             breadcrumbTrail={breadcrumbTrail}
             onMenuClick={onMenuClick}
@@ -660,12 +683,15 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         mdBrowseIndex={mdBrowseIndex}
         htmlBrowseIndex={htmlBrowseIndex}
         videoBrowseIndex={videoBrowseIndex}
+        audioBrowseIndex={audioBrowseIndex}
         setMdBrowseIndex={setMdBrowseIndex}
         setHtmlBrowseIndex={setHtmlBrowseIndex}
         setVideoBrowseIndex={setVideoBrowseIndex}
+        setAudioBrowseIndex={setAudioBrowseIndex}
         mdItems={mdItems}
         htmlItems={htmlItems}
         videoItems={videoItems}
+        audioItems={audioItems}
         routeGuideEnabled={routeGuideEnabled}
         breadcrumbTrail={breadcrumbTrail}
         onMenuClick={onMenuClick}

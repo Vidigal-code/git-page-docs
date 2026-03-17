@@ -14,7 +14,7 @@ import { loadLayoutsAndThemes } from "./layouts/load-layouts";
 import { loadPages } from "./content/load-pages";
 
 const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
-const DEFAULT_HIERARCHY: HierarchyConfig = { md: 0, html: 1, video: 2 };
+const DEFAULT_HIERARCHY: HierarchyConfig = { md: 0, html: 1, video: 2, audio: 3 };
 
 function isLocalRuntime(): boolean {
   if (process.env.NODE_ENV !== "production") {
@@ -107,9 +107,11 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
       : (config["routes-md"] ?? config.routes ?? []);
   let routesHtml: ContentTypeRouteConfig[] = config["routes-html"] ?? [];
   let routesVideo: ContentTypeRouteConfig[] = config["routes-video"] ?? [];
+  let routesAudio: ContentTypeRouteConfig[] = config["routes-audio"] ?? [];
   let menusHeaderMd = config["menus-header-md"] ?? config["menus-header"] ?? [];
   let menusHeaderHtml = config["menus-header-html"] ?? [];
   let menusHeaderVideo = config["menus-header-video"] ?? [];
+  let menusHeaderAudio = config["menus-header-audio"] ?? [];
   let hierarchyPage = config.hierarchyPage ?? DEFAULT_HIERARCHY;
   let hierarchyMenu = config.hierarchyMenu ?? DEFAULT_HIERARCHY;
 
@@ -127,10 +129,12 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
         else if (versionConfig.routes?.length) routesMd = versionConfig.routes;
         if (versionConfig["routes-html"]?.length) routesHtml = versionConfig["routes-html"];
         if (versionConfig["routes-video"]?.length) routesVideo = versionConfig["routes-video"];
+        if (versionConfig["routes-audio"]?.length) routesAudio = versionConfig["routes-audio"];
         if (versionConfig["menus-header-md"]?.length) menusHeaderMd = versionConfig["menus-header-md"];
         else if (versionConfig["menus-header"]?.length) menusHeaderMd = versionConfig["menus-header"];
         if (versionConfig["menus-header-html"]?.length) menusHeaderHtml = versionConfig["menus-header-html"];
         if (versionConfig["menus-header-video"]?.length) menusHeaderVideo = versionConfig["menus-header-video"];
+        if (versionConfig["menus-header-audio"]?.length) menusHeaderAudio = versionConfig["menus-header-audio"];
         if (versionConfig.hierarchyPage) hierarchyPage = versionConfig.hierarchyPage;
         if (versionConfig.hierarchyMenu) hierarchyMenu = versionConfig.hierarchyMenu;
       }
@@ -147,9 +151,11 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     "routes-md": routesMd,
     "routes-html": routesHtml,
     "routes-video": routesVideo,
+    "routes-audio": routesAudio,
     "menus-header-md": menusHeaderMd,
     "menus-header-html": menusHeaderHtml,
     "menus-header-video": menusHeaderVideo,
+    "menus-header-audio": menusHeaderAudio,
     hierarchyPage,
     hierarchyMenu,
   };
@@ -165,12 +171,13 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     layoutsConfigPathTemplates: effectiveConfig.site.layoutsConfigPathTemplates,
   });
 
-  const languages = getLanguages(effectiveConfig, routesMd, routesHtml, routesVideo);
+  const languages = getLanguages(effectiveConfig, routesMd, routesHtml, routesVideo, routesAudio);
 
   const allIds = new Set<number>();
   routesMd.forEach((r) => allIds.add(r.id));
   routesHtml.forEach((r) => allIds.add(r.id));
   routesVideo.forEach((r) => allIds.add(r.id));
+  routesAudio.forEach((r) => allIds.add(r.id));
   const sortedIds = Array.from(allIds).sort((a, b) => a - b);
 
   const { pages, pathToPageMap } = await loadPages({
@@ -178,6 +185,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     routesMd,
     routesHtml,
     routesVideo,
+    routesAudio,
     languages,
     source,
     owner,

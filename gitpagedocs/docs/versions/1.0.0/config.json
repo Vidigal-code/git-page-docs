@@ -72,7 +72,23 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
+      "RouteguideBrandContainerTop": false,
+      "audio": {
+        "enabled": true,
+        "autoPlayOnLoad": true,
+        "loopEnabled": false,
+        "tracks": [
+          {
+            "url": "https://www.youtube.com/watch?v=0w80F8FffQ4",
+            "type": "youtube",
+            "title": {
+              "pt": "Música página 2",
+              "en": "Page 2 music",
+              "es": "Música página 2"
+            }
+          }
+        ]
+      }
     },
     {
       "id": 3,
@@ -547,11 +563,13 @@
   "hierarchyPage": {
     "md": 0,
     "html": 1,
-    "video": 2
+    "video": 2,
+    "audio": 3
   },
   "hierarchyMenu": {
     "md": 0,
     "html": 1,
-    "video": 2
+    "video": 2,
+    "audio": 3
   }
 }

@@ -8,9 +8,11 @@ export interface VersionRoutesConfig {
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
+  "routes-audio"?: ContentTypeRouteConfig[];
   "menus-header-md"?: GitPageDocsConfig["menus-header"];
   "menus-header-html"?: GitPageDocsConfig["menus-header"];
   "menus-header-video"?: GitPageDocsConfig["menus-header"];
+  "menus-header-audio"?: GitPageDocsConfig["menus-header"];
   hierarchyPage?: HierarchyConfig;
   hierarchyMenu?: HierarchyConfig;
 }
@@ -77,12 +79,14 @@ export async function loadVersionConfig(options: {
     (versionConfig?.routes?.length ?? 0) > 0 ||
     (versionConfig?.["routes-md"]?.length ?? 0) > 0 ||
     (versionConfig?.["routes-html"]?.length ?? 0) > 0 ||
-    (versionConfig?.["routes-video"]?.length ?? 0) > 0;
+    (versionConfig?.["routes-video"]?.length ?? 0) > 0 ||
+    (versionConfig?.["routes-audio"]?.length ?? 0) > 0;
   const hasAnyMenus =
     (versionConfig?.["menus-header"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-md"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-html"]?.length ?? 0) > 0 ||
-    (versionConfig?.["menus-header-video"]?.length ?? 0) > 0;
+    (versionConfig?.["menus-header-video"]?.length ?? 0) > 0 ||
+    (versionConfig?.["menus-header-audio"]?.length ?? 0) > 0;
   if ((hasAnyRoutes || hasAnyMenus) && versionConfig) {
     return versionConfig;
   }

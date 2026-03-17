@@ -88,6 +88,26 @@ export interface SiteConfig {
   RouteguideBrandPositionDefault?: "center" | "left" | "right";
   /** Default for RouteguideBrandContainerTop when not set per route. If false, TOC beside content on desktop. */
   RouteguideBrandContainerTopDefault?: boolean;
+  /** Background music player: enable play/pause button in header */
+  audioPlayerEnabled?: boolean;
+  /** Background music: autoplay on page load (browser may block) */
+  audioAutoPlayOnLoad?: boolean;
+  /** Background music: loop current track */
+  audioLoopEnabled?: boolean;
+  /** Background music: allow user to choose track from playlist (when 2+ tracks) */
+  audioAllowUserChoice?: boolean;
+  /** Background music: site-level tracks (used when no per-page audio) */
+  audioTracks?: { url: string; type: string; title?: Record<string, string> }[];
+  IconAudioPlayReactIcones?: boolean;
+  IconAudioPlayReactIconesTag?: string;
+  IconAudioPlayReactIconesTagColorDark?: string;
+  IconAudioPlayReactIconesTagColorLight?: string;
+  IconAudioPlayReactIconesTagSize?: string;
+  IconAudioPauseReactIcones?: boolean;
+  IconAudioPauseReactIconesTag?: string;
+  IconAudioPauseReactIconesTagColorDark?: string;
+  IconAudioPauseReactIconesTagColorLight?: string;
+  IconAudioPauseReactIconesTagSize?: string;
   /** TOC scroll max-height desktop, e.g. "min(65vh, 400px)" */
   TocScrollMaxHeightDesktop?: string;
   /** TOC scroll max-height mobile, e.g. "220px" */

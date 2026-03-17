@@ -13,9 +13,10 @@ import {
   VIDEO_META_ID2,
   VIDEO_META_ID3,
   VIDEO_META_ID4,
+  AUDIO_META,
   DEFAULT_HIERARCHY,
 } from "../data/route-metas.mjs";
-import { buildMdRoute, buildHtmlRoute, buildVideoRoute } from "./route-builders.mjs";
+import { buildMdRoute, buildHtmlRoute, buildVideoRoute, buildAudioRoute } from "./route-builders.mjs";
 import { generateSourceViewerHtml } from "./source-viewer.mjs";
 
 export function buildConfigArtifacts(options = {}) {
@@ -43,6 +44,20 @@ export function buildConfigArtifacts(options = {}) {
   const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4 };
   const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
   const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
+  const AUDIO_YOUTUBE_ID = "xAR6N9N8e6U";
+
+  const PAGE2_AUDIO = {
+    enabled: true,
+    autoPlayOnLoad: true,
+    loopEnabled: false,
+    tracks: [
+      {
+        url: "https://www.youtube.com/watch?v=0w80F8FffQ4",
+        type: "youtube",
+        title: { pt: "Música página 2", en: "Page 2 music", es: "Música página 2" },
+      },
+    ],
+  };
 
   function buildVersionMdRoutesSimple(versionId) {
     const base = `gitpagedocs/docs/versions/${versionId}`;
@@ -54,7 +69,8 @@ export function buildConfigArtifacts(options = {}) {
         en: `${base}/en/${paths.en}`,
         es: `${base}/es/${paths.es}`,
       };
-      return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions);
+      const options = id === 2 ? { audio: PAGE2_AUDIO } : {};
+      return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions, options);
     });
   }
 
@@ -93,6 +109,19 @@ export function buildConfigArtifacts(options = {}) {
     );
   }
 
+  function buildVersionAudioRoutesSimple(versionId) {
+    return [1, 2, 3, 4].map((id) =>
+      buildAudioRoute(
+        versionId,
+        id,
+        "youtube",
+        AUDIO_YOUTUBE_ID,
+        AUDIO_META.title,
+        AUDIO_META.description,
+      ),
+    );
+  }
+
   function buildVersionMenusSimple(versionId) {
     const base = `gitpagedocs/docs/versions/${versionId}`;
     const menuMd = [1, 2, 3, 4].map((id) => ({
@@ -111,22 +140,31 @@ export function buildConfigArtifacts(options = {}) {
       en: { title: VIDEO_METAS[id].title.en.slice(0, 40) + "...", "path-click": `page:${id}` },
       es: { title: VIDEO_METAS[id].title.es.slice(0, 40) + "...", "path-click": `page:${id}` },
     }));
-    return { md: menuMd, html: menuHtml, video: menuVideo };
+    const menuAudio = [1, 2, 3, 4].map((id) => ({
+      id: id,
+      pt: { title: AUDIO_META.title.pt.slice(0, 40) + "...", "path-click": `page:${id}` },
+      en: { title: AUDIO_META.title.en.slice(0, 40) + "...", "path-click": `page:${id}` },
+      es: { title: AUDIO_META.title.es.slice(0, 40) + "...", "path-click": `page:${id}` },
+    }));
+    return { md: menuMd, html: menuHtml, video: menuVideo, audio: menuAudio };
   }
 
   const versionRoutes_1_0_0_md = buildVersionMdRoutesSimple("1.0.0");
   const versionRoutes_1_0_0_html = buildVersionHtmlRoutesSimple("1.0.0");
   const versionRoutes_1_0_0_video = buildVersionVideoRoutesSimple("1.0.0");
+  const versionRoutes_1_0_0_audio = buildVersionAudioRoutesSimple("1.0.0");
   const versionMenus_1_0_0 = buildVersionMenusSimple("1.0.0");
 
   const versionRoutes_1_1_0_md = buildVersionMdRoutesSimple("1.1.0");
   const versionRoutes_1_1_0_html = buildVersionHtmlRoutesSimple("1.1.0");
   const versionRoutes_1_1_0_video = buildVersionVideoRoutesSimple("1.1.0");
+  const versionRoutes_1_1_0_audio = buildVersionAudioRoutesSimple("1.1.0");
   const versionMenus_1_1_0 = buildVersionMenusSimple("1.1.0");
 
   const versionRoutes_1_1_1_md = buildVersionMdRoutesSimple("1.1.1");
   const versionRoutes_1_1_1_html = buildVersionHtmlRoutesSimple("1.1.1");
   const versionRoutes_1_1_1_video = buildVersionVideoRoutesSimple("1.1.1");
+  const versionRoutes_1_1_1_audio = buildVersionAudioRoutesSimple("1.1.1");
   const versionMenus_1_1_1 = buildVersionMenusSimple("1.1.1");
 
   const rootConfig = {
@@ -194,6 +232,26 @@ export function buildConfigArtifacts(options = {}) {
       IconPreviewProjectLinkImgHeight: 20,
       RouteguideBrandPositionDefault: "center",
       RouteguideBrandContainerTopDefault: false,
+      audioPlayerEnabled: true,
+      audioAutoPlayOnLoad: false,
+      audioLoopEnabled: false,
+      audioTracks: [
+        {
+          url: "https://www.youtube.com/watch?v=xAR6N9N8e6U",
+          type: "youtube",
+          title: { pt: "Rádio", en: "Radio", es: "Radio" },
+        },
+      ],
+      IconAudioPlayReactIcones: true,
+      IconAudioPlayReactIconesTag: "CiPlay1",
+      IconAudioPlayReactIconesTagColorDark: "White",
+      IconAudioPlayReactIconesTagColorLight: "black",
+      IconAudioPlayReactIconesTagSize: "25px",
+      IconAudioPauseReactIcones: true,
+      IconAudioPauseReactIconesTag: "FaPause",
+      IconAudioPauseReactIconesTagColorDark: "White",
+      IconAudioPauseReactIconesTagColorLight: "black",
+      IconAudioPauseReactIconesTagSize: "25px",
       TocScrollMaxHeightDesktop: "min(65vh, 400px)",
       TocScrollMaxHeightMobile: "min(45vh, 280px)",
       layoutsConfigPathOficial: useOfficialLayouts,
@@ -221,10 +279,15 @@ export function buildConfigArtifacts(options = {}) {
           versionLinksLabel: "Links do repositorio",
           titleHeaderMenuMd: "Markdown",
           titleHeaderMenuVideo: "Vídeo",
+          titleHeaderMenuAudio: "Áudio",
           titleHeaderMenuHtml: "Páginas",
           lastUpdateVersionLabel: "Ultima versao de atualizacao",
           darkMode: "Modo escuro",
           lightMode: "Modo claro",
+          audioPlayLabel: "Reproduzir música de fundo",
+          audioPauseLabel: "Pausar música de fundo",
+          audioPlaylistTitle: "Escolher faixa",
+          audioPlaylistDescription: "Selecione uma faixa para reproduzir da playlist.",
         },
         en: {
           pt: "Portuguese",
@@ -245,10 +308,15 @@ export function buildConfigArtifacts(options = {}) {
           versionLinksLabel: "Repository links",
           titleHeaderMenuMd: "Markdown",
           titleHeaderMenuVideo: "Video",
+          titleHeaderMenuAudio: "Audio",
           titleHeaderMenuHtml: "Pages",
           lastUpdateVersionLabel: "Last update version",
           darkMode: "Dark mode",
           lightMode: "Light mode",
+          audioPlayLabel: "Play background music",
+          audioPauseLabel: "Pause background music",
+          audioPlaylistTitle: "Choose track",
+          audioPlaylistDescription: "Select a track to play from the playlist.",
         },
         es: {
           pt: "Portugues",
@@ -269,10 +337,15 @@ export function buildConfigArtifacts(options = {}) {
           versionLinksLabel: "Enlaces del repositorio",
           titleHeaderMenuMd: "Markdown",
           titleHeaderMenuVideo: "Vídeo",
+          titleHeaderMenuAudio: "Áudio",
           titleHeaderMenuHtml: "Páginas",
           lastUpdateVersionLabel: "Ultima version de actualizacion",
           darkMode: "Modo oscuro",
           lightMode: "Modo claro",
+          audioPlayLabel: "Reproducir música de fondo",
+          audioPauseLabel: "Pausar música de fondo",
+          audioPlaylistTitle: "Elegir pista",
+          audioPlaylistDescription: "Seleccione una pista para reproducir de la playlist.",
         },
       },
     },

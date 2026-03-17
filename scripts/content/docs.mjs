@@ -183,18 +183,19 @@ Version configs support multiple content types:
 - \`routes-md\`: Markdown routes with optional \`title\`, \`description\` (centered via \`titlePosition\`, \`descriptionPosition\`)
 - \`routes-html\`: HTML page paths per language
 - \`routes-video\`: Video config with \`video.videoType\` (youtube, vimeo, mp4, etc.) and \`video.pathVideo\`
-- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`: menus per type
-- \`hierarchyPage\`: container order on page \`{ md: 0, html: 1, video: 2 }\`
-- \`hierarchyMenu\`: menu section order \`{ md: 0, html: 1, video: 2 }\`
+- \`routes-audio\`: Audio config with \`audio.audioType\` (youtube, mp3, etc.) and \`audio.pathAudio\`
+- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus per type
+- \`hierarchyPage\`: container order on page \`{ md: 0, html: 1, video: 2, audio: 3 }\`
+- \`hierarchyMenu\`: menu section order \`{ md: 0, html: 1, video: 2, audio: 3 }\`
 
 Each route can include \`title\`, \`description\` (per language), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 
 ## Route-level variables (blockLink, container, url, browseAll)
 
-Per-route options for \`routes-md\`, \`routes-html\`, and \`routes-video\`:
+Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`routes-audio\`:
 
 - **\`blockLink\`** (default: true) – For HTML: if true, links open in a new tab (\`target="_blank"\`); if false, links open in the same context.
-- **\`container\`** – \`"full"\` = auto-extend height; number (e.g. \`500\`) = fixed height in px with overflow auto. Applies to md, html, and video containers.
+- **\`container\`** – \`"full"\` = auto-extend height; number (e.g. \`500\`) = fixed height in px with overflow auto. Applies to md, html, video, and audio containers.
 - **\`url\`** – For \`routes-html\` only: \`Record<LanguageCode, string>\` with external URLs. When set, the iframe uses \`src={url}\` instead of local HTML via \`srcDoc\`. Routes with \`url\` do not generate local HTML files.
 - **\`browseAll\`** (default: false) – If true, the container shows Previous/Next buttons to browse all items of that type without changing the page.
 
@@ -203,6 +204,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, and \`routes-video\`:
 - **Markdown (\`routes-md\`)**: always uses \`path\` pointing to local \`.md\` files.
 - **HTML (\`routes-html\`)**: uses \`path\` for local \`.html\` files or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated.
 - **Video (\`routes-video\`)**: uses \`video.pathVideo\` and \`video.videoType\` (youtube, vimeo, mp4, etc.).
+- **Audio (\`routes-audio\`)**: uses \`audio.pathAudio\` and \`audio.audioType\` (youtube, mp3, etc.). No autoplay by default.
 
 ## Environment variables
 
@@ -489,9 +491,10 @@ Configs de versao suportam multiplos tipos:
 - \`routes-md\`: Rotas markdown com \`title\`, \`description\` (centralizados via \`titlePosition\`, \`descriptionPosition\`)
 - \`routes-html\`: Caminhos de paginas HTML por idioma
 - \`routes-video\`: Config de video com \`video.videoType\` (youtube, vimeo, mp4, etc.) e \`video.pathVideo\`
-- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`: menus por tipo
-- \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, html: 1, video: 2 }\`
-- \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, html: 1, video: 2 }\`
+- \`routes-audio\`: Config de audio com \`audio.audioType\` (youtube, mp3, etc.) e \`audio.pathAudio\`
+- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
+- \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, html: 1, video: 2, audio: 3 }\`
+- \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, html: 1, video: 2, audio: 3 }\`
 
 Cada rota pode incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 
@@ -805,9 +808,10 @@ Los configs de version soportan multiples tipos:
 - \`routes-md\`: Rutas markdown con \`title\`, \`description\` (centrados via \`titlePosition\`, \`descriptionPosition\`)
 - \`routes-html\`: Rutas de paginas HTML por idioma
 - \`routes-video\`: Config de video con \`video.videoType\` (youtube, vimeo, mp4, etc.) y \`video.pathVideo\`
-- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`: menus por tipo
-- \`hierarchyPage\`: orden de contenedores en la pagina \`{ md: 0, html: 1, video: 2 }\`
-- \`hierarchyMenu\`: orden de secciones del menu \`{ md: 0, html: 1, video: 2 }\`
+- \`routes-audio\`: Config de audio con \`audio.audioType\` (youtube, mp3, etc.) y \`audio.pathAudio\`
+- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
+- \`hierarchyPage\`: orden de contenedores en la pagina \`{ md: 0, html: 1, video: 2, audio: 3 }\`
+- \`hierarchyMenu\`: orden de secciones del menu \`{ md: 0, html: 1, video: 2, audio: 3 }\`
 
 Cada ruta puede incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 

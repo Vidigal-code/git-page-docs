@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
 import { getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
 import { buildUnifiedHeaderMenuTree } from "./menu-tree";
 
-export type FullscreenContentType = "md" | "html" | "video" | null;
+export type FullscreenContentType = "md" | "html" | "video" | "audio" | null;
 
 export interface UrlParamsAction {
   type: "navigate";
@@ -41,11 +41,14 @@ export function useDocsShellUrlParams(
   searchParams: URLSearchParams,
   data: LoadedDocsData,
   language: LanguageCode,
+  pageIndex: number,
   setPageIndex: (idx: number) => void,
   expandAncestors: (keys: string[]) => void,
   onParamsProcessed?: (action: UrlParamsAction | null) => void,
   onFullscreenRequest?: (params: FullscreenParams) => void
 ) {
+  const searchParamsKey = useMemo(() => searchParams.toString(), [searchParams]);
+
   useEffect(() => {
     const menuLang = searchParams.get("menu") as LanguageCode | null;
     const menuId = searchParams.get("id");
@@ -59,6 +62,9 @@ export function useDocsShellUrlParams(
     const videofullSlug = urlParams.get("slug");
     const htmlfull = urlParams.get("htmlfull");
     const htmlfullFile = urlParams.get("file");
+    const audiofull = urlParams.get("audiofull");
+    const audiofullId = urlParams.get("id");
+    const audiofullSlug = urlParams.get("slug");
 
     if (onFullscreenRequest) {
       if (mdfull && mdfullFile) {
@@ -77,6 +83,16 @@ export function useDocsShellUrlParams(
       }
       if (htmlfull && htmlfullFile) {
         onFullscreenRequest({ type: "html", lang: htmlfull as LanguageCode, file: htmlfullFile });
+        return;
+      }
+      if (audiofull) {
+        const id = audiofullId ? parseInt(audiofullId, 10) : undefined;
+        onFullscreenRequest({
+          type: "audio",
+          lang: audiofull as LanguageCode,
+          id: Number.isNaN(id) ? undefined : id,
+          slug: audiofullSlug ?? undefined,
+        });
         return;
       }
     }
@@ -99,7 +115,7 @@ export function useDocsShellUrlParams(
 
       if (pathClick) {
         const pageIdx = getPageIndexByPathClick(data, pathClick);
-        if (pageIdx >= 0) {
+        if (pageIdx >= 0 && pageIdx !== pageIndex) {
           const tree = buildUnifiedHeaderMenuTree(data, menuLang, pageIdx);
           const trail = getBreadcrumbTrail(tree, pathClick);
           const ancestorKeys = trail.length > 0 ? trail[trail.length - 1].ancestorKeys : [];
@@ -120,8 +136,10 @@ export function useDocsShellUrlParams(
     onParamsProcessed?.(null);
   }, [
     searchParams,
+    searchParamsKey,
     data,
     language,
+    pageIndex,
     setPageIndex,
     expandAncestors,
     onParamsProcessed,

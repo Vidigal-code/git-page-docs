@@ -6,6 +6,7 @@ import type {
   LoadedMdContent,
   LoadedPage,
   LoadedVideoContent,
+  LoadedAudioContent,
 } from "@/entities/docs/model/types";
 import { getPageIndexByPathClick } from "./menu-tree";
 
@@ -24,6 +25,10 @@ function getHtmlItems(pages: LoadedPage[]): BrowseItem<LoadedHtmlContent>[] {
 
 function getVideoItems(pages: LoadedPage[]): BrowseItem<LoadedVideoContent>[] {
   return pages.flatMap((p, i) => (p.video ? [{ pageIndex: i, content: p.video }] : []));
+}
+
+function getAudioItems(pages: LoadedPage[]): BrowseItem<LoadedAudioContent>[] {
+  return pages.flatMap((p, i) => (p.audio ? [{ pageIndex: i, content: p.audio }] : []));
 }
 
 function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): number {
@@ -49,18 +54,21 @@ export function useDocsShellNavigationState({
   const [mdBrowseIndex, setMdBrowseIndex] = useState(0);
   const [htmlBrowseIndex, setHtmlBrowseIndex] = useState(0);
   const [videoBrowseIndex, setVideoBrowseIndex] = useState(0);
+  const [audioBrowseIndex, setAudioBrowseIndex] = useState(0);
 
   const pages = data.pages ?? [];
   const mdItems = getMdItems(pages);
   const htmlItems = getHtmlItems(pages);
   const videoItems = getVideoItems(pages);
+  const audioItems = getAudioItems(pages);
 
   useEffect(() => {
     setMdBrowseIndex(getBrowseIndexForPage(mdItems, pageIndex));
     setHtmlBrowseIndex(getBrowseIndexForPage(htmlItems, pageIndex));
     setVideoBrowseIndex(getBrowseIndexForPage(videoItems, pageIndex));
+    setAudioBrowseIndex(getBrowseIndexForPage(audioItems, pageIndex));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync browse indices when page or items change
-  }, [pageIndex, pages.length, mdItems.length, htmlItems.length, videoItems.length]);
+  }, [pageIndex, pages.length, mdItems.length, htmlItems.length, videoItems.length, audioItems.length]);
 
   function onMenuClick(pathClick: string, ancestorKeys: string[] = []) {
     const idx = getPageIndexByPathClick(data, pathClick);
@@ -111,12 +119,15 @@ export function useDocsShellNavigationState({
     mdBrowseIndex,
     htmlBrowseIndex,
     videoBrowseIndex,
+    audioBrowseIndex,
     setMdBrowseIndex,
     setHtmlBrowseIndex,
     setVideoBrowseIndex,
+    setAudioBrowseIndex,
     mdItems,
     htmlItems,
     videoItems,
+    audioItems,
     expandAncestors,
   };
 }

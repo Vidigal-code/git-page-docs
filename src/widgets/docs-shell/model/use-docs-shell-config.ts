@@ -1,8 +1,9 @@
 import { useMemo } from "react";
+import { getBackgroundAudioConfig } from "@/entities/docs/lib/audio";
 import { buildFooterConfigFromData } from "@/entities/docs/lib/footer/build-footer-config";
 import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
 import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
-import type { LayoutItem, LoadedDocsData, VersionEntry } from "@/entities/docs/model/types";
+import type { LayoutItem, LoadedDocsData, LoadedPage, VersionEntry } from "@/entities/docs/model/types";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 
@@ -56,6 +57,19 @@ export interface DocsShellControlsConfig {
   nextModeIsDark: boolean;
   darkModeLabel: string;
   lightModeLabel: string;
+  showAudioPlayer: boolean;
+  audioPlayerConfig: import("@/entities/docs/lib/audio").ResolvedBackgroundAudioConfig | null;
+  useReactAudioPlayIcon: boolean;
+  audioPlayIconTag: string | undefined;
+  audioPlayIconStyle: React.CSSProperties;
+  useReactAudioPauseIcon: boolean;
+  audioPauseIconTag: string | undefined;
+  audioPauseIconStyle: React.CSSProperties;
+  audioPlayLabel: string;
+  audioPauseLabel: string;
+  audioPlaylistTitle: string;
+  audioPlaylistDescription: string;
+  audioPopoverCloseLabel: string;
 }
 
 export function useDocsShellConfig(
@@ -66,6 +80,7 @@ export function useDocsShellConfig(
   activeThemeId: string,
   canToggleMode: boolean,
   nextModeIsDark: boolean,
+  currentPage: LoadedPage | undefined,
 ) {
   const basePath = getBasePath();
 
@@ -90,6 +105,10 @@ export function useDocsShellConfig(
 
   const mode = activeLayout?.mode ?? "dark";
   const site = data.config.site;
+  const audioPlayerConfig = useMemo(
+    () => getBackgroundAudioConfig(currentPage, site, language),
+    [currentPage, site, language]
+  );
 
   const controlsConfig: DocsShellControlsConfig = useMemo(
     () => ({
@@ -163,6 +182,25 @@ export function useDocsShellConfig(
       nextModeIsDark,
       darkModeLabel: getLangMenuLabelFromMenu(site.langmenu, language, "darkMode", "Dark mode"),
       lightModeLabel: getLangMenuLabelFromMenu(site.langmenu, language, "lightMode", "Light mode"),
+      showAudioPlayer: Boolean(audioPlayerConfig),
+      audioPlayerConfig,
+      useReactAudioPlayIcon: Boolean(site.IconAudioPlayReactIcones),
+      audioPlayIconTag: site.IconAudioPlayReactIconesTag,
+      audioPlayIconStyle: {
+        color: (mode === "dark" ? site.IconAudioPlayReactIconesTagColorDark : site.IconAudioPlayReactIconesTagColorLight)?.trim() || undefined,
+        fontSize: site.IconAudioPlayReactIconesTagSize?.trim() || undefined,
+      },
+      useReactAudioPauseIcon: Boolean(site.IconAudioPauseReactIcones),
+      audioPauseIconTag: site.IconAudioPauseReactIconesTag,
+      audioPauseIconStyle: {
+        color: (mode === "dark" ? site.IconAudioPauseReactIconesTagColorDark : site.IconAudioPauseReactIconesTagColorLight)?.trim() || undefined,
+        fontSize: site.IconAudioPauseReactIconesTagSize?.trim() || undefined,
+      },
+      audioPlayLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPlayLabel", "Play background music"),
+      audioPauseLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPauseLabel", "Pause background music"),
+      audioPlaylistTitle: getLangMenuLabelFromMenu(site.langmenu, language, "audioPlaylistTitle", "Choose track"),
+      audioPlaylistDescription: getLangMenuLabelFromMenu(site.langmenu, language, "audioPlaylistDescription", "Select a track to play from the playlist."),
+      audioPopoverCloseLabel: getLangMenuLabelFromMenu(site.langmenu, language, "menuClose", "Close"),
     }),
     [
       data.activeVersion,
@@ -177,6 +215,7 @@ export function useDocsShellConfig(
       activeThemeId,
       canToggleMode,
       nextModeIsDark,
+      audioPlayerConfig,
     ],
   );
 

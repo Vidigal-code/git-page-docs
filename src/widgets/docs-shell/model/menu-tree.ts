@@ -116,7 +116,7 @@ export function buildHeaderMenuTree(
   return entries;
 }
 
-const DEFAULT_HIERARCHY = { md: 0, html: 1, video: 2 };
+const DEFAULT_HIERARCHY = { md: 0, html: 1, video: 2, audio: 3 };
 
 export function buildUnifiedHeaderMenuTree(
   data: LoadedDocsData,
@@ -138,6 +138,10 @@ export function buildUnifiedHeaderMenuTree(
   const menusVideo = data.config["menus-header-video"];
   if (menusVideo?.length) {
     sections.push({ type: "video", menus: menusVideo, labelKey: "titleHeaderMenuVideo" });
+  }
+  const menusAudio = data.config["menus-header-audio"];
+  if (menusAudio?.length) {
+    sections.push({ type: "audio", menus: menusAudio, labelKey: "titleHeaderMenuAudio" });
   }
 
   sections.sort((a, b) => (hierarchyMenu[a.type] ?? 999) - (hierarchyMenu[b.type] ?? 999));

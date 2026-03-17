@@ -42,11 +42,20 @@ export interface LoadedVideoContent {
   fullscreenEnabled?: boolean;
 }
 
+export interface LoadedAudioContent {
+  routeId: number;
+  config: ContentTypeRouteConfig;
+  audioTypeByLanguage: Record<LanguageCode, string>;
+  pathAudioByLanguage: Record<LanguageCode, string>;
+  fullscreenEnabled?: boolean;
+}
+
 export interface LoadedPage {
   id: number;
   md?: LoadedMdContent;
   html?: LoadedHtmlContent;
   video?: LoadedVideoContent;
+  audio?: LoadedAudioContent;
 }
 
 export interface PathToPageEntry {

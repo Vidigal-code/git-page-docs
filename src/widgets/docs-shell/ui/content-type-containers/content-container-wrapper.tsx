@@ -128,7 +128,14 @@ export function ContentContainerWrapper({
   );
 
   const resolvedChildren =
-    typeof children === "function" ? resolveChildren(fullscreenButton, { contentOnly: false }) : [fullscreenButton, children];
+    typeof children === "function" ? (
+      resolveChildren(fullscreenButton, { contentOnly: false })
+    ) : (
+      <>
+        {fullscreenButton}
+        {children}
+      </>
+    );
 
   return (
     <div className={styles.contentContainerWrapper} style={wrapperStyle}>

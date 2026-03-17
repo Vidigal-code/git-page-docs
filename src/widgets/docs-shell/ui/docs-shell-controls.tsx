@@ -1,4 +1,6 @@
 import Image from "next/image";
+import type { ResolvedBackgroundAudioConfig } from "@/entities/docs/lib/audio";
+import { DocsShellAudioPlayer } from "./docs-shell-audio-player";
 import { LanguageSelector } from "@/features/language-selector";
 import { QuickNavigationTrigger } from "@/features/quick-navigation";
 import { ThemeModeToggle } from "@/features/theme-switcher";
@@ -58,6 +60,17 @@ interface DocsShellControlsProps {
   nextModeIsDark: boolean;
   darkModeLabel: string;
   lightModeLabel: string;
+  showAudioPlayer?: boolean;
+  audioPlayerConfig?: ResolvedBackgroundAudioConfig | null;
+  audioPlayIconTag?: string;
+  audioPlayIconStyle?: React.CSSProperties;
+  audioPauseIconTag?: string;
+  audioPauseIconStyle?: React.CSSProperties;
+  audioPlayLabel?: string;
+  audioPauseLabel?: string;
+  audioPlaylistTitle?: string;
+  audioPlaylistDescription?: string;
+  audioPopoverCloseLabel?: string;
   onOpenVersionLinksPopup: () => void;
   onOpenInfoPopup: () => void;
   onOpenFocusMode: () => void;
@@ -118,6 +131,17 @@ export function DocsShellControls({
   nextModeIsDark,
   darkModeLabel,
   lightModeLabel,
+  showAudioPlayer,
+  audioPlayerConfig,
+  audioPlayIconTag,
+  audioPlayIconStyle,
+  audioPauseIconTag,
+  audioPauseIconStyle,
+  audioPlayLabel,
+  audioPauseLabel,
+  audioPlaylistTitle,
+  audioPlaylistDescription,
+  audioPopoverCloseLabel,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
   onOpenFocusMode,
@@ -189,6 +213,20 @@ export function DocsShellControls({
             <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
           )}
         </a>
+      )}
+      {showAudioPlayer && audioPlayerConfig && (
+        <DocsShellAudioPlayer
+          config={audioPlayerConfig}
+          language={language}
+          playIconTag={audioPlayIconTag}
+          pauseIconTag={audioPauseIconTag}
+          iconStyle={audioPlayIconStyle}
+          playLabel={audioPlayLabel ?? "Play"}
+          pauseLabel={audioPauseLabel ?? "Pause"}
+          playlistTitle={audioPlaylistTitle ?? "Choose track"}
+          playlistDescription={audioPlaylistDescription ?? ""}
+          closeLabel={audioPopoverCloseLabel ?? "Close"}
+        />
       )}
       {focusModeEnabled && (
         <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>

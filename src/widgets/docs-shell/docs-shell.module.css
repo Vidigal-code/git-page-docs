@@ -704,6 +704,33 @@
   border-radius: 8px;
 }
 
+/* Audio-only: compact container, no video/thumbnail */
+.audioWrapper {
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  aspect-ratio: unset;
+}
+
+.audioEmbedWrapper {
+  width: 100%;
+  max-width: 100%;
+  height: 80px;
+  min-height: 80px;
+  aspect-ratio: unset;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.audioEmbedIframe {
+  width: 100%;
+  height: 200px;
+  border: none;
+  border-radius: 8px;
+  position: relative;
+  top: -120px;
+}
+
 .footerActions {
   margin-top: 18px;
   display: flex;
