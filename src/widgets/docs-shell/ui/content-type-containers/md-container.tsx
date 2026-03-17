@@ -41,6 +41,8 @@ interface MdContainerProps {
   tocPositionDefault?: TocPosition;
   /** When true, TOC links use default anchor behavior (for fullscreen mode) */
   useDefaultScrollBehavior?: boolean;
+  /** When true, show only markdown content (hide routes/TOC) - for fullscreen mode */
+  contentOnly?: boolean;
 }
 
 export function MdContainer({
@@ -60,6 +62,7 @@ export function MdContainer({
   routeGuideIconConfig,
   tocPositionDefault = "center",
   useDefaultScrollBehavior = false,
+  contentOnly = false,
 }: MdContainerProps) {
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
@@ -103,10 +106,12 @@ export function MdContainer({
     </>
   );
 
+  const showToc = !contentOnly && routeguideBrand && headings.length > 0;
+
   const content =
     fullscreenEnabled
       ? (fullscreenButton: React.ReactNode) =>
-          routeguideBrand && headings.length > 0 ? (
+          showToc ? (
             <TocContainer
               headings={headings}
               position={tocPosition}
@@ -120,7 +125,7 @@ export function MdContainer({
               {fullscreenButton}
             </div>
           )
-      : routeguideBrand && headings.length > 0 ? (
+      : showToc ? (
           <TocContainer
             headings={headings}
             position={tocPosition}

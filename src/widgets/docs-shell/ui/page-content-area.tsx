@@ -179,6 +179,7 @@ export function PageContentArea({
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               useDefaultScrollBehavior={isUrlFullscreen}
+              contentOnly={isUrlFullscreen}
               browseNav={mdBrowseNav}
               routeGuideEnabled={routeGuideEnabled}
               breadcrumbTrail={breadcrumbTrail}
