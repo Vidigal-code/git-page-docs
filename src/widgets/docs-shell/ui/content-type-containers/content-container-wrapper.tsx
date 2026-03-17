@@ -85,12 +85,15 @@ export function ContentContainerWrapper({
 
   const showTopNav = browseNav && (browseNavPosition === "top" || browseNavPosition === "both");
 
+  const resolveChildren = (btn: React.ReactNode | null) =>
+    typeof children === "function" ? (children as (b: React.ReactNode) => React.ReactNode)(btn) : children;
+
   if (!fullscreenEnabled) {
     return (
       <div style={wrapperStyle}>
         {header}
         {showTopNav && <BrowseNavBar browseNav={browseNav} />}
-        {children}
+        {resolveChildren(null)}
       </div>
     );
   }
@@ -108,9 +111,7 @@ export function ContentContainerWrapper({
   );
 
   const resolvedChildren =
-    typeof children === "function"
-      ? (children as (btn: React.ReactNode) => React.ReactNode)(fullscreenButton)
-      : [fullscreenButton, children];
+    typeof children === "function" ? resolveChildren(fullscreenButton) : [fullscreenButton, children];
 
   return (
     <div className={styles.contentContainerWrapper} style={wrapperStyle}>
@@ -135,7 +136,7 @@ export function ContentContainerWrapper({
           </button>
           <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
             <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
-              {children}
+              {resolveChildren(null)}
             </TocScrollContainerProvider>
           </div>
         </div>
