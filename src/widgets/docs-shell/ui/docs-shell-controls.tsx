@@ -70,6 +70,17 @@ export interface DocsShellControlsProps {
   audioPlaylistTitle?: string;
   audioPlaylistDescription?: string;
   audioPopoverCloseLabel?: string;
+  audioPopoverCloseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverPlayIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverPauseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverRestartIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverLoopOnIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverLoopOffIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverNowPlayingLabel?: string;
+  audioPopoverRestartLabel?: string;
+  audioPopoverLoopOnLabel?: string;
+  audioPopoverLoopOffLabel?: string;
+  audioPopoverSourceLabel?: string;
   onOpenVersionLinksPopup: () => void;
   onOpenInfoPopup: () => void;
   onOpenFocusMode: () => void;
@@ -141,6 +152,17 @@ export function DocsShellControls({
   audioPlaylistTitle,
   audioPlaylistDescription,
   audioPopoverCloseLabel,
+  audioPopoverCloseIcon,
+  audioPopoverPlayIcon,
+  audioPopoverPauseIcon,
+  audioPopoverRestartIcon,
+  audioPopoverLoopOnIcon,
+  audioPopoverLoopOffIcon,
+  audioPopoverNowPlayingLabel,
+  audioPopoverRestartLabel,
+  audioPopoverLoopOnLabel,
+  audioPopoverLoopOffLabel,
+  audioPopoverSourceLabel,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
   onOpenFocusMode,
@@ -198,6 +220,17 @@ export function DocsShellControls({
         audioPlaylistTitle={audioPlaylistTitle}
         audioPlaylistDescription={audioPlaylistDescription}
         audioPopoverCloseLabel={audioPopoverCloseLabel}
+        audioPopoverCloseIcon={audioPopoverCloseIcon}
+        audioPopoverPlayIcon={audioPopoverPlayIcon}
+        audioPopoverPauseIcon={audioPopoverPauseIcon}
+        audioPopoverRestartIcon={audioPopoverRestartIcon}
+        audioPopoverLoopOnIcon={audioPopoverLoopOnIcon}
+        audioPopoverLoopOffIcon={audioPopoverLoopOffIcon}
+        audioPopoverNowPlayingLabel={audioPopoverNowPlayingLabel}
+        audioPopoverRestartLabel={audioPopoverRestartLabel}
+        audioPopoverLoopOnLabel={audioPopoverLoopOnLabel}
+        audioPopoverLoopOffLabel={audioPopoverLoopOffLabel}
+        audioPopoverSourceLabel={audioPopoverSourceLabel}
       />
       {focusModeEnabled && (
         <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>

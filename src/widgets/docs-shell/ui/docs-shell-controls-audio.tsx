@@ -15,6 +15,17 @@ export interface DocsShellControlsAudioProps {
   audioPlaylistTitle?: string;
   audioPlaylistDescription?: string;
   audioPopoverCloseLabel?: string;
+  audioPopoverCloseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverPlayIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverPauseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverRestartIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverLoopOnIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverLoopOffIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverNowPlayingLabel?: string;
+  audioPopoverRestartLabel?: string;
+  audioPopoverLoopOnLabel?: string;
+  audioPopoverLoopOffLabel?: string;
+  audioPopoverSourceLabel?: string;
 }
 
 export function DocsShellControlsAudio({
@@ -30,6 +41,17 @@ export function DocsShellControlsAudio({
   audioPlaylistTitle = "Choose track",
   audioPlaylistDescription = "",
   audioPopoverCloseLabel = "Close",
+  audioPopoverCloseIcon,
+  audioPopoverPlayIcon,
+  audioPopoverPauseIcon,
+  audioPopoverRestartIcon,
+  audioPopoverLoopOnIcon,
+  audioPopoverLoopOffIcon,
+  audioPopoverNowPlayingLabel = "Now playing",
+  audioPopoverRestartLabel = "Restart",
+  audioPopoverLoopOnLabel = "Loop on",
+  audioPopoverLoopOffLabel = "Loop off",
+  audioPopoverSourceLabel = "File",
 }: DocsShellControlsAudioProps) {
   if (!showAudioPlayer || !audioPlayerConfig) {
     return null;
@@ -47,6 +69,17 @@ export function DocsShellControlsAudio({
       playlistTitle={audioPlaylistTitle}
       playlistDescription={audioPlaylistDescription}
       closeLabel={audioPopoverCloseLabel}
+      closeIcon={audioPopoverCloseIcon}
+      playIcon={audioPopoverPlayIcon}
+      pauseIcon={audioPopoverPauseIcon}
+      restartIcon={audioPopoverRestartIcon}
+      loopOnIcon={audioPopoverLoopOnIcon}
+      loopOffIcon={audioPopoverLoopOffIcon}
+      nowPlayingLabel={audioPopoverNowPlayingLabel}
+      restartLabel={audioPopoverRestartLabel}
+      loopOnLabel={audioPopoverLoopOnLabel}
+      loopOffLabel={audioPopoverLoopOffLabel}
+      sourceLabel={audioPopoverSourceLabel}
     />
   );
 }

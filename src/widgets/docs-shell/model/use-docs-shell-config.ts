@@ -6,6 +6,12 @@ import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
 import type { LayoutItem, LoadedDocsData, LoadedPage, VersionEntry } from "@/entities/docs/model/types";
 import { getBasePath } from "@/shared/lib/base-path";
 import {
+  resolveAudioPlayerPopoverCloseIconConfig,
+  resolveAudioPlayerPopoverLoopOffIconConfig,
+  resolveAudioPlayerPopoverLoopOnIconConfig,
+  resolveAudioPlayerPopoverPauseIconConfig,
+  resolveAudioPlayerPopoverPlayIconConfig,
+  resolveAudioPlayerPopoverRestartIconConfig,
   resolveHeaderIconConfig,
   resolveNavMenuOpenIconConfig,
   resolveNavMenuCloseIconConfig,
@@ -78,6 +84,17 @@ export interface DocsShellControlsConfig {
   audioPlaylistTitle: string;
   audioPlaylistDescription: string;
   audioPopoverCloseLabel: string;
+  audioPopoverCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverPlayIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverPauseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverRestartIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverLoopOnIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverLoopOffIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  audioPopoverNowPlayingLabel: string;
+  audioPopoverRestartLabel: string;
+  audioPopoverLoopOnLabel: string;
+  audioPopoverLoopOffLabel: string;
+  audioPopoverSourceLabel: string;
 }
 
 export interface NavMenuConfig {
@@ -220,6 +237,17 @@ export function useDocsShellConfig(
       audioPlaylistTitle: getLangMenuLabelFromMenu(site.langmenu, language, "audioPlaylistTitle", "Choose track"),
       audioPlaylistDescription: getLangMenuLabelFromMenu(site.langmenu, language, "audioPlaylistDescription", "Select a track to play from the playlist."),
       audioPopoverCloseLabel: getLangMenuLabelFromMenu(site.langmenu, language, "menuClose", "Close"),
+      audioPopoverCloseIcon: resolveAudioPlayerPopoverCloseIconConfig(site, mode as "dark" | "light", basePath),
+      audioPopoverPlayIcon: resolveAudioPlayerPopoverPlayIconConfig(site, mode as "dark" | "light", basePath),
+      audioPopoverPauseIcon: resolveAudioPlayerPopoverPauseIconConfig(site, mode as "dark" | "light", basePath),
+      audioPopoverRestartIcon: resolveAudioPlayerPopoverRestartIconConfig(site, mode as "dark" | "light", basePath),
+      audioPopoverLoopOnIcon: resolveAudioPlayerPopoverLoopOnIconConfig(site, mode as "dark" | "light", basePath),
+      audioPopoverLoopOffIcon: resolveAudioPlayerPopoverLoopOffIconConfig(site, mode as "dark" | "light", basePath),
+      audioPopoverNowPlayingLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverNowPlaying", "Now playing"),
+      audioPopoverRestartLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverRestart", "Restart"),
+      audioPopoverLoopOnLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverLoopOn", "Loop on"),
+      audioPopoverLoopOffLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverLoopOff", "Loop off"),
+      audioPopoverSourceLabel: getLangMenuLabelFromMenu(site.langmenu, language, "audioPopoverSource", "File"),
     }),
     [
       data.activeVersion,

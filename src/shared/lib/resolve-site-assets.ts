@@ -26,3 +26,14 @@ export {
   type NavMenuIconConfigInput,
   type ResolvedNavMenuIconConfig,
 } from "./resolve-nav-menu-icon";
+export {
+  resolveAudioPlayerPopoverCloseIconConfig,
+  type AudioPlayerPopoverCloseIconConfigInput,
+} from "./resolve-audio-popover-close-icon";
+export {
+  resolveAudioPlayerPopoverPlayIconConfig,
+  resolveAudioPlayerPopoverPauseIconConfig,
+  resolveAudioPlayerPopoverRestartIconConfig,
+  resolveAudioPlayerPopoverLoopOnIconConfig,
+  resolveAudioPlayerPopoverLoopOffIconConfig,
+} from "./resolve-audio-popover-icons";

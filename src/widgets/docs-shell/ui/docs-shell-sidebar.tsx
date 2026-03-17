@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
+import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { MenuNode } from "../model/menu-tree";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
 import styles from "../docs-shell.module.css";
@@ -20,6 +22,9 @@ interface DocsShellSidebarProps {
   onToggleNode: (nodeKey: string) => void;
   isNodeExpanded: (nodeKey: string) => boolean;
   onCollapseSidebar: () => void;
+  blockMenuOnNav: boolean;
+  setBlockMenuOnNav: (v: boolean) => void;
+  navMenuConfig: NavMenuConfig;
 }
 
 export function DocsShellSidebar({
@@ -37,6 +42,9 @@ export function DocsShellSidebar({
   onToggleNode,
   isNodeExpanded,
   onCollapseSidebar,
+  blockMenuOnNav,
+  setBlockMenuOnNav,
+  navMenuConfig,
 }: DocsShellSidebarProps) {
   return (
     <aside className={styles.sidebar}>
@@ -60,6 +68,15 @@ export function DocsShellSidebar({
         />
       </nav>
       <div className={styles.sidebarFooter}>
+        <NavMenuBlockToggle
+          blockMenuOnNav={blockMenuOnNav}
+          onToggle={() => setBlockMenuOnNav(!blockMenuOnNav)}
+          activeIcon={navMenuConfig.navMenuBlockActiveIcon}
+          inactiveIcon={navMenuConfig.navMenuBlockInactiveIcon}
+          labelActive={navMenuConfig.blockMenuOnNavLabelActive}
+          labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
+          className={`${styles.button} ${styles.sidebarRailButton}`}
+        />
         <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onCollapseSidebar} aria-label={menuCloseLabel} title={menuCloseLabel}>
           ❮❮
         </button>

@@ -514,6 +514,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         onToggleNode={toggleNode}
         isNodeExpanded={isNodeExpanded}
         onCollapseSidebar={() => setSidebarOpen(false)}
+        blockMenuOnNav={blockMenuOnNav}
+        setBlockMenuOnNav={setBlockMenuOnNav}
+        navMenuConfig={navMenuConfig}
       />
 
       {!sidebarOpen && (
@@ -544,8 +547,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
         activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
         controlsProps={controlsProps}
         navMenuConfig={navMenuConfig}
-        blockMenuOnNav={blockMenuOnNav}
-        setBlockMenuOnNav={setBlockMenuOnNav}
         currentPage={currentPage}
         data={data}
         language={language}
@@ -670,8 +671,6 @@ function DocsShellMainContent(props: {
   activeLayoutMode?: string;
   controlsProps: DocsShellControlsProps;
   navMenuConfig: import("./model/use-docs-shell-config").NavMenuConfig;
-  blockMenuOnNav: boolean;
-  setBlockMenuOnNav: (v: boolean) => void;
   currentPage: LoadedPage | undefined;
   data: LoadedDocsData;
   language: string;
@@ -773,8 +772,6 @@ function DocsShellMainContent(props: {
         onToggleMenu={props.onToggleMenu}
         activeLayoutMode={activeLayoutMode as "light" | "dark" | undefined}
         navMenuConfig={props.navMenuConfig}
-        blockMenuOnNav={props.blockMenuOnNav}
-        setBlockMenuOnNav={props.setBlockMenuOnNav}
         controls={<DocsShellControls {...controlsProps} />}
       />
 

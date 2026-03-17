@@ -168,6 +168,66 @@ export interface SiteConfig {
   IconAudioPauseReactIconesTagColorDark?: string;
   IconAudioPauseReactIconesTagColorLight?: string;
   IconAudioPauseReactIconesTagSize?: string;
+  /** Audio player popover (choose track): close button icon */
+  IconAudioPlayerPopoverCloseLightImg?: string;
+  IconAudioPlayerPopoverCloseDarkImg?: string;
+  IconAudioPlayerPopoverCloseReactIcones?: boolean;
+  IconAudioPlayerPopoverCloseReactIconesTag?: string;
+  IconAudioPlayerPopoverCloseReactIconesTagColorDark?: string;
+  IconAudioPlayerPopoverCloseReactIconesTagColorLight?: string;
+  IconAudioPlayerPopoverCloseReactIconesTagSize?: string;
+  IconAudioPlayerPopoverCloseImgWidth?: string | number;
+  IconAudioPlayerPopoverCloseImgHeight?: string | number;
+  /** Audio player popover: play button icon */
+  IconAudioPlayerPopoverPlayLightImg?: string;
+  IconAudioPlayerPopoverPlayDarkImg?: string;
+  IconAudioPlayerPopoverPlayReactIcones?: boolean;
+  IconAudioPlayerPopoverPlayReactIconesTag?: string;
+  IconAudioPlayerPopoverPlayReactIconesTagColorDark?: string;
+  IconAudioPlayerPopoverPlayReactIconesTagColorLight?: string;
+  IconAudioPlayerPopoverPlayReactIconesTagSize?: string;
+  IconAudioPlayerPopoverPlayImgWidth?: string | number;
+  IconAudioPlayerPopoverPlayImgHeight?: string | number;
+  /** Audio player popover: pause button icon */
+  IconAudioPlayerPopoverPauseLightImg?: string;
+  IconAudioPlayerPopoverPauseDarkImg?: string;
+  IconAudioPlayerPopoverPauseReactIcones?: boolean;
+  IconAudioPlayerPopoverPauseReactIconesTag?: string;
+  IconAudioPlayerPopoverPauseReactIconesTagColorDark?: string;
+  IconAudioPlayerPopoverPauseReactIconesTagColorLight?: string;
+  IconAudioPlayerPopoverPauseReactIconesTagSize?: string;
+  IconAudioPlayerPopoverPauseImgWidth?: string | number;
+  IconAudioPlayerPopoverPauseImgHeight?: string | number;
+  /** Audio player popover: restart button icon */
+  IconAudioPlayerPopoverRestartLightImg?: string;
+  IconAudioPlayerPopoverRestartDarkImg?: string;
+  IconAudioPlayerPopoverRestartReactIcones?: boolean;
+  IconAudioPlayerPopoverRestartReactIconesTag?: string;
+  IconAudioPlayerPopoverRestartReactIconesTagColorDark?: string;
+  IconAudioPlayerPopoverRestartReactIconesTagColorLight?: string;
+  IconAudioPlayerPopoverRestartReactIconesTagSize?: string;
+  IconAudioPlayerPopoverRestartImgWidth?: string | number;
+  IconAudioPlayerPopoverRestartImgHeight?: string | number;
+  /** Audio player popover: loop on icon */
+  IconAudioPlayerPopoverLoopOnLightImg?: string;
+  IconAudioPlayerPopoverLoopOnDarkImg?: string;
+  IconAudioPlayerPopoverLoopOnReactIcones?: boolean;
+  IconAudioPlayerPopoverLoopOnReactIconesTag?: string;
+  IconAudioPlayerPopoverLoopOnReactIconesTagColorDark?: string;
+  IconAudioPlayerPopoverLoopOnReactIconesTagColorLight?: string;
+  IconAudioPlayerPopoverLoopOnReactIconesTagSize?: string;
+  IconAudioPlayerPopoverLoopOnImgWidth?: string | number;
+  IconAudioPlayerPopoverLoopOnImgHeight?: string | number;
+  /** Audio player popover: loop off icon */
+  IconAudioPlayerPopoverLoopOffLightImg?: string;
+  IconAudioPlayerPopoverLoopOffDarkImg?: string;
+  IconAudioPlayerPopoverLoopOffReactIcones?: boolean;
+  IconAudioPlayerPopoverLoopOffReactIconesTag?: string;
+  IconAudioPlayerPopoverLoopOffReactIconesTagColorDark?: string;
+  IconAudioPlayerPopoverLoopOffReactIconesTagColorLight?: string;
+  IconAudioPlayerPopoverLoopOffReactIconesTagSize?: string;
+  IconAudioPlayerPopoverLoopOffImgWidth?: string | number;
+  IconAudioPlayerPopoverLoopOffImgHeight?: string | number;
   /** TOC scroll max-height desktop, e.g. "min(65vh, 400px)" */
   TocScrollMaxHeightDesktop?: string;
   /** TOC scroll max-height mobile, e.g. "220px" */

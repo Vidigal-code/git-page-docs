@@ -15,6 +15,17 @@ interface DocsShellAudioPlayerProps {
   playlistTitle: string;
   playlistDescription: string;
   closeLabel: string;
+  closeIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  playIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  pauseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  restartIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  loopOnIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  loopOffIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  nowPlayingLabel?: string;
+  restartLabel?: string;
+  loopOnLabel?: string;
+  loopOffLabel?: string;
+  sourceLabel?: string;
 }
 
 export function DocsShellAudioPlayer({
@@ -28,6 +39,17 @@ export function DocsShellAudioPlayer({
   playlistTitle,
   playlistDescription,
   closeLabel,
+  closeIcon,
+  playIcon,
+  pauseIcon,
+  restartIcon,
+  loopOnIcon,
+  loopOffIcon,
+  nowPlayingLabel = "Now playing",
+  restartLabel = "Restart",
+  loopOnLabel = "Loop on",
+  loopOffLabel = "Loop off",
+  sourceLabel = "File",
 }: DocsShellAudioPlayerProps) {
   const {
     playing,
@@ -35,7 +57,13 @@ export function DocsShellAudioPlayer({
     audioRef,
     audioSrc,
     embedUrl,
+    restartKey,
+    loopEnabled,
+    toggleLoop,
     togglePlay,
+    play,
+    pause,
+    restart,
     selectTrack,
     closePopover,
     currentTrack,
@@ -68,19 +96,41 @@ export function DocsShellAudioPlayer({
         isOpen={popoverOpen}
         tracks={tracks}
         language={lang}
+        currentTrack={currentTrack}
+        playing={playing}
+        loopEnabled={loopEnabled}
         onSelect={selectTrack}
         onClose={closePopover}
+        onPlay={play}
+        onPause={pause}
+        onRestart={restart}
+        onToggleLoop={toggleLoop}
         title={playlistTitle}
         description={playlistDescription}
         closeLabel={closeLabel}
-        overlayClassName={styles.versionLinksOverlay}
-        cardClassName={styles.versionLinksCard}
+        nowPlayingLabel={nowPlayingLabel}
+        restartLabel={restartLabel}
+        loopOnLabel={loopOnLabel}
+        loopOffLabel={loopOffLabel}
+        sourceLabel={sourceLabel}
+        playLabel={playLabel}
+        pauseLabel={pauseLabel}
+        closeIcon={closeIcon}
+        playIcon={playIcon}
+        pauseIcon={pauseIcon}
+        restartIcon={restartIcon}
+        loopOnIcon={loopOnIcon}
+        loopOffIcon={loopOffIcon}
+        overlayClassName={styles.audioPlayerPopoverOverlay}
+        cardClassName={styles.audioPlayerPopoverCard}
+        closeButtonClassName={styles.audioPlayerPopoverCloseButton}
+        controlButtonClassName={styles.audioPlayerPopoverControlButton}
       />
       {isNative && (
         <audio
           ref={audioRef}
           src={audioSrc}
-          loop={config.loopEnabled}
+          loop={loopEnabled}
           playsInline
           style={{ display: "none" }}
           aria-hidden
@@ -88,6 +138,7 @@ export function DocsShellAudioPlayer({
       )}
       {isEmbed && playing && (
         <iframe
+          key={restartKey}
           src={embedUrl}
           title="Background audio"
           allow="autoplay"

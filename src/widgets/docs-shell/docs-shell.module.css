@@ -89,6 +89,8 @@
   border-top: 1px solid var(--card-border);
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
 .menuList {
@@ -975,6 +977,84 @@
   gap: 8px;
 }
 
+.audioPlayerPopoverOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 65;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+}
+
+.audioPlayerPopoverCard {
+  width: min(520px, 100%);
+  max-width: 100%;
+  max-height: calc(100dvh - 32px);
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  box-sizing: border-box;
+  margin: auto;
+}
+
+.audioPlayerPopoverHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.audioPlayerPopoverCloseButton {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+}
+
+.audioPlayerPopoverControlButton {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audioPlayerPopoverList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: calc(100dvh - 160px);
+}
+
+.audioPlayerPopoverTrackButton {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+}
+
 .infoOverlayDate {
   margin: 0;
   padding: 8px 0;
@@ -1275,6 +1355,26 @@
   }
 
   .versionLinksCloseButton {
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .audioPlayerPopoverOverlay {
+    padding: 8px;
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-right: max(8px, env(safe-area-inset-right, 0px));
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(8px, env(safe-area-inset-left, 0px));
+  }
+
+  .audioPlayerPopoverCard {
+    width: 100%;
+    max-width: calc(100% - 16px);
+    padding: 12px;
+  }
+
+  .audioPlayerPopoverCloseButton {
     min-width: 44px;
     width: 44px;
     height: 44px;
