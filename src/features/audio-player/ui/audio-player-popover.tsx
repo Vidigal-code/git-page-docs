@@ -167,7 +167,7 @@ export function AudioPlayerPopover({
         aria-label={title}
       >
         <div className={headerClassName}>
-          <strong>{title}</strong>
+          <strong style={{ color: "var(--text)" }}>{title}</strong>
           <button
             type="button"
             className={closeButtonClassName}
