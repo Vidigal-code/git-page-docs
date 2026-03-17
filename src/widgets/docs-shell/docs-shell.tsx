@@ -203,7 +203,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   });
 
   const onMenuClick = useCallback(
-    (pathClick: string, ancestorKeys: string[] = [], options?: { fromLinearNav?: boolean }) => {
+    (pathClick: string, ancestorKeys: string[] = [], options?: { fromLinearNav?: boolean; fromQuickNav?: boolean }) => {
       onMenuClickState(pathClick, ancestorKeys, options);
       setQuickNavOpen(false);
       setFocusModeOpen(false);

@@ -19,7 +19,7 @@ interface DocsShellQuickNavOverlayProps {
   onClose: () => void;
   onQueryChange: (value: string) => void;
   onActiveIndexChange: (nextIndex: number | ((prev: number) => number)) => void;
-  onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
+  onMenuClick: (pathClick: string, ancestorKeys: string[], options?: { fromQuickNav?: boolean }) => void;
 }
 
 export function DocsShellQuickNavOverlay({
@@ -80,7 +80,7 @@ export function DocsShellQuickNavOverlay({
               event.preventDefault();
               const selectedEntry = filteredQuickNavEntries[quickNavActiveIndex];
               if (selectedEntry) {
-                onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys);
+                onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys, { fromQuickNav: true });
               }
             } else if (event.key === "Escape") {
               event.preventDefault();
@@ -96,7 +96,7 @@ export function DocsShellQuickNavOverlay({
                 quickNavItemRefs.current[index] = element;
               }}
               className={`${styles.menuButton} ${index === quickNavActiveIndex ? styles.quickNavItemActive : ""}`}
-              onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys)}
+              onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys, { fromQuickNav: true })}
               onMouseEnter={() => onActiveIndexChange(index)}
             >
               {entry.searchLabel}

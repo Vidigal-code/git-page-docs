@@ -36,6 +36,7 @@ function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): nu
 
 export interface OnMenuClickOptions {
   fromLinearNav?: boolean;
+  fromQuickNav?: boolean;
 }
 
 interface UseDocsShellNavigationStateArgs {
@@ -88,7 +89,8 @@ export function useDocsShellNavigationState({
         return nextMap;
       });
     }
-    const skipSidebarOpen = options.fromLinearNav === true && blockSidebarOpenOnNav;
+    const skipSidebarOpen =
+      blockSidebarOpenOnNav && (options?.fromLinearNav === true || options?.fromQuickNav === true);
     if (!skipSidebarOpen) {
       setSidebarOpen(true);
     }

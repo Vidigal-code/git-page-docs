@@ -32,7 +32,7 @@ export interface DocsShellOverlaysProps {
   headerName: string;
   headerMenuTree: MenuNode[];
   menuCloseLabel: string;
-  onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
+  onMenuClick: (pathClick: string, ancestorKeys: string[], options?: { fromLinearNav?: boolean; fromQuickNav?: boolean }) => void;
   toggleNode: (key: string) => void;
   isNodeExpanded: (key: string) => boolean;
   controlsProps: DocsShellControlsProps;
