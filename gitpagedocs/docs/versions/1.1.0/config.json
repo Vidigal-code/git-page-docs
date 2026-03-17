@@ -34,7 +34,8 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center"
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     },
     {
       "id": 2,
@@ -70,7 +71,8 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center"
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     },
     {
       "id": 3,
@@ -106,7 +108,8 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center"
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     },
     {
       "id": 4,
@@ -142,7 +145,8 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center"
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     }
   ],
   "routes-html": [
@@ -180,7 +184,8 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center"
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     },
     {
       "id": 2,
@@ -217,7 +222,8 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
-      "RouteguideBrandPosition": "center"
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     }
   ],
   "routes-video": [

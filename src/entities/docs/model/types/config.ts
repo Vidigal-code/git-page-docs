@@ -50,6 +50,8 @@ export interface ContentTypeRouteConfig {
   RouteGuideSpeciFicbrand?: string[];
   /** TOC position: "center" | "left" | "right". Desktop only; mobile always center. */
   RouteguideBrandPosition?: "center" | "left" | "right";
+  /** If true, TOC on top of content. If false, TOC beside content on desktop. Mobile always on top. */
+  RouteguideBrandContainerTop?: boolean;
   /** For routes-video: slug per language for URL identification (e.g. ?videofull=pt&slug=copilot) */
   videoSlug?: Record<LanguageCode, string>;
 }

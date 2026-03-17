@@ -13,6 +13,8 @@ interface TocContainerProps {
   useDefaultScrollBehavior?: boolean;
   /** Rendered inside the markdown content area (e.g. fullscreen button) */
   contentActions?: React.ReactNode;
+  /** If true (default), TOC on top of content. If false, TOC beside content on desktop. Mobile always on top. */
+  containerTop?: boolean;
 }
 
 export function TocContainer({
@@ -21,6 +23,7 @@ export function TocContainer({
   markdownContent,
   useDefaultScrollBehavior = false,
   contentActions,
+  containerTop = true,
 }: TocContainerProps) {
   if (headings.length === 0) {
     return <>{markdownContent}</>;
@@ -41,10 +44,15 @@ export function TocContainer({
     </div>
   );
 
+  const positionClass = styles[`position${position.charAt(0).toUpperCase() + position.slice(1)}`];
+  const sideWhenNotTop = position === "left" ? "left" : "right";
+
   return (
     <div
-      className={`${styles.wrapper} ${styles[`position${position.charAt(0).toUpperCase() + position.slice(1)}`]}`}
+      className={`${styles.wrapper} ${positionClass}`}
       data-toc-wrapper
+      data-container-top={containerTop ? "true" : "false"}
+      data-side={!containerTop ? sideWhenNotTop : undefined}
     >
       {position === "left" && toc}
       {position === "center" && toc}

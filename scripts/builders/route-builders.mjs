@@ -21,6 +21,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrand = true,
     RouteGuideSpeciFicbrand = [],
     RouteguideBrandPosition = "center",
+    RouteguideBrandContainerTop = false,
   } = options;
   const out = {
     id: routeId,
@@ -46,6 +47,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrand,
     RouteGuideSpeciFicbrand,
     RouteguideBrandPosition,
+    RouteguideBrandContainerTop,
   };
   if (container !== undefined) out.container = container;
   return out;

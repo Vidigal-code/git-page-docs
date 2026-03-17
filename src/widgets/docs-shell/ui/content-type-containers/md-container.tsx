@@ -39,6 +39,8 @@ interface MdContainerProps {
   routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
   /** Default TOC position when not set in config. */
   tocPositionDefault?: TocPosition;
+  /** Default for RouteguideBrandContainerTop when not set in config. */
+  tocContainerTopDefault?: boolean;
   /** When true, TOC links use default anchor behavior (for fullscreen mode) */
   useDefaultScrollBehavior?: boolean;
   /** When true, show only markdown content (hide routes/TOC) - for fullscreen mode */
@@ -65,6 +67,7 @@ export function MdContainer({
   homeAncestorKeys = [],
   routeGuideIconConfig,
   tocPositionDefault = "center",
+  tocContainerTopDefault = false,
   useDefaultScrollBehavior = false,
   contentOnly = false,
   onFullscreenOpen,
@@ -124,6 +127,7 @@ export function MdContainer({
               markdownContent={markdownContent}
               useDefaultScrollBehavior={useDefaultScrollBehavior}
               contentActions={fullscreenButton}
+              containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
             />
           ) : (
             <div style={{ position: "relative" }}>
@@ -141,6 +145,7 @@ export function MdContainer({
             position={tocPosition}
             markdownContent={markdownContent}
             useDefaultScrollBehavior={useDefaultScrollBehavior}
+            containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
           />
         ) : (
           markdownContent

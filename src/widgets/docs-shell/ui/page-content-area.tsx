@@ -223,6 +223,7 @@ export function PageContentArea({
               homeAncestorKeys={homeAncestorKeys}
               routeGuideIconConfig={routeGuideIconConfig}
               tocPositionDefault={data.config.site?.RouteguideBrandPositionDefault ?? "center"}
+              tocContainerTopDefault={data.config.site?.RouteguideBrandContainerTopDefault ?? false}
               onFullscreenOpen={mdFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
             />

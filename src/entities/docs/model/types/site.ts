@@ -86,6 +86,8 @@ export interface SiteConfig {
   IconRouteGuideImgHeight?: number;
   /** Default TOC position when RouteguideBrand is true. "center" | "left" | "right" */
   RouteguideBrandPositionDefault?: "center" | "left" | "right";
+  /** Default for RouteguideBrandContainerTop when not set per route. If false, TOC beside content on desktop. */
+  RouteguideBrandContainerTopDefault?: boolean;
   /** TOC scroll max-height desktop, e.g. "min(65vh, 400px)" */
   TocScrollMaxHeightDesktop?: string;
   /** TOC scroll max-height mobile, e.g. "220px" */

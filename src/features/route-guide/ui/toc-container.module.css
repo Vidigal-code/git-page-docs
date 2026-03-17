@@ -1,4 +1,5 @@
 .wrapper {
+  --toc-aside-width: 220px;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -74,6 +75,38 @@
 
 .contentWithActions {
   position: relative;
+}
+
+/* Side-by-side when containerTop=false (desktop only) */
+@media (min-width: 768px) {
+  .wrapper[data-container-top="false"] {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .wrapper[data-container-top="false"] .tocAside {
+    width: var(--toc-aside-width);
+    flex-shrink: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wrapper[data-container-top="false"] .tocScroll {
+    max-height: none;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .wrapper[data-container-top="false"] .content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .wrapper[data-container-top="false"][data-side="right"] .content {
+    order: -1;
+  }
 }
 
 /* Mobile: routes extend full width, centered, stacked, never overflow */
