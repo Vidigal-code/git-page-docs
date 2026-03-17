@@ -1,6 +1,6 @@
 export function parseCliOptions(argv, env) {
   const args = argv.slice(2);
-  const knownFlags = new Set(["--build", "--serve", "--layoutconfig", "--full", "--push"]);
+  const knownFlags = new Set(["--build", "--serve", "--layoutconfig", "--full", "--push", "--home"]);
   const readOptionValue = (optionName) => {
     const equalsArg = args.find((arg) => arg.startsWith(`${optionName}=`));
     if (equalsArg) {
@@ -25,6 +25,7 @@ export function parseCliOptions(argv, env) {
     .filter((arg) => !arg.startsWith("--owner"))
     .filter((arg) => !arg.startsWith("--repo"))
     .filter((arg) => !arg.startsWith("--path"))
+    .filter((arg) => !arg.startsWith("--home"))
     .map((arg) => arg.replace(/^--/, "").trim())
     .filter(Boolean);
   if (!githubOwner && fallbackDashedArgs[0]) {
@@ -38,7 +39,8 @@ export function parseCliOptions(argv, env) {
   const isServe = argv.includes("--serve");
   const useLocalLayoutConfig = argv.includes("--layoutconfig");
   const shouldPush = argv.includes("--push");
-  const mode = argv.includes("--full") ? "full" : "config-only";
+  const isHome = argv.includes("--home");
+  const mode = isHome ? "home" : argv.includes("--full") ? "full" : "config-only";
   const outputDir = "gitpagedocs";
   return {
     isBuild,

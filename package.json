@@ -2,27 +2,28 @@
   "name": "gitpagedocs",
   "version": "1.0.0",
   "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
-  "main": "scripts/gitpagedocs-init.mjs",
+  "main": "cli/index.mjs",
   "bin": {
-    "gitpagedocs": "scripts/gitpagedocs-init.mjs"
+    "gitpagedocs": "cli/index.mjs"
   },
   "files": [
-    "scripts",
+    "cli",
     "prebuilt"
   ],
   "scripts": {
     "predev": "node -e \"const fs=require('fs'); const s='gitpagedocs/icon.svg'; const d='public/icon.svg'; if(fs.existsSync(s)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(s,d);}\"",
     "dev": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false next dev",
     "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('.next',{recursive:true})}catch(e){}\"",
-    "build": "node scripts/gitpagedocs-init.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build",
-    "build:prebuilt": "node scripts/gitpagedocs-init.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build && node -e \"const fs=require('fs'); if(fs.existsSync('prebuilt')) fs.rmSync('prebuilt',{recursive:true}); fs.cpSync('out','prebuilt',{recursive:true}); fs.writeFileSync('prebuilt/.nojekyll','')\"",
+    "build": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build",
+    "build:prebuilt": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build && node -e \"const fs=require('fs'); if(fs.existsSync('prebuilt')) fs.rmSync('prebuilt',{recursive:true}); fs.cpSync('out','prebuilt',{recursive:true}); fs.writeFileSync('prebuilt/.nojekyll','')\"",
     "prepublishOnly": "node -e \"if(process.platform==='win32'){console.warn('Skipping build:prebuilt on Windows (EBUSY). Use GitHub Actions to publish with prebuilt.');process.exit(0)}require('child_process').execSync('npm run build:prebuilt',{stdio:'inherit'})\"",
     "export": "next export",
     "prestart": "npm run build",
-    "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node scripts/start.mjs",
+    "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
-    "gitpagedocs": "node scripts/gitpagedocs-init.mjs",
-    "gitpagedocs:full": "node scripts/gitpagedocs-init.mjs"
+    "gitpagedocs": "node cli/index.mjs",
+    "gitpagedocs:full": "node cli/index.mjs",
+    "gitpagedocs:home": "node cli/index.mjs --home"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,9 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
+  },
+  "dependencies": {
+    "inquirer": "^9.2.23"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

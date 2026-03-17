@@ -3,10 +3,22 @@ import { parseCliOptions, sanitizeSegment } from "./cli-options.mjs";
 import { getCurrentGitBranch, runGitPushForGeneratedArtifacts } from "./git-ops.mjs";
 import { writeConfigOnlyOutput, writeText } from "./output.mjs";
 import { ensureGitHubPagesWorkflow } from "./workflow.mjs";
+import { runHomeBuild } from "../home/home-build-runner.mjs";
 
 export async function runCli(params) {
   const { argv, env, root, pkgRoot, prebuiltDir, buildConfigArtifacts, createThemeTemplate, layouts } = params;
   const options = parseCliOptions(argv, env);
+
+  if (options.mode === "home") {
+    await runHomeBuild({
+      root,
+      pkgRoot,
+      buildConfigArtifacts,
+      createThemeTemplate,
+      layouts,
+    });
+    return;
+  }
   const artifacts = buildConfigArtifacts({
     useLocalLayoutConfig: options.useLocalLayoutConfig,
     githubOwner: sanitizeSegment(options.githubOwner),

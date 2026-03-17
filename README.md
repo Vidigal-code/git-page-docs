@@ -47,6 +47,29 @@ Shortcut syntax also supported:
 npx gitpagedocs --push --your-user --your-repository
 ```
 
+### Standalone home distribution (`npx gitpagedocs --home`)
+
+Generates a self-contained `gitpagedocshome/` folder with:
+
+- Static export of the docs (ready for `npx serve .`)
+- Pre-configured `.env`
+- `Dockerfile` for container deployment
+- `README.md` with usage instructions
+
+```bash
+npx gitpagedocs --home
+cd gitpagedocshome
+npx serve .
+```
+
+Or with Docker:
+
+```bash
+cd gitpagedocshome
+docker build -t gitpagedocshome .
+docker run -p 3000:80 gitpagedocshome
+```
+
 ## Layout Strategy
 
 `gitpagedocs` supports two layout strategies:
@@ -193,6 +216,7 @@ GITPAGEDOCS_REPOSITORY_SEARCH=true
 
 - `npm run gitpagedocs` -> runs `node scripts/gitpagedocs-init.mjs`
 - `npm run gitpagedocs:full` -> compatibility alias for the same generator
+- `npm run gitpagedocs:home` -> generates `gitpagedocshome/` (static site + .env + Dockerfile + README)
 - `npm run build` -> generate `gitpagedocs/` + `next build`
 - `npm run build:prebuilt` -> generate + build + copy `out/` to `prebuilt/`
 - `npm run dev` -> `next dev`
@@ -295,5 +319,6 @@ Supported for compatibility:
 - `--full`
 - `--push` (setup + workflow + git push automation)
 - `--path <subpath>` (optional; put docs under a subpath, e.g. `docs` or `git-page-docs`)
+- `--home` (standalone distribution in `gitpagedocshome/` with static site, `.env`, `Dockerfile`, and `README`)
 
-These flags do not change the artifact type. Output remains `gitpagedocs/`.
+With `--home`, output is `gitpagedocshome/` instead of `gitpagedocs/`. Otherwise, output remains `gitpagedocs/`.
