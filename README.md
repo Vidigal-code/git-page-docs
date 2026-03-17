@@ -33,13 +33,13 @@ npx gitpagedocs --push --owner your-user --repo your-repository
 
 Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/1.0.0/?lang=en`.
 
-Optional `--path` to serve docs in a subpath:
+Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 
 ```bash
-npx gitpagedocs --push --owner your-user --repo your-repository --path git-page-docs
+npx gitpagedocs --push --owner your-user --repo your-repository --path docs
 ```
 
-Then docs are at `https://your-user.github.io/your-repository/git-page-docs/v/1.0.0/?lang=en`.
+Then docs are at `https://your-user.github.io/your-repository/docs/v/1.0.0/?lang=en`.
 
 Shortcut syntax also supported:
 
@@ -126,7 +126,7 @@ npm start
 - Use the repository workflow to build/deploy static output.
 - Optional one-command bootstrap:
   - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs at `https://<owner>.github.io/<repo>/v/<version>/`
-  - `npx gitpagedocs --push --owner your-user --repo your-repository --path <subpath>` — docs at `https://<owner>.github.io/<repo>/<subpath>/v/<version>/`
+  - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/v/<version>/`
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
   - The generated workflow clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds, and deploys to your GitHub Pages URL.
   - Root URL redirects to docs entrypoint (`/v/<version>`), so `https://<owner>.github.io/<repo>/` opens docs directly.
@@ -294,6 +294,6 @@ Supported for compatibility:
 - `--serve`
 - `--full`
 - `--push` (setup + workflow + git push automation)
-- `--path <subpath>` (optional; put docs under a subpath, e.g. `git-page-docs`)
+- `--path <subpath>` (optional; put docs under a subpath, e.g. `docs` or `git-page-docs`)
 
 These flags do not change the artifact type. Output remains `gitpagedocs/`.
