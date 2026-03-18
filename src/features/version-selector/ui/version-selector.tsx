@@ -1,4 +1,4 @@
-import type { VersionEntry } from "@/entities/docs/model/types";
+import type { VersionEntry } from "@/entities/docs";
 
 interface VersionSelectorProps {
   versions: VersionEntry[];

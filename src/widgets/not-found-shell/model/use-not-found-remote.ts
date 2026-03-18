@@ -6,9 +6,8 @@ export {
   checkRepositoryHasGitPageDocs,
   loadRemoteDocsData,
   parseSupportedLanguage,
-} from "@/entities/docs/api/load-remote-docs-data-client";
-export type { SupportedLanguage } from "@/entities/docs/api/load-remote-docs-data-client";
-export { getLanguageLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-export { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
-export { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
-export type { LoadedDocsData } from "@/entities/docs/model/types";
+  getLanguageLabelFromMenu,
+  resolveThemeByMode,
+  toSearchShellCssVars,
+} from "@/entities/docs";
+export type { LoadedDocsData, SupportedLanguage } from "@/entities/docs";

@@ -1,20 +1,8 @@
 "use client";
 
-import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
-import { getEmbedUrl, isNativeAudio, isNativeVideo } from "@/entities/docs/lib/video/embed-url";
+import { getEmbedUrl, isNativeAudio, isNativeVideo, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import styles from "../../docs-shell.module.css";
-
-function getContainerStyle(container: ContentTypeRouteConfig["container"]): React.CSSProperties {
-  if (container === "full") {
-    return { minHeight: "80vh", overflow: "auto" };
-  }
-  if (typeof container === "number" && container > 0) {
-    return { height: container, overflow: "auto" };
-  }
-  return {};
-}
 
 function parseCssToStyle(css: string | undefined): React.CSSProperties {
   if (!css) return {};

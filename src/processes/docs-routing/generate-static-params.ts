@@ -1,4 +1,4 @@
-import { loadRootConfig } from "@/entities/docs/api/io/config-loader";
+import { loadRootConfig } from "@/entities/docs/server";
 import { parseOwnerRepoFromUrl } from "@/shared/lib/runtime/parse-owner-repo";
 import { getRepoFromPackage } from "@/shared/config/repo-from-package";
 
@@ -6,30 +6,34 @@ const DEFAULT_VERSIONS = ["1.0.0", "1.1.0", "1.1.1"];
 const FALLBACK_OWNER = "Vidigal-code";
 const FALLBACK_REPO = "git-page-docs";
 
-export async function generateStaticParams(): Promise<{ repo: string[] }[]> {
+export async function generateDocsStaticParams(): Promise<{ repo: string[] }[]> {
   const params: { repo: string[] }[] = [{ repo: [] }];
   let versions: string[] = [...DEFAULT_VERSIONS];
 
-  const addVersionPaths = (vids: string[]) => {
-    for (const vid of vids) {
-      if (!params.some((p) => p.repo?.length >= 2 && p.repo[0] === "v" && p.repo[1] === vid)) {
-        params.push({ repo: ["v", vid] });
+  const addVersionPaths = (versionIds: string[]) => {
+    for (const versionId of versionIds) {
+      if (!params.some((entry) => entry.repo?.length >= 2 && entry.repo[0] === "v" && entry.repo[1] === versionId)) {
+        params.push({ repo: ["v", versionId] });
       }
     }
   };
 
-  const addRepoWithVersions = (owner: string, repo: string, vids: string[]) => {
-    if (!params.some((p) => p.repo?.length >= 2 && p.repo[0] === owner && p.repo[1] === repo)) {
+  const addRepoWithVersions = (owner: string, repo: string, versionIds: string[]) => {
+    if (!params.some((entry) => entry.repo?.length >= 2 && entry.repo[0] === owner && entry.repo[1] === repo)) {
       params.push({ repo: [owner, repo] });
     }
-    for (const vid of vids) {
+    for (const versionId of versionIds) {
       if (
         !params.some(
-          (p) =>
-            p.repo?.length >= 4 && p.repo[0] === owner && p.repo[1] === repo && p.repo[2] === "v" && p.repo[3] === vid,
+          (entry) =>
+            entry.repo?.length >= 4 &&
+            entry.repo[0] === owner &&
+            entry.repo[1] === repo &&
+            entry.repo[2] === "v" &&
+            entry.repo[3] === versionId,
         )
       ) {
-        params.push({ repo: [owner, repo, "v", vid] });
+        params.push({ repo: [owner, repo, "v", versionId] });
       }
     }
   };
@@ -39,7 +43,7 @@ export async function generateStaticParams(): Promise<{ repo: string[] }[]> {
       VersionControl?: { versions?: { id: string }[] };
       site?: { ProjectLink?: string };
     }>();
-    versions = config?.VersionControl?.versions?.map((v: { id: string }) => v.id) ?? DEFAULT_VERSIONS;
+    versions = config?.VersionControl?.versions?.map((version) => version.id) ?? DEFAULT_VERSIONS;
     addVersionPaths(versions);
 
     if (config?.site?.ProjectLink) {
@@ -70,5 +74,6 @@ export async function generateStaticParams(): Promise<{ repo: string[] }[]> {
       addRepoWithVersions(FALLBACK_OWNER, FALLBACK_REPO, versions);
     }
   }
+
   return params;
 }

@@ -1,17 +1,17 @@
 "use client";
 
-import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
 import type {
-  LoadedDocsData,
-  LoadedMdContent,
-  LoadedHtmlContent,
-  LoadedVideoContent,
+  BrowseItem,
+  BreadcrumbItem,
   LoadedAudioContent,
-} from "@/entities/docs/model/types";
-import type { BreadcrumbItem } from "@/entities/docs/model/menu";
-import type { BrowseItem } from "@/entities/docs/model/navigation";
+  LoadedDocsData,
+  LoadedHtmlContent,
+  LoadedMdContent,
+  LoadedVideoContent,
+  MenuNode,
+  VersionLinkOption,
+} from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import type { MenuNode } from "@/entities/docs/model/menu";
 import type { MenuEntry } from "../model/menu-tree";
 import { DocsShellFocusOverlay } from "./docs-shell-focus-overlay";
 import { DocsShellInfoOverlay } from "./docs-shell-info-overlay";

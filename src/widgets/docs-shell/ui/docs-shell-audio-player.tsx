@@ -1,7 +1,7 @@
 "use client";
 
 import { AudioPlayerButton, AudioPlayerPopover, useAudioPlayer } from "@/features/audio-player";
-import type { ResolvedBackgroundAudioConfig } from "@/entities/docs/lib/audio";
+import type { ResolvedBackgroundAudioConfig } from "@/entities/docs";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellAudioPlayerProps {

@@ -4,7 +4,6 @@ import { LanguageSelector } from "@/features/language-selector";
 import { QuickNavigationTrigger } from "@/features/quick-navigation";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { VersionSelector } from "@/features/version-selector";
-import type { LanguageCode } from "@/entities/docs/model/types";
 import type {
   DocsShellControlsBaseProps,
   DocsShellControlsAudioProps,
@@ -32,7 +31,7 @@ export function DocsShellControls({
   previewIconImgWidth,
   previewIconImgHeight,
   showInfoButton,
-  updateDate,
+  updateDate: _updateDate,
   lastUpdateLabel,
   useReactInfoIcon,
   infoIconTag,

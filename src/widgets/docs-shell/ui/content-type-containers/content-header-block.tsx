@@ -1,7 +1,6 @@
 "use client";
 
-import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
+import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
 import styles from "../../docs-shell.module.css";
 
 function parseCssToStyle(css: string | undefined): React.CSSProperties {

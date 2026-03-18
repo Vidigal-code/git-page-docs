@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
+import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
 import { isFrameBlockedUrl } from "@/shared/lib/is-frame-blocked-url";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";

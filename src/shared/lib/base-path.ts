@@ -9,20 +9,6 @@ export function getBasePath(): string {
 }
 
 /**
- * Converts full pathname (from window.location.pathname) to app path (for usePathname / router).
- * Strips the basePath prefix when present.
- */
-export function toAppPath(fullPathname: string): string {
-  const base = getBasePath();
-  if (!base) return fullPathname;
-  const normalized = fullPathname.replace(/\/+$/, "") || "/";
-  if (normalized === base || normalized.startsWith(base + "/")) {
-    return normalized.slice(base.length) || "/";
-  }
-  return fullPathname;
-}
-
-/**
  * Converts app path to full pathname for window.location / plain <a href>.
  */
 export function toFullPath(appPath: string): string {

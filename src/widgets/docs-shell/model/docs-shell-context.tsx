@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import type { LoadedDocsData, LoadedPage } from "@/entities/docs/model/types";
+import type { LoadedDocsData, LoadedPage } from "@/entities/docs";
 
 export interface DocsShellContextValue {
   data: LoadedDocsData;

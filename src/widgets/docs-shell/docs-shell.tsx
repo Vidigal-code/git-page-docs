@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { toDocsShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
-import type { LoadedDocsData, LoadedPage } from "@/entities/docs/model/types";
-import type { BreadcrumbItem, MenuNode } from "@/entities/docs/model/menu";
+import { toDocsShellCssVars, type LoadedDocsData } from "@/entities/docs";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
 import { useDocsShellKeyboard } from "./model/use-docs-shell-keyboard";
@@ -15,15 +13,13 @@ import { useDocsShellUrl } from "./model/use-docs-shell-url";
 import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLabels } from "./model/use-docs-shell-labels";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
-import type { MenuEntry } from "./model/menu-tree";
-import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getUrlParamsForPathClick } from "./model/menu-tree";
-import { getBasePath, toFullPath } from "@/shared/lib/base-path";
+import { getBreadcrumbTrail, getUrlParamsForPathClick } from "./model/menu-tree";
+import { getBasePath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
-import { DocsShellControls } from "./ui/docs-shell-controls";
 import { CollapsedNavRail } from "./ui/docs-shell-collapsed-rail";
 import { DocsShellMainContent } from "./ui/docs-shell-main-content";
 import { DocsShellOverlays } from "./ui/docs-shell-overlays";
@@ -33,7 +29,7 @@ import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
   const { getCurrentSearchParams, replaceUrlWithoutNavigation, pathname, router } = useDocsShellUrl();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams() ?? new URLSearchParams();
 
   const { languageStorageKey, versionStorageKey, themeModeStorageKey, themeLayoutStorageKey } = useDocsPreferences(
     data.config.site.name,
@@ -148,9 +144,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   } = useFocusMode(markdownHtml);
 
   const versionFromQuery = searchParams.get("version");
+  const pathnameValue = pathname ?? "/";
   const isRemoteRepositorySession = data.activeRepository.source === "remote";
   const { selectedVersionValue, onVersionChange: onVersionChangeInternal } = useVersionRouting({
-    pathname,
+    pathname: pathnameValue,
     versionFromQuery,
     activeVersionId: data.activeVersionId,
     availableVersions: data.availableVersions,
@@ -186,7 +183,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   useDocsShellVersionSync({
     showVersionSelector: controlsConfig.showVersionSelector,
     isRemoteRepositorySession,
-    pathname,
+    pathname: pathnameValue,
     versionStorageKey,
     availableVersions: data.availableVersions,
     routerReplace: router.replace,

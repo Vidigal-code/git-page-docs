@@ -7,7 +7,7 @@ import { FaPause } from "react-icons/fa";
 import { CiPlay1 } from "react-icons/ci";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
-import type { AudioTrackConfig } from "@/entities/docs/model/types";
+import type { AudioTrackConfig } from "@/entities/docs";
 import { getDisplaySourceLabel } from "../lib/get-display-source-label";
 
 function renderIcon(icon: ResolvedNavMenuIconConfig | undefined, fallback: React.ReactNode) {

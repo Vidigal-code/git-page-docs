@@ -2,19 +2,23 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-import { toSearchShellCssVars } from "@/entities/docs/lib/theme/to-css-vars";
-import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
+import {
+  buildFooterConfigFromData,
+  getLanguageLabelFromMenu,
+  getLangMenuLabelFromMenu,
+  toSearchShellCssVars,
+  type LanguageCode,
+  type LoadedDocsData,
+} from "@/entities/docs";
 import { RepositorySearchForm } from "@/features/repository-search-form";
 import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
-import { buildFooterConfigFromData } from "@/entities/docs/lib/footer/build-footer-config";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
-import styles from "./repository-search-shell.module.css";
+import styles from "./repository-search-screen.module.css";
 
-export function RepositorySearchShell({
+export function RepositorySearchScreen({
   data,
   repositoryNotUsingGitPageDocs,
 }: {
@@ -88,7 +92,7 @@ export function RepositorySearchShell({
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
   const footerEnabled = data.config.site.FooterEnabled !== false;
 
-  // Handle repository identification via URL hash (#/owner/repo) on mount only
+  // Read #/owner/repo only once to avoid URL/React state races after first mount.
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
       const parts = window.location.hash.slice(2).split("/").filter(Boolean);
@@ -97,7 +101,7 @@ export function RepositorySearchShell({
         setRepoInput(parts[1]);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount to sync from hash
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only sync from legacy hash route.
   }, []);
 
   function onSearch() {
@@ -106,8 +110,6 @@ export function RepositorySearchShell({
     if (!owner || !repo) {
       return;
     }
-    // Keep the canonical route format on search:
-    // /<owner>/<repo>/ (no hash-based fallback in the final URL).
     const targetPath = `/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/`;
     router.push(targetPath);
   }

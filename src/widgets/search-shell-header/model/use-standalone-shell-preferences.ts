@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
+import { resolveThemeByMode, type LanguageCode, type LayoutItem } from "@/entities/docs";
 import { THEME_URL_PARAM } from "@/shared/config/constants";
 import { toFullPath } from "@/shared/lib/base-path";
-import type { LanguageCode, LayoutItem } from "@/entities/docs/model/types";
 
 const STORAGE_KEY_PREFIX = "git-page-docs";
 
@@ -36,6 +35,10 @@ export function useStandaloneShellPreferences({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const safeSearchParams = useMemo(
+    () => searchParams ?? new URLSearchParams(),
+    [searchParams],
+  );
 
   const languageStorageKey = buildStorageKey("language", siteName);
   const themeModeStorageKey = buildStorageKey("mode", siteName);
@@ -68,7 +71,7 @@ export function useStandaloneShellPreferences({
     if (typeof window !== "undefined") {
       return new URLSearchParams(window.location.search);
     }
-    return new URLSearchParams(searchParams.toString());
+    return new URLSearchParams(searchParams?.toString() ?? "");
   }
 
   function replaceUrl(path: string, params: URLSearchParams) {
@@ -84,7 +87,7 @@ export function useStandaloneShellPreferences({
 
   // Restore language from URL → localStorage
   useEffect(() => {
-    const langFromQuery = searchParams.get("lang") as LanguageCode | null;
+    const langFromQuery = safeSearchParams.get("lang") as LanguageCode | null;
     if (langFromQuery && availableLanguages.includes(langFromQuery)) {
       setLanguage(langFromQuery);
       setLanguageRestored(true);
@@ -100,19 +103,19 @@ export function useStandaloneShellPreferences({
       /* ignore */
     }
     setLanguageRestored(true);
-  }, [searchParams, availableLanguages, languageStorageKey, languageRestored]);
+  }, [safeSearchParams, availableLanguages, languageStorageKey, languageRestored]);
 
   // Restore theme from URL (theme param) → localStorage (once)
   useEffect(() => {
     if (themeRestored) return;
-    const urlThemeId = searchParams.get(THEME_URL_PARAM);
+    const urlThemeId = safeSearchParams.get(THEME_URL_PARAM);
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
     if (layoutFromUrl) {
       setActiveThemeId(layoutFromUrl.id);
       setThemeRestored(true);
       return;
     }
-    const urlMode = searchParams.get("modetheme");
+    const urlMode = safeSearchParams.get("modetheme");
     try {
       const savedMode = window.localStorage.getItem(themeModeStorageKey);
       const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
@@ -127,7 +130,7 @@ export function useStandaloneShellPreferences({
     }
     setThemeRestored(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only restore once, skip when themeRestored
-  }, [searchParams, configuredDefaultMode, layouts, initialThemeBaseId, themeModeStorageKey, themeLayoutStorageKey]);
+  }, [safeSearchParams, configuredDefaultMode, layouts, initialThemeBaseId, themeModeStorageKey, themeLayoutStorageKey]);
 
   // Persist language when changed
   useEffect(() => {

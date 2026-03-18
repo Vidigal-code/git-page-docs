@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTocScrollContainer } from "../model/toc-scroll-context";
-import type { HeadingItem } from "@/entities/docs/lib/markdown/extract-headings";
+import type { HeadingItem } from "@/entities/docs";
 import styles from "./toc-tree.module.css";
 
 interface TocTreeProps {

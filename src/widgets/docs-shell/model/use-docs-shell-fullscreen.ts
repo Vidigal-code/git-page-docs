@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import type { LoadedDocsData } from "@/entities/docs/model/types";
+import type { LoadedDocsData } from "@/entities/docs";
 import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
 import { toFullPath } from "@/shared/lib/base-path";
 import type { FullscreenParams } from "./use-docs-shell-url-params";

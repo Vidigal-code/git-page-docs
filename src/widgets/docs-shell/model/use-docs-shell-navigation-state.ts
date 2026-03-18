@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import type {
+  BrowseItem,
   LanguageCode,
+  LoadedAudioContent,
   LoadedDocsData,
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedPage,
   LoadedVideoContent,
-  LoadedAudioContent,
-} from "@/entities/docs/model/types";
-import type { BrowseItem } from "@/entities/docs/model/navigation";
+} from "@/entities/docs";
 import { getPageIndexByPathClick } from "./menu-tree";
 
 export type { BrowseItem };
@@ -49,7 +49,7 @@ interface UseDocsShellNavigationStateArgs {
 
 export function useDocsShellNavigationState({
   data,
-  language,
+  language: _language,
   setSidebarOpen,
   setMenuOpen,
   blockSidebarOpenOnNav = false,

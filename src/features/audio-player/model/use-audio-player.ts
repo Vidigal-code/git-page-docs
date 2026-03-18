@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AudioTrackConfig, LanguageCode } from "@/entities/docs/model/types";
+import type { AudioTrackConfig, LanguageCode } from "@/entities/docs";
 import {
   getAudioSrc,
   getEmbedUrlWithAutoplay,

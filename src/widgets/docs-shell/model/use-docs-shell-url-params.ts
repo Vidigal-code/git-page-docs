@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import type { LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
+import type { LanguageCode, LoadedDocsData } from "@/entities/docs";
 import { getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
 import { buildUnifiedHeaderMenuTree } from "./menu-tree";
 
@@ -99,7 +99,6 @@ export function useDocsShellUrlParams(
 
     if (menuLang && (menuId || menuSlug)) {
       let pathClick: string | null = null;
-      let ancestorKeys: string[] = [];
 
       if (menuId) {
         const idNum = parseInt(menuId, 10);

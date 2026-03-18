@@ -1,6 +1,4 @@
-import { getEmbedUrl } from "@/entities/docs/lib/video/embed-url";
-import type { AudioTrackConfig } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
+import { getEmbedUrl, type AudioTrackConfig, type LanguageCode } from "@/entities/docs";
 import { getBasePath } from "@/shared/lib/base-path";
 import {
   isNativeAudio,

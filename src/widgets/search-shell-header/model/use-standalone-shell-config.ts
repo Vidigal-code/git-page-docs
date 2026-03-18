@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import {
   fetchOfficialSiteConfig,
   loadStandaloneLayoutsAndThemes,
-} from "@/entities/docs/api/load-remote-docs-data-client";
-import type { OfficialSiteConfig } from "@/entities/docs/api/load-remote-docs-data-client";
-import type { LayoutsConfig, ThemeTemplate } from "@/entities/docs/model/types";
+  type LayoutsConfig,
+  type OfficialSiteConfig,
+  type ThemeTemplate,
+} from "@/entities/docs";
 
 export interface StandaloneShellConfig {
   layoutsConfig: LayoutsConfig;

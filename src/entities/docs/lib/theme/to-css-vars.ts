@@ -35,7 +35,6 @@ export function toDocsShellCssVars(
   site?: SiteConfig,
 ): CSSProperties {
   const base = toBaseThemeCssVars(theme);
-  const colors = theme?.colors ?? {};
   const button = (theme?.components.button as
     | {
         borderRadius?: string;

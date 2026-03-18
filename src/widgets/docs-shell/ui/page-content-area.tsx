@@ -2,20 +2,19 @@
 
 import { useCallback } from "react";
 import type {
+  BrowseItem,
+  BreadcrumbItem,
   ContentTypeRouteConfig,
   LanguageCode,
+  LoadedAudioContent,
   LoadedDocsData,
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedPage,
   LoadedVideoContent,
-  LoadedAudioContent,
-  RouteConfig,
-} from "@/entities/docs/model/types";
+} from "@/entities/docs";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
-import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-import type { BrowseItem } from "@/entities/docs/model/navigation";
-import type { BreadcrumbItem } from "@/entities/docs/model/menu";
+import { getLangMenuLabelFromMenu } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import {
   isBrowseAllEnabled,

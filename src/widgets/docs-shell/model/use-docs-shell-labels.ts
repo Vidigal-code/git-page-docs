@@ -1,7 +1,5 @@
 import { useMemo } from "react";
-import { getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-import { resolveTranslation } from "@/entities/docs/lib/i18n/resolve-translation";
-import type { LoadedDocsData } from "@/entities/docs/model/types";
+import { getLangMenuLabelFromMenu, resolveTranslation, type LoadedDocsData } from "@/entities/docs";
 
 export interface DocsShellLabels {
   previousLabel: string;

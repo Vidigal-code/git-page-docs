@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
+import type { VersionLinkOption } from "@/entities/docs";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import styles from "../docs-shell.module.css";
 

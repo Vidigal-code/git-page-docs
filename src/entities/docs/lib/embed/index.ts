@@ -16,5 +16,5 @@ export function resolveAudioEmbedUrl(type: string, url: string, language: Langua
   return url;
 }
 
-export { registerEmbedResolver, getEmbedResolver, hasEmbedResolver } from "./embed-resolver-registry";
+export { registerEmbedResolver, getEmbedResolver } from "./embed-resolver-registry";
 export type { EmbedResolver } from "./embed-resolver-registry";

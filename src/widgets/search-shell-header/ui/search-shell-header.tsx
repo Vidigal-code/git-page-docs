@@ -6,7 +6,7 @@ import Link from "next/link";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
-import type { LanguageCode, LayoutItem } from "@/entities/docs/model/types";
+import type { LanguageCode, LayoutItem } from "@/entities/docs";
 import styles from "../search-shell-header.module.css";
 
 interface SearchShellHeaderProps {
@@ -32,7 +32,7 @@ interface SearchShellHeaderProps {
 
 export function SearchShellHeader({
   siteName,
-  basePath,
+  basePath: _basePath,
   language,
   languages,
   onLanguageChange,

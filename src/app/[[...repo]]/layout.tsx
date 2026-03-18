@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { FALLBACK_HEADER_NAME, resolveHeaderName } from "@/shared/lib/resolve-site-assets";
-import { loadRootConfig } from "@/entities/docs/api/io/config-loader";
+import { loadSiteName } from "@/processes/site-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
-  let siteName = FALLBACK_HEADER_NAME;
-  try {
-    const config = await loadRootConfig<{ site?: { SiteHeaderName?: string; name?: string } }>();
-    siteName = resolveHeaderName(config?.site?.SiteHeaderName, config?.site?.name);
-  } catch {
-    // fallback kept
-  }
+  const siteName = await loadSiteName();
   return {
     title: { absolute: siteName },
     openGraph: {

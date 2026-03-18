@@ -11,7 +11,3 @@ export function registerEmbedResolver(type: string, resolver: EmbedResolver): vo
 export function getEmbedResolver(type: string): EmbedResolver | undefined {
   return registry.get(type.toLowerCase());
 }
-
-export function hasEmbedResolver(type: string): boolean {
-  return registry.has(type.toLowerCase());
-}

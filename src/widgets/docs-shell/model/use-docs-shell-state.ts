@@ -1,4 +1,4 @@
-import type { LoadedDocsData } from "@/entities/docs/model/types";
+import type { LoadedDocsData } from "@/entities/docs";
 import { useDocsShellPopups } from "./use-docs-shell-popups";
 import { useDocsShellThemeState } from "./use-docs-shell-theme-state";
 import { useDocsShellLanguageState } from "./use-docs-shell-language-state";

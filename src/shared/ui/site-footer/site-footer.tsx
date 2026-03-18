@@ -23,7 +23,7 @@ export interface SiteFooterProps {
 }
 
 export function SiteFooter({
-  language,
+  language: _language,
   projectLabel,
   linkName,
   linkUrl,

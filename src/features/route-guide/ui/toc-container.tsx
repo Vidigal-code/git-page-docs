@@ -1,7 +1,7 @@
 "use client";
 
 import { TocTree } from "./toc-tree";
-import type { HeadingItem } from "@/entities/docs/lib/markdown/extract-headings";
+import type { HeadingItem } from "@/entities/docs";
 import styles from "./toc-container.module.css";
 
 export type TocPosition = "center" | "left" | "right";

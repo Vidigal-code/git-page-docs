@@ -11,7 +11,7 @@ export function useDocsShellUrl() {
     if (typeof window !== "undefined") {
       return new URLSearchParams(window.location.search);
     }
-    return new URLSearchParams(searchParams.toString());
+    return new URLSearchParams(searchParams?.toString() ?? "");
   }, [searchParams]);
 
   const replaceUrlWithoutNavigation = useCallback(

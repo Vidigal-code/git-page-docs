@@ -37,26 +37,3 @@ export function parseRepoPathFromLocation(
   const version = versionFromPath || versionFromQuery;
   return { owner, repo, version, language };
 }
-
-/**
- * Parse owner, repo, version from pathname and search params (for testing or non-window usage).
- */
-export function parseRepoPathFromProps(
-  pathname: string,
-  searchParams: URLSearchParams,
-  basePath: string,
-  parseLanguage: ParseLanguageFn,
-): ParsedRepoPath | null {
-  const withoutBase = basePath ? pathname.slice(basePath.length) : pathname;
-  const parts = withoutBase.split("/").filter(Boolean);
-  if (parts.length < 2) {
-    return null;
-  }
-  const owner = parts[0];
-  const repo = parts[1];
-  const versionFromPath = parts.length >= 4 && parts[2] === "v" ? parts[3] : undefined;
-  const versionFromQuery = searchParams.get("version") ?? undefined;
-  const language = parseLanguage(searchParams.get("lang"));
-  const version = versionFromPath || versionFromQuery;
-  return { owner, repo, version, language };
-}

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ContentTypeRouteConfig, RouteConfig } from "@/entities/docs/model/types";
+import type { ContentTypeRouteConfig, RouteConfig } from "@/entities/docs";
 import styles from "../docs-shell.module.css";
 
 export function isBrowseAllEnabled(config: ContentTypeRouteConfig | RouteConfig | undefined): boolean {

@@ -1,9 +1,15 @@
 import { useMemo } from "react";
-import { getBackgroundAudioConfig } from "@/entities/docs/lib/audio";
-import { buildFooterConfigFromData } from "@/entities/docs/lib/footer/build-footer-config";
-import { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "@/entities/docs/lib/i18n/lang-menu";
-import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
-import type { LayoutItem, LoadedDocsData, LoadedPage, VersionEntry } from "@/entities/docs/model/types";
+import {
+  buildFooterConfigFromData,
+  buildVersionLinkOptions,
+  getBackgroundAudioConfig,
+  getLanguageLabelFromMenu,
+  getLangMenuLabelFromMenu,
+  type LayoutItem,
+  type LoadedDocsData,
+  type LoadedPage,
+  type VersionEntry,
+} from "@/entities/docs";
 import { getBasePath } from "@/shared/lib/base-path";
 import {
   resolveAudioPlayerPopoverCloseIconConfig,
@@ -72,7 +78,7 @@ export interface DocsShellControlsConfig {
   darkModeLabel: string;
   lightModeLabel: string;
   showAudioPlayer: boolean;
-  audioPlayerConfig: import("@/entities/docs/lib/audio").ResolvedBackgroundAudioConfig | null;
+  audioPlayerConfig: import("@/entities/docs").ResolvedBackgroundAudioConfig | null;
   useReactAudioPlayIcon: boolean;
   audioPlayIconTag: string | undefined;
   audioPlayIconStyle: React.CSSProperties;
@@ -277,6 +283,7 @@ export function useDocsShellConfig(
       canToggleMode,
       nextModeIsDark,
       audioPlayerConfig,
+      basePath,
     ],
   );
 

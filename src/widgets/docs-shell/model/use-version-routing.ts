@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
-import type { LanguageCode, VersionEntry } from "@/entities/docs/model/types";
+import { buildVersionPath, type LanguageCode, type VersionEntry } from "@/entities/docs";
 import { toFullPath } from "@/shared/lib/base-path";
 
 interface UseVersionRoutingArgs {

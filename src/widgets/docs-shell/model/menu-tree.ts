@@ -1,17 +1,21 @@
-import type { ContentType, HeaderMenuItem, HeaderMenuLocalizedContent, LanguageCode, LoadedDocsData } from "@/entities/docs/model/types";
 import {
+  getBreadcrumbTrail,
+  getPageIndexByPathClick,
+  getUrlParamsForPathClick,
+  type BreadcrumbItem,
+  type ContentType,
+  type HeaderMenuItem,
+  type HeaderMenuLocalizedContent,
+  type LanguageCode,
+  type LoadedDocsData,
   type MenuEntry,
   type MenuNode,
-  type BreadcrumbItem,
-  getBreadcrumbTrail,
-} from "@/entities/docs/model/menu";
-import { getPageIndexByPathClick } from "@/entities/docs/model/menu-utils";
+} from "@/entities/docs";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 
 export type { MenuEntry, MenuNode, BreadcrumbItem };
 export { getBreadcrumbTrail, getPageIndexByPathClick };
-
-export { getUrlParamsForPathClick } from "@/entities/docs/model/menu-utils";
+export { getUrlParamsForPathClick };
 
 function buildLocalizedSubmenuTree(
   submenus: HeaderMenuLocalizedContent[],

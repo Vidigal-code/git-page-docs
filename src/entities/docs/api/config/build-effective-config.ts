@@ -1,7 +1,5 @@
 import type {
-  ContentTypeRouteConfig,
   GitPageDocsConfig,
-  RouteConfig,
 } from "@/entities/docs/model/types";
 import { hasPath } from "../utils/route-utils";
 import type { MergedRoutesConfig } from "./merge-version-config";

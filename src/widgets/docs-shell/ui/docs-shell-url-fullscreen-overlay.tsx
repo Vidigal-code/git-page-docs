@@ -5,15 +5,15 @@ import { FiX } from "react-icons/fi";
 import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentArea } from "./page-content-area";
 import type {
+  BrowseItem,
+  BreadcrumbItem,
+  LoadedAudioContent,
   LoadedDocsData,
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedVideoContent,
-  LoadedAudioContent,
-} from "@/entities/docs/model/types";
+} from "@/entities/docs";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
-import type { BrowseItem } from "@/entities/docs/model/navigation";
-import type { BreadcrumbItem } from "@/entities/docs/model/menu";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "../docs-shell.module.css";
 

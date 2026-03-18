@@ -1,4 +1,4 @@
-import type { AudioTrackConfig, LanguageCode } from "@/entities/docs/model/types";
+import type { AudioTrackConfig, LanguageCode } from "@/entities/docs";
 
 /** Friendly display names for embed platform types */
 const PLATFORM_DISPLAY_NAMES: Record<string, string> = {

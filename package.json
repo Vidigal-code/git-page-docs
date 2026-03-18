@@ -21,6 +21,8 @@
     "prestart": "npm run build",
     "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
+    "lint:src": "eslint \"src/**/*.{ts,tsx}\"",
+    "typecheck:strict-unused": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
     "smoke:cli": "node tools/smoke/cli-smoke.mjs",
     "baseline:create": "node tools/smoke/create-baseline.mjs",
     "baseline:check": "node tools/smoke/check-baseline.mjs",

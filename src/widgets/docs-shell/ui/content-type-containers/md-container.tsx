@@ -1,11 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
-import type { BreadcrumbItem } from "@/entities/docs/model/menu";
+import { extractHeadingsFromHtml, type BreadcrumbItem, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import { extractHeadingsFromHtml } from "@/entities/docs/lib/markdown/extract-headings";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
 import { RouteGuideBreadcrumb, TocContainer } from "@/features/route-guide";
@@ -136,7 +133,7 @@ export function MdContainer({
             </div>
           );
         }
-      : (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
+      : (_fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
           const hideToc = contentOnly || options?.contentOnly;
           const showToc = !hideToc && routeguideBrand && headings.length > 0;
           return showToc ? (

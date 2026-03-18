@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { LoadedDocsData } from "@/entities/docs/model/types";
+import type { LoadedDocsData } from "@/entities/docs";
 import { buildUnifiedHeaderMenuTree, flattenMenuTree, getPageIndexByPathClick } from "./menu-tree";
 
 export function useDocsShellLinearNav(data: LoadedDocsData, language: string, safePageIndex: number) {

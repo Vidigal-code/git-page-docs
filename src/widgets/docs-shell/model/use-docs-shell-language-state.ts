@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { LanguageCode } from "@/entities/docs/model/types";
+import type { LanguageCode } from "@/entities/docs";
 
 interface UseDocsShellLanguageStateArgs {
   defaultLanguage: LanguageCode;

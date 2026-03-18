@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { resolveThemeByMode } from "@/entities/docs/lib/theme/resolve-theme-by-mode";
-import type { LayoutItem } from "@/entities/docs/model/types";
+import { resolveThemeByMode, type LayoutItem } from "@/entities/docs";
 import { THEME_URL_PARAM } from "@/shared/config/constants";
 
 interface UseDocsShellThemeStateArgs {

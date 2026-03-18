@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { BreadcrumbItem } from "@/entities/docs/model/menu";
+import type { BreadcrumbItem } from "@/entities/docs";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./route-guide-breadcrumb.module.css";

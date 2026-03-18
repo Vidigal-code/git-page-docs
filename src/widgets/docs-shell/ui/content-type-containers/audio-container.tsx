@@ -1,8 +1,6 @@
 "use client";
 
-import type { ContentTypeRouteConfig } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
-import { getEmbedUrl, isNativeAudio, isNativeVideo } from "@/entities/docs/lib/video/embed-url";
+import { getEmbedUrl, isNativeAudio, isNativeVideo, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import styles from "../../docs-shell.module.css";
 

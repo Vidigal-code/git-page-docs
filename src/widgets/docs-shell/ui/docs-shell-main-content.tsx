@@ -1,15 +1,15 @@
 "use client";
 
 import type {
-  LoadedDocsData,
-  LoadedPage,
-  LoadedMdContent,
-  LoadedHtmlContent,
-  LoadedVideoContent,
+  BrowseItem,
+  BreadcrumbItem,
   LoadedAudioContent,
-} from "@/entities/docs/model/types";
-import type { BreadcrumbItem } from "@/entities/docs/model/menu";
-import type { BrowseItem } from "@/entities/docs/model/navigation";
+  LoadedDocsData,
+  LoadedHtmlContent,
+  LoadedMdContent,
+  LoadedPage,
+  LoadedVideoContent,
+} from "@/entities/docs";
 import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { DocsShellControls, type DocsShellControlsProps } from "./docs-shell-controls";

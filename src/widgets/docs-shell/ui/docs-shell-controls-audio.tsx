@@ -1,5 +1,4 @@
-import type { ResolvedBackgroundAudioConfig } from "@/entities/docs/lib/audio";
-import type { LanguageCode } from "@/entities/docs/model/types";
+import type { LanguageCode, ResolvedBackgroundAudioConfig } from "@/entities/docs";
 import { DocsShellAudioPlayer } from "./docs-shell-audio-player";
 
 export interface DocsShellControlsAudioProps {
@@ -44,7 +43,7 @@ export function DocsShellControlsAudio({
   audioPlayIconTag,
   audioPlayIconStyle,
   audioPauseIconTag,
-  audioPauseIconStyle,
+  audioPauseIconStyle: _audioPauseIconStyle,
   audioPlayLabel = "Play",
   audioPauseLabel = "Pause",
   audioPlaylistTitle = "Choose track",

@@ -1,6 +1,4 @@
-import type { LanguageCode, LayoutItem, VersionEntry } from "@/entities/docs/model/types";
-import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
-import type { ResolvedBackgroundAudioConfig } from "@/entities/docs/lib/audio";
+import type { LanguageCode, LayoutItem, ResolvedBackgroundAudioConfig, VersionEntry, VersionLinkOption } from "@/entities/docs";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 
 /** Version selector and repository links config */
@@ -48,7 +46,7 @@ export interface DocsShellHeaderConfig {
 /** Audio player and popover config */
 export interface DocsShellAudioConfig {
   showAudioPlayer: boolean;
-  audioPlayerConfig: import("@/entities/docs/lib/audio").ResolvedBackgroundAudioConfig | null;
+  audioPlayerConfig: ResolvedBackgroundAudioConfig | null;
   useReactAudioPlayIcon: boolean;
   audioPlayIconTag: string | undefined;
   audioPlayIconStyle: React.CSSProperties;

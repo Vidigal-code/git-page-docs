@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { buildVersionPath } from "@/entities/docs/lib/routing/version-path";
+import { buildVersionPath, type VersionEntry } from "@/entities/docs";
 import { toFullPath } from "@/shared/lib/base-path";
-import type { VersionEntry } from "@/entities/docs/model/types";
 
 export function useDocsShellVersionSync(options: {
   showVersionSelector: boolean;
@@ -24,7 +23,7 @@ export function useDocsShellVersionSync(options: {
 
   useEffect(() => {
     if (!showVersionSelector) return;
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() ?? "");
     const urlVersion = params.get("version");
     const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
     const pathVersionMatch = pathname.match(/\/v\/([^/]+)\/?$/);
