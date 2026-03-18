@@ -6,6 +6,11 @@ export const ROUTE_PATHS = {
   3: { pt: "functionalities.md", en: "functionalities.md", es: "functionalities.md" },
   4: { pt: "github-issues-projects.md", en: "github-issues-projects.md", es: "github-issues-projects.md" },
   5: { pt: "git-introduction.md", en: "git-introduction.md", es: "git-introduction.md" },
+  6: { pt: "configuration.md", en: "configuration.md", es: "configuration.md" },
+  7: { pt: "deployment.md", en: "deployment.md", es: "deployment.md" },
+  8: { pt: "architecture.md", en: "architecture.md", es: "architecture.md" },
+  9: { pt: "themes.md", en: "themes.md", es: "themes.md" },
+  10: { pt: "faq.md", en: "faq.md", es: "faq.md" },
 };
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];

@@ -25,12 +25,35 @@ The runtime expects this structure:
 
 ## Quick navigation
 
-- Open **Getting Started** for local setup.
-- Open **Configuration** for full \`config.json\` explanation.
-- Open **Deployment** for local, server, and GitHub Pages behavior.
-- Open **Architecture** for code map and data flow.
-- Open **Themes and layouts** for template authoring details.
-- Open **FAQ** for troubleshooting.
+Use the menu to open:
+
+- **Getting Started** – Setup from zero
+- **Project overview** – Stack, goals and structure
+- **Functionalities** – CLI, options, configuration, deployment, themes, FAQ
+- **GitHub issues and projects** – How to use Issues and Projects
+- **Introduction to Git** – Basic Git concepts
+- **Source code** – GitHub-style code viewer
+- **Configuration** – Full \`config.json\` explanation
+- **Deployment** – Local, server, and GitHub Pages behavior
+- **Architecture** – Code map and data flow
+- **Themes** – Template authoring details
+- **FAQ** – Troubleshooting
+
+## What each page covers
+
+| Page | Description |
+|------|-------------|
+| Getting Started | Prerequisites, install, generate, local run, CLI behavior, repository search, troubleshooting |
+| Project overview | Stack, objectives, folder structure, architecture summary |
+| Functionalities | CLI commands and options, generated output, content types, source viewer, configuration keys, deployment, architecture, themes, FAQ |
+| GitHub issues and projects | Issues (bugs, features, assignees), Projects (Kanban, tables), workflows |
+| Introduction to Git | Basic Git concepts for beginners |
+| Source code | File tree, search, syntax highlighting, copy, README preview for all \`.md\` files |
+| Configuration | Site, layout, VersionControl sections; content types; env vars |
+| Deployment | Official site, self-hosted GitHub Pages, npm publish |
+| Architecture | Route parser, load-docs, docs-shell; data flow; reliability |
+| Themes | Layout strategies, template model, runtime behavior |
+| FAQ | Remote repos, version path, theme selection, GitHub Pages behavior |
 `,
     gettingStarted: `# Getting Started
 
@@ -75,6 +98,31 @@ Local repository search is controlled by:
 - \`GITPAGEDOCS_REPOSITORY_SEARCH=false\`
 
 On GitHub Pages builds (\`GITHUB_ACTIONS=true\`), repository-search home is enabled.
+
+## Troubleshooting
+
+### Repository search does not work locally
+
+- Set \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` in \`.env\` (create it in project root if missing).
+- Ensure the target repository contains \`gitpagedocs/config.json\`.
+- Check that markdown paths in the target repo match its version config routes.
+
+### Build fails or docs do not load
+
+- Run \`npm run lint\` to catch config or path issues.
+- Ensure \`gitpagedocs/config.json\` exists and has valid \`VersionControl.versions\`.
+- Verify markdown files exist for each language (\`en\`, \`pt\`, \`es\`) in the version folders.
+
+### Version path returns wrong or empty content
+
+- Check \`VersionControl.versions[*].path\` in \`gitpagedocs/config.json\`.
+- Ensure the version config has valid \`routes\` and \`menus-header\`.
+- Regenerate with \`npx gitpagedocs\` to refresh artifacts.
+
+## Next steps
+
+- **Configuration and deployment**: See **Functionalities** for \`config.json\` keys, self-hosted GitHub Pages, and npm publish.
+- **Deploy to GitHub Pages**: Run \`npx gitpagedocs --push --owner <user> --repo <repo>\` to create the workflow, commit artifacts, and push.
 `,
     projectOverview: `# Project Overview
 
@@ -97,6 +145,36 @@ Git Page Docs is powered by Next.js 15, React 19, TypeScript, and Node.js. It bu
 - Multilingual: en, pt, es
 - Theme system with JSON templates
 - Local and GitHub Pages execution
+
+## Architecture (summary)
+
+\`\`\`mermaid
+flowchart LR
+    CLI[npx gitpagedocs] --> gitpagedocs[gitpagedocs/]
+    gitpagedocs --> config[config.json]
+    gitpagedocs --> docs[docs/versions]
+    config --> runtime[Next.js runtime]
+    docs --> runtime
+    runtime --> shell[Docs shell UI]
+\`\`\`
+
+### Data flow
+
+1. **CLI** (\`npx gitpagedocs\`) scans the project and writes \`gitpagedocs/config.json\`, \`gitpagedocs/docs/versions/<ver>/*\`, and optionally \`gitpagedocs/layouts/\`.
+2. **Request** arrives at \`/owner/repo/v/x.y.z\` (or local equivalent).
+3. **Runtime** loads config (local or from remote repo), resolves version, fetches markdown and layouts.
+4. **Docs shell** renders content with language/version/theme state and URL sync.
+
+### Main folders
+
+| Path | Role |
+|------|------|
+| \`gitpagedocs/config.json\` | Root config (site, VersionControl, layout source) |
+| \`gitpagedocs/docs/versions/<ver>/config.json\` | Per-version routes, menus |
+| \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` | Markdown content |
+| \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` | Source code viewer HTML |
+| \`gitpagedocs/layouts/\` | Local layouts (with \`--layoutconfig\`) |
+| \`src/app/\`, \`src/entities/\`, \`src/widgets/\` | Next.js app, load-docs, docs-shell |
 `,
     functionalities: `# Functionalities
 
@@ -154,16 +232,71 @@ The CLI generates a **Source code** page per version. It scans \`src/\`, \`cli/\
 - README.md preview/code toggle
 - Expand all / Collapse all controls
 
-## Config keys (site)
+## Configuration
 
-- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
-- \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
-- \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+Runtime configuration lives in \`gitpagedocs/config.json\`.
+
+### \`site\` section
+
+| Key | Description |
+|-----|-------------|
+| \`name\` | Site name |
+| \`defaultLanguage\` | Default UI language (\`en\`, \`pt\`, \`es\`) |
+| \`supportedLanguages\` | Array of supported languages |
+| \`docsVersion\` | Default docs version |
+| \`rendering\` | GitHub Pages URL for self-hosted |
+| \`ThemeDefault\` | Default theme id |
+| \`ThemeModeDefault\` | Default mode (\`dark\`/\`light\`) |
+| \`ProjectLink\` | Project/repo link |
+
+### Layout source keys
+
+| Key | Description |
+|-----|-------------|
+| \`layoutsConfigPathOficial\` | \`true\` = use official layouts; \`false\` = use local |
+| \`layoutsConfigPath\` | Local layouts config path |
+
+### \`VersionControl\` section
+
+\`VersionControl.versions\` defines per-version: \`id\`, \`path\`, optional metadata.
+
+## Deployment
+
+1. **Official viewer site**: \`https://vidigal-code.github.io/git-page-docs/\` – provide owner + repository to load docs.
+2. **Self-hosted GitHub Pages**: Generate with \`npx gitpagedocs\`, set \`site.rendering\` to your Pages URL, build and deploy via workflow.
+
+## Architecture
+
+Main runtime modules: Route parser (\`src/app/[[...repo]]/page.tsx\`), Load docs (\`src/entities/docs/api/load-docs-data.ts\`), Docs shell (\`src/widgets/docs-shell/docs-shell.tsx\`). Data flow: request → config → version → markdown → layout → shell.
+
+## Themes and layouts
+
+Themes are JSON templates in \`layoutsConfig.json\`. Default mode uses official layouts; Local mode (\`--layoutconfig\`) uses \`gitpagedocs/layouts/\`.
+
+## FAQ
+
+### Why are remote repositories not opening locally?
+
+Check: \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` in \`.env\`; target repo has \`gitpagedocs/config.json\`; markdown paths match routes config.
+
+### Why does a version path return wrong content?
+
+Check: \`VersionControl.versions[*].path\` in config; version config has valid \`routes\` and \`menus-header\`; markdown files exist per language.
+
+### Why does theme selection not apply correctly?
+
+Check: \`layoutsConfig.json\` references valid templates; template ids are unique; selected theme exists in loaded themes map.
+
+### Why can GitHub Pages behave differently from local?
+
+GitHub Pages build mode enables repository-search home and static-export specific behavior.
 
 ## Environment variables
 
-- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – repository search (local)
-- \`GITHUB_ACTIONS\` – GitHub Pages build mode
+| Variable | Description |
+|----------|-------------|
+| \`GITPAGEDOCS_REPOSITORY_SEARCH\` | Enable/disable remote repository search (local) |
+| \`GITHUB_ACTIONS\` | GitHub Pages build mode |
 `,
     githubIssuesProjects: `# GitHub Issues and Projects
 
@@ -171,15 +304,48 @@ Learn how to use GitHub Issues and Projects to manage your work.
 
 ## Issues
 
-- Track bugs, features, and tasks
-- Assignees, labels, milestones
-- Discussions and linked PRs
+Issues let you track bugs, features, and tasks.
+
+- **Assignees**: assign work to team members
+- **Labels**: categorize by type (bug, enhancement, documentation)
+- **Milestones**: group issues for releases or sprints
+- **Discussions**: comments and linked PRs stay attached to the issue
+
+### Creating an issue
+
+1. Open the **Issues** tab in your repo
+2. Click **New issue**
+3. Add title, description, labels, and assignees
+4. Submit and optionally link to a PR when ready
 
 ## Projects
 
-- Kanban boards
-- Tables and roadmaps
-- Custom fields and automation
+Projects visualize and organize work beyond simple lists.
+
+- **Kanban boards**: columns like To do, In progress, Done
+- **Tables**: rows and columns for structured data
+- **Roadmaps**: timeline views with milestones
+- **Custom fields**: priorities, status, effort
+- **Automation**: move items when PRs merge, auto-archive
+
+### Creating a project
+
+1. Open **Projects** in your repo or org
+2. Click **New project**, choose **Board** (Kanban) or **Table**
+3. Add columns/fields (Status, Priority, etc.)
+4. Link issues or add work items manually
+
+### Workflow example
+
+1. Create issues for bugs and features
+2. Add them to a Kanban project
+3. Move cards as work progresses
+4. Link PRs to close issues automatically
+
+## Related resources
+
+- GitHub docs: "Managing your work with GitHub Issues and Projects"
+- Video: "How to use GitHub Issues and Projects"
 `,
     gitIntroduction: `# Introduction to Git
 
@@ -445,12 +611,35 @@ O runtime espera esta estrutura:
 
 ## Navegacao rapida
 
-- Abra **Primeiros passos** para setup local.
-- Abra **Configuracao** para detalhes completos do \`config.json\`.
-- Abra **Publicacao** para comportamento local/producao/GitHub Pages.
-- Abra **Arquitetura** para mapa de codigo e fluxo de dados.
-- Abra **Temas e layouts** para autoria de templates.
-- Abra **FAQ** para troubleshooting.
+Use o menu para abrir:
+
+- **Primeiros passos** – Setup do zero
+- **Visao geral do projeto** – Stack, objetivos e estrutura
+- **Funcionalidades** – CLI, opcoes, configuracao, publicacao, temas, FAQ
+- **GitHub Issues e Projects** – Como usar Issues e Projects
+- **Introducao ao Git** – Conceitos basicos de Git
+- **Codigo fonte** – Visualizador de codigo estilo GitHub
+- **Configuracao** – Detalhes completos do \`config.json\`
+- **Publicacao** – Comportamento local, servidor e GitHub Pages
+- **Arquitetura** – Mapa de codigo e fluxo de dados
+- **Temas** – Detalhes de autoria de templates
+- **FAQ** – Troubleshooting
+
+## O que cada pagina cobre
+
+| Pagina | Descricao |
+|--------|-----------|
+| Primeiros passos | Pre-requisitos, instalar, gerar, execucao local, comportamento da CLI, troubleshooting |
+| Visao geral do projeto | Stack, objetivos, estrutura de pastas, resumo de arquitetura |
+| Funcionalidades | Comandos e opcoes da CLI, saida gerada, tipos de conteudo, visualizador de codigo, chaves de config, publicacao, arquitetura, temas, FAQ |
+| GitHub Issues e Projects | Issues (bugs, features, responsaveis), Projects (Kanban, tabelas), fluxos |
+| Introducao ao Git | Conceitos basicos de Git para iniciantes |
+| Codigo fonte | Arvore de arquivos, busca, destaque de sintaxe, copiar, preview do README |
+| Configuracao | Seccoes site, layout, VersionControl; tipos de conteudo; variaveis de ambiente |
+| Publicacao | Site oficial, GitHub Pages self-hosted, npm publish |
+| Arquitetura | Parser de rotas, load-docs, docs-shell; fluxo de dados; resiliencia |
+| Temas | Estrategias de layout, modelo de template, comportamento em runtime |
+| FAQ | Repos remotos, rota de versao, tema, GitHub Pages |
 `,
     gettingStarted: `# Primeiros passos
 
@@ -490,6 +679,31 @@ No ambiente local, o controle e por variavel:
 - \`GITPAGEDOCS_REPOSITORY_SEARCH=false\`
 
 Em build de GitHub Pages (\`GITHUB_ACTIONS=true\`), a busca de repositorio fica sempre ativa.
+
+## Troubleshooting
+
+### Busca por repositorio nao funciona localmente
+
+- Defina \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` no \`.env\` (crie na raiz do projeto se nao existir).
+- Garanta que o repo alvo contem \`gitpagedocs/config.json\`.
+- Verifique se os paths markdown no repo alvo batem com o config de rotas.
+
+### Build falha ou docs nao carregam
+
+- Execute \`npm run lint\` para detectar erros de config ou paths.
+- Garanta que \`gitpagedocs/config.json\` existe e tem \`VersionControl.versions\` validos.
+- Verifique se existem arquivos markdown para cada idioma (\`en\`, \`pt\`, \`es\`) nas pastas de versao.
+
+### Rota de versao retorna conteudo errado ou vazio
+
+- Verifique \`VersionControl.versions[*].path\` em \`gitpagedocs/config.json\`.
+- Garanta que o config da versao tem \`routes\` e \`menus-header\` validos.
+- Regenere com \`npx gitpagedocs\` para atualizar os artefatos.
+
+## Proximos passos
+
+- **Configuracao e publicacao**: Veja **Funcionalidades** para chaves do \`config.json\`, GitHub Pages self-hosted e publish no npm.
+- **Publicar no GitHub Pages**: Execute \`npx gitpagedocs --push --owner <user> --repo <repo>\` para criar o workflow, commitar artefatos e enviar.
 `,
     projectOverview: `# Visao geral do projeto
 
@@ -505,6 +719,36 @@ Git Page Docs e alimentado por Next.js 15, React 19, TypeScript e Node.js. Gera 
 ## Objetivo
 
 Construir documentacao multilinguagem para repositorios GitHub com suporte a versoes, temas e conteudo md/html/video.
+
+## Arquitetura (resumo)
+
+\`\`\`mermaid
+flowchart LR
+    CLI[npx gitpagedocs] --> gitpagedocs[gitpagedocs/]
+    gitpagedocs --> config[config.json]
+    gitpagedocs --> docs[docs/versions]
+    config --> runtime[Next.js runtime]
+    docs --> runtime
+    runtime --> shell[Docs shell UI]
+\`\`\`
+
+### Fluxo de dados
+
+1. **CLI** (\`npx gitpagedocs\`) escaneia o projeto e escreve \`gitpagedocs/config.json\`, \`gitpagedocs/docs/versions/<ver>/*\` e opcionalmente \`gitpagedocs/layouts/\`.
+2. **Request** chega em \`/owner/repo/v/x.y.z\` (ou equivalente local).
+3. **Runtime** carrega config (local ou remoto), resolve versao, busca markdown e layouts.
+4. **Docs shell** renderiza conteudo com estado de idioma/versao/tema e sincronizacao de URL.
+
+### Pastas principais
+
+| Path | Papel |
+|------|-------|
+| \`gitpagedocs/config.json\` | Config raiz (site, VersionControl, layout) |
+| \`gitpagedocs/docs/versions/<ver>/config.json\` | Rotas e menus por versao |
+| \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` | Conteudo markdown |
+| \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` | Visualizador de codigo HTML |
+| \`gitpagedocs/layouts/\` | Layouts locais (com \`--layoutconfig\`) |
+| \`src/app/\`, \`src/entities/\`, \`src/widgets/\` | App Next.js, load-docs, docs-shell |
 `,
     functionalities: `# Funcionalidades
 
@@ -562,16 +806,71 @@ A CLI gera uma pagina **Codigo fonte** por versao. Escaneia \`src/\`, \`cli/\` e
 - Alternar preview/codigo do README.md
 - Controles Expandir tudo / Recolher tudo
 
-## Chaves de config (site)
+## Configuracao
 
-- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
-- \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
-- \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+A configuracao de runtime fica em \`gitpagedocs/config.json\`.
+
+### Secao \`site\`
+
+| Chave | Descricao |
+|-------|-----------|
+| \`name\` | Nome do site |
+| \`defaultLanguage\` | Idioma padrao (\`en\`, \`pt\`, \`es\`) |
+| \`supportedLanguages\` | Lista de idiomas suportados |
+| \`docsVersion\` | Versao padrao dos docs |
+| \`rendering\` | URL do GitHub Pages para self-hosted |
+| \`ThemeDefault\` | Id do tema padrao |
+| \`ThemeModeDefault\` | Modo padrao (\`dark\`/\`light\`) |
+| \`ProjectLink\` | Link do projeto/repo |
+
+### Chaves de layout
+
+| Chave | Descricao |
+|-------|-----------|
+| \`layoutsConfigPathOficial\` | \`true\` = layouts oficiais; \`false\` = locais |
+| \`layoutsConfigPath\` | Caminho dos layouts locais |
+
+### Secao \`VersionControl\`
+
+\`VersionControl.versions\` define por versao: \`id\`, \`path\` e metadados opcionais.
+
+## Publicacao
+
+1. **Site oficial**: \`https://vidigal-code.github.io/git-page-docs/\` – informe owner + repositorio para carregar docs.
+2. **GitHub Pages self-hosted**: Gere com \`npx gitpagedocs\`, defina \`site.rendering\` para sua URL Pages, faca build e publique via workflow.
+
+## Arquitetura
+
+Modulos principais: Parser de rota (\`src/app/[[...repo]]/page.tsx\`), Carregar docs (\`src/entities/docs/api/load-docs-data.ts\`), Docs shell (\`src/widgets/docs-shell/docs-shell.tsx\`). Fluxo: request → config → versao → markdown → layout → shell.
+
+## Temas e layouts
+
+Temas sao templates JSON em \`layoutsConfig.json\`. Modo padrao usa layouts oficiais; Modo local (\`--layoutconfig\`) usa \`gitpagedocs/layouts/\`.
+
+## FAQ
+
+### Por que repositorios remotos nao abrem localmente?
+
+Verifique: \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` no \`.env\`; repo alvo tem \`gitpagedocs/config.json\`; paths markdown batem com config de rotas.
+
+### Por que rota de versao mostra conteudo errado?
+
+Verifique: \`VersionControl.versions[*].path\` no config; config da versao tem \`routes\` e \`menus-header\` validos; arquivos markdown existem por idioma.
+
+### Por que tema nao aplica corretamente?
+
+Verifique: \`layoutsConfig.json\` referencia templates validos; ids sao unicos; tema selecionado existe no mapa de temas.
+
+### Por que GitHub Pages pode se comportar diferente do local?
+
+O modo build GitHub Pages habilita pagina de busca e comportamento especifico de export estatico.
 
 ## Variaveis de ambiente
 
-- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busca de repositorio (local)
-- \`GITHUB_ACTIONS\` – modo build GitHub Pages
+| Variavel | Descricao |
+|----------|-----------|
+| \`GITPAGEDOCS_REPOSITORY_SEARCH\` | Ativa/desativa busca remota (local) |
+| \`GITHUB_ACTIONS\` | Modo build GitHub Pages |
 `,
     configuration: `# Configuracao
 
@@ -722,11 +1021,50 @@ O projeto e organizado por fronteiras de feature e responsabilidades do runtime.
 
 Aprenda a usar GitHub Issues e Projects para gerenciar seu trabalho.
 
-## Conceitos
+## Issues
 
-- Issues para rastrear tarefas e bugs
-- Projects para visualizar e organizar o trabalho
-- Workflows recomendados para equipes
+Issues permitem rastrear bugs, funcionalidades e tarefas.
+
+- **Responsaveis**: atribuir trabalho a membros da equipe
+- **Etiquetas**: categorizar por tipo (bug, melhoria, documentacao)
+- **Marcos**: agrupar issues para releases ou sprints
+- **Discussoes**: comentarios e PRs vinculados ficam ligados a issue
+
+### Criar uma issue
+
+1. Abra a aba **Issues** no seu repo
+2. Clique em **New issue**
+3. Adicione titulo, descricao, etiquetas e responsaveis
+4. Envie e opcionalmente vincule a um PR quando pronto
+
+## Projects
+
+Projects visualizam e organizam o trabalho alem de listas simples.
+
+- **Quadros Kanban**: colunas como A fazer, Em progresso, Concluido
+- **Tabelas**: linhas e colunas para dados estruturados
+- **Roadmaps**: visoes de timeline com marcos
+- **Campos customizados**: prioridade, status, esforco
+- **Automacao**: mover itens quando PRs fazem merge, arquivar automaticamente
+
+### Criar um project
+
+1. Abra **Projects** no repo ou na organizacao
+2. Clique em **New project**, escolha **Board** (Kanban) ou **Table**
+3. Adicione colunas/campos (Status, Prioridade, etc.)
+4. Vincule issues ou adicione itens manualmente
+
+### Exemplo de fluxo
+
+1. Crie issues para bugs e funcionalidades
+2. Adicione-as a um projeto Kanban
+3. Mova os cards conforme o progresso
+4. Vincule PRs para fechar issues automaticamente
+
+## Recursos relacionados
+
+- Docs GitHub: "Managing your work with GitHub Issues and Projects"
+- Video: "How to use GitHub Issues and Projects"
 `,
     gitIntroduction: `# Introducao ao Git
 
@@ -829,12 +1167,35 @@ El runtime espera esta estructura:
 
 ## Navegacion rapida
 
-- Abre **Primeros pasos** para setup local.
-- Abre **Configuracion** para detalle completo de \`config.json\`.
-- Abre **Publicacion** para comportamiento local/produccion/GitHub Pages.
-- Abre **Arquitectura** para mapa de codigo y flujo de datos.
-- Abre **Temas y layouts** para creacion de templates.
-- Abre **FAQ** para troubleshooting.
+Usa el menu para abrir:
+
+- **Primeros pasos** – Setup desde cero
+- **Vision general del proyecto** – Stack, objetivos y estructura
+- **Funcionalidades** – CLI, opciones, configuracion, publicacion, temas, FAQ
+- **GitHub Issues y Projects** – Como usar Issues y Projects
+- **Introduccion a Git** – Conceptos basicos de Git
+- **Codigo fuente** – Visor de codigo estilo GitHub
+- **Configuracion** – Detalle completo de \`config.json\`
+- **Publicacion** – Comportamiento local, servidor y GitHub Pages
+- **Arquitectura** – Mapa de codigo y flujo de datos
+- **Temas** – Detalles de creacion de templates
+- **FAQ** – Troubleshooting
+
+## Que cubre cada pagina
+
+| Pagina | Descripcion |
+|--------|-------------|
+| Primeros pasos | Requisitos, instalar, generar, ejecucion local, comportamiento de la CLI, troubleshooting |
+| Vision general del proyecto | Stack, objetivos, estructura de carpetas, resumen de arquitectura |
+| Funcionalidades | Comandos y opciones CLI, salida generada, tipos de contenido, visor de codigo, claves de config, publicacion, arquitectura, temas, FAQ |
+| GitHub Issues y Projects | Issues (bugs, features, asignados), Projects (Kanban, tablas), flujos |
+| Introduccion a Git | Conceptos basicos de Git para principiantes |
+| Codigo fuente | Arbol de archivos, busqueda, resaltado de sintaxis, copiar, vista previa del README |
+| Configuracion | Secciones site, layout, VersionControl; tipos de contenido; variables de entorno |
+| Publicacion | Sitio oficial, GitHub Pages self-hosted, npm publish |
+| Arquitectura | Parser de rutas, load-docs, docs-shell; flujo de datos; resiliencia |
+| Temas | Estrategias de layout, modelo de template, comportamiento en runtime |
+| FAQ | Repos remotos, ruta de version, tema, GitHub Pages |
 `,
     gettingStarted: `# Primeros pasos
 
@@ -874,6 +1235,31 @@ En local, se controla por variable:
 - \`GITPAGEDOCS_REPOSITORY_SEARCH=false\`
 
 En build de GitHub Pages (\`GITHUB_ACTIONS=true\`), la busqueda de repositorio siempre esta activa.
+
+## Troubleshooting
+
+### La busqueda por repositorio no funciona en local
+
+- Define \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` en \`.env\` (crealo en la raiz del proyecto si no existe).
+- Asegurate de que el repo objetivo contiene \`gitpagedocs/config.json\`.
+- Verifica que los paths markdown del repo objetivo coincidan con el config de rutas.
+
+### El build falla o los docs no cargan
+
+- Ejecuta \`npm run lint\` para detectar errores de config o paths.
+- Asegurate de que \`gitpagedocs/config.json\` existe y tiene \`VersionControl.versions\` validos.
+- Verifica que existan archivos markdown para cada idioma (\`en\`, \`pt\`, \`es\`) en las carpetas de version.
+
+### La ruta de version retorna contenido incorrecto o vacio
+
+- Verifica \`VersionControl.versions[*].path\` en \`gitpagedocs/config.json\`.
+- Asegurate de que el config de version tiene \`routes\` y \`menus-header\` validos.
+- Regenera con \`npx gitpagedocs\` para actualizar los artefactos.
+
+## Proximos pasos
+
+- **Configuracion y publicacion**: Ve **Funcionalidades** para claves de \`config.json\`, GitHub Pages self-hosted y publicacion en npm.
+- **Publicar en GitHub Pages**: Ejecuta \`npx gitpagedocs --push --owner <user> --repo <repo>\` para crear el workflow, hacer commit de artefactos y enviar.
 `,
     projectOverview: `# Vision general del proyecto
 
@@ -889,6 +1275,36 @@ Git Page Docs esta impulsado por Next.js 15, React 19, TypeScript y Node.js. Gen
 ## Objetivo
 
 Construir documentacion multilingue para repositorios GitHub con soporte para versiones, temas y contenido md/html/video.
+
+## Arquitectura (resumen)
+
+\`\`\`mermaid
+flowchart LR
+    CLI[npx gitpagedocs] --> gitpagedocs[gitpagedocs/]
+    gitpagedocs --> config[config.json]
+    gitpagedocs --> docs[docs/versions]
+    config --> runtime[Next.js runtime]
+    docs --> runtime
+    runtime --> shell[Docs shell UI]
+\`\`\`
+
+### Flujo de datos
+
+1. **CLI** (\`npx gitpagedocs\`) escanea el proyecto y escribe \`gitpagedocs/config.json\`, \`gitpagedocs/docs/versions/<ver>/*\` y opcionalmente \`gitpagedocs/layouts/\`.
+2. **Request** llega a \`/owner/repo/v/x.y.z\` (o equivalente local).
+3. **Runtime** carga config (local o remoto), resuelve version, obtiene markdown y layouts.
+4. **Docs shell** renderiza contenido con estado de idioma/version/tema y sincronizacion de URL.
+
+### Carpetas principales
+
+| Path | Rol |
+|------|-----|
+| \`gitpagedocs/config.json\` | Config raiz (site, VersionControl, layout) |
+| \`gitpagedocs/docs/versions/<ver>/config.json\` | Rutas y menus por version |
+| \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` | Contenido markdown |
+| \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` | Visor de codigo HTML |
+| \`gitpagedocs/layouts/\` | Layouts locales (con \`--layoutconfig\`) |
+| \`src/app/\`, \`src/entities/\`, \`src/widgets/\` | App Next.js, load-docs, docs-shell |
 `,
     functionalities: `# Funcionalidades
 
@@ -946,16 +1362,71 @@ La CLI genera una pagina **Codigo fuente** por version. Escanea \`src/\`, \`cli/
 - Alternar vista previa/codigo del README.md
 - Controles Expandir todo / Colapsar todo
 
-## Claves de config (site)
+## Configuracion
 
-- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
-- \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
-- \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+La configuracion de runtime esta en \`gitpagedocs/config.json\`.
+
+### Seccion \`site\`
+
+| Clave | Descripcion |
+|-------|-------------|
+| \`name\` | Nombre del sitio |
+| \`defaultLanguage\` | Idioma por defecto (\`en\`, \`pt\`, \`es\`) |
+| \`supportedLanguages\` | Lista de idiomas soportados |
+| \`docsVersion\` | Version por defecto de docs |
+| \`rendering\` | URL de GitHub Pages para self-hosted |
+| \`ThemeDefault\` | Id del tema por defecto |
+| \`ThemeModeDefault\` | Modo por defecto (\`dark\`/\`light\`) |
+| \`ProjectLink\` | Enlace del proyecto/repo |
+
+### Claves de layout
+
+| Clave | Descripcion |
+|-------|-------------|
+| \`layoutsConfigPathOficial\` | \`true\` = layouts oficiales; \`false\` = locales |
+| \`layoutsConfigPath\` | Ruta de layouts locales |
+
+### Seccion \`VersionControl\`
+
+\`VersionControl.versions\` define por version: \`id\`, \`path\` y metadatos opcionales.
+
+## Publicacion
+
+1. **Sitio oficial**: \`https://vidigal-code.github.io/git-page-docs/\` – proporcione owner + repositorio para cargar docs.
+2. **GitHub Pages self-hosted**: Genere con \`npx gitpagedocs\`, configure \`site.rendering\` a su URL Pages, haga build y publique via workflow.
+
+## Arquitectura
+
+Modulos principales: Parser de rutas (\`src/app/[[...repo]]/page.tsx\`), Cargar docs (\`src/entities/docs/api/load-docs-data.ts\`), Docs shell (\`src/widgets/docs-shell/docs-shell.tsx\`). Flujo: request → config → version → markdown → layout → shell.
+
+## Temas y layouts
+
+Los temas son templates JSON en \`layoutsConfig.json\`. Modo por defecto usa layouts oficiales; Modo local (\`--layoutconfig\`) usa \`gitpagedocs/layouts/\`.
+
+## FAQ
+
+### Por que repositorios remotos no abren en local?
+
+Verifica: \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` en \`.env\`; repo objetivo tiene \`gitpagedocs/config.json\`; paths markdown coinciden con config de rutas.
+
+### Por que ruta de version muestra contenido incorrecto?
+
+Verifica: \`VersionControl.versions[*].path\` en config; config de version tiene \`routes\` y \`menus-header\` validos; archivos markdown existen por idioma.
+
+### Por que tema no aplica correctamente?
+
+Verifica: \`layoutsConfig.json\` referencia templates validos; ids son unicos; tema seleccionado existe en el mapa de temas.
+
+### Por que GitHub Pages puede comportarse distinto del local?
+
+El modo build GitHub Pages habilita pagina de busqueda y comportamiento especifico de export estatico.
 
 ## Variables de entorno
 
-- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busqueda de repositorio (local)
-- \`GITHUB_ACTIONS\` – modo build GitHub Pages
+| Variable | Descripcion |
+|----------|-------------|
+| \`GITPAGEDOCS_REPOSITORY_SEARCH\` | Activa/desactiva busqueda remota (local) |
+| \`GITHUB_ACTIONS\` | Modo build GitHub Pages |
 `,
     configuration: `# Configuracion
 
@@ -1106,11 +1577,50 @@ El proyecto esta organizado por fronteras de feature y responsabilidades de runt
 
 Aprende a usar GitHub Issues y Projects para gestionar tu trabajo.
 
-## Conceptos
+## Issues
 
-- Issues para rastrear tareas y bugs
-- Projects para visualizar y organizar el trabajo
-- Flujos recomendados para equipos
+Las Issues permiten rastrear bugs, funcionalidades y tareas.
+
+- **Asignados**: asignar trabajo a miembros del equipo
+- **Etiquetas**: categorizar por tipo (bug, mejora, documentacion)
+- **Hitos**: agrupar issues para releases o sprints
+- **Discusiones**: comentarios y PRs vinculados permanecen ligados a la issue
+
+### Crear una issue
+
+1. Abre la pestana **Issues** en tu repo
+2. Haz clic en **New issue**
+3. Anade titulo, descripcion, etiquetas y asignados
+4. Envia y opcionalmente vincula a un PR cuando este listo
+
+## Projects
+
+Los Projects visualizan y organizan el trabajo mas alla de listas simples.
+
+- **Tableros Kanban**: columnas como Por hacer, En progreso, Hecho
+- **Tablas**: filas y columnas para datos estructurados
+- **Roadmaps**: vistas de timeline con hitos
+- **Campos personalizados**: prioridad, estado, esfuerzo
+- **Automatizacion**: mover items cuando los PRs hacen merge, archivar automaticamente
+
+### Crear un project
+
+1. Abre **Projects** en tu repo o en la organizacion
+2. Haz clic en **New project**, elige **Board** (Kanban) o **Table**
+3. Anade columnas/campos (Status, Prioridad, etc.)
+4. Vincula issues o anade items manualmente
+
+### Ejemplo de flujo
+
+1. Crea issues para bugs y funcionalidades
+2. Anadelas a un proyecto Kanban
+3. Mueve las tarjetas segun avance el trabajo
+4. Vincula PRs para cerrar issues automaticamente
+
+## Recursos relacionados
+
+- Docs GitHub: "Managing your work with GitHub Issues and Projects"
+- Video: "How to use GitHub Issues and Projects"
 `,
     gitIntroduction: `# Introduccion a Git
 

@@ -23,11 +23,34 @@ The runtime expects this structure:
 
 ## Quick navigation
 
-- Open **Getting Started** for local setup.
-- Open **Configuration** for full `config.json` explanation.
-- Open **Deployment** for local, server, and GitHub Pages behavior.
-- Open **Architecture** for code map and data flow.
-- Open **Themes and layouts** for template authoring details.
-- Open **FAQ** for troubleshooting.
+Use the menu to open:
+
+- **Getting Started** – Setup from zero
+- **Project overview** – Stack, goals and structure
+- **Functionalities** – CLI, options, configuration, deployment, themes, FAQ
+- **GitHub issues and projects** – How to use Issues and Projects
+- **Introduction to Git** – Basic Git concepts
+- **Source code** – GitHub-style code viewer
+- **Configuration** – Full `config.json` explanation
+- **Deployment** – Local, server, and GitHub Pages behavior
+- **Architecture** – Code map and data flow
+- **Themes** – Template authoring details
+- **FAQ** – Troubleshooting
+
+## What each page covers
+
+| Page | Description |
+|------|-------------|
+| Getting Started | Prerequisites, install, generate, local run, CLI behavior, repository search, troubleshooting |
+| Project overview | Stack, objectives, folder structure, architecture summary |
+| Functionalities | CLI commands and options, generated output, content types, source viewer, configuration keys, deployment, architecture, themes, FAQ |
+| GitHub issues and projects | Issues (bugs, features, assignees), Projects (Kanban, tables), workflows |
+| Introduction to Git | Basic Git concepts for beginners |
+| Source code | File tree, search, syntax highlighting, copy, README preview for all `.md` files |
+| Configuration | Site, layout, VersionControl sections; content types; env vars |
+| Deployment | Official site, self-hosted GitHub Pages, npm publish |
+| Architecture | Route parser, load-docs, docs-shell; data flow; reliability |
+| Themes | Layout strategies, template model, runtime behavior |
+| FAQ | Remote repos, version path, theme selection, GitHub Pages behavior |
 
 > Version: 1.1.0

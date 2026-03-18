@@ -200,6 +200,191 @@
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 6,
+      "title": {
+        "pt": "Configuração",
+        "en": "Configuration",
+        "es": "Configuración"
+      },
+      "description": {
+        "pt": "Configuração do runtime e config.json",
+        "en": "Runtime configuration and config.json",
+        "es": "Configuración del runtime y config.json"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/configuration.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/configuration.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 7,
+      "title": {
+        "pt": "Publicação",
+        "en": "Deployment",
+        "es": "Publicación"
+      },
+      "description": {
+        "pt": "Publicação local e GitHub Pages",
+        "en": "Local and GitHub Pages deployment",
+        "es": "Publicación local y GitHub Pages"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/deployment.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/deployment.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 8,
+      "title": {
+        "pt": "Arquitetura",
+        "en": "Architecture",
+        "es": "Arquitectura"
+      },
+      "description": {
+        "pt": "Mapa de código e fluxo de dados",
+        "en": "Code map and data flow",
+        "es": "Mapa de código y flujo de datos"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/architecture.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/architecture.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/architecture.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 9,
+      "title": {
+        "pt": "Temas",
+        "en": "Themes",
+        "es": "Temas"
+      },
+      "description": {
+        "pt": "Temas e layouts com templates JSON",
+        "en": "Themes and layouts with JSON templates",
+        "es": "Temas y layouts con templates JSON"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/themes.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/themes.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/themes.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 10,
+      "title": {
+        "pt": "FAQ",
+        "en": "FAQ",
+        "es": "FAQ"
+      },
+      "description": {
+        "pt": "Perguntas frequentes e troubleshooting",
+        "en": "Frequently asked questions and troubleshooting",
+        "es": "Preguntas frecuentes y troubleshooting"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/faq.md",
+        "en": "gitpagedocs/docs/versions/1.1.1/en/faq.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/faq.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     }
   ],
   "routes-html": [
@@ -478,6 +663,81 @@
       "es": {
         "title": "Introducción a Git",
         "path-click": "gitpagedocs/docs/versions/1.1.1/es/git-introduction.md"
+      }
+    },
+    {
+      "id": 6,
+      "pt": {
+        "title": "Configuração",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/configuration.md"
+      },
+      "en": {
+        "title": "Configuration",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/configuration.md"
+      },
+      "es": {
+        "title": "Configuración",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/configuration.md"
+      }
+    },
+    {
+      "id": 7,
+      "pt": {
+        "title": "Publicação",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/deployment.md"
+      },
+      "en": {
+        "title": "Deployment",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/deployment.md"
+      },
+      "es": {
+        "title": "Publicación",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/deployment.md"
+      }
+    },
+    {
+      "id": 8,
+      "pt": {
+        "title": "Arquitetura",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/architecture.md"
+      },
+      "en": {
+        "title": "Architecture",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/architecture.md"
+      },
+      "es": {
+        "title": "Arquitectura",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/architecture.md"
+      }
+    },
+    {
+      "id": 9,
+      "pt": {
+        "title": "Temas",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/themes.md"
+      },
+      "en": {
+        "title": "Themes",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/themes.md"
+      },
+      "es": {
+        "title": "Temas",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/themes.md"
+      }
+    },
+    {
+      "id": 10,
+      "pt": {
+        "title": "FAQ",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/pt/faq.md"
+      },
+      "en": {
+        "title": "FAQ",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/en/faq.md"
+      },
+      "es": {
+        "title": "FAQ",
+        "path-click": "gitpagedocs/docs/versions/1.1.1/es/faq.md"
       }
     }
   ],
