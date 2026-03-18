@@ -51,8 +51,9 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+  flex: 0 1 auto;
 }
 
 .brandLink {
@@ -63,6 +64,13 @@
   text-decoration: none;
   font-weight: 700;
   font-size: 1rem;
+}
+
+.brandLink strong {
+  max-width: min(34vw, 320px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .brandLink:hover {
@@ -87,9 +95,9 @@
 
 .select {
   height: clamp(38px, 1.2vw + 30px, 42px);
-  min-width: 128px;
-  max-width: min(220px, 42vw);
-  width: auto;
+  min-width: 0;
+  width: clamp(120px, 15vw, 176px);
+  max-width: 100%;
   box-sizing: border-box;
   padding: 0 36px 0 12px;
   border-radius: var(--select-radius, 10px);
@@ -239,13 +247,16 @@
     gap: 10px;
   }
 
+  .brandLink strong {
+    max-width: min(28vw, 220px);
+  }
+
   .headerRight {
     gap: 6px;
   }
 
   .select {
-    min-width: 110px;
-    max-width: min(180px, 30vw);
+    width: clamp(108px, 17vw, 150px);
   }
 }
 

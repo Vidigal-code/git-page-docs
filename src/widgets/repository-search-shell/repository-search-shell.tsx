@@ -101,15 +101,15 @@ export function RepositorySearchShell({
   }, []);
 
   function onSearch() {
-    const owner = ownerInput.trim();
-    const repo = repoInput.trim();
+    const owner = ownerInput.trim().replace(/^\/+|\/+$/g, "");
+    const repo = repoInput.trim().replace(/^\/+|\/+$/g, "");
     if (!owner || !repo) {
       return;
     }
-    if (typeof window !== "undefined") {
-      window.location.hash = `#/${owner}/${repo}`;
-    }
-    router.push(`/${owner}/${repo}`);
+    // Keep the canonical route format on search:
+    // /<owner>/<repo>/ (no hash-based fallback in the final URL).
+    const targetPath = `/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/`;
+    router.push(targetPath);
   }
 
   const header = (
