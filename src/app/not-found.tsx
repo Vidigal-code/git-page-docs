@@ -7,18 +7,20 @@ import {
   loadRemoteDocsData,
   parseSupportedLanguage,
   toSearchShellCssVars,
-} from "@/widgets/not-found-shell/model/use-not-found-remote";
+} from "@/widgets/not-found-shell";
 import { parseRepoPathFromLocation } from "@/shared/lib/parse-repo-path";
-import type { LoadedDocsData } from "@/widgets/not-found-shell/model/use-not-found-remote";
+import type { LoadedDocsData } from "@/widgets/not-found-shell";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
-import { SearchShellHeader } from "@/widgets/search-shell-header/ui/search-shell-header";
-import { SearchShellLayout } from "@/widgets/search-shell-layout/search-shell-layout";
-import { useStandaloneShellConfig } from "@/widgets/search-shell-header/model/use-standalone-shell-config";
-import { useStandaloneShellPreferences } from "@/widgets/search-shell-header/model/use-standalone-shell-preferences";
+import {
+  SearchShellHeader,
+  useStandaloneShellConfig,
+  useStandaloneShellPreferences,
+} from "@/widgets/search-shell-header";
+import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import notFoundStyles from "./not-found.module.css";
-import { DocsShell } from "@/widgets/docs-shell/docs-shell";
+import { DocsShell } from "@/widgets/docs-shell";
 
 const NOT_INSTALLED = {
   en: "GitPageDocs is not installed.",

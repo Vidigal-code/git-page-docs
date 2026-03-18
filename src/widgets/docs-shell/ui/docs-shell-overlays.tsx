@@ -1,8 +1,15 @@
 "use client";
 
 import type { VersionLinkOption } from "@/entities/docs/lib/version-links";
-import type { LoadedDocsData } from "@/entities/docs/model/types";
+import type {
+  LoadedDocsData,
+  LoadedMdContent,
+  LoadedHtmlContent,
+  LoadedVideoContent,
+  LoadedAudioContent,
+} from "@/entities/docs/model/types";
 import type { BreadcrumbItem } from "@/entities/docs/model/menu";
+import type { BrowseItem } from "@/entities/docs/model/navigation";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import type { MenuNode } from "@/entities/docs/model/menu";
 import type { MenuEntry } from "../model/menu-tree";
@@ -81,10 +88,10 @@ export interface DocsShellOverlaysProps {
   setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
   setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
   setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
-  mdItems: unknown[];
-  htmlItems: unknown[];
-  videoItems: unknown[];
-  audioItems: unknown[];
+  mdItems: BrowseItem<LoadedMdContent>[];
+  htmlItems: BrowseItem<LoadedHtmlContent>[];
+  videoItems: BrowseItem<LoadedVideoContent>[];
+  audioItems: BrowseItem<LoadedAudioContent>[];
   routeGuideEnabled: boolean;
   breadcrumbTrail: BreadcrumbItem[];
   homePathClick: string | undefined;
@@ -179,10 +186,10 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
         setHtmlBrowseIndex={props.setHtmlBrowseIndex}
         setVideoBrowseIndex={props.setVideoBrowseIndex}
         setAudioBrowseIndex={props.setAudioBrowseIndex}
-        mdItems={props.mdItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["mdItems"]}
-        htmlItems={props.htmlItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["htmlItems"]}
-        videoItems={props.videoItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["videoItems"]}
-        audioItems={props.audioItems as Parameters<typeof DocsShellUrlFullscreenOverlay>[0]["audioItems"]}
+        mdItems={props.mdItems}
+        htmlItems={props.htmlItems}
+        videoItems={props.videoItems}
+        audioItems={props.audioItems}
         routeGuideEnabled={props.routeGuideEnabled}
         breadcrumbTrail={props.breadcrumbTrail}
         onMenuClick={props.onMenuClick}

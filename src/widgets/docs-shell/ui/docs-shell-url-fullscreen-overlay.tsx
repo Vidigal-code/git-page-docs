@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { FiX } from "react-icons/fi";
-import { TocScrollContainerProvider } from "@/features/route-guide/model/toc-scroll-context";
+import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentArea } from "./page-content-area";
 import type {
   LoadedDocsData,

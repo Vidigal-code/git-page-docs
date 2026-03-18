@@ -90,7 +90,12 @@ export async function writeConfigOnlyOutput(options) {
         const language = extractLanguageFromPath(docPath);
         const content = key && language ? docsHtml[key]?.[language] : undefined;
         if (!content) continue;
-        await writeText(root, normalizeToOutputPath(outputDir, docPath), content);
+        const normalizedHtmlPath = normalizeToOutputPath(outputDir, docPath);
+        await writeText(root, normalizedHtmlPath, content);
+        // Backward-compatible alias for tools or users that still expect ".html".
+        if (!path.extname(docPath)) {
+          await writeText(root, `${normalizedHtmlPath}.html`, content);
+        }
       }
     }
 

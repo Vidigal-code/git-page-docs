@@ -2,43 +2,25 @@
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { printBanner, printCredits } from "./ui/banner.mjs";
-import { resolveOptions } from "./options/resolver.mjs";
-import { runConfigOnly } from "./commands/run-config-only.mjs";
-import { runHome } from "./commands/run-home.mjs";
-import { buildConfigArtifacts } from "./builders/config-orchestrator.mjs";
-import { createThemeTemplate } from "./builders/theme-template.mjs";
-import { LAYOUTS } from "./data/layouts.mjs";
+import { spawnSync } from "node:child_process";
 
-const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = process.cwd();
-const PKG_ROOT = path.join(SCRIPT_DIR, "..");
-const PREBUILT_DIR = path.join(PKG_ROOT, "prebuilt");
+const scriptPath = fileURLToPath(import.meta.url);
+const scriptDir = path.dirname(scriptPath);
+const tsEntry = path.join(scriptDir, "presentation", "index.ts");
 
-/** Clean architecture layers: presentation -> application -> infrastructure */
-const params = {
-  root: ROOT,
-  pkgRoot: PKG_ROOT,
-  prebuiltDir: PREBUILT_DIR,
-  buildConfigArtifacts,
-  createThemeTemplate,
-  layouts: LAYOUTS,
-};
+const result = spawnSync(
+  process.execPath,
+  ["--import", "tsx", tsEntry, ...process.argv.slice(2)],
+  {
+    stdio: "inherit",
+    cwd: process.cwd(),
+    env: process.env,
+  },
+);
 
-async function main() {
-  printBanner();
-  const options = await resolveOptions(process.argv, process.env);
-
-  if (options.mode === "home") {
-    await runHome({ ...params, options });
-  } else {
-    await runConfigOnly({ ...params, options });
-  }
-
-  printCredits();
+if (result.error) {
+  console.warn("[gitpagedocs] TypeScript runtime unavailable; falling back to legacy CLI.");
+  await import("./index.legacy.mjs");
+} else if (typeof result.status === "number" && result.status !== 0) {
+  process.exitCode = result.status;
 }
-
-main().catch((err) => {
-  console.error("Failed to create Git Page Docs scaffold.", err);
-  process.exitCode = 1;
-});

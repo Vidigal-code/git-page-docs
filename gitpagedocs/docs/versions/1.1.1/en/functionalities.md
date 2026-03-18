@@ -54,70 +54,15 @@ The CLI generates a **Source code** page per version. It scans `src/`, `cli/`, a
 - README.md preview/code toggle
 - Expand all / Collapse all controls
 
-## Configuration
+## Config keys (site)
 
-Runtime configuration lives in `gitpagedocs/config.json`.
-
-### `site` section
-
-| Key | Description |
-|-----|-------------|
-| `name` | Site name |
-| `defaultLanguage` | Default UI language (`en`, `pt`, `es`) |
-| `supportedLanguages` | Array of supported languages |
-| `docsVersion` | Default docs version |
-| `rendering` | GitHub Pages URL for self-hosted |
-| `ThemeDefault` | Default theme id |
-| `ThemeModeDefault` | Default mode (`dark`/`light`) |
-| `ProjectLink` | Project/repo link |
-
-### Layout source keys
-
-| Key | Description |
-|-----|-------------|
-| `layoutsConfigPathOficial` | `true` = use official layouts; `false` = use local |
-| `layoutsConfigPath` | Local layouts config path |
-
-### `VersionControl` section
-
-`VersionControl.versions` defines per-version: `id`, `path`, optional metadata.
-
-## Deployment
-
-1. **Official viewer site**: `https://vidigal-code.github.io/git-page-docs/` – provide owner + repository to load docs.
-2. **Self-hosted GitHub Pages**: Generate with `npx gitpagedocs`, set `site.rendering` to your Pages URL, build and deploy via workflow.
-
-## Architecture
-
-Main runtime modules: Route parser (`src/app/[[...repo]]/page.tsx`), Load docs (`src/entities/docs/api/load-docs-data.ts`), Docs shell (`src/widgets/docs-shell/docs-shell.tsx`). Data flow: request → config → version → markdown → layout → shell.
-
-## Themes and layouts
-
-Themes are JSON templates in `layoutsConfig.json`. Default mode uses official layouts; Local mode (`--layoutconfig`) uses `gitpagedocs/layouts/`.
-
-## FAQ
-
-### Why are remote repositories not opening locally?
-
-Check: `GITPAGEDOCS_REPOSITORY_SEARCH=true` in `.env`; target repo has `gitpagedocs/config.json`; markdown paths match routes config.
-
-### Why does a version path return wrong content?
-
-Check: `VersionControl.versions[*].path` in config; version config has valid `routes` and `menus-header`; markdown files exist per language.
-
-### Why does theme selection not apply correctly?
-
-Check: `layoutsConfig.json` references valid templates; template ids are unique; selected theme exists in loaded themes map.
-
-### Why can GitHub Pages behave differently from local?
-
-GitHub Pages build mode enables repository-search home and static-export specific behavior.
+- `name`, `defaultLanguage`, `supportedLanguages`
+- `docsVersion`, `rendering`, `ThemeDefault`, `ThemeModeDefault`
+- `ProjectLink`, `layoutsConfigPathOficial`, `layoutsConfigPath`
 
 ## Environment variables
 
-| Variable | Description |
-|----------|-------------|
-| `GITPAGEDOCS_REPOSITORY_SEARCH` | Enable/disable remote repository search (local) |
-| `GITHUB_ACTIONS` | GitHub Pages build mode |
+- `GITPAGEDOCS_REPOSITORY_SEARCH` – repository search (local)
+- `GITHUB_ACTIONS` – GitHub Pages build mode
 
 > Version: 1.1.1

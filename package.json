@@ -21,6 +21,9 @@
     "prestart": "npm run build",
     "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
+    "smoke:cli": "node tools/smoke/cli-smoke.mjs",
+    "baseline:create": "node tools/smoke/create-baseline.mjs",
+    "baseline:check": "node tools/smoke/check-baseline.mjs",
     "gitpagedocs": "node cli/index.mjs",
     "gitpagedocs:config": "node cli/index.mjs",
     "gitpagedocs:full": "node cli/index.mjs",
@@ -50,14 +53,16 @@
     "access": "public"
   },
   "dependencies": {
-    "inquirer": "^9.2.23"
+    "inquirer": "^9.2.23",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "@eslint/eslintrc": "^3.3.5",
+    "@types/inquirer": "^9.0.9",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "cross-env": "^7.0.3",
     "eslint": "^9.20.1",
     "eslint-config-next": "^15.1.7",
     "gray-matter": "^4.0.3",

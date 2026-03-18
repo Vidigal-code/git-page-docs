@@ -1,6 +1,7 @@
 /** Parse CLI argv into options */
 
 import { DEFAULTS } from "./schema.mjs";
+import { sanitizeSegment } from "../domain/services/sanitize-segment.mjs";
 
 const KNOWN_FLAGS = new Set([
   "--build", "--serve", "--layoutconfig", "--full", "--push", "--home",
@@ -73,8 +74,4 @@ export function parseCliOptions(argv, env) {
   };
 }
 
-export function sanitizeSegment(value) {
-  if (!value) return "";
-  const n = value.trim();
-  return /^[A-Za-z0-9._-]+$/.test(n) ? n : "";
-}
+export { sanitizeSegment };

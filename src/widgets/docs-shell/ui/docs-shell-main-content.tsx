@@ -1,7 +1,15 @@
 "use client";
 
-import type { LoadedDocsData, LoadedPage } from "@/entities/docs/model/types";
+import type {
+  LoadedDocsData,
+  LoadedPage,
+  LoadedMdContent,
+  LoadedHtmlContent,
+  LoadedVideoContent,
+  LoadedAudioContent,
+} from "@/entities/docs/model/types";
 import type { BreadcrumbItem } from "@/entities/docs/model/menu";
+import type { BrowseItem } from "@/entities/docs/model/navigation";
 import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { DocsShellControls, type DocsShellControlsProps } from "./docs-shell-controls";
@@ -23,7 +31,7 @@ export interface DocsShellMainContentProps {
   menuOpenLabel: string;
   menuCloseLabel: string;
   onToggleMenu: () => void;
-  activeLayoutMode?: string;
+  activeLayoutMode?: "light" | "dark";
   controlsProps: DocsShellControlsProps;
   navMenuConfig: NavMenuConfig;
   currentPage: LoadedPage | undefined;
@@ -43,10 +51,10 @@ export interface DocsShellMainContentProps {
   setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
   setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
   setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
-  mdItems: unknown[];
-  htmlItems: unknown[];
-  videoItems: unknown[];
-  audioItems: unknown[];
+  mdItems: BrowseItem<LoadedMdContent>[];
+  htmlItems: BrowseItem<LoadedHtmlContent>[];
+  videoItems: BrowseItem<LoadedVideoContent>[];
+  audioItems: BrowseItem<LoadedAudioContent>[];
   routeGuideEnabled: boolean;
   breadcrumbTrail: BreadcrumbItem[];
   onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
@@ -129,7 +137,7 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
         menuOpenLabel={menuOpenLabel}
         menuCloseLabel={menuCloseLabel}
         onToggleMenu={onToggleMenu}
-        activeLayoutMode={activeLayoutMode as "light" | "dark" | undefined}
+        activeLayoutMode={activeLayoutMode}
         navMenuConfig={props.navMenuConfig}
         controls={<DocsShellControls {...controlsProps} />}
       />
@@ -154,10 +162,10 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
           setHtmlBrowseIndex={setHtmlBrowseIndex}
           setVideoBrowseIndex={setVideoBrowseIndex}
           setAudioBrowseIndex={setAudioBrowseIndex}
-          mdItems={mdItems as Parameters<typeof PageContentArea>[0]["mdItems"]}
-          htmlItems={htmlItems as Parameters<typeof PageContentArea>[0]["htmlItems"]}
-          videoItems={videoItems as Parameters<typeof PageContentArea>[0]["videoItems"]}
-          audioItems={audioItems as Parameters<typeof PageContentArea>[0]["audioItems"]}
+          mdItems={mdItems}
+          htmlItems={htmlItems}
+          videoItems={videoItems}
+          audioItems={audioItems}
           routeGuideEnabled={routeGuideEnabled}
           breadcrumbTrail={breadcrumbTrail}
           onMenuClick={onMenuClick}

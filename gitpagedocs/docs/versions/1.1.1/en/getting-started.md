@@ -42,29 +42,4 @@ Local repository search is controlled by:
 
 On GitHub Pages builds (`GITHUB_ACTIONS=true`), repository-search home is enabled.
 
-## Troubleshooting
-
-### Repository search does not work locally
-
-- Set `GITPAGEDOCS_REPOSITORY_SEARCH=true` in `.env` (create it in project root if missing).
-- Ensure the target repository contains `gitpagedocs/config.json`.
-- Check that markdown paths in the target repo match its version config routes.
-
-### Build fails or docs do not load
-
-- Run `npm run lint` to catch config or path issues.
-- Ensure `gitpagedocs/config.json` exists and has valid `VersionControl.versions`.
-- Verify markdown files exist for each language (`en`, `pt`, `es`) in the version folders.
-
-### Version path returns wrong or empty content
-
-- Check `VersionControl.versions[*].path` in `gitpagedocs/config.json`.
-- Ensure the version config has valid `routes` and `menus-header`.
-- Regenerate with `npx gitpagedocs` to refresh artifacts.
-
-## Next steps
-
-- **Configuration and deployment**: See **Functionalities** for `config.json` keys, self-hosted GitHub Pages, and npm publish.
-- **Deploy to GitHub Pages**: Run `npx gitpagedocs --push --owner <user> --repo <repo>` to create the workflow, commit artifacts, and push.
-
 > Version: 1.1.1

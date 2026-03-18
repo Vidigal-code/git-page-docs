@@ -25,7 +25,8 @@ function collectSourceFiles(projectRoot) {
   const files = {};
   function scan(dir, prefix = "") {
     if (!existsSync(dir)) return;
-    const entries = readdirSync(dir, { withFileTypes: true });
+    const entries = readdirSync(dir, { withFileTypes: true })
+      .sort((a, b) => a.name.localeCompare(b.name));
     for (const e of entries) {
       const name = e.name;
       if (name === "node_modules" || name.startsWith(".")) continue;
@@ -81,81 +82,78 @@ export function generateSourceViewerHtml(root) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
 <style>
-/* GitHub Dark 100% - exact colors from github.com */
+/* GitHub dark theme - variables */
 :root{
-  --color-canvas-default:#0d1117;
-  --color-canvas-subtle:#161b22;
-  --color-canvas-inset:#010409;
-  --color-border-default:#30363d;
-  --color-border-muted:#21262d;
-  --color-fg-default:#e6edf3;
-  --color-fg-muted:#8b949e;
-  --color-fg-subtle:#6e7681;
-  --color-accent-fg:#58a6ff;
-  --color-accent-subtle:rgba(56,139,253,0.15);
-  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;
-  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --github-bg: #0d1117;
+  --github-bg-secondary: #161b22;
+  --github-bg-tertiary: #21262d;
+  --github-border: #30363d;
+  --github-border-muted: #21262d;
+  --github-fg: #e6edf3;
+  --github-fg-muted: #8b949e;
+  --github-accent: #58a6ff;
+  --github-accent-soft: #79c0ff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);background:var(--color-canvas-default);color:var(--color-fg-default);min-height:100vh;font-size:14px;line-height:1.5}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--github-bg);color:var(--github-fg);min-height:100vh;font-size:14px;line-height:1.5}
 
-/* Top bar - GitHub blob header */
-.top-bar{background:var(--color-canvas-subtle);border-bottom:1px solid var(--color-border-muted);padding:12px 16px;min-height:52px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.top-bar .crumb{color:var(--color-fg-muted);text-decoration:none}
-.top-bar .crumb:hover{color:var(--color-accent-fg)}
-.top-bar .crumb-sep{color:var(--color-fg-muted);user-select:none}
-.top-bar .file-name{color:var(--color-fg-default);font-weight:600;font-family:var(--font-mono)}
+/* Top bar - GitHub style */
+.top-bar{background:var(--github-bg-secondary);border-bottom:1px solid var(--github-border-muted);padding:8px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.top-bar .crumb{color:var(--github-fg-muted);text-decoration:none}
+.top-bar .crumb:hover{color:var(--github-accent)}
+.top-bar .crumb-sep{color:var(--github-fg-muted);user-select:none}
+.top-bar .file-name{color:var(--github-fg);font-weight:600}
 
 /* Layout */
-.layout{display:flex;height:calc(100vh - 52px)}
+.layout{display:flex;height:calc(100vh - 45px)}
 
 /* Sidebar - GitHub file tree */
-.sidebar{width:260px;min-width:200px;background:var(--color-canvas-subtle);border-right:1px solid var(--color-border-muted);overflow-y:auto;padding:8px 0;flex-shrink:0}
+.sidebar{width:260px;min-width:200px;background:var(--github-bg-secondary);border-right:1px solid var(--github-border-muted);overflow-y:auto;padding:8px 0;flex-shrink:0}
 .sidebar .folder,.sidebar .file{padding:4px 12px 4px 8px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;border-radius:6px;margin:0 8px}
-.sidebar .folder:hover,.sidebar .file:hover{background:var(--color-border-muted)}
-.sidebar .file{color:var(--color-fg-muted)}
-.sidebar .file.active{color:var(--color-accent-fg);background:var(--color-accent-subtle)}
+.sidebar .folder:hover,.sidebar .file:hover{background:var(--github-bg-tertiary)}
+.sidebar .file{color:var(--github-fg-muted)}
+.sidebar .file.active{color:var(--github-accent);background:var(--github-bg-tertiary)}
 .sidebar .icon{width:16px;text-align:center;flex-shrink:0}
 .sidebar .icon svg{vertical-align:middle}
-.sidebar .folder .icon{color:var(--color-accent-fg)}
+.sidebar .folder .icon{color:var(--github-accent-soft)}
 .sidebar .chevron{width:16px;transition:transform .15s;flex-shrink:0}
 .sidebar .folder.collapsed .chevron{transform:rotate(-90deg)}
 .sidebar .children{margin-left:4px}
 .sidebar .children.hidden{display:none}
-.sidebar .search-wrap{padding:8px;border-bottom:1px solid var(--color-border-muted)}
-.sidebar .search-input{width:100%;padding:6px 10px;font-size:12px;border:1px solid var(--color-border-default);border-radius:6px;background:var(--color-canvas-default);color:var(--color-fg-default);outline:none}
-.sidebar .search-input:focus{border-color:var(--color-accent-fg)}
-.sidebar .search-input::placeholder{color:var(--color-fg-muted)}
-.sidebar .tree-actions{display:flex;gap:4px;padding:4px 8px;border-bottom:1px solid var(--color-border-muted)}
-.sidebar .tree-btn{padding:4px 8px;font-size:11px;border:1px solid var(--color-border-default);border-radius:4px;background:var(--color-border-muted);color:var(--color-fg-muted);cursor:pointer}
-.sidebar .tree-btn:hover{color:var(--color-fg-default);background:var(--color-border-default)}
+.sidebar .search-wrap{padding:8px;border-bottom:1px solid var(--github-border-muted)}
+.sidebar .search-input{width:100%;padding:6px 10px;font-size:12px;border:1px solid var(--github-border);border-radius:6px;background:var(--github-bg);color:var(--github-fg);outline:none}
+.sidebar .search-input:focus{border-color:var(--github-accent)}
+.sidebar .search-input::placeholder{color:var(--github-fg-muted)}
+.sidebar .tree-actions{display:flex;gap:4px;padding:4px 8px;border-bottom:1px solid var(--github-border-muted)}
+.sidebar .tree-btn{padding:4px 8px;font-size:11px;border:1px solid var(--github-border);border-radius:4px;background:var(--github-bg-tertiary);color:var(--github-fg-muted);cursor:pointer}
+.sidebar .tree-btn:hover{color:var(--github-fg);background:var(--github-border)}
 
 /* Content - GitHub file view */
-.content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--color-canvas-default)}
-.content .file-header{background:var(--color-canvas-subtle);border-bottom:1px solid var(--color-border-muted);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.content .file-header .file-path{font-weight:600;color:var(--color-fg-default)}
-.content .file-header .copy-btn{padding:4px 12px;font-size:12px;border:1px solid var(--color-border-default);border-radius:6px;background:var(--color-border-muted);color:var(--color-fg-default);cursor:pointer}
-.content .file-header .copy-btn:hover{background:var(--color-border-default);border-color:var(--color-fg-muted)}
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--github-bg)}
+.content .file-header{background:var(--github-bg-secondary);border-bottom:1px solid var(--github-border-muted);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.content .file-header .file-path{font-weight:600;color:var(--github-fg)}
+.content .file-header .copy-btn{padding:4px 12px;font-size:12px;border:1px solid var(--github-border);border-radius:6px;background:var(--github-bg-tertiary);color:var(--github-fg);cursor:pointer}
+.content .file-header .copy-btn:hover{background:var(--github-border);border-color:var(--github-fg-muted)}
 .content .code-wrap{flex:1;overflow:auto}
 .content .code-table{width:100%;border-collapse:collapse;font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;font-size:12px;line-height:1.45}
 .content .code-table td{vertical-align:top;padding:0}
-.content .line-nums{padding:16px 0;text-align:right;user-select:none;color:var(--color-fg-muted);background:var(--color-canvas-subtle);border-right:1px solid var(--color-border-muted);width:1%;min-width:50px}
+.content .line-nums{padding:16px 0;text-align:right;user-select:none;color:var(--github-fg-muted);background:var(--github-bg-secondary);border-right:1px solid var(--github-border-muted);width:1%;min-width:50px}
 .content .line-nums span{display:block;padding:0 16px}
 .content .line-code{padding:16px 0;padding-left:16px}
 .content .line-code .line{display:block;min-height:1.45em;white-space:pre}
-.content .empty{color:var(--color-fg-muted);padding:24px;font-style:italic}
+.content .empty{color:var(--github-fg-muted);padding:24px;font-style:italic}
 .content .md-preview{padding:24px;line-height:1.6}
 .content .md-preview h1,.content .md-preview h2,.content .md-preview h3{margin-top:1em;margin-bottom:0.5em;font-weight:600}
-.content .md-preview code{background:var(--color-border-muted);padding:2px 6px;border-radius:4px;font-size:0.9em}
-.content .md-preview pre{background:var(--color-border-muted);padding:16px;overflow-x:auto;border-radius:6px;font-size:13px}
+.content .md-preview code{background:var(--github-bg-tertiary);padding:2px 6px;border-radius:4px;font-size:0.9em}
+.content .md-preview pre{background:var(--github-bg-tertiary);padding:16px;overflow-x:auto;border-radius:6px;font-size:13px}
 .content .btn-group{display:flex;gap:8px;margin-bottom:16px}
-.content .btn{padding:6px 12px;border:1px solid var(--color-border-default);border-radius:6px;background:var(--color-border-muted);color:var(--color-fg-default);cursor:pointer;font-size:12px}
-.content .btn.active{background:var(--color-accent-fg);border-color:var(--color-accent-fg);color:#fff}
-.content .btn:hover{background:var(--color-border-default)}
+.content .btn{padding:6px 12px;border:1px solid var(--github-border);border-radius:6px;background:var(--github-bg-tertiary);color:var(--github-fg);cursor:pointer;font-size:12px}
+.content .btn.active{background:var(--github-accent);border-color:var(--github-accent);color:#fff}
+.content .btn:hover{background:var(--github-border)}
 
 @media(max-width:767px){
   .layout{flex-direction:column;height:auto;min-height:100vh}
-  .sidebar{width:100%;max-height:200px;border-right:none;border-bottom:1px solid var(--color-border-muted)}
+  .sidebar{width:100%;max-height:200px;border-right:none;border-bottom:1px solid var(--github-border-muted)}
   .content .code-wrap{min-height:400px}
 }
 </style>
@@ -204,26 +202,14 @@ function selectFile(path){
   document.querySelectorAll(".sidebar .file.active").forEach(function(n){n.classList.remove("active")});
   document.querySelectorAll(".sidebar .folder.active").forEach(function(n){n.classList.remove("active")});
   var node=document.querySelector('.sidebar .file[data-path="'+path.replace(/"/g,'\\"')+'"]');
-  if(node){
-    node.classList.add("active");
-    var parent=node.parentElement;
-    while(parent&&parent.id!=="tree"){
-      var folder=parent.previousElementSibling;
-      if(folder&&folder.classList.contains("folder")){
-        folder.classList.remove("collapsed");
-        parent.classList.remove("hidden");
-      }
-      parent=parent.parentElement;
-    }
-    node.scrollIntoView({block:"nearest"});
-  }
+  if(node){node.classList.add("active");node.scrollIntoView({block:"nearest"})}
   document.getElementById("breadcrumbFile").textContent=path;
   document.getElementById("fileHeader").style.display="block";
   document.getElementById("headerPath").textContent=path;
   var content=files[path]||"";
-  var isMd=path.toLowerCase().endsWith(".md");
+  var isReadme=path.toLowerCase()==="readme.md";
   var viewer=document.getElementById("viewer");
-  if(isMd){
+  if(isReadme){
     var btnHtml='<div class="btn-group"><button class="btn'+(viewMode==='preview'?' active':'')+'" data-mode="preview">Preview</button><button class="btn'+(viewMode==='code'?' active':'')+'" data-mode="code">Code</button></div>';
     if(viewMode==="preview"&&typeof marked!=="undefined"){
       viewer.innerHTML=btnHtml+'<div class="md-preview">'+marked.parse(content||"")+'</div>';

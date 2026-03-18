@@ -40,31 +40,6 @@ export const ROUTE_META_ID5 = {
   descriptions: { pt: "Conceitos básicos de Git para iniciantes", en: "Basic Git concepts for beginners", es: "Conceptos básicos de Git para principiantes" },
 };
 
-export const ROUTE_META_ID6 = {
-  titles: { pt: "Configuração", en: "Configuration", es: "Configuración" },
-  descriptions: { pt: "Configuração do runtime e config.json", en: "Runtime configuration and config.json", es: "Configuración del runtime y config.json" },
-};
-
-export const ROUTE_META_ID7 = {
-  titles: { pt: "Publicação", en: "Deployment", es: "Publicación" },
-  descriptions: { pt: "Publicação local e GitHub Pages", en: "Local and GitHub Pages deployment", es: "Publicación local y GitHub Pages" },
-};
-
-export const ROUTE_META_ID8 = {
-  titles: { pt: "Arquitetura", en: "Architecture", es: "Arquitectura" },
-  descriptions: { pt: "Mapa de código e fluxo de dados", en: "Code map and data flow", es: "Mapa de código y flujo de datos" },
-};
-
-export const ROUTE_META_ID9 = {
-  titles: { pt: "Temas", en: "Themes", es: "Temas" },
-  descriptions: { pt: "Temas e layouts com templates JSON", en: "Themes and layouts with JSON templates", es: "Temas y layouts con templates JSON" },
-};
-
-export const ROUTE_META_ID10 = {
-  titles: { pt: "FAQ", en: "FAQ", es: "FAQ" },
-  descriptions: { pt: "Perguntas frequentes e troubleshooting", en: "Frequently asked questions and troubleshooting", es: "Preguntas frecuentes y troubleshooting" },
-};
-
 export const VIDEO_META_ID1 = {
   title: { pt: "Interactive vs non-interactive modes | Copilot CLI for beginners", en: "Interactive vs non-interactive modes | Copilot CLI for beginners", es: "Interactive vs non-interactive modes | Copilot CLI for beginners" },
   description: {

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { FiX } from "react-icons/fi";
 import { MdFullscreen } from "react-icons/md";
-import { TocScrollContainerProvider } from "@/features/route-guide/model/toc-scroll-context";
+import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentBrowseNav, type BrowseNavConfig } from "../page-content-browse-nav";
 import styles from "../../docs-shell.module.css";
 

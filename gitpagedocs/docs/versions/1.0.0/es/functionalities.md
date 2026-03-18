@@ -54,70 +54,15 @@ La CLI genera una pagina **Codigo fuente** por version. Escanea `src/`, `cli/` y
 - Alternar vista previa/codigo del README.md
 - Controles Expandir todo / Colapsar todo
 
-## Configuracion
+## Claves de config (site)
 
-La configuracion de runtime esta en `gitpagedocs/config.json`.
-
-### Seccion `site`
-
-| Clave | Descripcion |
-|-------|-------------|
-| `name` | Nombre del sitio |
-| `defaultLanguage` | Idioma por defecto (`en`, `pt`, `es`) |
-| `supportedLanguages` | Lista de idiomas soportados |
-| `docsVersion` | Version por defecto de docs |
-| `rendering` | URL de GitHub Pages para self-hosted |
-| `ThemeDefault` | Id del tema por defecto |
-| `ThemeModeDefault` | Modo por defecto (`dark`/`light`) |
-| `ProjectLink` | Enlace del proyecto/repo |
-
-### Claves de layout
-
-| Clave | Descripcion |
-|-------|-------------|
-| `layoutsConfigPathOficial` | `true` = layouts oficiales; `false` = locales |
-| `layoutsConfigPath` | Ruta de layouts locales |
-
-### Seccion `VersionControl`
-
-`VersionControl.versions` define por version: `id`, `path` y metadatos opcionales.
-
-## Publicacion
-
-1. **Sitio oficial**: `https://vidigal-code.github.io/git-page-docs/` – proporcione owner + repositorio para cargar docs.
-2. **GitHub Pages self-hosted**: Genere con `npx gitpagedocs`, configure `site.rendering` a su URL Pages, haga build y publique via workflow.
-
-## Arquitectura
-
-Modulos principales: Parser de rutas (`src/app/[[...repo]]/page.tsx`), Cargar docs (`src/entities/docs/api/load-docs-data.ts`), Docs shell (`src/widgets/docs-shell/docs-shell.tsx`). Flujo: request → config → version → markdown → layout → shell.
-
-## Temas y layouts
-
-Los temas son templates JSON en `layoutsConfig.json`. Modo por defecto usa layouts oficiales; Modo local (`--layoutconfig`) usa `gitpagedocs/layouts/`.
-
-## FAQ
-
-### Por que repositorios remotos no abren en local?
-
-Verifica: `GITPAGEDOCS_REPOSITORY_SEARCH=true` en `.env`; repo objetivo tiene `gitpagedocs/config.json`; paths markdown coinciden con config de rutas.
-
-### Por que ruta de version muestra contenido incorrecto?
-
-Verifica: `VersionControl.versions[*].path` en config; config de version tiene `routes` y `menus-header` validos; archivos markdown existen por idioma.
-
-### Por que tema no aplica correctamente?
-
-Verifica: `layoutsConfig.json` referencia templates validos; ids son unicos; tema seleccionado existe en el mapa de temas.
-
-### Por que GitHub Pages puede comportarse distinto del local?
-
-El modo build GitHub Pages habilita pagina de busqueda y comportamiento especifico de export estatico.
+- `name`, `defaultLanguage`, `supportedLanguages`
+- `docsVersion`, `rendering`, `ThemeDefault`, `ThemeModeDefault`
+- `ProjectLink`, `layoutsConfigPathOficial`, `layoutsConfigPath`
 
 ## Variables de entorno
 
-| Variable | Descripcion |
-|----------|-------------|
-| `GITPAGEDOCS_REPOSITORY_SEARCH` | Activa/desactiva busqueda remota (local) |
-| `GITHUB_ACTIONS` | Modo build GitHub Pages |
+- `GITPAGEDOCS_REPOSITORY_SEARCH` – busqueda de repositorio (local)
+- `GITHUB_ACTIONS` – modo build GitHub Pages
 
 > Version (ES): 1.0.0

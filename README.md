@@ -195,15 +195,6 @@ gitpagedocs/
       1.1.1/...
 ```
 
-### Source code viewer (`source-viewer`)
-
-Each version includes a self-contained **Source code** HTML page per language (`en`, `pt`, `es`). The viewer:
-
-- **Scans** `src/`, `cli/`, and root files (README.md, package.json, next.config.ts, tsconfig.json, etc.)
-- **Displays** a GitHub-style dark interface with file tree, search, syntax highlighting, line numbers, copy button
-- **Special handling** for README.md: toggle between rendered Markdown preview and raw code
-- **Uses** highlight.js and marked from CDN; single HTML file, no build step
-
 Local layout mode adds:
 
 ```text
@@ -212,24 +203,6 @@ gitpagedocs/layouts/
   layoutsFallbackConfig.json
   templates/*.json
 ```
-
-### Documentation structure
-
-| Page | Description |
-|------|-------------|
-| Getting Started | Setup from zero, prerequisites, install, generate, local run, troubleshooting |
-| Project overview | Stack, goals, folder structure, architecture summary, data flow |
-| Functionalities | CLI commands and options, config, deployment, architecture, themes, FAQ, source viewer |
-| GitHub issues and projects | Issues (bugs, features), Projects (Kanban, tables), workflows |
-| Introduction to Git | Basic Git concepts for beginners |
-| Source code | GitHub-style file tree viewer with syntax highlighting and Markdown preview |
-| Configuration | Site, layout, VersionControl sections; content types; env vars |
-| Deployment | Official site, self-hosted GitHub Pages, npm publish |
-| Architecture | Route parser, load-docs, docs-shell; data flow; reliability |
-| Themes | Layout strategies, template model, runtime behavior |
-| FAQ | Remote repos, version path, theme selection, GitHub Pages behavior |
-
-Docs are versioned (`1.0.0`, `1.1.0`, `1.1.1`) and localized (`en`, `pt`, `es`).
 
 ## Configuration Keys (Layout Source)
 
@@ -327,7 +300,7 @@ All routes for accessing documentation files on the official site or self-hosted
 
 **HTML pages** (by slug)
 
-- Source code viewer (GitHub-style file tree, syntax highlighting, README preview):  
+- Source code viewer:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=source-viewer  
 
 **Video pages** (route id 1–4; pages combine MD + HTML + Video by id)

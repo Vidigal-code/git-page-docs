@@ -12,11 +12,6 @@ import {
   ROUTE_META_ID3,
   ROUTE_META_ID4,
   ROUTE_META_ID5,
-  ROUTE_META_ID6,
-  ROUTE_META_ID7,
-  ROUTE_META_ID8,
-  ROUTE_META_ID9,
-  ROUTE_META_ID10,
   VIDEO_META_ID1,
   VIDEO_META_ID2,
   VIDEO_META_ID3,
@@ -25,15 +20,12 @@ import {
 } from "../data/route-metas.mjs";
 import { buildMdRoute, buildHtmlRoute, buildVideoRoute } from "./route-builders.mjs";
 
-const ROUTE_METAS = {
-  1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4, 5: ROUTE_META_ID5,
-  6: ROUTE_META_ID6, 7: ROUTE_META_ID7, 8: ROUTE_META_ID8, 9: ROUTE_META_ID9, 10: ROUTE_META_ID10,
-};
+const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4, 5: ROUTE_META_ID5 };
 const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
 
 function buildVersionMdRoutes(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => {
+  return [1, 2, 3, 4, 5].map((id) => {
     const paths = ROUTE_PATHS[id];
     const meta = ROUTE_METAS[id];
     const pathByLang = {
@@ -76,7 +68,7 @@ function buildVersionVideoRoutes(versionId) {
 
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  const menuMd = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => ({
+  const menuMd = [1, 2, 3, 4, 5].map((id) => ({
     id: id,
     pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
     en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
