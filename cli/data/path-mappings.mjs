@@ -10,8 +10,6 @@ export const ROUTE_PATHS = {
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
 
-export const AUDIO_YOUTUBE_ID = "xAR6N9N8e6U";
-
 export const PAGE2_AUDIO = {
   enabled: true,
   autoPlayOnLoad: true,

@@ -7,13 +7,17 @@ import { BASELINE_FILE, collectFileHashes, getBaselineTargets } from "./_baselin
 
 const root = process.cwd();
 const baselinePath = path.join(root, BASELINE_FILE);
+const normalizePath = (value) => String(value).replace(/[\\/]+/g, "/");
 
 if (!existsSync(baselinePath)) {
   throw new Error(`Baseline snapshot not found at ${BASELINE_FILE}. Run npm run baseline:create first.`);
 }
 
 const snapshot = JSON.parse(readFileSync(baselinePath, "utf-8"));
-const targets = snapshot.targets ?? getBaselineTargets();
+const targets = (snapshot.targets ?? getBaselineTargets()).map(normalizePath);
+const baselineHashes = Object.fromEntries(
+  Object.entries(snapshot.hashes ?? {}).map(([file, hash]) => [normalizePath(file), hash]),
+);
 
 console.log("[baseline:check] Regenerating CLI artifacts...");
 execSync("node cli/index.mjs", { cwd: root, stdio: "inherit" });
@@ -22,7 +26,7 @@ const current = collectFileHashes(root, targets);
 const diffs = [];
 
 for (const file of targets) {
-  const previousHash = snapshot.hashes?.[file];
+  const previousHash = baselineHashes[file];
   const currentHash = current[file];
   if (previousHash !== currentHash) {
     diffs.push({ file, previousHash, currentHash });

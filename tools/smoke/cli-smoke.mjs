@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
-import { DOC_VERSIONS } from "../../cli/data/version-constants.mjs";
+import { DOC_VERSIONS } from "../../cli/contracts/doc-versions.mjs";
 
 const root = process.cwd();
 

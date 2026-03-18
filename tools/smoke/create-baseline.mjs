@@ -6,11 +6,12 @@ import { execSync } from "node:child_process";
 import { BASELINE_FILE, collectFileHashes, getBaselineTargets } from "./_baseline-common.mjs";
 
 const root = process.cwd();
+const normalizePath = (value) => String(value).replace(/[\\/]+/g, "/");
 
 console.log("[baseline:create] Generating CLI artifacts...");
 execSync("node cli/index.mjs", { cwd: root, stdio: "inherit" });
 
-const targets = getBaselineTargets();
+const targets = getBaselineTargets().map(normalizePath);
 const hashes = collectFileHashes(root, targets);
 const output = {
   generatedAt: new Date().toISOString(),

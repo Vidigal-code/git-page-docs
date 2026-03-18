@@ -2,19 +2,6 @@
 
 export const DEFAULT_HIERARCHY = { md: 0, html: 1, video: 2, audio: 3 };
 
-export const AUDIO_META = {
-  title: {
-    pt: "Áudio de fundo | Git Page Docs",
-    en: "Background audio | Git Page Docs",
-    es: "Audio de fondo | Git Page Docs",
-  },
-  description: {
-    pt: "Reproduza áudio de fundo enquanto navega na documentação.",
-    en: "Play background audio while browsing the documentation.",
-    es: "Reproduce audio de fondo mientras navegas la documentación.",
-  },
-};
-
 export const ROUTE_META_ID1 = {
   titles: { pt: "Primeiros passos", en: "Getting Started", es: "Primeros pasos" },
   descriptions: { pt: "Configure o repositório do zero", en: "Configure repository from zero", es: "Configura el repositorio desde cero" },

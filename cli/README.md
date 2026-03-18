@@ -4,45 +4,50 @@
 
 ```
 cli/
-├── index.mjs         # Presentation: entry, banner, command dispatch
-├── ui/               # Presentation: banner, logger, prompts
-├── commands/         # Presentation: thin command wrappers
+├── index.mjs                          # Node entry (bootstraps TS presentation)
+├── contracts/                         # Stable contracts for external tooling
+│   └── doc-versions.mjs
 │
-├── application/      # Use cases (orchestration)
+├── presentation/                      # Interface/composition root
+│   ├── index.ts
+│   ├── options/
+│   └── ui/
+│
+├── application/                       # Use-cases and ports
 │   ├── config-only/handler.mjs
 │   ├── home/handler.mjs
-│   └── report/       # Output messaging (SRP)
-│       └── config-only-reporter.mjs
+│   ├── report/config-only-reporter.mjs
+│   ├── use-cases/dispatch-mode.ts
+│   └── ports/cli-runtime-ports.ts
 │
-├── builders/         # Domain: pure config building logic
-│   ├── root-config-builder.mjs
-│   ├── version-config-builder.mjs
-│   ├── config-orchestrator.mjs
-│   └── ...
+├── domain/                            # Business rules
+│   └── services/sanitize-segment.mjs
 │
-├── infrastructure/   # I/O adapters
-│   ├── file-writer.mjs   # FileWriter abstraction (DIP)
-│   └── runtime/         # output, workflow, git-ops, doc-path-resolver
+├── infrastructure/                    # Side effects and adapters
+│   ├── config-only/runtime.mjs
+│   └── home/runtime.mjs
 │
-├── options/          # Shared: parser, resolver, schema
-├── data/             # Shared: layouts, urls, constants
-├── content/          # Shared: docs, html-pages
-└── home/             # Home-specific: templates, file-writer
+├── builders/                          # Pure config builders
+├── data/                              # Constants and metadata
+├── content/                           # Static docs content
+├── runtime/                           # Low-level runtime helpers
+└── home/                              # Home templates/files
 ```
 
 ## SOLID Principles
 
 | Principle | Application |
 |-----------|-------------|
-| **SRP** | ConfigOnlyReporter (messages only); handlers (orchestration only) |
-| **OCP** | FileWriter interface allows new writers without modifying consumers |
-| **LSP** | Handlers interchangeable via execute(params) contract |
-| **ISP** | Small interfaces (writeText, writeJson) |
-| **DIP** | Use cases depend on abstractions (writeText injected) |
+| **SRP** | `application/report` only formats messages; handlers only orchestrate |
+| **OCP** | New runtime implementations can be injected through ports |
+| **LSP** | `dispatch-mode` works with any runner implementing `CliCommandRunner` |
+| **ISP** | Split runtime contracts (`ConfigOnlyRuntimePort`, `HomeRuntimePort`) |
+| **DIP** | Use-cases depend on `application/ports`, not concrete fs/git/exec |
 
 ## Clean Architecture
 
-- **Domain**: Pure logic, no I/O (builders)
-- **Application**: Use cases orchestrate domain + infrastructure
-- **Infrastructure**: Concrete I/O (fs, git, exec)
-- **Presentation**: CLI entry, parses args, delegates to use cases
+- **Interfaces/Presentation**: parse CLI args, resolve mode, wire dependencies in `presentation/index.ts`
+- **Application**: orchestrate flows with explicit ports, without direct fs/git/exec imports
+- **Domain**: sanitize and core rules with no infrastructure dependencies
+- **Infrastructure**: concrete adapters for runtime side effects
+- **Contracts**: `tools/smoke` consumes `cli/contracts` instead of internal CLI modules

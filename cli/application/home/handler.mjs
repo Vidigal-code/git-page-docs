@@ -1,21 +1,6 @@
 /** Home distribution use case - static site + auxiliary files */
 
-import path from "node:path";
-import { existsSync, rmSync, cpSync, readdirSync } from "node:fs";
-import { execSync } from "node:child_process";
-import { writeConfigOnlyOutput, writeText } from "../../runtime/output.mjs";
-import { writeHomeFiles } from "../../home/home-file-writer.mjs";
 import { STATIC_OUTPUT_DIR, ARTIFACTS_DIR } from "../../home/constants.mjs";
-import { logSuccess, logInfo } from "../../ui/logger.mjs";
-
-function ensureDirEmpty(root, dir) {
-  const full = path.join(root, dir);
-  if (existsSync(full)) rmSync(full, { recursive: true, force: true });
-}
-
-function copyRecursive(src, dest) {
-  cpSync(src, dest, { recursive: true, force: true });
-}
 
 /**
  * Execute home distribution use case
@@ -26,17 +11,24 @@ function copyRecursive(src, dest) {
  * @param {Function} params.buildConfigArtifacts - Artifact builder
  * @param {Function} params.createThemeTemplate - Theme template creator
  * @param {Array} params.layouts - Layout definitions
+ * @param {import("../ports/cli-runtime-ports").HomeRuntimePort} runtime
  */
-export async function executeHome(params) {
+export async function executeHome(params, runtime) {
+  if (!runtime) {
+    throw new Error("Home runtime is required.");
+  }
+
   const { options, root, pkgRoot, buildConfigArtifacts, createThemeTemplate, layouts } = params;
   const outputDir = options.outputDir || "gitpagedocshome";
   const repositorySearch = options.repositorySearch ?? false;
   const basePath = options.basePath ?? "";
 
   const isCurrentDir = outputDir === "." || outputDir === "./";
-  const targetDir = isCurrentDir ? root : path.join(root, outputDir);
+  const targetDir = isCurrentDir ? root : runtime.joinPath(root, outputDir);
 
-  if (!isCurrentDir) ensureDirEmpty(root, outputDir);
+  if (!isCurrentDir) {
+    runtime.ensureDirEmpty(root, outputDir);
+  }
 
   const pathSegment = basePath ? basePath.replace(/^\/+|\/+$/g, "") : "";
   const buildEnv = {
@@ -54,7 +46,7 @@ export async function executeHome(params) {
     root,
   });
 
-  await writeConfigOnlyOutput({
+  await runtime.writeConfigOnlyOutput({
     root,
     pkgRoot,
     outputDir: ARTIFACTS_DIR,
@@ -64,28 +56,28 @@ export async function executeHome(params) {
     createThemeTemplate,
   });
 
-  execSync("npx next build", { cwd: root, env: buildEnv, stdio: "inherit" });
+  runtime.runNextBuild(root, buildEnv);
 
-  const outPath = path.join(root, STATIC_OUTPUT_DIR);
-  if (!existsSync(outPath)) {
+  const outPath = runtime.joinPath(root, STATIC_OUTPUT_DIR);
+  if (!runtime.existsPath(outPath)) {
     throw new Error(`Static export not found at ${STATIC_OUTPUT_DIR}/. Ensure next.config exports when GITHUB_ACTIONS=true.`);
   }
 
-  const destBase = isCurrentDir ? root : path.join(root, outputDir);
+  const destBase = isCurrentDir ? root : targetDir;
   if (isCurrentDir) {
-    for (const name of readdirSync(outPath)) {
-      copyRecursive(path.join(outPath, name), path.join(destBase, name));
+    for (const name of runtime.readDirNames(outPath)) {
+      runtime.copyRecursive(runtime.joinPath(outPath, name), runtime.joinPath(destBase, name));
     }
   } else {
-    copyRecursive(outPath, destBase);
+    runtime.copyRecursive(outPath, destBase);
   }
-  copyRecursive(path.join(root, ARTIFACTS_DIR), path.join(destBase, ARTIFACTS_DIR));
+  runtime.copyRecursive(runtime.joinPath(root, ARTIFACTS_DIR), runtime.joinPath(destBase, ARTIFACTS_DIR));
 
-  await writeHomeFiles(root, isCurrentDir ? "." : outputDir, { repositorySearch, basePath });
-  await writeText(root, (isCurrentDir ? "" : outputDir + "/") + ".nojekyll", "");
+  await runtime.writeHomeFiles(root, isCurrentDir ? "." : outputDir, { repositorySearch, basePath });
+  await runtime.writeText(root, (isCurrentDir ? "" : outputDir + "/") + ".nojekyll", "");
 
   const cdDir = isCurrentDir ? "." : outputDir;
-  logSuccess(`Generated: ${cdDir}/ (static site + .env + Dockerfile + README.md)`);
-  logInfo(`Serve: cd ${cdDir} && npx serve .`);
-  logInfo(`Docker: cd ${cdDir} && docker build -t gitpagedocshome . && docker run -p 3000:80 gitpagedocshome`);
+  runtime.logSuccess(`Generated: ${cdDir}/ (static site + .env + Dockerfile + README.md)`);
+  runtime.logInfo(`Serve: cd ${cdDir} && npx serve .`);
+  runtime.logInfo(`Docker: cd ${cdDir} && docker build -t gitpagedocshome . && docker run -p 3000:80 gitpagedocshome`);
 }

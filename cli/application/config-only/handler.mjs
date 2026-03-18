@@ -1,10 +1,6 @@
 /** Config-only use case - orchestrates build, write, and optional push */
 
-import { existsSync } from "node:fs";
-import { sanitizeSegment } from "../../options/parser.mjs";
-import { getCurrentGitBranch, runGitPushForGeneratedArtifacts } from "../../runtime/git-ops.mjs";
-import { writeConfigOnlyOutput, writeText } from "../../runtime/output.mjs";
-import { ensureGitHubPagesWorkflow } from "../../runtime/workflow.mjs";
+import { sanitizeSegment } from "../../domain/services/sanitize-segment.mjs";
 import { reportAll } from "../report/config-only-reporter.mjs";
 
 /**
@@ -17,8 +13,13 @@ import { reportAll } from "../report/config-only-reporter.mjs";
  * @param {Function} params.buildConfigArtifacts - Artifact builder
  * @param {Function} params.createThemeTemplate - Theme template creator
  * @param {Array} params.layouts - Layout definitions
+ * @param {import("../ports/cli-runtime-ports").ConfigOnlyRuntimePort} runtime
  */
-export async function executeConfigOnly(params) {
+export async function executeConfigOnly(params, runtime) {
+  if (!runtime) {
+    throw new Error("Config-only runtime is required.");
+  }
+
   const { options, root, pkgRoot, prebuiltDir, buildConfigArtifacts, createThemeTemplate, layouts } = params;
 
   const artifacts = buildConfigArtifacts({
@@ -28,7 +29,7 @@ export async function executeConfigOnly(params) {
     root,
   });
 
-  await writeConfigOnlyOutput({
+  await runtime.writeConfigOnlyOutput({
     root,
     pkgRoot,
     outputDir: options.outputDir,
@@ -39,13 +40,16 @@ export async function executeConfigOnly(params) {
   });
 
   if (options.shouldPush) {
-    await ensureGitHubPagesWorkflow(
-      () => getCurrentGitBranch(root),
-      (relativePath, content) => writeText(root, relativePath, content),
+    await runtime.ensureGitHubPagesWorkflow(
+      () => runtime.getCurrentGitBranch(root),
+      (relativePath, content) => runtime.writeText(root, relativePath, content),
       options.docsPath || "",
     );
-    runGitPushForGeneratedArtifacts(options, root, sanitizeSegment);
+    runtime.runGitPushForGeneratedArtifacts(options, root, sanitizeSegment);
   }
 
-  reportAll(options, existsSync(prebuiltDir));
+  const reportLines = reportAll(options, runtime.hasPath(prebuiltDir));
+  for (const line of reportLines) {
+    runtime.logInfo(line);
+  }
 }

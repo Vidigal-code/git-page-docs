@@ -19,8 +19,8 @@ const result = spawnSync(
 );
 
 if (result.error) {
-  console.warn("[gitpagedocs] TypeScript runtime unavailable; falling back to legacy CLI.");
-  await import("./index.legacy.mjs");
+  console.error("[gitpagedocs] Failed to run TypeScript CLI runtime.", result.error);
+  process.exitCode = 1;
 } else if (typeof result.status === "number" && result.status !== 0) {
   process.exitCode = result.status;
 }
