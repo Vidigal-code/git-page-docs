@@ -14,6 +14,7 @@ It does **not** generate `index.html` or `index.js`.
 - [Self-Hosted GitHub Pages Setup](#self-hosted-github-pages-setup)
 - [Generated Structure](#generated-structure)
 - [Configuration Keys](#configuration-keys-layout-source)
+- [Version selector visibility](#version-selector-visibility)
 - [Repository Search Behavior](#repository-search-behavior)
 - [Scripts](#scripts)
 - [URL Routes and Query Parameters](#url-routes-and-query-parameters)
@@ -219,6 +220,14 @@ Behavior:
 
 - If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
 - If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagedocs/layouts/**` or your custom paths).
+
+## Version selector visibility
+
+In the docs shell, the **version** dropdown is hidden when `VersionControl.versions` resolves to **at most one unique** `id`:
+
+- One entry, or multiple entries with the same `id`, shows **no** version selector (duplicate `id` rows are deduplicated; the first wins).
+- Two or more **distinct** `id` values show the version selector.
+- **Language** and **theme** selectors are separate and are not affected by version count.
 
 ## Repository Search Behavior
 

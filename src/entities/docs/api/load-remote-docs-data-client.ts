@@ -14,6 +14,7 @@ import type {
   ThemeTemplate,
   VersionEntry,
 } from "@/entities/docs/model/types";
+import { dedupeVersionEntriesById } from "../lib/dedupe-version-entries";
 
 type VersionConfig = {
   routes?: RouteConfig[];
@@ -333,7 +334,7 @@ export async function loadRemoteDocsData(
     return null;
   }
 
-  const versions = config.VersionControl?.versions ?? [];
+  const versions = dedupeVersionEntriesById(config.VersionControl?.versions ?? []);
   const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);
   const activeVersionId = activeVersion?.id;
 

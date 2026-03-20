@@ -8,6 +8,7 @@ import { resolveDocsSource } from "./resolve-docs-source";
 import { isLocalRuntime } from "@/shared/lib/runtime";
 import { mergeVersionConfig } from "./config/merge-version-config";
 import { buildEffectiveConfig } from "./config/build-effective-config";
+import { dedupeVersionEntriesById } from "../lib/dedupe-version-entries";
 
 export async function loadDocsData(slug: string[] | undefined, selectedVersionId?: string): Promise<LoadedDocsData> {
   const localConfig = await loadRootConfig<GitPageDocsConfig>();
@@ -23,7 +24,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
 
   const local = isLocalRuntime();
 
-  const availableVersions = baseConfig.VersionControl?.versions ?? [];
+  const availableVersions = dedupeVersionEntriesById(baseConfig.VersionControl?.versions ?? []);
   const activeVersionId = resolveActiveVersionId(availableVersions, selectedVersionId, baseConfig.site.docsVersion);
   const activeVersion = activeVersionId
     ? availableVersions.find((version) => version.id === activeVersionId)

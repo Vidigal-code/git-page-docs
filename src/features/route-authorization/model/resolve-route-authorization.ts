@@ -29,9 +29,10 @@ function routeHasVideoMatch(route: { video?: { pathVideo: Record<string, string>
   return Object.values(route.video.pathVideo).includes(pathClick);
 }
 
-function routeHasAudioMatch(route: { audio?: { pathAudio: Record<string, string> } }, pathClick: string): boolean {
-  if (!route.audio) return false;
-  return Object.values(route.audio.pathAudio).includes(pathClick);
+function routeHasAudioMatch(route: ContentTypeRouteConfig, pathClick: string): boolean {
+  const audio = route.audio;
+  if (!audio || !("pathAudio" in audio) || !audio.pathAudio) return false;
+  return Object.values(audio.pathAudio).includes(pathClick);
 }
 
 function extractAuthorization(route: unknown): RouteAuthorizationConfig | undefined {
