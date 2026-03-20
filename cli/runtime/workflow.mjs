@@ -83,16 +83,14 @@ ${buildEnvBlock}
           const path = require('path');
           const pathSegment = ${JSON.stringify(pathSegment)};
           const repoName = (process.env.GITHUB_REPOSITORY || '').split('/')[1] || '';
-          const effectiveBase = repoName
-            ? (pathSegment ? repoName + '/' + pathSegment : repoName)
-            : pathSegment;
+          const rootRedirectBase = pathSegment;
           const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
           if (!fs.existsSync(cfgPath)) process.exit(0);
           const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
           const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.0';
           const defaultLang = cfg?.site?.defaultLanguage || 'en';
-          const redirectTargetRoot = effectiveBase
-            ? './' + effectiveBase + '/v/' + defaultVersion + '/?lang=' + defaultLang
+          const redirectTargetRoot = rootRedirectBase
+            ? './' + rootRedirectBase + '/v/' + defaultVersion + '/?lang=' + defaultLang
             : './v/' + defaultVersion + '/?lang=' + defaultLang;
           const redirectTargetProject = './v/' + defaultVersion + '/?lang=' + defaultLang;
           const rootHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetRoot + '"/><script>window.location.replace("' + redirectTargetRoot + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
