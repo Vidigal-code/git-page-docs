@@ -11,7 +11,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
       ? `        env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_BASE_PATH: "/${pathSegment}"`
+          GITPAGEDOCS_BASE_PATH: "/\${{ github.event.repository.name }}/${pathSegment}"`
       : `        env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}`;
@@ -83,7 +83,9 @@ ${buildEnvBlock}
           const path = require('path');
           const pathSegment = ${JSON.stringify(pathSegment)};
           const repoName = (process.env.GITHUB_REPOSITORY || '').split('/')[1] || '';
-          const effectiveBase = pathSegment || repoName;
+          const effectiveBase = repoName
+            ? (pathSegment ? repoName + '/' + pathSegment : repoName)
+            : pathSegment;
           const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
           if (!fs.existsSync(cfgPath)) process.exit(0);
           const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
@@ -95,8 +97,11 @@ ${buildEnvBlock}
           const redirectTargetProject = './v/' + defaultVersion + '/?lang=' + defaultLang;
           const rootHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetRoot + '"/><script>window.location.replace("' + redirectTargetRoot + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
           fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), rootHtml);
-          if (pathSegment) {
-            const projectIndexPath = path.join('.gitpagedocs-runtime', 'out', pathSegment, 'index.html');
+          const projectPathSegments = [];
+          if (repoName) projectPathSegments.push(repoName);
+          if (pathSegment) projectPathSegments.push(pathSegment);
+          if (projectPathSegments.length > 0) {
+            const projectIndexPath = path.join('.gitpagedocs-runtime', 'out', ...projectPathSegments, 'index.html');
             if (fs.existsSync(path.dirname(projectIndexPath))) {
               const projectHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetProject + '"/><script>window.location.replace("' + redirectTargetProject + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
               fs.writeFileSync(projectIndexPath, projectHtml);

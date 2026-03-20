@@ -51,3 +51,21 @@ cli/
 - **Domain**: sanitize and core rules with no infrastructure dependencies
 - **Infrastructure**: concrete adapters for runtime side effects
 - **Contracts**: `tools/smoke` consumes `cli/contracts` instead of internal CLI modules
+
+## GitHub Pages Push Paths
+
+- Default project-site publish (`--push` without `--path`) targets `/<repo>/`.
+- Custom project subpath publish (`--push --path <segment>`) targets `/<repo>/<segment>/`.
+- `--path` accepts a single sanitized segment (letters, numbers, `.`, `_`, `-`).
+
+Example:
+
+```bash
+npx gitpagedocs --owner vidigal-code --repo energy-bill-ai-parser --path git-docs --push
+```
+
+Expected URL after deployment:
+
+```text
+https://vidigal-code.github.io/energy-bill-ai-parser/git-docs/
+```
