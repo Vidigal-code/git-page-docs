@@ -3,6 +3,7 @@ import { readRemoteJson, readRemoteJsonFromRepo } from "../io/remote-fetcher";
 import { tryReadJsonFile } from "../io/file-reader";
 
 export interface VersionRoutesConfig {
+  auth?: GitPageDocsConfig["auth"];
   routes?: RouteConfig[];
   "menus-header"?: GitPageDocsConfig["menus-header"];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
@@ -87,7 +88,8 @@ export async function loadVersionConfig(options: {
     (versionConfig?.["menus-header-html"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-video"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-audio"]?.length ?? 0) > 0;
-  if ((hasAnyRoutes || hasAnyMenus) && versionConfig) {
+  const hasAuthConfig = typeof versionConfig?.auth === "object";
+  if ((hasAnyRoutes || hasAnyMenus || hasAuthConfig) && versionConfig) {
     return versionConfig;
   }
 

@@ -6,6 +6,7 @@ export const ROUTE_PATHS = {
   3: { pt: "functionalities.md", en: "functionalities.md", es: "functionalities.md" },
   4: { pt: "github-issues-projects.md", en: "github-issues-projects.md", es: "github-issues-projects.md" },
   5: { pt: "git-introduction.md", en: "git-introduction.md", es: "git-introduction.md" },
+  6: { pt: "authorized-routes.md", en: "authorized-routes.md", es: "authorized-routes.md" },
 };
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];

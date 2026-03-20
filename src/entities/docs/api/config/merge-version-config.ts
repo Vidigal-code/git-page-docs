@@ -8,6 +8,7 @@ import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 import type { VersionRoutesConfig } from "../version/resolve-version";
 
 export interface MergedRoutesConfig {
+  auth: GitPageDocsConfig["auth"];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
@@ -25,6 +26,7 @@ export function mergeVersionConfig(
   versionConfig: VersionRoutesConfig | undefined,
 ): MergedRoutesConfig {
   const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
+  let auth = baseConfig.auth;
   let routesMd = baseConfig["routes-md"] ?? baseConfig.routes ?? [];
   let routesHtml = baseConfig["routes-html"] ?? [];
   let routesVideo = baseConfig["routes-video"] ?? [];
@@ -37,6 +39,7 @@ export function mergeVersionConfig(
   let hierarchyMenu = baseConfig.hierarchyMenu ?? defaultHierarchy;
 
   if (versionConfig) {
+    if (versionConfig.auth) auth = versionConfig.auth;
     if (versionConfig["routes-md"]?.length) routesMd = versionConfig["routes-md"];
     else if (versionConfig.routes?.length) routesMd = versionConfig.routes;
     if (versionConfig["routes-html"]?.length) routesHtml = versionConfig["routes-html"];
@@ -52,6 +55,7 @@ export function mergeVersionConfig(
   }
 
   return {
+    auth,
     routesMd,
     routesHtml,
     routesVideo,

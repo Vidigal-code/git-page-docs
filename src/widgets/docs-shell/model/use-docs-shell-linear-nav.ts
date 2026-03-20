@@ -2,10 +2,15 @@ import { useMemo } from "react";
 import type { LoadedDocsData } from "@/entities/docs";
 import { buildUnifiedHeaderMenuTree, flattenMenuTree, getPageIndexByPathClick } from "./menu-tree";
 
-export function useDocsShellLinearNav(data: LoadedDocsData, language: string, safePageIndex: number) {
+export function useDocsShellLinearNav(
+  data: LoadedDocsData,
+  language: string,
+  safePageIndex: number,
+  isPathAllowed?: (pathClick: string) => boolean,
+) {
   const headerMenuTree = useMemo(
-    () => buildUnifiedHeaderMenuTree(data, language, safePageIndex),
-    [data, language, safePageIndex],
+    () => buildUnifiedHeaderMenuTree(data, language, safePageIndex, isPathAllowed),
+    [data, language, safePageIndex, isPathAllowed],
   );
 
   const headerMenuEntries = useMemo(() => flattenMenuTree(headerMenuTree), [headerMenuTree]);

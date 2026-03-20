@@ -13,13 +13,14 @@ export function buildEffectiveConfig(
   baseConfig: GitPageDocsConfig,
   merged: MergedRoutesConfig,
 ): EffectiveConfigResult {
-  const { routesMd, routesHtml, routesVideo, routesAudio, menusHeaderMd, hierarchyPage, hierarchyMenu } = merged;
+  const { auth, routesMd, routesHtml, routesVideo, routesAudio, menusHeaderMd, hierarchyPage, hierarchyMenu } = merged;
 
   const routes = routesMd.filter((r) => hasPath(r)).map((r) => ({ id: r.id, path: r.path! }));
   const menusHeader = menusHeaderMd;
 
   const effectiveConfig: GitPageDocsConfig = {
     ...baseConfig,
+    auth,
     routes,
     "menus-header": menusHeader,
     "routes-md": routesMd,

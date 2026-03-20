@@ -17,6 +17,7 @@ It does **not** generate `index.html` or `index.js`.
 - [Repository Search Behavior](#repository-search-behavior)
 - [Scripts](#scripts)
 - [URL Routes and Query Parameters](#url-routes-and-query-parameters)
+- [Authorized Routes](#authorized-routes)
 - [CLI Options](#cli-options)
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
@@ -330,6 +331,54 @@ All routes for accessing documentation files on the official site or self-hosted
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.0/?lang=en&theme=aurora-dark  
 - v1.1.1:  
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.1/?lang=en&theme=aurora-dark  
+
+## Authorized Routes
+
+Route authorization is configured per version in:
+
+- `gitpagedocs/docs/versions/<version>/config.json`
+
+Use the top-level `auth` section plus route-level `authorization`:
+
+- `auth.accessKeys`: key ids and expected secrets
+- `auth.rolesStorageKey`: localStorage key used to bootstrap roles
+- `auth.providers`: external providers (`authjs`, `clerk`, `firebase`, `jwt`)
+- `authorization.accessKeyId`: requires a configured key
+- `authorization.requiredRoles`: requires matching roles
+- `authorization.requireExternalAuth`: requires authenticated external provider
+- `authorization.allowedProviders`: optional provider allow-list per route
+
+Example:
+
+```json
+{
+  "auth": {
+    "accessKeys": {
+      "docs-key": "open-gitpagedocs-docs"
+    },
+    "providers": [
+      { "type": "authjs", "enabled": true, "sessionEndpoint": "/api/auth/session" },
+      { "type": "jwt", "enabled": true, "tokenStorageKey": "git-page-docs:jwt-token" }
+    ]
+  },
+  "routes-md": [
+    {
+      "id": 6,
+      "path": {
+        "en": "gitpagedocs/docs/versions/1.1.1/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/authorized-routes.md"
+      },
+      "authorization": {
+        "accessKeyId": "docs-key",
+        "requiredRoles": ["maintainer"],
+        "requireExternalAuth": true,
+        "allowedProviders": ["authjs", "jwt"]
+      }
+    }
+  ]
+}
+```
 
 ## CLI Options
 

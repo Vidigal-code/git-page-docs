@@ -26,6 +26,7 @@ function buildLocalizedSubmenuTree(
   data: LoadedDocsData,
   language: LanguageCode,
   pageIndex: number,
+  isPathAllowed?: (pathClick: string) => boolean,
 ): MenuNode[] {
   const entries: MenuNode[] = [];
   submenus.forEach((submenu, index) => {
@@ -35,8 +36,22 @@ function buildLocalizedSubmenuTree(
     const key = `${parentKey}-l${level}-${index}`;
     const ancestorKeys = [...parentAncestors];
     const children = submenu.submenus?.length
-      ? buildLocalizedSubmenuTree(submenu.submenus, key, trail, [...ancestorKeys, key], level + 1, data, language, pageIndex)
+      ? buildLocalizedSubmenuTree(
+          submenu.submenus,
+          key,
+          trail,
+          [...ancestorKeys, key],
+          level + 1,
+          data,
+          language,
+          pageIndex,
+          isPathAllowed,
+        )
       : [];
+    const allowed = !pathClick || isPathAllowed?.(pathClick) !== false;
+    if (!allowed && children.length === 0) {
+      return;
+    }
     entries.push({
       key,
       id: index,
@@ -60,6 +75,7 @@ export function buildHeaderMenuTree(
   level = 0,
   parentTrail: string[] = [],
   parentAncestors: string[] = [],
+  isPathAllowed?: (pathClick: string) => boolean,
 ): MenuNode[] {
   const entries: MenuNode[] = [];
   menus.forEach((menu) => {
@@ -70,11 +86,34 @@ export function buildHeaderMenuTree(
     const key = `${trail.join("-")}-${menu.id}`;
     const ancestorKeys = [...parentAncestors];
     const nestedByItem = Array.isArray(menu.submenus)
-      ? buildHeaderMenuTree(menu.submenus, data, language, pageIndex, level + 1, trail, [...ancestorKeys, key])
+      ? buildHeaderMenuTree(
+          menu.submenus,
+          data,
+          language,
+          pageIndex,
+          level + 1,
+          trail,
+          [...ancestorKeys, key],
+          isPathAllowed,
+        )
       : [];
     const nestedByLanguage = value?.submenus?.length
-      ? buildLocalizedSubmenuTree(value.submenus, `${menu.id}`, trail, [...ancestorKeys, key], level + 1, data, language, pageIndex)
+      ? buildLocalizedSubmenuTree(
+          value.submenus,
+          `${menu.id}`,
+          trail,
+          [...ancestorKeys, key],
+          level + 1,
+          data,
+          language,
+          pageIndex,
+          isPathAllowed,
+        )
       : [];
+    const allowed = !pathClick || isPathAllowed?.(pathClick) !== false;
+    if (!allowed && nestedByItem.length === 0 && nestedByLanguage.length === 0) {
+      return;
+    }
     entries.push({
       key,
       id: menu.id,
@@ -94,6 +133,7 @@ export function buildUnifiedHeaderMenuTree(
   data: LoadedDocsData,
   language: LanguageCode,
   pageIndex: number,
+  isPathAllowed?: (pathClick: string) => boolean,
 ): MenuNode[] {
   const hierarchyMenu = data.config.hierarchyMenu ?? DEFAULT_HIERARCHY as Record<string, number>;
   const langmenu = data.config.site.langmenu;
@@ -136,7 +176,23 @@ export function buildUnifiedHeaderMenuTree(
         isSectionHeader: true,
       });
     }
-    result.push(...buildHeaderMenuTree(menus, data, language, pageIndex, showSectionLabels ? 1 : 0, showSectionLabels ? [] : [], []));
+    const sectionNodes = buildHeaderMenuTree(
+      menus,
+      data,
+      language,
+      pageIndex,
+      showSectionLabels ? 1 : 0,
+      showSectionLabels ? [] : [],
+      [],
+      isPathAllowed,
+    );
+    if (sectionNodes.length === 0) {
+      if (showSectionLabels) {
+        result.pop();
+      }
+      continue;
+    }
+    result.push(...sectionNodes);
   }
 
   return result;

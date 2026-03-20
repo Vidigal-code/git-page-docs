@@ -23,6 +23,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrandPosition = "center",
     RouteguideBrandContainerTop = false,
     audio,
+    authorization,
   } = options;
   const out = {
     id: routeId,
@@ -52,6 +53,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
   };
   if (container !== undefined) out.container = container;
   if (audio !== undefined) out.audio = audio;
+  if (authorization !== undefined) out.authorization = authorization;
   return out;
 }
 
@@ -78,6 +80,7 @@ export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles
     blockLink = true,
     container,
     browseAll = false,
+    authorization,
   } = options;
   const videoTypeByLang = typeof videoType === "string" ? { pt: videoType, en: videoType, es: videoType } : videoType;
   const pathVideoByLang = typeof pathVideo === "string" ? { pt: pathVideo, en: pathVideo, es: pathVideo } : pathVideo;
@@ -103,5 +106,6 @@ export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles
     video: { videoType: videoTypeByLang, pathVideo: pathVideoByLang },
   };
   if (container !== undefined) obj.container = container;
+  if (authorization !== undefined) obj.authorization = authorization;
   return obj;
 }

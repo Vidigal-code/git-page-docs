@@ -30,6 +30,7 @@ The runtime expects this structure:
 - Open **Deployment** for local, server, and GitHub Pages behavior.
 - Open **Architecture** for code map and data flow.
 - Open **Themes and layouts** for template authoring details.
+- Open **Authorized routes** for key, roles, and external auth setup.
 - Open **FAQ** for troubleshooting.
 `,
     gettingStarted: `# Getting Started
@@ -199,6 +200,92 @@ Basic Git concepts for beginners.
 - \`git commit\` - Create a snapshot
 - \`git push\` - Send to remote
 `,
+    authorizedRoutes: `# Authorized Routes
+
+Protect routes by access key, required roles, and external authentication providers.
+
+## Version config location
+
+Configure this at:
+
+- \`gitpagedocs/docs/versions/<version>/config.json\`
+
+## Global auth section
+
+Use top-level \`auth\` in version config:
+
+- \`accessKeys\`: map of key ids to expected secrets
+- \`rolesStorageKey\`: localStorage key for role bootstrap
+- \`providers\`: external providers list (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
+
+## Route-level authorization
+
+Inside each route (\`routes-md\`, \`routes-html\`, \`routes-video\`):
+
+- \`authorization.accessKeyId\`
+- \`authorization.requiredRoles\`
+- \`authorization.requireExternalAuth\`
+- \`authorization.allowedProviders\`
+
+## Phases
+
+### Phase A - Access key
+
+Set \`authorization.accessKeyId\` and define that key in \`auth.accessKeys\`.
+
+### Phase B - Roles
+
+Set \`authorization.requiredRoles\` with one or more roles.
+
+Roles can come from:
+
+- query param \`?authRoles=admin,maintainer\`
+- localStorage (\`rolesStorageKey\`)
+- external provider claims
+
+### Phase C - External providers
+
+Set \`authorization.requireExternalAuth=true\` and optionally \`allowedProviders\`.
+
+Supported adapters:
+
+- Auth.js (\`type: "authjs"\`)
+- Clerk (\`type: "clerk"\`)
+- Firebase Auth (\`type: "firebase"\`)
+- Custom JWT (\`type: "jwt"\`)
+
+## Example
+
+\`\`\`json
+{
+  "auth": {
+    "accessKeys": {
+      "docs-key": "open-gitpagedocs-docs"
+    },
+    "providers": [
+      { "type": "authjs", "enabled": true, "sessionEndpoint": "/api/auth/session" },
+      { "type": "jwt", "enabled": true, "tokenStorageKey": "git-page-docs:jwt-token" }
+    ]
+  },
+  "routes-md": [
+    {
+      "id": 6,
+      "path": {
+        "en": "gitpagedocs/docs/versions/1.1.1/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/1.1.1/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/1.1.1/es/authorized-routes.md"
+      },
+      "authorization": {
+        "accessKeyId": "docs-key",
+        "requiredRoles": ["maintainer"],
+        "requireExternalAuth": true,
+        "allowedProviders": ["authjs", "jwt"]
+      }
+    }
+  ]
+}
+\`\`\`
+`,
     configuration: `# Configuration
 
 Runtime configuration lives in \`gitpagedocs/config.json\`.
@@ -243,6 +330,13 @@ Behavior:
 - \`menus-header\`: hierarchical menu model
 - \`translations\`: UI labels
 
+## Authorization (version config)
+
+- \`auth\`: global authorization runtime settings for that version
+- \`auth.accessKeys\`: key map used by \`authorization.accessKeyId\`
+- \`auth.rolesStorageKey\`: localStorage key for role bootstrap
+- \`auth.providers\`: provider adapters (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
+
 ## Content types (version config)
 
 Version configs support multiple content types:
@@ -251,6 +345,7 @@ Version configs support multiple content types:
 - \`routes-html\`: HTML page paths per language
 - \`routes-video\`: Video config with \`video.videoType\` (youtube, vimeo, mp4, etc.) and \`video.pathVideo\`
 - \`routes-audio\`: Audio config with \`audio.audioType\` (youtube, mp3, etc.) and \`audio.pathAudio\`
+- \`authorization\` (md/html/video): route guard by access key, roles, and external auth
 - \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus per type
 - \`hierarchyPage\`: container order on page \`{ md: 0, html: 1, video: 2, audio: 3 }\`
 - \`hierarchyMenu\`: menu section order \`{ md: 0, html: 1, video: 2, audio: 3 }\`
@@ -450,6 +545,7 @@ O runtime espera esta estrutura:
 - Abra **Publicacao** para comportamento local/producao/GitHub Pages.
 - Abra **Arquitetura** para mapa de codigo e fluxo de dados.
 - Abra **Temas e layouts** para autoria de templates.
+- Abra **Rotas autorizadas** para configurar chave, papeis e autenticacao externa.
 - Abra **FAQ** para troubleshooting.
 `,
     gettingStarted: `# Primeiros passos
@@ -618,6 +714,13 @@ Principais chaves:
 - \`menus-header\`: menu hierarquico
 - \`translations\`: labels de UI para not-found e navegacao
 
+## Autorizacao (config de versao)
+
+- \`auth\`: configuracoes globais de autorizacao para a versao
+- \`auth.accessKeys\`: mapa de chaves usado por \`authorization.accessKeyId\`
+- \`auth.rolesStorageKey\`: chave de localStorage para bootstrap de papeis
+- \`auth.providers\`: adaptadores de provedor (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
+
 ## Tipos de conteudo (config de versao)
 
 Configs de versao suportam multiplos tipos:
@@ -626,6 +729,7 @@ Configs de versao suportam multiplos tipos:
 - \`routes-html\`: Caminhos de paginas HTML por idioma
 - \`routes-video\`: Config de video com \`video.videoType\` (youtube, vimeo, mp4, etc.) e \`video.pathVideo\`
 - \`routes-audio\`: Config de audio com \`audio.audioType\` (youtube, mp3, etc.) e \`audio.pathAudio\`
+- \`authorization\` (md/html/video): guarda de acesso por chave, papeis e autenticacao externa
 - \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
 - \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, html: 1, video: 2, audio: 3 }\`
 - \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, html: 1, video: 2, audio: 3 }\`
@@ -739,6 +843,60 @@ Conceitos basicos de Git para iniciantes.
 - \`git commit\` - registrar commit
 - \`git push\` - enviar para remoto
 `,
+    authorizedRoutes: `# Rotas autorizadas
+
+Proteja rotas por chave de acesso, papeis obrigatorios e provedores externos.
+
+## Local do config de versao
+
+Configure em:
+
+- \`gitpagedocs/docs/versions/<versao>/config.json\`
+
+## Secao global auth
+
+Use \`auth\` no topo do config de versao:
+
+- \`accessKeys\`: mapa de ids de chave para segredo esperado
+- \`rolesStorageKey\`: chave de localStorage para bootstrap de papeis
+- \`providers\`: lista de provedores externos (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
+
+## Autorizacao por rota
+
+Dentro de cada rota (\`routes-md\`, \`routes-html\`, \`routes-video\`):
+
+- \`authorization.accessKeyId\`
+- \`authorization.requiredRoles\`
+- \`authorization.requireExternalAuth\`
+- \`authorization.allowedProviders\`
+
+## Fases
+
+### Fase A - Chave de acesso
+
+Defina \`authorization.accessKeyId\` e a chave correspondente em \`auth.accessKeys\`.
+
+### Fase B - Papeis
+
+Defina \`authorization.requiredRoles\` com um ou mais papeis.
+
+Os papeis podem vir de:
+
+- query param \`?authRoles=admin,maintainer\`
+- localStorage (\`rolesStorageKey\`)
+- claims de provedores externos
+
+### Fase C - Provedores externos
+
+Defina \`authorization.requireExternalAuth=true\` e opcionalmente \`allowedProviders\`.
+
+Adaptadores suportados:
+
+- Auth.js (\`type: "authjs"\`)
+- Clerk (\`type: "clerk"\`)
+- Firebase Auth (\`type: "firebase"\`)
+- JWT custom (\`type: "jwt"\`)
+`,
     themes: `# Temas e layouts
 
 Temas sao templates JSON mapeados por \`layoutsConfig.json\`.
@@ -834,6 +992,7 @@ El runtime espera esta estructura:
 - Abre **Publicacion** para comportamiento local/produccion/GitHub Pages.
 - Abre **Arquitectura** para mapa de codigo y flujo de datos.
 - Abre **Temas y layouts** para creacion de templates.
+- Abre **Rutas autorizadas** para configurar clave, roles y autenticacion externa.
 - Abre **FAQ** para troubleshooting.
 `,
     gettingStarted: `# Primeros pasos
@@ -1002,6 +1161,13 @@ Claves principales:
 - \`menus-header\`: menu jerarquico
 - \`translations\`: etiquetas UI para not-found y navegacion
 
+## Autorizacion (config de version)
+
+- \`auth\`: configuraciones globales de autorizacion para esa version
+- \`auth.accessKeys\`: mapa de claves usado por \`authorization.accessKeyId\`
+- \`auth.rolesStorageKey\`: clave de localStorage para bootstrap de roles
+- \`auth.providers\`: adaptadores de proveedor (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
+
 ## Tipos de contenido (config de version)
 
 Los configs de version soportan multiples tipos:
@@ -1010,6 +1176,7 @@ Los configs de version soportan multiples tipos:
 - \`routes-html\`: Rutas de paginas HTML por idioma
 - \`routes-video\`: Config de video con \`video.videoType\` (youtube, vimeo, mp4, etc.) y \`video.pathVideo\`
 - \`routes-audio\`: Config de audio con \`audio.audioType\` (youtube, mp3, etc.) y \`audio.pathAudio\`
+- \`authorization\` (md/html/video): guardia de acceso por clave, roles y autenticacion externa
 - \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
 - \`hierarchyPage\`: orden de contenedores en la pagina \`{ md: 0, html: 1, video: 2, audio: 3 }\`
 - \`hierarchyMenu\`: orden de secciones del menu \`{ md: 0, html: 1, video: 2, audio: 3 }\`
@@ -1122,6 +1289,60 @@ Conceptos basicos de Git para principiantes.
 - \`git add\` - preparar cambios
 - \`git commit\` - registrar commit
 - \`git push\` - enviar a remoto
+`,
+    authorizedRoutes: `# Rutas autorizadas
+
+Protege rutas por clave de acceso, roles requeridos y proveedores externos.
+
+## Ubicacion del config de version
+
+Configura en:
+
+- \`gitpagedocs/docs/versions/<version>/config.json\`
+
+## Seccion global auth
+
+Usa \`auth\` en la raiz del config de version:
+
+- \`accessKeys\`: mapa de ids de clave al secreto esperado
+- \`rolesStorageKey\`: clave de localStorage para bootstrap de roles
+- \`providers\`: lista de proveedores externos (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
+
+## Autorizacion por ruta
+
+Dentro de cada ruta (\`routes-md\`, \`routes-html\`, \`routes-video\`):
+
+- \`authorization.accessKeyId\`
+- \`authorization.requiredRoles\`
+- \`authorization.requireExternalAuth\`
+- \`authorization.allowedProviders\`
+
+## Fases
+
+### Fase A - Clave de acceso
+
+Define \`authorization.accessKeyId\` y la clave correspondiente en \`auth.accessKeys\`.
+
+### Fase B - Roles
+
+Define \`authorization.requiredRoles\` con uno o mas roles.
+
+Los roles pueden venir de:
+
+- query param \`?authRoles=admin,maintainer\`
+- localStorage (\`rolesStorageKey\`)
+- claims de proveedores externos
+
+### Fase C - Proveedores externos
+
+Define \`authorization.requireExternalAuth=true\` y opcionalmente \`allowedProviders\`.
+
+Adaptadores soportados:
+
+- Auth.js (\`type: "authjs"\`)
+- Clerk (\`type: "clerk"\`)
+- Firebase Auth (\`type: "firebase"\`)
+- JWT custom (\`type: "jwt"\`)
 `,
     themes: `# Temas y layouts
 

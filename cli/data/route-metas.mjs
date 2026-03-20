@@ -27,6 +27,15 @@ export const ROUTE_META_ID5 = {
   descriptions: { pt: "Conceitos básicos de Git para iniciantes", en: "Basic Git concepts for beginners", es: "Conceptos básicos de Git para principiantes" },
 };
 
+export const ROUTE_META_ID6 = {
+  titles: { pt: "Rotas autorizadas", en: "Authorized routes", es: "Rutas autorizadas" },
+  descriptions: {
+    pt: "Controle acesso por chave, roles e provedores externos",
+    en: "Control access by key, roles and external providers",
+    es: "Controla acceso por clave, roles y proveedores externos",
+  },
+};
+
 export const VIDEO_META_ID1 = {
   title: { pt: "Interactive vs non-interactive modes | Copilot CLI for beginners", en: "Interactive vs non-interactive modes | Copilot CLI for beginners", es: "Interactive vs non-interactive modes | Copilot CLI for beginners" },
   description: {

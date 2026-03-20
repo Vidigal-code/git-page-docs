@@ -44,6 +44,7 @@ export function useDocsShellUrlParams(
   pageIndex: number,
   setPageIndex: (idx: number) => void,
   expandAncestors: (keys: string[]) => void,
+  canNavigateToPathClick?: (pathClick: string) => boolean,
   onParamsProcessed?: (action: UrlParamsAction | null) => void,
   onFullscreenRequest?: (params: FullscreenParams) => void
 ) {
@@ -113,6 +114,10 @@ export function useDocsShellUrlParams(
       }
 
       if (pathClick) {
+        if (canNavigateToPathClick && !canNavigateToPathClick(pathClick)) {
+          onParamsProcessed?.(null);
+          return;
+        }
         const pageIdx = getPageIndexByPathClick(data, pathClick);
         if (pageIdx >= 0 && pageIdx !== pageIndex) {
           const tree = buildUnifiedHeaderMenuTree(data, menuLang, pageIdx);
@@ -141,6 +146,7 @@ export function useDocsShellUrlParams(
     pageIndex,
     setPageIndex,
     expandAncestors,
+    canNavigateToPathClick,
     onParamsProcessed,
     onFullscreenRequest,
   ]);

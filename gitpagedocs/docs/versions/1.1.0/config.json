@@ -1,4 +1,36 @@
 {
+  "auth": {
+    "accessKeys": {
+      "docs-key": "open-gitpagedocs-docs",
+      "source-viewer-key": "open-source-viewer"
+    },
+    "rolesStorageKey": "git-page-docs:route-auth:roles",
+    "providers": [
+      {
+        "type": "authjs",
+        "enabled": true,
+        "sessionEndpoint": "/api/auth/session",
+        "rolesClaimPath": "user.roles"
+      },
+      {
+        "type": "clerk",
+        "enabled": true,
+        "rolesClaimPath": "claims.publicMetadata.roles"
+      },
+      {
+        "type": "firebase",
+        "enabled": true,
+        "tokenStorageKey": "git-page-docs:firebase-token",
+        "rolesClaimPath": "roles"
+      },
+      {
+        "type": "jwt",
+        "enabled": true,
+        "tokenStorageKey": "git-page-docs:jwt-token",
+        "rolesClaimPath": "roles"
+      }
+    ]
+  },
   "routes-md": [
     {
       "id": 1,
@@ -125,7 +157,12 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
+      "RouteguideBrandContainerTop": false,
+      "authorization": {
+        "requiredRoles": [
+          "maintainer"
+        ]
+      }
     },
     {
       "id": 4,
@@ -200,6 +237,56 @@
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 6,
+      "title": {
+        "pt": "Rotas autorizadas",
+        "en": "Authorized routes",
+        "es": "Rutas autorizadas"
+      },
+      "description": {
+        "pt": "Controle acesso por chave, roles e provedores externos",
+        "en": "Control access by key, roles and external providers",
+        "es": "Controla acceso por clave, roles y proveedores externos"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "path": {
+        "pt": "gitpagedocs/docs/versions/1.1.0/pt/authorized-routes.md",
+        "en": "gitpagedocs/docs/versions/1.1.0/en/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/1.1.0/es/authorized-routes.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false,
+      "authorization": {
+        "accessKeyId": "docs-key",
+        "requiredRoles": [
+          "maintainer"
+        ],
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
+      }
     }
   ],
   "routes-html": [
@@ -239,7 +326,10 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
+      "RouteguideBrandContainerTop": false,
+      "authorization": {
+        "accessKeyId": "source-viewer-key"
+      }
     }
   ],
   "routes-video": [
@@ -281,6 +371,15 @@
           "en": "bdIJkGr2NV0",
           "es": "bdIJkGr2NV0"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     },
     {
@@ -321,6 +420,15 @@
           "en": "c67GaAkf1BE",
           "es": "c67GaAkf1BE"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     },
     {
@@ -361,6 +469,15 @@
           "en": "N3my6W_Rdwg",
           "es": "N3my6W_Rdwg"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     },
     {
@@ -401,6 +518,15 @@
           "en": "r8jQ9hVA2qs",
           "es": "r8jQ9hVA2qs"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     }
   ],
@@ -478,6 +604,21 @@
       "es": {
         "title": "Introducción a Git",
         "path-click": "gitpagedocs/docs/versions/1.1.0/es/git-introduction.md"
+      }
+    },
+    {
+      "id": 6,
+      "pt": {
+        "title": "Rotas autorizadas",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/pt/authorized-routes.md"
+      },
+      "en": {
+        "title": "Authorized routes",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/en/authorized-routes.md"
+      },
+      "es": {
+        "title": "Rutas autorizadas",
+        "path-click": "gitpagedocs/docs/versions/1.1.0/es/authorized-routes.md"
       }
     }
   ],

@@ -18,6 +18,7 @@ import { getBasePath } from "@/shared/lib/base-path";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference";
+import { useRouteAuthorization } from "@/features/route-authorization";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { CollapsedNavRail } from "./ui/docs-shell-collapsed-rail";
@@ -86,6 +87,19 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   } = state;
 
   const {
+    evaluatePathAccess,
+    ensurePathAccess,
+    isPageAccessible,
+    firstAccessiblePageIndex,
+    getDeniedMessage,
+  } = useRouteAuthorization(data, language, searchParams);
+
+  const isPathAllowed = useCallback(
+    (pathClick: string) => evaluatePathAccess(pathClick).allowed,
+    [evaluatePathAccess],
+  );
+
+  const {
     urlFullscreenParams,
     onFullscreenRequest,
     closeUrlFullscreen,
@@ -103,10 +117,11 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   });
 
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
-  const currentPage = data.pages?.[safePageIndex];
+  const safeAccessiblePageIndex = isPageAccessible(safePageIndex) ? safePageIndex : firstAccessiblePageIndex;
+  const currentPage = data.pages?.[safeAccessiblePageIndex];
   const markdownHtml =
     currentPage?.md?.markdownByLanguage[language] ??
-    data.docs?.[safePageIndex]?.markdownByLanguage[language] ??
+    data.docs?.[safeAccessiblePageIndex]?.markdownByLanguage[language] ??
     "<p>Document not found for this language.</p>";
 
   const {
@@ -116,7 +131,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     currentLinearNavigationIndex,
     canGoPrevious,
     canGoNext,
-  } = useDocsShellLinearNav(data, language, safePageIndex);
+  } = useDocsShellLinearNav(data, language, safeAccessiblePageIndex, isPathAllowed);
 
   const {
     quickNavOpen,
@@ -176,6 +191,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     pageIndex,
     setPageIndex,
     expandAncestors,
+    isPathAllowed,
     undefined,
     onFullscreenRequest,
   );
@@ -201,16 +217,41 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   const onMenuClick = useCallback(
     (pathClick: string, ancestorKeys: string[] = [], options?: { fromLinearNav?: boolean; fromQuickNav?: boolean }) => {
-      onMenuClickState(pathClick, ancestorKeys, options);
-      setQuickNavOpen(false);
-      setFocusModeOpen(false);
-      setQuickNavQuery("");
-      if (pathClick && typeof window !== "undefined") {
-        const params = getUrlParamsForPathClick(data, pathClick, language, getCurrentSearchParams());
-        replaceUrlWithoutNavigation(pathname ?? "/", params);
-      }
+      void (async () => {
+        if (pathClick) {
+          const access = await ensurePathAccess(pathClick);
+          if (!access.allowed) {
+            const deniedMessage = getDeniedMessage(pathClick);
+            if (deniedMessage && typeof window !== "undefined") {
+              window.alert(deniedMessage);
+            }
+            return;
+          }
+        }
+
+        onMenuClickState(pathClick, ancestorKeys, options);
+        setQuickNavOpen(false);
+        setFocusModeOpen(false);
+        setQuickNavQuery("");
+        if (pathClick && typeof window !== "undefined") {
+          const params = getUrlParamsForPathClick(data, pathClick, language, getCurrentSearchParams());
+          replaceUrlWithoutNavigation(pathname ?? "/", params);
+        }
+      })();
     },
-    [onMenuClickState, setQuickNavOpen, setFocusModeOpen, setQuickNavQuery, data, language, pathname, getCurrentSearchParams, replaceUrlWithoutNavigation],
+    [
+      ensurePathAccess,
+      getDeniedMessage,
+      onMenuClickState,
+      setQuickNavOpen,
+      setFocusModeOpen,
+      setQuickNavQuery,
+      data,
+      language,
+      pathname,
+      getCurrentSearchParams,
+      replaceUrlWithoutNavigation,
+    ],
   );
 
   const goToLinearNavigation = useCallback(
@@ -234,6 +275,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     },
     [versionStorageKey, onVersionChangeInternal],
   );
+
+  useEffect(() => {
+    if (safePageIndex !== safeAccessiblePageIndex) {
+      setPageIndex(safeAccessiblePageIndex);
+    }
+  }, [safeAccessiblePageIndex, safePageIndex, setPageIndex]);
 
   function openQuickNavigation() {
     setMenuOpen(false);

@@ -12,6 +12,7 @@ import {
   ROUTE_META_ID3,
   ROUTE_META_ID4,
   ROUTE_META_ID5,
+  ROUTE_META_ID6,
   VIDEO_META_ID1,
   VIDEO_META_ID2,
   VIDEO_META_ID3,
@@ -20,12 +21,19 @@ import {
 } from "../data/route-metas.mjs";
 import { buildMdRoute, buildHtmlRoute, buildVideoRoute } from "./route-builders.mjs";
 
-const ROUTE_METAS = { 1: ROUTE_META_ID1, 2: ROUTE_META_ID2, 3: ROUTE_META_ID3, 4: ROUTE_META_ID4, 5: ROUTE_META_ID5 };
+const ROUTE_METAS = {
+  1: ROUTE_META_ID1,
+  2: ROUTE_META_ID2,
+  3: ROUTE_META_ID3,
+  4: ROUTE_META_ID4,
+  5: ROUTE_META_ID5,
+  6: ROUTE_META_ID6,
+};
 const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
 
 function buildVersionMdRoutes(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  return [1, 2, 3, 4, 5].map((id) => {
+  return [1, 2, 3, 4, 5, 6].map((id) => {
     const paths = ROUTE_PATHS[id];
     const meta = ROUTE_METAS[id];
     const pathByLang = {
@@ -33,7 +41,20 @@ function buildVersionMdRoutes(versionId) {
       en: `${base}/en/${paths.en}`,
       es: `${base}/es/${paths.es}`,
     };
-    const routeOptions = id === 2 ? { audio: PAGE2_AUDIO } : {};
+    const routeOptions = {
+      ...(id === 2 ? { audio: PAGE2_AUDIO } : {}),
+      ...(id === 3 ? { authorization: { requiredRoles: ["maintainer"] } } : {}),
+      ...(id === 6
+        ? {
+            authorization: {
+              accessKeyId: "docs-key",
+              requiredRoles: ["maintainer"],
+              requireExternalAuth: true,
+              allowedProviders: ["authjs", "clerk", "firebase", "jwt"],
+            },
+          }
+        : {}),
+    };
     return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions, routeOptions);
   });
 }
@@ -49,6 +70,7 @@ function buildVersionHtmlRoutes(versionId) {
     buildHtmlRoute(versionId, 1, pathByLangSource, SOURCE_VIEWER_META.titles, SOURCE_VIEWER_META.descriptions, {
       container: "full",
       blockLink: true,
+      authorization: { accessKeyId: "source-viewer-key" },
     }),
   ];
 }
@@ -61,14 +83,20 @@ function buildVersionVideoRoutes(versionId) {
       "youtube",
       VIDEO_IDS[id - 1],
       VIDEO_METAS[id].title,
-      VIDEO_METAS[id].description
+      VIDEO_METAS[id].description,
+      {
+        authorization: {
+          requireExternalAuth: true,
+          allowedProviders: ["authjs", "clerk", "firebase", "jwt"],
+        },
+      },
     )
   );
 }
 
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  const menuMd = [1, 2, 3, 4, 5].map((id) => ({
+  const menuMd = [1, 2, 3, 4, 5, 6].map((id) => ({
     id: id,
     pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
     en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
@@ -98,6 +126,19 @@ function buildVersionMenus(versionId) {
  */
 export function buildVersionConfig(versionId) {
   return {
+    auth: {
+      accessKeys: {
+        "docs-key": "open-gitpagedocs-docs",
+        "source-viewer-key": "open-source-viewer",
+      },
+      rolesStorageKey: "git-page-docs:route-auth:roles",
+      providers: [
+        { type: "authjs", enabled: true, sessionEndpoint: "/api/auth/session", rolesClaimPath: "user.roles" },
+        { type: "clerk", enabled: true, rolesClaimPath: "claims.publicMetadata.roles" },
+        { type: "firebase", enabled: true, tokenStorageKey: "git-page-docs:firebase-token", rolesClaimPath: "roles" },
+        { type: "jwt", enabled: true, tokenStorageKey: "git-page-docs:jwt-token", rolesClaimPath: "roles" },
+      ],
+    },
     "routes-md": buildVersionMdRoutes(versionId),
     "routes-html": buildVersionHtmlRoutes(versionId),
     "routes-video": buildVersionVideoRoutes(versionId),

@@ -12,6 +12,7 @@ export function parseDocFileToKey(fileName) {
   if (fileName === "functionalities.md") return "functionalities";
   if (fileName === "github-issues-projects.md") return "githubIssuesProjects";
   if (fileName === "git-introduction.md") return "gitIntroduction";
+  if (fileName === "authorized-routes.md") return "authorizedRoutes";
   return undefined;
 }
 

@@ -52,6 +52,22 @@ cli/
 - **Infrastructure**: concrete adapters for runtime side effects
 - **Contracts**: `tools/smoke` consumes `cli/contracts` instead of internal CLI modules
 
+## Authorized Routes Pipeline
+
+The CLI now generates authorized-route docs and config entries in PT/EN/ES.
+
+- Source content: `cli/content/docs.mjs` (`authorizedRoutes` key per language)
+- Route metadata: `cli/data/route-metas.mjs` (`ROUTE_META_ID6`)
+- Route path mapping: `cli/data/path-mappings.mjs` (`authorized-routes.md`)
+- Version config composition: `cli/builders/version-config-builder.mjs`
+- Doc key resolution: `cli/runtime/doc-path-resolver.mjs`
+
+Generated artifacts include:
+
+- `gitpagedocs/docs/versions/<version>/config.json` with `auth` and route `authorization`
+- `gitpagedocs/docs/versions/<version>/{pt,en,es}/authorized-routes.md`
+- `menus-header-md` entry dedicated to Authorized Routes
+
 ## GitHub Pages Push Paths
 
 - Default project-site publish (`--push` without `--path`) targets `/<repo>/`.

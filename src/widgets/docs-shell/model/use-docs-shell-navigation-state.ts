@@ -45,6 +45,7 @@ interface UseDocsShellNavigationStateArgs {
   setSidebarOpen: (open: boolean) => void;
   setMenuOpen: (open: boolean) => void;
   blockSidebarOpenOnNav?: boolean;
+  canNavigateToPathClick?: (pathClick: string) => boolean;
 }
 
 export function useDocsShellNavigationState({
@@ -53,6 +54,7 @@ export function useDocsShellNavigationState({
   setSidebarOpen,
   setMenuOpen,
   blockSidebarOpenOnNav = false,
+  canNavigateToPathClick,
 }: UseDocsShellNavigationStateArgs) {
   const [pageIndex, setPageIndex] = useState(0);
   const [expandedMenuMap, setExpandedMenuMap] = useState<Record<string, boolean>>({});
@@ -76,6 +78,10 @@ export function useDocsShellNavigationState({
   }, [pageIndex, pages.length, mdItems.length, htmlItems.length, videoItems.length, audioItems.length]);
 
   function onMenuClick(pathClick: string, ancestorKeys: string[] = [], options: OnMenuClickOptions = {}) {
+    if (pathClick && canNavigateToPathClick && !canNavigateToPathClick(pathClick)) {
+      setMenuOpen(false);
+      return;
+    }
     const idx = getPageIndexByPathClick(data, pathClick);
     if (idx >= 0) {
       setPageIndex(idx);

@@ -4,6 +4,37 @@ import type { SiteConfig, UiTranslationsConfig } from "./site";
 
 export type ContentType = "md" | "html" | "video" | "audio";
 
+export type ExternalAuthProviderType = "authjs" | "clerk" | "firebase" | "jwt";
+
+export interface ExternalAuthProviderConfig {
+  type: ExternalAuthProviderType;
+  enabled?: boolean;
+  sessionEndpoint?: string;
+  tokenStorageKey?: string;
+  rolesClaimPath?: string;
+  authHeaderPrefix?: string;
+}
+
+export interface AuthConfig {
+  /** Maps access key ids to expected secrets. */
+  accessKeys?: Record<string, string>;
+  /** Optional localStorage key to persist custom runtime roles. */
+  rolesStorageKey?: string;
+  providers?: ExternalAuthProviderConfig[];
+}
+
+export interface RouteAuthorizationConfig {
+  enabled?: boolean;
+  /** Key id looked up in auth.accessKeys */
+  accessKeyId?: string;
+  /** All roles listed here must exist in the current session. */
+  requiredRoles?: string[];
+  /** When true, at least one configured external provider must authenticate the user. */
+  requireExternalAuth?: boolean;
+  /** Optional provider allow-list for this route. */
+  allowedProviders?: ExternalAuthProviderType[];
+}
+
 export interface HierarchyConfig {
   md: number;
   html: number;
@@ -84,6 +115,8 @@ export interface ContentTypeRouteConfig {
   videoSlug?: Record<LanguageCode, string>;
   /** For routes-audio: slug per language for URL identification (e.g. ?audiofull=pt&slug=...) */
   audioSlug?: Record<LanguageCode, string>;
+  /** Route-level authorization rules for access-key, roles and external providers. */
+  authorization?: RouteAuthorizationConfig;
 }
 
 export interface RouteConfig {
@@ -105,6 +138,7 @@ export interface HeaderMenuLocalizedContent {
 
 export interface GitPageDocsConfig {
   site: SiteConfig;
+  auth?: AuthConfig;
   routes: RouteConfig[];
   "menus-header": HeaderMenuItem[];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];

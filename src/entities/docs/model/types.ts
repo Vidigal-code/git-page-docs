@@ -3,6 +3,10 @@ export type { VersionEntry, VersionControlConfig } from "./types/version";
 export type { LayoutItem, LayoutsConfig, ThemeTemplate } from "./types/theme";
 export type {
   ContentType,
+  ExternalAuthProviderType,
+  ExternalAuthProviderConfig,
+  AuthConfig,
+  RouteAuthorizationConfig,
   HierarchyConfig,
   VideoRouteConfig,
   AudioRouteConfig,
