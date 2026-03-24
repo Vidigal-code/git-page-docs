@@ -136,20 +136,25 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    min-height: 0;
     text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     overflow: hidden;
   }
 
   .tocScroll {
+    /* min-height: 0 lets the flex item honor max-height so overflow-y scrolls on small screens */
+    min-height: 0;
     max-height: var(--toc-scroll-max-height-mobile, min(45vh, 280px));
     width: 100%;
     max-width: 100%;
     min-width: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
