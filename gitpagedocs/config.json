@@ -14,10 +14,10 @@
     "FocusMode": true,
     "FooterEnabled": true,
     "FooterLinkName": "GitPageDocs",
-    "FooterLinkUrl": "https://github.com/Vidigal-code/git-page-docs",
+    "FooterLinkUrl": "https://github.com/test-owner/test-repo",
     "FooterDateMode": "browser",
     "FooterDateCustom": "",
-    "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+    "ProjectLink": "https://github.com/test-owner/test-repo",
     "SiteIconPath": "/icon.svg",
     "SiteHeaderName": "Git Pages Docs",
     "IconImageMenuHeaderImgWidth": 20,
@@ -215,8 +215,8 @@
     "layoutsConfigPathOficial": true,
     "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates",
     "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
-    "repositorySearchHome": true,
-    "rendering": "https://vidigal-code.github.io/git-page-docs/",
+    "repositorySearchHome": false,
+    "rendering": "https://test-owner.github.io/test-repo/",
     "langmenu": {
       "pt": {
         "pt": "Portugues",
@@ -345,7 +345,7 @@
       {
         "id": "1.0.0",
         "path": "gitpagedocs/docs/versions/1.0.0/config.json",
-        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "ProjectLink": "https://github.com/test-owner/test-repo",
         "PathConfig": "gitpagedocs/docs/versions/1.0.0/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
@@ -356,7 +356,7 @@
       {
         "id": "1.1.0",
         "path": "gitpagedocs/docs/versions/1.1.0/config.json",
-        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "ProjectLink": "https://github.com/test-owner/test-repo",
         "PathConfig": "gitpagedocs/docs/versions/1.1.0/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
@@ -367,7 +367,7 @@
       {
         "id": "1.1.1",
         "path": "gitpagedocs/docs/versions/1.1.1/config.json",
-        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "ProjectLink": "https://github.com/test-owner/test-repo",
         "PathConfig": "gitpagedocs/docs/versions/1.1.1/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
