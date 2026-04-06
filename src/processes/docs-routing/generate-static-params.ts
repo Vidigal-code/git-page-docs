@@ -38,6 +38,10 @@ export async function generateDocsStaticParams(): Promise<{ repo: string[] }[]> 
     }
   };
 
+  if (process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true") {
+    return params;
+  }
+
   try {
     const config = await loadRootConfig<{
       VersionControl?: { versions?: { id: string }[] };
