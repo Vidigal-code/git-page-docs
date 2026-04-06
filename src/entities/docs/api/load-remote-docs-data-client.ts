@@ -15,6 +15,19 @@ import type {
   VersionEntry,
 } from "@/entities/docs/model/types";
 import { dedupeVersionEntriesById } from "../lib/dedupe-version-entries";
+import {
+  DEFAULT_LAYOUTS_PATH,
+  DEFAULT_TEMPLATES_BASE_PATH,
+  OFFICIAL_LAYOUTS_CONFIG_URL,
+  OFFICIAL_LAYOUTS_TEMPLATES_URL,
+} from "@/shared/config/remote-urls";
+import {
+  tryFetchText,
+  fetchRepoText,
+  fetchUrlText,
+  fetchRepoJson,
+  fetchUrlJson,
+} from "@/shared/api/fetch-client";
 
 type VersionConfig = {
   routes?: RouteConfig[];
@@ -24,13 +37,6 @@ type VersionConfig = {
 };
 export type SupportedLanguage = "en" | "pt" | "es";
 
-const REQUEST_TIMEOUT_MS = 12000;
-const DEFAULT_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
-const DEFAULT_TEMPLATES_BASE_PATH = "gitpagedocs/layouts/";
-const OFFICIAL_LAYOUTS_CONFIG_URL =
-  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json";
-const OFFICIAL_LAYOUTS_TEMPLATES_URL =
-  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates";
 export async function loadStandaloneLayoutsAndThemes(): Promise<{
   layoutsConfig: LayoutsConfig;
   themes: Record<string, ThemeTemplate>;
@@ -107,61 +113,6 @@ export function parseSupportedLanguage(input: string | null | undefined): Suppor
 
 function stripFrontMatter(markdown: string): string {
   return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-}
-
-async function tryFetchText(url: string): Promise<string | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    const response = await fetch(url, { cache: "no-store", signal: controller.signal });
-    if (!response.ok) {
-      return null;
-    }
-    return await response.text();
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-async function fetchRepoText(owner: string, repo: string, relativePath: string): Promise<string | null> {
-  const candidates = buildGithubRawCandidates(owner, repo, relativePath);
-  for (const candidate of candidates) {
-    const content = await tryFetchText(candidate);
-    if (content !== null) {
-      return content;
-    }
-  }
-  return null;
-}
-
-async function fetchUrlText(url: string): Promise<string | null> {
-  return tryFetchText(toRawGithubUrl(url));
-}
-
-async function fetchRepoJson<T>(owner: string, repo: string, relativePath: string): Promise<T | null> {
-  const text = await fetchRepoText(owner, repo, relativePath);
-  if (!text) {
-    return null;
-  }
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    return null;
-  }
-}
-
-async function fetchUrlJson<T>(url: string): Promise<T | null> {
-  const text = await fetchUrlText(url);
-  if (!text) {
-    return null;
-  }
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    return null;
-  }
 }
 
 function getAvailableLanguages(

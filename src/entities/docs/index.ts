@@ -18,6 +18,7 @@ export { toBaseThemeCssVars, toDocsShellCssVars, toSearchShellCssVars } from "./
 export { getEmbedUrl, isNativeAudio, isNativeVideo } from "./lib/video/embed-url";
 export { getBackgroundAudioConfig, type ResolvedBackgroundAudioConfig } from "./lib/audio";
 export { buildVersionLinkOptions, type VersionLinkOption } from "./lib/version-links";
+export { resolvePageHierarchy } from "./lib/hierarchy/resolve-page-hierarchy";
 
 export type * from "./model/types";
 export { type MenuNode, type MenuEntry, type BreadcrumbItem, getBreadcrumbTrail } from "./model/menu";

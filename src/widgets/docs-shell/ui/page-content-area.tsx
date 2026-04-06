@@ -12,7 +12,9 @@ import type {
   LoadedMdContent,
   LoadedPage,
   LoadedVideoContent,
+  ContentType,
 } from "@/entities/docs";
+import { resolvePageHierarchy } from "@/entities/docs";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import { getLangMenuLabelFromMenu } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
@@ -29,7 +31,7 @@ interface PageContentAreaProps {
   language: LanguageCode;
   isDarkMode?: boolean;
   /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull/audiofull) */
-  contentTypeFilter?: "md" | "html" | "video" | "audio";
+  contentTypeFilter?: ContentType;
   /** When true, content is inside URL fullscreen overlay - hide expand button, overlay provides close */
   isUrlFullscreen?: boolean;
   fullscreenCloseLabel: string;
@@ -96,7 +98,8 @@ export function PageContentArea({
   onFullscreenOpen,
   onFullscreenClose,
 }: PageContentAreaProps) {
-  const hierarchy = data.config.hierarchyPage ?? { md: 0, html: 1, video: 2, audio: 3 };
+  const types = resolvePageHierarchy(currentPage, data.config, contentTypeFilter);
+
   const mdConfig = currentPage?.md?.config;
   const htmlConfig = currentPage?.html?.config;
   const videoConfig = currentPage?.video?.config;
@@ -164,10 +167,7 @@ export function PageContentArea({
     );
   }
 
-  const types = (["md", "html", "video", "audio"] as const)
-    .filter((t) => currentPage[t])
-    .filter((t) => !contentTypeFilter || t === contentTypeFilter)
-    .sort((a, b) => (hierarchy[a] ?? 999) - (hierarchy[b] ?? 999));
+  if (types.length === 0) return null;
 
   const mdLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuMd", "Markdown");
   const htmlLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "titleHeaderMenuHtml", "Pages");

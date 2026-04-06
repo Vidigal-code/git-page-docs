@@ -3,6 +3,7 @@ import type { VersionControlConfig } from "./version";
 import type { SiteConfig, UiTranslationsConfig } from "./site";
 
 export type ContentType = "md" | "html" | "video" | "audio";
+export const CONTENT_TYPES: ContentType[] = ["md", "html", "video", "audio"];
 
 export type ExternalAuthProviderType = "authjs" | "clerk" | "firebase" | "jwt";
 
@@ -117,6 +118,8 @@ export interface ContentTypeRouteConfig {
   audioSlug?: Record<LanguageCode, string>;
   /** Route-level authorization rules for access-key, roles and external providers. */
   authorization?: RouteAuthorizationConfig;
+  /** Granular content hierarchy override for this specific route. */
+  hierarchyPage?: HierarchyConfig;
 }
 
 export interface RouteConfig {
