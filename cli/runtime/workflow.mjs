@@ -6,13 +6,26 @@ function sanitizeDocsPath(docsPath) {
 
 export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, docsPath = "") {
   const pathSegment = sanitizeDocsPath(docsPath);
-  const buildEnvBlock =
+  const buildStepsBlock =
     pathSegment
-      ? `        env:
+      ? `      - name: Build static site with target repository path
+        run: npx next build
+        working-directory: .gitpagedocs-runtime
+        env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_PATH: "${pathSegment}"`
-      : `        env:
+          GITPAGEDOCS_PATH: "${pathSegment}"
+
+      - name: Relocate output to custom docs path
+        run: |
+          mkdir -p .gitpagedocs-runtime/out_new/${pathSegment}
+          mv .gitpagedocs-runtime/out/* .gitpagedocs-runtime/out_new/${pathSegment}/
+          rm -rf .gitpagedocs-runtime/out
+          mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out`
+      : `      - name: Build static site with target repository path
+        run: npx next build
+        working-directory: .gitpagedocs-runtime
+        env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}`;
   const currentBranch = getCurrentGitBranch();
@@ -69,18 +82,7 @@ jobs:
         run: npm ci
         working-directory: .gitpagedocs-runtime
 
-      - name: Build static site with target repository path
-        run: npx next build
-        working-directory: .gitpagedocs-runtime
-${buildEnvBlock}
-
-      - name: Relocate output to custom docs path
-        if: \${{ env.GITPAGEDOCS_PATH != '' }}
-        run: |
-          mkdir -p .gitpagedocs-runtime/out_new/\${{ env.GITPAGEDOCS_PATH }}
-          mv .gitpagedocs-runtime/out/* .gitpagedocs-runtime/out_new/\${{ env.GITPAGEDOCS_PATH }}/
-          rm -rf .gitpagedocs-runtime/out
-          mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out
+${buildStepsBlock}
 
       - name: Force root URL to docs entrypoint
         env:
