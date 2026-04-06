@@ -1,6 +1,6 @@
 {
   "name": "gitpagedocs",
-  "version": "1.1.42",
+  "version": "1.1.43",
   "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
   "main": "cli/index.mjs",
   "bin": {
