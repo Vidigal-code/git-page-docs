@@ -35,7 +35,7 @@ export async function executeHome(params, runtime) {
     ...process.env,
     GITHUB_ACTIONS: "true",
     GITPAGEDOCS_REPOSITORY_SEARCH: String(repositorySearch),
-    GITPAGEDOCS_BASE_PATH: pathSegment ? `/${pathSegment}` : "",
+    GITPAGEDOCS_BASE_PATH: pathSegment ? `/${pathSegment}` : "/",
     GITPAGEDOCS_PATH: pathSegment,
   };
 

@@ -4,23 +4,29 @@ const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
 const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
 const emulateGithubPagesRuntime = isGithubPagesBuild || repositorySearchEnabledByEnv;
 const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "git-page-docs";
-const basePathFromEnv = process.env.GITPAGEDOCS_BASE_PATH;
+const isUserPage = repositoryName.toLowerCase().endsWith(".github.io");
+
+const rawDocsPath = process.env.GITPAGEDOCS_PATH?.trim();
+const docsPathSegment = rawDocsPath ? rawDocsPath.replace(/^\/+|\/+$/g, "") : "";
 
 // Local path: only when GITPAGEDOCS_REPOSITORY_SEARCH=false and GITPAGEDOCS_PATH is set
 const isLocalMode = !repositorySearchEnabledByEnv && !isGithubPagesBuild;
-const localPathRaw = process.env.GITPAGEDOCS_PATH?.trim();
-const localBasePath =
-  isLocalMode && localPathRaw
-    ? "/" + localPathRaw.replace(/^\/+|\/+$/g, "")
-    : undefined;
 
-// Treat empty string as "not set" so fallback to /repositoryName is used for project sites
+// Explicit base path definition taking precedence (interprets "/" and "" as root/undefined)
+const explicitBasePath = "GITPAGEDOCS_BASE_PATH" in process.env
+  ? (process.env.GITPAGEDOCS_BASE_PATH === "/" || process.env.GITPAGEDOCS_BASE_PATH === ""
+    ? undefined
+    : process.env.GITPAGEDOCS_BASE_PATH)
+  : null;
+
 const basePath =
-  localBasePath ??
-  (basePathFromEnv !== undefined && basePathFromEnv !== ""
-    ? basePathFromEnv
+  explicitBasePath ??
+  (isLocalMode
+    ? (docsPathSegment ? `/${docsPathSegment}` : undefined)
     : emulateGithubPagesRuntime
-      ? `/${repositoryName}`
+      ? (isUserPage
+        ? (docsPathSegment ? `/${docsPathSegment}` : undefined)
+        : `/${repositoryName}${docsPathSegment ? `/${docsPathSegment}` : ""}`)
       : undefined);
 
 const nextConfig: NextConfig = {

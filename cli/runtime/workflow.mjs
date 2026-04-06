@@ -11,7 +11,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
       ? `        env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_BASE_PATH: "/\${{ github.event.repository.name }}/${pathSegment}"`
+          GITPAGEDOCS_PATH: "${pathSegment}"`
       : `        env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}`;
@@ -74,6 +74,14 @@ jobs:
         working-directory: .gitpagedocs-runtime
 ${buildEnvBlock}
 
+      - name: Relocate output to custom docs path
+        if: \${{ env.GITPAGEDOCS_PATH != '' }}
+        run: |
+          mkdir -p .gitpagedocs-runtime/out_new/\${{ env.GITPAGEDOCS_PATH }}
+          mv .gitpagedocs-runtime/out/* .gitpagedocs-runtime/out_new/\${{ env.GITPAGEDOCS_PATH }}/
+          rm -rf .gitpagedocs-runtime/out
+          mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out
+
       - name: Force root URL to docs entrypoint
         env:
           GITHUB_REPOSITORY: \${{ github.repository }}
@@ -83,6 +91,7 @@ ${buildEnvBlock}
           const path = require('path');
           const pathSegment = ${JSON.stringify(pathSegment)};
           const repoName = (process.env.GITHUB_REPOSITORY || '').split('/')[1] || '';
+          const isUserPage = repoName.toLowerCase().endsWith('.github.io');
           const rootRedirectBase = pathSegment;
           const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
           if (!fs.existsSync(cfgPath)) process.exit(0);
@@ -96,7 +105,7 @@ ${buildEnvBlock}
           const rootHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetRoot + '"/><script>window.location.replace("' + redirectTargetRoot + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
           fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), rootHtml);
           const projectPathSegments = [];
-          if (repoName) projectPathSegments.push(repoName);
+          if (repoName && !isUserPage) projectPathSegments.push(repoName);
           if (pathSegment) projectPathSegments.push(pathSegment);
           if (projectPathSegments.length > 0) {
             const projectIndexPath = path.join('.gitpagedocs-runtime', 'out', ...projectPathSegments, 'index.html');
