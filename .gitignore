@@ -9,3 +9,4 @@ dist
 coverage
 .env*
 !.env.example
+.idea
