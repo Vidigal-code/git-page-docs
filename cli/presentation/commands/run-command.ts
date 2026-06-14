@@ -20,7 +20,7 @@ import { runProvider, runModels } from "./ai-info";
 import { runConfig } from "./config-info";
 import { runMcp } from "./mcp";
 import { runDocs } from "./docs";
-import { runPagesActions } from "./pages";
+import { runPagesActions, runPagesDeploy } from "./pages";
 
 const REGISTRY: Record<string, CommandHandler> = {
   version: runVersion,
@@ -42,9 +42,14 @@ export async function runNewCommand(argv: string[], pkgRoot: string): Promise<bo
   const ctx: CommandContext = { argv, args, pkgRoot, cwd: process.cwd() };
 
   // Configure-only Pages→Actions: `--pages-actions` flag or `pages actions` verb.
-  // (`pages deploy` / `deploy` keep falling through to the full push flow.)
   if (args.includes("--pages-actions") || (args[0] === "pages" && args[1] === "actions")) {
     await runPagesActions(ctx);
+    return true;
+  }
+  // Full deploy: `pages deploy` (detect owner/repo, confirm, run the proven
+  // push flow, print URL). Bare `pages`/`deploy` still fall through to legacy.
+  if (args[0] === "pages" && args[1] === "deploy") {
+    await runPagesDeploy(ctx);
     return true;
   }
 
