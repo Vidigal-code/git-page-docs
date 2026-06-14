@@ -6,6 +6,8 @@ import { SecurityError } from "../errors/app-error";
 export interface VaultStorage {
   load(): Promise<string | null>;
   save(serialized: string): Promise<void>;
+  /** Permanently remove the stored vault (used by a password reset). */
+  clear(): Promise<void>;
 }
 
 interface VaultFile {
@@ -100,5 +102,16 @@ export class EncryptedCredentialVault implements CredentialVault {
     const next = { ...file.credentials };
     delete next[providerId];
     await this.write({ ...file, credentials: next });
+  }
+
+  /**
+   * Wipe the whole vault — every stored credential and the password verifier.
+   * Used by a "forgot password" reset: the user loses all saved keys and then
+   * creates a fresh password. No password is required (the point is recovery
+   * when the password is lost).
+   */
+  async reset(): Promise<void> {
+    this.file = undefined;
+    await this.storage.clear();
   }
 }

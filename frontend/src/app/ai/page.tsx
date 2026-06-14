@@ -73,6 +73,15 @@ export default function AiConsolePage() {
               {c.initialized ? 'Unlock' : 'Create password'}
             </button>
             {c.error && <p style={{ color: '#f85149', marginTop: '0.75rem' }}>{c.error}</p>}
+            {c.initialized && (
+              <button
+                data-testid="reset-password"
+                onClick={() => { void c.reset(); setPw(''); }}
+                style={{ display: 'block', marginTop: '0.75rem', background: 'transparent', border: 'none', color: '#8b949e', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline', padding: 0 }}
+              >
+                Forgot password? Reset (erases saved keys)
+              </button>
+            )}
           </div>
         ) : (
           <div style={{ display: 'grid', gap: '1rem' }}>

@@ -42,6 +42,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     const [sessionPassword, setSessionPassword] = useState<string | null>(null);
     const [passwordInput, setPasswordInput] = useState('');
     const [gateError, setGateError] = useState('');
+    const [isResetPopupOpen, setIsResetPopupOpen] = useState(false);
 
     const refreshHasKey = useCallback(async (pw: string, providerAndModel: string) => {
         const bare = providerAndModel.split(':')[0];
@@ -164,6 +165,19 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         }
     };
 
+    const handleResetPassword = async () => {
+        // Forgot password: wipe the vault (all stored keys) and start over with
+        // a fresh password. Also clear any legacy plaintext key.
+        await aiSecureStorage.reset();
+        aiStorage.clearKey();
+        setSessionPassword(null);
+        setPasswordInput('');
+        setGateError('');
+        setHasKey(false);
+        setIsResetPopupOpen(false);
+        setVaultState('create');
+    };
+
     const handleSaveKey = async (providerAndModel: string, key: string) => {
         if (!sessionPassword) return;
         aiStorage.saveProvider(providerAndModel);
@@ -229,7 +243,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Resize Handle */}
                 {!isExpanded && (
                     <div
                         onMouseDown={handleMouseDown}
@@ -247,7 +260,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     />
                 )}
-                {/* Header */}
                 <div className={styles.header}>
                     <div className={styles.headerTitle}>
                         <div className={styles.aiIcon}>
@@ -331,7 +343,17 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     onCancel={() => setIsClearDataPopupOpen(false)}
                 />
 
-                {/* Main Content Area */}
+                <ConfirmPopup
+                    isOpen={isResetPopupOpen}
+                    title={labels.aiChatResetPopupTitle || 'Reset password?'}
+                    description={labels.aiChatResetPopupDesc || 'This erases all saved API keys and the local password. You will then create a new password. This cannot be undone.'}
+                    confirmText={labels.aiChatResetConfirmBtn || 'Reset and erase'}
+                    cancelText={labels.aiChatResetCancelBtn || 'Cancel'}
+                    isDestructive
+                    onConfirm={() => void handleResetPassword()}
+                    onCancel={() => setIsResetPopupOpen(false)}
+                />
+
                 <div className={styles.messagesArea}>
                     {vaultState !== 'unlocked' ? (
                         <div
@@ -367,6 +389,16 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                                             : (labels.aiChatUnlockBtn || 'Unlock')}
                                     </button>
                                     {gateError && <p data-testid="drawer-gate-error" style={{ color: '#f85149' }}>{gateError}</p>}
+                                    {vaultState === 'locked' && (
+                                        <button
+                                            type="button"
+                                            data-testid="drawer-reset-password"
+                                            onClick={() => setIsResetPopupOpen(true)}
+                                            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}
+                                        >
+                                            {labels.aiChatResetBtn || 'Forgot password? Reset (erases saved keys)'}
+                                        </button>
+                                    )}
                                 </>
                             )}
                         </div>
@@ -376,7 +408,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                         </div>
                     ) : (
                         <>
-                            {/* Greeting Message */}
                             {messages.length === 0 && (
                                 <div className={styles.messageRow}>
                                     <div className={styles.avatarAi}>
@@ -429,7 +460,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     )}
                 </div>
 
-                {/* Input Area */}
                 {vaultState === 'unlocked' && hasKey && !isSettingsOpen && (
                     <div className={styles.inputArea}>
                         {pendingAttachments.length > 0 && (
