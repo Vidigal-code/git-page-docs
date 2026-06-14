@@ -21,6 +21,7 @@ next build frontend      # produces frontend/out/  (the Pages workflow then move
 
 ```text
 frontend/
+├── package.json              # @gitpagedocs/frontend (private) — declares next/react/… deps
 ├── next.config.ts            # output:export, basePath logic, transpilePackages
 ├── tsconfig.json             # extends ../tsconfig.base.json (@/* → ./src/*)
 ├── public/                   # static assets, robots.txt, sitemap.xml (export-safe)

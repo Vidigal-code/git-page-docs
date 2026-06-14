@@ -1,7 +1,7 @@
 <!-- gitpagedocs:start -->
 ### Development
 
-This is a pnpm + turbo monorepo (`frontend` at root `src/`, plus `tools/`, `mcp/`, `cli/`).
+This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the published `gitpagedocs` npm package), `tools/` (`@gitpagedocs/tools` shared core), and `mcp/` (`@gitpagedocs/mcp` server).
 
 - `pnpm install` — install workspace dependencies
 - `pnpm run typecheck` — type-check frontend + tools + mcp
