@@ -10,15 +10,27 @@ const compat = new FlatCompat({
 });
 
 const config = [
+    {
+        // Never lint build output / generated artifacts (post src→frontend move,
+        // the Next build dir is frontend/.next).
+        ignores: [
+            "**/node_modules/**",
+            "**/.next/**",
+            "**/out/**",
+            "prebuilt/**",
+            "coverage/**",
+            "**/*.tsbuildinfo",
+        ],
+    },
     ...compat.extends("next/core-web-vitals"),
     {
-        files: ["src/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-console": "warn",
         },
     },
     {
-        files: ["src/app/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/app/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
@@ -34,7 +46,7 @@ const config = [
         },
     },
     {
-        files: ["src/page-slices/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/page-slices/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
@@ -50,7 +62,7 @@ const config = [
         },
     },
     {
-        files: ["src/processes/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/processes/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
@@ -74,7 +86,7 @@ const config = [
         },
     },
     {
-        files: ["src/widgets/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/widgets/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
@@ -90,7 +102,7 @@ const config = [
         },
     },
     {
-        files: ["src/features/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/features/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
@@ -106,7 +118,7 @@ const config = [
         },
     },
     {
-        files: ["src/entities/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/entities/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
@@ -122,7 +134,7 @@ const config = [
         },
     },
     {
-        files: ["src/shared/**/*.{js,jsx,ts,tsx}"],
+        files: ["frontend/src/shared/**/*.{js,jsx,ts,tsx}"],
         rules: {
             "no-restricted-imports": [
                 "warn",
