@@ -28,7 +28,10 @@ import { createHomeRuntime } from "../infrastructure/home/runtime.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = process.cwd();
-const pkgRoot = path.join(scriptDir, "..", "..");
+// cli/ is the published package root (bin = cli/index.mjs). scriptDir is
+// cli/presentation, so pkgRoot = cli/ and the bundled prebuilt/ ships at
+// cli/prebuilt — works identically in-repo and when installed via npm.
+const pkgRoot = path.join(scriptDir, "..");
 const prebuiltDir = path.join(pkgRoot, "prebuilt");
 
 const params: CliRuntimeParams = {
@@ -76,7 +79,7 @@ async function main(): Promise<void> {
     runAi: async (context) => {
       console.log("[gitpagedocs] Iniciando Módulo de IA na CLI...");
       // @ts-ignore
-      const { runAiCliCommand } = await import("../../frontend/src/cli/application/run-ai-cli-command.ts");
+      const { runAiCliCommand } = await import("../ai/application/run-ai-cli-command.ts");
       const result = await runAiCliCommand({
         cwd: process.cwd(),
         onInfo: (message: string) => console.log(message),

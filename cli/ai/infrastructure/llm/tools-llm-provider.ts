@@ -1,7 +1,7 @@
 import { createDefaultFactory, legacyProviderToCatalogId } from "@gitpagedocs/tools/ai";
 import type { AiMessage, ProviderConfig } from "@gitpagedocs/tools/ports";
 import type { ILLMProvider, ChatMessage, ILLMProviderConfig } from "../../core/ports/illm-provider";
-import { DEFAULT_AI_DOC_PROMPT, type AiProviderId } from "../../../shared/config/ai-config";
+import { DEFAULT_AI_DOC_PROMPT, type AiProviderId } from "../../config";
 
 const factory = createDefaultFactory();
 

@@ -1,9 +1,8 @@
 {
   "name": "@gitpagedocs/tools",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.1.43",
   "type": "module",
-  "description": "Shared business-logic core for Git Page Docs (consumed by frontend, cli and mcp).",
+  "description": "Shared business-logic core for Git Page Docs (consumed by frontend, cli and mcp). Ships TypeScript source; consume via tsx or a TS-aware bundler.",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
@@ -15,7 +14,24 @@
     "./security/web": "./src/security/web.ts",
     "./cache/web": "./src/cache/web-storage-cache.ts"
   },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vidigal-code/git-page-docs.git",
+    "directory": "tools"
+  },
+  "author": "Vidigal-code",
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,20 +1,15 @@
 {
-  "name": "gitpagedocs",
+  "name": "gitpagedocs-monorepo",
   "version": "1.1.43",
-  "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
-  "main": "cli/index.mjs",
-  "bin": {
-    "gitpagedocs": "cli/index.mjs"
-  },
-  "files": [
-    "cli",
-    "prebuilt"
-  ],
+  "private": true,
+  "description": "Workspace root for Git Page Docs — frontend (Next.js viewer), cli (published `gitpagedocs`), mcp, and tools (shared core).",
   "packageManager": "pnpm@10.33.2",
   "engines": {
     "node": ">=20"
   },
   "workspaces": [
+    "frontend",
+    "cli",
     "tools",
     "mcp"
   ],
@@ -23,9 +18,7 @@
     "dev": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false next dev frontend",
     "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('frontend/.next',{recursive:true})}catch(e){}\"",
     "build": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend",
-    "build:prebuilt": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend && node -e \"const fs=require('fs'); if(fs.existsSync('prebuilt')) fs.rmSync('prebuilt',{recursive:true}); fs.cpSync('frontend/out','prebuilt',{recursive:true}); fs.writeFileSync('prebuilt/.nojekyll','')\"",
-    "prepublishOnly": "node -e \"if(process.platform==='win32'){console.warn('Skipping build:prebuilt on Windows (EBUSY). Use GitHub Actions to publish with prebuilt.');process.exit(0)}require('child_process').execSync('npm run build:prebuilt',{stdio:'inherit'})\"",
-    "export": "next export",
+    "build:prebuilt": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend && node -e \"const fs=require('fs'); if(fs.existsSync('cli/prebuilt')) fs.rmSync('cli/prebuilt',{recursive:true}); fs.cpSync('frontend/out','cli/prebuilt',{recursive:true}); fs.writeFileSync('cli/prebuilt/.nojekyll','')\"",
     "prestart": "npm run build",
     "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
@@ -52,41 +45,22 @@
     "turbo:typecheck": "turbo run typecheck",
     "turbo:test": "turbo run test",
     "gitpagedocs": "node cli/index.mjs",
-    "gitpagedocs:config": "node cli/index.mjs",
-    "gitpagedocs:full": "node cli/index.mjs",
     "gitpagedocs:home": "node cli/index.mjs --home"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Vidigal-code/git-page-docs.git"
   },
-  "keywords": [
-    "gitpagedocs",
-    "documentation",
-    "markdown",
-    "spa",
-    "cli",
-    "github-pages",
-    "create-gitpagedocs"
-  ],
   "author": "Vidigal-code",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Vidigal-code/git-page-docs/issues"
   },
   "homepage": "https://vidigal-code.github.io/git-page-docs/",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
-  "dependencies": {
-    "@clack/prompts": "^1.5.1",
-    "@gitpagedocs/mcp": "workspace:*",
-    "@gitpagedocs/tools": "workspace:*",
-    "tsx": "^4.21.0"
-  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@gitpagedocs/mcp": "workspace:*",
+    "@gitpagedocs/tools": "workspace:*",
     "@playwright/test": "^1.60.0",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
@@ -101,6 +75,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
+    "tsx": "^4.21.0",
     "turbo": "^2.9.18",
     "typescript": "5.9.3",
     "vitest": "^4.1.8"

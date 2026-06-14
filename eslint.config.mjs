@@ -17,7 +17,7 @@ const config = [
             "**/node_modules/**",
             "**/.next/**",
             "**/out/**",
-            "prebuilt/**",
+            "cli/prebuilt/**",
             "coverage/**",
             "**/*.tsbuildinfo",
         ],

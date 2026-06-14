@@ -2,7 +2,7 @@ import {
     AI_MODEL_DEFAULTS,
     OLLAMA_DEFAULT_BASE_URL,
     type AiProviderId,
-} from '../../shared/config/ai-config';
+} from '../config';
 import { PROVIDER_CATALOG, legacyProviderToCatalogId } from '@gitpagedocs/tools/ai';
 import type { AiCliConfig, AiCliRunPlan } from '../core/models/ai-cli-config';
 import {
@@ -11,7 +11,7 @@ import {
     askSelect,
     askMultiSelect,
     intro,
-} from '../../../../cli/presentation/ui/clack';
+} from '../../presentation/ui/clack';
 
 export interface InteractiveCliAnswers {
     provider: AiProviderId;

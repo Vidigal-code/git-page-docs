@@ -1,4 +1,4 @@
-import type { AiProviderId } from "../../../shared/config/ai-config";
+import type { AiProviderId } from "../../config";
 
 export const AI_CLI_CONFIG_FILENAME = ".gitpagedocsconfig";
 

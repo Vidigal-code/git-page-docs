@@ -1,0 +1,60 @@
+{
+  "name": "gitpagedocs",
+  "version": "1.1.43",
+  "description": "CLI that scaffolds and maintains gitpagedocs documentation, generates docs with AI, configures GitHub Pages, and runs the MCP server.",
+  "bin": {
+    "gitpagedocs": "index.mjs"
+  },
+  "main": "index.mjs",
+  "files": [
+    "index.mjs",
+    "start.mjs",
+    "ai",
+    "application",
+    "builders",
+    "content",
+    "contracts",
+    "data",
+    "domain",
+    "home",
+    "infrastructure",
+    "presentation",
+    "runtime",
+    "ui",
+    "prebuilt",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.5.1",
+    "@gitpagedocs/mcp": "workspace:*",
+    "@gitpagedocs/tools": "workspace:*",
+    "tsx": "^4.21.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vidigal-code/git-page-docs.git",
+    "directory": "cli"
+  },
+  "keywords": [
+    "gitpagedocs",
+    "documentation",
+    "markdown",
+    "spa",
+    "cli",
+    "github-pages",
+    "create-gitpagedocs"
+  ],
+  "author": "Vidigal-code",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vidigal-code/git-page-docs/issues"
+  },
+  "homepage": "https://vidigal-code.github.io/git-page-docs/",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
