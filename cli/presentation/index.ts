@@ -76,7 +76,7 @@ async function main(): Promise<void> {
     runAi: async (context) => {
       console.log("[gitpagedocs] Iniciando Módulo de IA na CLI...");
       // @ts-ignore
-      const { runAiCliCommand } = await import("../../src/cli/application/run-ai-cli-command.ts");
+      const { runAiCliCommand } = await import("../../frontend/src/cli/application/run-ai-cli-command.ts");
       const result = await runAiCliCommand({
         cwd: process.cwd(),
         onInfo: (message: string) => console.log(message),

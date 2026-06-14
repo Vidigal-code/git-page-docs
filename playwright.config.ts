@@ -4,6 +4,9 @@ import { defineConfig, devices } from "@playwright/test";
  * Frontend E2E. Starts `next dev` (local docs mode) and runs specs in a desktop
  * and a mobile project so responsiveness (no horizontal overflow) is covered.
  */
+const PORT = Number(process.env.PORT) || 3000;
+const BASE_URL = `http://localhost:${PORT}`;
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -14,7 +17,7 @@ export default defineConfig({
   reporter: [["list"]],
   timeout: 60_000,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: BASE_URL,
     trace: "on-first-retry",
   },
   projects: [
@@ -23,7 +26,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "pnpm dev",
-    url: "http://localhost:3000",
+    url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
     stdout: "ignore",

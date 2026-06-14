@@ -1,4 +1,4 @@
-import type { AiProviderId } from "@/shared/config/ai-config";
+import type { AiProviderId } from "../../shared/config/ai-config";
 import type { ILLMProvider } from "../core/ports/illm-provider";
 import { ToolsLlmProvider } from "../infrastructure/llm/tools-llm-provider";
 

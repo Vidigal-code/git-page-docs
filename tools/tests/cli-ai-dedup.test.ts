@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { ToolsLlmProvider } from "../../src/cli/infrastructure/llm/tools-llm-provider";
+import { ToolsLlmProvider } from "../../frontend/src/cli/infrastructure/llm/tools-llm-provider";
 // @ts-expect-error .mjs runtime module
 import { detectRepoFromGit } from "../../cli/runtime/git-ops.mjs";
 

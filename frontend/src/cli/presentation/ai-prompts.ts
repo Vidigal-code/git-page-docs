@@ -10,7 +10,7 @@ import {
     askSelect,
     askMultiSelect,
     intro,
-} from '../../../cli/presentation/ui/clack';
+} from '../../../../cli/presentation/ui/clack';
 
 export interface InteractiveCliAnswers {
     provider: AiProviderId;

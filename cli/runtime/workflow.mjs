@@ -9,7 +9,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
   const buildStepsBlock =
     pathSegment
       ? `      - name: Build static site with target repository path
-        run: pnpm exec next build
+        run: pnpm exec next build frontend && mv frontend/out out
         working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
@@ -23,7 +23,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
           rm -rf .gitpagedocs-runtime/out
           mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out`
       : `      - name: Build static site with target repository path
-        run: pnpm exec next build
+        run: pnpm exec next build frontend && mv frontend/out out
         working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
