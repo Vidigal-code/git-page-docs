@@ -62,6 +62,14 @@ export class AiSecureStorage {
         if (this.vault) await this.vault.removeCredential(password, provider);
     }
 
+    /**
+     * Forgot-password reset: wipe the whole vault (all keys + the password
+     * verifier) so the user can set a brand-new password. No password needed.
+     */
+    async reset(): Promise<void> {
+        if (this.vault) await this.vault.reset();
+    }
+
     /** Move a legacy plaintext key into the encrypted vault, then clear it. */
     async migrateFromPlaintext(
         password: string,

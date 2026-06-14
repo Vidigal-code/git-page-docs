@@ -65,6 +65,14 @@ export function useAiConsole() {
     [password, providerId, storage],
   );
 
+  /** Forgot password: wipe the vault and return to the create-password gate. */
+  const reset = useCallback(async (): Promise<void> => {
+    await storage.reset();
+    setPassword(null);
+    setInitialized(false);
+    setError(null);
+  }, [storage]);
+
   const config = useCallback(
     async (): Promise<ProviderConfig | null> => {
       if (!password) return null;
@@ -142,6 +150,7 @@ export function useAiConsole() {
     busy,
     error,
     unlock,
+    reset,
     saveApiKey,
     testConnection,
     send,

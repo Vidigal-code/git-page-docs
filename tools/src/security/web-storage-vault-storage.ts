@@ -16,4 +16,8 @@ export class WebStorageVaultStorage implements VaultStorage {
   async save(serialized: string): Promise<void> {
     this.storage.setItem(this.key, serialized);
   }
+
+  async clear(): Promise<void> {
+    this.storage.removeItem(this.key);
+  }
 }
