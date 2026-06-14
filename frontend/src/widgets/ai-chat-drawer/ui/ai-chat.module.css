@@ -1,0 +1,460 @@
+.drawerOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(2, 6, 23, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.drawerContent {
+    position: relative;
+    background-color: color-mix(in srgb, var(--card-background) 95%, var(--background));
+    border-left: 1px solid var(--card-border);
+    width: 400px;
+    max-width: 100vw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawerOverlayExpanded {
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.drawerExpanded {
+    width: 100%;
+    max-width: 900px;
+    height: 90dvh;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .drawerOverlay {
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+
+    .drawerContent {
+        width: 100%;
+        height: 100%;
+        max-height: calc(100dvh - 32px);
+        border-radius: 16px;
+        border: 1px solid var(--card-border);
+        overflow: hidden;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--card-background) 80%, transparent);
+}
+
+.headerTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.aiIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.aiIcon span {
+    color: white;
+    font-size: 14px;
+}
+
+.titleText {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+
+.closeButton {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.closeButton:hover {
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+    color: var(--text);
+}
+
+.messagesArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.inputArea {
+    padding: 16px;
+    border-top: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--background) 50%, var(--card-background));
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: color-mix(in srgb, var(--card-background) 80%, var(--background));
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    transition: all 0.2s;
+}
+
+.inputContainer:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.textArea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    padding: 12px 16px;
+    resize: none;
+    min-height: 48px;
+    max-height: 150px;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.textArea::placeholder {
+    color: var(--text-secondary);
+}
+
+.inputActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 12px 8px;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 4px;
+}
+
+.actionButton {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actionButton:hover {
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+    color: var(--text);
+}
+
+.sendButton {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.sendButton[data-active="true"] {
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.sendButton[data-active="true"]:hover {
+    background: #1d4ed8;
+}
+
+.disclaimer {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* Chat Bubbles */
+.messageRow {
+    display: flex;
+    gap: 16px;
+    max-width: 90%;
+}
+
+.messageRowUser {
+    display: flex;
+    gap: 16px;
+    max-width: 90%;
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.avatarAi {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarAi span {
+    color: white;
+    font-size: 14px;
+}
+
+.avatarUser {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--text) 20%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.bubbleAi {
+    background: color-mix(in srgb, var(--card-border) 40%, var(--card-background));
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 16px;
+    border-top-left-radius: 4px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.bubbleUser {
+    background: #2563eb;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border-top-right-radius: 4px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.markdownContent {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.markdownContent>*:first-child {
+    margin-top: 0;
+}
+
+.markdownContent>*:last-child {
+    margin-bottom: 0;
+}
+
+.markdownContent pre {
+    background: color-mix(in srgb, var(--background) 50%, transparent);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 8px 0;
+    max-width: 100%;
+}
+
+.markdownContent code {
+    background: color-mix(in srgb, var(--background) 50%, transparent);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Consolas, monospace;
+}
+
+.markdownContent p {
+    margin: 0 0 8px 0;
+}
+
+.typingIndicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background: #60a5fa;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0s;
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+
+    40% {
+        transform: scale(1);
+    }
+}
+
+/* API Key Form */
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--card-background) 80%, transparent);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+}
+
+.formHeader h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #60a5fa, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.formHeader p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.formSelect,
+.formInput {
+    padding: 12px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--background) 80%, var(--card-background));
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.formInput {
+    font-family: monospace;
+}
+
+.formSelect:focus,
+.formInput:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.formActions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btnPrimary {
+    padding: 12px 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btnPrimary:hover {
+    background: #1d4ed8;
+}
+
+.btnClear {
+    padding: 10px 16px;
+    background: transparent;
+    color: #f87171;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btnClear:hover {
+    background: color-mix(in srgb, #f87171 10%, transparent);
+    color: #fca5a5;
+}

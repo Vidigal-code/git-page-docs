@@ -1,0 +1,33 @@
+{
+  "name": "@gitpagedocs/mcp",
+  "version": "1.1.44",
+  "type": "module",
+  "description": "Model Context Protocol server for Git Page Docs (delegates to @gitpagedocs/tools). Ships TypeScript source; run via tsx.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@gitpagedocs/tools": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vidigal-code/git-page-docs.git",
+    "directory": "mcp"
+  },
+  "author": "Vidigal-code",
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  }
+}

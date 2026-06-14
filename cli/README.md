@@ -1,10 +1,45 @@
+# gitpagedocs (CLI)
+
+The **published npm package** of the [Git Page Docs](../README.md) monorepo. It scaffolds the `gitpagedocs/` docs contract, generates docs with AI, configures GitHub Pages, and runs the MCP server.
+
+```bash
+npm install -g gitpagedocs   # global
+gitpagedocs                  # generate gitpagedocs/ config (config-only)
+
+# or one-off, no install:
+npx gitpagedocs
+```
+
+> This package ships its TypeScript sources and runs them via `tsx`; it depends on the workspace packages `@gitpagedocs/tools` and `@gitpagedocs/mcp` (published alongside it).
+
+## Commands
+
+| Command | Description |
+|---|---|
+| `gitpagedocs` | Generate `gitpagedocs/` config + versioned docs (config-only) |
+| `gitpagedocs --layoutconfig` | Also emit local layout templates in `gitpagedocs/layouts/` |
+| `gitpagedocs --push --owner <o> --repo <r> [--path <sub>]` | Generate, configure Pages, create workflow, commit + push |
+| `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`: static site + .env + Dockerfile) |
+| `gitpagedocs -i` / `--interactive` | Interactive prompts |
+| `gitpagedocs ai` | Interactive AI documentation generator (see below) |
+| `gitpagedocs provider [id]` · `models [provider]` | List AI providers / catalog models |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI |
+| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
+| `gitpagedocs docs` | Refresh managed regions of README/CONTRIBUTING/SECURITY |
+| `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / update hint |
+| `gitpagedocs mcp start` | Start the MCP server over stdio |
+
+The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the published package is self-contained).
+
 # CLI Architecture (Clean Architecture + SOLID)
 
 ## Layer Overview
 
 ```
 cli/
-├── index.mjs                          # Node entry (bootstraps TS presentation)
+├── index.mjs                          # Node entry (bootstraps TS presentation via tsx)
+├── package.json                       # the published `gitpagedocs` package
+├── ai/                                # AI documentation CLI (provider/model/paths → markdown)
 ├── contracts/                         # Stable contracts for external tooling
 │   └── doc-versions.mjs
 │
@@ -85,3 +120,50 @@ Expected URL after deployment:
 ```text
 https://vidigal-code.github.io/energy-bill-ai-parser/git-docs/
 ```
+
+## AI CLI (interactive + config file)
+
+The CLI now includes a dedicated interactive AI mode:
+
+```bash
+npx gitpagedocs ai
+```
+
+### What it does
+
+- asks provider (`openai`, `claude`, `gemini`, `ollama`)
+- asks API key or Ollama URL
+- asks paths to scan (supports one or many paths, including other repositories)
+- generates markdown documentation in `pt`, `en`, `es`
+- optionally persists config in `.gitpagedocsconfig`
+- optionally runs standard `gitpagedocs` scaffolding after AI generation
+
+### `.gitpagedocsconfig` (manual mode)
+
+You can create/edit this file manually and then run `npx gitpagedocs ai`:
+
+```json
+{
+	"version": 1,
+	"ai": {
+		"provider": "openai",
+		"model": "gpt-4o-mini",
+		"apiKey": "<YOUR_API_KEY>",
+		"paths": ["src", "cli", "../another-repo/src"],
+		"languages": ["pt", "en", "es"],
+		"outputDir": "gitpagedocs/docs",
+		"filePrefix": "ai-generated",
+		"contextPrompt": "Você é um redator técnico sênior..."
+	}
+}
+```
+
+For Ollama, use `baseUrl` instead of `apiKey`.
+
+### Interactive fallback
+
+If a directory is not found, CLI offers fallback choices:
+
+- fix paths and retry
+- skip missing paths and continue
+- abort safely

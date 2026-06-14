@@ -17,7 +17,7 @@ function copyRecursive(src, dest) {
 }
 
 function runNextBuild(root, env) {
-  execSync("npx next build", { cwd: root, env, stdio: "inherit" });
+  execSync("npx next build frontend", { cwd: root, env, stdio: "inherit" });
 }
 
 export function createHomeRuntime() {

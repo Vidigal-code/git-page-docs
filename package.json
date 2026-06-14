@@ -1,69 +1,71 @@
 {
-  "name": "gitpagedocs",
-  "version": "1.1.43",
-  "description": "CLI that generates initial gitpagedocs configuration files (config-only) without index scaffold.",
-  "main": "cli/index.mjs",
-  "bin": {
-    "gitpagedocs": "cli/index.mjs"
+  "name": "gitpagedocs-monorepo",
+  "version": "1.1.44",
+  "private": true,
+  "description": "Workspace root for Git Page Docs — frontend (Next.js viewer), cli (published `gitpagedocs`), mcp, and tools (shared core).",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=20"
   },
-  "files": [
+  "workspaces": [
+    "frontend",
     "cli",
-    "prebuilt"
+    "tools",
+    "mcp"
   ],
   "scripts": {
-    "predev": "node -e \"const fs=require('fs'); const s='gitpagedocs/icon.svg'; const d='public/icon.svg'; if(fs.existsSync(s)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(s,d);}\"",
-    "dev": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false next dev",
-    "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('.next',{recursive:true})}catch(e){}\"",
-    "build": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build",
-    "build:prebuilt": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build && node -e \"const fs=require('fs'); if(fs.existsSync('prebuilt')) fs.rmSync('prebuilt',{recursive:true}); fs.cpSync('out','prebuilt',{recursive:true}); fs.writeFileSync('prebuilt/.nojekyll','')\"",
-    "prepublishOnly": "node -e \"if(process.platform==='win32'){console.warn('Skipping build:prebuilt on Windows (EBUSY). Use GitHub Actions to publish with prebuilt.');process.exit(0)}require('child_process').execSync('npm run build:prebuilt',{stdio:'inherit'})\"",
-    "export": "next export",
+    "predev": "node -e \"const fs=require('fs'); const s='gitpagedocs/icon.svg'; const d='frontend/public/icon.svg'; if(fs.existsSync(s)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(s,d);}\"",
+    "dev": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false next dev frontend",
+    "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('frontend/.next',{recursive:true})}catch(e){}\"",
+    "build": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend",
+    "build:prebuilt": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend && node -e \"const fs=require('fs'); if(fs.existsSync('cli/prebuilt')) fs.rmSync('cli/prebuilt',{recursive:true}); fs.cpSync('frontend/out','cli/prebuilt',{recursive:true}); fs.writeFileSync('cli/prebuilt/.nojekyll','')\"",
     "prestart": "npm run build",
     "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
-    "lint:src": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:src": "eslint \"frontend/src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p tools/tsconfig.json && tsc --noEmit -p mcp/tsconfig.json",
+    "test:unit": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:ci": "npm run smoke:cli && npm run smoke:flags && npm run smoke:core && npm run smoke:ai && npm run smoke:secweb && npm run smoke:mcp && npm run smoke:docs",
     "typecheck:strict-unused": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
     "smoke:cli": "node tools/smoke/cli-smoke.mjs",
+    "smoke:flags": "node --import tsx tools/smoke/flag-contract.ts",
+    "smoke:core": "node --import tsx tools/smoke/core-selftest.ts",
+    "smoke:ai": "node --import tsx tools/smoke/ai-selftest.ts",
+    "smoke:secweb": "node --import tsx tools/smoke/security-web-selftest.ts",
+    "smoke:mcp": "node --import tsx mcp/smoke/mcp-selftest.ts",
+    "smoke:docs": "node --import tsx tools/smoke/docs-selftest.ts",
+    "smoke:all": "npm run smoke:cli && npm run smoke:flags && npm run smoke:core && npm run smoke:ai && npm run smoke:secweb && npm run smoke:mcp && npm run smoke:docs && npm run baseline:check",
+    "test": "npm run smoke:all",
     "baseline:create": "node tools/smoke/create-baseline.mjs",
     "baseline:check": "node tools/smoke/check-baseline.mjs",
+    "turbo:build": "turbo run build",
+    "turbo:lint": "turbo run lint",
+    "turbo:typecheck": "turbo run typecheck",
+    "turbo:test": "turbo run test",
     "gitpagedocs": "node cli/index.mjs",
-    "gitpagedocs:config": "node cli/index.mjs",
-    "gitpagedocs:full": "node cli/index.mjs",
     "gitpagedocs:home": "node cli/index.mjs --home"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Vidigal-code/git-page-docs.git"
   },
-  "keywords": [
-    "gitpagedocs",
-    "documentation",
-    "markdown",
-    "spa",
-    "cli",
-    "github-pages",
-    "create-gitpagedocs"
-  ],
   "author": "Vidigal-code",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Vidigal-code/git-page-docs/issues"
   },
   "homepage": "https://vidigal-code.github.io/git-page-docs/",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
-  "dependencies": {
-    "inquirer": "^9.2.23",
-    "tsx": "^4.21.0"
-  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@types/inquirer": "^9.0.9",
+    "@gitpagedocs/mcp": "workspace:*",
+    "@gitpagedocs/tools": "workspace:*",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@vitest/coverage-v8": "^4.1.8",
     "cross-env": "^7.0.3",
     "eslint": "^9.20.1",
     "eslint-config-next": "^15.1.7",
@@ -73,6 +75,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
-    "typescript": "5.9.3"
+    "tsx": "^4.21.0",
+    "turbo": "^2.9.18",
+    "typescript": "5.9.3",
+    "vitest": "^4.1.8"
   }
 }

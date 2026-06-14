@@ -13,6 +13,8 @@ const KNOWN_FLAGS = new Set([
   "--output",
   "--interactive",
   "-i",
+  "--ai",
+  "--pages-actions",
 ]);
 
 function readOptionValue(args: string[], optionName: string): string {
@@ -50,13 +52,28 @@ export function parseCliOptions(argv: string[], env: NodeJS.ProcessEnv): CliOpti
   if (!githubOwner && fallbackDashedArgs[0]) githubOwner = fallbackDashedArgs[0];
   if (!githubRepo && fallbackDashedArgs[1]) githubRepo = fallbackDashedArgs[1];
 
+  // New verb aliases (Phase 6) that map onto existing modes without new modes.
+  const command = args[0];
+  const isDocument = command === "document" || (command?.startsWith("document:") ?? false);
+  const isDeploy = command === "deploy" || command === "pages";
+
   const isBuild = args.includes("--build") || env.GITPAGEDOCS_BUILD === "1";
   const isServe = args.includes("--serve");
   const useLocalLayoutConfig = args.includes("--layoutconfig");
-  const shouldPush = args.includes("--push");
+  const shouldPush = args.includes("--push") || isDeploy;
   const isHome = args.includes("--home");
   const isInteractive = args.includes("--interactive") || args.includes("-i");
-  const mode = isHome ? "home" : args.includes("--full") ? "full" : "config-only";
+  const isAi = command === "ai" || args.includes("--ai") || isDocument;
+  const aiCommand =
+    command === "ai"
+      ? args[1]
+      : command === "document"
+        ? args[1] ?? "repo"
+        : command?.startsWith("document:")
+          ? command.split(":")[1]
+          : undefined;
+
+  const mode: import("../../domain/models/cli-options").CliMode = isAi ? "ai" : isHome ? "home" : args.includes("--full") ? "full" : "config-only";
   const repositorySearch =
     searchRaw === "true"
       ? true
@@ -72,6 +89,7 @@ export function parseCliOptions(argv: string[], env: NodeJS.ProcessEnv): CliOpti
     isBuild,
     isServe,
     mode,
+    aiCommand,
     outputDir: outputDir || (isHome ? DEFAULTS.home.outputDir : DEFAULTS.outputDir),
     useLocalLayoutConfig,
     shouldPush,

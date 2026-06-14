@@ -7,6 +7,7 @@ It does **not** generate `index.html` or `index.js`.
 
 ## Table of Contents
 
+- [Project Architecture (Monorepo)](#project-architecture-monorepo)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Layout Strategy](#layout-strategy)
@@ -20,8 +21,46 @@ It does **not** generate `index.html` or `index.js`.
 - [URL Routes and Query Parameters](#url-routes-and-query-parameters)
 - [Authorized Routes](#authorized-routes)
 - [CLI Options](#cli-options)
+- [AI CLI (interactive docs generator)](#ai-cli-interactive-docs-generator)
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
+
+## Project Architecture (Monorepo)
+
+`git-page-docs` is a **pnpm + turborepo monorepo**. All business logic lives in one shared core (`tools/`); the frontend, CLI, and MCP server are thin consumers of it.
+
+```text
+git-page-docs/
+├── frontend/     # Next.js 15 docs viewer (static export) — see frontend/README.md
+├── cli/          # Hexagonal CLI, published as the `gitpagedocs` npm bin
+├── mcp/          # Model Context Protocol server (@gitpagedocs/mcp)
+├── tools/        # @gitpagedocs/tools — the ONLY home for shared business logic
+├── gitpagedocs/  # User contract: config + versioned docs + layouts (kept stable)
+├── e2e/          # Playwright end-to-end specs
+└── tsconfig.base.json · turbo.json · pnpm-workspace.yaml · vitest.config.ts
+```
+
+| Area | Package | Responsibility |
+| --- | --- | --- |
+| **frontend/** | root pkg | Next.js App Router docs viewer: multi-version / multi-language docs, 36-theme layouts, the in-docs AI chat drawer, and the `/ai` console. Built via `next build frontend` and static-exported to `out/` for GitHub Pages. |
+| **cli/** | `gitpagedocs` (`bin`) | Hexagonal CLI (`@clack/prompts`) that scaffolds `gitpagedocs/`, generates docs with AI, configures GitHub Pages, and launches the MCP server. |
+| **mcp/** | `@gitpagedocs/mcp` | MCP server (SDK 1.29): 20 tools + 7 resources for repository analysis and AI doc generation, all delegating to `tools/`. |
+| **tools/** | `@gitpagedocs/tools` | Shared core: 14-provider AI system (registry/factory, no switch chains), encrypted credential vault (AES-256-GCM) + password gate, logger with secret redaction, caches, config loader, filesystem + documentation services. Browser-safe subpath exports (`./ai`, `./crypto/web`, `./security/web`, …). |
+| **gitpagedocs/** | — | The user-facing contract: `config.{json,js,ts}`, `docs/versions/**`, `layouts/**`. Never broken by refactors. |
+
+### Security: encrypted AI credentials
+
+API keys are never stored in plaintext. Both the `/ai` console and the in-docs chat drawer gate access behind a **local password** that derives (PBKDF2) an AES-256-GCM key; keys are encrypted at rest in `localStorage` and decrypted only for the session. Any legacy plaintext key is migrated into the vault and wiped on first unlock.
+
+### Tooling
+
+- **pnpm workspaces** + **turborepo** for builds/tests across packages
+- Shared **`tsconfig.base.json`**; `npm run typecheck` covers cli / frontend / tools / mcp
+- **Vitest** unit + integration (coverage on `tools/src`) and **Playwright** E2E (`e2e/`)
+- A **smoke + byte-baseline** harness (`npm run smoke:all`) guards every legacy CLI contract
+- **GitHub Actions**: CI (`ci.yml`) + GitHub Pages deploy (`gitpagedocs-pages.yml`)
+
+> The sections below document the published `gitpagedocs` CLI and its runtime contract. For frontend-specific development (the Next.js viewer), see [`frontend/README.md`](frontend/README.md).
 
 ## Prerequisites
 
@@ -30,11 +69,17 @@ It does **not** generate `index.html` or `index.js`.
 
 ## Quick Start
 
-Install in your project:
+Install the CLI globally, or run it one-off:
 
 ```bash
-npm install gitpagedocs
+npm install -g gitpagedocs   # global install
+gitpagedocs                  # then run anywhere
+
+# or, no install:
+npx gitpagedocs
 ```
+
+> `gitpagedocs` is published from the [`cli/`](cli/README.md) package of this monorepo. Generating docs is config-only — it never writes `index.html`/`index.js`.
 
 Generate docs config and versioned files (recommended default):
 
@@ -402,6 +447,7 @@ Example:
 | `--push` | Create workflow, commit artifacts, push to origin |
 | `--home` | Standalone distribution in `gitpagedocshome/` (static site + .env + Dockerfile + README) |
 | `--interactive` / `-i` | Run in interactive mode (prompts for options) |
+| `ai` or `--ai` | Interactive AI documentation mode (paths, provider, API key/base URL, multilingual output) |
 | `--build` | Compatibility flag (no change to output) |
 | `--serve` | Compatibility flag |
 | `--full` | Compatibility flag |
@@ -409,6 +455,45 @@ Example:
 Shortcut syntax: `npx gitpagedocs --push --<owner> --<repo>` (e.g. `--Vidigal-code --git-page-docs`) is equivalent to `--owner <owner> --repo <repo>`.
 
 With `--home`, output is `gitpagedocshome/` (or `--output` value). Otherwise, output remains `gitpagedocs/` (or `--output` value).
+
+## AI CLI (interactive docs generator)
+
+Run:
+
+```bash
+npx gitpagedocs ai
+```
+
+This mode provides:
+
+- provider selection (`openai`, `claude`, `gemini`, `ollama`)
+- API key / base URL input
+- path input (supports multiple paths and cross-repo paths)
+- multilingual markdown generation (`pt`, `en`, `es`)
+- optional `.gitpagedocsconfig` persistence for manual reuse
+- interactive fallback when directories are missing (fix/skip/abort)
+
+### Manual config (`.gitpagedocsconfig`)
+
+You can run manually with a persisted config in repository root:
+
+```json
+{
+  "version": 1,
+  "ai": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "apiKey": "<YOUR_API_KEY>",
+    "paths": ["src", "cli", "../another-repo/src"],
+    "languages": ["pt", "en", "es"],
+    "outputDir": "gitpagedocs/docs",
+    "filePrefix": "ai-generated",
+    "contextPrompt": "Você é um redator técnico sênior..."
+  }
+}
+```
+
+For Ollama, use `baseUrl` instead of `apiKey`.
 
 ## Configuration File Format
 
@@ -421,3 +506,37 @@ Runtime supports three config file formats (in order of precedence):
 ## License
 
 ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details.
+
+<!-- gitpagedocs:start -->
+### Supported AI providers (14)
+
+| Provider | ID | Default model | Capabilities |
+| --- | --- | --- | --- |
+| OpenAI | `openai` | `gpt-4o-mini` | stream, vision |
+| Anthropic | `anthropic` | `claude-sonnet-4-6` | stream, vision |
+| Google Gemini | `gemini` | `gemini-2.0-flash` | stream, vision, audio |
+| OpenRouter | `openrouter` | `openai/gpt-4o-mini` | stream, vision |
+| Ollama (local) | `ollama` | `llama3` | stream, vision |
+| Azure OpenAI | `azure-openai` | `gpt-4o-mini` | stream, vision |
+| Mistral | `mistral` | `mistral-large-latest` | stream |
+| DeepSeek | `deepseek` | `deepseek-chat` | stream |
+| Cohere | `cohere` | `command-r-plus` | stream |
+| Groq | `groq` | `llama-3.3-70b-versatile` | stream |
+| xAI Grok | `xai` | `grok-2-latest` | stream, vision |
+| Together AI | `together` | `meta-llama/Llama-3.3-70B-Instruct-Turbo` | stream |
+| Fireworks AI | `fireworks` | `accounts/fireworks/models/llama-v3p3-70b-instruct` | stream |
+| Perplexity | `perplexity` | `sonar` | stream |
+
+### CLI commands
+
+- `gitpagedocs init` — scaffold gitpagedocs config files
+- `gitpagedocs config` — show the resolved gitpagedocs config
+- `gitpagedocs provider [id]` — list AI providers or show one
+- `gitpagedocs models [provider]` — list catalog models
+- `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI
+- `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
+- `gitpagedocs doctor` — diagnose the environment
+- `gitpagedocs mcp start` — start the MCP server over stdio
+- `gitpagedocs version` — print the CLI version
+- `gitpagedocs update` — show how to update the CLI
+<!-- gitpagedocs:end -->

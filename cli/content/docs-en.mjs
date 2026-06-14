@@ -78,25 +78,29 @@ On GitHub Pages builds (\`GITHUB_ACTIONS=true\`), repository-search home is enab
 `,
     projectOverview: `# Project Overview
 
-Git Page Docs is powered by Next.js 15, React 19, TypeScript, and Node.js. It builds multilingual documentation for GitHub Pages.
+Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's \`gitpagedocs/\` folder into a multilingual, versioned documentation site — with an integrated AI assistant and a Model Context Protocol (MCP) server.
+
+## Monorepo packages
+
+- **frontend/** — Next.js 15 (App Router, React 19) documentation viewer, static-exported for GitHub Pages.
+- **cli/** — the published \`gitpagedocs\` npm package (\`npm install -g gitpagedocs\`): scaffolds the docs contract, generates docs with AI, configures Pages, and runs the MCP server.
+- **tools/** — \`@gitpagedocs/tools\`, the shared business-logic core: the 14-provider AI system, the encrypted credential vault, the config loader, caches, and the logger.
+- **mcp/** — \`@gitpagedocs/mcp\`, a Model Context Protocol server (20 tools + 7 resources).
+- **gitpagedocs/** — the user contract: \`config.json\`, versioned docs, and layouts.
 
 ## Stack
 
-- Next.js 15 with App Router
-- React 19
-- TypeScript
-- Static export for GitHub Pages
-- gray-matter, marked for Markdown
-- react-icons
-- ESLint
+- Next.js 15 (App Router) + React 19 + TypeScript; static export for GitHub Pages
+- gray-matter + marked for Markdown; react-icons
+- pnpm workspaces + turborepo; Vitest + Playwright; ESLint
 
-## Goals
+## Highlights
 
-- Generate and maintain a \`gitpagedocs/\` folder with config and versioned content
-- Support Markdown, HTML (local or URL), and video embeds
-- Multilingual: en, pt, es
-- Theme system with JSON templates
-- Local and GitHub Pages execution
+- Multilingual (\`en\`, \`pt\`, \`es\`) and version-aware routing (\`/v/:version\`)
+- 14-provider AI system (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI, and more) with streaming
+- AI API keys stored **encrypted at rest** (AES-256-GCM) behind a local password gate — never plaintext
+- In-docs **AI chat drawer** plus a dedicated **\`/ai\` console**
+- 36-theme layout system; local and GitHub Pages execution modes
 `,
     functionalities: `# Functionalities
 
@@ -106,11 +110,20 @@ Complete reference of CLI options, configuration keys, and runtime features.
 
 | Command | Description |
 |---------|--------------|
-| \`npx gitpagedocs\` | Generate config and docs in \`gitpagedocs/\` |
-| \`npx gitpagedocs --layoutconfig\` | Also generate local layouts/templates |
-| \`npx gitpagedocs --home\` | Standalone distribution (\`gitpagedocshome/\`) |
-| \`npx gitpagedocs --push --owner X --repo Y\` | Setup workflow, commit, push |
-| \`npx gitpagedocs --interactive\` / \`-i\` | Interactive mode with prompts |
+| \`gitpagedocs\` | Generate config and docs in \`gitpagedocs/\` |
+| \`gitpagedocs --layoutconfig\` | Also generate local layouts/templates |
+| \`gitpagedocs --home\` | Standalone distribution (\`gitpagedocshome/\`) |
+| \`gitpagedocs --push --owner X --repo Y\` | Setup workflow, commit, push |
+| \`gitpagedocs --interactive\` / \`-i\` | Interactive mode with prompts |
+| \`gitpagedocs ai\` | Interactive AI documentation generator |
+| \`gitpagedocs provider [id]\` / \`models [provider]\` | List AI providers / catalog models |
+| \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Generate documentation with AI |
+| \`gitpagedocs deploy\` / \`pages [actions\\|deploy]\` | Configure GitHub Pages via Actions + push |
+| \`gitpagedocs docs\` | Refresh README/CONTRIBUTING/SECURITY managed regions |
+| \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnostics / version / update hint |
+| \`gitpagedocs mcp start\` | Start the MCP server over stdio |
+
+Install globally with \`npm install -g gitpagedocs\`, or run one-off with \`npx gitpagedocs\`.
 
 ## CLI options
 
@@ -164,6 +177,19 @@ The CLI generates a **Source code** page per version. It scans \`src/\`, \`cli/\
 
 - \`GITPAGEDOCS_REPOSITORY_SEARCH\` – repository search (local)
 - \`GITHUB_ACTIONS\` – GitHub Pages build mode
+
+## AI assistant
+
+The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the ✨ button in the sidebar, enabled via \`site.AiChatEnabled\`) and a dedicated **\`/ai\` console** page.
+
+- **14 providers** via one shared core: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
+- **Model selection** — pick from each provider's catalog (\`gitpagedocs models <provider>\`) or type a custom id.
+- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** (one unlock per session) and is never stored in plaintext or logged. A legacy plaintext key is migrated and wiped on first unlock.
+- **AI documentation generation** — \`gitpagedocs ai\` scans chosen paths and writes multilingual markdown (pt/en/es); reusable via \`.gitpagedocsconfig\`.
+
+## MCP server
+
+\`gitpagedocs mcp start\` runs a Model Context Protocol server (stdio) exposing **20 tools** (filesystem, AI, doc generation/analysis) and **7 resources** (\`project://structure|docs|config|repository|readme|ai/providers|ai/models\`) for editors and AI agents.
 `,
     githubIssuesProjects: `# GitHub Issues and Projects
 
@@ -416,23 +442,24 @@ Manual fallback:
 `,
     architecture: `# Architecture
 
-This project is organized by feature boundaries and UI runtime responsibilities.
+A pnpm + turborepo monorepo where all business logic lives in one shared core (\`tools/\`); the frontend, CLI, and MCP server are thin consumers of it.
 
-## Main runtime modules
+## Packages
 
-- \`src/app/[[...repo]]/page.tsx\`
-  - route parser
-  - static params generation
-  - shell selection (docs shell vs repository search shell)
-- \`src/entities/docs/api/load-docs-data.ts\`
-  - local/remote config loading
-  - version resolution
-  - markdown fetch + parse pipeline
-  - layouts + themes loading
-- \`src/widgets/docs-shell/docs-shell.tsx\`
-  - UI rendering
-  - language/version/theme state
-  - URL synchronization
+- **frontend/** — Next.js viewer (Feature-Sliced: \`app / widgets / features / entities / shared\`); static export.
+- **cli/** — the published \`gitpagedocs\` bin (hexagonal: \`presentation / application / domain / infrastructure\`) + \`cli/ai/\` (the AI documentation CLI).
+- **tools/** — \`@gitpagedocs/tools\`: \`ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ ports/\`.
+- **mcp/** — \`@gitpagedocs/mcp\`: MCP tools + resources delegating to \`tools/\`.
+
+## Main runtime modules (frontend)
+
+- \`frontend/src/app/[[...repo]]/page.tsx\` — route parser, static params, shell selection (docs vs repository-search).
+- \`frontend/src/entities/docs/api/load-docs-data.ts\` — local/remote config loading, version resolution, markdown parse, layouts + themes.
+- \`frontend/src/widgets/docs-shell/docs-shell.tsx\` — UI rendering, language/version/theme state, URL sync, AI chat drawer mount.
+
+## Security: encrypted AI credentials
+
+The \`/ai\` console and the chat drawer gate access behind a local password that derives (PBKDF2) an AES-256-GCM key; keys live encrypted in \`localStorage\` and are decrypted only for the session (\`@gitpagedocs/tools/security\`).
 
 ## Data flow
 
