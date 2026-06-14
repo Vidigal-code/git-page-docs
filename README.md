@@ -72,11 +72,11 @@ API keys are never stored in plaintext. Both the `/ai` console and the in-docs c
 Install the CLI globally, or run it one-off:
 
 ```bash
-npm install -g gitpagedocs   # global install
-gitpagedocs                  # then run anywhere
+npm install -g @gitpagedocs/cli   # global install
+gitpagedocs                       # then run anywhere (the bin is `gitpagedocs`)
 
 # or, no install:
-npx gitpagedocs
+npx @gitpagedocs/cli
 ```
 
 > `gitpagedocs` is published from the [`cli/`](cli/README.md) package of this monorepo. Generating docs is config-only — it never writes `index.html`/`index.js`.
