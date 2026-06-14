@@ -9,6 +9,12 @@ import {
   normalizeToOutputPath,
 } from "./doc-path-resolver.mjs";
 
+/** True when `child` is the same as, or nested inside, `parent` (path-safe). */
+function isWithin(parent, child) {
+  const rel = path.relative(parent, child);
+  return !rel.startsWith("..") && !path.isAbsolute(rel);
+}
+
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M12 3C4.5885 3 3 4.5885 3 12C3 19.4115 4.5885 21 12 21C19.4115 21 21 19.4115 21 12C21 4.5885 19.4115 3 12 3ZM14.2695 9.03471C15.1872 8.34452 15.7204 8.25293 15.9299 8.25017C16.1326 8.86788 16.1588 9.54654 16.0042 10.1835C15.9945 10.2234 15.9842 10.263 15.9731 10.3025C15.941 10.4168 15.9647 10.5393 16.0366 10.6333L16.0377 10.6347C16.0521 10.6537 16.0664 10.6728 16.0805 10.6922C16.5194 11.2949 16.7603 12.0687 16.7497 12.8714L16.7496 12.8747C16.7496 14.5738 16.3076 15.5644 15.6994 16.1583C15.0859 16.7572 14.2627 16.9938 13.4137 17.0968L13.3898 17.0997L13.3777 17.1014C12.443 17.2601 11.5456 17.2688 10.6078 17.1286L10.604 17.1281L10.5687 17.1233C9.72415 17.0085 8.90483 16.7616 8.29455 16.1566C7.68912 15.5564 7.25036 14.5643 7.25038 12.8747L7.25034 12.8714C7.23972 12.0687 7.48056 11.2949 7.91949 10.6922C7.93482 10.6711 7.9504 10.6503 7.96621 10.6297C8.03648 10.538 8.05962 10.4184 8.02812 10.3068L8.02599 10.2993C8.01523 10.2608 8.00513 10.2222 7.99569 10.1834C7.84087 9.54684 7.86561 8.86863 8.0659 8.25016C8.27679 8.2528 8.81228 8.34432 9.73045 9.03473C9.76619 9.0616 9.80249 9.08937 9.83937 9.11807C9.93139 9.19 10.0529 9.21205 10.1644 9.17703L10.1657 9.17661C10.2268 9.15768 10.2882 9.13972 10.3496 9.12272C11.4349 8.82255 12.5651 8.82255 13.6504 9.12272C13.7088 9.13888 13.7671 9.15592 13.8253 9.17382L13.8277 9.17457C13.9431 9.21015 14.0704 9.18836 14.1678 9.11252C14.2022 9.08578 14.2361 9.05985 14.2695 9.03471Z" fill="#323232"/>
@@ -58,7 +64,10 @@ export async function writeConfigOnlyOutput(options) {
       const template = createThemeTemplate(layout);
       await writeJson(root, `${outputDir}/layouts/${layout.file}`, template);
     }
-  } else if (existsSync(layoutsPath) && root !== pkgRoot) {
+  } else if (existsSync(layoutsPath) && !isWithin(root, pkgRoot)) {
+    // Only clean a stale local layouts/ when the CLI runs from OUTSIDE the
+    // project (a real install) — never when pkgRoot is inside the project being
+    // generated (the gitpagedocs source repo), so committed layouts survive.
     rmSync(layoutsPath, { recursive: true, force: true });
   }
 
