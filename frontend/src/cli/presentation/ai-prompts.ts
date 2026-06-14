@@ -3,6 +3,7 @@ import {
     OLLAMA_DEFAULT_BASE_URL,
     type AiProviderId,
 } from '../../shared/config/ai-config';
+import { PROVIDER_CATALOG, legacyProviderToCatalogId } from '@gitpagedocs/tools/ai';
 import type { AiCliConfig, AiCliRunPlan } from '../core/models/ai-cli-config';
 import {
     askText,
@@ -36,6 +37,45 @@ function validateCommaSeparatedDirectories(value: string): string | undefined {
     const values = parseCommaSeparated(value);
     if (!values.length) return 'Provide at least one path.';
     return undefined;
+}
+
+const CUSTOM_MODEL = '__custom_model__';
+
+/**
+ * Ask for the model as a SELECT of the provider's real catalog models (with the
+ * default marked), plus a "Custom" escape hatch — so an invalid id like "4.8"
+ * can't be typed by mistake and rejected later as a 404 by the provider.
+ */
+async function askModel(provider: AiProviderId): Promise<string> {
+    const catalogId = legacyProviderToCatalogId(provider);
+    const spec = catalogId ? PROVIDER_CATALOG[catalogId] : undefined;
+    const fallback = AI_MODEL_DEFAULTS[provider] || '';
+
+    if (!spec || spec.models.length === 0) {
+        return String(await askText({ message: 'Which model do you want to use?', defaultValue: fallback }));
+    }
+
+    const picked = await askSelect<string>(
+        'Which model do you want to use?',
+        [
+            ...spec.models.map((m) => ({
+                value: m.id,
+                label: m.id === spec.defaultModel ? `${m.id} (default)` : m.id,
+            })),
+            { value: CUSTOM_MODEL, label: 'Custom — enter a model id manually' },
+        ],
+        spec.defaultModel,
+    );
+
+    if (picked !== CUSTOM_MODEL) return picked;
+
+    return String(
+        await askText({
+            message: 'Enter the model id:',
+            defaultValue: spec.defaultModel,
+            validate: (value) => (value.trim() ? undefined : 'Provide a model id'),
+        }),
+    );
 }
 
 function toPlan(answers: InteractiveCliAnswers): AiCliRunPlan {
@@ -137,10 +177,7 @@ export async function runAiInteractivePrompt(existingConfig?: AiCliConfig | null
         validate: (input) => (input.length > 0 ? undefined : 'Required field'),
     });
 
-    const model = await askText({
-        message: 'Which model do you want to use?',
-        defaultValue: AI_MODEL_DEFAULTS[provider] || '',
-    });
+    const model = await askModel(provider);
 
     const targetDirsRaw = await askText({
         message:
