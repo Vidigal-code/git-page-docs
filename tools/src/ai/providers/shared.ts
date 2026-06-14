@@ -14,6 +14,9 @@ export function buildAuthHeaders(spec: ProviderSpec, config: ProviderConfig): Re
       requireKey(spec, config);
       headers["x-api-key"] = config.apiKey as string;
       headers["anthropic-version"] = "2023-06-01";
+      // Required for direct browser calls (the docs run as a static site);
+      // ignored server-side. Without it Anthropic rejects the CORS preflight.
+      headers["anthropic-dangerous-direct-browser-access"] = "true";
       break;
     case "api-key-header":
       requireKey(spec, config);
