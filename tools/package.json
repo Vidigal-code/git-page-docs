@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/tools",
-  "version": "1.1.43",
+  "version": "1.1.44",
   "type": "module",
   "description": "Shared business-logic core for Git Page Docs (consumed by frontend, cli and mcp). Ships TypeScript source; consume via tsx or a TS-aware bundler.",
   "main": "./src/index.ts",

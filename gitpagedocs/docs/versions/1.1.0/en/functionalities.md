@@ -6,11 +6,20 @@ Complete reference of CLI options, configuration keys, and runtime features.
 
 | Command | Description |
 |---------|--------------|
-| `npx gitpagedocs` | Generate config and docs in `gitpagedocs/` |
-| `npx gitpagedocs --layoutconfig` | Also generate local layouts/templates |
-| `npx gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`) |
-| `npx gitpagedocs --push --owner X --repo Y` | Setup workflow, commit, push |
-| `npx gitpagedocs --interactive` / `-i` | Interactive mode with prompts |
+| `gitpagedocs` | Generate config and docs in `gitpagedocs/` |
+| `gitpagedocs --layoutconfig` | Also generate local layouts/templates |
+| `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`) |
+| `gitpagedocs --push --owner X --repo Y` | Setup workflow, commit, push |
+| `gitpagedocs --interactive` / `-i` | Interactive mode with prompts |
+| `gitpagedocs ai` | Interactive AI documentation generator |
+| `gitpagedocs provider [id]` / `models [provider]` | List AI providers / catalog models |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI |
+| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
+| `gitpagedocs docs` | Refresh README/CONTRIBUTING/SECURITY managed regions |
+| `gitpagedocs doctor` / `version` / `update` | Diagnostics / version / update hint |
+| `gitpagedocs mcp start` | Start the MCP server over stdio |
+
+Install globally with `npm install -g gitpagedocs`, or run one-off with `npx gitpagedocs`.
 
 ## CLI options
 
@@ -64,5 +73,18 @@ The CLI generates a **Source code** page per version. It scans `src/`, `cli/`, a
 
 - `GITPAGEDOCS_REPOSITORY_SEARCH` – repository search (local)
 - `GITHUB_ACTIONS` – GitHub Pages build mode
+
+## AI assistant
+
+The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the ✨ button in the sidebar, enabled via `site.AiChatEnabled`) and a dedicated **`/ai` console** page.
+
+- **14 providers** via one shared core: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
+- **Model selection** — pick from each provider's catalog (`gitpagedocs models <provider>`) or type a custom id.
+- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** (one unlock per session) and is never stored in plaintext or logged. A legacy plaintext key is migrated and wiped on first unlock.
+- **AI documentation generation** — `gitpagedocs ai` scans chosen paths and writes multilingual markdown (pt/en/es); reusable via `.gitpagedocsconfig`.
+
+## MCP server
+
+`gitpagedocs mcp start` runs a Model Context Protocol server (stdio) exposing **20 tools** (filesystem, AI, doc generation/analysis) and **7 resources** (`project://structure|docs|config|repository|readme|ai/providers|ai/models`) for editors and AI agents.
 
 > Version: 1.1.0

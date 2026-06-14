@@ -43,6 +43,7 @@ export function buildRootConfig(options = {}) {
       layoutsConfigPathOficialUrl: useOfficialLayouts ? OFFICIAL_LAYOUTS_CONFIG_URL : "",
       repositorySearchHome,
       rendering: renderingUrl,
+      AiChatEnabled: true,
       langmenu: defaultLangMenu,
     },
     VersionControl: {

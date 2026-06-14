@@ -73,18 +73,29 @@ Em build de GitHub Pages (\`GITHUB_ACTIONS=true\`), a busca de repositorio fica 
 `,
     projectOverview: `# Visao geral do projeto
 
-Git Page Docs e alimentado por Next.js 15, React 19, TypeScript e Node.js. Gera documentacao multilinguagem para GitHub Pages.
+Git Page Docs e um monorepo pnpm + turborepo que transforma a pasta \`gitpagedocs/\` de um repositorio em um site de documentacao multilinguagem e versionado — com assistente de IA integrado e um servidor MCP (Model Context Protocol).
+
+## Pacotes do monorepo
+
+- **frontend/** — visualizador Next.js 15 (App Router, React 19), exportado estaticamente para o GitHub Pages.
+- **cli/** — o pacote npm publicado \`gitpagedocs\` (\`npm install -g gitpagedocs\`): gera a estrutura de docs, documenta com IA, configura o Pages e roda o servidor MCP.
+- **tools/** — \`@gitpagedocs/tools\`, o nucleo de logica compartilhado: sistema de IA com 14 provedores, cofre de credenciais criptografado, loader de config, caches e logger.
+- **mcp/** — \`@gitpagedocs/mcp\`, servidor Model Context Protocol (20 ferramentas + 7 recursos).
+- **gitpagedocs/** — o contrato do usuario: \`config.json\`, docs versionados e layouts.
 
 ## Stack
 
-- Next.js 15
-- React 19
-- TypeScript
-- Node.js 20+
+- Next.js 15 (App Router) + React 19 + TypeScript; exportacao estatica para GitHub Pages
+- gray-matter + marked para Markdown; react-icons
+- pnpm workspaces + turborepo; Vitest + Playwright; ESLint
 
-## Objetivo
+## Destaques
 
-Construir documentacao multilinguagem para repositorios GitHub com suporte a versoes, temas e conteudo md/html/video.
+- Multilinguagem (\`en\`, \`pt\`, \`es\`) e rotas por versao (\`/v/:version\`)
+- Sistema de IA com 14 provedores (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI e mais) com streaming
+- Chaves de IA **criptografadas em repouso** (AES-256-GCM) atras de uma senha local — nunca em texto puro
+- **Drawer de chat de IA** nos docs + um **console \`/ai\`** dedicado
+- Sistema de 36 temas; execucao local e no GitHub Pages
 `,
     functionalities: `# Funcionalidades
 
@@ -275,21 +286,22 @@ Se \`build:prebuilt\` for pulado no Windows, use CI para gerar artefatos prebuil
 
 O projeto e organizado por fronteiras de feature e responsabilidades do runtime.
 
-## Modulos principais
+## Pacotes
 
-- \`src/app/[[...repo]]/page.tsx\`
-  - parser de rota
-  - generateStaticParams
-  - selecao de shell (docs vs repository search)
-- \`src/entities/docs/api/load-docs-data.ts\`
-  - carga de config local/remota
-  - resolucao de versao
-  - pipeline de fetch + parse markdown
-  - carga de layouts + temas
-- \`src/widgets/docs-shell/docs-shell.tsx\`
-  - renderizacao da UI
-  - estado de idioma/versao/tema
-  - sincronizacao de URL
+- **frontend/** — visualizador Next.js (Feature-Sliced: app / widgets / features / entities / shared); export estatico.
+- **cli/** — o bin publicado \`gitpagedocs\` (hexagonal) + \`cli/ai/\` (CLI de documentacao com IA).
+- **tools/** — \`@gitpagedocs/tools\`: ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ ports/.
+- **mcp/** — \`@gitpagedocs/mcp\`: ferramentas + recursos MCP que delegam ao tools/.
+
+## Modulos principais (frontend)
+
+- \`frontend/src/app/[[...repo]]/page.tsx\` — parser de rota, generateStaticParams, selecao de shell.
+- \`frontend/src/entities/docs/api/load-docs-data.ts\` — config local/remota, versao, parse markdown, layouts + temas.
+- \`frontend/src/widgets/docs-shell/docs-shell.tsx\` — UI, estado idioma/versao/tema, sync de URL, montagem do chat de IA.
+
+## Seguranca: credenciais de IA criptografadas
+
+O console \`/ai\` e o chat drawer exigem uma senha local que deriva (PBKDF2) uma chave AES-256-GCM; as chaves ficam criptografadas no \`localStorage\` e so sao descriptografadas durante a sessao (\`@gitpagedocs/tools/security\`).
 
 ## Fluxo de dados
 
