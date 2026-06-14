@@ -45,7 +45,8 @@
     "turbo:typecheck": "turbo run typecheck",
     "turbo:test": "turbo run test",
     "gitpagedocs": "node cli/index.mjs",
-    "gitpagedocs:home": "node cli/index.mjs --home"
+    "gitpagedocs:home": "node cli/index.mjs --home",
+    "publish:all": "pnpm -r publish --access public --no-git-checks"
   },
   "repository": {
     "type": "git",
