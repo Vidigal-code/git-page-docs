@@ -7,6 +7,7 @@ It does **not** generate `index.html` or `index.js`.
 
 ## Table of Contents
 
+- [Project Architecture (Monorepo)](#project-architecture-monorepo)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Layout Strategy](#layout-strategy)
@@ -23,6 +24,43 @@ It does **not** generate `index.html` or `index.js`.
 - [AI CLI (interactive docs generator)](#ai-cli-interactive-docs-generator)
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
+
+## Project Architecture (Monorepo)
+
+`git-page-docs` is a **pnpm + turborepo monorepo**. All business logic lives in one shared core (`tools/`); the frontend, CLI, and MCP server are thin consumers of it.
+
+```text
+git-page-docs/
+├── frontend/     # Next.js 15 docs viewer (static export) — see frontend/README.md
+├── cli/          # Hexagonal CLI, published as the `gitpagedocs` npm bin
+├── mcp/          # Model Context Protocol server (@gitpagedocs/mcp)
+├── tools/        # @gitpagedocs/tools — the ONLY home for shared business logic
+├── gitpagedocs/  # User contract: config + versioned docs + layouts (kept stable)
+├── e2e/          # Playwright end-to-end specs
+└── tsconfig.base.json · turbo.json · pnpm-workspace.yaml · vitest.config.ts
+```
+
+| Area | Package | Responsibility |
+| --- | --- | --- |
+| **frontend/** | root pkg | Next.js App Router docs viewer: multi-version / multi-language docs, 36-theme layouts, the in-docs AI chat drawer, and the `/ai` console. Built via `next build frontend` and static-exported to `out/` for GitHub Pages. |
+| **cli/** | `gitpagedocs` (`bin`) | Hexagonal CLI (`@clack/prompts`) that scaffolds `gitpagedocs/`, generates docs with AI, configures GitHub Pages, and launches the MCP server. |
+| **mcp/** | `@gitpagedocs/mcp` | MCP server (SDK 1.29): 20 tools + 7 resources for repository analysis and AI doc generation, all delegating to `tools/`. |
+| **tools/** | `@gitpagedocs/tools` | Shared core: 14-provider AI system (registry/factory, no switch chains), encrypted credential vault (AES-256-GCM) + password gate, logger with secret redaction, caches, config loader, filesystem + documentation services. Browser-safe subpath exports (`./ai`, `./crypto/web`, `./security/web`, …). |
+| **gitpagedocs/** | — | The user-facing contract: `config.{json,js,ts}`, `docs/versions/**`, `layouts/**`. Never broken by refactors. |
+
+### Security: encrypted AI credentials
+
+API keys are never stored in plaintext. Both the `/ai` console and the in-docs chat drawer gate access behind a **local password** that derives (PBKDF2) an AES-256-GCM key; keys are encrypted at rest in `localStorage` and decrypted only for the session. Any legacy plaintext key is migrated into the vault and wiped on first unlock.
+
+### Tooling
+
+- **pnpm workspaces** + **turborepo** for builds/tests across packages
+- Shared **`tsconfig.base.json`**; `npm run typecheck` covers cli / frontend / tools / mcp
+- **Vitest** unit + integration (coverage on `tools/src`) and **Playwright** E2E (`e2e/`)
+- A **smoke + byte-baseline** harness (`npm run smoke:all`) guards every legacy CLI contract
+- **GitHub Actions**: CI (`ci.yml`) + GitHub Pages deploy (`gitpagedocs-pages.yml`)
+
+> The sections below document the published `gitpagedocs` CLI and its runtime contract. For frontend-specific development (the Next.js viewer), see [`frontend/README.md`](frontend/README.md).
 
 ## Prerequisites
 
