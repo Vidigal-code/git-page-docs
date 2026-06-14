@@ -147,7 +147,7 @@ export function getDefaultSiteConfig(DOCS, projectLink) {
         IconAudioPlayerPopoverCloseLightImg: "",
         IconAudioPlayerPopoverCloseDarkImg: "",
         IconAudioPlayerPopoverCloseReactIcones: true,
-        IconAudioPlayerPopoverCloseReactIconesTag: "IoClose",
+        IconAudioPlayerPopoverCloseReactIconesTag: "IoMdClose",
         IconAudioPlayerPopoverCloseReactIconesTagColorDark: "White",
         IconAudioPlayerPopoverCloseReactIconesTagColorLight: "black",
         IconAudioPlayerPopoverCloseReactIconesTagSize: "25px",
