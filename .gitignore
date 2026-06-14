@@ -6,9 +6,10 @@ prebuilt
 dist
 .DS_Store
 *.log
+*.tsbuildinfo
 coverage
 .env*
-!.env.example
+!frontend/.env.example
 .idea
 .turbo
 test-results
