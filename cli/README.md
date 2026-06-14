@@ -1,13 +1,13 @@
-# gitpagedocs (CLI)
+# @gitpagedocs/cli
 
-The **published npm package** of the [Git Page Docs](../README.md) monorepo. It scaffolds the `gitpagedocs/` docs contract, generates docs with AI, configures GitHub Pages, and runs the MCP server.
+The **published npm package** of the [Git Page Docs](../README.md) monorepo (the command it installs is `gitpagedocs`). It scaffolds the `gitpagedocs/` docs contract, generates docs with AI, configures GitHub Pages, and runs the MCP server.
 
 ```bash
-npm install -g gitpagedocs   # global
-gitpagedocs                  # generate gitpagedocs/ config (config-only)
+npm install -g @gitpagedocs/cli   # global (installs the `gitpagedocs` command)
+gitpagedocs                       # generate gitpagedocs/ config (config-only)
 
 # or one-off, no install:
-npx gitpagedocs
+npx @gitpagedocs/cli
 ```
 
 > This package ships its TypeScript sources and runs them via `tsx`; it depends on the workspace packages `@gitpagedocs/tools` and `@gitpagedocs/mcp` (published alongside it).
