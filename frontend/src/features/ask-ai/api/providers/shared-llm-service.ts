@@ -3,6 +3,7 @@ import type { AiMessage, ProviderConfig } from '@gitpagedocs/tools/ports';
 import { isAppError } from '@gitpagedocs/tools/errors';
 import { ILlmService, LlmCompletionParams, BaseChatMessage } from './llm-types';
 import { LlmError } from '../llm-error';
+import { isBrowserNetworkError, describeAiBrowserError } from '@/shared/lib/ai-error';
 
 /** Credentials injected by the caller (decrypted from the vault), so the
  * service never reads keys from storage itself. */
@@ -66,6 +67,10 @@ export class SharedLlmService implements ILlmService {
             }
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') throw error;
+            // CORS/network failure (status-less TypeError): give an actionable hint.
+            if (isBrowserNetworkError(error)) {
+                throw new LlmError(describeAiBrowserError(this.providerId, error), 0);
+            }
             const status = isAppError(error)
                 ? Number((error.details as { status?: number } | undefined)?.status ?? 500)
                 : 500;

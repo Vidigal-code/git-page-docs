@@ -153,7 +153,7 @@ export async function promptUseExistingConfig(existingConfig: AiCliConfig): Prom
 }
 
 export async function runAiInteractivePrompt(existingConfig?: AiCliConfig | null): Promise<AiCliRunPlan> {
-    intro('🤖 GitPageDocs AI CLI — interactive mode');
+    intro('🤖  GitPageDocs AI CLI — interactive mode 🤖');
 
     if (existingConfig) {
         const existingPlan = await promptUseExistingConfig(existingConfig);

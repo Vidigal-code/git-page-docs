@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createDefaultFactory, PROVIDER_CATALOG, ALL_PROVIDER_IDS } from '@gitpagedocs/tools/ai';
 import type { AiProviderId, ProviderConfig } from '@gitpagedocs/tools/ports';
 import { AiSecureStorage } from '@/shared/lib/ai-secure-storage';
+import { describeAiBrowserError } from '@/shared/lib/ai-error';
 
 export interface ConsoleMessage {
   role: 'user' | 'assistant';
@@ -89,7 +90,7 @@ export function useAiConsole() {
       );
       setMessages((m) => [...m, { role: 'assistant', content: `Connection OK — ${res.text.trim().slice(0, 40)}` }]);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(describeAiBrowserError(providerId, e));
     } finally {
       setBusy(false);
     }
@@ -112,7 +113,7 @@ export function useAiConsole() {
           });
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : String(e));
+        setError(describeAiBrowserError(providerId, e));
       } finally {
         setBusy(false);
       }

@@ -103,7 +103,8 @@ export function useAiChat(
                 let formattedError = labels?.aiChatErrorGeneric || "Generic Error";
 
                 if (error.name === 'LlmError') {
-                    if (error.statusCode === 401 || error.statusCode === 403) formattedError = labels?.aiChatError401;
+                    if (error.statusCode === 0) formattedError = error.message;
+                    else if (error.statusCode === 401 || error.statusCode === 403) formattedError = labels?.aiChatError401;
                     else if (error.statusCode === 429) formattedError = labels?.aiChatError429;
                     else if (error.statusCode && error.statusCode >= 500) formattedError = labels?.aiChatError500;
                     else if (error.statusCode) formattedError = labels?.aiChatErrorGeneric;
