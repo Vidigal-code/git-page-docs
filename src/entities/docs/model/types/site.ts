@@ -113,6 +113,28 @@ export interface SiteConfig {
   IconNavMenuMobileCloseReactIconesTagSize?: string;
   IconNavMenuMobileCloseImgWidth?: string | number;
   IconNavMenuMobileCloseImgHeight?: string | number;
+
+  /** Sidebar toggle: collapse icon */
+  IconSidebarCollapseLightImg?: string;
+  IconSidebarCollapseDarkImg?: string;
+  IconSidebarCollapseReactIcones?: boolean;
+  IconSidebarCollapseReactIconesTag?: string;
+  IconSidebarCollapseReactIconesTagColorDark?: string;
+  IconSidebarCollapseReactIconesTagColorLight?: string;
+  IconSidebarCollapseReactIconesTagSize?: string;
+  IconSidebarCollapseImgWidth?: string | number;
+  IconSidebarCollapseImgHeight?: string | number;
+
+  /** Sidebar toggle: expand icon */
+  IconSidebarExpandLightImg?: string;
+  IconSidebarExpandDarkImg?: string;
+  IconSidebarExpandReactIcones?: boolean;
+  IconSidebarExpandReactIconesTag?: string;
+  IconSidebarExpandReactIconesTagColorDark?: string;
+  IconSidebarExpandReactIconesTagColorLight?: string;
+  IconSidebarExpandReactIconesTagSize?: string;
+  IconSidebarExpandImgWidth?: string | number;
+  IconSidebarExpandImgHeight?: string | number;
   /** Block menu on nav toggle: active (blocking) state icon */
   IconNavMenuBlockActiveLightImg?: string;
   IconNavMenuBlockActiveDarkImg?: string;
@@ -230,6 +252,120 @@ export interface SiteConfig {
   IconAudioPlayerPopoverLoopOffReactIconesTagSize?: string;
   IconAudioPlayerPopoverLoopOffImgWidth?: string | number;
   IconAudioPlayerPopoverLoopOffImgHeight?: string | number;
+
+  /** AI Chat toggle: enable/disable entirely */
+  AiChatEnabled?: boolean;
+
+  /** AI Chat toggle: open icon */
+  IconAiChatOpenLightImg?: string;
+  IconAiChatOpenDarkImg?: string;
+  IconAiChatOpenReactIcones?: boolean;
+  IconAiChatOpenReactIconesTag?: string;
+  IconAiChatOpenReactIconesTagColorDark?: string;
+  IconAiChatOpenReactIconesTagColorLight?: string;
+  IconAiChatOpenReactIconesTagSize?: string;
+  IconAiChatOpenImgWidth?: string | number;
+  IconAiChatOpenImgHeight?: string | number;
+
+  /** AI Chat toggle: close icon */
+  IconAiChatCloseLightImg?: string;
+  IconAiChatCloseDarkImg?: string;
+  IconAiChatCloseReactIcones?: boolean;
+  IconAiChatCloseReactIconesTag?: string;
+  IconAiChatCloseReactIconesTagColorDark?: string;
+  IconAiChatCloseReactIconesTagColorLight?: string;
+  IconAiChatCloseReactIconesTagSize?: string;
+  IconAiChatCloseImgWidth?: string | number;
+  IconAiChatCloseImgHeight?: string | number;
+
+  /** AI Chat: settings icon */
+  IconAiChatSettingsLightImg?: string;
+  IconAiChatSettingsDarkImg?: string;
+  IconAiChatSettingsReactIcones?: boolean;
+  IconAiChatSettingsReactIconesTag?: string;
+  IconAiChatSettingsReactIconesTagColorDark?: string;
+  IconAiChatSettingsReactIconesTagColorLight?: string;
+  IconAiChatSettingsReactIconesTagSize?: string;
+  IconAiChatSettingsImgWidth?: string | number;
+  IconAiChatSettingsImgHeight?: string | number;
+
+  /** AI Chat: send button icon */
+  IconAiChatSendLightImg?: string;
+  IconAiChatSendDarkImg?: string;
+  IconAiChatSendReactIcones?: boolean;
+  IconAiChatSendReactIconesTag?: string;
+  IconAiChatSendReactIconesTagColorDark?: string;
+  IconAiChatSendReactIconesTagColorLight?: string;
+  IconAiChatSendReactIconesTagSize?: string;
+  IconAiChatSendImgWidth?: string | number;
+  IconAiChatSendImgHeight?: string | number;
+
+  /** AI Chat: cancel generation icon */
+  IconAiChatCancelLightImg?: string;
+  IconAiChatCancelDarkImg?: string;
+  IconAiChatCancelReactIcones?: boolean;
+  IconAiChatCancelReactIconesTag?: string;
+  IconAiChatCancelReactIconesTagColorDark?: string;
+  IconAiChatCancelReactIconesTagColorLight?: string;
+  IconAiChatCancelReactIconesTagSize?: string;
+  IconAiChatCancelImgWidth?: string | number;
+  IconAiChatCancelImgHeight?: string | number;
+
+  /** AI Chat: trash/clear icon */
+  IconAiChatTrashLightImg?: string;
+  IconAiChatTrashDarkImg?: string;
+  IconAiChatTrashReactIcones?: boolean;
+  IconAiChatTrashReactIconesTag?: string;
+  IconAiChatTrashReactIconesTagColorDark?: string;
+  IconAiChatTrashReactIconesTagColorLight?: string;
+  IconAiChatTrashReactIconesTagSize?: string;
+  IconAiChatTrashImgWidth?: string | number;
+  IconAiChatTrashImgHeight?: string | number;
+
+  /** AI Chat: clear chat icon */
+  IconAiChatClearChatLightImg?: string;
+  IconAiChatClearChatDarkImg?: string;
+  IconAiChatClearChatReactIcones?: boolean;
+  IconAiChatClearChatReactIconesTag?: string;
+  IconAiChatClearChatReactIconesTagColorDark?: string;
+  IconAiChatClearChatReactIconesTagColorLight?: string;
+  IconAiChatClearChatReactIconesTagSize?: string;
+  IconAiChatClearChatImgWidth?: string | number;
+  IconAiChatClearChatImgHeight?: string | number;
+
+  /** AI Chat: clear data icon */
+  IconAiChatClearDataLightImg?: string;
+  IconAiChatClearDataDarkImg?: string;
+  IconAiChatClearDataReactIcones?: boolean;
+  IconAiChatClearDataReactIconesTag?: string;
+  IconAiChatClearDataReactIconesTagColorDark?: string;
+  IconAiChatClearDataReactIconesTagColorLight?: string;
+  IconAiChatClearDataReactIconesTagSize?: string;
+  IconAiChatClearDataImgWidth?: string | number;
+  IconAiChatClearDataImgHeight?: string | number;
+
+  /** AI Chat: expand to popup mode icon */
+  IconAiChatExpandLightImg?: string;
+  IconAiChatExpandDarkImg?: string;
+  IconAiChatExpandReactIcones?: boolean;
+  IconAiChatExpandReactIconesTag?: string;
+  IconAiChatExpandReactIconesTagColorDark?: string;
+  IconAiChatExpandReactIconesTagColorLight?: string;
+  IconAiChatExpandReactIconesTagSize?: string;
+  IconAiChatExpandImgWidth?: string | number;
+  IconAiChatExpandImgHeight?: string | number;
+
+  /** AI Chat: collapse to drawer mode icon */
+  IconAiChatCollapseLightImg?: string;
+  IconAiChatCollapseDarkImg?: string;
+  IconAiChatCollapseReactIcones?: boolean;
+  IconAiChatCollapseReactIconesTag?: string;
+  IconAiChatCollapseReactIconesTagColorDark?: string;
+  IconAiChatCollapseReactIconesTagColorLight?: string;
+  IconAiChatCollapseReactIconesTagSize?: string;
+  IconAiChatCollapseImgWidth?: string | number;
+  IconAiChatCollapseImgHeight?: string | number;
+
   /** If true, hide the "File: ID" line in the audio popover Now playing block */
   audioPopoverHideSource?: boolean;
   /** Custom source label for all tracks (Record<pt|en|es, string>). Empty = use track ID or track.sourceLabel */

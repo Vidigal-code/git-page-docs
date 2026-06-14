@@ -9,7 +9,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
   const buildStepsBlock =
     pathSegment
       ? `      - name: Build static site with target repository path
-        run: npx next build
+        run: pnpm exec next build
         working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
@@ -23,7 +23,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
           rm -rf .gitpagedocs-runtime/out
           mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out`
       : `      - name: Build static site with target repository path
-        run: npx next build
+        run: pnpm exec next build
         working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
@@ -53,6 +53,11 @@ jobs:
       - name: Checkout target repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -79,7 +84,7 @@ jobs:
           fi
 
       - name: Install runtime dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         working-directory: .gitpagedocs-runtime
 
 ${buildStepsBlock}

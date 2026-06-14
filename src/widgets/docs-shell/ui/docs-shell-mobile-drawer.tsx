@@ -16,6 +16,8 @@ interface DocsShellMobileDrawerProps {
   isNodeExpanded: (nodeKey: string) => boolean;
   controls: React.ComponentProps<typeof DocsShellControls>;
   navMenuCloseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  onOpenAiChat: () => void;
+  aiChatIconConfig: any;
 }
 
 export function DocsShellMobileDrawer({
@@ -29,6 +31,8 @@ export function DocsShellMobileDrawer({
   isNodeExpanded,
   controls,
   navMenuCloseIcon,
+  onOpenAiChat,
+  aiChatIconConfig,
 }: DocsShellMobileDrawerProps) {
   if (!isOpen) {
     return null;
@@ -53,6 +57,17 @@ export function DocsShellMobileDrawer({
               />
             ) : (
               "✕"
+            )}
+          </button>
+          <button className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} style={{ marginLeft: 6, order: -1 }} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
+            {aiChatIconConfig.open.useReactIcon ? (
+              <span style={aiChatIconConfig.open.reactIconStyle}>
+                <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
+              </span>
+            ) : aiChatIconConfig.open.iconImage ? (
+              <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
+            ) : (
+              "✨"
             )}
           </button>
         </div>

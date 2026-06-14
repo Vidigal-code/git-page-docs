@@ -95,6 +95,8 @@ export interface NavMenuConfig {
   navMenuMobileCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   navMenuBlockActiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   navMenuBlockInactiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  sidebarCollapseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  sidebarExpandIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
   blockMenuOnNavLabelActive: string;
   blockMenuOnNavLabelInactive: string;
 }

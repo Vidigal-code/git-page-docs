@@ -6,6 +6,10 @@ export async function dispatchMode(
   params: CliRuntimeParams,
   runner: CliCommandRunner,
 ): Promise<void> {
+  if (options.mode === "ai") {
+    await runner.runAi({ ...params, options });
+    return;
+  }
   if (options.mode === "home") {
     await runner.runHome({ ...params, options });
     return;

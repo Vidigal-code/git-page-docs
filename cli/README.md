@@ -85,3 +85,50 @@ Expected URL after deployment:
 ```text
 https://vidigal-code.github.io/energy-bill-ai-parser/git-docs/
 ```
+
+## AI CLI (interactive + config file)
+
+The CLI now includes a dedicated interactive AI mode:
+
+```bash
+npx gitpagedocs ai
+```
+
+### What it does
+
+- asks provider (`openai`, `claude`, `gemini`, `ollama`)
+- asks API key or Ollama URL
+- asks paths to scan (supports one or many paths, including other repositories)
+- generates markdown documentation in `pt`, `en`, `es`
+- optionally persists config in `.gitpagedocsconfig`
+- optionally runs standard `gitpagedocs` scaffolding after AI generation
+
+### `.gitpagedocsconfig` (manual mode)
+
+You can create/edit this file manually and then run `npx gitpagedocs ai`:
+
+```json
+{
+	"version": 1,
+	"ai": {
+		"provider": "openai",
+		"model": "gpt-4o-mini",
+		"apiKey": "<YOUR_API_KEY>",
+		"paths": ["src", "cli", "../another-repo/src"],
+		"languages": ["pt", "en", "es"],
+		"outputDir": "gitpagedocs/docs",
+		"filePrefix": "ai-generated",
+		"contextPrompt": "Você é um redator técnico sênior..."
+	}
+}
+```
+
+For Ollama, use `baseUrl` instead of `apiKey`.
+
+### Interactive fallback
+
+If a directory is not found, CLI offers fallback choices:
+
+- fix paths and retry
+- skip missing paths and continue
+- abort safely

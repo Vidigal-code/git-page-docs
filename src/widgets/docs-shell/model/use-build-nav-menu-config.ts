@@ -8,6 +8,8 @@ import {
     resolveNavMenuMobileCloseIconConfig,
     resolveNavMenuBlockActiveIconConfig,
     resolveNavMenuBlockInactiveIconConfig,
+    resolveSidebarCollapseIconConfig,
+    resolveSidebarExpandIconConfig,
 } from "@/shared/lib/resolve-site-assets";
 import type { NavMenuConfig } from "./use-docs-shell-config";
 
@@ -26,6 +28,8 @@ export function useBuildNavMenuConfig(
             navMenuMobileCloseIcon: resolveNavMenuMobileCloseIconConfig(site, mode, basePath),
             navMenuBlockActiveIcon: resolveNavMenuBlockActiveIconConfig(site, mode, basePath),
             navMenuBlockInactiveIcon: resolveNavMenuBlockInactiveIconConfig(site, mode, basePath),
+            sidebarCollapseIcon: resolveSidebarCollapseIconConfig(site, mode, basePath),
+            sidebarExpandIcon: resolveSidebarExpandIconConfig(site, mode, basePath),
             blockMenuOnNavLabelActive: getLangMenuLabelFromMenu(site.langmenu, language, "blockMenuOnNavActive", "Block menu on navigation"),
             blockMenuOnNavLabelInactive: getLangMenuLabelFromMenu(site.langmenu, language, "blockMenuOnNavInactive", "Allow menu on navigation"),
         };

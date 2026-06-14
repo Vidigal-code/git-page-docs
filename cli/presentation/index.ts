@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { printBanner, printCredits } from "./ui/banner";
 import { resolveOptions } from "./options/resolver";
+import { runNewCommand } from "./commands/run-command";
 import { dispatchMode } from "../application/use-cases/dispatch-mode";
 import type {
   CliRuntimeParams,
@@ -40,7 +41,18 @@ const params: CliRuntimeParams = {
 };
 
 async function main(): Promise<void> {
-  printBanner();
+  // `mcp start` owns stdout (the MCP stdio channel) — no banner/credits there.
+  const stdoutOwnedByCommand = process.argv[2] === "mcp";
+  if (!stdoutOwnedByCommand) printBanner();
+
+  // New informational/utility commands (version, doctor, provider, models,
+  // config, mcp, update) are handled before the legacy flag flow. Alias verbs
+  // (init, document, deploy, pages) are mapped in the parser and fall through.
+  if (await runNewCommand(process.argv, pkgRoot)) {
+    if (!stdoutOwnedByCommand) printCredits();
+    return;
+  }
+
   const options = await resolveOptions(process.argv, process.env);
   const configOnlyRuntime = createConfigOnlyRuntime() as ConfigOnlyRuntimePort;
   const homeRuntime = createHomeRuntime() as HomeRuntimePort;
@@ -60,6 +72,28 @@ async function main(): Promise<void> {
     },
     runHome: async (context) => {
       await executeHome(context, homeRuntime);
+    },
+    runAi: async (context) => {
+      console.log("[gitpagedocs] Iniciando Módulo de IA na CLI...");
+      // @ts-ignore
+      const { runAiCliCommand } = await import("../../src/cli/application/run-ai-cli-command.ts");
+      const result = await runAiCliCommand({
+        cwd: process.cwd(),
+        onInfo: (message: string) => console.log(message),
+      });
+
+      if (result.summary.scannedFilesCount === 0) {
+        console.log("[gitpagedocs:ai] Nenhum arquivo elegível foi encontrado nos paths informados.");
+        return;
+      }
+
+      if (result.runConfigScaffold) {
+        console.log("\n[gitpagedocs] Scaffolding GitPageDocs ecosystem automatically...");
+        const safePrebuiltDir = typeof context.prebuiltDir === "string" ? context.prebuiltDir : path.join(String(context.pkgRoot ?? process.cwd()), "prebuilt");
+        await executeConfigOnly({ ...context, prebuiltDir: safePrebuiltDir }, configOnlyRuntime);
+      }
+
+      console.log(`\n🎉 Processo completo! Arquivos gerados: ${result.summary.outputs.join(", ")}`);
     },
   });
   printCredits();

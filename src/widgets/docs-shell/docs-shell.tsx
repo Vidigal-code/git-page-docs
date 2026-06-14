@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toDocsShellCssVars, type LoadedDocsData } from "@/entities/docs";
 import { useDocsPreferences } from "./model/use-docs-preferences";
@@ -26,6 +26,8 @@ import { DocsShellMainContent } from "./ui/docs-shell-main-content";
 import { DocsShellOverlays } from "./ui/docs-shell-overlays";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellProvider } from "./model/docs-shell-context";
+import { AiChatDrawer } from "../ai-chat-drawer/ui/ai-chat-drawer";
+import { resolveAiChatOpenIconConfig, resolveAiChatCloseIconConfig, resolveAiChatSettingsIconConfig, resolveAiChatSendIconConfig, resolveAiChatCancelIconConfig, resolveAiChatTrashIconConfig, resolveAiChatClearChatIconConfig, resolveAiChatClearDataIconConfig, resolveAiChatExpandIconConfig, resolveAiChatCollapseIconConfig } from "@/shared/lib/icons/ai-chat/resolve-ai-chat-icon";
 import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
@@ -357,6 +359,43 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     [data.config.site, nextMode],
   );
 
+  const [isAiChatOpen, setAiChatOpen] = useState(false);
+  const aiChatIconConfig = useMemo(
+    () => ({
+      open: resolveAiChatOpenIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      close: resolveAiChatCloseIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      settings: resolveAiChatSettingsIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      send: resolveAiChatSendIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      cancel: resolveAiChatCancelIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      trash: resolveAiChatTrashIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      clearChat: resolveAiChatClearChatIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      clearData: resolveAiChatClearDataIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      expand: resolveAiChatExpandIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      collapse: resolveAiChatCollapseIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath())
+    }),
+    [data.config.site, activeLayout?.mode]
+  );
+
+  const isAiChatEnabledGlobal = data.config.site.AiChatEnabled !== false;
+
+  const aiContext = useMemo(() => {
+    let rawContent = labels.aiChatEmptyPageContent;
+    if (currentPage?.md) {
+      rawContent = (currentPage.md.markdownByLanguage as Record<string, string>)[language] || labels.aiChatEmptyPageContent;
+    } else if (currentPage?.html) {
+      rawContent = (currentPage.html.htmlByLanguage as Record<string, string>)[language] || labels.aiChatEmptyPageContent;
+    }
+
+    const langMap: Record<string, string> = { "pt": "Portuguese", "en": "English", "es": "Spanish" };
+    const fullLang = langMap[language] || language;
+
+    return labels.aiChatSystemPrompt
+      .replace('{headerName}', headerName || 'Docs')
+      .replace('{language}', fullLang)
+      .replace('{pageId}', String(currentPage?.id || labels.aiChatNoPageId))
+      .replace('{rawContent}', rawContent);
+  }, [headerName, currentPage, language, labels]);
+
   const contextValue = {
     data,
     language,
@@ -381,167 +420,180 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   return (
     <DocsShellProvider value={contextValue}>
       <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
-      <DocsShellSidebar
-        siteName={headerName}
-        useReactHeaderIcon={useReactHeaderIcon}
-        reactHeaderIconTag={reactHeaderIconTag}
-        headerReactIconStyle={headerReactIconStyle}
-        activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
-        iconImage={iconImage}
-        iconImgWidth={iconImageMenuHeaderImgWidth}
-        iconImgHeight={iconImageMenuHeaderImgHeight}
-        menuNodes={headerMenuTree}
-        menuCloseLabel={labels.menuCloseLabel}
-        onMenuClick={onMenuClick}
-        onToggleNode={toggleNode}
-        isNodeExpanded={isNodeExpanded}
-        onCollapseSidebar={() => setSidebarOpen(false)}
-        blockMenuOnNav={blockMenuOnNav}
-        setBlockMenuOnNav={setBlockMenuOnNav}
-        navMenuConfig={navMenuConfig}
-      />
-
-      {!sidebarOpen && (
-        <CollapsedNavRail
-          menuOpenLabel={labels.menuOpenLabel}
-          onExpand={() => setSidebarOpen(true)}
+        <DocsShellSidebar
+          siteName={headerName}
+          useReactHeaderIcon={useReactHeaderIcon}
+          reactHeaderIconTag={reactHeaderIconTag}
+          headerReactIconStyle={headerReactIconStyle}
+          activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
+          iconImage={iconImage}
+          iconImgWidth={iconImageMenuHeaderImgWidth}
+          iconImgHeight={iconImageMenuHeaderImgHeight}
+          menuNodes={headerMenuTree}
+          menuCloseLabel={labels.menuCloseLabel}
+          onMenuClick={onMenuClick}
+          onToggleNode={toggleNode}
+          isNodeExpanded={isNodeExpanded}
+          onCollapseSidebar={() => setSidebarOpen(false)}
           blockMenuOnNav={blockMenuOnNav}
           setBlockMenuOnNav={setBlockMenuOnNav}
           navMenuConfig={navMenuConfig}
+          onOpenAiChat={() => setAiChatOpen(true)}
+          aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}
         />
-      )}
 
-      <DocsShellMainContent
-        headerName={headerName}
-        iconImage={iconImage}
-        useReactHeaderIcon={useReactHeaderIcon}
-        reactHeaderIconTag={reactHeaderIconTag}
-        headerReactIconStyle={headerReactIconStyle}
-        iconImgWidth={iconImageMenuHeaderImgWidth}
-        iconImgHeight={iconImageMenuHeaderImgHeight}
-        menuOpen={menuOpen}
-        menuOpenLabel={labels.menuOpenLabel}
-        menuCloseLabel={labels.menuCloseLabel}
-        onToggleMenu={() => setMenuOpen((v) => !v)}
-        activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
-        controlsProps={controlsProps}
-        navMenuConfig={navMenuConfig}
-        currentPage={currentPage}
-        data={data}
-        language={language}
-        nextMode={nextMode}
-        previousLabel={labels.previousLabel}
-        nextLabel={labels.nextLabel}
-        browsePrevLabel={labels.browsePrevLabel}
-        browseNextLabel={labels.browseNextLabel}
-        fullscreenExpandLabel={labels.fullscreenExpandLabel}
-        mdBrowseIndex={mdBrowseIndex}
-        htmlBrowseIndex={htmlBrowseIndex}
-        videoBrowseIndex={videoBrowseIndex}
-        audioBrowseIndex={audioBrowseIndex}
-        setMdBrowseIndex={setMdBrowseIndex}
-        setHtmlBrowseIndex={setHtmlBrowseIndex}
-        setVideoBrowseIndex={setVideoBrowseIndex}
-        setAudioBrowseIndex={setAudioBrowseIndex}
-        mdItems={mdItems}
-        htmlItems={htmlItems}
-        videoItems={videoItems}
-        audioItems={audioItems}
-        routeGuideEnabled={routeGuideEnabled}
-        breadcrumbTrail={breadcrumbTrail}
-        onMenuClick={onMenuClick}
-        homePathClick={homePathClick}
-        homeAncestorKeys={homeAncestorKeys}
-        routeGuideIconConfig={routeGuideIconConfig}
-        onFullscreenOpen={handleInlineFullscreenOpen}
-        onFullscreenClose={handleInlineFullscreenClose}
-        linearNavigationEntries={linearNavigationEntries}
-        canGoPrevious={canGoPrevious}
-        canGoNext={canGoNext}
-        goToLinearNavigation={goToLinearNavigation}
-        footerEnabled={footerEnabled}
-        footerConfig={footerConfig}
-      />
+        {!sidebarOpen && (
+          <CollapsedNavRail
+            menuOpenLabel={labels.menuOpenLabel}
+            onExpand={() => setSidebarOpen(true)}
+            blockMenuOnNav={blockMenuOnNav}
+            setBlockMenuOnNav={setBlockMenuOnNav}
+            navMenuConfig={navMenuConfig}
+          />
+        )}
 
-      <DocsShellOverlays
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        headerName={headerName}
-        headerMenuTree={headerMenuTree}
-        menuCloseLabel={labels.menuCloseLabel}
-        onMenuClick={onMenuClick}
-        toggleNode={toggleNode}
-        isNodeExpanded={isNodeExpanded}
-        controlsProps={controlsProps}
-        navMenuConfig={navMenuConfig}
-        controlsConfig={{
-          activeNavigation: controlsConfig.activeNavigation,
-          focusModeEnabled: controlsConfig.focusModeEnabled,
-          focusModeLabel: controlsConfig.focusModeLabel,
-          versionLinksLabel: controlsConfig.versionLinksLabel,
-          versionLinkOptionsWithLabels: controlsConfig.versionLinkOptionsWithLabels,
-          lastUpdateLabel: controlsConfig.lastUpdateLabel,
-          updateDate: controlsConfig.updateDate,
-        }}
-        versionLinksPopupOpen={versionLinksPopupOpen}
-        setVersionLinksPopupOpen={setVersionLinksPopupOpen}
-        infoPopupOpen={infoPopupOpen}
-        setInfoPopupOpen={setInfoPopupOpen}
-        quickNavOpen={quickNavOpen}
-        quickNavPlaceholder={labels.quickNavPlaceholder}
-        quickNavQuery={quickNavQuery}
-        filteredQuickNavEntries={filteredQuickNavEntries}
-        quickNavActiveIndex={quickNavActiveIndex}
-        navigateHintLabel={labels.navigateHintLabel}
-        selectHintLabel={labels.selectHintLabel}
-        escHintLabel={labels.escHintLabel}
-        closeHintLabel={labels.closeHintLabel}
-        noNavigationResults={labels.noNavigationResults}
-        quickNavListRef={quickNavListRef}
-        quickNavItemRefs={quickNavItemRefs}
-        closeQuickNavigation={closeQuickNavigationInternal}
-        setQuickNavQuery={setQuickNavQuery}
-        setQuickNavActiveIndex={setQuickNavActiveIndex}
-        focusModeOpen={focusModeOpen}
-        focusModeLabel={controlsConfig.focusModeLabel}
-        previousLabel={labels.previousLabel}
-        nextLabel={labels.nextLabel}
-        focusModeCurrentHtml={focusModeCurrentHtml}
-        canFocusModeGoPrevious={canFocusModeGoPrevious}
-        canFocusModeGoNext={canFocusModeGoNext}
-        closeFocusMode={closeFocusModeInternal}
-        onFocusModeNavigate={onFocusModeNavigateInternal}
-        versionLinksLabel={controlsConfig.versionLinksLabel}
-        versionLinkOptionsWithLabels={controlsConfig.versionLinkOptionsWithLabels}
-        lastUpdateLabel={controlsConfig.lastUpdateLabel}
-        updateDate={controlsConfig.updateDate}
-        urlFullscreenParams={urlFullscreenParams}
-        data={data}
-        language={language}
-        mdBrowseIndex={mdBrowseIndex}
-        htmlBrowseIndex={htmlBrowseIndex}
-        videoBrowseIndex={videoBrowseIndex}
-        audioBrowseIndex={audioBrowseIndex}
-        setMdBrowseIndex={setMdBrowseIndex}
-        setHtmlBrowseIndex={setHtmlBrowseIndex}
-        setVideoBrowseIndex={setVideoBrowseIndex}
-        setAudioBrowseIndex={setAudioBrowseIndex}
-        mdItems={mdItems}
-        htmlItems={htmlItems}
-        videoItems={videoItems}
-        audioItems={audioItems}
-        routeGuideEnabled={routeGuideEnabled}
-        breadcrumbTrail={breadcrumbTrail}
-        homePathClick={homePathClick}
-        homeAncestorKeys={homeAncestorKeys}
-        routeGuideIconConfig={routeGuideIconConfig}
-        nextMode={nextMode}
-        browsePrevLabel={labels.browsePrevLabel}
-        browseNextLabel={labels.browseNextLabel}
-        fullscreenExpandLabel={labels.fullscreenExpandLabel}
-        closeUrlFullscreen={closeUrlFullscreen}
-      />
-    </div>
+        <DocsShellMainContent
+          headerName={headerName}
+          iconImage={iconImage}
+          useReactHeaderIcon={useReactHeaderIcon}
+          reactHeaderIconTag={reactHeaderIconTag}
+          headerReactIconStyle={headerReactIconStyle}
+          iconImgWidth={iconImageMenuHeaderImgWidth}
+          iconImgHeight={iconImageMenuHeaderImgHeight}
+          menuOpen={menuOpen}
+          menuOpenLabel={labels.menuOpenLabel}
+          menuCloseLabel={labels.menuCloseLabel}
+          onToggleMenu={() => setMenuOpen((v) => !v)}
+          activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
+          controlsProps={controlsProps}
+          navMenuConfig={navMenuConfig}
+          currentPage={currentPage}
+          data={data}
+          language={language}
+          nextMode={nextMode}
+          previousLabel={labels.previousLabel}
+          nextLabel={labels.nextLabel}
+          browsePrevLabel={labels.browsePrevLabel}
+          browseNextLabel={labels.browseNextLabel}
+          fullscreenExpandLabel={labels.fullscreenExpandLabel}
+          mdBrowseIndex={mdBrowseIndex}
+          htmlBrowseIndex={htmlBrowseIndex}
+          videoBrowseIndex={videoBrowseIndex}
+          audioBrowseIndex={audioBrowseIndex}
+          setMdBrowseIndex={setMdBrowseIndex}
+          setHtmlBrowseIndex={setHtmlBrowseIndex}
+          setVideoBrowseIndex={setVideoBrowseIndex}
+          setAudioBrowseIndex={setAudioBrowseIndex}
+          mdItems={mdItems}
+          htmlItems={htmlItems}
+          videoItems={videoItems}
+          audioItems={audioItems}
+          routeGuideEnabled={routeGuideEnabled}
+          breadcrumbTrail={breadcrumbTrail}
+          onMenuClick={onMenuClick}
+          homePathClick={homePathClick}
+          homeAncestorKeys={homeAncestorKeys}
+          routeGuideIconConfig={routeGuideIconConfig}
+          onFullscreenOpen={handleInlineFullscreenOpen}
+          onFullscreenClose={handleInlineFullscreenClose}
+          linearNavigationEntries={linearNavigationEntries}
+          canGoPrevious={canGoPrevious}
+          canGoNext={canGoNext}
+          goToLinearNavigation={goToLinearNavigation}
+          footerEnabled={footerEnabled}
+          footerConfig={footerConfig}
+        />
+
+        <DocsShellOverlays
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
+          headerName={headerName}
+          headerMenuTree={headerMenuTree}
+          menuCloseLabel={labels.menuCloseLabel}
+          onMenuClick={onMenuClick}
+          toggleNode={toggleNode}
+          isNodeExpanded={isNodeExpanded}
+          controlsProps={controlsProps}
+          navMenuConfig={navMenuConfig}
+          controlsConfig={{
+            activeNavigation: controlsConfig.activeNavigation,
+            focusModeEnabled: controlsConfig.focusModeEnabled,
+            focusModeLabel: controlsConfig.focusModeLabel,
+            versionLinksLabel: controlsConfig.versionLinksLabel,
+            versionLinkOptionsWithLabels: controlsConfig.versionLinkOptionsWithLabels,
+            lastUpdateLabel: controlsConfig.lastUpdateLabel,
+            updateDate: controlsConfig.updateDate,
+          }}
+          versionLinksPopupOpen={versionLinksPopupOpen}
+          setVersionLinksPopupOpen={setVersionLinksPopupOpen}
+          infoPopupOpen={infoPopupOpen}
+          setInfoPopupOpen={setInfoPopupOpen}
+          quickNavOpen={quickNavOpen}
+          quickNavPlaceholder={labels.quickNavPlaceholder}
+          quickNavQuery={quickNavQuery}
+          filteredQuickNavEntries={filteredQuickNavEntries}
+          quickNavActiveIndex={quickNavActiveIndex}
+          navigateHintLabel={labels.navigateHintLabel}
+          selectHintLabel={labels.selectHintLabel}
+          escHintLabel={labels.escHintLabel}
+          closeHintLabel={labels.closeHintLabel}
+          noNavigationResults={labels.noNavigationResults}
+          quickNavListRef={quickNavListRef}
+          quickNavItemRefs={quickNavItemRefs}
+          closeQuickNavigation={closeQuickNavigationInternal}
+          setQuickNavQuery={setQuickNavQuery}
+          setQuickNavActiveIndex={setQuickNavActiveIndex}
+          focusModeOpen={focusModeOpen}
+          focusModeLabel={controlsConfig.focusModeLabel}
+          previousLabel={labels.previousLabel}
+          nextLabel={labels.nextLabel}
+          focusModeCurrentHtml={focusModeCurrentHtml}
+          canFocusModeGoPrevious={canFocusModeGoPrevious}
+          canFocusModeGoNext={canFocusModeGoNext}
+          closeFocusMode={closeFocusModeInternal}
+          onFocusModeNavigate={onFocusModeNavigateInternal}
+          versionLinksLabel={controlsConfig.versionLinksLabel}
+          versionLinkOptionsWithLabels={controlsConfig.versionLinkOptionsWithLabels}
+          lastUpdateLabel={controlsConfig.lastUpdateLabel}
+          updateDate={controlsConfig.updateDate}
+          urlFullscreenParams={urlFullscreenParams}
+          data={data}
+          language={language}
+          mdBrowseIndex={mdBrowseIndex}
+          htmlBrowseIndex={htmlBrowseIndex}
+          videoBrowseIndex={videoBrowseIndex}
+          audioBrowseIndex={audioBrowseIndex}
+          setMdBrowseIndex={setMdBrowseIndex}
+          setHtmlBrowseIndex={setHtmlBrowseIndex}
+          setVideoBrowseIndex={setVideoBrowseIndex}
+          setAudioBrowseIndex={setAudioBrowseIndex}
+          mdItems={mdItems}
+          htmlItems={htmlItems}
+          videoItems={videoItems}
+          audioItems={audioItems}
+          routeGuideEnabled={routeGuideEnabled}
+          breadcrumbTrail={breadcrumbTrail}
+          homePathClick={homePathClick}
+          homeAncestorKeys={homeAncestorKeys}
+          routeGuideIconConfig={routeGuideIconConfig}
+          nextMode={nextMode}
+          browsePrevLabel={labels.browsePrevLabel}
+          browseNextLabel={labels.browseNextLabel}
+          fullscreenExpandLabel={labels.fullscreenExpandLabel}
+          closeUrlFullscreen={closeUrlFullscreen}
+          onOpenAiChat={() => setAiChatOpen(true)}
+          aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}
+        />
+        {isAiChatEnabledGlobal && (
+          <AiChatDrawer
+            isOpen={isAiChatOpen}
+            onClose={() => setAiChatOpen(false)}
+            icons={aiChatIconConfig}
+            labels={labels}
+            systemContext={aiContext}
+          />
+        )}
+      </div>
     </DocsShellProvider>
   );
 }

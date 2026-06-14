@@ -27,6 +27,14 @@ export async function generateMetadata(): Promise<Metadata> {
         "Generate, customize and publish multilingual markdown documentation with layout themes.",
       siteName,
       type: "website",
+      images: [{ url: iconPath }],
+    },
+    twitter: {
+      card: "summary",
+      title: siteName,
+      description:
+        "Generate, customize and publish multilingual markdown documentation with layout themes.",
+      images: [iconPath],
     },
     robots: {
       index: true,

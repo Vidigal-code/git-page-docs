@@ -27,6 +27,15 @@ import {
   SEARCH_PROMPT,
   INSTALLED_PROMPT,
   RETURN_HOME,
+  LOADING_DOCUMENTATION,
+  REPOSITORY_DETECTED,
+  COULD_NOT_LOAD,
+  NETWORK_FAILURE_RETRY,
+  TRY_AGAIN,
+  SEARCH_OWNER_PLACEHOLDER,
+  SEARCH_REPO_PLACEHOLDER,
+  SEARCH_BUTTON,
+  LOADING_FALLBACK,
 } from "@/shared/config/i18n/not-found-dict";
 
 type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
@@ -42,7 +51,7 @@ function NotFoundFallback() {
   return (
     <SearchShellLayout header={null} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language="en" style={{}}>
       <section className={notFoundStyles.section}>
-        <p style={{ margin: 0, color: "var(--text-secondary)", textAlign: "center" }}>Loading...</p>
+        <p style={{ margin: 0, color: "var(--text-secondary)", textAlign: "center" }}>{LOADING_FALLBACK.en}</p>
       </section>
     </SearchShellLayout>
   );
@@ -254,11 +263,13 @@ function NotFoundContent() {
     />
   );
 
+  const safeLang = lang as SupportedLanguage;
+
   if (!mounted) {
     return (
       <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
         <section className={notFoundStyles.section}>
-          <p style={styles.loading}>Loading...</p>
+          <p style={styles.loading}>{LOADING_FALLBACK[safeLang] || LOADING_FALLBACK.en}</p>
         </section>
       </SearchShellLayout>
     );
@@ -269,7 +280,7 @@ function NotFoundContent() {
   }
 
   if (isCheckingOrLoading) {
-    const loadingTitleBase = lang === "pt" ? "Carregando documentação" : lang === "es" ? "Cargando documentación" : "Loading documentation";
+    const loadingTitleBase = LOADING_DOCUMENTATION[safeLang] || LOADING_DOCUMENTATION.en;
     const loadingTitle = `${loadingTitleBase}${".".repeat(loaderDots)}`;
     const progressWidth = loaderDots === 1 ? "34%" : loaderDots === 2 ? "68%" : "100%";
     return (
@@ -277,11 +288,7 @@ function NotFoundContent() {
         <section className={notFoundStyles.section}>
           <h1 style={styles.title}>{loadingTitle}</h1>
           <p style={styles.description}>
-            {lang === "pt"
-              ? "Repositório detectado. Abrindo o app..."
-              : lang === "es"
-                ? "Repositorio detectado. Abriendo la app..."
-                : "Repository detected. Opening the app..."}
+            {REPOSITORY_DETECTED[safeLang] || REPOSITORY_DETECTED.en}
           </p>
           <div style={styles.loadingTrack}>
             <div style={{ ...styles.loadingBar, width: progressWidth }} />
@@ -295,13 +302,9 @@ function NotFoundContent() {
     return (
       <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
         <section className={notFoundStyles.section}>
-          <h1 style={styles.title}>{lang === "pt" ? "Não foi possível carregar agora" : lang === "es" ? "No se pudo cargar ahora" : "Could not load right now"}</h1>
+          <h1 style={styles.title}>{COULD_NOT_LOAD[safeLang] || COULD_NOT_LOAD.en}</h1>
           <p style={styles.description}>
-            {lang === "pt"
-              ? "O repositório possui gitpagedocs, mas houve falha temporária de rede. Tente novamente."
-              : lang === "es"
-                ? "El repositorio tiene gitpagedocs, pero hubo un fallo temporal de red. Intenta de nuevo."
-                : "This repository has gitpagedocs, but there was a temporary network failure. Try again."}
+            {NETWORK_FAILURE_RETRY[safeLang] || NETWORK_FAILURE_RETRY.en}
           </p>
           <button
             type="button"
@@ -310,25 +313,24 @@ function NotFoundContent() {
               setRepoStatus("checking");
             }}
           >
-            {lang === "pt" ? "Tentar novamente" : lang === "es" ? "Intentar de nuevo" : "Try again"}
+            {TRY_AGAIN[safeLang] || TRY_AGAIN.en}
           </button>
         </section>
       </SearchShellLayout>
     );
   }
 
-  const safeLang = lang as SupportedLanguage;
   const message = isRepoPath
     ? repoStatus === "installed"
-      ? INSTALLED_NOT_PRERENDERED[safeLang]
-      : NOT_INSTALLED[safeLang]
+      ? INSTALLED_NOT_PRERENDERED[safeLang] || INSTALLED_NOT_PRERENDERED.en
+      : NOT_INSTALLED[safeLang] || NOT_INSTALLED.en
     : "Page not found";
   const prompt = isRepoPath
     ? repoStatus === "installed"
-      ? INSTALLED_PROMPT[safeLang]
-      : SEARCH_PROMPT[safeLang]
+      ? INSTALLED_PROMPT[safeLang] || INSTALLED_PROMPT.en
+      : SEARCH_PROMPT[safeLang] || SEARCH_PROMPT.en
     : "The requested page does not exist.";
-  const returnLabel = RETURN_HOME[safeLang];
+  const returnLabel = RETURN_HOME[safeLang] || RETURN_HOME.en;
 
   return (
     <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
@@ -358,18 +360,18 @@ function NotFoundContent() {
           >
             <input
               name="owner"
-              placeholder={lang === "pt" ? "Usuário (ex: Vidigal-code)" : lang === "es" ? "Usuario (ej: Vidigal-code)" : "Owner (ex: Vidigal-code)"}
+              placeholder={SEARCH_OWNER_PLACEHOLDER[safeLang] || SEARCH_OWNER_PLACEHOLDER.en}
               defaultValue={pathOwner ?? ""}
               className={notFoundStyles.input}
             />
             <input
               name="repo"
-              placeholder={lang === "pt" ? "Repositório (ex: git-page-link-create)" : lang === "es" ? "Repositorio (ej: git-page-link-create)" : "Repository (ex: git-page-link-create)"}
+              placeholder={SEARCH_REPO_PLACEHOLDER[safeLang] || SEARCH_REPO_PLACEHOLDER.en}
               defaultValue={pathRepo ?? ""}
               className={notFoundStyles.input}
             />
             <button type="submit" className={notFoundStyles.button}>
-              {lang === "pt" ? "Buscar" : lang === "es" ? "Buscar" : "Search"}
+              {SEARCH_BUTTON[safeLang] || SEARCH_BUTTON.en}
             </button>
           </form>
         )}

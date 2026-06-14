@@ -37,6 +37,7 @@ export interface CliCommandContext extends CliRuntimeParams {
 export interface CliCommandRunner {
   runConfigOnly: (params: CliCommandContext) => Promise<void>;
   runHome: (params: CliCommandContext) => Promise<void>;
+  runAi: (params: CliCommandContext) => Promise<void>;
 }
 
 export interface ConfigOnlyOutputInput {

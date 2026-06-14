@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
 import type { ResolvedNavMenuIconConfig } from "../nav-menu/resolve-nav-menu-icon";
+import { DEFAULT_ICON_FALLBACK_URL } from "../../../config/icon-defaults";
 
-const DEFAULT_IMG = "https://cdn-icons-png.flaticon.com/256/25/25231.png";
+const DEFAULT_IMG = DEFAULT_ICON_FALLBACK_URL;
 
 type IconKeyPrefix =
   | "IconAudioPlayerPopoverPlay"

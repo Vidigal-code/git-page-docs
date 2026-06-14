@@ -102,6 +102,8 @@ export interface DocsShellOverlaysProps {
   browsePrevLabel: string;
   browseNextLabel: string;
   fullscreenExpandLabel: string;
+  onOpenAiChat: () => void;
+  aiChatIconConfig: any;
 }
 
 export function DocsShellOverlays(props: DocsShellOverlaysProps) {
@@ -119,6 +121,8 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
         isNodeExpanded={props.isNodeExpanded}
         controls={controlsProps}
         navMenuCloseIcon={props.navMenuConfig.navMenuMobileCloseIcon}
+        onOpenAiChat={props.onOpenAiChat}
+        aiChatIconConfig={props.aiChatIconConfig}
       />
       <DocsShellQuickNavOverlay
         isOpen={controlsConfig.activeNavigation && props.quickNavOpen}

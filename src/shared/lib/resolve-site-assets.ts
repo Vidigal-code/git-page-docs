@@ -17,6 +17,8 @@ export {
   resolveNavMenuMobileCloseIconConfig,
   resolveNavMenuBlockActiveIconConfig,
   resolveNavMenuBlockInactiveIconConfig,
+  resolveSidebarCollapseIconConfig,
+  resolveSidebarExpandIconConfig,
   type NavMenuIconConfigInput,
   type ResolvedNavMenuIconConfig,
   resolveAudioPlayerPopoverCloseIconConfig,

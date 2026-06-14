@@ -15,6 +15,8 @@ import type { ExternalProviderState, RouteAccessDeniedReason } from "./types";
 const ACCESS_KEYS_STORAGE_PREFIX = "git-page-docs:route-auth:keys";
 const ROLES_STORAGE_PREFIX = "git-page-docs:route-auth:roles";
 
+import { getLangMenuLabelFromMenu } from "@/entities/docs";
+
 function normalizeSiteName(siteName: string): string {
   return siteName.toLowerCase().replaceAll(" ", "-");
 }
@@ -57,26 +59,21 @@ function toLowerUnique(values: string[]): string[] {
   return Array.from(new Set(values.map((value) => value.trim().toLowerCase()).filter(Boolean)));
 }
 
-function reasonMessage(reason: RouteAccessDeniedReason, language: LanguageCode, routeTitle?: string): string {
+function reasonMessage(reason: RouteAccessDeniedReason, language: LanguageCode, routeTitle: string | undefined, langmenu: any): string {
   const titleSuffix = routeTitle ? ` (${routeTitle})` : "";
+  const suffixVar = "{titleSuffix}";
+
   if (reason === "missing_access_key") {
-    if (language === "pt") return `Acesso negado${titleSuffix}: chave de acesso obrigatória.`;
-    if (language === "es") return `Acceso denegado${titleSuffix}: se requiere clave de acceso.`;
-    return `Access denied${titleSuffix}: access key required.`;
+    return getLangMenuLabelFromMenu(langmenu, language, "authAccessDenied", `Access denied${suffixVar}: access key required.`).replace(suffixVar, titleSuffix);
   }
   if (reason === "missing_roles") {
-    if (language === "pt") return `Acesso negado${titleSuffix}: papéis insuficientes.`;
-    if (language === "es") return `Acceso denegado${titleSuffix}: roles insuficientes.`;
-    return `Access denied${titleSuffix}: missing required roles.`;
+    return getLangMenuLabelFromMenu(langmenu, language, "authMissingRoles", `Access denied${suffixVar}: missing required roles.`).replace(suffixVar, titleSuffix);
   }
   if (reason === "provider_not_allowed") {
-    if (language === "pt") return `Acesso negado${titleSuffix}: provedor externo não autorizado para esta rota.`;
-    if (language === "es") return `Acceso denegado${titleSuffix}: proveedor externo no permitido para esta ruta.`;
-    return `Access denied${titleSuffix}: external provider not allowed for this route.`;
+    return getLangMenuLabelFromMenu(langmenu, language, "authProviderNotAllowed", `Access denied${suffixVar}: external provider not allowed for this route.`).replace(suffixVar, titleSuffix);
   }
-  if (language === "pt") return `Acesso negado${titleSuffix}: autenticação externa obrigatória.`;
-  if (language === "es") return `Acceso denegado${titleSuffix}: autenticación externa requerida.`;
-  return `Access denied${titleSuffix}: external authentication required.`;
+
+  return getLangMenuLabelFromMenu(langmenu, language, "authExternalRequired", `Access denied${suffixVar}: external authentication required.`).replace(suffixVar, titleSuffix);
 }
 
 export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCode, searchParams: URLSearchParams) {
@@ -174,12 +171,13 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     (accessKeyId: string): boolean => {
       const expected = authConfig?.accessKeys?.[accessKeyId];
       if (!expected) return false;
-      const promptLabel =
-        language === "pt"
-          ? `Digite a chave de acesso para "${accessKeyId}":`
-          : language === "es"
-            ? `Ingresa la clave de acceso para "${accessKeyId}":`
-            : `Enter access key for "${accessKeyId}":`;
+      const promptLabelTemplate = getLangMenuLabelFromMenu(
+        data.config.site.langmenu,
+        language,
+        "authEnterAccessKeyFor",
+        "Enter access key for '{accessKeyId}':"
+      );
+      const promptLabel = promptLabelTemplate.replace("{accessKeyId}", accessKeyId);
       const input = window.prompt(promptLabel);
       if (typeof input !== "string") return false;
       if (input.trim() !== expected) return false;
@@ -250,7 +248,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     (pathClick: string) => {
       const decision = evaluatePathAccess(pathClick);
       if (decision.allowed || !decision.reason) return undefined;
-      return reasonMessage(decision.reason, language, decision.target?.title);
+      return reasonMessage(decision.reason, language, decision.target?.title, data.config.site.langmenu);
     },
     [evaluatePathAccess, language],
   );

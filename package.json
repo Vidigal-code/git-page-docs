@@ -10,6 +10,14 @@
     "cli",
     "prebuilt"
   ],
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "tools",
+    "mcp"
+  ],
   "scripts": {
     "predev": "node -e \"const fs=require('fs'); const s='gitpagedocs/icon.svg'; const d='public/icon.svg'; if(fs.existsSync(s)){fs.mkdirSync('public',{recursive:true}); fs.copyFileSync(s,d);}\"",
     "dev": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false next dev",
@@ -22,10 +30,27 @@
     "start": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false node cli/start.mjs",
     "lint": "eslint .",
     "lint:src": "eslint \"src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tools/tsconfig.json && tsc --noEmit -p mcp/tsconfig.json",
+    "test:unit": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:ci": "npm run smoke:cli && npm run smoke:flags && npm run smoke:core && npm run smoke:ai && npm run smoke:secweb && npm run smoke:mcp && npm run smoke:docs",
     "typecheck:strict-unused": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
     "smoke:cli": "node tools/smoke/cli-smoke.mjs",
+    "smoke:flags": "node --import tsx tools/smoke/flag-contract.ts",
+    "smoke:core": "node --import tsx tools/smoke/core-selftest.ts",
+    "smoke:ai": "node --import tsx tools/smoke/ai-selftest.ts",
+    "smoke:secweb": "node --import tsx tools/smoke/security-web-selftest.ts",
+    "smoke:mcp": "node --import tsx mcp/smoke/mcp-selftest.ts",
+    "smoke:docs": "node --import tsx tools/smoke/docs-selftest.ts",
+    "smoke:all": "npm run smoke:cli && npm run smoke:flags && npm run smoke:core && npm run smoke:ai && npm run smoke:secweb && npm run smoke:mcp && npm run smoke:docs && npm run baseline:check",
+    "test": "npm run smoke:all",
     "baseline:create": "node tools/smoke/create-baseline.mjs",
     "baseline:check": "node tools/smoke/check-baseline.mjs",
+    "turbo:build": "turbo run build",
+    "turbo:lint": "turbo run lint",
+    "turbo:typecheck": "turbo run typecheck",
+    "turbo:test": "turbo run test",
     "gitpagedocs": "node cli/index.mjs",
     "gitpagedocs:config": "node cli/index.mjs",
     "gitpagedocs:full": "node cli/index.mjs",
@@ -55,15 +80,18 @@
     "access": "public"
   },
   "dependencies": {
-    "inquirer": "^9.2.23",
+    "@clack/prompts": "^1.5.1",
+    "@gitpagedocs/mcp": "workspace:*",
+    "@gitpagedocs/tools": "workspace:*",
     "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@types/inquirer": "^9.0.9",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@vitest/coverage-v8": "^4.1.8",
     "cross-env": "^7.0.3",
     "eslint": "^9.20.1",
     "eslint-config-next": "^15.1.7",
@@ -73,6 +101,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
-    "typescript": "5.9.3"
+    "turbo": "^2.9.18",
+    "typescript": "5.9.3",
+    "vitest": "^4.1.8"
   }
 }

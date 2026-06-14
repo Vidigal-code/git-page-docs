@@ -2,7 +2,19 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
-function tryConfigurePagesToGitHubActions(owner, repo, branch, root) {
+/** Detect { owner, repo } from the git `origin` remote URL, or null. */
+export function detectRepoFromGit(root) {
+  try {
+    const url = execSync("git remote get-url origin", { cwd: root, stdio: "pipe" }).toString().trim();
+    const match = url.match(/[:/]([^/:]+)\/([^/]+?)(?:\.git)?$/);
+    if (match) return { owner: match[1], repo: match[2] };
+  } catch {
+    // no remote / not a repo
+  }
+  return null;
+}
+
+export function tryConfigurePagesToGitHubActions(owner, repo, branch, root) {
   try {
     execSync("gh --version", { cwd: root, stdio: "ignore" });
   } catch {

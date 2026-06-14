@@ -25,6 +25,8 @@ interface DocsShellSidebarProps {
   blockMenuOnNav: boolean;
   setBlockMenuOnNav: (v: boolean) => void;
   navMenuConfig: NavMenuConfig;
+  onOpenAiChat: () => void;
+  aiChatIconConfig: any;
 }
 
 export function DocsShellSidebar({
@@ -45,6 +47,8 @@ export function DocsShellSidebar({
   blockMenuOnNav,
   setBlockMenuOnNav,
   navMenuConfig,
+  onOpenAiChat,
+  aiChatIconConfig,
 }: DocsShellSidebarProps) {
   return (
     <aside className={styles.sidebar}>
@@ -77,8 +81,27 @@ export function DocsShellSidebar({
           labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
           className={`${styles.button} ${styles.sidebarRailButton}`}
         />
+        <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
+          {aiChatIconConfig.open.useReactIcon ? (
+            <span style={aiChatIconConfig.open.reactIconStyle}>
+              <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
+            </span>
+          ) : aiChatIconConfig.open.iconImage ? (
+            <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
+          ) : (
+            "✨"
+          )}
+        </button>
         <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onCollapseSidebar} aria-label={menuCloseLabel} title={menuCloseLabel}>
-          ❮❮
+          {navMenuConfig.sidebarCollapseIcon.useReactIcon ? (
+            <span style={navMenuConfig.sidebarCollapseIcon.reactIconStyle}>
+              <ReactIconByTag tag={navMenuConfig.sidebarCollapseIcon.reactIconTag || "FiChevronsLeft"} style={navMenuConfig.sidebarCollapseIcon.reactIconStyle} />
+            </span>
+          ) : navMenuConfig.sidebarCollapseIcon.iconImage ? (
+            <Image src={navMenuConfig.sidebarCollapseIcon.iconImage} alt="Collapse sidebar" width={navMenuConfig.sidebarCollapseIcon.iconImgWidth} height={navMenuConfig.sidebarCollapseIcon.iconImgHeight} unoptimized />
+          ) : (
+            "❮❮"
+          )}
         </button>
       </div>
     </aside>

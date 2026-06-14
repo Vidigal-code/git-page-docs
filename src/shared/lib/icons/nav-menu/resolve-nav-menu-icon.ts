@@ -13,6 +13,8 @@ const resolveMobileOpen = createNavMenuIconResolver("mobileOpen");
 const resolveMobileClose = createNavMenuIconResolver("mobileClose");
 const resolveBlockActive = createNavMenuIconResolver("blockActive");
 const resolveBlockInactive = createNavMenuIconResolver("blockInactive");
+const resolveSidebarCollapse = createNavMenuIconResolver("sidebarCollapse");
+const resolveSidebarExpand = createNavMenuIconResolver("sidebarExpand");
 
 export function resolveNavMenuOpenIconConfig(
   site: NavMenuIconConfigInput | undefined,
@@ -66,4 +68,20 @@ export function resolveNavMenuBlockInactiveIconConfig(
   basePath: string,
 ): ResolvedNavMenuIconConfig {
   return resolveBlockInactive(site, mode, basePath);
+}
+
+export function resolveSidebarCollapseIconConfig(
+  site: NavMenuIconConfigInput | undefined,
+  mode: "dark" | "light",
+  basePath: string,
+): ResolvedNavMenuIconConfig {
+  return resolveSidebarCollapse(site, mode, basePath);
+}
+
+export function resolveSidebarExpandIconConfig(
+  site: NavMenuIconConfigInput | undefined,
+  mode: "dark" | "light",
+  basePath: string,
+): ResolvedNavMenuIconConfig {
+  return resolveSidebarExpand(site, mode, basePath);
 }

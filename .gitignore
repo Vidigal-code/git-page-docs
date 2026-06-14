@@ -9,3 +9,8 @@ dist
 coverage
 .env*
 !.env.example
+.idea
+.turbo
+test-results
+playwright-report
+.gitpagedocs-mcp.json

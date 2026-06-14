@@ -18,6 +18,8 @@ export {
   resolveNavMenuMobileCloseIconConfig,
   resolveNavMenuBlockActiveIconConfig,
   resolveNavMenuBlockInactiveIconConfig,
+  resolveSidebarCollapseIconConfig,
+  resolveSidebarExpandIconConfig,
   type NavMenuIconConfigInput,
   type ResolvedNavMenuIconConfig,
 } from "./nav-menu/resolve-nav-menu-icon";

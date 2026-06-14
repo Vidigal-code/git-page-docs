@@ -1,9 +1,10 @@
-export type CliMode = "home" | "full" | "config-only";
+export type CliMode = "home" | "full" | "config-only" | "ai";
 
 export interface CliOptions {
   isBuild: boolean;
   isServe: boolean;
   mode: CliMode;
+  aiCommand?: string;
   outputDir: string;
   useLocalLayoutConfig: boolean;
   shouldPush: boolean;

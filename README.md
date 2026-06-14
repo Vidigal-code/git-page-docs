@@ -20,6 +20,7 @@ It does **not** generate `index.html` or `index.js`.
 - [URL Routes and Query Parameters](#url-routes-and-query-parameters)
 - [Authorized Routes](#authorized-routes)
 - [CLI Options](#cli-options)
+- [AI CLI (interactive docs generator)](#ai-cli-interactive-docs-generator)
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
 
@@ -402,6 +403,7 @@ Example:
 | `--push` | Create workflow, commit artifacts, push to origin |
 | `--home` | Standalone distribution in `gitpagedocshome/` (static site + .env + Dockerfile + README) |
 | `--interactive` / `-i` | Run in interactive mode (prompts for options) |
+| `ai` or `--ai` | Interactive AI documentation mode (paths, provider, API key/base URL, multilingual output) |
 | `--build` | Compatibility flag (no change to output) |
 | `--serve` | Compatibility flag |
 | `--full` | Compatibility flag |
@@ -409,6 +411,45 @@ Example:
 Shortcut syntax: `npx gitpagedocs --push --<owner> --<repo>` (e.g. `--Vidigal-code --git-page-docs`) is equivalent to `--owner <owner> --repo <repo>`.
 
 With `--home`, output is `gitpagedocshome/` (or `--output` value). Otherwise, output remains `gitpagedocs/` (or `--output` value).
+
+## AI CLI (interactive docs generator)
+
+Run:
+
+```bash
+npx gitpagedocs ai
+```
+
+This mode provides:
+
+- provider selection (`openai`, `claude`, `gemini`, `ollama`)
+- API key / base URL input
+- path input (supports multiple paths and cross-repo paths)
+- multilingual markdown generation (`pt`, `en`, `es`)
+- optional `.gitpagedocsconfig` persistence for manual reuse
+- interactive fallback when directories are missing (fix/skip/abort)
+
+### Manual config (`.gitpagedocsconfig`)
+
+You can run manually with a persisted config in repository root:
+
+```json
+{
+  "version": 1,
+  "ai": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "apiKey": "<YOUR_API_KEY>",
+    "paths": ["src", "cli", "../another-repo/src"],
+    "languages": ["pt", "en", "es"],
+    "outputDir": "gitpagedocs/docs",
+    "filePrefix": "ai-generated",
+    "contextPrompt": "Você é um redator técnico sênior..."
+  }
+}
+```
+
+For Ollama, use `baseUrl` instead of `apiKey`.
 
 ## Configuration File Format
 
@@ -421,3 +462,37 @@ Runtime supports three config file formats (in order of precedence):
 ## License
 
 ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details.
+
+<!-- gitpagedocs:start -->
+### Supported AI providers (14)
+
+| Provider | ID | Default model | Capabilities |
+| --- | --- | --- | --- |
+| OpenAI | `openai` | `gpt-4o-mini` | stream, vision |
+| Anthropic | `anthropic` | `claude-sonnet-4-6` | stream, vision |
+| Google Gemini | `gemini` | `gemini-2.0-flash` | stream, vision, audio |
+| OpenRouter | `openrouter` | `openai/gpt-4o-mini` | stream, vision |
+| Ollama (local) | `ollama` | `llama3` | stream, vision |
+| Azure OpenAI | `azure-openai` | `gpt-4o-mini` | stream, vision |
+| Mistral | `mistral` | `mistral-large-latest` | stream |
+| DeepSeek | `deepseek` | `deepseek-chat` | stream |
+| Cohere | `cohere` | `command-r-plus` | stream |
+| Groq | `groq` | `llama-3.3-70b-versatile` | stream |
+| xAI Grok | `xai` | `grok-2-latest` | stream, vision |
+| Together AI | `together` | `meta-llama/Llama-3.3-70B-Instruct-Turbo` | stream |
+| Fireworks AI | `fireworks` | `accounts/fireworks/models/llama-v3p3-70b-instruct` | stream |
+| Perplexity | `perplexity` | `sonar` | stream |
+
+### CLI commands
+
+- `gitpagedocs init` — scaffold gitpagedocs config files
+- `gitpagedocs config` — show the resolved gitpagedocs config
+- `gitpagedocs provider [id]` — list AI providers or show one
+- `gitpagedocs models [provider]` — list catalog models
+- `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI
+- `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
+- `gitpagedocs doctor` — diagnose the environment
+- `gitpagedocs mcp start` — start the MCP server over stdio
+- `gitpagedocs version` — print the CLI version
+- `gitpagedocs update` — show how to update the CLI
+<!-- gitpagedocs:end -->

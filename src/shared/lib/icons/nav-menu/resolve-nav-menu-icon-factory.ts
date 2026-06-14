@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
+import { DEFAULT_ICON_FALLBACK_URL } from "../../../config/icon-defaults";
 
 /** Minimal config shape for nav menu icon resolution */
 export interface NavMenuIconConfigInput {
@@ -57,6 +58,24 @@ export interface NavMenuIconConfigInput {
   IconNavMenuBlockInactiveReactIconesTagSize?: string;
   IconNavMenuBlockInactiveImgWidth?: string | number;
   IconNavMenuBlockInactiveImgHeight?: string | number;
+  IconSidebarCollapseLightImg?: string;
+  IconSidebarCollapseDarkImg?: string;
+  IconSidebarCollapseReactIcones?: boolean;
+  IconSidebarCollapseReactIconesTag?: string;
+  IconSidebarCollapseReactIconesTagColorDark?: string;
+  IconSidebarCollapseReactIconesTagColorLight?: string;
+  IconSidebarCollapseReactIconesTagSize?: string;
+  IconSidebarCollapseImgWidth?: string | number;
+  IconSidebarCollapseImgHeight?: string | number;
+  IconSidebarExpandLightImg?: string;
+  IconSidebarExpandDarkImg?: string;
+  IconSidebarExpandReactIcones?: boolean;
+  IconSidebarExpandReactIconesTag?: string;
+  IconSidebarExpandReactIconesTagColorDark?: string;
+  IconSidebarExpandReactIconesTagColorLight?: string;
+  IconSidebarExpandReactIconesTagSize?: string;
+  IconSidebarExpandImgWidth?: string | number;
+  IconSidebarExpandImgHeight?: string | number;
 }
 
 export interface ResolvedNavMenuIconConfig {
@@ -83,7 +102,7 @@ export interface NavMenuIconKeysConfig {
   fallbackTag: string;
 }
 
-const DEFAULT_IMG = "https://cdn-icons-png.flaticon.com/256/25/25231.png";
+const DEFAULT_IMG = DEFAULT_ICON_FALLBACK_URL;
 
 const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
   open: {
@@ -158,6 +177,30 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     heightKey: "IconNavMenuBlockInactiveImgHeight",
     fallbackTag: "FiUnlock",
   },
+  sidebarCollapse: {
+    lightKey: "IconSidebarCollapseLightImg",
+    darkKey: "IconSidebarCollapseDarkImg",
+    useReactKey: "IconSidebarCollapseReactIcones",
+    tagKey: "IconSidebarCollapseReactIconesTag",
+    colorDarkKey: "IconSidebarCollapseReactIconesTagColorDark",
+    colorLightKey: "IconSidebarCollapseReactIconesTagColorLight",
+    sizeKey: "IconSidebarCollapseReactIconesTagSize",
+    widthKey: "IconSidebarCollapseImgWidth",
+    heightKey: "IconSidebarCollapseImgHeight",
+    fallbackTag: "FiChevronsLeft",
+  },
+  sidebarExpand: {
+    lightKey: "IconSidebarExpandLightImg",
+    darkKey: "IconSidebarExpandDarkImg",
+    useReactKey: "IconSidebarExpandReactIcones",
+    tagKey: "IconSidebarExpandReactIconesTag",
+    colorDarkKey: "IconSidebarExpandReactIconesTagColorDark",
+    colorLightKey: "IconSidebarExpandReactIconesTagColorLight",
+    sizeKey: "IconSidebarExpandReactIconesTagSize",
+    widthKey: "IconSidebarExpandImgWidth",
+    heightKey: "IconSidebarExpandImgHeight",
+    fallbackTag: "FiChevronsRight",
+  },
 };
 
 function resolveIconFromKeys(
@@ -226,8 +269,8 @@ export function hasNavMenuIconConfig(
   const keys = NAV_MENU_ICON_KEYS[iconKey];
   return Boolean(
     (site[keys.lightKey] as string)?.trim() ||
-      (site[keys.darkKey] as string)?.trim() ||
-      site[keys.useReactKey] ||
-      (site[keys.tagKey] as string)?.trim(),
+    (site[keys.darkKey] as string)?.trim() ||
+    site[keys.useReactKey] ||
+    (site[keys.tagKey] as string)?.trim(),
   );
 }

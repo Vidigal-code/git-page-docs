@@ -31,6 +31,7 @@ const basePath =
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  transpilePackages: ["@gitpagedocs/tools"],
   output: isGithubPagesBuild ? "export" : undefined,
   trailingSlash: emulateGithubPagesRuntime,
   basePath: basePath ?? undefined,

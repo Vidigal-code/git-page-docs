@@ -27,3 +27,57 @@ export const RETURN_HOME = {
     pt: "Voltar ao início",
     es: "Volver al inicio",
 } as const;
+
+export const LOADING_DOCUMENTATION = {
+    en: "Loading documentation",
+    pt: "Carregando documentação",
+    es: "Cargando documentación",
+} as const;
+
+export const REPOSITORY_DETECTED = {
+    en: "Repository detected. Opening the app...",
+    pt: "Repositório detectado. Abrindo o app...",
+    es: "Repositorio detectado. Abriendo la app...",
+} as const;
+
+export const COULD_NOT_LOAD = {
+    en: "Could not load right now",
+    pt: "Não foi possível carregar agora",
+    es: "No se pudo cargar ahora",
+} as const;
+
+export const NETWORK_FAILURE_RETRY = {
+    en: "This repository has gitpagedocs, but there was a temporary network failure. Try again.",
+    pt: "O repositório possui gitpagedocs, mas houve falha temporária de rede. Tente novamente.",
+    es: "El repositorio tiene gitpagedocs, pero hubo un fallo temporal de red. Intenta de nuevo.",
+} as const;
+
+export const TRY_AGAIN = {
+    en: "Try again",
+    pt: "Tentar novamente",
+    es: "Intentar de nuevo",
+} as const;
+
+export const SEARCH_OWNER_PLACEHOLDER = {
+    en: "Owner (ex: Vidigal-code)",
+    pt: "Usuário (ex: Vidigal-code)",
+    es: "Usuario (ej: Vidigal-code)",
+} as const;
+
+export const SEARCH_REPO_PLACEHOLDER = {
+    en: "Repository (ex: git-page-link-create)",
+    pt: "Repositório (ex: git-page-link-create)",
+    es: "Repositorio (ej: git-page-link-create)",
+} as const;
+
+export const SEARCH_BUTTON = {
+    en: "Search",
+    pt: "Buscar",
+    es: "Buscar",
+} as const;
+
+export const LOADING_FALLBACK = {
+    en: "Loading...",
+    pt: "Carregando...",
+    es: "Cargando...",
+} as const;
