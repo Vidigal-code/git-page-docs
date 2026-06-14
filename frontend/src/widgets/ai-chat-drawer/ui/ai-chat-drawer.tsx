@@ -8,6 +8,7 @@ import { BsChatDots } from 'react-icons/bs';
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { ApiKeyForm } from '../../../features/ask-ai/ui/api-key-form';
 import { aiStorage } from '../../../shared/lib/ai-storage';
+import { aiSecureStorage } from '../../../shared/lib/ai-secure-storage';
 import { useAiChat } from '../../../features/ask-ai/model/use-ai-chat';
 import type { MultimodalAttachment } from '../../../features/ask-ai/api/providers/llm-types';
 import { ConfirmPopup } from '../../../shared/ui/confirm-popup/confirm-popup';
@@ -35,7 +36,34 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     const [providerName, setProviderName] = useState<string>('openai');
     const [pendingAttachments, setPendingAttachments] = useState<MultimodalAttachment[]>([]);
 
-    const { messages, isLoading, sendMessage, cancelMessage, clearMessages } = useAiChat(systemContext, labels);
+    // Encrypted-vault password gate (same vault the /ai console uses). The
+    // session password lives only in memory; keys are stored AES-256-GCM.
+    const [vaultState, setVaultState] = useState<'loading' | 'create' | 'locked' | 'unlocked'>('loading');
+    const [sessionPassword, setSessionPassword] = useState<string | null>(null);
+    const [passwordInput, setPasswordInput] = useState('');
+    const [gateError, setGateError] = useState('');
+
+    const refreshHasKey = useCallback(async (pw: string, providerAndModel: string) => {
+        const bare = providerAndModel.split(':')[0];
+        if (bare === 'ollama') { setHasKey(true); return; }
+        const key = await aiSecureStorage.getKey(pw, bare);
+        setHasKey(!!key);
+    }, []);
+
+    const resolveCredentials = useCallback(async () => {
+        if (!sessionPassword) return null;
+        const providerAndModel = aiStorage.getProvider() || 'openai:gpt-4o-mini';
+        const bare = providerAndModel.split(':')[0];
+        if (bare === 'ollama') {
+            const baseUrl = await aiSecureStorage.getKey(sessionPassword, 'ollama');
+            return { providerAndModel, baseUrl: baseUrl || undefined };
+        }
+        const apiKey = await aiSecureStorage.getKey(sessionPassword, bare);
+        if (!apiKey) return null;
+        return { providerAndModel, apiKey };
+    }, [sessionPassword]);
+
+    const { messages, isLoading, sendMessage, cancelMessage, clearMessages } = useAiChat(systemContext, labels, resolveCredentials);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,11 +92,23 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     }, [drawerWidth, isExpanded]);
 
     useEffect(() => {
-        if (isOpen) {
-            setHasKey(!!aiStorage.getKey() || aiStorage.getProvider() === 'ollama');
-            setProviderName(aiStorage.getProvider() || 'openai');
-        }
-    }, [isOpen]);
+        if (!isOpen) return;
+        let cancelled = false;
+        const providerAndModel = aiStorage.getProvider() || 'openai:gpt-4o-mini';
+        setProviderName(providerAndModel);
+        (async () => {
+            if (sessionPassword) {
+                if (cancelled) return;
+                setVaultState('unlocked');
+                await refreshHasKey(sessionPassword, providerAndModel);
+                return;
+            }
+            const initialized = await aiSecureStorage.isInitialized();
+            if (cancelled) return;
+            setVaultState(initialized ? 'locked' : 'create');
+        })();
+        return () => { cancelled = true; };
+    }, [isOpen, sessionPassword, refreshHasKey]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -96,9 +136,43 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         );
     };
 
-    const handleSaveKey = () => {
-        setHasKey(true);
-        setProviderName(aiStorage.getProvider() || 'openai');
+    const handleUnlock = async () => {
+        const pw = passwordInput;
+        if (!pw) return;
+        setGateError('');
+        try {
+            const initialized = await aiSecureStorage.isInitialized();
+            if (!initialized) {
+                await aiSecureStorage.setPassword(pw);
+            } else if (!(await aiSecureStorage.unlock(pw))) {
+                setGateError(labels.aiChatWrongPassword || 'Incorrect password.');
+                return;
+            }
+            const providerAndModel = aiStorage.getProvider() || 'openai:gpt-4o-mini';
+            const legacyKey = aiStorage.getKey();
+            if (legacyKey) {
+                await aiSecureStorage.migrateFromPlaintext(
+                    pw, providerAndModel.split(':')[0], legacyKey, () => aiStorage.clearKey(),
+                );
+            }
+            setSessionPassword(pw);
+            setPasswordInput('');
+            setVaultState('unlocked');
+            await refreshHasKey(pw, providerAndModel);
+        } catch {
+            setGateError(labels.aiChatWrongPassword || 'Incorrect password.');
+        }
+    };
+
+    const handleSaveKey = async (providerAndModel: string, key: string) => {
+        if (!sessionPassword) return;
+        aiStorage.saveProvider(providerAndModel);
+        setProviderName(providerAndModel);
+        const bare = providerAndModel.split(':')[0];
+        if (key) {
+            await aiSecureStorage.saveKey(sessionPassword, bare, key);
+        }
+        await refreshHasKey(sessionPassword, providerAndModel);
         setIsSettingsOpen(false);
     };
 
@@ -242,9 +316,16 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     description={labels.aiChatClearDataPopupDesc}
                     confirmText={labels.aiChatClearDataConfirmBtn}
                     cancelText={labels.aiChatClearDataCancelBtn}
-                    onConfirm={() => {
+                    onConfirm={async () => {
+                        if (sessionPassword) {
+                            const bare = (aiStorage.getProvider() || 'openai:gpt-4o-mini').split(':')[0];
+                            try { await aiSecureStorage.removeKey(sessionPassword, bare); } catch { /* ignore */ }
+                        }
                         aiStorage.clearKey();
                         setHasKey(false);
+                        setSessionPassword(null);
+                        setVaultState('locked');
+                        setIsClearDataPopupOpen(false);
                         clearMessages();
                     }}
                     onCancel={() => setIsClearDataPopupOpen(false)}
@@ -252,7 +333,44 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
 
                 {/* Main Content Area */}
                 <div className={styles.messagesArea}>
-                    {!hasKey || isSettingsOpen ? (
+                    {vaultState !== 'unlocked' ? (
+                        <div
+                            data-testid="ai-chat-gate"
+                            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24, textAlign: 'center' }}
+                        >
+                            {vaultState === 'loading' ? (
+                                <p style={{ color: 'var(--text-secondary)' }}>…</p>
+                            ) : (
+                                <>
+                                    <p style={{ color: 'var(--text-secondary)' }}>
+                                        {vaultState === 'create'
+                                            ? (labels.aiChatPasswordCreateDesc || 'Create a local password to encrypt your API keys.')
+                                            : (labels.aiChatPasswordUnlockDesc || 'Enter your local password to unlock.')}
+                                    </p>
+                                    <input
+                                        data-testid="drawer-password-input"
+                                        type="password"
+                                        value={passwordInput}
+                                        onChange={e => setPasswordInput(e.target.value)}
+                                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void handleUnlock(); } }}
+                                        placeholder={labels.aiChatPasswordPlaceholder || 'Local password'}
+                                        className={styles.formInput}
+                                        style={{ maxWidth: 280 }}
+                                    />
+                                    <button
+                                        data-testid="drawer-unlock-button"
+                                        onClick={() => void handleUnlock()}
+                                        className={styles.btnPrimary}
+                                    >
+                                        {vaultState === 'create'
+                                            ? (labels.aiChatCreatePasswordBtn || 'Create password')
+                                            : (labels.aiChatUnlockBtn || 'Unlock')}
+                                    </button>
+                                    {gateError && <p data-testid="drawer-gate-error" style={{ color: '#f85149' }}>{gateError}</p>}
+                                </>
+                            )}
+                        </div>
+                    ) : !hasKey || isSettingsOpen ? (
                         <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <ApiKeyForm onSave={handleSaveKey} labels={labels} />
                         </div>
@@ -312,7 +430,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                 </div>
 
                 {/* Input Area */}
-                {hasKey && !isSettingsOpen && (
+                {vaultState === 'unlocked' && hasKey && !isSettingsOpen && (
                     <div className={styles.inputArea}>
                         {pendingAttachments.length > 0 && (
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '0 0 8px 8px', display: 'flex', alignItems: 'center' }}>

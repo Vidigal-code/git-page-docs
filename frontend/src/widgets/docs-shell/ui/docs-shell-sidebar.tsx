@@ -81,7 +81,7 @@ export function DocsShellSidebar({
           labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
           className={`${styles.button} ${styles.sidebarRailButton}`}
         />
-        <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
+        <button data-testid="ai-chat-open" className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
           {aiChatIconConfig.open.useReactIcon ? (
             <span style={aiChatIconConfig.open.reactIconStyle}>
               <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />

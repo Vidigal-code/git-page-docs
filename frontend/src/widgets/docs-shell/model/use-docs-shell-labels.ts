@@ -27,6 +27,13 @@ export interface DocsShellLabels {
   aiChatSystemPrompt: string;
   aiChatEmptyStateGreeting: string;
   aiChatDisclaimer: string;
+  aiChatPasswordCreateDesc: string;
+  aiChatPasswordUnlockDesc: string;
+  aiChatPasswordPlaceholder: string;
+  aiChatCreatePasswordBtn: string;
+  aiChatUnlockBtn: string;
+  aiChatWrongPassword: string;
+  aiChatLockBtn: string;
   aiChatProviderLabel: string;
   aiChatApiKeyLabel: string;
   aiChatProviderOpenAI: string;
@@ -136,6 +143,13 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
     const aiChatSystemPrompt = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatSystemPrompt", "You are the official AI documentation assistant for the '{headerName}' project. Your primary role is to answer questions strictly related to the project's documentation, configurations (like config.json), and markdown files located in the 'gitpagedocs' directory. Be highly professional and helpful.\n\nIMPORTANT: You MUST address the user and respond EXCLUSIVELY in the following language: {language}.\n\nHere is the raw content of the active page the user is currently looking at:\n[Page ID]: {pageId}\n[Hidden Current Context Content]:\n{rawContent}");
     const aiChatEmptyStateGreeting = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatEmptyStateGreeting", "Hello! I am the artificial intelligence assistant of this documentation. You can ask me questions about the content or search for a term across the documentation. How can I help you today?");
     const aiChatDisclaimer = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatDisclaimer", "AI can make mistakes. Always verify the information.");
+    const aiChatPasswordCreateDesc = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatPasswordCreateDesc", "Create a local password to encrypt your API keys.");
+    const aiChatPasswordUnlockDesc = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatPasswordUnlockDesc", "Enter your local password to unlock.");
+    const aiChatPasswordPlaceholder = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatPasswordPlaceholder", "Local password");
+    const aiChatCreatePasswordBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatCreatePasswordBtn", "Create password");
+    const aiChatUnlockBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatUnlockBtn", "Unlock");
+    const aiChatWrongPassword = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatWrongPassword", "Incorrect password.");
+    const aiChatLockBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatLockBtn", "Lock");
 
     // Auth and API Key texts
     const aiChatProviderLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderLabel", "Provider:");
@@ -185,6 +199,13 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       aiChatConfigTitle,
       aiChatConfigDesc,
       aiChatClearDataBtn,
+      aiChatPasswordCreateDesc,
+      aiChatPasswordUnlockDesc,
+      aiChatPasswordPlaceholder,
+      aiChatCreatePasswordBtn,
+      aiChatUnlockBtn,
+      aiChatWrongPassword,
+      aiChatLockBtn,
       aiChatSendBtn,
       aiChatAttachAriaLabel,
       aiChatOpenBtnAriaLabel,

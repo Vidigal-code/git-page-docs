@@ -4,7 +4,9 @@ import styles from '../../../widgets/ai-chat-drawer/ui/ai-chat.module.css';
 import { getProviderInputPlaceholder, normalizeProviderAndModel } from '@/shared/config/ai-config';
 
 interface ApiKeyFormProps {
-    onSave: () => void;
+    /** Persistence is owned by the parent drawer (encrypted vault), so the
+     * form just reports the chosen provider + key. */
+    onSave: (providerAndModel: string, key: string) => void;
     labels?: any;
 }
 
@@ -24,13 +26,7 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
-        aiStorage.saveKey(key);
-        aiStorage.saveProvider(provider);
-        onSave();
-    };
-
-    const clearData = () => {
-        aiStorage.clearKey();
+        onSave(provider, key);
         setKey('');
     };
 
@@ -44,6 +40,7 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
             <label className={styles.formGroup}>
                 {labels?.aiChatProviderLabel || "Provider:"}
                 <select
+                    data-testid="drawer-provider-select"
                     value={provider}
                     onChange={e => setProvider(e.target.value)}
                     className={styles.formSelect}
@@ -68,6 +65,7 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
                     ? labels?.aiChatOllamaUrlLabel || "Ollama API URL (leave blank for local):"
                     : labels?.aiChatApiKeyLabel || "API Key (leave blank for local AI):"}
                 <input
+                    data-testid="drawer-apikey-input"
                     type={provider.startsWith('ollama') ? "url" : "password"}
                     value={key}
                     onChange={e => setKey(e.target.value)}
@@ -79,20 +77,11 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
             <div className={styles.formActions}>
                 <button
                     type="submit"
+                    data-testid="drawer-save-key"
                     className={styles.btnPrimary}
                 >
                     {labels?.aiChatSendBtn || "Save & Start Chatting"}
                 </button>
-
-                {key && (
-                    <button
-                        type="button"
-                        onClick={clearData}
-                        className={styles.btnClear}
-                    >
-                        {labels?.aiChatClearDataBtn || "Erase my local data"}
-                    </button>
-                )}
             </div>
         </form>
     );

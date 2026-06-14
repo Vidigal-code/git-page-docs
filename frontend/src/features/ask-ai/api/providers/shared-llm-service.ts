@@ -2,8 +2,14 @@ import { createDefaultFactory, parseLegacyProviderAndModel } from '@gitpagedocs/
 import type { AiMessage, ProviderConfig } from '@gitpagedocs/tools/ports';
 import { isAppError } from '@gitpagedocs/tools/errors';
 import { ILlmService, LlmCompletionParams, BaseChatMessage } from './llm-types';
-import { aiStorage } from '../../../../shared/lib/ai-storage';
 import { LlmError } from '../llm-error';
+
+/** Credentials injected by the caller (decrypted from the vault), so the
+ * service never reads keys from storage itself. */
+export interface LlmCredentials {
+    apiKey?: string;
+    baseUrl?: string;
+}
 
 const factory = createDefaultFactory();
 
@@ -27,25 +33,27 @@ function toAiMessages(messages: BaseChatMessage[]): AiMessage[] {
 export class SharedLlmService implements ILlmService {
     private readonly providerId;
     private readonly model;
+    private readonly credentials: LlmCredentials;
 
-    constructor(providerAndModel: string) {
+    constructor(providerAndModel: string, credentials: LlmCredentials = {}) {
         const parsed = parseLegacyProviderAndModel(providerAndModel);
         this.providerId = parsed.providerId;
         this.model = parsed.model;
+        this.credentials = credentials;
     }
 
     async streamCompletion({ messages, onChunk, signal }: LlmCompletionParams): Promise<void> {
-        const storedKey = aiStorage.getKey() ?? undefined;
         const isOllama = this.providerId === 'ollama';
-        if (!isOllama && !storedKey) {
+        const apiKey = this.credentials.apiKey ?? undefined;
+        if (!isOllama && !apiKey) {
             throw new LlmError(`${this.providerId} API key missing`, 401);
         }
 
         const config: ProviderConfig = {
             providerId: this.providerId,
             model: this.model,
-            apiKey: isOllama ? undefined : storedKey,
-            baseUrl: isOllama ? storedKey : undefined,
+            apiKey: isOllama ? undefined : apiKey,
+            baseUrl: isOllama ? this.credentials.baseUrl : undefined,
         };
 
         const provider = factory.create(this.providerId);

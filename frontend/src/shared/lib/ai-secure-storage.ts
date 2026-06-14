@@ -57,6 +57,11 @@ export class AiSecureStorage {
         return this.vault ? this.vault.getCredential(password, provider) : undefined;
     }
 
+    /** Remove a single provider's stored key from the vault (used by "Clear Data"). */
+    async removeKey(password: string, provider: string): Promise<void> {
+        if (this.vault) await this.vault.removeCredential(password, provider);
+    }
+
     /** Move a legacy plaintext key into the encrypted vault, then clear it. */
     async migrateFromPlaintext(
         password: string,

@@ -59,7 +59,7 @@ export function DocsShellMobileDrawer({
               "✕"
             )}
           </button>
-          <button className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} style={{ marginLeft: 6, order: -1 }} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
+          <button data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} style={{ marginLeft: 6, order: -1 }} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
             {aiChatIconConfig.open.useReactIcon ? (
               <span style={aiChatIconConfig.open.reactIconStyle}>
                 <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
