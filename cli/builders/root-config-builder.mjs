@@ -44,6 +44,7 @@ export function buildRootConfig(options = {}) {
       repositorySearchHome,
       rendering: renderingUrl,
       AiChatEnabled: true,
+      docsAccess: { enabled: false, publicKey: "" },
       langmenu: defaultLangMenu,
     },
     VersionControl: {

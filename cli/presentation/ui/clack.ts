@@ -5,6 +5,7 @@
  */
 import {
   text,
+  password,
   confirm,
   select,
   multiselect,
@@ -33,6 +34,22 @@ export async function askText(options: AskTextOptions): Promise<string> {
     placeholder: options.placeholder,
     defaultValue: options.defaultValue,
     initialValue: undefined,
+    validate: options.validate
+      ? (value) => options.validate?.(value ?? "")
+      : undefined,
+  });
+  return exitIfCancelled(result);
+}
+
+export interface AskPasswordOptions {
+  message: string;
+  validate?: (value: string) => string | undefined;
+}
+
+/** Masked password prompt (input hidden as the user types). */
+export async function askPassword(options: AskPasswordOptions): Promise<string> {
+  const result = await password({
+    message: options.message,
     validate: options.validate
       ? (value) => options.validate?.(value ?? "")
       : undefined,
