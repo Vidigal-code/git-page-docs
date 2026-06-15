@@ -50,7 +50,7 @@ export function useBuildDocsControlsConfig(
             fallbackProjectLink: data.activeVersion?.ProjectLink?.trim() || site.ProjectLink?.trim(),
             projectLabel: getLangMenuLabelFromMenu(site.langmenu, language, "projectLabel", "Project"),
             useReactProjectLinkIcon: Boolean(site.IconProjectLinkReactIcones),
-            projectLinkReactIconTag: site.IconProjectLinkReactIconesTag,
+            projectLinkReactIconTag: site.IconProjectLinkReactIconesTag || "FaGithubAlt",
             projectLinkReactIconStyle: {
                 color: (mode === "dark" ? site.IconProjectLinkReactIconesTagColorDark : site.IconProjectLinkReactIconesTagColorLight)?.trim() || undefined,
                 fontSize: site.IconProjectLinkReactIconesTagSize?.trim() || undefined,
@@ -58,7 +58,7 @@ export function useBuildDocsControlsConfig(
             versionLinkOptionsWithLabels,
             versionLinksLabel: getLangMenuLabelFromMenu(site.langmenu, language, "versionLinksLabel", "Repository links"),
             useReactVersionLinksIcon: Boolean(site.IconVersionLinksReactIcones),
-            versionLinksIconTag: site.IconVersionLinksReactIconesTag,
+            versionLinksIconTag: site.IconVersionLinksReactIconesTag || "FaCodeBranch",
             versionLinksIconStyle: {
                 color: (mode === "dark" ? site.IconVersionLinksReactIconesTagColorDark : site.IconVersionLinksReactIconesTagColorLight)?.trim() || undefined,
                 fontSize: site.IconVersionLinksReactIconesTagSize?.trim() || undefined,
@@ -77,7 +77,7 @@ export function useBuildDocsControlsConfig(
             updateDate: data.activeVersion?.UpdateDate?.trim() ?? "",
             lastUpdateLabel: getLangMenuLabelFromMenu(site.langmenu, language, "lastUpdateVersionLabel", "Last update version"),
             useReactInfoIcon: Boolean(site.IconInfoHeaderMenuReactIcones),
-            infoIconTag: site.IconInfoHeaderMenuReactIconesTag,
+            infoIconTag: site.IconInfoHeaderMenuReactIconesTag || "BsInfoSquareFill",
             infoIconStyle: {
                 color: (mode === "dark" ? site.IconInfoHeaderMenuReactIconesTagColorDark : site.IconInfoHeaderMenuReactIconesTagColorLight)?.trim() || undefined,
                 fontSize: site.IconInfoHeaderMenuReactIconesTagSize?.trim() || undefined,
@@ -89,7 +89,7 @@ export function useBuildDocsControlsConfig(
             showPreviewButton: Boolean(data.activeVersion?.PreviewProject?.trim()),
             previewProjectUrl: data.activeVersion?.PreviewProject?.trim() ?? "",
             useReactPreviewIcon: Boolean(site.IconPreviewProjectLinkReactIcones),
-            previewIconTag: site.IconPreviewProjectLinkReactIconesTag,
+            previewIconTag: site.IconPreviewProjectLinkReactIconesTag || "CiGlobe",
             previewIconStyle: {
                 color: (mode === "dark" ? site.IconPreviewProjectLinkReactIconesTagColorDark : site.IconPreviewProjectLinkReactIconesTagColorLight)?.trim() || undefined,
                 fontSize: site.IconPreviewProjectLinkReactIconesTagSize?.trim() || undefined,
@@ -120,13 +120,13 @@ export function useBuildDocsControlsConfig(
             showAudioPlayer: Boolean(audioPlayerConfig),
             audioPlayerConfig,
             useReactAudioPlayIcon: Boolean(site.IconAudioPlayReactIcones),
-            audioPlayIconTag: site.IconAudioPlayReactIconesTag,
+            audioPlayIconTag: site.IconAudioPlayReactIconesTag || "CiPlay1",
             audioPlayIconStyle: {
                 color: (mode === "dark" ? site.IconAudioPlayReactIconesTagColorDark : site.IconAudioPlayReactIconesTagColorLight)?.trim() || undefined,
                 fontSize: site.IconAudioPlayReactIconesTagSize?.trim() || undefined,
             },
             useReactAudioPauseIcon: Boolean(site.IconAudioPauseReactIcones),
-            audioPauseIconTag: site.IconAudioPauseReactIconesTag,
+            audioPauseIconTag: site.IconAudioPauseReactIconesTag || "FaPause",
             audioPauseIconStyle: {
                 color: (mode === "dark" ? site.IconAudioPauseReactIconesTagColorDark : site.IconAudioPauseReactIconesTagColorLight)?.trim() || undefined,
                 fontSize: site.IconAudioPauseReactIconesTagSize?.trim() || undefined,
