@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/cli",
-  "version": "1.1.47",
+  "version": "1.1.48",
   "description": "CLI that scaffolds and maintains gitpagedocs documentation, generates docs with AI, configures GitHub Pages, and runs the MCP server.",
   "bin": {
     "gitpagedocs": "index.mjs"
