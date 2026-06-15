@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
 import type { CliOptions } from "../../domain/models/cli-options";
 import { DEFAULTS } from "../options/schema";
 import { askText, askConfirm, note } from "./clack";
@@ -51,6 +54,23 @@ export async function promptHomeOptions(parsed: CliOptions): Promise<CliOptions>
  * them (pre-filled from the git `origin` remote when available) instead of
  * crashing with "`--push` requires owner and repo".
  */
+export async function askOwnerRepo(
+  detected: { owner: string; repo: string } | null,
+  defaults?: { owner?: string; repo?: string },
+): Promise<{ owner: string; repo: string }> {
+  const owner = await askText({
+    message: "GitHub owner (user or organization):",
+    defaultValue: defaults?.owner || detected?.owner || "",
+    validate: (v) => (v && v.trim() ? undefined : "Owner is required."),
+  });
+  const repo = await askText({
+    message: "GitHub repository name:",
+    defaultValue: defaults?.repo || detected?.repo || "",
+    validate: (v) => (v && v.trim() ? undefined : "Repository is required."),
+  });
+  return { owner: owner.trim(), repo: repo.trim() };
+}
+
 export async function promptDeployOptions(
   parsed: CliOptions,
   detected: { owner: string; repo: string } | null,
@@ -59,22 +79,40 @@ export async function promptDeployOptions(
     "Deploy publishes gitpagedocs to GitHub Pages and needs the target\nrepository (owner/repo). Press Enter to accept a detected value.",
     "GitHub Pages deploy",
   );
-  const githubOwner = await askText({
-    message: "GitHub owner (user or organization):",
-    defaultValue: parsed.githubOwner || detected?.owner || "",
-    validate: (v) => (v && v.trim() ? undefined : "Owner is required to deploy."),
-  });
-  const githubRepo = await askText({
-    message: "GitHub repository name:",
-    defaultValue: parsed.githubRepo || detected?.repo || "",
-    validate: (v) => (v && v.trim() ? undefined : "Repository is required to deploy."),
+  const { owner, repo } = await askOwnerRepo(detected, {
+    owner: parsed.githubOwner,
+    repo: parsed.githubRepo,
   });
 
   return {
     ...parsed,
-    githubOwner: githubOwner.trim(),
-    githubRepo: githubRepo.trim(),
+    githubOwner: owner,
+    githubRepo: repo,
   };
+}
+
+/**
+ * Deploy/--push needs a git repository in the current folder. When there isn't
+ * one, offer to run `git init` instead of crashing with "not a git repository".
+ * In CI/non-TTY this is a no-op so the downstream guard still reports clearly.
+ */
+export async function ensureGitRepoInteractive(root: string): Promise<void> {
+  if (existsSync(path.join(root, ".git"))) return;
+  if (!interactivePromptsAvailable()) return;
+  const init = await askConfirm(
+    "This folder is not a git repository yet. Initialize one here (git init)?",
+    true,
+  );
+  if (!init) {
+    note("Deploy needs a git repository. Run `git init`, then retry.", "Heads up");
+    return;
+  }
+  try {
+    execSync("git init", { cwd: root, stdio: "ignore" });
+    note("Initialized an empty git repository.", "git");
+  } catch {
+    note("Could not run `git init`. Initialize git manually, then retry.", "git");
+  }
 }
 
 export async function promptConfigOnlyOptions(parsed: CliOptions): Promise<CliOptions> {

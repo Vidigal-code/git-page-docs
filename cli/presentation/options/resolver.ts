@@ -5,6 +5,7 @@ import {
   promptConfigOnlyOptions,
   promptHomeOptions,
   promptDeployOptions,
+  ensureGitRepoInteractive,
   interactivePromptsAvailable,
 } from "../ui/prompts";
 import { DEFAULTS } from "./schema";
@@ -19,12 +20,18 @@ export async function resolveOptions(argv: string[], env: NodeJS.ProcessEnv): Pr
     parsed.basePath = parsed.basePath ?? parsed.docsPath ?? DEFAULTS.home.basePath;
   }
 
-  // `deploy` / `--push` need owner + repo. If absent, prompt interactively
-  // (pre-filled from the git origin remote) instead of throwing. In CI/non-TTY
-  // we fall through so the explicit "requires owner and repo" guard still fires.
-  if (parsed.shouldPush && (!parsed.githubOwner || !parsed.githubRepo) && interactivePromptsAvailable()) {
-    const detected = detectRepoFromGit(process.cwd()) as { owner: string; repo: string } | null;
-    return promptDeployOptions(parsed, detected);
+  // `deploy` / `--push` need owner + repo AND a git repo. If anything is
+  // missing, prompt interactively (owner/repo pre-filled from the git origin
+  // remote; offer to `git init`) instead of throwing. In CI/non-TTY we fall
+  // through so the explicit guards in the push flow still fire clearly.
+  if (parsed.shouldPush && interactivePromptsAvailable()) {
+    let resolved = parsed;
+    if (!parsed.githubOwner || !parsed.githubRepo) {
+      const detected = detectRepoFromGit(process.cwd()) as { owner: string; repo: string } | null;
+      resolved = await promptDeployOptions(parsed, detected);
+    }
+    await ensureGitRepoInteractive(process.cwd());
+    return resolved;
   }
 
   const runHomeInteractive = parsed.isInteractive || (shouldRunInteractive(argv) && parsed.mode === "home");

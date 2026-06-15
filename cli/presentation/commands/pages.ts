@@ -2,6 +2,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import type { CommandContext } from "./run-command";
 import { askConfirm } from "../ui/clack";
+import { askOwnerRepo, interactivePromptsAvailable } from "../ui/prompts";
 // @ts-expect-error .mjs runtime module
 import { detectRepoFromGit, getCurrentGitBranch, tryConfigurePagesToGitHubActions } from "../../runtime/git-ops.mjs";
 
@@ -21,11 +22,14 @@ function readFlag(args: string[], name: string): string {
  * overwrite). Does NOT generate docs or push (that is `pages deploy`).
  */
 export async function runPagesActions(ctx: CommandContext): Promise<void> {
-  const repo = detectRepoFromGit(ctx.cwd) as { owner: string; repo: string } | null;
+  let repo = detectRepoFromGit(ctx.cwd) as { owner: string; repo: string } | null;
   if (!repo) {
-    // eslint-disable-next-line no-console
-    console.log("\n  Could not detect a GitHub repo from the git 'origin' remote.\n  Add a remote or use `--push --owner <o> --repo <r>`.\n");
-    return;
+    if (!interactivePromptsAvailable()) {
+      // eslint-disable-next-line no-console
+      console.log("\n  Could not detect a GitHub repo from the git 'origin' remote.\n  Add a remote or use `--push --owner <o> --repo <r>`.\n");
+      return;
+    }
+    repo = await askOwnerRepo(null);
   }
   const branch = getCurrentGitBranch(ctx.cwd) as string;
   // eslint-disable-next-line no-console
@@ -59,9 +63,14 @@ export async function runPagesDeploy(ctx: CommandContext): Promise<void> {
     }
   }
   if (!owner || !repo) {
-    // eslint-disable-next-line no-console
-    console.log("\n  Could not determine owner/repo. Pass `--owner <o> --repo <r>` or add a git 'origin' remote.\n");
-    return;
+    if (!interactivePromptsAvailable()) {
+      // eslint-disable-next-line no-console
+      console.log("\n  Could not determine owner/repo. Pass `--owner <o> --repo <r>` or add a git 'origin' remote.\n");
+      return;
+    }
+    const answered = await askOwnerRepo(null, { owner, repo });
+    owner = answered.owner;
+    repo = answered.repo;
   }
 
   // eslint-disable-next-line no-console
@@ -76,7 +85,8 @@ export async function runPagesDeploy(ctx: CommandContext): Promise<void> {
     return;
   }
 
-  const bin = path.join(ctx.pkgRoot, "cli", "index.mjs");
+  // pkgRoot is the cli package root (cli/), where the bin lives as index.mjs.
+  const bin = path.join(ctx.pkgRoot, "index.mjs");
   const pushArgs = ["--push", "--owner", owner, "--repo", repo, ...(docsPath ? ["--path", docsPath] : [])];
   const result = spawnSync(process.execPath, [bin, ...pushArgs], { stdio: "inherit", cwd: ctx.cwd, env: process.env });
 
