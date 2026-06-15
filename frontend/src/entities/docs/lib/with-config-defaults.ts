@@ -1,5 +1,6 @@
-import type { GitPageDocsConfig, SiteConfig } from "@/entities/docs/model/types";
+import type { GitPageDocsConfig, SiteConfig, UiTranslationsConfig } from "@/entities/docs/model/types";
 import siteBaseline from "@/shared/config/site-baseline.json";
+import translationsBaseline from "@/shared/config/translations-baseline.json";
 
 /**
  * Baseline `site` defaults, generated from the canonical gitpagedocs/config.json
@@ -9,6 +10,14 @@ import siteBaseline from "@/shared/config/site-baseline.json";
  * field inherit the exact value shipped in the current config.json.
  */
 export const SITE_CONFIG_DEFAULTS = siteBaseline as unknown as SiteConfig;
+
+/**
+ * Baseline `translations` defaults (navigation/footer/notFound en/pt/es text),
+ * generated from the canonical gitpagedocs/config.json. OLD config.json files often
+ * omit the whole `translations` section, which left prev/next/menu/footer labels
+ * falling back to hardcoded English. Merging this baseline restores pt/es text.
+ */
+export const TRANSLATIONS_CONFIG_DEFAULTS = translationsBaseline as unknown as UiTranslationsConfig;
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -41,11 +50,12 @@ function deepMergeDefaults<T>(base: T, override: unknown): T {
 }
 
 /**
- * Returns a config whose `site` section is backfilled with the baseline defaults.
- * Only `site` is merged — routes, menus, auth and VersionControl come from the
- * loaded config untouched (they are deployment content, not chrome defaults).
+ * Returns a config whose `site` and `translations` sections are backfilled with the
+ * baseline defaults. Only chrome defaults are merged — routes, menus, auth and
+ * VersionControl come from the loaded config untouched (they are deployment content).
  */
 export function withConfigDefaults(config: GitPageDocsConfig): GitPageDocsConfig {
   const mergedSite = deepMergeDefaults(SITE_CONFIG_DEFAULTS, config?.site);
-  return { ...config, site: mergedSite };
+  const mergedTranslations = deepMergeDefaults(TRANSLATIONS_CONFIG_DEFAULTS, config?.translations);
+  return { ...config, site: mergedSite, translations: mergedTranslations };
 }

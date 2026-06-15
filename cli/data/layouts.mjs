@@ -348,6 +348,26 @@ export const LAYOUTS = [
     supportsLightAndDarkModesReference: "slate-1",
     mode: "light",
   },
+  {
+    id: "vscode-dark",
+    name: "VSCode Dark",
+    author: "Kauan Vidigal",
+    file: "templates/vscode-dark.json",
+    preview: "Visual Studio Code Dark+ theme with editor blue accents",
+    supportsLightAndDarkModes: true,
+    supportsLightAndDarkModesReference: "vscode-1",
+    mode: "dark",
+  },
+  {
+    id: "vscode-light",
+    name: "VSCode Light",
+    author: "Kauan Vidigal",
+    file: "templates/vscode-light.json",
+    preview: "Visual Studio Code Light+ theme with clean editor tones",
+    supportsLightAndDarkModes: true,
+    supportsLightAndDarkModesReference: "vscode-1",
+    mode: "light",
+  },
 ];
 
 export const FALLBACK_LAYOUTS = LAYOUTS.filter((layout) => layout.id === "aurora-dark" || layout.id === "aurora-light");

@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 /**
- * Generates frontend/src/shared/config/site-baseline.json from the canonical
- * gitpagedocs/config.json `site` section.
+ * Generates the config baselines from the canonical gitpagedocs/config.json:
+ *   - frontend/src/shared/config/site-baseline.json         (the `site` section)
+ *   - frontend/src/shared/config/translations-baseline.json (the `translations` section)
  *
- * This baseline is deep-merged UNDER any loaded config (see with-config-defaults.ts)
+ * These baselines are deep-merged UNDER any loaded config (see with-config-defaults.ts)
  * so that OLD config.json files — which lack newer `site` fields (icon flags, react
- * icon tags, langmenu en/pt/es entries, language defaults) — inherit the exact values
- * shipped in the current config.json instead of rendering empty/undefined.
+ * icon tags, langmenu en/pt/es entries, language defaults) or the whole `translations`
+ * section (navigation/footer/notFound en/pt/es text) — inherit the exact values shipped
+ * in the current config.json instead of rendering empty/undefined/english-only.
  *
  * config.json is the single source of truth; re-run this whenever it changes
  * (wired into `npm run baseline:create`).
@@ -17,18 +19,18 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const configPath = path.join(root, "gitpagedocs", "config.json");
-const outPath = path.join(root, "frontend", "src", "shared", "config", "site-baseline.json");
+const sharedConfigDir = path.join(root, "frontend", "src", "shared", "config");
+const siteOutPath = path.join(sharedConfigDir, "site-baseline.json");
+const translationsOutPath = path.join(sharedConfigDir, "translations-baseline.json");
 
 const config = JSON.parse(readFileSync(configPath, "utf-8"));
 if (!config || typeof config.site !== "object" || config.site === null) {
   throw new Error(`Expected a "site" object in ${configPath}`);
 }
 
-const header =
-  "// AUTO-GENERATED from gitpagedocs/config.json by tools/gen-site-baseline.mjs.\n" +
-  "// Do not edit by hand — run `npm run baseline:site` (or `baseline:create`) to refresh.\n";
-// JSON files can't carry comments, so the provenance note lives in the generator only.
-void header;
+writeFileSync(siteOutPath, JSON.stringify(config.site, null, 2) + "\n", "utf-8");
+console.log(`[gen-site-baseline] wrote ${path.relative(root, siteOutPath)} (${Object.keys(config.site).length} site keys)`);
 
-writeFileSync(outPath, JSON.stringify(config.site, null, 2) + "\n", "utf-8");
-console.log(`[gen-site-baseline] wrote ${path.relative(root, outPath)} (${Object.keys(config.site).length} site keys)`);
+const translations = config.translations ?? {};
+writeFileSync(translationsOutPath, JSON.stringify(translations, null, 2) + "\n", "utf-8");
+console.log(`[gen-site-baseline] wrote ${path.relative(root, translationsOutPath)} (${Object.keys(translations).length} translation groups)`);
