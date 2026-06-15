@@ -21,6 +21,7 @@ import { runConfig } from "./config-info";
 import { runMcp } from "./mcp";
 import { runDocs } from "./docs";
 import { runPagesActions, runPagesDeploy } from "./pages";
+import { runPassword } from "./password";
 
 const REGISTRY: Record<string, CommandHandler> = {
   version: runVersion,
@@ -34,6 +35,7 @@ const REGISTRY: Record<string, CommandHandler> = {
   config: runConfig,
   mcp: runMcp,
   docs: runDocs,
+  password: runPassword,
 };
 
 /** Returns true if a new command handled the invocation (skip legacy flow). */

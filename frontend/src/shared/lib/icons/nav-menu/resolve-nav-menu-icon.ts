@@ -15,6 +15,7 @@ const resolveBlockActive = createNavMenuIconResolver("blockActive");
 const resolveBlockInactive = createNavMenuIconResolver("blockInactive");
 const resolveSidebarCollapse = createNavMenuIconResolver("sidebarCollapse");
 const resolveSidebarExpand = createNavMenuIconResolver("sidebarExpand");
+const resolveDocsLock = createNavMenuIconResolver("docsLock");
 
 export function resolveNavMenuOpenIconConfig(
   site: NavMenuIconConfigInput | undefined,
@@ -84,4 +85,12 @@ export function resolveSidebarExpandIconConfig(
   basePath: string,
 ): ResolvedNavMenuIconConfig {
   return resolveSidebarExpand(site, mode, basePath);
+}
+
+export function resolveDocsLockIconConfig(
+  site: NavMenuIconConfigInput | undefined,
+  mode: "dark" | "light",
+  basePath: string,
+): ResolvedNavMenuIconConfig {
+  return resolveDocsLock(site, mode, basePath);
 }

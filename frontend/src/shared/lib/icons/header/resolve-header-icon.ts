@@ -53,8 +53,8 @@ export function resolveHeaderIconConfig(
     return {
       iconImage: resolveIconPath(undefined, basePath),
       headerName,
-      useReactIcon: false,
-      reactIconTag: undefined,
+      useReactIcon: true,
+      reactIconTag: "FaGithubAlt",
       reactIconStyle: {},
       iconImgWidth: 20,
       iconImgHeight: 20,
@@ -67,8 +67,8 @@ export function resolveHeaderIconConfig(
     site.IconImageMenuHeader?.trim() ||
     site.SiteIconPath?.trim();
   const iconImage = resolveIconPath(rawIconImage, basePath);
-  const useReactIcon = Boolean(site.IconImageMenuHeaderReactIcones);
-  const reactIconTag = site.IconImageMenuHeaderReactIconesTag;
+  const useReactIcon = (site.IconImageMenuHeaderReactIcones ?? !rawIconImage);
+  const reactIconTag = site.IconImageMenuHeaderReactIconesTag || "FaGithubAlt";
   const reactIconColor =
     mode === "dark"
       ? site.IconImageMenuHeaderReactIconesTagColorDark

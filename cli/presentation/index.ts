@@ -78,11 +78,19 @@ async function main(): Promise<void> {
     },
     runAi: async (context) => {
       console.log("[gitpagedocs] Iniciando Módulo de IA na CLI...");
+      const safePrebuiltDir =
+        typeof context.prebuiltDir === "string"
+          ? context.prebuiltDir
+          : path.join(String(context.pkgRoot ?? process.cwd()), "prebuilt");
       // @ts-ignore
       const { runAiCliCommand } = await import("../ai/application/run-ai-cli-command.ts");
       const result = await runAiCliCommand({
         cwd: process.cwd(),
         onInfo: (message: string) => console.log(message),
+        // Scaffold the base gitpagedocs/ structure before AI pages are wired in.
+        onScaffold: async () => {
+          await executeConfigOnly({ ...context, prebuiltDir: safePrebuiltDir }, configOnlyRuntime);
+        },
       });
 
       if (result.summary.scannedFilesCount === 0) {
@@ -90,13 +98,13 @@ async function main(): Promise<void> {
         return;
       }
 
-      if (result.runConfigScaffold) {
-        console.log("\n[gitpagedocs] Scaffolding GitPageDocs ecosystem automatically...");
-        const safePrebuiltDir = typeof context.prebuiltDir === "string" ? context.prebuiltDir : path.join(String(context.pkgRoot ?? process.cwd()), "prebuilt");
-        await executeConfigOnly({ ...context, prebuiltDir: safePrebuiltDir }, configOnlyRuntime);
-      }
-
-      console.log(`\n🎉 Processo completo! Arquivos gerados: ${result.summary.outputs.join(", ")}`);
+      const pages = result.summary.pages ?? [];
+      console.log(
+        `\n🎉 Processo completo! Páginas no padrão gitpagedocs: ${pages.join(", ") || "(nenhuma)"}`,
+      );
+      console.log(
+        `[gitpagedocs:ai] ${result.summary.outputs.length} arquivos markdown gerados e conectados ao config.json da versão mais recente.`,
+      );
     },
   });
   printCredits();

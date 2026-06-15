@@ -76,6 +76,15 @@ export interface NavMenuIconConfigInput {
   IconSidebarExpandReactIconesTagSize?: string;
   IconSidebarExpandImgWidth?: string | number;
   IconSidebarExpandImgHeight?: string | number;
+  IconDocsLockLightImg?: string;
+  IconDocsLockDarkImg?: string;
+  IconDocsLockReactIcones?: boolean;
+  IconDocsLockReactIconesTag?: string;
+  IconDocsLockReactIconesTagColorDark?: string;
+  IconDocsLockReactIconesTagColorLight?: string;
+  IconDocsLockReactIconesTagSize?: string;
+  IconDocsLockImgWidth?: string | number;
+  IconDocsLockImgHeight?: string | number;
 }
 
 export interface ResolvedNavMenuIconConfig {
@@ -127,7 +136,7 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     sizeKey: "IconNavMenuCloseReactIconesTagSize",
     widthKey: "IconNavMenuCloseImgWidth",
     heightKey: "IconNavMenuCloseImgHeight",
-    fallbackTag: "IoClose",
+    fallbackTag: "IoMdClose",
   },
   mobileOpen: {
     lightKey: "IconNavMenuMobileOpenLightImg",
@@ -151,7 +160,7 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     sizeKey: "IconNavMenuMobileCloseReactIconesTagSize",
     widthKey: "IconNavMenuMobileCloseImgWidth",
     heightKey: "IconNavMenuMobileCloseImgHeight",
-    fallbackTag: "IoClose",
+    fallbackTag: "IoMdClose",
   },
   blockActive: {
     lightKey: "IconNavMenuBlockActiveLightImg",
@@ -201,6 +210,18 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     heightKey: "IconSidebarExpandImgHeight",
     fallbackTag: "FiChevronsRight",
   },
+  docsLock: {
+    lightKey: "IconDocsLockLightImg",
+    darkKey: "IconDocsLockDarkImg",
+    useReactKey: "IconDocsLockReactIcones",
+    tagKey: "IconDocsLockReactIconesTag",
+    colorDarkKey: "IconDocsLockReactIconesTagColorDark",
+    colorLightKey: "IconDocsLockReactIconesTagColorLight",
+    sizeKey: "IconDocsLockReactIconesTagSize",
+    widthKey: "IconDocsLockImgWidth",
+    heightKey: "IconDocsLockImgHeight",
+    fallbackTag: "FiLock",
+  },
 };
 
 function resolveIconFromKeys(
@@ -224,7 +245,10 @@ function resolveIconFromKeys(
       ? (site[keys.darkKey] as string)?.trim()
       : (site[keys.lightKey] as string)?.trim();
   const iconImage = resolveIconPath(rawIconImage || DEFAULT_IMG, basePath);
-  const useReactIcon = Boolean(site[keys.useReactKey]);
+  // Fallback to the default react-icon when the config provides nothing for
+  // this slot (no explicit flag and no custom image) — instead of a broken
+  // default image. An explicit flag (true/false) is always respected.
+  const useReactIcon = (site[keys.useReactKey] as boolean | undefined) ?? !rawIconImage;
   const reactIconTag = (site[keys.tagKey] as string) || keys.fallbackTag;
   const reactIconColor =
     mode === "dark"

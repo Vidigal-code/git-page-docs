@@ -8,7 +8,7 @@ The **shared business-logic core** of the [Git Page Docs](../README.md) monorepo
 |---|---|
 | `ai/` | 14-provider AI system — data-driven `PROVIDER_CATALOG`, registry + factory (no switch chains), 5 family adapters (OpenAI-compatible, Anthropic, Gemini, Ollama, Cohere), SSE/NDJSON streaming, legacy↔catalog id mapping |
 | `security/` | `EncryptedCredentialVault` (AES-256-GCM), `SessionPasswordGate`, plaintext migration; web + file storage adapters |
-| `crypto/` | `NodeCryptoService` + `WebCryptoService` (SHA-256, PBKDF2, AES-256-GCM, masking, secure wipe) |
+| `crypto/` | `NodeCryptoService` + `WebCryptoService` (SHA-256, PBKDF2, AES-256-GCM, masking, secure wipe); `deriveDocAccessKeys` / `verifyDocAccess` (double-hash documentation password gate shared by the CLI `password` command and the frontend gate) |
 | `cache/` | `MemoryCache`, `FileCache`, `WebStorageCache` (Strategy over one `Cache` port) |
 | `config/` | `GitPageDocsConfigLoader` (`.json` / `.js` / `.ts`) |
 | `logger/` | Level-filtered logger with **secret redaction** |

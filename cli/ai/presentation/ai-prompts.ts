@@ -141,7 +141,7 @@ export async function promptUseExistingConfig(existingConfig: AiCliConfig): Prom
     if (!useExistingConfig) return null;
 
     const runConfigScaffold = await askConfirm(
-        'After generating docs with AI, run the default gitpagedocs scaffolding?',
+        'Generate the base gitpagedocs structure first, so the AI pages are wired into the docs viewer?',
         true,
     );
 
@@ -220,7 +220,7 @@ export async function runAiInteractivePrompt(existingConfig?: AiCliConfig | null
     );
 
     const runConfigScaffold = await askConfirm(
-        'After generating docs with AI, run the default gitpagedocs scaffolding?',
+        'Generate the base gitpagedocs structure first, so the AI pages are wired into the docs viewer?',
         true,
     );
 

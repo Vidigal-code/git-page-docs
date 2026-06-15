@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/mcp",
-  "version": "1.1.45",
+  "version": "1.1.53",
   "type": "module",
   "description": "Model Context Protocol server for Git Page Docs (delegates to @gitpagedocs/tools). Ships TypeScript source; run via tsx.",
   "main": "./src/index.ts",
@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@gitpagedocs/tools": "workspace:*",
+    "@gitpagedocs/tools": "^1.1.53",
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^3.23.8"
   },

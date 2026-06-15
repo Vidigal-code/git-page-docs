@@ -44,7 +44,7 @@ export function resolveRouteGuideIconConfig(
   const iconImage = rawIconImage?.startsWith("http")
     ? rawIconImage
     : resolveIconPath(undefined, basePath);
-  const useReactIcon = Boolean(site.IconRouteGuideReactIcones);
+  const useReactIcon = (site.IconRouteGuideReactIcones ?? !rawIconImage);
   const reactIconTag = site.IconRouteGuideReactIconesTag;
   const reactIconColor = isDarkMode
     ? site.IconRouteGuideReactIconesTagColorDark

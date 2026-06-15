@@ -135,6 +135,16 @@ export interface SiteConfig {
   IconSidebarExpandReactIconesTagSize?: string;
   IconSidebarExpandImgWidth?: string | number;
   IconSidebarExpandImgHeight?: string | number;
+  /** Documentation lock button (clears the access cache to re-block the docs) */
+  IconDocsLockLightImg?: string;
+  IconDocsLockDarkImg?: string;
+  IconDocsLockReactIcones?: boolean;
+  IconDocsLockReactIconesTag?: string;
+  IconDocsLockReactIconesTagColorDark?: string;
+  IconDocsLockReactIconesTagColorLight?: string;
+  IconDocsLockReactIconesTagSize?: string;
+  IconDocsLockImgWidth?: string | number;
+  IconDocsLockImgHeight?: string | number;
   /** Block menu on nav toggle: active (blocking) state icon */
   IconNavMenuBlockActiveLightImg?: string;
   IconNavMenuBlockActiveDarkImg?: string;
@@ -255,6 +265,13 @@ export interface SiteConfig {
 
   /** AI Chat toggle: enable/disable entirely */
   AiChatEnabled?: boolean;
+
+  /** Documentation-wide password gate. When enabled with a publicKey, the
+   * frontend blocks all docs until the visitor enters the password or private key. */
+  docsAccess?: {
+    enabled?: boolean;
+    publicKey?: string;
+  };
 
   /** AI Chat toggle: open icon */
   IconAiChatOpenLightImg?: string;

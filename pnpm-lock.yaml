@@ -78,10 +78,10 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       '@gitpagedocs/mcp':
-        specifier: workspace:*
+        specifier: ^1.1.53
         version: link:../mcp
       '@gitpagedocs/tools':
-        specifier: workspace:*
+        specifier: ^1.1.53
         version: link:../tools
       tsx:
         specifier: ^4.21.0
@@ -124,7 +124,7 @@ importers:
   mcp:
     dependencies:
       '@gitpagedocs/tools':
-        specifier: workspace:*
+        specifier: ^1.1.53
         version: link:../tools
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.0

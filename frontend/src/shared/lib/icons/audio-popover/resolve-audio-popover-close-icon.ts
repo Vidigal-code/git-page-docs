@@ -16,7 +16,7 @@ export interface AudioPlayerPopoverCloseIconConfigInput {
 }
 
 const DEFAULT_IMG = DEFAULT_ICON_FALLBACK_URL;
-const FALLBACK_TAG = "IoClose";
+const FALLBACK_TAG = "IoMdClose";
 
 export function resolveAudioPlayerPopoverCloseIconConfig(
   site: AudioPlayerPopoverCloseIconConfigInput | undefined,
@@ -38,7 +38,7 @@ export function resolveAudioPlayerPopoverCloseIconConfig(
       ? site.IconAudioPlayerPopoverCloseDarkImg?.trim()
       : site.IconAudioPlayerPopoverCloseLightImg?.trim();
   const iconImage = resolveIconPath(rawIconImage || DEFAULT_IMG, basePath);
-  const useReactIcon = Boolean(site.IconAudioPlayerPopoverCloseReactIcones);
+  const useReactIcon = (site.IconAudioPlayerPopoverCloseReactIcones ?? !rawIconImage);
   const reactIconTag = site.IconAudioPlayerPopoverCloseReactIconesTag?.trim() || FALLBACK_TAG;
   const reactIconColor =
     mode === "dark"
