@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/mcp",
-  "version": "1.1.44",
+  "version": "1.1.45",
   "type": "module",
   "description": "Model Context Protocol server for Git Page Docs (delegates to @gitpagedocs/tools). Ships TypeScript source; run via tsx.",
   "main": "./src/index.ts",
