@@ -67,7 +67,7 @@ export function resolveHeaderIconConfig(
     site.IconImageMenuHeader?.trim() ||
     site.SiteIconPath?.trim();
   const iconImage = resolveIconPath(rawIconImage, basePath);
-  const useReactIcon = Boolean(site.IconImageMenuHeaderReactIcones);
+  const useReactIcon = (site.IconImageMenuHeaderReactIcones ?? !rawIconImage);
   const reactIconTag = site.IconImageMenuHeaderReactIconesTag;
   const reactIconColor =
     mode === "dark"

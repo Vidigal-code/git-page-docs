@@ -84,7 +84,8 @@ function resolveAudioPopoverIcon(
       ? (s[`${prefix}DarkImg`] as string)?.trim()
       : (s[`${prefix}LightImg`] as string)?.trim();
   const iconImage = resolveIconPath(rawIconImage || DEFAULT_IMG, basePath);
-  const useReactIcon = Boolean(s[`${prefix}ReactIcones`]);
+  const useReactIcon =
+    (s[`${prefix}ReactIcones`] as boolean | undefined) ?? !rawIconImage;
   const reactIconTag = (s[`${prefix}ReactIconesTag`] as string)?.trim() || fallbackTag;
   const reactIconColor =
     mode === "dark"

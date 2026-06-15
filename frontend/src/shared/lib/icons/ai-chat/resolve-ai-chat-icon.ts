@@ -29,7 +29,7 @@ export function resolveAiChatOpenIconConfig(site: any, mode: "dark" | "light", b
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatOpenDarkImg : site.IconAiChatOpenLightImg;
-    const useReactIcon = Boolean(site.IconAiChatOpenReactIcones);
+    const useReactIcon = (site.IconAiChatOpenReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatOpenReactIconesTag || "BsChatDots";
     const color = mode === "dark" ? site.IconAiChatOpenReactIconesTagColorDark : site.IconAiChatOpenReactIconesTagColorLight;
     const size = site.IconAiChatOpenReactIconesTagSize;
@@ -55,7 +55,7 @@ export function resolveAiChatCloseIconConfig(site: any, mode: "dark" | "light", 
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatCloseDarkImg : site.IconAiChatCloseLightImg;
-    const useReactIcon = Boolean(site.IconAiChatCloseReactIcones);
+    const useReactIcon = (site.IconAiChatCloseReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatCloseReactIconesTag || "IoClose";
     const color = mode === "dark" ? site.IconAiChatCloseReactIconesTagColorDark : site.IconAiChatCloseReactIconesTagColorLight;
     const size = site.IconAiChatCloseReactIconesTagSize;
@@ -81,7 +81,7 @@ export function resolveAiChatSettingsIconConfig(site: any, mode: "dark" | "light
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatSettingsDarkImg : site.IconAiChatSettingsLightImg;
-    const useReactIcon = Boolean(site.IconAiChatSettingsReactIcones);
+    const useReactIcon = (site.IconAiChatSettingsReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatSettingsReactIconesTag || "FiSettings";
     const color = mode === "dark" ? site.IconAiChatSettingsReactIconesTagColorDark : site.IconAiChatSettingsReactIconesTagColorLight;
     const size = site.IconAiChatSettingsReactIconesTagSize;
@@ -107,7 +107,7 @@ export function resolveAiChatSendIconConfig(site: any, mode: "dark" | "light", b
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatSendDarkImg : site.IconAiChatSendLightImg;
-    const useReactIcon = Boolean(site.IconAiChatSendReactIcones);
+    const useReactIcon = (site.IconAiChatSendReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatSendReactIconesTag || "FiSend";
     const color = mode === "dark" ? site.IconAiChatSendReactIconesTagColorDark : site.IconAiChatSendReactIconesTagColorLight;
     const size = site.IconAiChatSendReactIconesTagSize;
@@ -133,7 +133,7 @@ export function resolveAiChatCancelIconConfig(site: any, mode: "dark" | "light",
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatCancelDarkImg : site.IconAiChatCancelLightImg;
-    const useReactIcon = Boolean(site.IconAiChatCancelReactIcones);
+    const useReactIcon = (site.IconAiChatCancelReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatCancelReactIconesTag || "FiXCircle";
     const color = mode === "dark" ? site.IconAiChatCancelReactIconesTagColorDark : site.IconAiChatCancelReactIconesTagColorLight;
     const size = site.IconAiChatCancelReactIconesTagSize;
@@ -159,7 +159,7 @@ export function resolveAiChatTrashIconConfig(site: any, mode: "dark" | "light", 
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatTrashDarkImg : site.IconAiChatTrashLightImg;
-    const useReactIcon = Boolean(site.IconAiChatTrashReactIcones);
+    const useReactIcon = (site.IconAiChatTrashReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatTrashReactIconesTag || "FiTrash2";
     const color = mode === "dark" ? site.IconAiChatTrashReactIconesTagColorDark : site.IconAiChatTrashReactIconesTagColorLight;
     const size = site.IconAiChatTrashReactIconesTagSize;
@@ -185,7 +185,7 @@ export function resolveAiChatClearChatIconConfig(site: any, mode: "dark" | "ligh
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatClearChatDarkImg : site.IconAiChatClearChatLightImg;
-    const useReactIcon = Boolean(site.IconAiChatClearChatReactIcones);
+    const useReactIcon = (site.IconAiChatClearChatReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatClearChatReactIconesTag || "FiMessageSquare";
     const color = mode === "dark" ? site.IconAiChatClearChatReactIconesTagColorDark : site.IconAiChatClearChatReactIconesTagColorLight;
     const size = site.IconAiChatClearChatReactIconesTagSize;
@@ -211,7 +211,7 @@ export function resolveAiChatClearDataIconConfig(site: any, mode: "dark" | "ligh
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatClearDataDarkImg : site.IconAiChatClearDataLightImg;
-    const useReactIcon = Boolean(site.IconAiChatClearDataReactIcones);
+    const useReactIcon = (site.IconAiChatClearDataReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatClearDataReactIconesTag || "FiDatabase";
     const color = mode === "dark" ? site.IconAiChatClearDataReactIconesTagColorDark : site.IconAiChatClearDataReactIconesTagColorLight;
     const size = site.IconAiChatClearDataReactIconesTagSize;
@@ -237,7 +237,7 @@ export function resolveAiChatExpandIconConfig(site: any, mode: "dark" | "light",
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatExpandDarkImg : site.IconAiChatExpandLightImg;
-    const useReactIcon = Boolean(site.IconAiChatExpandReactIcones);
+    const useReactIcon = (site.IconAiChatExpandReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatExpandReactIconesTag || "FiMaximize2";
     const color = mode === "dark" ? site.IconAiChatExpandReactIconesTagColorDark : site.IconAiChatExpandReactIconesTagColorLight;
     const size = site.IconAiChatExpandReactIconesTagSize;
@@ -263,7 +263,7 @@ export function resolveAiChatCollapseIconConfig(site: any, mode: "dark" | "light
         };
     }
     const rawImage = mode === "dark" ? site.IconAiChatCollapseDarkImg : site.IconAiChatCollapseLightImg;
-    const useReactIcon = Boolean(site.IconAiChatCollapseReactIcones);
+    const useReactIcon = (site.IconAiChatCollapseReactIcones ?? !rawImage);
     const reactIconTag = site.IconAiChatCollapseReactIconesTag || "FiMinimize2";
     const color = mode === "dark" ? site.IconAiChatCollapseReactIconesTagColorDark : site.IconAiChatCollapseReactIconesTagColorLight;
     const size = site.IconAiChatCollapseReactIconesTagSize;

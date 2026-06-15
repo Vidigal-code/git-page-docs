@@ -224,7 +224,10 @@ function resolveIconFromKeys(
       ? (site[keys.darkKey] as string)?.trim()
       : (site[keys.lightKey] as string)?.trim();
   const iconImage = resolveIconPath(rawIconImage || DEFAULT_IMG, basePath);
-  const useReactIcon = Boolean(site[keys.useReactKey]);
+  // Fallback to the default react-icon when the config provides nothing for
+  // this slot (no explicit flag and no custom image) — instead of a broken
+  // default image. An explicit flag (true/false) is always respected.
+  const useReactIcon = (site[keys.useReactKey] as boolean | undefined) ?? !rawIconImage;
   const reactIconTag = (site[keys.tagKey] as string) || keys.fallbackTag;
   const reactIconColor =
     mode === "dark"
