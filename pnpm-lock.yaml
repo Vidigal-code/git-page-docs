@@ -78,10 +78,10 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       '@gitpagedocs/mcp':
-        specifier: ^1.1.47
+        specifier: ^1.1.49
         version: link:../mcp
       '@gitpagedocs/tools':
-        specifier: ^1.1.47
+        specifier: ^1.1.49
         version: link:../tools
       tsx:
         specifier: ^4.21.0
@@ -124,7 +124,7 @@ importers:
   mcp:
     dependencies:
       '@gitpagedocs/tools':
-        specifier: ^1.1.47
+        specifier: ^1.1.49
         version: link:../tools
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.0
