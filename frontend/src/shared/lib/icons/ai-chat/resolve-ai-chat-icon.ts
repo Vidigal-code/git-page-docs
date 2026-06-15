@@ -48,7 +48,7 @@ export function resolveAiChatCloseIconConfig(site: any, mode: "dark" | "light", 
         return {
             iconImage: resolveIconPath(DEFAULT_IMG, basePath),
             useReactIcon: true,
-            reactIconTag: "IoClose",
+            reactIconTag: "IoMdClose",
             reactIconStyle: {},
             iconImgWidth: 20,
             iconImgHeight: 20,
@@ -56,7 +56,7 @@ export function resolveAiChatCloseIconConfig(site: any, mode: "dark" | "light", 
     }
     const rawImage = mode === "dark" ? site.IconAiChatCloseDarkImg : site.IconAiChatCloseLightImg;
     const useReactIcon = (site.IconAiChatCloseReactIcones ?? !rawImage);
-    const reactIconTag = site.IconAiChatCloseReactIconesTag || "IoClose";
+    const reactIconTag = site.IconAiChatCloseReactIconesTag || "IoMdClose";
     const color = mode === "dark" ? site.IconAiChatCloseReactIconesTagColorDark : site.IconAiChatCloseReactIconesTagColorLight;
     const size = site.IconAiChatCloseReactIconesTagSize;
     return {

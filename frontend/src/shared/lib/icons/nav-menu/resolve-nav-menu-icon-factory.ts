@@ -127,7 +127,7 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     sizeKey: "IconNavMenuCloseReactIconesTagSize",
     widthKey: "IconNavMenuCloseImgWidth",
     heightKey: "IconNavMenuCloseImgHeight",
-    fallbackTag: "IoClose",
+    fallbackTag: "IoMdClose",
   },
   mobileOpen: {
     lightKey: "IconNavMenuMobileOpenLightImg",
@@ -151,7 +151,7 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     sizeKey: "IconNavMenuMobileCloseReactIconesTagSize",
     widthKey: "IconNavMenuMobileCloseImgWidth",
     heightKey: "IconNavMenuMobileCloseImgHeight",
-    fallbackTag: "IoClose",
+    fallbackTag: "IoMdClose",
   },
   blockActive: {
     lightKey: "IconNavMenuBlockActiveLightImg",

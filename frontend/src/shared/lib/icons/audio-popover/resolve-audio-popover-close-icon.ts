@@ -16,7 +16,7 @@ export interface AudioPlayerPopoverCloseIconConfigInput {
 }
 
 const DEFAULT_IMG = DEFAULT_ICON_FALLBACK_URL;
-const FALLBACK_TAG = "IoClose";
+const FALLBACK_TAG = "IoMdClose";
 
 export function resolveAudioPlayerPopoverCloseIconConfig(
   site: AudioPlayerPopoverCloseIconConfigInput | undefined,

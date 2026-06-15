@@ -307,7 +307,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                             title={labels.aiChatCloseBtnAriaLabel}
                             className={styles.closeButton}
                         >
-                            {renderIcon(icons.close, "IoClose")}
+                            {renderIcon(icons.close, "IoMdClose")}
                         </button>
                     </div>
                 </div>
