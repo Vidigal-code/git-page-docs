@@ -464,8 +464,8 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     <div className={styles.inputArea}>
                         {pendingAttachments.length > 0 && (
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '0 0 8px 8px', display: 'flex', alignItems: 'center' }}>
-                                {pendingAttachments.length} arquivo(s) anexado(s)
-                                <button onClick={() => setPendingAttachments([])} style={{ marginLeft: 8, background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer' }}>Remover</button>
+                                {pendingAttachments.length} {labels.aiChatAttachedFilesLabel}
+                                <button onClick={() => setPendingAttachments([])} style={{ marginLeft: 8, background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer' }}>{labels.aiChatRemoveAttachmentBtn}</button>
                             </div>
                         )}
                         <div className={styles.inputContainer}>
@@ -497,7 +497,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                                     className={styles.sendButton}
                                     data-active={inputValue.trim().length > 0 || isLoading}
                                     disabled={!inputValue.trim() && !isLoading}
-                                    title={isLoading ? "Cancelar Resposta" : labels.aiChatSendBtn}
+                                    title={isLoading ? labels.aiChatCancelResponseLabel : labels.aiChatSendBtn}
                                 >
                                     {isLoading ? renderIcon(icons.cancel, "FiXCircle") : renderIcon(icons.send, "FiSend")}
                                 </button>

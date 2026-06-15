@@ -2,6 +2,8 @@ import Image from "next/image";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
+import { DocsLockButton, type DocsLockTexts } from "@/features/docs-access";
+import type { ResolvedNavMenuIconConfig } from "@/shared/lib/icons/nav-menu/resolve-nav-menu-icon";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { MenuNode } from "../model/menu-tree";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
@@ -27,6 +29,11 @@ interface DocsShellSidebarProps {
   navMenuConfig: NavMenuConfig;
   onOpenAiChat: () => void;
   aiChatIconConfig: any;
+  docsLock?: {
+    icon: ResolvedNavMenuIconConfig;
+    texts: DocsLockTexts;
+    onConfirmBlock: () => void;
+  };
 }
 
 export function DocsShellSidebar({
@@ -49,6 +56,7 @@ export function DocsShellSidebar({
   navMenuConfig,
   onOpenAiChat,
   aiChatIconConfig,
+  docsLock,
 }: DocsShellSidebarProps) {
   return (
     <aside className={styles.sidebar}>
@@ -72,6 +80,14 @@ export function DocsShellSidebar({
         />
       </nav>
       <div className={styles.sidebarFooter}>
+        {docsLock && (
+          <DocsLockButton
+            icon={docsLock.icon}
+            texts={docsLock.texts}
+            onConfirmBlock={docsLock.onConfirmBlock}
+            className={`${styles.button} ${styles.sidebarRailButton}`}
+          />
+        )}
         <NavMenuBlockToggle
           blockMenuOnNav={blockMenuOnNav}
           onToggle={() => setBlockMenuOnNav(!blockMenuOnNav)}

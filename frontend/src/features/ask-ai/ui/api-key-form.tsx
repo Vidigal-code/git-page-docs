@@ -80,7 +80,7 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
                     data-testid="drawer-save-key"
                     className={styles.btnPrimary}
                 >
-                    {labels?.aiChatSendBtn || "Save & Start Chatting"}
+                    {labels?.aiChatSaveStartBtn || "Save & Start Chatting"}
                 </button>
             </div>
         </form>

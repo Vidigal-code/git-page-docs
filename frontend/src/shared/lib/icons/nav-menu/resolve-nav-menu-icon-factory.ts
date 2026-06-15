@@ -76,6 +76,15 @@ export interface NavMenuIconConfigInput {
   IconSidebarExpandReactIconesTagSize?: string;
   IconSidebarExpandImgWidth?: string | number;
   IconSidebarExpandImgHeight?: string | number;
+  IconDocsLockLightImg?: string;
+  IconDocsLockDarkImg?: string;
+  IconDocsLockReactIcones?: boolean;
+  IconDocsLockReactIconesTag?: string;
+  IconDocsLockReactIconesTagColorDark?: string;
+  IconDocsLockReactIconesTagColorLight?: string;
+  IconDocsLockReactIconesTagSize?: string;
+  IconDocsLockImgWidth?: string | number;
+  IconDocsLockImgHeight?: string | number;
 }
 
 export interface ResolvedNavMenuIconConfig {
@@ -200,6 +209,18 @@ const NAV_MENU_ICON_KEYS: Record<string, NavMenuIconKeysConfig> = {
     widthKey: "IconSidebarExpandImgWidth",
     heightKey: "IconSidebarExpandImgHeight",
     fallbackTag: "FiChevronsRight",
+  },
+  docsLock: {
+    lightKey: "IconDocsLockLightImg",
+    darkKey: "IconDocsLockDarkImg",
+    useReactKey: "IconDocsLockReactIcones",
+    tagKey: "IconDocsLockReactIconesTag",
+    colorDarkKey: "IconDocsLockReactIconesTagColorDark",
+    colorLightKey: "IconDocsLockReactIconesTagColorLight",
+    sizeKey: "IconDocsLockReactIconesTagSize",
+    widthKey: "IconDocsLockImgWidth",
+    heightKey: "IconDocsLockImgHeight",
+    fallbackTag: "FiLock",
   },
 };
 

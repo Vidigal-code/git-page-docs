@@ -19,6 +19,8 @@ import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference";
 import { useRouteAuthorization } from "@/features/route-authorization";
+import { useDocsAccess, DocsAccessGate } from "@/features/docs-access";
+import { resolveDocsLockIconConfig } from "@/shared/lib/icons/nav-menu/resolve-nav-menu-icon";
 import { useQuickNavigation } from "./model/use-quick-navigation";
 import { useVersionRouting } from "./model/use-version-routing";
 import { CollapsedNavRail } from "./ui/docs-shell-collapsed-rail";
@@ -359,6 +361,25 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     [data.config.site, nextMode],
   );
 
+  const docsAccess = useDocsAccess(data.config.site.docsAccess, data.config.site.name);
+  const docsLockIconConfig = useMemo(
+    () => resolveDocsLockIconConfig(data.config.site, nextMode === "dark" ? "dark" : "light", getBasePath()),
+    [data.config.site, nextMode],
+  );
+  const docsLockProps = docsAccess.enabled
+    ? {
+        icon: docsLockIconConfig,
+        texts: {
+          tooltip: labels.docsAccessLockTooltip,
+          popupTitle: labels.docsAccessBlockPopupTitle,
+          popupDescription: labels.docsAccessBlockPopupDesc,
+          confirmText: labels.docsAccessBlockConfirmBtn,
+          cancelText: labels.docsAccessBlockCancelBtn,
+        },
+        onConfirmBlock: docsAccess.lockAgain,
+      }
+    : undefined;
+
   const [isAiChatOpen, setAiChatOpen] = useState(false);
   const aiChatIconConfig = useMemo(
     () => ({
@@ -417,6 +438,27 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     onToggleMode,
   };
 
+  if (docsAccess.state === "loading") {
+    return <div className={styles.wrapper} style={cssVars} />;
+  }
+
+  if (docsAccess.state === "locked") {
+    return (
+      <div className={styles.wrapper} style={cssVars}>
+        <DocsAccessGate
+          texts={{
+            title: labels.docsAccessGateTitle,
+            description: labels.docsAccessGateDescription,
+            placeholder: labels.docsAccessInputPlaceholder,
+            unlockBtn: labels.docsAccessUnlockBtn,
+            wrongCredential: labels.docsAccessWrongCredential,
+          }}
+          onUnlock={docsAccess.unlock}
+        />
+      </div>
+    );
+  }
+
   return (
     <DocsShellProvider value={contextValue}>
       <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
@@ -440,6 +482,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           navMenuConfig={navMenuConfig}
           onOpenAiChat={() => setAiChatOpen(true)}
           aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}
+          docsLock={docsLockProps}
         />
 
         {!sidebarOpen && (

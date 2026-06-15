@@ -57,6 +57,25 @@ export interface DocsShellLabels {
   aiChatError429: string;
   aiChatError500: string;
   aiChatErrorGeneric: string;
+  aiChatSaveStartBtn: string;
+  aiChatAttachedFilesLabel: string;
+  aiChatRemoveAttachmentBtn: string;
+  aiChatCancelResponseLabel: string;
+  aiChatResetBtn: string;
+  aiChatResetPopupTitle: string;
+  aiChatResetPopupDesc: string;
+  aiChatResetConfirmBtn: string;
+  aiChatResetCancelBtn: string;
+  docsAccessGateTitle: string;
+  docsAccessGateDescription: string;
+  docsAccessInputPlaceholder: string;
+  docsAccessUnlockBtn: string;
+  docsAccessWrongCredential: string;
+  docsAccessLockTooltip: string;
+  docsAccessBlockPopupTitle: string;
+  docsAccessBlockPopupDesc: string;
+  docsAccessBlockConfirmBtn: string;
+  docsAccessBlockCancelBtn: string;
 }
 
 export function useDocsShellLabels(data: LoadedDocsData, language: string): DocsShellLabels {
@@ -180,6 +199,29 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
     const aiChatError500 = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatError500", "An internal server error occurred on the AI model.");
     const aiChatErrorGeneric = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatErrorGeneric", "An unexpected error occurred while communicating with the AI.");
 
+    // Chat strings migrated from hardcoded literals
+    const aiChatSaveStartBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatSaveStartBtn", "Save & Start Chatting");
+    const aiChatAttachedFilesLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatAttachedFilesLabel", "file(s) attached");
+    const aiChatRemoveAttachmentBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatRemoveAttachmentBtn", "Remove");
+    const aiChatCancelResponseLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatCancelResponseLabel", "Cancel response");
+    const aiChatResetBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetBtn", "Forgot password?");
+    const aiChatResetPopupTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetPopupTitle", "Reset password?");
+    const aiChatResetPopupDesc = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetPopupDesc", "This erases all saved API keys and the local password. You'll create a new password next time.");
+    const aiChatResetConfirmBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetConfirmBtn", "Yes, reset");
+    const aiChatResetCancelBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetCancelBtn", "Cancel");
+
+    // Documentation access gate
+    const docsAccessGateTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessGateTitle", "Protected documentation");
+    const docsAccessGateDescription = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessGateDescription", "Enter the password or private key to view the documentation.");
+    const docsAccessInputPlaceholder = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessInputPlaceholder", "Password or private key");
+    const docsAccessUnlockBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessUnlockBtn", "Unlock");
+    const docsAccessWrongCredential = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessWrongCredential", "Incorrect password or key.");
+    const docsAccessLockTooltip = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessLockTooltip", "Lock documentation");
+    const docsAccessBlockPopupTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessBlockPopupTitle", "Block the documentation?");
+    const docsAccessBlockPopupDesc = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessBlockPopupDesc", "You'll need the password again on your next visit.");
+    const docsAccessBlockConfirmBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessBlockConfirmBtn", "Yes, block");
+    const docsAccessBlockCancelBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessBlockCancelBtn", "Cancel");
+
     return {
       previousLabel,
       nextLabel,
@@ -236,6 +278,25 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       aiChatError429,
       aiChatError500,
       aiChatErrorGeneric,
+      aiChatSaveStartBtn,
+      aiChatAttachedFilesLabel,
+      aiChatRemoveAttachmentBtn,
+      aiChatCancelResponseLabel,
+      aiChatResetBtn,
+      aiChatResetPopupTitle,
+      aiChatResetPopupDesc,
+      aiChatResetConfirmBtn,
+      aiChatResetCancelBtn,
+      docsAccessGateTitle,
+      docsAccessGateDescription,
+      docsAccessInputPlaceholder,
+      docsAccessUnlockBtn,
+      docsAccessWrongCredential,
+      docsAccessLockTooltip,
+      docsAccessBlockPopupTitle,
+      docsAccessBlockPopupDesc,
+      docsAccessBlockConfirmBtn,
+      docsAccessBlockCancelBtn,
     };
   }, [data.config.site.langmenu, data.config.translations, language]);
 }
