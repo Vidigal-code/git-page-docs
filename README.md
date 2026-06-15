@@ -473,6 +473,17 @@ This mode provides:
 - optional `.gitpagedocsconfig` persistence for manual reuse
 - interactive fallback when directories are missing (fix/skip/abort)
 
+**Generates in the gitpagedocs pattern.** The model is told what gitpagedocs is and
+returns documentation split into multiple pages. `gitpagedocs ai` first scaffolds the base
+`gitpagedocs/` structure, then writes each page to
+`gitpagedocs/docs/versions/<latest>/<lang>/<slug>.md` (in every language) **and wires them
+into that version's `config.json`** (`routes-md` + `menus-header-md`), so the AI pages show up
+directly in the docs viewer menu. The added entries are tagged `aiGenerated` and are
+idempotent — re-running `gitpagedocs ai` replaces them instead of duplicating.
+
+> Note: a later plain `gitpagedocs` run rebuilds the base config from the deterministic
+> templates and drops the AI wiring — re-run `gitpagedocs ai` to restore it.
+
 ### Manual config (`.gitpagedocsconfig`)
 
 You can run manually with a persisted config in repository root:
@@ -494,6 +505,23 @@ You can run manually with a persisted config in repository root:
 ```
 
 For Ollama, use `baseUrl` instead of `apiKey`.
+
+## Documentation password gate
+
+Protect the whole documentation site behind a password:
+
+```bash
+gitpagedocs password
+```
+
+It prompts for a password (type + confirm), writes a non-reversible **public key** to
+`site.docsAccess` in `gitpagedocs/config.json`, and prints a **private key** to copy. The
+scheme is double-hash: `privateKey = SHA256(password)`, `publicKey = SHA256(privateKey)` — the
+password itself is never stored. When `docsAccess.enabled` is set, the viewer blocks the entire
+documentation behind a full-page gate; visitors unlock with the **password OR the private key**
+(verified against the public key). The unlock is cached in `localStorage`, and a lock icon in
+the menu clears the cache to re-block. Leave `docsAccess.enabled` false (the default) to keep
+the docs open.
 
 ## Configuration File Format
 
@@ -533,7 +561,9 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 - `gitpagedocs config` — show the resolved gitpagedocs config
 - `gitpagedocs provider [id]` — list AI providers or show one
 - `gitpagedocs models [provider]` — list catalog models
-- `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI
+- `gitpagedocs ai` — interactive AI docs generator (writes pages in the gitpagedocs pattern)
+- `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI in the gitpagedocs pattern
+- `gitpagedocs password` — set a documentation access password (writes the public key to config.json)
 - `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio

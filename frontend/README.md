@@ -45,6 +45,10 @@ Two independent surfaces share the same encrypted vault from `@gitpagedocs/tools
 
 Both are gated by a **local password**: it creates/unlocks an AES-256-GCM vault (`src/shared/lib/ai-secure-storage.ts` → `EncryptedCredentialVault`), keys are stored encrypted in `localStorage` (`gitpagedocs:vault`) and decrypted only in-session. The legacy plaintext key (`gitpagedocs_ai_key`) is migrated and wiped on first unlock. The chat itself runs through the shared 14-provider AI core, so the service layer never reads keys from storage — credentials are injected per request.
 
+## Documentation access gate
+
+When `site.docsAccess.enabled` is set in `gitpagedocs/config.json` (via the `gitpagedocs password` CLI command), the whole documentation is blocked behind a full-page gate (`src/features/docs-access`). Visitors unlock with the **password or the private key**, verified against the stored public key with `verifyDocAccess` from `@gitpagedocs/tools/crypto/web` (double-hash SHA-256). The unlock is cached in `localStorage` (only the public hash), and a lock button in the sidebar re-blocks by clearing it. All gate/chat strings are sourced from `config.json` `langmenu` (en/pt/es).
+
 ## Environment
 
 `.env` (frontend-local; copy from `.env.example`):

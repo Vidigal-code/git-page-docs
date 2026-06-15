@@ -21,9 +21,10 @@ npx @gitpagedocs/cli
 | `gitpagedocs --push --owner <o> --repo <r> [--path <sub>]` | Generate, configure Pages, create workflow, commit + push |
 | `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`: static site + .env + Dockerfile) |
 | `gitpagedocs -i` / `--interactive` | Interactive prompts |
-| `gitpagedocs ai` | Interactive AI documentation generator (see below) |
+| `gitpagedocs ai` | Interactive AI documentation generator — writes pages in the gitpagedocs pattern (see below) |
 | `gitpagedocs provider [id]` · `models [provider]` | List AI providers / catalog models |
-| `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI in the gitpagedocs pattern |
+| `gitpagedocs password` | Set a documentation access password (writes the public key to `config.json`, prints the private key) |
 | `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
 | `gitpagedocs docs` | Refresh managed regions of README/CONTRIBUTING/SECURITY |
 | `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / update hint |
@@ -134,9 +135,18 @@ npx gitpagedocs ai
 - asks provider (`openai`, `claude`, `gemini`, `ollama`)
 - asks API key or Ollama URL
 - asks paths to scan (supports one or many paths, including other repositories)
-- generates markdown documentation in `pt`, `en`, `es`
+- generates documentation in `pt`, `en`, `es` **in the gitpagedocs pattern**
 - optionally persists config in `.gitpagedocsconfig`
-- optionally runs standard `gitpagedocs` scaffolding after AI generation
+
+### gitpagedocs pattern output
+
+The model is given a gitpagedocs-aware system prompt and returns documentation split into
+pages (delimited by `=== PAGE: <slug> | <Title> ===`). The CLI scaffolds the base
+`gitpagedocs/` structure first, then writes each page to
+`gitpagedocs/docs/versions/<latest>/<lang>/<slug>.md` for every language and **wires it into
+that version's `config.json`** (`routes-md` + `menus-header-md`) so the pages render in the
+viewer menu. Entries are tagged `aiGenerated` and idempotent (re-running replaces them). A
+later plain `gitpagedocs` rebuild drops the wiring — re-run `gitpagedocs ai` to restore.
 
 ### `.gitpagedocsconfig` (manual mode)
 
