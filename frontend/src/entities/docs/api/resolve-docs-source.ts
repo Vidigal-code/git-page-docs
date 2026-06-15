@@ -2,6 +2,7 @@ import type { GitPageDocsConfig } from "@/entities/docs/model/types";
 import { readRemoteJsonFromRepo } from "./io/remote-fetcher";
 import { parseOwnerRepoFromRenderingUrl } from "./utils/url-utils";
 import { DEFAULT_CONFIG_PATH } from "@/shared/config/constants";
+import { withConfigDefaults } from "../lib/with-config-defaults";
 
 export interface ResolvedDocsSource {
   source: "local" | "remote";
@@ -91,7 +92,9 @@ export async function resolveDocsSource(
     source,
     owner,
     repo,
-    config,
+    // Backfill the `site` section so OLD config.json files inherit the current
+    // config.json defaults (header control icons, en/pt/es langmenu, language).
+    config: withConfigDefaults(config),
     hasGitPageDocs,
     showRepositorySearchHome,
     isRepositoryRouteRequest,

@@ -28,6 +28,7 @@ import {
   fetchRepoJson,
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
+import { withConfigDefaults } from "../lib/with-config-defaults";
 
 type VersionConfig = {
   routes?: RouteConfig[];
@@ -280,10 +281,13 @@ export async function loadRemoteDocsData(
   selectedVersionId?: string,
   selectedLanguage: SupportedLanguage = "en",
 ): Promise<LoadedDocsData | null> {
-  const config = await fetchRepoJson<GitPageDocsConfig>(owner, repo, "gitpagedocs/config.json");
-  if (!config) {
+  const rawConfig = await fetchRepoJson<GitPageDocsConfig>(owner, repo, "gitpagedocs/config.json");
+  if (!rawConfig) {
     return null;
   }
+  // Backfill the `site` section so OLD config.json files inherit the current
+  // config.json defaults (header control icons, en/pt/es langmenu, language).
+  const config = withConfigDefaults(rawConfig);
 
   const versions = dedupeVersionEntriesById(config.VersionControl?.versions ?? []);
   const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);
