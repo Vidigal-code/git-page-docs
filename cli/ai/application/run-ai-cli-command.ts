@@ -1,4 +1,3 @@
-import path from "node:path";
 import { AiCommandService } from "./ai-command";
 import { createAiProvider } from "./ai-provider-factory";
 import { FileSystemAdapter, type FilePayload } from "../infrastructure/file-system-adapter";
@@ -7,6 +6,11 @@ import {
 } from "../infrastructure/ai-config-file";
 import type { AiCliRunPlan, AiCliRunSummary } from "../core/models/ai-cli-config";
 import { promptMissingDirectories, runAiInteractivePrompt } from "../presentation/ai-prompts";
+import { GITPAGEDOCS_DOC_SYSTEM_PROMPT } from "../config";
+import { parseAiPages, type AiDocPage } from "./docs-pattern";
+import { writeVersionDocs } from "../infrastructure/version-docs-writer";
+// @ts-expect-error .mjs runtime module is type-less in this package.
+import { DOC_VERSIONS } from "../../contracts/doc-versions.mjs";
 
 const LANGUAGE_TO_LABEL: Record<string, string> = {
   pt: "Portuguese",
@@ -22,7 +26,13 @@ function aggregateFilesPayload(files: FilePayload[]): string {
 
 function buildLanguagePrompt(basePrompt: string, language: "pt" | "en" | "es"): string {
   const languageLabel = LANGUAGE_TO_LABEL[language] ?? language;
-  return `${basePrompt}\n\nMandatory output rules:\n- Respond 100% in ${languageLabel}.\n- Generate professional markdown for technical documentation.\n- Include architectural overview, layer responsibilities, and next steps.\n- Avoid content outside the scope of the analyzed files.`;
+  const authorGuidance = basePrompt?.trim() ? `Additional author guidance:\n${basePrompt.trim()}\n\n` : "";
+  return (
+    `${GITPAGEDOCS_DOC_SYSTEM_PROMPT}\n\n` +
+    authorGuidance +
+    `Output language: write every page Title and body 100% in ${languageLabel}. ` +
+    `Keep each page slug lowercase-kebab and in English so the languages line up.`
+  );
 }
 
 async function collectFilesWithInteractiveFallback(
@@ -66,7 +76,7 @@ async function collectFilesWithInteractiveFallback(
   };
 }
 
-async function runPlan(plan: AiCliRunPlan): Promise<AiCliRunSummary> {
+async function runPlan(plan: AiCliRunPlan, cwd: string): Promise<AiCliRunSummary> {
   const provider = createAiProvider({
     provider: plan.config.ai.provider,
     model: plan.config.ai.model,
@@ -92,30 +102,33 @@ async function runPlan(plan: AiCliRunPlan): Promise<AiCliRunSummary> {
   }
 
   const payload = aggregateFilesPayload(files);
-  const outputs: string[] = [];
+  const pagesByLang: Partial<Record<"pt" | "en" | "es", AiDocPage[]>> = {};
 
   for (const language of plan.config.ai.languages) {
     const prompt = buildLanguagePrompt(plan.config.ai.contextPrompt, language);
     const markdown = await aiService.runGeneration(payload, prompt);
-    const outputFile = path.posix.join(
-      plan.config.ai.outputDir.replace(/\\/g, "/"),
-      `${plan.config.ai.filePrefix}-${plan.config.ai.provider}-${language}.md`,
-    );
-    await fileSystem.writeDocumentationOutput(markdown, outputFile);
-    outputs.push(outputFile);
+    pagesByLang[language] = parseAiPages(markdown);
   }
+
+  // Wire the AI pages into the latest documentation version (gitpagedocs pattern).
+  const versionId = DOC_VERSIONS[DOC_VERSIONS.length - 1] as string;
+  const result = await writeVersionDocs({ cwd, versionId, pagesByLang });
 
   return {
     scannedDirectories: scanned,
     skippedDirectories: skipped,
     scannedFilesCount: files.length,
-    outputs,
+    outputs: result.files,
+    pages: result.slugs,
   };
 }
 
 export async function runAiCliCommand(options: {
   cwd: string;
   onInfo?: (message: string) => void;
+  /** Provided by the composition root to scaffold the base gitpagedocs/ tree
+   * (so the version config.json exists before AI pages are wired into it). */
+  onScaffold?: () => Promise<void>;
 }): Promise<{ summary: AiCliRunSummary; runConfigScaffold: boolean }> {
   const logInfo = options.onInfo ?? (() => undefined);
   const configRepo = new AiConfigFileRepository(options.cwd);
@@ -128,7 +141,14 @@ export async function runAiCliCommand(options: {
     logInfo(`[gitpagedocs:ai] Configuration saved to ${configRepo.getConfigPath()}`);
   }
 
-  const summary = await runPlan(plan);
+  // Build the base gitpagedocs structure BEFORE generation so the version
+  // config.json exists and the AI pages can be wired into it.
+  if (plan.runConfigScaffold && options.onScaffold) {
+    logInfo("[gitpagedocs] Generating base gitpagedocs structure...");
+    await options.onScaffold();
+  }
+
+  const summary = await runPlan(plan, options.cwd);
   return {
     summary,
     runConfigScaffold: plan.runConfigScaffold,

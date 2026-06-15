@@ -28,4 +28,6 @@ export interface AiCliRunSummary {
   skippedDirectories: string[];
   scannedFilesCount: number;
   outputs: string[];
+  /** Slugs of the gitpagedocs pages wired into the version config (if any). */
+  pages?: string[];
 }
