@@ -1,0 +1,330 @@
+{
+  "hero": {
+    "eyebrow": { "en": "Documentation platform", "pt": "Plataforma de documentação", "es": "Plataforma de documentación" },
+    "title": { "en": "GitPageDocs", "pt": "GitPageDocs", "es": "GitPageDocs" },
+    "subtitle": {
+      "en": "An open-source toolkit to scaffold, generate and ship multilingual, versioned documentation to GitHub Pages — with a built-in AI assistant, an MCP server, and a themeable docs shell.",
+      "pt": "Um conjunto de ferramentas open-source para criar, gerar e publicar documentação multilíngue e versionada no GitHub Pages — com assistente de IA integrado, servidor MCP e um shell de docs com temas.",
+      "es": "Un conjunto de herramientas open-source para crear, generar y publicar documentación multilingüe y versionada en GitHub Pages — con asistente de IA integrado, servidor MCP y un shell de docs con temas."
+    },
+    "install": "npx gitpagedocs",
+    "ctaPrimary": { "en": "Get started", "pt": "Começar", "es": "Empezar" },
+    "ctaSecondary": { "en": "View on GitHub", "pt": "Ver no GitHub", "es": "Ver en GitHub" }
+  },
+  "ui": {
+    "searchPlaceholder": { "en": "Search the guide…", "pt": "Buscar no guia…", "es": "Buscar en la guía…" },
+    "searchEmpty": { "en": "No sections match your search.", "pt": "Nenhuma seção corresponde à busca.", "es": "Ninguna sección coincide con la búsqueda." },
+    "onThisPage": { "en": "On this page", "pt": "Nesta página", "es": "En esta página" },
+    "sectionsLabel": { "en": "Sections", "pt": "Seções", "es": "Secciones" }
+  },
+  "sections": [
+    {
+      "id": "overview",
+      "icon": "FiBookOpen",
+      "title": { "en": "Overview", "pt": "Visão geral", "es": "Visión general" },
+      "lead": {
+        "en": "What GitPageDocs is and the problem it solves.",
+        "pt": "O que é o GitPageDocs e o problema que ele resolve.",
+        "es": "Qué es GitPageDocs y el problema que resuelve."
+      },
+      "keywords": ["overview", "about", "intro", "introduction", "what"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "GitPageDocs turns a single config file into a complete, static documentation site: multilingual (en/pt/es), version-aware (/v/:version), themeable and deployable to GitHub Pages with no server. It ships as three npm packages that share one core.",
+            "pt": "O GitPageDocs transforma um único arquivo de configuração em um site de documentação estático e completo: multilíngue (en/pt/es), versionado (/v/:version), com temas e publicável no GitHub Pages sem servidor. É distribuído como três pacotes npm que compartilham um núcleo.",
+            "es": "GitPageDocs convierte un único archivo de configuración en un sitio de documentación estático y completo: multilingüe (en/pt/es), versionado (/v/:version), con temas y publicable en GitHub Pages sin servidor. Se distribuye como tres paquetes npm que comparten un núcleo."
+          }
+        },
+        {
+          "type": "table",
+          "headers": {
+            "en": ["Package", "Role"], "pt": ["Pacote", "Função"], "es": ["Paquete", "Función"]
+          },
+          "rows": [
+            ["@gitpagedocs/cli", { "en": "Scaffolds config, generates docs, AI generation, configures GitHub Pages.", "pt": "Cria a configuração, gera docs, geração por IA e configura o GitHub Pages.", "es": "Crea la configuración, genera docs, generación por IA y configura GitHub Pages." }],
+            ["@gitpagedocs/mcp", { "en": "Model Context Protocol server exposing tools & resources to AI agents.", "pt": "Servidor Model Context Protocol que expõe ferramentas e recursos a agentes de IA.", "es": "Servidor Model Context Protocol que expone herramientas y recursos a agentes de IA." }],
+            ["@gitpagedocs/tools", { "en": "Shared core: crypto, encrypted vault, cache, logging, doc utilities.", "pt": "Núcleo compartilhado: cripto, cofre criptografado, cache, logs e utilidades de docs.", "es": "Núcleo compartido: cripto, bóveda cifrada, caché, logs y utilidades de docs." }]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quickstart",
+      "icon": "FiZap",
+      "title": { "en": "Quickstart", "pt": "Início rápido", "es": "Inicio rápido" },
+      "lead": {
+        "en": "Generate your first docs in seconds.",
+        "pt": "Gere sua primeira documentação em segundos.",
+        "es": "Genera tu primera documentación en segundos."
+      },
+      "keywords": ["quickstart", "install", "npx", "start", "begin", "setup"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Run the CLI in your repository. It writes a gitpagedocs/ folder with config.json and multilingual markdown you can edit right away.",
+            "pt": "Execute a CLI no seu repositório. Ela cria a pasta gitpagedocs/ com config.json e markdown multilíngue pronto para editar.",
+            "es": "Ejecuta la CLI en tu repositorio. Crea la carpeta gitpagedocs/ con config.json y markdown multilingüe listo para editar."
+          }
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "# one-off, no install\nnpx gitpagedocs\n\n# include local theme layouts\nnpx gitpagedocs --layoutconfig\n\n# configure GitHub Pages + commit + push\nnpx gitpagedocs deploy --owner <you> --repo <repo>"
+        },
+        {
+          "type": "callout",
+          "tone": "info",
+          "text": {
+            "en": "On GitHub Pages, repository search is enabled, which unlocks this guide at /introduction-guide and the multi-repository home.",
+            "pt": "No GitHub Pages, a busca de repositórios fica ativa, o que libera este guia em /introduction-guide e a home multi-repositório.",
+            "es": "En GitHub Pages, la búsqueda de repositorios está activa, lo que habilita esta guía en /introduction-guide y la home multi-repositorio."
+          }
+        }
+      ]
+    },
+    {
+      "id": "cli",
+      "icon": "FiTerminal",
+      "title": { "en": "CLI", "pt": "CLI", "es": "CLI" },
+      "lead": {
+        "en": "Commands and options of the gitpagedocs command.",
+        "pt": "Comandos e opções do comando gitpagedocs.",
+        "es": "Comandos y opciones del comando gitpagedocs."
+      },
+      "keywords": ["cli", "command", "commands", "options", "flags", "terminal", "build", "push", "home", "document", "deploy"],
+      "blocks": [
+        {
+          "type": "table",
+          "headers": { "en": ["Command", "Description"], "pt": ["Comando", "Descrição"], "es": ["Comando", "Descripción"] },
+          "rows": [
+            ["gitpagedocs", { "en": "Generate config and docs in gitpagedocs/.", "pt": "Gera config e docs em gitpagedocs/.", "es": "Genera config y docs en gitpagedocs/." }],
+            ["gitpagedocs --layoutconfig", { "en": "Also generate local layouts/templates.", "pt": "Também gera layouts/templates locais.", "es": "También genera layouts/plantillas locales." }],
+            ["gitpagedocs --home", { "en": "Standalone distribution (gitpagedocshome/).", "pt": "Distribuição standalone (gitpagedocshome/).", "es": "Distribución standalone (gitpagedocshome/)." }],
+            ["gitpagedocs ai", { "en": "Interactive AI documentation generator.", "pt": "Gerador de documentação por IA interativo.", "es": "Generador de documentación por IA interactivo." }],
+            ["gitpagedocs document[:repo|:file|:folder]", { "en": "Generate documentation with AI for a scope.", "pt": "Gera documentação com IA para um escopo.", "es": "Genera documentación con IA para un alcance." }],
+            ["gitpagedocs deploy / pages", { "en": "Configure GitHub Pages via Actions and push.", "pt": "Configura o GitHub Pages via Actions e faz push.", "es": "Configura GitHub Pages vía Actions y hace push." }],
+            ["gitpagedocs mcp start", { "en": "Start the MCP server over stdio.", "pt": "Inicia o servidor MCP via stdio.", "es": "Inicia el servidor MCP por stdio." }]
+          ]
+        },
+        {
+          "type": "table",
+          "headers": { "en": ["Option", "Description"], "pt": ["Opção", "Descrição"], "es": ["Opción", "Descripción"] },
+          "rows": [
+            ["--owner / --repo", { "en": "Target GitHub owner and repository.", "pt": "Owner e repositório de destino no GitHub.", "es": "Owner y repositorio de destino en GitHub." }],
+            ["--path <subpath>", { "en": "Docs subpath; sets the base path for correct CSS/JS on project sites.", "pt": "Subcaminho das docs; define o base path para CSS/JS corretos em project sites.", "es": "Subruta de docs; define el base path para CSS/JS correctos en project sites." }],
+            ["--output <dir>", { "en": "Output directory (default: gitpagedocs).", "pt": "Diretório de saída (padrão: gitpagedocs).", "es": "Directorio de salida (por defecto: gitpagedocs)." }],
+            ["--search true|false", { "en": "Enable/disable repository search (with --home).", "pt": "Ativa/desativa a busca de repositórios (com --home).", "es": "Activa/desactiva la búsqueda de repositorios (con --home)." }],
+            ["--push", { "en": "Create workflow, commit artifacts, push.", "pt": "Cria workflow, commita artefatos e faz push.", "es": "Crea workflow, commitea artefactos y hace push." }],
+            ["--interactive / -i", { "en": "Interactive mode with prompts.", "pt": "Modo interativo com prompts.", "es": "Modo interactivo con prompts." }]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "config",
+      "icon": "FiSettings",
+      "title": { "en": "Configuration", "pt": "Configuração", "es": "Configuración" },
+      "lead": {
+        "en": "Everything in config.json: site, translations and versions.",
+        "pt": "Tudo no config.json: site, traduções e versões.",
+        "es": "Todo en config.json: site, traducciones y versiones."
+      },
+      "keywords": ["config", "configuration", "config.json", "site", "translations", "version", "versioncontrol", "settings"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "config.json has three top-level sections. site holds the chrome (name, languages, theme defaults, header icons, langmenu, AiChatEnabled, docsAccess). translations holds navigation/footer/not-found labels per language. VersionControl lists the documentation versions.",
+            "pt": "O config.json tem três seções no topo. site contém a aparência (name, idiomas, temas padrão, ícones do cabeçalho, langmenu, AiChatEnabled, docsAccess). translations contém os rótulos de navegação/rodapé/404 por idioma. VersionControl lista as versões da documentação.",
+            "es": "config.json tiene tres secciones de nivel superior. site contiene la apariencia (name, idiomas, temas por defecto, iconos de cabecera, langmenu, AiChatEnabled, docsAccess). translations contiene las etiquetas de navegación/pie/404 por idioma. VersionControl lista las versiones de la documentación."
+          }
+        },
+        {
+          "type": "table",
+          "headers": { "en": ["Content type", "Config key"], "pt": ["Tipo de conteúdo", "Chave de config"], "es": ["Tipo de contenido", "Clave de config"] },
+          "rows": [
+            [{ "en": "Markdown", "pt": "Markdown", "es": "Markdown" }, "routes-md"],
+            [{ "en": "HTML / source-viewer or external url", "pt": "HTML / source-viewer ou url externa", "es": "HTML / source-viewer o url externa" }, "routes-html"],
+            [{ "en": "Video", "pt": "Vídeo", "es": "Vídeo" }, "routes-video"],
+            [{ "en": "Audio", "pt": "Áudio", "es": "Audio" }, "routes-audio"]
+          ]
+        },
+        {
+          "type": "callout",
+          "tone": "info",
+          "text": {
+            "en": "Old config.json files keep working: any missing site or translations field is backfilled from the current baseline, so icons and en/pt/es text never render empty.",
+            "pt": "config.json antigos continuam funcionando: qualquer campo ausente em site ou translations é preenchido a partir do baseline atual, então ícones e textos en/pt/es nunca ficam vazios.",
+            "es": "Los config.json antiguos siguen funcionando: cualquier campo ausente en site o translations se completa desde el baseline actual, así los iconos y el texto en/pt/es nunca quedan vacíos."
+          }
+        }
+      ]
+    },
+    {
+      "id": "layouts",
+      "icon": "FiLayout",
+      "title": { "en": "Layouts & themes", "pt": "Layouts e temas", "es": "Layouts y temas" },
+      "lead": {
+        "en": "60+ light and dark themes, switchable at runtime.",
+        "pt": "Mais de 60 temas claros e escuros, alternáveis em tempo real.",
+        "es": "Más de 60 temas claros y oscuros, conmutables en tiempo real."
+      },
+      "keywords": ["layout", "layouts", "theme", "themes", "dark", "light", "vscode", "colors", "design"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Each theme is a JSON template (colors, typography, component tokens) turned into CSS variables at runtime. Pick a default with site.ThemeDefault and site.ThemeModeDefault; visitors can switch theme and light/dark mode from the header.",
+            "pt": "Cada tema é um template JSON (cores, tipografia, tokens de componentes) convertido em variáveis CSS em tempo real. Defina o padrão com site.ThemeDefault e site.ThemeModeDefault; o visitante troca tema e modo claro/escuro pelo cabeçalho.",
+            "es": "Cada tema es una plantilla JSON (colores, tipografía, tokens de componentes) convertida en variables CSS en tiempo real. Define el predeterminado con site.ThemeDefault y site.ThemeModeDefault; el visitante cambia tema y modo claro/oscuro desde la cabecera."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The catalog includes editor-inspired themes (VSCode Light/Dark) plus 25 modern palettes such as Midnight, Neon Noir, Ember, Cobalt, Lagoon, Orchid, Velvet and more.",
+            "pt": "O catálogo inclui temas inspirados em editores (VSCode Light/Dark) e 25 paletas modernas como Midnight, Neon Noir, Ember, Cobalt, Lagoon, Orchid, Velvet e outras.",
+            "es": "El catálogo incluye temas inspirados en editores (VSCode Light/Dark) y 25 paletas modernas como Midnight, Neon Noir, Ember, Cobalt, Lagoon, Orchid, Velvet y más."
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "icon": "FiCpu",
+      "title": { "en": "AI assistant", "pt": "Assistente de IA", "es": "Asistente de IA" },
+      "lead": {
+        "en": "14 providers, streaming, keys encrypted at rest.",
+        "pt": "14 provedores, streaming e chaves criptografadas em repouso.",
+        "es": "14 proveedores, streaming y claves cifradas en reposo."
+      },
+      "keywords": ["ai", "chat", "assistant", "providers", "openai", "anthropic", "gemini", "ollama", "encryption", "key", "password"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The docs ship an AI assistant in two surfaces: an in-docs chat drawer (enabled by site.AiChatEnabled) and a dedicated /ai console. Both share one core across 14 providers: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks and Perplexity.",
+            "pt": "As docs trazem um assistente de IA em duas superfícies: um drawer de chat embutido (ativado por site.AiChatEnabled) e um console /ai dedicado. Ambos compartilham um núcleo com 14 provedores: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks e Perplexity.",
+            "es": "Las docs incluyen un asistente de IA en dos superficies: un drawer de chat integrado (activado por site.AiChatEnabled) y una consola /ai dedicada. Ambos comparten un núcleo con 14 proveedores: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks y Perplexity."
+          }
+        },
+        {
+          "type": "callout",
+          "tone": "warn",
+          "text": {
+            "en": "Your API key is sealed with AES-256-GCM behind a local password (one unlock per session) and is never stored in plaintext or logged.",
+            "pt": "Sua chave de API é selada com AES-256-GCM atrás de uma senha local (um desbloqueio por sessão) e nunca é armazenada em texto puro nem registrada em log.",
+            "es": "Tu clave de API se sella con AES-256-GCM tras una contraseña local (un desbloqueo por sesión) y nunca se almacena en texto plano ni se registra."
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcp",
+      "icon": "FiServer",
+      "title": { "en": "MCP server", "pt": "Servidor MCP", "es": "Servidor MCP" },
+      "lead": {
+        "en": "Expose tools and resources to editors and AI agents.",
+        "pt": "Exponha ferramentas e recursos a editores e agentes de IA.",
+        "es": "Expón herramientas y recursos a editores y agentes de IA."
+      },
+      "keywords": ["mcp", "model context protocol", "server", "tools", "resources", "agent", "stdio"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "gitpagedocs mcp start runs a Model Context Protocol server over stdio exposing 20 tools (filesystem, AI, doc generation/analysis) and 7 resources for editors and AI agents.",
+            "pt": "gitpagedocs mcp start executa um servidor Model Context Protocol via stdio expondo 20 ferramentas (filesystem, IA, geração/análise de docs) e 7 recursos para editores e agentes de IA.",
+            "es": "gitpagedocs mcp start ejecuta un servidor Model Context Protocol por stdio exponiendo 20 herramientas (filesystem, IA, generación/análisis de docs) y 7 recursos para editores y agentes de IA."
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            "project://structure",
+            "project://docs",
+            "project://config",
+            "project://repository",
+            "project://readme",
+            "project://ai/providers",
+            "project://ai/models"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "icon": "FiTool",
+      "title": { "en": "Tools core", "pt": "Núcleo de ferramentas", "es": "Núcleo de herramientas" },
+      "lead": {
+        "en": "The shared, runtime-agnostic foundation.",
+        "pt": "A base compartilhada e agnóstica de runtime.",
+        "es": "La base compartida y agnóstica de runtime."
+      },
+      "keywords": ["tools", "core", "crypto", "vault", "cache", "logger", "doc-access", "shared"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "@gitpagedocs/tools is the core both the CLI and the MCP server build on. It provides the crypto service (AES-256-GCM), the encrypted credential vault, a memory cache with TTL, a redaction-aware logger, and the shared doc-access key scheme.",
+            "pt": "@gitpagedocs/tools é o núcleo sobre o qual a CLI e o servidor MCP são construídos. Fornece o serviço de cripto (AES-256-GCM), o cofre de credenciais criptografado, um cache em memória com TTL, um logger com redação e o esquema compartilhado de chave de acesso aos docs.",
+            "es": "@gitpagedocs/tools es el núcleo sobre el que se construyen la CLI y el servidor MCP. Proporciona el servicio de cripto (AES-256-GCM), la bóveda de credenciales cifrada, una caché en memoria con TTL, un logger con redacción y el esquema compartido de clave de acceso a los docs."
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth",
+      "icon": "FiLock",
+      "title": { "en": "Protected docs", "pt": "Docs protegidas", "es": "Docs protegidas" },
+      "lead": {
+        "en": "Gate documentation by access key, roles or external auth.",
+        "pt": "Proteja a documentação por chave de acesso, papéis ou auth externa.",
+        "es": "Protege la documentación por clave de acceso, roles o auth externa."
+      },
+      "keywords": ["auth", "authorization", "password", "access", "roles", "protected", "gate", "private"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Set a top-level auth block in a version config (accessKeys, rolesStorageKey, providers) and per-route authorization (accessKeyId, requiredRoles, requireExternalAuth, allowedProviders). A whole documentation can also sit behind a password gate via site.docsAccess.",
+            "pt": "Defina um bloco auth no topo da config de uma versão (accessKeys, rolesStorageKey, providers) e a authorization por rota (accessKeyId, requiredRoles, requireExternalAuth, allowedProviders). Uma documentação inteira também pode ficar atrás de uma senha via site.docsAccess.",
+            "es": "Define un bloque auth de nivel superior en la config de una versión (accessKeys, rolesStorageKey, providers) y la authorization por ruta (accessKeyId, requiredRoles, requireExternalAuth, allowedProviders). Una documentación entera también puede quedar tras una contraseña vía site.docsAccess."
+          }
+        }
+      ]
+    },
+    {
+      "id": "deploy",
+      "icon": "FiUploadCloud",
+      "title": { "en": "Deploy & environment", "pt": "Deploy e ambiente", "es": "Despliegue y entorno" },
+      "lead": {
+        "en": "Ship to GitHub Pages and the environment flags.",
+        "pt": "Publique no GitHub Pages e as variáveis de ambiente.",
+        "es": "Publica en GitHub Pages y las variables de entorno."
+      },
+      "keywords": ["deploy", "pages", "github", "actions", "environment", "env", "build", "static"],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "gitpagedocs deploy generates a GitHub Actions workflow that statically exports the site and publishes it to GitHub Pages on every push to the default branch.",
+            "pt": "gitpagedocs deploy gera um workflow do GitHub Actions que exporta o site estaticamente e publica no GitHub Pages a cada push na branch padrão.",
+            "es": "gitpagedocs deploy genera un workflow de GitHub Actions que exporta el sitio estáticamente y lo publica en GitHub Pages en cada push a la rama por defecto."
+          }
+        },
+        {
+          "type": "table",
+          "headers": { "en": ["Variable", "Effect"], "pt": ["Variável", "Efeito"], "es": ["Variable", "Efecto"] },
+          "rows": [
+            ["GITPAGEDOCS_REPOSITORY_SEARCH", { "en": "Enables repository search, the multi-repo home and this guide.", "pt": "Ativa a busca de repositórios, a home multi-repo e este guia.", "es": "Activa la búsqueda de repositorios, la home multi-repo y esta guía." }],
+            ["GITHUB_ACTIONS", { "en": "Switches the build into GitHub Pages static-export mode.", "pt": "Coloca o build em modo de exportação estática do GitHub Pages.", "es": "Pone el build en modo de exportación estática de GitHub Pages." }]
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -14,6 +14,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
         env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: \${{ github.repository }}
+          GITPAGEDOCS_REPOSITORY_SEARCH: "true"
           GITPAGEDOCS_PATH: "${pathSegment}"
 
       - name: Relocate output to custom docs path
@@ -27,7 +28,8 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
         working-directory: .gitpagedocs-runtime
         env:
           GITHUB_ACTIONS: "true"
-          GITHUB_REPOSITORY: \${{ github.repository }}`;
+          GITHUB_REPOSITORY: \${{ github.repository }}
+          GITPAGEDOCS_REPOSITORY_SEARCH: "true"`;
   const currentBranch = getCurrentGitBranch();
   const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
   const workflowContent = `name: Deploy GitPageDocs
