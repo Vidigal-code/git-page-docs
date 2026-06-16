@@ -5,6 +5,10 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  /* Grid/flex child must be allowed to shrink below its content's intrinsic
+     width (the search input), otherwise the stacked 1fr column refuses to
+     narrow and forces horizontal overflow on small screens. */
+  min-width: 0;
 }
 
 /* ---- Search ---- */
