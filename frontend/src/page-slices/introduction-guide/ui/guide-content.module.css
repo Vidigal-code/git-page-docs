@@ -141,3 +141,31 @@
 .table tr:last-child td {
   border-bottom: none;
 }
+
+/* ---- Responsive: stack + center section headers on mobile ---- */
+@media (max-width: 640px) {
+  .section {
+    padding: 28px 0;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 9px 10px;
+  }
+
+  .table {
+    font-size: 0.85rem;
+  }
+}

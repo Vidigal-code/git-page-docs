@@ -121,5 +121,14 @@
 @media (max-width: 860px) {
   .sidebar {
     position: static;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .groupLabel {
+    text-align: center;
   }
 }

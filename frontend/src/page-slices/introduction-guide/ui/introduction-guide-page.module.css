@@ -50,7 +50,7 @@
 
 .heroTitle {
   margin: 0;
-  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-size: clamp(2.1rem, 6vw, 4.2rem);
   line-height: 1.02;
   letter-spacing: -0.03em;
   font-weight: 800;
@@ -151,5 +151,43 @@
   .body {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+}
+
+/* ---- Responsive: center + stack the hero on mobile ---- */
+@media (max-width: 640px) {
+  .page {
+    padding: 0 16px 64px;
+  }
+
+  .hero {
+    padding: 28px 0 36px;
+    text-align: center;
+  }
+
+  .heroSubtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .heroInstall {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .heroActions {
+    justify-content: center;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0 12px 48px;
   }
 }
