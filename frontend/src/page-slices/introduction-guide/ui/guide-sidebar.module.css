@@ -1,0 +1,125 @@
+.sidebar {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---- Search ---- */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: var(--card-background);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search:focus-within {
+  border-color: color-mix(in srgb, var(--primary) 60%, var(--card-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.searchIcon {
+  display: inline-flex;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ---- Nav ---- */
+.groupLabel {
+  margin: 6px 0 2px;
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.empty {
+  margin: 4px 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.navItem:hover {
+  background: color-mix(in srgb, var(--text-secondary) 10%, transparent);
+  color: var(--text);
+}
+
+.navItemActive {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+  color: var(--text);
+}
+
+.navIcon {
+  display: inline-flex;
+  margin-top: 2px;
+  color: var(--secondary);
+  font-size: 1rem;
+}
+
+.navText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.navTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.navLead {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .sidebar {
+    position: static;
+  }
+}

@@ -1,6 +1,7 @@
 import { loadRootConfig } from "@/entities/docs/server";
 import { parseOwnerRepoFromUrl } from "@/shared/lib/runtime/parse-owner-repo";
 import { getRepoFromPackage } from "@/shared/config/repo-from-package";
+import { isRepositorySearchEnabled } from "@/shared/lib/repository-search";
 
 const DEFAULT_VERSIONS = ["1.0.0", "1.1.0", "1.1.1"];
 const FALLBACK_OWNER = "Vidigal-code";
@@ -38,7 +39,7 @@ export async function generateDocsStaticParams(): Promise<{ repo: string[] }[]> 
     }
   };
 
-  if (process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true") {
+  if (isRepositorySearchEnabled()) {
     return params;
   }
 

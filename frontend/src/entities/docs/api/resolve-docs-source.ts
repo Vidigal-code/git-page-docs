@@ -3,6 +3,7 @@ import { readRemoteJsonFromRepo } from "./io/remote-fetcher";
 import { parseOwnerRepoFromRenderingUrl } from "./utils/url-utils";
 import { DEFAULT_CONFIG_PATH } from "@/shared/config/constants";
 import { withConfigDefaults } from "../lib/with-config-defaults";
+import { isRepositorySearchEnabled, isGithubPagesBuild as isGithubPagesBuildFn } from "@/shared/lib/repository-search";
 
 export interface ResolvedDocsSource {
   source: "local" | "remote";
@@ -19,9 +20,8 @@ export async function resolveDocsSource(
   localConfig: GitPageDocsConfig,
   selectedVersionId?: string,
 ): Promise<ResolvedDocsSource> {
-  const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
-  const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
-  const repositorySearchEnabled = isGithubPagesBuild || repositorySearchEnabledByEnv;
+  const isGithubPagesBuild = isGithubPagesBuildFn();
+  const repositorySearchEnabled = isRepositorySearchEnabled();
   const renderingRef = parseOwnerRepoFromRenderingUrl(localConfig.site.rendering);
   const projectRef = parseOwnerRepoFromRenderingUrl(localConfig.site.ProjectLink || "");
   const buildRepositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1]?.toLowerCase();

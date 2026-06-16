@@ -368,6 +368,231 @@
       "supportsLightAndDarkModes": true,
       "supportsLightAndDarkModesReference": "vscode-1",
       "mode": "light"
+    },
+    {
+      "id": "midnight-dark",
+      "name": "Midnight",
+      "author": "Kauan Vidigal",
+      "file": "templates/midnight-dark.json",
+      "preview": "Deep navy canvas with electric-blue accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "sakura-light",
+      "name": "Sakura",
+      "author": "Kauan Vidigal",
+      "file": "templates/sakura-light.json",
+      "preview": "Soft cherry-blossom pinks on a bright canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "carbon-dark",
+      "name": "Carbon",
+      "author": "Kauan Vidigal",
+      "file": "templates/carbon-dark.json",
+      "preview": "Near-black graphite with crisp white accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "neon-noir-dark",
+      "name": "Neon Noir",
+      "author": "Kauan Vidigal",
+      "file": "templates/neon-noir-dark.json",
+      "preview": "Black canvas with magenta and cyan neon",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "arctic-light",
+      "name": "Arctic",
+      "author": "Kauan Vidigal",
+      "file": "templates/arctic-light.json",
+      "preview": "Icy whites with cool glacier-blue accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "ember-dark",
+      "name": "Ember",
+      "author": "Kauan Vidigal",
+      "file": "templates/ember-dark.json",
+      "preview": "Charcoal canvas glowing with warm ember orange",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "sage-light",
+      "name": "Sage",
+      "author": "Kauan Vidigal",
+      "file": "templates/sage-light.json",
+      "preview": "Calm sage greens on a warm cream canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "cobalt-dark",
+      "name": "Cobalt",
+      "author": "Kauan Vidigal",
+      "file": "templates/cobalt-dark.json",
+      "preview": "Deep blue canvas with vivid cobalt highlights",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "plum-dark",
+      "name": "Plum",
+      "author": "Kauan Vidigal",
+      "file": "templates/plum-dark.json",
+      "preview": "Dark plum canvas with violet and rose accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "mint-light",
+      "name": "Mint",
+      "author": "Kauan Vidigal",
+      "file": "templates/mint-light.json",
+      "preview": "Fresh mint greens on a clean light canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "coral-light",
+      "name": "Coral",
+      "author": "Kauan Vidigal",
+      "file": "templates/coral-light.json",
+      "preview": "Warm coral and peach on a soft light canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "obsidian-dark",
+      "name": "Obsidian",
+      "author": "Kauan Vidigal",
+      "file": "templates/obsidian-dark.json",
+      "preview": "Volcanic black glass with teal highlights",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "lagoon-dark",
+      "name": "Lagoon",
+      "author": "Kauan Vidigal",
+      "file": "templates/lagoon-dark.json",
+      "preview": "Deep teal waters with bright cyan accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "marigold-light",
+      "name": "Marigold",
+      "author": "Kauan Vidigal",
+      "file": "templates/marigold-light.json",
+      "preview": "Warm marigold amber on a bright canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "orchid-dark",
+      "name": "Orchid",
+      "author": "Kauan Vidigal",
+      "file": "templates/orchid-dark.json",
+      "preview": "Dark canvas with orchid purple and pink",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "steel-dark",
+      "name": "Steel",
+      "author": "Kauan Vidigal",
+      "file": "templates/steel-dark.json",
+      "preview": "Cool steel grays with icy blue highlights",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "moss-dark",
+      "name": "Moss",
+      "author": "Kauan Vidigal",
+      "file": "templates/moss-dark.json",
+      "preview": "Dark forest canvas with mossy green accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "tangerine-light",
+      "name": "Tangerine",
+      "author": "Kauan Vidigal",
+      "file": "templates/tangerine-light.json",
+      "preview": "Bright tangerine orange on a light canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "indigo-dark",
+      "name": "Indigo",
+      "author": "Kauan Vidigal",
+      "file": "templates/indigo-dark.json",
+      "preview": "Deep indigo canvas with violet highlights",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "blush-light",
+      "name": "Blush",
+      "author": "Kauan Vidigal",
+      "file": "templates/blush-light.json",
+      "preview": "Soft blush pinks on an airy light canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "verdant-dark",
+      "name": "Verdant",
+      "author": "Kauan Vidigal",
+      "file": "templates/verdant-dark.json",
+      "preview": "Rich emerald greens on a dark canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "crimson-dark",
+      "name": "Crimson",
+      "author": "Kauan Vidigal",
+      "file": "templates/crimson-dark.json",
+      "preview": "Dark canvas with bold crimson accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "azure-light",
+      "name": "Azure",
+      "author": "Kauan Vidigal",
+      "file": "templates/azure-light.json",
+      "preview": "Open sky-blue accents on a bright canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "sand-light",
+      "name": "Sand",
+      "author": "Kauan Vidigal",
+      "file": "templates/sand-light.json",
+      "preview": "Warm desert sand and beige on light canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "velvet-dark",
+      "name": "Velvet",
+      "author": "Kauan Vidigal",
+      "file": "templates/velvet-dark.json",
+      "preview": "Royal purple velvet with warm gold accents",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
     }
   ]
 }

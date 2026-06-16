@@ -1,0 +1,128 @@
+.page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+/* ---- Hero ---- */
+.hero {
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--card-border);
+  text-align: left;
+}
+
+.heroEyebrow {
+  margin: 0 0 16px;
+  font-family: var(--font-mono, ui-monospace, "SF Mono", "Fira Code", Menlo, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.heroSubtitle {
+  margin: 20px 0 0;
+  max-width: 640px;
+  font-size: 1.12rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.heroInstall {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 32px;
+  padding: 12px 18px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: var(--card-background);
+  font-family: var(--font-mono, ui-monospace, "SF Mono", "Fira Code", Menlo, monospace);
+}
+
+.heroPrompt {
+  color: var(--secondary);
+  user-select: none;
+}
+
+.heroCommand {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.primaryButton {
+  border: 1px solid transparent;
+  background: var(--primary);
+  color: var(--background);
+}
+
+.primaryButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.secondaryButton {
+  border: 1px solid var(--card-border);
+  background: var(--card-background);
+  color: var(--text);
+}
+
+.secondaryButton:hover {
+  border-color: color-mix(in srgb, var(--secondary) 60%, var(--card-border));
+}
+
+.buttonIcon {
+  display: inline-flex;
+  font-size: 1.05rem;
+}
+
+/* ---- Body: sidebar + content ---- */
+.body {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: 48px;
+  margin-top: 48px;
+  align-items: start;
+}
+
+.content {
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

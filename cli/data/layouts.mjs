@@ -1,3 +1,46 @@
+/**
+ * 25 modern standalone layouts. Each is a single fixed-aesthetic theme; colors
+ * live in cli/data/theme-colors.mjs under the matching id. Defined as data so the
+ * theme-template builder and layoutsConfig emit them with zero per-theme code.
+ */
+const MODERN_LAYOUT_DEFS = [
+  ["midnight-dark", "Midnight", "dark", "Deep navy canvas with electric-blue accents"],
+  ["sakura-light", "Sakura", "light", "Soft cherry-blossom pinks on a bright canvas"],
+  ["carbon-dark", "Carbon", "dark", "Near-black graphite with crisp white accents"],
+  ["neon-noir-dark", "Neon Noir", "dark", "Black canvas with magenta and cyan neon"],
+  ["arctic-light", "Arctic", "light", "Icy whites with cool glacier-blue accents"],
+  ["ember-dark", "Ember", "dark", "Charcoal canvas glowing with warm ember orange"],
+  ["sage-light", "Sage", "light", "Calm sage greens on a warm cream canvas"],
+  ["cobalt-dark", "Cobalt", "dark", "Deep blue canvas with vivid cobalt highlights"],
+  ["plum-dark", "Plum", "dark", "Dark plum canvas with violet and rose accents"],
+  ["mint-light", "Mint", "light", "Fresh mint greens on a clean light canvas"],
+  ["coral-light", "Coral", "light", "Warm coral and peach on a soft light canvas"],
+  ["obsidian-dark", "Obsidian", "dark", "Volcanic black glass with teal highlights"],
+  ["lagoon-dark", "Lagoon", "dark", "Deep teal waters with bright cyan accents"],
+  ["marigold-light", "Marigold", "light", "Warm marigold amber on a bright canvas"],
+  ["orchid-dark", "Orchid", "dark", "Dark canvas with orchid purple and pink"],
+  ["steel-dark", "Steel", "dark", "Cool steel grays with icy blue highlights"],
+  ["moss-dark", "Moss", "dark", "Dark forest canvas with mossy green accents"],
+  ["tangerine-light", "Tangerine", "light", "Bright tangerine orange on a light canvas"],
+  ["indigo-dark", "Indigo", "dark", "Deep indigo canvas with violet highlights"],
+  ["blush-light", "Blush", "light", "Soft blush pinks on an airy light canvas"],
+  ["verdant-dark", "Verdant", "dark", "Rich emerald greens on a dark canvas"],
+  ["crimson-dark", "Crimson", "dark", "Dark canvas with bold crimson accents"],
+  ["azure-light", "Azure", "light", "Open sky-blue accents on a bright canvas"],
+  ["sand-light", "Sand", "light", "Warm desert sand and beige on light canvas"],
+  ["velvet-dark", "Velvet", "dark", "Royal purple velvet with warm gold accents"],
+];
+
+export const MODERN_LAYOUTS = MODERN_LAYOUT_DEFS.map(([id, name, mode, preview]) => ({
+  id,
+  name,
+  author: "Kauan Vidigal",
+  file: `templates/${id}.json`,
+  preview,
+  supportsLightAndDarkModes: false,
+  mode,
+}));
+
 export const LAYOUTS = [
   {
     id: "matrix-dark",
@@ -368,6 +411,7 @@ export const LAYOUTS = [
     supportsLightAndDarkModesReference: "vscode-1",
     mode: "light",
   },
+  ...MODERN_LAYOUTS,
 ];
 
 export const FALLBACK_LAYOUTS = LAYOUTS.filter((layout) => layout.id === "aurora-dark" || layout.id === "aurora-light");
