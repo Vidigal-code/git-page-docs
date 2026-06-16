@@ -55,6 +55,7 @@
   letter-spacing: -0.03em;
   font-weight: 800;
   color: var(--text);
+  overflow-wrap: break-word;
 }
 
 .heroSubtitle {
@@ -85,6 +86,7 @@
 .heroCommand {
   color: var(--text);
   font-size: 0.95rem;
+  overflow-wrap: anywhere;
 }
 
 .heroActions {
@@ -189,5 +191,35 @@
 @media (max-width: 480px) {
   .page {
     padding: 0 12px 48px;
+  }
+}
+
+/* Very narrow viewports (e.g. Galaxy Z Fold cover screen, ~280px) */
+@media (max-width: 360px) {
+  .page {
+    padding: 0 10px 40px;
+  }
+
+  .heroTitle {
+    font-size: 1.85rem;
+  }
+
+  .heroEyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .heroInstall {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .heroCommand {
+    font-size: 0.82rem;
   }
 }

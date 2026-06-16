@@ -177,3 +177,22 @@
     font-size: 0.85rem;
   }
 }
+
+/* Very narrow viewports (e.g. Galaxy Z Fold cover screen, ~280px) */
+@media (max-width: 360px) {
+  .sectionIcon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.05rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.15rem;
+  }
+
+  .code,
+  .callout {
+    padding: 12px;
+    font-size: 0.8rem;
+  }
+}
