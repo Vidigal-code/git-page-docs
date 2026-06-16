@@ -6,14 +6,24 @@ import styles from "./introduction-guide-page.module.css";
 export function GuideHero({
   hero,
   projectUrl,
+  backToSearchHref,
+  backToSearchLabel,
   onPrimary,
 }: {
   hero: GuideHeroModel;
   projectUrl: string;
+  backToSearchHref: string;
+  backToSearchLabel: string;
   onPrimary: () => void;
 }) {
   return (
     <header className={styles.hero}>
+      <a className={styles.backLink} href={backToSearchHref}>
+        <span className={styles.backIcon} aria-hidden>
+          <ReactIconByTag tag="FiArrowLeft" />
+        </span>
+        {backToSearchLabel}
+      </a>
       <p className={styles.heroEyebrow}>{hero.eyebrow}</p>
       <h1 className={styles.heroTitle}>{hero.title}</h1>
       <p className={styles.heroSubtitle}>{hero.subtitle}</p>

@@ -29,7 +29,7 @@ import { DocsShellOverlays } from "./ui/docs-shell-overlays";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellProvider } from "./model/docs-shell-context";
 import { AiChatDrawer } from "../ai-chat-drawer/ui/ai-chat-drawer";
-import { resolveAiChatOpenIconConfig, resolveAiChatCloseIconConfig, resolveAiChatSettingsIconConfig, resolveAiChatSendIconConfig, resolveAiChatCancelIconConfig, resolveAiChatTrashIconConfig, resolveAiChatClearChatIconConfig, resolveAiChatClearDataIconConfig, resolveAiChatExpandIconConfig, resolveAiChatCollapseIconConfig } from "@/shared/lib/icons/ai-chat/resolve-ai-chat-icon";
+import { resolveAiChatOpenIconConfig, resolveAiChatCloseIconConfig, resolveAiChatSettingsIconConfig, resolveAiChatSendIconConfig, resolveAiChatCancelIconConfig, resolveAiChatTrashIconConfig, resolveAiChatClearChatIconConfig, resolveAiChatClearDataIconConfig, resolveAiChatExpandIconConfig, resolveAiChatCollapseIconConfig, resolveAiChatLockIconConfig } from "@/shared/lib/icons/ai-chat/resolve-ai-chat-icon";
 import styles from "./docs-shell.module.css";
 
 export function DocsShell({ data }: { data: LoadedDocsData }) {
@@ -392,7 +392,8 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
       clearChat: resolveAiChatClearChatIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
       clearData: resolveAiChatClearDataIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
       expand: resolveAiChatExpandIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
-      collapse: resolveAiChatCollapseIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath())
+      collapse: resolveAiChatCollapseIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
+      lock: resolveAiChatLockIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath())
     }),
     [data.config.site, activeLayout?.mode]
   );

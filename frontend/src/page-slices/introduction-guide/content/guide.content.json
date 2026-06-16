@@ -15,7 +15,8 @@
     "searchPlaceholder": { "en": "Search the guide…", "pt": "Buscar no guia…", "es": "Buscar en la guía…" },
     "searchEmpty": { "en": "No sections match your search.", "pt": "Nenhuma seção corresponde à busca.", "es": "Ninguna sección coincide con la búsqueda." },
     "onThisPage": { "en": "On this page", "pt": "Nesta página", "es": "En esta página" },
-    "sectionsLabel": { "en": "Sections", "pt": "Seções", "es": "Secciones" }
+    "sectionsLabel": { "en": "Sections", "pt": "Seções", "es": "Secciones" },
+    "backToSearch": { "en": "Back to search", "pt": "Voltar à busca", "es": "Volver a la búsqueda" }
   },
   "sections": [
     {

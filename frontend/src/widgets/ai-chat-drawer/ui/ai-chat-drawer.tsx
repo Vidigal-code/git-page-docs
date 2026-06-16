@@ -165,6 +165,16 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         }
     };
 
+    // Re-lock the vault: drop the in-memory session password so the password gate
+    // is shown again before the AI can be used. Stored keys and chat are preserved.
+    const handleLockVault = () => {
+        setSessionPassword(null);
+        setPasswordInput('');
+        setGateError('');
+        setVaultState('locked');
+        setIsSettingsOpen(false);
+    };
+
     const handleResetPassword = async () => {
         // Forgot password: wipe the vault (all stored keys) and start over with
         // a fresh password. Also clear any legacy plaintext key.
@@ -293,6 +303,16 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                         >
                             {renderIcon(icons.settings, "FiSettings")}
                         </button>
+                        {vaultState === 'unlocked' && (
+                            <button
+                                onClick={handleLockVault}
+                                aria-label={labels.aiChatLockBtn}
+                                title={labels.aiChatLockBtn}
+                                className={styles.closeButton}
+                            >
+                                {renderIcon(icons.lock, "FiLock")}
+                            </button>
+                        )}
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}
                             aria-label={"Expand or Collapse"}

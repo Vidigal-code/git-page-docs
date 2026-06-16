@@ -44,6 +44,7 @@ export interface GuideUi {
   searchEmpty: string;
   onThisPage: string;
   sectionsLabel: string;
+  backToSearch: string;
 }
 
 /** The whole guide AFTER resolution — what the UI renders. */

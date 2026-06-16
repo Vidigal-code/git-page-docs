@@ -60,12 +60,18 @@ export function IntroductionGuidePage() {
   const content = useMemo(() => getGuideContent(language), [language]);
   const { query, setQuery, results } = useGuideSearch(content.sections);
   const sectionIds = useMemo(() => content.sections.map((section) => section.id), [content.sections]);
-  const activeId = useActiveSection(sectionIds);
+  const { activeId, setActiveId } = useActiveSection(sectionIds);
+
+  const onSelectSection = (id: string) => {
+    setActiveId(id);
+    scrollToSection(id);
+  };
 
   const activeTheme = themes[activeLayout?.id ?? ""];
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
   const basePath = getBasePath();
+  const backToSearchHref = basePath ? `${basePath}/` : "/";
   const headerIconConfig = useMemo(
     () => resolveHeaderIconConfig(siteConfig ?? undefined, nextModeIsDark ? "dark" : "light", basePath),
     [siteConfig, nextModeIsDark, basePath],
@@ -100,7 +106,13 @@ export function IntroductionGuidePage() {
   return (
     <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars}>
       <div className={styles.page}>
-        <GuideHero hero={content.hero} projectUrl={projectUrl} onPrimary={() => scrollToSection(sectionIds[1] ?? sectionIds[0])} />
+        <GuideHero
+          hero={content.hero}
+          projectUrl={projectUrl}
+          backToSearchHref={backToSearchHref}
+          backToSearchLabel={content.ui.backToSearch}
+          onPrimary={() => scrollToSection(sectionIds[1] ?? sectionIds[0])}
+        />
         <div className={styles.body}>
           <GuideSidebar
             ui={content.ui}
@@ -108,7 +120,7 @@ export function IntroductionGuidePage() {
             query={query}
             onQueryChange={setQuery}
             activeId={activeId}
-            onSelect={scrollToSection}
+            onSelect={onSelectSection}
           />
           <div className={styles.content}>
             {content.sections.map((section) => (

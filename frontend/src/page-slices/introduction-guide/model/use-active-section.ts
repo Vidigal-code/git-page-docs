@@ -2,35 +2,63 @@
 
 import { useEffect, useState } from "react";
 
+/** Approx. sticky-header offset so the "active" band starts just below the header. */
+const HEADER_OFFSET = 96;
+
+export interface ActiveSection {
+  activeId: string;
+  /** Set the active id optimistically (e.g. on a nav click) before the observer catches up. */
+  setActiveId: (id: string) => void;
+}
+
 /**
- * Scrollspy: returns the id of the section currently in view. Generic over any set
- * of element ids so it can be reused by any in-page navigation, not just this guide.
+ * Scrollspy: tracks which section id is currently in view. Generic over any set of
+ * element ids so it can be reused by any in-page navigation. The whole window scrolls
+ * (the layout has no inner scroll container), so the observer root is the viewport.
  */
-export function useActiveSection(ids: string[]): string {
+export function useActiveSection(ids: string[]): ActiveSection {
   const [activeId, setActiveId] = useState<string>(ids[0] ?? "");
 
   useEffect(() => {
-    if (ids.length === 0 || typeof IntersectionObserver === "undefined") return;
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((element): element is HTMLElement => element !== null);
-    if (elements.length === 0) return;
+    if (ids.length === 0 || typeof window === "undefined") return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]?.target.id) setActiveId(visible[0].target.id);
-      },
-      { rootMargin: "-20% 0px -70% 0px", threshold: 0 },
-    );
+    const getElements = () =>
+      ids
+        .map((id) => document.getElementById(id))
+        .filter((element): element is HTMLElement => element !== null);
 
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+    // Pick the last section whose top has scrolled above the header band — the one
+    // the reader is actually looking at. Falls back to the first/last at the edges.
+    const recompute = () => {
+      const elements = getElements();
+      if (elements.length === 0) return;
+      let current = elements[0].id;
+      for (const element of elements) {
+        if (element.getBoundingClientRect().top - HEADER_OFFSET <= 1) {
+          current = element.id;
+        }
+      }
+      setActiveId(current);
+    };
+
+    recompute();
+    // IntersectionObserver wakes us on entry/exit; we then recompute from geometry,
+    // which is robust to multiple sections being on screen at once.
+    const observer = new IntersectionObserver(recompute, {
+      rootMargin: `-${HEADER_OFFSET}px 0px -55% 0px`,
+      threshold: [0, 1],
+    });
+    getElements().forEach((element) => observer.observe(element));
+    window.addEventListener("scroll", recompute, { passive: true });
+    window.addEventListener("resize", recompute);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", recompute);
+      window.removeEventListener("resize", recompute);
+    };
   }, [ids]);
 
-  return activeId;
+  return { activeId, setActiveId };
 }
 
 /** Smoothly scroll a section into view and reflect it in the URL hash. */

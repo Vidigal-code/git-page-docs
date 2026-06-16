@@ -92,6 +92,7 @@ export function getGuideContent(language: LanguageCode): GuideContent {
       searchEmpty: pickText(guide.ui.searchEmpty, language),
       onThisPage: pickText(guide.ui.onThisPage, language),
       sectionsLabel: pickText(guide.ui.sectionsLabel, language),
+      backToSearch: pickText(guide.ui.backToSearch, language),
     },
     sections: guide.sections.map((section) => resolveSection(section, language)),
   };

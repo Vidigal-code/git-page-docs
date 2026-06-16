@@ -251,6 +251,32 @@ export function resolveAiChatExpandIconConfig(site: any, mode: "dark" | "light",
     };
 }
 
+export function resolveAiChatLockIconConfig(site: any, mode: "dark" | "light", basePath: string): ResolvedAiChatIconConfig {
+    if (!site) {
+        return {
+            iconImage: resolveIconPath(DEFAULT_IMG, basePath),
+            useReactIcon: true,
+            reactIconTag: "FiLock",
+            reactIconStyle: {},
+            iconImgWidth: 20,
+            iconImgHeight: 20,
+        };
+    }
+    const rawImage = mode === "dark" ? site.IconAiChatLockDarkImg : site.IconAiChatLockLightImg;
+    const useReactIcon = (site.IconAiChatLockReactIcones ?? !rawImage);
+    const reactIconTag = site.IconAiChatLockReactIconesTag || "FiLock";
+    const color = mode === "dark" ? site.IconAiChatLockReactIconesTagColorDark : site.IconAiChatLockReactIconesTagColorLight;
+    const size = site.IconAiChatLockReactIconesTagSize;
+    return {
+        iconImage: resolveIconPath(rawImage || DEFAULT_IMG, basePath),
+        useReactIcon,
+        reactIconTag,
+        reactIconStyle: { color: color || undefined, fontSize: size || undefined },
+        iconImgWidth: Number(site.IconAiChatLockImgWidth) || 20,
+        iconImgHeight: Number(site.IconAiChatLockImgHeight) || 20,
+    };
+}
+
 export function resolveAiChatCollapseIconConfig(site: any, mode: "dark" | "light", basePath: string): ResolvedAiChatIconConfig {
     if (!site) {
         return {

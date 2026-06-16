@@ -105,9 +105,11 @@ export function useStandaloneShellPreferences({
     setLanguageRestored(true);
   }, [safeSearchParams, availableLanguages, languageStorageKey, languageRestored]);
 
-  // Restore theme from URL (theme param) → localStorage (once)
+  // Restore theme from URL (theme param) → localStorage (once layouts are available).
+  // Standalone pages load `layouts` asynchronously; without the length guard the
+  // effect would "restore" against an empty array and lock onto layouts[0].
   useEffect(() => {
-    if (themeRestored) return;
+    if (themeRestored || layouts.length === 0) return;
     const urlThemeId = safeSearchParams.get(THEME_URL_PARAM);
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
     if (layoutFromUrl) {

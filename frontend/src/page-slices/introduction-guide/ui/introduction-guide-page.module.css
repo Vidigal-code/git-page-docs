@@ -7,9 +7,36 @@
 
 /* ---- Hero ---- */
 .hero {
-  padding: 72px 0 56px;
+  padding: 40px 0 56px;
   border-bottom: 1px solid var(--card-border);
   text-align: left;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 28px;
+  padding: 7px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--card-background);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.backLink:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--secondary) 55%, var(--card-border));
+  transform: translateX(-2px);
+}
+
+.backIcon {
+  display: inline-flex;
+  font-size: 0.95rem;
 }
 
 .heroEyebrow {
