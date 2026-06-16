@@ -34,6 +34,7 @@
   font-size: 1.5rem;
   letter-spacing: -0.01em;
   color: var(--text);
+  overflow-wrap: break-word;
 }
 
 .sectionLead {
@@ -53,6 +54,7 @@
   font-size: 1rem;
   line-height: 1.7;
   color: var(--text);
+  overflow-wrap: break-word;
 }
 
 .list {
@@ -158,6 +160,12 @@
 @media (max-width: 480px) {
   .sectionTitle {
     font-size: 1.25rem;
+  }
+
+  /* Allow long inline-code tokens to wrap instead of forcing horizontal scroll. */
+  .inlineCode {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .table th,
