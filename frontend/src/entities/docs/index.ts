@@ -22,5 +22,5 @@ export { resolvePageHierarchy } from "./lib/hierarchy/resolve-page-hierarchy";
 
 export type * from "./model/types";
 export { type MenuNode, type MenuEntry, type BreadcrumbItem, getBreadcrumbTrail } from "./model/menu";
-export { getRouteIndexByPath, getPageIndexByPathClick, getUrlParamsForPathClick } from "./model/menu-utils";
+export { getRouteIndexByPath, getPageIndexByPathClick, getPathClickByRouteId, getUrlParamsForPathClick } from "./model/menu-utils";
 export type { BrowseItem } from "./model/navigation";

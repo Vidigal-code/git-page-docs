@@ -2,8 +2,10 @@ import { marked } from "marked";
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
 import { buildGithubRawCandidates, ensureTrailingSlash, toRawGithubUrl } from "@/entities/docs/lib/remote/github-url";
 import type {
+  ContentTypeRouteConfig,
   GitPageDocsConfig,
   HeaderMenuItem,
+  HierarchyConfig,
   LanguageCode,
   LayoutItem,
   LayoutsConfig,
@@ -21,6 +23,7 @@ import {
   OFFICIAL_LAYOUTS_CONFIG_URL,
   OFFICIAL_LAYOUTS_TEMPLATES_URL,
 } from "@/shared/config/remote-urls";
+import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 import {
   tryFetchText,
   fetchRepoText,
@@ -31,10 +34,19 @@ import {
 import { withConfigDefaults } from "../lib/with-config-defaults";
 
 type VersionConfig = {
+  auth?: GitPageDocsConfig["auth"];
   routes?: RouteConfig[];
   "menus-header"?: HeaderMenuItem[];
-  "routes-md"?: RouteConfig[];
+  "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
+  "routes-html"?: ContentTypeRouteConfig[];
+  "routes-video"?: ContentTypeRouteConfig[];
+  "routes-audio"?: ContentTypeRouteConfig[];
   "menus-header-md"?: HeaderMenuItem[];
+  "menus-header-html"?: HeaderMenuItem[];
+  "menus-header-video"?: HeaderMenuItem[];
+  "menus-header-audio"?: HeaderMenuItem[];
+  hierarchyPage?: HierarchyConfig;
+  hierarchyMenu?: HierarchyConfig;
 };
 export type SupportedLanguage = "en" | "pt" | "es";
 
@@ -125,6 +137,52 @@ function getAvailableLanguages(
     return [fallbackLanguage];
   }
   return Object.keys(firstWithPath.path);
+}
+
+function getLanguagesFromRecord(record: Record<LanguageCode, string> | undefined): LanguageCode[] {
+  if (!record || typeof record !== "object") return [];
+  return Object.keys(record);
+}
+
+function getAvailableLanguagesFromContent(
+  routesMd: Array<ContentTypeRouteConfig | RouteConfig>,
+  routesHtml: ContentTypeRouteConfig[],
+  routesVideo: ContentTypeRouteConfig[],
+  routesAudio: ContentTypeRouteConfig[],
+  fallbackLanguage: LanguageCode,
+): LanguageCode[] {
+  const mdPath = routesMd.find((route) => route.path && Object.keys(route.path).length > 0)?.path;
+  if (mdPath) return getLanguagesFromRecord(mdPath);
+
+  const htmlPath = routesHtml.find((route) => route.path && Object.keys(route.path).length > 0)?.path;
+  if (htmlPath) return getLanguagesFromRecord(htmlPath);
+
+  const htmlUrl = routesHtml.find((route) => route.url && Object.keys(route.url).length > 0)?.url;
+  if (htmlUrl) return getLanguagesFromRecord(htmlUrl);
+
+  const videoPath = routesVideo.find((route) => route.video?.pathVideo)?.video?.pathVideo;
+  if (videoPath) return getLanguagesFromRecord(videoPath);
+
+  const audioPath = routesAudio.find((route) => {
+    const audio = route.audio;
+    return audio && "pathAudio" in audio && audio.pathAudio;
+  })?.audio;
+  if (audioPath && "pathAudio" in audioPath) return getLanguagesFromRecord(audioPath.pathAudio);
+
+  return [fallbackLanguage];
+}
+
+function routeHasPath(route: ContentTypeRouteConfig | RouteConfig): route is ContentTypeRouteConfig & { path: Record<LanguageCode, string> } {
+  return Boolean(route.path && Object.keys(route.path).length > 0);
+}
+
+function routeHasVideo(route: ContentTypeRouteConfig): route is ContentTypeRouteConfig & { video: NonNullable<ContentTypeRouteConfig["video"]> } {
+  return Boolean(route.video?.pathVideo && route.video?.videoType);
+}
+
+function routeHasAudio(route: ContentTypeRouteConfig): route is ContentTypeRouteConfig & { audio: { audioType: Record<LanguageCode, string>; pathAudio: Record<LanguageCode, string> } } {
+  const audio = route.audio;
+  return Boolean(audio && "pathAudio" in audio && "audioType" in audio && audio.pathAudio && audio.audioType);
 }
 
 function resolveActiveVersion(
@@ -293,18 +351,44 @@ export async function loadRemoteDocsData(
   const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);
   const activeVersionId = activeVersion?.id;
 
-  let routes = config["routes-md"] ?? config.routes ?? [];
-  let menusHeader = config["menus-header-md"] ?? config["menus-header"] ?? [];
+  const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
+  let auth = config.auth;
+  let routesMd = config["routes-md"] ?? config.routes ?? [];
+  let routesHtml = config["routes-html"] ?? [];
+  let routesVideo = config["routes-video"] ?? [];
+  let routesAudio = config["routes-audio"] ?? [];
+  let menusHeaderMd = config["menus-header-md"] ?? config["menus-header"] ?? [];
+  let menusHeaderHtml = config["menus-header-html"] ?? [];
+  let menusHeaderVideo = config["menus-header-video"] ?? [];
+  let menusHeaderAudio = config["menus-header-audio"] ?? [];
+  let hierarchyPage = config.hierarchyPage ?? defaultHierarchy;
+  let hierarchyMenu = config.hierarchyMenu ?? defaultHierarchy;
+
   if (activeVersion) {
     const versionConfig = await loadVersionConfig(owner, repo, activeVersion);
-    if (versionConfig?.["routes-md"]?.length) routes = versionConfig["routes-md"];
-    else if (versionConfig?.routes?.length) routes = versionConfig.routes;
-    if (versionConfig?.["menus-header-md"]?.length) menusHeader = versionConfig["menus-header-md"];
-    else if (versionConfig?.["menus-header"]?.length) menusHeader = versionConfig["menus-header"];
+    if (versionConfig?.auth) auth = versionConfig.auth;
+    if (versionConfig?.["routes-md"]?.length) routesMd = versionConfig["routes-md"];
+    else if (versionConfig?.routes?.length) routesMd = versionConfig.routes;
+    if (versionConfig?.["routes-html"]?.length) routesHtml = versionConfig["routes-html"];
+    if (versionConfig?.["routes-video"]?.length) routesVideo = versionConfig["routes-video"];
+    if (versionConfig?.["routes-audio"]?.length) routesAudio = versionConfig["routes-audio"];
+    if (versionConfig?.["menus-header-md"]?.length) menusHeaderMd = versionConfig["menus-header-md"];
+    else if (versionConfig?.["menus-header"]?.length) menusHeaderMd = versionConfig["menus-header"];
+    if (versionConfig?.["menus-header-html"]?.length) menusHeaderHtml = versionConfig["menus-header-html"];
+    if (versionConfig?.["menus-header-video"]?.length) menusHeaderVideo = versionConfig["menus-header-video"];
+    if (versionConfig?.["menus-header-audio"]?.length) menusHeaderAudio = versionConfig["menus-header-audio"];
+    if (versionConfig?.hierarchyPage) hierarchyPage = versionConfig.hierarchyPage;
+    if (versionConfig?.hierarchyMenu) hierarchyMenu = versionConfig.hierarchyMenu;
   }
 
-  const routesWithPath = routes.filter((r): r is RouteConfig => Boolean(r.path && Object.keys(r.path).length > 0));
-  const availableLanguages = getAvailableLanguages(routes, config.site.defaultLanguage);
+  const routesWithPath = routesMd.filter(routeHasPath);
+  const availableLanguages = getAvailableLanguagesFromContent(
+    routesMd,
+    routesHtml,
+    routesVideo,
+    routesAudio,
+    config.site.defaultLanguage,
+  );
   const preferredLanguage = availableLanguages.includes(selectedLanguage)
     ? selectedLanguage
     : availableLanguages.includes(config.site.defaultLanguage)
@@ -312,23 +396,47 @@ export async function loadRemoteDocsData(
       : availableLanguages[0] ?? "en";
 
   const routesForConfig: RouteConfig[] = routesWithPath.map((r) => ({ id: r.id, path: r.path }));
+  const allIds = new Set<number>();
+  routesMd.forEach((route) => allIds.add(route.id));
+  routesHtml.forEach((route) => allIds.add(route.id));
+  routesVideo.forEach((route) => allIds.add(route.id));
+  routesAudio.forEach((route) => allIds.add(route.id));
+  const sortedIds = Array.from(allIds).sort((a, b) => a - b);
 
   const effectiveConfig: GitPageDocsConfig = {
     ...config,
+    auth,
     site: {
       ...config.site,
       defaultLanguage: preferredLanguage,
     },
     routes: routesForConfig,
-    "menus-header": menusHeader,
+    "menus-header": menusHeaderMd,
+    "routes-md": routesMd,
+    "routes-html": routesHtml,
+    "routes-video": routesVideo,
+    "routes-audio": routesAudio,
+    "menus-header-md": menusHeaderMd,
+    "menus-header-html": menusHeaderHtml,
+    "menus-header-video": menusHeaderVideo,
+    "menus-header-audio": menusHeaderAudio,
+    hierarchyPage,
+    hierarchyMenu,
   };
 
-  const docs = await Promise.all(
-    routesWithPath.map(async (route) => {
+  const pathToPageMap: Record<string, PathToPageEntry> = {};
+  const pages: LoadedPage[] = [];
+
+  for (let pageIndex = 0; pageIndex < sortedIds.length; pageIndex++) {
+    const id = sortedIds[pageIndex];
+    const page: LoadedPage = { id };
+
+    const mdRoute = routesMd.find((route) => route.id === id);
+    if (mdRoute && routeHasPath(mdRoute)) {
       const markdownByLanguage: Record<LanguageCode, string> = {};
       await Promise.all(
         availableLanguages.map(async (langCode) => {
-          const markdownPath = route.path![langCode];
+          const markdownPath = mdRoute.path[langCode];
           if (!markdownPath) {
             markdownByLanguage[langCode] = "<p>Missing language file path in config.</p>";
             return;
@@ -339,25 +447,100 @@ export async function loadRemoteDocsData(
             : "<p>Unable to load remote markdown file.</p>";
         }),
       );
-      return {
-        routeId: route.id,
-        markdownByLanguage,
-      };
-    }),
-  );
+      const fullscreenEnabled = "fullscreenEnabled" in mdRoute ? mdRoute.fullscreenEnabled : true;
+      page.md = { routeId: id, config: mdRoute, markdownByLanguage, fullscreenEnabled };
+      availableLanguages.forEach((lang) => {
+        const pathVal = mdRoute.path[lang];
+        if (pathVal) pathToPageMap[pathVal] = { pageIndex, contentType: "md" };
+      });
+    }
 
-  const pathToPageMap: Record<string, PathToPageEntry> = {};
-  const pages: LoadedPage[] = docs.map((doc, idx) => {
-    const route = routesWithPath[idx];
-    availableLanguages.forEach((lang) => {
-      const pathVal = route.path[lang];
-      if (pathVal) pathToPageMap[pathVal] = { pageIndex: idx, contentType: "md" };
-    });
-    return {
-      id: route.id,
-      md: { routeId: route.id, config: route, markdownByLanguage: doc.markdownByLanguage, fullscreenEnabled: true },
-    };
-  });
+    const htmlRoute = routesHtml.find((route) => route.id === id && (route.path || route.url));
+    if (htmlRoute) {
+      const htmlByLanguage: Record<LanguageCode, string> = {};
+      if (htmlRoute.path) {
+        await Promise.all(
+          availableLanguages.map(async (langCode) => {
+            const htmlPath = htmlRoute.path?.[langCode];
+            if (!htmlPath) {
+              htmlByLanguage[langCode] = "<p>Missing HTML path.</p>";
+              return;
+            }
+            htmlByLanguage[langCode] = (await fetchRepoText(owner, repo, htmlPath)) ?? "<p>Unable to load remote HTML.</p>";
+          }),
+        );
+        availableLanguages.forEach((lang) => {
+          const pathVal = htmlRoute.path?.[lang];
+          if (pathVal) pathToPageMap[pathVal] = { pageIndex, contentType: "html" };
+        });
+      } else if (htmlRoute.url) {
+        availableLanguages.forEach((lang) => {
+          htmlByLanguage[lang] = "";
+          const urlVal = htmlRoute.url?.[lang];
+          if (urlVal) pathToPageMap[`url:${urlVal}`] = { pageIndex, contentType: "html" };
+        });
+      }
+      page.html = {
+        routeId: id,
+        config: htmlRoute,
+        htmlByLanguage,
+        fullscreenEnabled: htmlRoute.fullscreenEnabled ?? true,
+      };
+    }
+
+    const videoRoute = routesVideo.find((route) => route.id === id && routeHasVideo(route));
+    if (videoRoute && routeHasVideo(videoRoute)) {
+      const videoTypeByLanguage: Record<LanguageCode, string> = {};
+      const pathVideoByLanguage: Record<LanguageCode, string> = {};
+      availableLanguages.forEach((lang) => {
+        videoTypeByLanguage[lang] = videoRoute.video.videoType[lang] ?? videoRoute.video.videoType.en ?? "youtube";
+        pathVideoByLanguage[lang] = videoRoute.video.pathVideo[lang] ?? videoRoute.video.pathVideo.en ?? "";
+      });
+      page.video = {
+        routeId: id,
+        config: videoRoute,
+        videoTypeByLanguage,
+        pathVideoByLanguage,
+        fullscreenEnabled: videoRoute.fullscreenEnabled ?? true,
+      };
+      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "video" };
+      availableLanguages.forEach((lang) => {
+        const videoPath = pathVideoByLanguage[lang];
+        if (videoPath) pathToPageMap[videoPath] = { pageIndex, contentType: "video" };
+      });
+    }
+
+    const audioRoute = routesAudio.find((route) => route.id === id && routeHasAudio(route));
+    if (audioRoute && routeHasAudio(audioRoute)) {
+      const audioTypeByLanguage: Record<LanguageCode, string> = {};
+      const pathAudioByLanguage: Record<LanguageCode, string> = {};
+      availableLanguages.forEach((lang) => {
+        audioTypeByLanguage[lang] = audioRoute.audio.audioType[lang] ?? audioRoute.audio.audioType.en ?? "youtube";
+        pathAudioByLanguage[lang] = audioRoute.audio.pathAudio[lang] ?? audioRoute.audio.pathAudio.en ?? "";
+      });
+      page.audio = {
+        routeId: id,
+        config: audioRoute,
+        audioTypeByLanguage,
+        pathAudioByLanguage,
+        fullscreenEnabled: audioRoute.fullscreenEnabled ?? true,
+      };
+      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "audio" };
+      availableLanguages.forEach((lang) => {
+        const audioPath = pathAudioByLanguage[lang];
+        if (audioPath) pathToPageMap[audioPath] = { pageIndex, contentType: "audio" };
+      });
+    }
+
+    pages.push(page);
+  }
+
+  const docs = pages
+    .filter((page) => page.md)
+    .map((page) => ({
+      routeId: page.id,
+      markdownByLanguage: page.md!.markdownByLanguage,
+    }));
 
   let layoutsConfig: LayoutsConfig;
   let themes: Record<string, ThemeTemplate>;

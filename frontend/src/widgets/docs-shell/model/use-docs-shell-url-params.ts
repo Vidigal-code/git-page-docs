@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs";
+import { getPathClickByRouteId } from "@/entities/docs";
 import { getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
 import { buildUnifiedHeaderMenuTree } from "./menu-tree";
 
@@ -104,10 +105,7 @@ export function useDocsShellUrlParams(
       if (menuId) {
         const idNum = parseInt(menuId, 10);
         if (!Number.isNaN(idNum)) {
-          const route = data.config.routes.find((r) => r.id === idNum);
-          if (route && route.path) {
-            pathClick = (route.path as Record<string, string>)[menuLang] ?? (route.path as Record<string, string>).en ?? null;
-          }
+          pathClick = getPathClickByRouteId(data, idNum, menuLang);
         }
       } else if (menuSlug) {
         pathClick = findPathClickBySlug(data, menuSlug, menuLang);
