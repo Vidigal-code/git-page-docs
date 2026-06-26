@@ -46,6 +46,11 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const merged = mergeVersionConfig(baseConfigForMerge, versionConfig);
   const { effectiveConfig, sortedIds } = buildEffectiveConfig(baseConfig, merged);
 
+  if (source === "remote") {
+    effectiveConfig.site.ThemeDefault = localConfig.site.ThemeDefault;
+    effectiveConfig.site.ThemeModeDefault = localConfig.site.ThemeModeDefault;
+  }
+
   const { layoutsConfig, themes } = await loadLayoutsAndThemes({
     isLocal: local,
     owner,

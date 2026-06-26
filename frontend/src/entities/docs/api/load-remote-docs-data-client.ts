@@ -31,7 +31,7 @@ import {
   fetchRepoJson,
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
-import { withConfigDefaults } from "../lib/with-config-defaults";
+import { SITE_CONFIG_DEFAULTS, withConfigDefaults } from "../lib/with-config-defaults";
 
 type VersionConfig = {
   auth?: GitPageDocsConfig["auth"];
@@ -409,6 +409,8 @@ export async function loadRemoteDocsData(
     site: {
       ...config.site,
       defaultLanguage: preferredLanguage,
+      ThemeDefault: SITE_CONFIG_DEFAULTS.ThemeDefault,
+      ThemeModeDefault: SITE_CONFIG_DEFAULTS.ThemeModeDefault,
     },
     routes: routesForConfig,
     "menus-header": menusHeaderMd,

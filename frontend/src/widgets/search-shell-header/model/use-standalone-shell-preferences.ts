@@ -119,10 +119,8 @@ export function useStandaloneShellPreferences({
     }
     const urlMode = safeSearchParams.get("modetheme");
     try {
-      const savedMode = window.localStorage.getItem(themeModeStorageKey);
-      const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
-      const mode = urlMode === "dark" || urlMode === "light" ? urlMode : savedMode === "light" || savedMode === "dark" ? savedMode : configuredDefaultMode;
-      const baseLayout = layouts.find((l) => l.id === savedThemeId) ?? layouts.find((l) => l.id === initialThemeBaseId) ?? layouts[0];
+      const mode = urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
+      const baseLayout = layouts.find((l) => l.id === initialThemeBaseId) ?? layouts[0];
       if (baseLayout) {
         const resolved = resolveThemeByMode(layouts, baseLayout, mode);
         setActiveThemeId(resolved.id);
