@@ -1,6 +1,6 @@
 import path from "node:path";
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
-import { ensureTrailingSlash, toRawGithubUrl } from "@/entities/docs/lib/remote/github-url";
+import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type { LayoutItem, LayoutsConfig, ThemeTemplate } from "@/entities/docs/model/types";
 import { tryReadJsonFile } from "../io/file-reader";
 import { readRemoteJson, readRemoteJsonFromRepo, buildRepoRawBase } from "../io/remote-fetcher";

@@ -1,4 +1,5 @@
-import { buildGithubRawCandidates, ensureTrailingSlash, toRawGithubUrl } from "@/entities/docs/lib/remote/github-url";
+import { parseJsonSafely } from "@/shared/lib/parse-json-safely";
+import { buildGithubRawCandidates, ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type { RemoteFetcher } from "./types";
 
 export async function tryFetchText(url: string): Promise<string | null> {
@@ -20,14 +21,7 @@ export async function tryFetchText(url: string): Promise<string | null> {
 export async function readRemoteJson<T>(url: string): Promise<T | null> {
   const rawUrl = toRawGithubUrl(url);
   const text = await tryFetchText(rawUrl);
-  if (!text) {
-    return null;
-  }
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    return null;
-  }
+  return text ? parseJsonSafely<T>(text) : null;
 }
 
 export function buildRepoRawBase(owner: string, repo: string, relativeBasePath: string): string {
@@ -47,14 +41,7 @@ export async function readRemoteText(owner: string, repo: string, relativePath: 
 
 export async function readRemoteJsonFromRepo<T>(owner: string, repo: string, relativePath: string): Promise<T | null> {
   const text = await readRemoteText(owner, repo, relativePath);
-  if (!text) {
-    return null;
-  }
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    return null;
-  }
+  return text ? parseJsonSafely<T>(text) : null;
 }
 
 export const defaultRemoteFetcher: RemoteFetcher = {

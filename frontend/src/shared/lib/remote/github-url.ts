@@ -4,6 +4,7 @@ export function toRawGithubUrl(url: string): string {
     if (parsed.hostname !== "github.com") {
       return url;
     }
+
     const parts = parsed.pathname.split("/").filter(Boolean);
     const blobOrTreeIndex = parts.findIndex((part) => part === "blob" || part === "tree");
     if (parts.length >= 5 && blobOrTreeIndex === 2) {
@@ -16,6 +17,7 @@ export function toRawGithubUrl(url: string): string {
   } catch {
     return url;
   }
+
   return url;
 }
 

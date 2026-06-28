@@ -22,7 +22,7 @@ async function loadLocalConfig<T>(resolvedPath: string): Promise<T> {
   }
   if (ext === ".js" || ext === ".ts") {
     const fileUrl = pathToFileURL(resolvedPath).href;
-    const mod = await import(fileUrl);
+    const mod = await import(/* webpackIgnore: true */ fileUrl);
     const value = mod.default ?? mod;
     if (value == null) {
       throw new Error(`Config file ${resolvedPath} did not export default or module.exports`);

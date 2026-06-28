@@ -22,10 +22,18 @@ const config = [
             "**/*.tsbuildinfo",
         ],
     },
+    {
+        settings: {
+            next: {
+                rootDir: "frontend/",
+            },
+        },
+    },
     ...compat.extends("next/core-web-vitals"),
     {
         files: ["frontend/src/**/*.{js,jsx,ts,tsx}"],
         rules: {
+            "@next/next/no-html-link-for-pages": "off",
             "no-console": "warn",
         },
     },

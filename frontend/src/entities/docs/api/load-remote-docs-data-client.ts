@@ -1,6 +1,6 @@
 import { marked } from "marked";
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
-import { buildGithubRawCandidates, ensureTrailingSlash, toRawGithubUrl } from "@/entities/docs/lib/remote/github-url";
+import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type {
   ContentTypeRouteConfig,
   GitPageDocsConfig,
@@ -25,9 +25,7 @@ import {
 } from "@/shared/config/remote-urls";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 import {
-  tryFetchText,
   fetchRepoText,
-  fetchUrlText,
   fetchRepoJson,
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
@@ -126,17 +124,6 @@ export function parseSupportedLanguage(input: string | null | undefined): Suppor
 
 function stripFrontMatter(markdown: string): string {
   return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-}
-
-function getAvailableLanguages(
-  routes: Array<{ path?: Record<LanguageCode, string> }>,
-  fallbackLanguage: LanguageCode,
-): LanguageCode[] {
-  const firstWithPath = routes.find((r) => r.path && Object.keys(r.path).length > 0);
-  if (!firstWithPath?.path) {
-    return [fallbackLanguage];
-  }
-  return Object.keys(firstWithPath.path);
 }
 
 function getLanguagesFromRecord(record: Record<LanguageCode, string> | undefined): LanguageCode[] {

@@ -4,9 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   AuthConfig,
   ExternalAuthProviderType,
+  GitPageDocsConfig,
   LanguageCode,
   LoadedDocsData,
 } from "@/entities/docs";
+import { getLangMenuLabelFromMenu } from "@/entities/docs";
 import { resolveExternalProviderState } from "../infrastructure/external-auth-adapters";
 import { evaluateRouteAccess } from "./access-policy";
 import { resolveRouteAuthorizationTarget } from "./resolve-route-authorization";
@@ -14,8 +16,6 @@ import type { ExternalProviderState, RouteAccessDeniedReason } from "./types";
 
 const ACCESS_KEYS_STORAGE_PREFIX = "git-page-docs:route-auth:keys";
 const ROLES_STORAGE_PREFIX = "git-page-docs:route-auth:roles";
-
-import { getLangMenuLabelFromMenu } from "@/entities/docs";
 
 function normalizeSiteName(siteName: string): string {
   return siteName.toLowerCase().replaceAll(" ", "-");
@@ -59,7 +59,14 @@ function toLowerUnique(values: string[]): string[] {
   return Array.from(new Set(values.map((value) => value.trim().toLowerCase()).filter(Boolean)));
 }
 
-function reasonMessage(reason: RouteAccessDeniedReason, language: LanguageCode, routeTitle: string | undefined, langmenu: any): string {
+type LangMenuConfig = GitPageDocsConfig["site"]["langmenu"];
+
+function reasonMessage(
+  reason: RouteAccessDeniedReason,
+  language: LanguageCode,
+  routeTitle: string | undefined,
+  langmenu: LangMenuConfig,
+): string {
   const titleSuffix = routeTitle ? ` (${routeTitle})` : "";
   const suffixVar = "{titleSuffix}";
 
@@ -79,6 +86,7 @@ function reasonMessage(reason: RouteAccessDeniedReason, language: LanguageCode, 
 export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCode, searchParams: URLSearchParams) {
   const authConfig = data.config.auth;
   const siteName = data.config.site.name;
+  const siteLangMenu = data.config.site.langmenu;
   const [unlockedKeyIds, setUnlockedKeyIds] = useState<string[]>([]);
   const [storedRoles, setStoredRoles] = useState<string[]>([]);
   const [providerStates, setProviderStates] = useState<ExternalProviderState[]>([]);
@@ -172,7 +180,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
       const expected = authConfig?.accessKeys?.[accessKeyId];
       if (!expected) return false;
       const promptLabelTemplate = getLangMenuLabelFromMenu(
-        data.config.site.langmenu,
+        siteLangMenu,
         language,
         "authEnterAccessKeyFor",
         "Enter access key for '{accessKeyId}':"
@@ -187,7 +195,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
       persistUnlockedKeys(updated);
       return true;
     },
-    [authConfig?.accessKeys, language, persistUnlockedKeys, unlockedKeyIds],
+    [authConfig?.accessKeys, language, persistUnlockedKeys, siteLangMenu, unlockedKeyIds],
   );
 
   const evaluatePathAccess = useCallback(
@@ -248,9 +256,9 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     (pathClick: string) => {
       const decision = evaluatePathAccess(pathClick);
       if (decision.allowed || !decision.reason) return undefined;
-      return reasonMessage(decision.reason, language, decision.target?.title, data.config.site.langmenu);
+      return reasonMessage(decision.reason, language, decision.target?.title, siteLangMenu);
     },
-    [evaluatePathAccess, language],
+    [evaluatePathAccess, language, siteLangMenu],
   );
 
   return {
