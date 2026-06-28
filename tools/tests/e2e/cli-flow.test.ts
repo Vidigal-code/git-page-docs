@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { mkdtempSync, rmSync, existsSync, writeFileSync, readFileSync, symlinkSync } from "node:fs";
 import { execFileSync } from "node:child_process";
+import { DOC_VERSIONS } from "../../../cli/contracts/doc-versions.mjs";
 
 const REPO = process.cwd();
 const CLI = path.resolve(REPO, "cli/index.mjs");
@@ -48,7 +49,7 @@ describe("E2E: CLI bin in a temp project", () => {
     const res = runCli([], dir);
     expect(res.status).toBe(0);
     expect(existsSync(path.join(dir, "gitpagedocs", "config.json"))).toBe(true);
-    expect(existsSync(path.join(dir, "gitpagedocs", "docs", "versions", "1.0.0", "config.json"))).toBe(true);
+    expect(existsSync(path.join(dir, "gitpagedocs", "docs", "versions", DOC_VERSIONS[0], "config.json"))).toBe(true);
     const cfg = JSON.parse(readFileSync(path.join(dir, "gitpagedocs", "config.json"), "utf8"));
     expect(cfg.site).toBeTruthy();
     expect(cfg.VersionControl).toBeTruthy();

@@ -14,6 +14,13 @@ function ensureExists(relativePath) {
   }
 }
 
+function ensureMissing(relativePath) {
+  const absolutePath = path.join(root, relativePath);
+  if (existsSync(absolutePath)) {
+    throw new Error(`Unexpected legacy artifact: ${relativePath}`);
+  }
+}
+
 function readJson(relativePath) {
   const absolutePath = path.join(root, relativePath);
   return JSON.parse(readFileSync(absolutePath, "utf-8"));
@@ -40,7 +47,8 @@ for (const version of DOC_VERSIONS) {
   if (!Array.isArray(versionConfig["routes-html"])) {
     throw new Error(`Invalid version config (${version}): routes-html is missing.`);
   }
-  ensureExists(path.join("gitpagedocs", "docs", "versions", version, "en", "source-viewer"));
+  ensureMissing(path.join("gitpagedocs", "docs", "versions", version, "en", "source-viewer"));
+  ensureMissing(path.join("gitpagedocs", "docs", "versions", version, "en", "source-viewer.html"));
 }
 
 console.log("[smoke:cli] OK - core artifacts and schemas validated.");
