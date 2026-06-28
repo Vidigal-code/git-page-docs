@@ -130,7 +130,6 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 - \`gitpagedocs/icon.svg\` – icone padrao
 - \`gitpagedocs/docs/versions/<ver>/config.json\` – rotas por versao
 - \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – docs em markdown
-- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` – visualizador de codigo (estilo GitHub)
 - \`gitpagedocs/layouts/\` – apenas com \`--layoutconfig\`
 
 ## Tipos de conteudo
@@ -138,20 +137,20 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 | Tipo | Chave config | Descricao |
 |------|--------------|-----------|
 | Markdown | \`routes-md\` | Arquivos .md com \`path\` por idioma |
-| HTML | \`routes-html\` | \`path\` (ex: source-viewer) ou \`url\` externa |
+| HTML | \`routes-html\` | \`path\` local ou \`url\` externa |
 | Video | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
 | Audio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
 
 ## Visualizador de codigo fonte
 
-A CLI gera uma pagina **Codigo fonte** por versao. Escaneia \`src/\`, \`cli/\` e arquivos raiz (README.md, package.json, next.config.ts, etc.) e constroi um visualizador estilo GitHub em modo escuro com:
+Quando \`GITPAGEDOCS_REPOSITORY_SEARCH=true\`, o runtime expoe \`/source-viewer\` e caminhos de repositorio como \`/source-viewer/<owner>/<repo>/tree/<branch>\`. O viewer le a arvore do repositorio no GitHub em tempo de execucao e aplica o tema atual da documentacao.
 
-- Arvore de arquivos na lateral com expandir/recolher pastas
-- Filtro de busca
-- Destaque de sintaxe (TypeScript, JavaScript, JSON, CSS, Markdown)
-- Botao copiar, numeros de linha
-- Alternar preview/codigo do README.md
-- Controles Expandir tudo / Recolher tudo
+- Inputs de owner, repositorio e branch; a branch padrao e \`main\`
+- Navegacao por pastas e filtro de arquivos
+- Listagem de diretorios no estilo GitHub
+- Renderizacao de codigo com numeros de linha
+- Alternancia preview/codigo para Markdown, incluindo \`README.md\`
+- Os metadados de versao controlam o atalho do cabecalho via \`source-viewer\` e \`source-viewer-path\`
 
 ## Chaves de config (site)
 
@@ -202,6 +201,7 @@ Principais chaves:
 - \`id\`: identificador da versao
 - \`path\`: caminho do config da versao
 - links opcionais (\`ProjectLink\`, \`branch\`, \`release\`, \`commit\`)
+- metadados opcionais do source viewer (\`source-viewer\`, \`source-viewer-path\`)
 
 ## Navegacao e rotas
 
@@ -226,8 +226,8 @@ Configs de versao suportam multiplos tipos:
 - \`routes-audio\`: Config de audio com \`audio.audioType\` (youtube, mp3, etc.) e \`audio.pathAudio\`
 - \`authorization\` (md/html/video): guarda de acesso por chave, papeis e autenticacao externa
 - \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
-- \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, html: 1, video: 2, audio: 3 }\`
-- \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, html: 1, video: 2, audio: 3 }\`
+- \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
+- \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
 
 Cada rota pode incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 
@@ -243,7 +243,7 @@ Opcoes por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
 ## Tipos de conteudo: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: usa \`path\` apontando para arquivos \`.md\` locais.
-- **HTML (\`routes-html\`)**: usa \`path\` para arquivos HTML locais (sem extensao .html no config, ex: \`source-viewer\`) ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a pagina externa; nenhum arquivo local e gerado. A CLI gera um visualizador **Codigo fonte** (estilo GitHub) por versao.
+- **HTML (\`routes-html\`)**: usa \`path\` para arquivos HTML locais (sem extensao .html no config) ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a pagina externa; nenhum arquivo local e gerado.
 - **Video (\`routes-video\`)**: usa \`video.pathVideo\` e \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
 ## Variaveis de ambiente

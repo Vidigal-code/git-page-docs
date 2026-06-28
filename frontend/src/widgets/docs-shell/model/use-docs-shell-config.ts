@@ -36,6 +36,8 @@ export interface DocsShellControlsConfig {
   previewIconTag: string | undefined;
   previewIconStyle: React.CSSProperties;
   previewIconImage: string | undefined;
+  sourceViewerUrl: string | undefined;
+  sourceViewerLabel: string;
   focusModeEnabled: boolean;
   focusModeLabel: string;
   activeNavigation: boolean;

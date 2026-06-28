@@ -1,17 +1,11 @@
 {
-  "generatedAt": "2026-06-16T14:02:36.081Z",
+  "generatedAt": "2026-06-28T09:53:07.339Z",
   "targets": [
     "gitpagedocs/config.json",
-    "gitpagedocs/docs/versions/1.0.0/en/source-viewer",
-    "gitpagedocs/docs/versions/1.0.0/config.json",
-    "gitpagedocs/docs/versions/1.1.0/config.json",
-    "gitpagedocs/docs/versions/1.1.1/config.json"
+    "gitpagedocs/docs/versions/1.1.54/config.json"
   ],
   "hashes": {
-    "gitpagedocs/config.json": "38bbb79615d5ddac15ec08e501745d521d2e7d9da29ce1f03d435906435492a6",
-    "gitpagedocs/docs/versions/1.0.0/en/source-viewer": "232c02d0f8588a42906cda7fd7728d78895798e482579adf5f85dd0e096aa6c2",
-    "gitpagedocs/docs/versions/1.0.0/config.json": "871779cf1e37f72110e414b47f6832cd14bff01bfb1aceeae9bf1b0f7f30d9b7",
-    "gitpagedocs/docs/versions/1.1.0/config.json": "c6f5d0617216e964d44769f9abdecbaa2cc43ef4fb06e6003b87db8411d534aa",
-    "gitpagedocs/docs/versions/1.1.1/config.json": "0dfea0e496c9cc55d3f94325497acc87a3c71d1cffddf24c1b16d0da3838d442"
+    "gitpagedocs/config.json": "da8e394ca6dacf0b563db56db9b544161950f889bc430b2bb4ff0edac122bef0",
+    "gitpagedocs/docs/versions/1.1.54/config.json": "027cc7f660f00052edbbe88aed8e46e8755ecf17bd961c4369c75faa1925c1bc"
   }
 }

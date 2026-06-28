@@ -8,6 +8,8 @@ export interface VersionEntry {
   branch?: string;
   release?: string;
   commit?: string;
+  "source-viewer"?: boolean;
+  "source-viewer-path"?: string;
 }
 
 export interface VersionControlConfig {

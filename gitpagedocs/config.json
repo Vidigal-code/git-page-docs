@@ -332,7 +332,7 @@
     "layoutsConfigPathOficial": true,
     "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/templates",
     "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json",
-    "repositorySearchHome": true,
+    "repositorySearchHome": false,
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
     "AiChatEnabled": true,
     "docsAccess": {
@@ -648,37 +648,17 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "1.0.0",
-        "path": "gitpagedocs/docs/versions/1.0.0/config.json",
+        "id": "1.1.54",
+        "path": "gitpagedocs/docs/versions/1.1.54/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.0.0/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/1.1.54/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",
         "release": "",
-        "commit": ""
-      },
-      {
-        "id": "1.1.0",
-        "path": "gitpagedocs/docs/versions/1.1.0/config.json",
-        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.1.0/config.json",
-        "PreviewProject": "",
-        "UpdateDate": "",
-        "branch": "",
-        "release": "",
-        "commit": ""
-      },
-      {
-        "id": "1.1.1",
-        "path": "gitpagedocs/docs/versions/1.1.1/config.json",
-        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.1.1/config.json",
-        "PreviewProject": "",
-        "UpdateDate": "",
-        "branch": "",
-        "release": "",
-        "commit": ""
+        "commit": "",
+        "source-viewer": true,
+        "source-viewer-path": "https://github.com/Vidigal-code/git-page-docs/tree/main"
       }
     ]
   },

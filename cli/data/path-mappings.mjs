@@ -19,16 +19,7 @@ export const PAGE2_AUDIO = {
     {
       url: "https://www.youtube.com/watch?v=0w80F8FffQ4",
       type: "youtube",
-      title: { pt: "Música página 2", en: "Page 2 music", es: "Música página 2" },
+      title: { pt: "Musica pagina 2", en: "Page 2 music", es: "Musica pagina 2" },
     },
   ],
-};
-
-export const SOURCE_VIEWER_META = {
-  titles: { pt: "Código fonte", en: "Source code", es: "Código fuente" },
-  descriptions: {
-    pt: "Visualizar código-fonte do projeto",
-    en: "View project source code",
-    es: "Ver código fuente del proyecto",
-  },
 };

@@ -1,4 +1,4 @@
-import { existsSync, rmSync } from "node:fs";
+import { existsSync, readdirSync, rmSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -22,6 +22,28 @@ const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="#323232" stroke-width="2"/>
 </svg>
 `;
+
+function listExistingVersionIds(root, outputDir) {
+  const versionsRoot = path.join(root, outputDir, "docs", "versions");
+  if (!existsSync(versionsRoot)) return [];
+  return readdirSync(versionsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+}
+
+function removeLegacySourceViewerFiles(root, outputDir) {
+  const versionIds = listExistingVersionIds(root, outputDir);
+  for (const versionId of versionIds) {
+    for (const language of ["pt", "en", "es"]) {
+      for (const fileName of ["source-viewer", "source-viewer.html"]) {
+        const legacyPath = path.join(root, outputDir, "docs", "versions", versionId, language, fileName);
+        if (existsSync(legacyPath)) {
+          rmSync(legacyPath, { force: true });
+        }
+      }
+    }
+  }
+}
 
 async function writeJson(root, relativePath, data) {
   const absolutePath = path.join(root, relativePath);
@@ -74,6 +96,8 @@ export async function writeConfigOnlyOutput(options) {
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
     await writeJson(root, `${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);
   }
+
+  removeLegacySourceViewerFiles(root, outputDir);
 
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
     const versionRoutesMd = versionConfig["routes-md"] ?? versionConfig.routes ?? [];

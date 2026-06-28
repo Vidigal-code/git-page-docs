@@ -103,7 +103,7 @@ ${buildStepsBlock}
           const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
           if (!fs.existsSync(cfgPath)) process.exit(0);
           const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
-          const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.0';
+          const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.54';
           const defaultLang = cfg?.site?.defaultLanguage || 'en';
           const redirectTargetRoot = rootRedirectBase
             ? './' + rootRedirectBase + '/v/' + defaultVersion + '/?lang=' + defaultLang

@@ -2,8 +2,8 @@ import type { LanguageCode } from "./site";
 import type { VersionControlConfig } from "./version";
 import type { SiteConfig, UiTranslationsConfig } from "./site";
 
-export type ContentType = "md" | "html" | "video" | "audio";
-export const CONTENT_TYPES: ContentType[] = ["md", "html", "video", "audio"];
+export type ContentType = "md" | "source-viewer" | "html" | "video" | "audio";
+export const CONTENT_TYPES: ContentType[] = ["md", "source-viewer", "html", "video", "audio"];
 
 export type ExternalAuthProviderType = "authjs" | "clerk" | "firebase" | "jwt";
 
@@ -38,6 +38,7 @@ export interface RouteAuthorizationConfig {
 
 export interface HierarchyConfig {
   md: number;
+  "source-viewer"?: number;
   html: number;
   video: number;
   audio?: number;

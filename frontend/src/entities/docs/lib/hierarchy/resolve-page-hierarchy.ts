@@ -6,6 +6,12 @@ import type {
 } from "../../model/types";
 import { CONTENT_TYPES } from "../../model/types/config";
 
+type PageContentType = Exclude<ContentType, "source-viewer">;
+
+const PAGE_CONTENT_TYPES = CONTENT_TYPES.filter(
+    (contentType): contentType is PageContentType => contentType !== "source-viewer",
+);
+
 export function resolvePageHierarchy(
     currentPage: LoadedPage | undefined,
     globalConfig: GitPageDocsConfig,
@@ -22,11 +28,12 @@ export function resolvePageHierarchy(
     const effectiveHierarchy: HierarchyConfig =
         localHierarchy ??
         globalConfig.hierarchyPage ??
-        { md: 0, html: 1, video: 2, audio: 3 };
+        { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 };
 
-    const availableTypes = CONTENT_TYPES.filter((t) => currentPage[t]);
+    const availableTypes = PAGE_CONTENT_TYPES.filter((contentType) => currentPage[contentType]);
 
     if (contentTypeFilter) {
+        if (contentTypeFilter === "source-viewer") return [];
         if (availableTypes.includes(contentTypeFilter)) {
             return [contentTypeFilter];
         }

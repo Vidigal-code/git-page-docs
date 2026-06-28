@@ -1,0 +1,351 @@
+.shell {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
+}
+
+.workspace {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: clamp(12px, 2vw, 22px);
+  display: grid;
+  gap: 12px;
+}
+
+.toolbar,
+.panel,
+.viewer,
+.sidebar {
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--card-background) 96%, var(--background));
+  border-radius: 8px;
+}
+
+.toolbar {
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+.externalLink {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(120px, 180px) auto;
+  gap: 8px;
+}
+
+.input,
+.button,
+.modeButton,
+.treeButton {
+  min-height: 38px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  color: var(--text);
+  font-weight: 650;
+}
+
+.input {
+  min-width: 0;
+  padding: 0 10px;
+}
+
+.button,
+.modeButton,
+.treeButton {
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.sidebar {
+  min-height: 480px;
+  max-height: calc(100vh - 180px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  padding: 10px;
+  border-bottom: 1px solid var(--card-border);
+  display: grid;
+  gap: 8px;
+}
+
+.treeActions {
+  display: flex;
+  gap: 8px;
+}
+
+.tree {
+  overflow: auto;
+  padding: 8px;
+}
+
+.treeItem,
+.fileRow,
+.breadcrumbButton {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.treeItem {
+  width: 100%;
+  min-height: 28px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.86rem;
+}
+
+.treeItem:hover,
+.treeItemActive {
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.main {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.panel {
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.breadcrumbButton {
+  min-height: 28px;
+  border-radius: 6px;
+  padding: 0 6px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.fileList {
+  display: grid;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fileRow {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 12px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text);
+}
+
+.fileRow:last-child {
+  border-bottom: 0;
+}
+
+.fileRow:hover {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.fileName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileMeta {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.viewer {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.viewerHeader {
+  min-height: 46px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.viewerTitle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+.modeGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.modeButtonActive {
+  background: color-mix(in srgb, var(--primary) 24%, var(--background));
+  border-color: var(--primary);
+}
+
+.codeScroll,
+.markdownPreview {
+  max-height: calc(100vh - 270px);
+  min-height: 420px;
+  overflow: auto;
+}
+
+.codeTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.lineNumber {
+  width: 1%;
+  min-width: 54px;
+  padding: 0 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  user-select: none;
+  background: color-mix(in srgb, var(--background) 92%, var(--card-background));
+  border-right: 1px solid var(--card-border);
+  vertical-align: top;
+}
+
+.lineCode {
+  padding: 0 12px;
+  white-space: pre;
+  vertical-align: top;
+}
+
+.lineNumber,
+.lineCode {
+  height: 1.55em;
+}
+
+.markdownPreview {
+  padding: clamp(14px, 2vw, 24px);
+  line-height: 1.65;
+}
+
+.markdownPreview > :first-child {
+  margin-top: 0;
+}
+
+.markdownPreview pre {
+  overflow: auto;
+  border-radius: 8px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--background) 90%, black);
+}
+
+.state {
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.error {
+  color: #ffb4b4;
+}
+
+@media (max-width: 900px) {
+  .form,
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    min-height: 240px;
+    max-height: 320px;
+  }
+
+  .codeScroll,
+  .markdownPreview {
+    max-height: none;
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 560px) {
+  .workspace {
+    padding: 8px;
+  }
+
+  .titleRow,
+  .viewerHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .externalLink,
+  .button,
+  .modeButton {
+    width: 100%;
+  }
+
+  .fileRow {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .fileMeta {
+    display: none;
+  }
+}

@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
   assetPrefix: basePath ?? undefined,
   env: {
     NEXT_PUBLIC_GITPAGEDOCS_BASE_PATH: basePath ?? "",
+    NEXT_PUBLIC_GITPAGEDOCS_REPOSITORY_SEARCH: repositorySearchEnabledByEnv ? "true" : "",
   },
   images: {
     unoptimized: true,

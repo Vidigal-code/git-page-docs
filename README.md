@@ -1,8 +1,8 @@
-# Git Page Docs
+﻿# Git Page Docs
 
 `gitpagedocs` is a CLI and runtime contract for repository documentation.
 
-It generates and maintains a `gitpagedocs/` folder with config and versioned markdown files.  
+It generates and maintains a `gitpagedocs/` folder with config and versioned markdown files.
 It does **not** generate `index.html` or `index.js`.
 
 ## Table of Contents
@@ -31,13 +31,13 @@ It does **not** generate `index.html` or `index.js`.
 
 ```text
 git-page-docs/
-├── frontend/     # Next.js 15 docs viewer (static export) — see frontend/README.md
-├── cli/          # Hexagonal CLI, published as the `gitpagedocs` npm bin
-├── mcp/          # Model Context Protocol server (@gitpagedocs/mcp)
-├── tools/        # @gitpagedocs/tools — the ONLY home for shared business logic
-├── gitpagedocs/  # User contract: config + versioned docs + layouts (kept stable)
-├── e2e/          # Playwright end-to-end specs
-└── tsconfig.base.json · turbo.json · pnpm-workspace.yaml · vitest.config.ts
+â”œâ”€â”€ frontend/     # Next.js 15 docs viewer (static export) â€” see frontend/README.md
+â”œâ”€â”€ cli/          # Hexagonal CLI, published as the `gitpagedocs` npm bin
+â”œâ”€â”€ mcp/          # Model Context Protocol server (@gitpagedocs/mcp)
+â”œâ”€â”€ tools/        # @gitpagedocs/tools â€” the ONLY home for shared business logic
+â”œâ”€â”€ gitpagedocs/  # User contract: config + versioned docs + layouts (kept stable)
+â”œâ”€â”€ e2e/          # Playwright end-to-end specs
+â””â”€â”€ tsconfig.base.json Â· turbo.json Â· pnpm-workspace.yaml Â· vitest.config.ts
 ```
 
 | Area | Package | Responsibility |
@@ -45,8 +45,8 @@ git-page-docs/
 | **frontend/** | root pkg | Next.js App Router docs viewer: multi-version / multi-language docs, 36-theme layouts, the in-docs AI chat drawer, and the `/ai` console. Built via `next build frontend` and static-exported to `out/` for GitHub Pages. |
 | **cli/** | `gitpagedocs` (`bin`) | Hexagonal CLI (`@clack/prompts`) that scaffolds `gitpagedocs/`, generates docs with AI, configures GitHub Pages, and launches the MCP server. |
 | **mcp/** | `@gitpagedocs/mcp` | MCP server (SDK 1.29): 20 tools + 7 resources for repository analysis and AI doc generation, all delegating to `tools/`. |
-| **tools/** | `@gitpagedocs/tools` | Shared core: 14-provider AI system (registry/factory, no switch chains), encrypted credential vault (AES-256-GCM) + password gate, logger with secret redaction, caches, config loader, filesystem + documentation services. Browser-safe subpath exports (`./ai`, `./crypto/web`, `./security/web`, …). |
-| **gitpagedocs/** | — | The user-facing contract: `config.{json,js,ts}`, `docs/versions/**`, `layouts/**`. Never broken by refactors. |
+| **tools/** | `@gitpagedocs/tools` | Shared core: 14-provider AI system (registry/factory, no switch chains), encrypted credential vault (AES-256-GCM) + password gate, logger with secret redaction, caches, config loader, filesystem + documentation services. Browser-safe subpath exports (`./ai`, `./crypto/web`, `./security/web`, â€¦). |
+| **gitpagedocs/** | â€” | The user-facing contract: `config.{json,js,ts}`, `docs/versions/**`, `layouts/**`. Never broken by refactors. |
 
 ### Security: encrypted AI credentials
 
@@ -79,7 +79,7 @@ gitpagedocs                       # then run anywhere (the bin is `gitpagedocs`)
 npx @gitpagedocs/cli
 ```
 
-> `gitpagedocs` is published from the [`cli/`](cli/README.md) package of this monorepo. Generating docs is config-only — it never writes `index.html`/`index.js`.
+> `gitpagedocs` is published from the [`cli/`](cli/README.md) package of this monorepo. Generating docs is config-only â€” it never writes `index.html`/`index.js`.
 
 Generate docs config and versioned files (recommended default):
 
@@ -99,7 +99,7 @@ Generate docs, configure GitHub Pages URL, create workflow, and push:
 npx gitpagedocs --push --owner your-user --repo your-repository
 ```
 
-Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/1.0.0/?lang=en`.
+Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/1.1.54/?lang=en`.
 
 Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 
@@ -107,7 +107,7 @@ Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 npx gitpagedocs --push --owner your-user --repo your-repository --path docs
 ```
 
-Then docs are at `https://your-user.github.io/your-repository/docs/v/1.0.0/?lang=en`.
+Then docs are at `https://your-user.github.io/your-repository/docs/v/1.1.54/?lang=en`.
 
 Shortcut syntax also supported:
 
@@ -167,7 +167,7 @@ docker run -p 3000:80 gitpagedocshome
 
 You can choose either:
 
-1. **Official viewer site**  
+1. **Official viewer site**
    `https://vidigal-code.github.io/git-page-docs/`
 2. **Self-hosted viewer** in your own GitHub repository using GitHub Pages.
 
@@ -216,8 +216,8 @@ npm start
 - Enable Pages for your repository (Settings -> Pages).
 - Use the repository workflow to build/deploy static output.
 - Optional one-command bootstrap:
-  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs at `https://<owner>.github.io/<repo>/<repo>/v/<version>/?lang=en` (e.g. `https://vidigal-code.github.io/energy-bill-ai-parser/energy-bill-ai-parser/v/1.0.0/?lang=en`); root redirects there; base path uses repo name so CSS/JS load correctly
-  - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/v/<version>/`
+  - `npx gitpagedocs --push --owner your-user --repo your-repository` â€” docs at `https://<owner>.github.io/<repo>/<repo>/v/<version>/?lang=en` (e.g. `https://vidigal-code.github.io/energy-bill-ai-parser/energy-bill-ai-parser/v/1.1.54/?lang=en`); root redirects there; base path uses repo name so CSS/JS load correctly
+  - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` â€” docs at `https://<owner>.github.io/<repo>/docs/v/<version>/`
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
   - The generated workflow clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds, and deploys to your GitHub Pages URL.
   - The workflow trigger uses your current git branch automatically.
@@ -235,11 +235,8 @@ gitpagedocs/
   icon.svg
   docs/
     versions/
-      1.0.0/config.json
-      1.0.0/{en,pt,es}/*.md
-      1.0.0/{en,pt,es}/source-viewer      # Source code viewer (GitHub-style)
-      1.1.0/...
-      1.1.1/...
+      1.1.54/config.json
+      1.1.54/{en,pt,es}/*.md
 ```
 
 Local layout mode adds:
@@ -287,17 +284,19 @@ Recommended for local testing:
 GITPAGEDOCS_REPOSITORY_SEARCH=true
 ```
 
+When repository search is enabled, the runtime also exposes `/source-viewer` and `/source-viewer/<owner>/<repo>/tree/<branch>` for GitHub-style source browsing. The branch input defaults to `main`, and version entries can expose the header shortcut with `source-viewer` and `source-viewer-path`.
+
 ## Scripts
 
-- `npm run gitpagedocs` — runs `node cli/index.mjs` (generate config and docs)
-- `npm run gitpagedocs:full` — compatibility alias for the same CLI
-- `npm run gitpagedocs:home` — generates `gitpagedocshome/` (static site + .env + Dockerfile + README)
-- `npm run build` — generate `gitpagedocs/` + copy icon to `public/` + `next build`
-- `npm run build:prebuilt` — generate + build + copy `out/` to `prebuilt/`
-- `npm run dev` — `next dev`
-- `npm run start` — `node cli/start.mjs` (spawns `next start`; runs after `prestart` build)
-- `npm run lint` — `eslint .`
-- `npm run clean` — remove `.next/`
+- `npm run gitpagedocs` â€” runs `node cli/index.mjs` (generate config and docs)
+- `npm run gitpagedocs:full` â€” compatibility alias for the same CLI
+- `npm run gitpagedocs:home` â€” generates `gitpagedocshome/` (static site + .env + Dockerfile + README)
+- `npm run build` â€” generate `gitpagedocs/` + copy icon to `public/` + `next build`
+- `npm run build:prebuilt` â€” generate + build + copy `out/` to `prebuilt/`
+- `npm run dev` â€” `next dev`
+- `npm run start` â€” `node cli/start.mjs` (spawns `next start`; runs after `prestart` build)
+- `npm run lint` â€” `eslint .`
+- `npm run clean` â€” remove `.next/`
 
 ## URL Routes and Query Parameters
 
@@ -308,9 +307,11 @@ All routes for accessing documentation files on the official site or self-hosted
 | Pattern | Description |
 |--------|-------------|
 | `/` | Repository search home (when `repositorySearchHome=true`) |
+| `/source-viewer` | Source viewer home (when repository search is enabled) |
+| `/source-viewer/{owner}/{repo}/tree/{branch}` | Source viewer for a repository branch |
 | `/{owner}/{repo}/` | Docs for `owner/repo`, default version |
 | `/{owner}/{repo}/v/{version}/` | Docs for `owner/repo`, specific version |
-| `/v/{version}/` | Docs for the project’s own repo, specific version |
+| `/v/{version}/` | Docs for the projectâ€™s own repo, specific version |
 
 **Base URL (official site):** `https://vidigal-code.github.io/git-page-docs/`
 
@@ -321,7 +322,7 @@ All routes for accessing documentation files on the official site or self-hosted
 | `lang` | `en`, `pt`, `es` | UI and content language |
 | `theme` | layout id (e.g. `aurora-dark`, `aurora-light`) | Active theme; always reflected in URL |
 | `modetheme` | `dark`, `light` | Theme mode (legacy; `theme` takes precedence) |
-| `version` | e.g. `1.0.0` | Version (alternative to path) |
+| `version` | e.g. `1.1.54` | Version (alternative to path) |
 | `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `name`) |
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
 | `name` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
@@ -337,54 +338,45 @@ All routes for accessing documentation files on the official site or self-hosted
 
 **Markdown pages**
 
-- Getting Started (v1.0.0, aurora-dark theme):  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&theme=aurora-dark&menu=en&id=1  
-- Project overview:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=2  
-- GitHub issues and projects:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=3  
-- Introduction to Git:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=4  
+- Getting Started (v1.1.54, aurora-dark theme):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&theme=aurora-dark&menu=en&id=1
+- Project overview:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=2
+- GitHub issues and projects:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=3
+- Introduction to Git:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=4
 
 **By slug (`name`)**
 
-- Getting Started:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=getting-started  
-- Project overview:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=project-overview  
+- Getting Started:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=getting-started
+- Project overview:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=project-overview
 
-**HTML pages** (by slug)
+**Source viewer**
 
-- Source code viewer:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&name=source-viewer  
+- Source viewer for the main branch:
+  https://vidigal-code.github.io/git-page-docs/source-viewer/Vidigal-code/git-page-docs/tree/main
 
-**Video pages** (route id 1–4; pages combine MD + HTML + Video by id)
+**Video pages** (route id 1â€“4; pages combine MD + HTML + Video by id)
 
-- Video 1:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?lang=en&menu=en&id=1  
+- Video 1:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=1
 
 **Fullscreen modes**
 
-- Markdown fullscreen:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?mdfull=en&file=gitpagedocs/docs/versions/1.0.0/en/getting-started.md  
-- HTML fullscreen:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?htmlfull=en&file=gitpagedocs/docs/versions/1.0.0/en/source-viewer  
-- Video fullscreen:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?videofull=en&id=1  
+- Markdown fullscreen:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?mdfull=en&file=gitpagedocs/docs/versions/1.1.54/en/getting-started.md
+- Video fullscreen:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?videofull=en&id=1
 
 **Theme selection**
 
-- aurora-dark (default dark):  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?theme=aurora-dark  
-- aurora-light:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.0.0/?theme=aurora-light  
-
-**Other versions**
-
-- v1.1.0:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.0/?lang=en&theme=aurora-dark  
-- v1.1.1:  
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.1/?lang=en&theme=aurora-dark  
+- aurora-dark (default dark):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?theme=aurora-dark
+- aurora-light:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?theme=aurora-light
 
 ## Authorized Routes
 
@@ -419,9 +411,9 @@ Example:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/1.1.1/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/1.1.54/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/1.1.54/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/1.1.54/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",
@@ -479,10 +471,10 @@ returns documentation split into multiple pages. `gitpagedocs ai` first scaffold
 `gitpagedocs/docs/versions/<latest>/<lang>/<slug>.md` (in every language) **and wires them
 into that version's `config.json`** (`routes-md` + `menus-header-md`), so the AI pages show up
 directly in the docs viewer menu. The added entries are tagged `aiGenerated` and are
-idempotent — re-running `gitpagedocs ai` replaces them instead of duplicating.
+idempotent â€” re-running `gitpagedocs ai` replaces them instead of duplicating.
 
 > Note: a later plain `gitpagedocs` run rebuilds the base config from the deterministic
-> templates and drops the AI wiring — re-run `gitpagedocs ai` to restore it.
+> templates and drops the AI wiring â€” re-run `gitpagedocs ai` to restore it.
 
 ### Manual config (`.gitpagedocsconfig`)
 
@@ -499,7 +491,7 @@ You can run manually with a persisted config in repository root:
     "languages": ["pt", "en", "es"],
     "outputDir": "gitpagedocs/docs",
     "filePrefix": "ai-generated",
-    "contextPrompt": "Você é um redator técnico sênior..."
+    "contextPrompt": "VocÃª Ã© um redator tÃ©cnico sÃªnior..."
   }
 }
 ```
@@ -516,7 +508,7 @@ gitpagedocs password
 
 It prompts for a password (type + confirm), writes a non-reversible **public key** to
 `site.docsAccess` in `gitpagedocs/config.json`, and prints a **private key** to copy. The
-scheme is double-hash: `privateKey = SHA256(password)`, `publicKey = SHA256(privateKey)` — the
+scheme is double-hash: `privateKey = SHA256(password)`, `publicKey = SHA256(privateKey)` â€” the
 password itself is never stored. When `docsAccess.enabled` is set, the viewer blocks the entire
 documentation behind a full-page gate; visitors unlock with the **password OR the private key**
 (verified against the public key). The unlock is cached in `localStorage`, and a lock icon in
@@ -557,16 +549,16 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 
 ### CLI commands
 
-- `gitpagedocs init` — scaffold gitpagedocs config files
-- `gitpagedocs config` — show the resolved gitpagedocs config
-- `gitpagedocs provider [id]` — list AI providers or show one
-- `gitpagedocs models [provider]` — list catalog models
-- `gitpagedocs ai` — interactive AI docs generator (writes pages in the gitpagedocs pattern)
-- `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI in the gitpagedocs pattern
-- `gitpagedocs password` — set a documentation access password (writes the public key to config.json)
-- `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
-- `gitpagedocs doctor` — diagnose the environment
-- `gitpagedocs mcp start` — start the MCP server over stdio
-- `gitpagedocs version` — print the CLI version
-- `gitpagedocs update` — show how to update the CLI
+- `gitpagedocs init` â€” scaffold gitpagedocs config files
+- `gitpagedocs config` â€” show the resolved gitpagedocs config
+- `gitpagedocs provider [id]` â€” list AI providers or show one
+- `gitpagedocs models [provider]` â€” list catalog models
+- `gitpagedocs ai` â€” interactive AI docs generator (writes pages in the gitpagedocs pattern)
+- `gitpagedocs document[:repo|:file|:folder]` â€” generate documentation with AI in the gitpagedocs pattern
+- `gitpagedocs password` â€” set a documentation access password (writes the public key to config.json)
+- `gitpagedocs deploy | pages` â€” configure GitHub Pages via Actions and push
+- `gitpagedocs doctor` â€” diagnose the environment
+- `gitpagedocs mcp start` â€” start the MCP server over stdio
+- `gitpagedocs version` â€” print the CLI version
+- `gitpagedocs update` â€” show how to update the CLI
 <!-- gitpagedocs:end -->

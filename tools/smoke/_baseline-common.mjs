@@ -10,10 +10,7 @@ function toPortablePath(relativePath) {
 }
 
 export function getBaselineTargets() {
-  const targets = [
-    "gitpagedocs/config.json",
-    `gitpagedocs/docs/versions/${DOC_VERSIONS[0]}/en/source-viewer`,
-  ];
+  const targets = ["gitpagedocs/config.json"];
   for (const version of DOC_VERSIONS) {
     targets.push(`gitpagedocs/docs/versions/${version}/config.json`);
   }

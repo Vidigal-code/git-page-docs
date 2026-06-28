@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/frontend",
-  "version": "1.1.44",
+  "version": "1.1.54",
   "private": true,
   "description": "Next.js 15 documentation viewer for Git Page Docs (static export).",
   "scripts": {

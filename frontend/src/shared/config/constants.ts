@@ -12,5 +12,5 @@ export const CONFIG_EXTENSIONS = [".json", ".js", ".ts"] as const;
 /** Default config path for remote repository config. */
 export const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
 
-/** Default content hierarchy (md, html, video, audio). */
-export const DEFAULT_HIERARCHY = { md: 0, html: 1, video: 2, audio: 3 } as const;
+/** Default content hierarchy. */
+export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 } as const;

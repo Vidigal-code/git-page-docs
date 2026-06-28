@@ -1,1 +1,3 @@
-export const DOC_VERSIONS = ["1.0.0", "1.1.0", "1.1.1"];
+export const PACKAGE_VERSION = "1.1.54";
+
+export const DOC_VERSIONS = [PACKAGE_VERSION];

@@ -9,7 +9,7 @@ export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
     id: layout.id,
     name: layout.name,
     author: layout.author,
-    version: "1.0.0",
+    version: "1.1.54",
     mode: layout.mode,
     supportsLightAndDarkModes: layout.supportsLightAndDarkModes,
     colors,

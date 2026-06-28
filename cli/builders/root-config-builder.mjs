@@ -20,6 +20,7 @@ export function buildRootConfig(options = {}) {
     githubOwner && githubRepo
       ? `https://github.com/${githubOwner}/${githubRepo}`
       : "https://github.com/Vidigal-code/git-page-docs";
+  const sourceViewerPath = `${projectLink}/tree/main`;
 
   const versionEntries = DOC_VERSIONS.map((id) => ({
     id,
@@ -31,6 +32,8 @@ export function buildRootConfig(options = {}) {
     branch: "",
     release: "",
     commit: "",
+    "source-viewer": true,
+    "source-viewer-path": sourceViewerPath,
   }));
 
   const baseSiteConfig = getDefaultSiteConfig(DOCS, projectLink);

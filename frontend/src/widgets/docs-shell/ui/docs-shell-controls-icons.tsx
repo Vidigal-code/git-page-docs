@@ -33,6 +33,8 @@ export interface DocsShellControlsIconsProps {
   previewIconTag: string | undefined;
   previewIconStyle: React.CSSProperties;
   previewIconImage: string | undefined;
+  sourceViewerUrl: string | undefined;
+  sourceViewerLabel: string;
   onOpenVersionLinksPopup: () => void;
   onOpenInfoPopup: () => void;
 }
@@ -67,6 +69,8 @@ export function DocsShellControlsIcons({
   previewIconTag,
   previewIconStyle,
   previewIconImage,
+  sourceViewerUrl,
+  sourceViewerLabel,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
 }: DocsShellControlsIconsProps) {
@@ -131,6 +135,16 @@ export function DocsShellControlsIcons({
           ) : (
             <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
           )}
+        </a>
+      )}
+      {sourceViewerUrl && (
+        <a
+          href={sourceViewerUrl}
+          className={`${styles.button} ${styles.githubLinkButton}`}
+          aria-label={sourceViewerLabel}
+          title={sourceViewerLabel}
+        >
+          <ReactIconByTag tag="FaCode" />
         </a>
       )}
     </>

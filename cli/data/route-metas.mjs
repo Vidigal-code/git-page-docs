@@ -1,6 +1,6 @@
 /** Route and video metadata for doc versions */
 
-export const DEFAULT_HIERARCHY = { md: 0, html: 1, video: 2, audio: 3 };
+export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 };
 
 export const ROUTE_META_ID1 = {
   titles: { pt: "Primeiros passos", en: "Getting Started", es: "Primeros pasos" },

@@ -91,6 +91,12 @@
   gap: 10px;
 }
 
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .input,
 .select,
 .button {
@@ -115,6 +121,18 @@
   cursor: pointer;
 }
 
+.secondaryButton {
+  min-height: 42px;
+  min-width: 160px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--card-background) 88%, var(--primary) 12%);
+  color: var(--text);
+  padding: 0 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .input::placeholder {
   color: var(--text-secondary);
 }
@@ -136,6 +154,10 @@
   }
 
   .button {
+    width: 100%;
+  }
+
+  .secondaryButton {
     width: 100%;
   }
 }

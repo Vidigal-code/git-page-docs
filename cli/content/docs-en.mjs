@@ -144,7 +144,6 @@ Install globally with \`npm install -g gitpagedocs\`, or run one-off with \`npx 
 - \`gitpagedocs/icon.svg\` – default icon
 - \`gitpagedocs/docs/versions/<ver>/config.json\` – per-version routes
 - \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – markdown docs
-- \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/source-viewer\` – GitHub-style source code viewer
 - \`gitpagedocs/layouts/\` – only with \`--layoutconfig\`
 
 ## Content types
@@ -152,20 +151,20 @@ Install globally with \`npm install -g gitpagedocs\`, or run one-off with \`npx 
 | Type | Config key | Description |
 |------|------------|-------------|
 | Markdown | \`routes-md\` | .md files with \`path\` per language |
-| HTML | \`routes-html\` | \`path\` (e.g. source-viewer) or \`url\` for external |
+| HTML | \`routes-html\` | local \`path\` or external \`url\` |
 | Video | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
 | Audio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
 
 ## Source code viewer
 
-The CLI generates a **Source code** page per version. It scans \`src/\`, \`cli/\`, and root files (README.md, package.json, next.config.ts, etc.) and builds a GitHub-style dark viewer with:
+When \`GITPAGEDOCS_REPOSITORY_SEARCH=true\`, the runtime exposes \`/source-viewer\` and repository-specific paths such as \`/source-viewer/<owner>/<repo>/tree/<branch>\`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
 
-- File tree sidebar with folder collapse/expand
-- Search filter for files
-- Syntax highlighting (TypeScript, JavaScript, JSON, CSS, Markdown)
-- Copy button, line numbers
-- README.md preview/code toggle
-- Expand all / Collapse all controls
+- Owner, repository, and branch inputs; branch defaults to \`main\`
+- Folder navigation and file filtering
+- GitHub-style directory listing
+- Code rendering with line numbers
+- Markdown preview/code toggle, including \`README.md\`
+- Version metadata controls the header shortcut via \`source-viewer\` and \`source-viewer-path\`
 
 ## Config keys (site)
 
@@ -296,9 +295,9 @@ Supported adapters:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/1.1.1/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/1.1.1/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/1.1.1/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/1.1.54/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/1.1.54/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/1.1.54/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",
@@ -348,6 +347,7 @@ Behavior:
 - \`id\`
 - \`path\`
 - optional metadata links (\`ProjectLink\`, \`branch\`, \`release\`, \`commit\`)
+- optional source viewer metadata (\`source-viewer\`, \`source-viewer-path\`)
 
 ## Navigation
 
@@ -372,8 +372,8 @@ Version configs support multiple content types:
 - \`routes-audio\`: Audio config with \`audio.audioType\` (youtube, mp3, etc.) and \`audio.pathAudio\`
 - \`authorization\` (md/html/video): route guard by access key, roles, and external auth
 - \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus per type
-- \`hierarchyPage\`: container order on page \`{ md: 0, html: 1, video: 2, audio: 3 }\`
-- \`hierarchyMenu\`: menu section order \`{ md: 0, html: 1, video: 2, audio: 3 }\`
+- \`hierarchyPage\`: container order on page \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
+- \`hierarchyMenu\`: menu section order \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
 
 Each route can include \`title\`, \`description\` (per language), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 
@@ -389,7 +389,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 ## Content types: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: always uses \`path\` pointing to local \`.md\` files.
-- **HTML (\`routes-html\`)**: uses \`path\` for local HTML files (no \`.html\` extension in config, e.g. \`source-viewer\`) or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated. The CLI generates a **Source code** viewer (GitHub-style) per version.
+- **HTML (\`routes-html\`)**: uses \`path\` for local HTML files (no \`.html\` extension in config) or \`url\` for external URLs. When \`url\` is set, the iframe loads the external page; no local file is generated.
 - **Video (\`routes-video\`)**: uses \`video.pathVideo\` and \`video.videoType\` (youtube, vimeo, mp4, etc.).
 - **Audio (\`routes-audio\`)**: uses \`audio.pathAudio\` and \`audio.audioType\` (youtube, mp3, etc.). No autoplay by default.
 

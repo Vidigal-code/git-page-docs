@@ -4,7 +4,6 @@ import {
   ROUTE_PATHS,
   VIDEO_IDS,
   PAGE2_AUDIO,
-  SOURCE_VIEWER_META,
 } from "../data/path-mappings.mjs";
 import {
   ROUTE_META_ID1,
@@ -19,7 +18,7 @@ import {
   VIDEO_META_ID4,
   DEFAULT_HIERARCHY,
 } from "../data/route-metas.mjs";
-import { buildMdRoute, buildHtmlRoute, buildVideoRoute } from "./route-builders.mjs";
+import { buildMdRoute, buildVideoRoute } from "./route-builders.mjs";
 
 const ROUTE_METAS = {
   1: ROUTE_META_ID1,
@@ -59,22 +58,6 @@ function buildVersionMdRoutes(versionId) {
   });
 }
 
-function buildVersionHtmlRoutes(versionId) {
-  const base = `gitpagedocs/docs/versions/${versionId}`;
-  const pathByLangSource = {
-    pt: `${base}/pt/source-viewer`,
-    en: `${base}/en/source-viewer`,
-    es: `${base}/es/source-viewer`,
-  };
-  return [
-    buildHtmlRoute(versionId, 1, pathByLangSource, SOURCE_VIEWER_META.titles, SOURCE_VIEWER_META.descriptions, {
-      container: "full",
-      blockLink: true,
-      authorization: { accessKeyId: "source-viewer-key" },
-    }),
-  ];
-}
-
 function buildVersionVideoRoutes(versionId) {
   return [1, 2, 3, 4].map((id) =>
     buildVideoRoute(
@@ -97,39 +80,32 @@ function buildVersionVideoRoutes(versionId) {
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
   const menuMd = [1, 2, 3, 4, 5, 6].map((id) => ({
-    id: id,
+    id,
     pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
     en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
     es: { title: ROUTE_METAS[id].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[id].es}` },
   }));
-  const menuHtml = [
-    {
-      id: 1,
-      pt: { title: "Código fonte", "path-click": `${base}/pt/source-viewer` },
-      en: { title: "Source code", "path-click": `${base}/en/source-viewer` },
-      es: { title: "Código fuente", "path-click": `${base}/es/source-viewer` },
-    },
-  ];
   const menuVideo = [1, 2, 3, 4].map((id) => ({
-    id: id,
-    pt: { title: VIDEO_METAS[id].title.pt.slice(0, 40) + "...", "path-click": `page:${id}` },
-    en: { title: VIDEO_METAS[id].title.en.slice(0, 40) + "...", "path-click": `page:${id}` },
-    es: { title: VIDEO_METAS[id].title.es.slice(0, 40) + "...", "path-click": `page:${id}` },
+    id,
+    pt: { title: `${VIDEO_METAS[id].title.pt.slice(0, 40)}...`, "path-click": `page:${id}` },
+    en: { title: `${VIDEO_METAS[id].title.en.slice(0, 40)}...`, "path-click": `page:${id}` },
+    es: { title: `${VIDEO_METAS[id].title.es.slice(0, 40)}...`, "path-click": `page:${id}` },
   }));
-  return { md: menuMd, html: menuHtml, video: menuVideo };
+  return { md: menuMd, html: [], video: menuVideo };
 }
 
 /**
  * Build version config for a single doc version.
- * @param {string} versionId - e.g. "1.0.0", "1.1.0", "1.1.1"
- * @returns {object} Version config with routes-md, routes-html, routes-video, menus, hierarchy
+ * @param {string} versionId - e.g. "1.1.54"
+ * @returns {object} Version config with routes, menus, and hierarchy
  */
 export function buildVersionConfig(versionId) {
+  const menus = buildVersionMenus(versionId);
+
   return {
     auth: {
       accessKeys: {
         "docs-key": "open-gitpagedocs-docs",
-        "source-viewer-key": "open-source-viewer",
       },
       rolesStorageKey: "git-page-docs:route-auth:roles",
       providers: [
@@ -140,11 +116,11 @@ export function buildVersionConfig(versionId) {
       ],
     },
     "routes-md": buildVersionMdRoutes(versionId),
-    "routes-html": buildVersionHtmlRoutes(versionId),
+    "routes-html": [],
     "routes-video": buildVersionVideoRoutes(versionId),
-    "menus-header-md": buildVersionMenus(versionId).md,
-    "menus-header-html": buildVersionMenus(versionId).html,
-    "menus-header-video": buildVersionMenus(versionId).video,
+    "menus-header-md": menus.md,
+    "menus-header-html": menus.html,
+    "menus-header-video": menus.video,
     hierarchyPage: DEFAULT_HIERARCHY,
     hierarchyMenu: DEFAULT_HIERARCHY,
   };
