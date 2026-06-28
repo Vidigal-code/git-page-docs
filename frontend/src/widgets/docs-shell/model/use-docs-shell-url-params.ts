@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs";
 import { getPathClickByRouteId } from "@/entities/docs";
+import { getCurrentHeadingHash, scrollToHeadingId } from "@/features/route-guide";
 import { getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
 import { buildUnifiedHeaderMenuTree } from "./menu-tree";
 
@@ -38,6 +39,17 @@ function findPathClickBySlug(data: LoadedDocsData, slug: string, _lang: Language
   return null;
 }
 
+function scrollToCurrentHeadingHash(delayMs: number = 100): void {
+  const headingId = getCurrentHeadingHash();
+  if (!headingId) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    scrollToHeadingId(headingId);
+  }, delayMs);
+}
+
 export function useDocsShellUrlParams(
   searchParams: URLSearchParams,
   data: LoadedDocsData,
@@ -55,7 +67,6 @@ export function useDocsShellUrlParams(
     const menuLang = searchParams.get("menu") as LanguageCode | null;
     const menuId = searchParams.get("id");
     const menuSlug = searchParams.get("name") ?? searchParams.get("nome");
-    const mdHash = typeof window !== "undefined" && window.location.hash ? window.location.hash.slice(1) : "";
     const urlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : searchParams;
     const mdfull = urlParams.get("mdfull");
     const mdfullFile = urlParams.get("file");
@@ -128,11 +139,8 @@ export function useDocsShellUrlParams(
       }
     }
 
-    if (mdHash && typeof window !== "undefined") {
-      const el = document.getElementById(mdHash);
-      if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
-      }
+    if (typeof window !== "undefined") {
+      scrollToCurrentHeadingHash();
     }
 
     onParamsProcessed?.(null);
@@ -148,4 +156,19 @@ export function useDocsShellUrlParams(
     onParamsProcessed,
     onFullscreenRequest,
   ]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleHashChange = () => {
+      scrollToCurrentHeadingHash(0);
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
 }
