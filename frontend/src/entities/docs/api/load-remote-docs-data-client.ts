@@ -1,4 +1,3 @@
-import { marked } from "marked";
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
 import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type {
@@ -30,6 +29,7 @@ import {
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
 import { SITE_CONFIG_DEFAULTS, withConfigDefaults } from "../lib/with-config-defaults";
+import { markdownToHtml } from "./utils/markdown";
 
 type VersionConfig = {
   auth?: GitPageDocsConfig["auth"];
@@ -120,10 +120,6 @@ export function parseSupportedLanguage(input: string | null | undefined): Suppor
     return input;
   }
   return "en";
-}
-
-function stripFrontMatter(markdown: string): string {
-  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
 }
 
 function getLanguagesFromRecord(record: Record<LanguageCode, string> | undefined): LanguageCode[] {
@@ -432,7 +428,7 @@ export async function loadRemoteDocsData(
           }
           const markdown = await fetchRepoText(owner, repo, markdownPath);
           markdownByLanguage[langCode] = markdown
-            ? (marked.parse(stripFrontMatter(markdown)) as string)
+            ? markdownToHtml(markdown)
             : "<p>Unable to load remote markdown file.</p>";
         }),
       );
