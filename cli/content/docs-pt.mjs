@@ -143,14 +143,14 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 
 ## Visualizador de codigo fonte
 
-Quando \`GITPAGEDOCS_REPOSITORY_SEARCH=true\`, o runtime expoe \`/source-viewer\` e caminhos de repositorio como \`/source-viewer/<owner>/<repo>/tree/<branch>\`. O viewer le a arvore do repositorio no GitHub em tempo de execucao e aplica o tema atual da documentacao.
+O config da versao pode renderizar um container **Codigo fonte** via \`routes-source-viewer\` e \`menus-header-source-viewer\`. O viewer le a arvore do repositorio no GitHub em tempo de execucao e aplica o tema atual da documentacao.
 
-- Inputs de owner, repositorio e branch; a branch padrao e \`main\`
+- Arvore do repositorio a partir de \`source-viewer-path\`; a branch padrao e \`main\`
 - Navegacao por pastas e filtro de arquivos
 - Listagem de diretorios no estilo GitHub
 - Renderizacao de codigo com numeros de linha
 - Alternancia preview/codigo para Markdown, incluindo \`README.md\`
-- Os metadados de versao controlam o atalho do cabecalho via \`source-viewer\` e \`source-viewer-path\`
+- Pastas recolhiveis na lateral
 
 ## Chaves de config (site)
 
@@ -221,11 +221,12 @@ Principais chaves:
 Configs de versao suportam multiplos tipos:
 
 - \`routes-md\`: Rotas markdown com \`title\`, \`description\` (centralizados via \`titlePosition\`, \`descriptionPosition\`)
+- \`routes-source-viewer\`: Containers de codigo fonte com \`source-viewer: true\` e \`source-viewer-path\`
 - \`routes-html\`: Caminhos de paginas HTML por idioma
 - \`routes-video\`: Config de video com \`video.videoType\` (youtube, vimeo, mp4, etc.) e \`video.pathVideo\`
 - \`routes-audio\`: Config de audio com \`audio.audioType\` (youtube, mp3, etc.) e \`audio.pathAudio\`
 - \`authorization\` (md/html/video): guarda de acesso por chave, papeis e autenticacao externa
-- \`menus-header-md\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
+- \`menus-header-md\`, \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`: menus por tipo
 - \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
 - \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
 

@@ -13,6 +13,7 @@ import { hasPath, hasVideo, hasAudio } from "../utils/route-utils";
 export async function loadPages(options: {
   sortedIds: number[];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
+  routesSourceViewer: ContentTypeRouteConfig[];
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
   routesAudio: ContentTypeRouteConfig[];
@@ -23,7 +24,7 @@ export async function loadPages(options: {
 }): Promise<{ pages: LoadedPage[]; pathToPageMap: Record<string, PathToPageEntry> }> {
   const pathToPageMap: Record<string, PathToPageEntry> = {};
   const pages: LoadedPage[] = [];
-  const { sortedIds, routesMd, routesHtml, routesVideo, routesAudio, languages, source, owner, repo } = options;
+  const { sortedIds, routesMd, routesSourceViewer, routesHtml, routesVideo, routesAudio, languages, source, owner, repo } = options;
 
   for (let pageIndex = 0; pageIndex < sortedIds.length; pageIndex++) {
     const id = sortedIds[pageIndex];
@@ -58,6 +59,23 @@ export async function loadPages(options: {
         const pathVal = mdRoute.path![lang];
         if (pathVal) pathToPageMap[pathVal] = { pageIndex, contentType: "md" };
       });
+    }
+
+    const sourceViewerRoute = routesSourceViewer.find((r) => r.id === id && r["source-viewer"] === true);
+    if (sourceViewerRoute) {
+      const rawPath = sourceViewerRoute["source-viewer-path"];
+      const sourceViewerPath =
+        typeof rawPath === "string"
+          ? rawPath
+          : rawPath?.[languages[0]] ?? rawPath?.en ?? Object.values(rawPath ?? {})[0] ?? "";
+      page.sourceViewer = {
+        routeId: id,
+        config: sourceViewerRoute,
+        sourceViewerPath,
+        fullscreenEnabled: sourceViewerRoute.fullscreenEnabled ?? false,
+      };
+      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "source-viewer" };
+      if (sourceViewerPath) pathToPageMap[`source-viewer:${sourceViewerPath}`] = { pageIndex, contentType: "source-viewer" };
     }
 
     const htmlRoute = routesHtml.find((r) => r.id === id && (r.path || r.url));

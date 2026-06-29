@@ -22,7 +22,7 @@ import {
   isBrowseAllEnabled,
   buildBrowseNavConfig,
 } from "./page-content-browse-nav";
-import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
+import { HtmlContainer, MdContainer, VideoContainer, AudioContainer, SourceViewerContainer } from "./content-type-containers";
 import styles from "../docs-shell.module.css";
 
 interface PageContentAreaProps {
@@ -101,10 +101,12 @@ export function PageContentArea({
   const types = resolvePageHierarchy(currentPage, data.config, contentTypeFilter);
 
   const mdConfig = currentPage?.md?.config;
+  const sourceViewerConfig = currentPage?.sourceViewer?.config;
   const htmlConfig = currentPage?.html?.config;
   const videoConfig = currentPage?.video?.config;
   const audioConfig = currentPage?.audio?.config;
   const mdBrowseAll = isBrowseAllEnabled(mdConfig);
+  const sourceViewerBrowseAll = isBrowseAllEnabled(sourceViewerConfig);
   const htmlBrowseAll = isBrowseAllEnabled(htmlConfig);
   const videoBrowseAll = isBrowseAllEnabled(videoConfig);
   const audioBrowseAll = isBrowseAllEnabled(audioConfig);
@@ -114,6 +116,9 @@ export function PageContentArea({
     (mdBrowseAll && mdItems.length > 0
       ? mdItems[Math.min(mdBrowseIndex, mdItems.length - 1)]?.content
       : currentPage.md);
+  const currentSourceViewer =
+    currentPage &&
+    (sourceViewerBrowseAll ? currentPage.sourceViewer : currentPage.sourceViewer);
   const currentHtml =
     currentPage &&
     (htmlBrowseAll && htmlItems.length > 0
@@ -240,6 +245,18 @@ export function PageContentArea({
               tocContainerTopDefault={data.config.site?.RouteguideBrandContainerTopDefault ?? false}
               onFullscreenOpen={mdFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
+            />
+          );
+        }
+        if (t === "source-viewer" && currentSourceViewer) {
+          return (
+            <SourceViewerContainer
+              key="source-viewer"
+              config={currentSourceViewer.config}
+              sourceViewerPath={currentSourceViewer.sourceViewerPath}
+              site={data.config.site}
+              language={language}
+              isDarkMode={isDarkMode}
             />
           );
         }

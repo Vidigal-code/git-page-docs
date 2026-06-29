@@ -13,7 +13,7 @@ export function buildEffectiveConfig(
   baseConfig: GitPageDocsConfig,
   merged: MergedRoutesConfig,
 ): EffectiveConfigResult {
-  const { auth, routesMd, routesHtml, routesVideo, routesAudio, menusHeaderMd, hierarchyPage, hierarchyMenu } = merged;
+  const { auth, routesMd, routesSourceViewer, routesHtml, routesVideo, routesAudio, menusHeaderMd, hierarchyPage, hierarchyMenu } = merged;
 
   const routes = routesMd.filter((r) => hasPath(r)).map((r) => ({ id: r.id, path: r.path! }));
   const menusHeader = menusHeaderMd;
@@ -24,10 +24,12 @@ export function buildEffectiveConfig(
     routes,
     "menus-header": menusHeader,
     "routes-md": routesMd,
+    "routes-source-viewer": routesSourceViewer,
     "routes-html": routesHtml,
     "routes-video": routesVideo,
     "routes-audio": routesAudio,
     "menus-header-md": merged.menusHeaderMd,
+    "menus-header-source-viewer": merged.menusHeaderSourceViewer,
     "menus-header-html": merged.menusHeaderHtml,
     "menus-header-video": merged.menusHeaderVideo,
     "menus-header-audio": merged.menusHeaderAudio,
@@ -37,6 +39,7 @@ export function buildEffectiveConfig(
 
   const allIds = new Set<number>();
   routesMd.forEach((r) => allIds.add(r.id));
+  routesSourceViewer.forEach((r) => allIds.add(r.id));
   routesHtml.forEach((r) => allIds.add(r.id));
   routesVideo.forEach((r) => allIds.add(r.id));
   routesAudio.forEach((r) => allIds.add(r.id));

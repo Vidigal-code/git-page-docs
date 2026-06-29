@@ -7,7 +7,6 @@ import {
   type LoadedDocsData,
   type LoadedPage,
 } from "@/entities/docs";
-import { buildSourceViewerPath, parseGithubTreeUrl } from "@/entities/source-viewer";
 import {
   resolveAudioPlayerPopoverCloseIconConfig,
   resolveAudioPlayerPopoverLoopOffIconConfig,
@@ -72,19 +71,6 @@ function getReactIconStyle(
     color: getThemeValue(mode, darkColor, lightColor),
     fontSize: trimToUndefined(size),
   };
-}
-
-function isRepositorySearchClientEnabled(): boolean {
-  return process.env.NEXT_PUBLIC_GITPAGEDOCS_REPOSITORY_SEARCH === "true";
-}
-
-function resolveSourceViewerUrl(activeVersion: LoadedDocsData["activeVersion"]): string | undefined {
-  if (!activeVersion?.["source-viewer"] || !isRepositorySearchClientEnabled()) {
-    return undefined;
-  }
-
-  const sourceRoute = parseGithubTreeUrl(activeVersion["source-viewer-path"]);
-  return sourceRoute ? buildSourceViewerPath(sourceRoute) : undefined;
 }
 
 export function useBuildDocsControlsConfig(
@@ -184,8 +170,6 @@ export function useBuildDocsControlsConfig(
         [site.IconPreviewProjectLinkDarkImg, site.IconPreviewProjectLinkHeaderDark],
         [site.IconPreviewProjectLinkLightImg, site.IconPreviewProjectLinkLight],
       ),
-      sourceViewerUrl: resolveSourceViewerUrl(data.activeVersion),
-      sourceViewerLabel: getLabel(site, language, "sourceViewerLabel", "Source viewer"),
       focusModeEnabled: Boolean(site.FocusMode),
       focusModeLabel: getLabel(site, language, "focusMode", "Focus mode"),
       activeNavigation: Boolean(site.ActiveNavigation),

@@ -10,10 +10,12 @@ import type { VersionRoutesConfig } from "../version/resolve-version";
 export interface MergedRoutesConfig {
   auth: GitPageDocsConfig["auth"];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
+  routesSourceViewer: ContentTypeRouteConfig[];
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
   routesAudio: ContentTypeRouteConfig[];
   menusHeaderMd: GitPageDocsConfig["menus-header"];
+  menusHeaderSourceViewer: GitPageDocsConfig["menus-header"];
   menusHeaderHtml: GitPageDocsConfig["menus-header"];
   menusHeaderVideo: GitPageDocsConfig["menus-header"];
   menusHeaderAudio: GitPageDocsConfig["menus-header"];
@@ -28,10 +30,12 @@ export function mergeVersionConfig(
   const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
   let auth = baseConfig.auth;
   let routesMd = baseConfig["routes-md"] ?? baseConfig.routes ?? [];
+  let routesSourceViewer = baseConfig["routes-source-viewer"] ?? [];
   let routesHtml = baseConfig["routes-html"] ?? [];
   let routesVideo = baseConfig["routes-video"] ?? [];
   let routesAudio = baseConfig["routes-audio"] ?? [];
   let menusHeaderMd = baseConfig["menus-header-md"] ?? baseConfig["menus-header"] ?? [];
+  let menusHeaderSourceViewer = baseConfig["menus-header-source-viewer"] ?? [];
   let menusHeaderHtml = baseConfig["menus-header-html"] ?? [];
   let menusHeaderVideo = baseConfig["menus-header-video"] ?? [];
   let menusHeaderAudio = baseConfig["menus-header-audio"] ?? [];
@@ -42,11 +46,13 @@ export function mergeVersionConfig(
     if (versionConfig.auth) auth = versionConfig.auth;
     if (versionConfig["routes-md"]?.length) routesMd = versionConfig["routes-md"];
     else if (versionConfig.routes?.length) routesMd = versionConfig.routes;
+    if (versionConfig["routes-source-viewer"]?.length) routesSourceViewer = versionConfig["routes-source-viewer"];
     if (versionConfig["routes-html"]?.length) routesHtml = versionConfig["routes-html"];
     if (versionConfig["routes-video"]?.length) routesVideo = versionConfig["routes-video"];
     if (versionConfig["routes-audio"]?.length) routesAudio = versionConfig["routes-audio"];
     if (versionConfig["menus-header-md"]?.length) menusHeaderMd = versionConfig["menus-header-md"];
     else if (versionConfig["menus-header"]?.length) menusHeaderMd = versionConfig["menus-header"];
+    if (versionConfig["menus-header-source-viewer"]?.length) menusHeaderSourceViewer = versionConfig["menus-header-source-viewer"];
     if (versionConfig["menus-header-html"]?.length) menusHeaderHtml = versionConfig["menus-header-html"];
     if (versionConfig["menus-header-video"]?.length) menusHeaderVideo = versionConfig["menus-header-video"];
     if (versionConfig["menus-header-audio"]?.length) menusHeaderAudio = versionConfig["menus-header-audio"];
@@ -57,10 +63,12 @@ export function mergeVersionConfig(
   return {
     auth,
     routesMd,
+    routesSourceViewer,
     routesHtml,
     routesVideo,
     routesAudio,
     menusHeaderMd,
+    menusHeaderSourceViewer,
     menusHeaderHtml,
     menusHeaderVideo,
     menusHeaderAudio,

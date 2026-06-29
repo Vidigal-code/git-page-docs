@@ -36,6 +36,16 @@ export const ROUTE_META_ID6 = {
   },
 };
 
+export const SOURCE_VIEWER_META = {
+  id: 7,
+  titles: { pt: "Codigo fonte", en: "Source code", es: "Codigo fuente" },
+  descriptions: {
+    pt: "Explore a arvore do repositorio, navegue por pastas e visualize arquivos diretamente na documentacao.",
+    en: "Explore the repository tree, browse folders, and preview files directly inside the documentation.",
+    es: "Explora el arbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentacion.",
+  },
+};
+
 export const VIDEO_META_ID1 = {
   title: { pt: "Interactive vs non-interactive modes | Copilot CLI for beginners", en: "Interactive vs non-interactive modes | Copilot CLI for beginners", es: "Interactive vs non-interactive modes | Copilot CLI for beginners" },
   description: {

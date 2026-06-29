@@ -44,14 +44,14 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 
 ## Visualizador de codigo fonte
 
-Quando `GITPAGEDOCS_REPOSITORY_SEARCH=true`, o runtime expoe `/source-viewer` e caminhos de repositorio como `/source-viewer/<owner>/<repo>/tree/<branch>`. O viewer le a arvore do repositorio no GitHub em tempo de execucao e aplica o tema atual da documentacao.
+O config da versao pode renderizar um container **Codigo fonte** via `routes-source-viewer` e `menus-header-source-viewer`. O viewer le a arvore do repositorio no GitHub em tempo de execucao e aplica o tema atual da documentacao.
 
-- Inputs de owner, repositorio e branch; a branch padrao e `main`
+- Arvore do repositorio a partir de `source-viewer-path`; a branch padrao e `main`
 - Navegacao por pastas e filtro de arquivos
 - Listagem de diretorios no estilo GitHub
 - Renderizacao de codigo com numeros de linha
 - Alternancia preview/codigo para Markdown, incluindo `README.md`
-- Os metadados de versao controlam o atalho do cabecalho via `source-viewer` e `source-viewer-path`
+- Pastas recolhiveis na lateral
 
 ## Chaves de config (site)
 

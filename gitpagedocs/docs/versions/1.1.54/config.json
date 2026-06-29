@@ -288,6 +288,42 @@
       }
     }
   ],
+  "routes-source-viewer": [
+    {
+      "id": 7,
+      "title": {
+        "pt": "Codigo fonte",
+        "en": "Source code",
+        "es": "Codigo fuente"
+      },
+      "description": {
+        "pt": "Explore a arvore do repositorio, navegue por pastas e visualize arquivos diretamente na documentacao.",
+        "en": "Explore the repository tree, browse folders, and preview files directly inside the documentation.",
+        "es": "Explora el arbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentacion."
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": false,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": false,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false,
+      "source-viewer": true,
+      "source-viewer-path": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+    }
+  ],
   "routes-html": [],
   "routes-video": [
     {
@@ -576,6 +612,23 @@
       "es": {
         "title": "Rutas autorizadas",
         "path-click": "gitpagedocs/docs/versions/1.1.54/es/authorized-routes.md"
+      }
+    }
+  ],
+  "menus-header-source-viewer": [
+    {
+      "id": 7,
+      "pt": {
+        "title": "Codigo fonte",
+        "path-click": "page:7"
+      },
+      "en": {
+        "title": "Source code",
+        "path-click": "page:7"
+      },
+      "es": {
+        "title": "Codigo fuente",
+        "path-click": "page:7"
       }
     }
   ],

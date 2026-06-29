@@ -89,6 +89,8 @@ export interface ContentTypeRouteConfig {
   descriptionPosition?: string;
   descriptionIsVisible?: boolean;
   path?: Record<LanguageCode, string>;
+  "source-viewer"?: boolean;
+  "source-viewer-path"?: string | Record<LanguageCode, string>;
   video?: VideoRouteConfig;
   /** routes-audio: AudioRouteConfig. routes-md/html/video: PageRouteAudioConfig (background music). Discriminate by "tracks" vs "pathAudio". */
   audio?: AudioRouteConfig | PageRouteAudioConfig;
@@ -146,10 +148,12 @@ export interface GitPageDocsConfig {
   routes: RouteConfig[];
   "menus-header": HeaderMenuItem[];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
+  "routes-source-viewer"?: ContentTypeRouteConfig[];
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
   "routes-audio"?: ContentTypeRouteConfig[];
   "menus-header-md"?: HeaderMenuItem[];
+  "menus-header-source-viewer"?: HeaderMenuItem[];
   "menus-header-html"?: HeaderMenuItem[];
   "menus-header-video"?: HeaderMenuItem[];
   "menus-header-audio"?: HeaderMenuItem[];

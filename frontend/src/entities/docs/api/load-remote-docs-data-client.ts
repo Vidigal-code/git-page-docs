@@ -36,10 +36,12 @@ type VersionConfig = {
   routes?: RouteConfig[];
   "menus-header"?: HeaderMenuItem[];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
+  "routes-source-viewer"?: ContentTypeRouteConfig[];
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
   "routes-audio"?: ContentTypeRouteConfig[];
   "menus-header-md"?: HeaderMenuItem[];
+  "menus-header-source-viewer"?: HeaderMenuItem[];
   "menus-header-html"?: HeaderMenuItem[];
   "menus-header-video"?: HeaderMenuItem[];
   "menus-header-audio"?: HeaderMenuItem[];
@@ -129,6 +131,7 @@ function getLanguagesFromRecord(record: Record<LanguageCode, string> | undefined
 
 function getAvailableLanguagesFromContent(
   routesMd: Array<ContentTypeRouteConfig | RouteConfig>,
+  routesSourceViewer: ContentTypeRouteConfig[],
   routesHtml: ContentTypeRouteConfig[],
   routesVideo: ContentTypeRouteConfig[],
   routesAudio: ContentTypeRouteConfig[],
@@ -136,6 +139,9 @@ function getAvailableLanguagesFromContent(
 ): LanguageCode[] {
   const mdPath = routesMd.find((route) => route.path && Object.keys(route.path).length > 0)?.path;
   if (mdPath) return getLanguagesFromRecord(mdPath);
+
+  const sourceViewerTitle = routesSourceViewer.find((route) => route.title && Object.keys(route.title).length > 0)?.title;
+  if (sourceViewerTitle) return getLanguagesFromRecord(sourceViewerTitle);
 
   const htmlPath = routesHtml.find((route) => route.path && Object.keys(route.path).length > 0)?.path;
   if (htmlPath) return getLanguagesFromRecord(htmlPath);
@@ -337,10 +343,12 @@ export async function loadRemoteDocsData(
   const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
   let auth = config.auth;
   let routesMd = config["routes-md"] ?? config.routes ?? [];
+  let routesSourceViewer = config["routes-source-viewer"] ?? [];
   let routesHtml = config["routes-html"] ?? [];
   let routesVideo = config["routes-video"] ?? [];
   let routesAudio = config["routes-audio"] ?? [];
   let menusHeaderMd = config["menus-header-md"] ?? config["menus-header"] ?? [];
+  let menusHeaderSourceViewer = config["menus-header-source-viewer"] ?? [];
   let menusHeaderHtml = config["menus-header-html"] ?? [];
   let menusHeaderVideo = config["menus-header-video"] ?? [];
   let menusHeaderAudio = config["menus-header-audio"] ?? [];
@@ -352,11 +360,13 @@ export async function loadRemoteDocsData(
     if (versionConfig?.auth) auth = versionConfig.auth;
     if (versionConfig?.["routes-md"]?.length) routesMd = versionConfig["routes-md"];
     else if (versionConfig?.routes?.length) routesMd = versionConfig.routes;
+    if (versionConfig?.["routes-source-viewer"]?.length) routesSourceViewer = versionConfig["routes-source-viewer"];
     if (versionConfig?.["routes-html"]?.length) routesHtml = versionConfig["routes-html"];
     if (versionConfig?.["routes-video"]?.length) routesVideo = versionConfig["routes-video"];
     if (versionConfig?.["routes-audio"]?.length) routesAudio = versionConfig["routes-audio"];
     if (versionConfig?.["menus-header-md"]?.length) menusHeaderMd = versionConfig["menus-header-md"];
     else if (versionConfig?.["menus-header"]?.length) menusHeaderMd = versionConfig["menus-header"];
+    if (versionConfig?.["menus-header-source-viewer"]?.length) menusHeaderSourceViewer = versionConfig["menus-header-source-viewer"];
     if (versionConfig?.["menus-header-html"]?.length) menusHeaderHtml = versionConfig["menus-header-html"];
     if (versionConfig?.["menus-header-video"]?.length) menusHeaderVideo = versionConfig["menus-header-video"];
     if (versionConfig?.["menus-header-audio"]?.length) menusHeaderAudio = versionConfig["menus-header-audio"];
@@ -367,6 +377,7 @@ export async function loadRemoteDocsData(
   const routesWithPath = routesMd.filter(routeHasPath);
   const availableLanguages = getAvailableLanguagesFromContent(
     routesMd,
+    routesSourceViewer,
     routesHtml,
     routesVideo,
     routesAudio,
@@ -381,6 +392,7 @@ export async function loadRemoteDocsData(
   const routesForConfig: RouteConfig[] = routesWithPath.map((r) => ({ id: r.id, path: r.path }));
   const allIds = new Set<number>();
   routesMd.forEach((route) => allIds.add(route.id));
+  routesSourceViewer.forEach((route) => allIds.add(route.id));
   routesHtml.forEach((route) => allIds.add(route.id));
   routesVideo.forEach((route) => allIds.add(route.id));
   routesAudio.forEach((route) => allIds.add(route.id));
@@ -398,10 +410,12 @@ export async function loadRemoteDocsData(
     routes: routesForConfig,
     "menus-header": menusHeaderMd,
     "routes-md": routesMd,
+    "routes-source-viewer": routesSourceViewer,
     "routes-html": routesHtml,
     "routes-video": routesVideo,
     "routes-audio": routesAudio,
     "menus-header-md": menusHeaderMd,
+    "menus-header-source-viewer": menusHeaderSourceViewer,
     "menus-header-html": menusHeaderHtml,
     "menus-header-video": menusHeaderVideo,
     "menus-header-audio": menusHeaderAudio,
@@ -438,6 +452,23 @@ export async function loadRemoteDocsData(
         const pathVal = mdRoute.path[lang];
         if (pathVal) pathToPageMap[pathVal] = { pageIndex, contentType: "md" };
       });
+    }
+
+    const sourceViewerRoute = routesSourceViewer.find((route) => route.id === id && route["source-viewer"] === true);
+    if (sourceViewerRoute) {
+      const rawPath = sourceViewerRoute["source-viewer-path"];
+      const sourceViewerPath =
+        typeof rawPath === "string"
+          ? rawPath
+          : rawPath?.[preferredLanguage] ?? rawPath?.en ?? Object.values(rawPath ?? {})[0] ?? "";
+      page.sourceViewer = {
+        routeId: id,
+        config: sourceViewerRoute,
+        sourceViewerPath,
+        fullscreenEnabled: sourceViewerRoute.fullscreenEnabled ?? false,
+      };
+      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "source-viewer" };
+      if (sourceViewerPath) pathToPageMap[`source-viewer:${sourceViewerPath}`] = { pageIndex, contentType: "source-viewer" };
     }
 
     const htmlRoute = routesHtml.find((route) => route.id === id && (route.path || route.url));

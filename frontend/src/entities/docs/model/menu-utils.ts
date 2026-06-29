@@ -12,7 +12,7 @@ export function getRouteIndexByPath(data: LoadedDocsData, language: LanguageCode
 
 function getOrderedContentTypes(data: LoadedDocsData): ContentType[] {
   const hierarchy = data.config.hierarchyPage ?? DEFAULT_HIERARCHY;
-  return (["md", "html", "video", "audio"] as ContentType[]).sort(
+  return (["md", "source-viewer", "html", "video", "audio"] as ContentType[]).sort(
     (a, b) => (hierarchy[a] ?? 999) - (hierarchy[b] ?? 999),
   );
 }
@@ -47,6 +47,9 @@ function findPathClickByPageAndType(
     const htmlPath = getRoutePath(cfg, language);
     const htmlUrl = cfg.url?.[language] ?? cfg.url?.en ?? Object.values(cfg.url ?? {})[0];
     return htmlPath ?? (htmlUrl ? `url:${htmlUrl}` : undefined);
+  }
+  if (contentType === "source-viewer" && page.sourceViewer) {
+    return `page:${page.sourceViewer.routeId}`;
   }
   if (contentType === "video" && page.video) {
     return `page:${page.video.routeId}`;
@@ -83,6 +86,9 @@ export function getPathClickByRouteId(
       if (path) return path;
       if (url) return `url:${url}`;
     }
+    if (contentType === "source-viewer" && data.config["routes-source-viewer"]?.some((route) => route.id === routeId)) {
+      return `page:${routeId}`;
+    }
     if (contentType === "video" && data.config["routes-video"]?.some((route) => route.id === routeId)) {
       return `page:${routeId}`;
     }
@@ -112,9 +118,10 @@ export function getPageIndexByPathClick(data: LoadedDocsData, pathClick: string)
     const mdPath = page.md ? Object.values((page.md.config as { path?: Record<string, string> }).path ?? {}) : [];
     const htmlPath = page.html ? Object.values(page.html.config.path ?? {}) : [];
     const htmlUrl = page.html ? Object.values(page.html.config.url ?? {}) : [];
+    const sourceViewerPath = page.sourceViewer ? [page.sourceViewer.sourceViewerPath, `page:${page.sourceViewer.routeId}`] : [];
     const videoPath = page.video ? Object.values(page.video.pathVideoByLanguage ?? {}) : [];
     const audioPath = page.audio ? Object.values(page.audio.pathAudioByLanguage ?? {}) : [];
-    return [...mdPath, ...htmlPath, ...htmlUrl, ...videoPath, ...audioPath].includes(normalizedPathClick);
+    return [...mdPath, ...sourceViewerPath, ...htmlPath, ...htmlUrl, ...videoPath, ...audioPath].includes(normalizedPathClick);
   }) ?? -1;
   if (pageIdx >= 0) return pageIdx;
 

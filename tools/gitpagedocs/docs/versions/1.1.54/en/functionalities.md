@@ -53,14 +53,14 @@ Install globally with `npm install -g gitpagedocs`, or run one-off with `npx git
 
 ## Source code viewer
 
-When `GITPAGEDOCS_REPOSITORY_SEARCH=true`, the runtime exposes `/source-viewer` and repository-specific paths such as `/source-viewer/<owner>/<repo>/tree/<branch>`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
+The version config can render a **Source code** container through `routes-source-viewer` and `menus-header-source-viewer`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
 
-- Owner, repository, and branch inputs; branch defaults to `main`
+- Repository tree from `source-viewer-path`; branch defaults to `main`
 - Folder navigation and file filtering
 - GitHub-style directory listing
 - Code rendering with line numbers
 - Markdown preview/code toggle, including `README.md`
-- Version metadata controls the header shortcut via `source-viewer` and `source-viewer-path`
+- Collapsible folders in the sidebar
 
 ## Config keys (site)
 

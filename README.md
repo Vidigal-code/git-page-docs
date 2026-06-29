@@ -284,7 +284,7 @@ Recommended for local testing:
 GITPAGEDOCS_REPOSITORY_SEARCH=true
 ```
 
-When repository search is enabled, the runtime also exposes `/source-viewer` and `/source-viewer/<owner>/<repo>/tree/<branch>` for GitHub-style source browsing. The branch input defaults to `main`, and version entries can expose the header shortcut with `source-viewer` and `source-viewer-path`.
+Version configs can render a GitHub-style source browser inside the docs through `routes-source-viewer` and `menus-header-source-viewer`. Each source viewer route uses `source-viewer: true` and `source-viewer-path`, for example `https://github.com/Vidigal-code/git-page-docs/tree/main`.
 
 ## Scripts
 
@@ -307,8 +307,6 @@ All routes for accessing documentation files on the official site or self-hosted
 | Pattern | Description |
 |--------|-------------|
 | `/` | Repository search home (when `repositorySearchHome=true`) |
-| `/source-viewer` | Source viewer home (when repository search is enabled) |
-| `/source-viewer/{owner}/{repo}/tree/{branch}` | Source viewer for a repository branch |
 | `/{owner}/{repo}/` | Docs for `owner/repo`, default version |
 | `/{owner}/{repo}/v/{version}/` | Docs for `owner/repo`, specific version |
 | `/v/{version}/` | Docs for the projectâ€™s own repo, specific version |
@@ -353,11 +351,6 @@ All routes for accessing documentation files on the official site or self-hosted
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=getting-started
 - Project overview:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=project-overview
-
-**Source viewer**
-
-- Source viewer for the main branch:
-  https://vidigal-code.github.io/git-page-docs/source-viewer/Vidigal-code/git-page-docs/tree/main
 
 **Video pages** (route id 1â€“4; pages combine MD + HTML + Video by id)
 

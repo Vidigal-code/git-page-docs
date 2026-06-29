@@ -44,14 +44,14 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 
 ## Visor de codigo fuente
 
-Cuando `GITPAGEDOCS_REPOSITORY_SEARCH=true`, el runtime expone `/source-viewer` y rutas de repositorio como `/source-viewer/<owner>/<repo>/tree/<branch>`. El viewer lee el arbol del repositorio en GitHub en tiempo de ejecucion y aplica el tema actual de la documentacion.
+El config de version puede renderizar un contenedor **Codigo fuente** via `routes-source-viewer` y `menus-header-source-viewer`. El viewer lee el arbol del repositorio en GitHub en tiempo de ejecucion y aplica el tema actual de la documentacion.
 
-- Inputs de owner, repositorio y branch; la branch por defecto es `main`
+- Arbol del repositorio desde `source-viewer-path`; la branch por defecto es `main`
 - Navegacion por carpetas y filtro de archivos
 - Listado de directorios estilo GitHub
 - Renderizado de codigo con numeros de linea
 - Alternancia vista previa/codigo para Markdown, incluido `README.md`
-- Los metadatos de version controlan el acceso del encabezado via `source-viewer` y `source-viewer-path`
+- Carpetas colapsables en la barra lateral
 
 ## Claves de config (site)
 

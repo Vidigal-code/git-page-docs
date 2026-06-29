@@ -16,9 +16,10 @@ import {
   VIDEO_META_ID2,
   VIDEO_META_ID3,
   VIDEO_META_ID4,
+  SOURCE_VIEWER_META,
   DEFAULT_HIERARCHY,
 } from "../data/route-metas.mjs";
-import { buildMdRoute, buildVideoRoute } from "./route-builders.mjs";
+import { buildMdRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
 
 const ROUTE_METAS = {
   1: ROUTE_META_ID1,
@@ -77,6 +78,17 @@ function buildVersionVideoRoutes(versionId) {
   );
 }
 
+function buildVersionSourceViewerRoutes() {
+  return [
+    buildSourceViewerRoute(
+      SOURCE_VIEWER_META.id,
+      "https://github.com/Vidigal-code/git-page-docs/tree/main",
+      SOURCE_VIEWER_META.titles,
+      SOURCE_VIEWER_META.descriptions,
+    ),
+  ];
+}
+
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
   const menuMd = [1, 2, 3, 4, 5, 6].map((id) => ({
@@ -91,7 +103,15 @@ function buildVersionMenus(versionId) {
     en: { title: `${VIDEO_METAS[id].title.en.slice(0, 40)}...`, "path-click": `page:${id}` },
     es: { title: `${VIDEO_METAS[id].title.es.slice(0, 40)}...`, "path-click": `page:${id}` },
   }));
-  return { md: menuMd, html: [], video: menuVideo };
+  const menuSourceViewer = [
+    {
+      id: SOURCE_VIEWER_META.id,
+      pt: { title: SOURCE_VIEWER_META.titles.pt, "path-click": `page:${SOURCE_VIEWER_META.id}` },
+      en: { title: SOURCE_VIEWER_META.titles.en, "path-click": `page:${SOURCE_VIEWER_META.id}` },
+      es: { title: SOURCE_VIEWER_META.titles.es, "path-click": `page:${SOURCE_VIEWER_META.id}` },
+    },
+  ];
+  return { md: menuMd, sourceViewer: menuSourceViewer, html: [], video: menuVideo };
 }
 
 /**
@@ -116,9 +136,11 @@ export function buildVersionConfig(versionId) {
       ],
     },
     "routes-md": buildVersionMdRoutes(versionId),
+    "routes-source-viewer": buildVersionSourceViewerRoutes(),
     "routes-html": [],
     "routes-video": buildVersionVideoRoutes(versionId),
     "menus-header-md": menus.md,
+    "menus-header-source-viewer": menus.sourceViewer,
     "menus-header-html": menus.html,
     "menus-header-video": menus.video,
     hierarchyPage: DEFAULT_HIERARCHY,

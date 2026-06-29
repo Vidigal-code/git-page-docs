@@ -23,6 +23,7 @@ export type {
   DocsContent,
   LoadedMdContent,
   LoadedHtmlContent,
+  LoadedSourceViewerContent,
   LoadedVideoContent,
   LoadedAudioContent,
   LoadedPage,

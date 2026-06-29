@@ -15,7 +15,6 @@ import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/sear
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
-import { buildSourceViewerPath, DEFAULT_SOURCE_VIEWER_BRANCH, DEFAULT_SOURCE_VIEWER_OWNER, DEFAULT_SOURCE_VIEWER_REPO } from "@/entities/source-viewer";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./repository-search-screen.module.css";
 
@@ -77,7 +76,6 @@ export function RepositorySearchScreen({
   const ownerLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchOwnerLabel", "Owner");
   const repoLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchRepoLabel", "Repository");
   const searchLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "searchButtonLabel", "Search");
-  const sourceViewerLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "sourceViewerLabel", "Source viewer");
 
   const localizedMessage = {
     pt: "GitPageDocs Não instalado.",
@@ -114,17 +112,6 @@ export function RepositorySearchScreen({
     }
     const targetPath = `/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/`;
     router.push(targetPath);
-  }
-
-  function onOpenSourceViewer() {
-    router.push(
-      buildSourceViewerPath({
-        owner: DEFAULT_SOURCE_VIEWER_OWNER,
-        repo: DEFAULT_SOURCE_VIEWER_REPO,
-        branch: DEFAULT_SOURCE_VIEWER_BRANCH,
-        path: "",
-      }),
-    );
   }
 
   const header = (
@@ -177,11 +164,6 @@ export function RepositorySearchScreen({
             button: styles.button,
           }}
         />
-        <div className={styles.actions}>
-          <button type="button" className={styles.secondaryButton} onClick={onOpenSourceViewer}>
-            {sourceViewerLabel}
-          </button>
-        </div>
       </section>
     </SearchShellLayout>
   );

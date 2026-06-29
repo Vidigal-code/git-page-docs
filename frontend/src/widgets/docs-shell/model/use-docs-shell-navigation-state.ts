@@ -7,6 +7,7 @@ import type {
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedPage,
+  LoadedSourceViewerContent,
   LoadedVideoContent,
 } from "@/entities/docs";
 import { getPageIndexByPathClick } from "./menu-tree";
@@ -19,6 +20,10 @@ function getMdItems(pages: LoadedPage[]): BrowseItem<LoadedMdContent>[] {
 
 function getHtmlItems(pages: LoadedPage[]): BrowseItem<LoadedHtmlContent>[] {
   return pages.flatMap((p, i) => (p.html ? [{ pageIndex: i, content: p.html }] : []));
+}
+
+function getSourceViewerItems(pages: LoadedPage[]): BrowseItem<LoadedSourceViewerContent>[] {
+  return pages.flatMap((p, i) => (p.sourceViewer ? [{ pageIndex: i, content: p.sourceViewer }] : []));
 }
 
 function getVideoItems(pages: LoadedPage[]): BrowseItem<LoadedVideoContent>[] {
@@ -60,22 +65,25 @@ export function useDocsShellNavigationState({
   const [expandedMenuMap, setExpandedMenuMap] = useState<Record<string, boolean>>({});
   const [mdBrowseIndex, setMdBrowseIndex] = useState(0);
   const [htmlBrowseIndex, setHtmlBrowseIndex] = useState(0);
+  const [sourceViewerBrowseIndex, setSourceViewerBrowseIndex] = useState(0);
   const [videoBrowseIndex, setVideoBrowseIndex] = useState(0);
   const [audioBrowseIndex, setAudioBrowseIndex] = useState(0);
 
   const pages = data.pages ?? [];
   const mdItems = getMdItems(pages);
+  const sourceViewerItems = getSourceViewerItems(pages);
   const htmlItems = getHtmlItems(pages);
   const videoItems = getVideoItems(pages);
   const audioItems = getAudioItems(pages);
 
   useEffect(() => {
     setMdBrowseIndex(getBrowseIndexForPage(mdItems, pageIndex));
+    setSourceViewerBrowseIndex(getBrowseIndexForPage(sourceViewerItems, pageIndex));
     setHtmlBrowseIndex(getBrowseIndexForPage(htmlItems, pageIndex));
     setVideoBrowseIndex(getBrowseIndexForPage(videoItems, pageIndex));
     setAudioBrowseIndex(getBrowseIndexForPage(audioItems, pageIndex));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync browse indices when page or items change
-  }, [pageIndex, pages.length, mdItems.length, htmlItems.length, videoItems.length, audioItems.length]);
+  }, [pageIndex, pages.length, mdItems.length, sourceViewerItems.length, htmlItems.length, videoItems.length, audioItems.length]);
 
   function onMenuClick(pathClick: string, ancestorKeys: string[] = [], options: OnMenuClickOptions = {}) {
     if (pathClick && canNavigateToPathClick && !canNavigateToPathClick(pathClick)) {
@@ -133,14 +141,17 @@ export function useDocsShellNavigationState({
     isNodeExpanded,
     mdBrowseIndex,
     htmlBrowseIndex,
+    sourceViewerBrowseIndex,
     videoBrowseIndex,
     audioBrowseIndex,
     setMdBrowseIndex,
     setHtmlBrowseIndex,
+    setSourceViewerBrowseIndex,
     setVideoBrowseIndex,
     setAudioBrowseIndex,
     mdItems,
     htmlItems,
+    sourceViewerItems,
     videoItems,
     audioItems,
     expandAncestors,

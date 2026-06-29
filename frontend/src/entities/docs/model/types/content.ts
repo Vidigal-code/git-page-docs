@@ -50,9 +50,17 @@ export interface LoadedAudioContent {
   fullscreenEnabled?: boolean;
 }
 
+export interface LoadedSourceViewerContent {
+  routeId: number;
+  config: ContentTypeRouteConfig;
+  sourceViewerPath: string;
+  fullscreenEnabled?: boolean;
+}
+
 export interface LoadedPage {
   id: number;
   md?: LoadedMdContent;
+  sourceViewer?: LoadedSourceViewerContent;
   html?: LoadedHtmlContent;
   video?: LoadedVideoContent;
   audio?: LoadedAudioContent;

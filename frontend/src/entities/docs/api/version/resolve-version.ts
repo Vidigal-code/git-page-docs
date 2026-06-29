@@ -7,10 +7,12 @@ export interface VersionRoutesConfig {
   routes?: RouteConfig[];
   "menus-header"?: GitPageDocsConfig["menus-header"];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
+  "routes-source-viewer"?: ContentTypeRouteConfig[];
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
   "routes-audio"?: ContentTypeRouteConfig[];
   "menus-header-md"?: GitPageDocsConfig["menus-header"];
+  "menus-header-source-viewer"?: GitPageDocsConfig["menus-header"];
   "menus-header-html"?: GitPageDocsConfig["menus-header"];
   "menus-header-video"?: GitPageDocsConfig["menus-header"];
   "menus-header-audio"?: GitPageDocsConfig["menus-header"];
@@ -79,12 +81,14 @@ export async function loadVersionConfig(options: {
   const hasAnyRoutes =
     (versionConfig?.routes?.length ?? 0) > 0 ||
     (versionConfig?.["routes-md"]?.length ?? 0) > 0 ||
+    (versionConfig?.["routes-source-viewer"]?.length ?? 0) > 0 ||
     (versionConfig?.["routes-html"]?.length ?? 0) > 0 ||
     (versionConfig?.["routes-video"]?.length ?? 0) > 0 ||
     (versionConfig?.["routes-audio"]?.length ?? 0) > 0;
   const hasAnyMenus =
     (versionConfig?.["menus-header"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-md"]?.length ?? 0) > 0 ||
+    (versionConfig?.["menus-header-source-viewer"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-html"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-video"]?.length ?? 0) > 0 ||
     (versionConfig?.["menus-header-audio"]?.length ?? 0) > 0;

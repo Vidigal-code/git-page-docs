@@ -143,6 +143,10 @@ export function buildUnifiedHeaderMenuTree(
   if (menusMd?.length) {
     sections.push({ type: "md", menus: menusMd, labelKey: "titleHeaderMenuMd" });
   }
+  const menusSourceViewer = data.config["menus-header-source-viewer"];
+  if (menusSourceViewer?.length) {
+    sections.push({ type: "source-viewer", menus: menusSourceViewer, labelKey: "titleHeaderMenuSourceViewer" });
+  }
   const menusHtml = data.config["menus-header-html"];
   if (menusHtml?.length) {
     sections.push({ type: "html", menus: menusHtml, labelKey: "titleHeaderMenuHtml" });

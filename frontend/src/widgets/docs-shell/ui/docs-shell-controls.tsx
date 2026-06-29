@@ -43,8 +43,6 @@ export function DocsShellControls({
   previewIconTag,
   previewIconStyle,
   previewIconImage,
-  sourceViewerUrl,
-  sourceViewerLabel,
   focusModeEnabled,
   focusModeLabel,
   activeNavigation,
@@ -135,8 +133,6 @@ export function DocsShellControls({
         previewIconTag={previewIconTag}
         previewIconStyle={previewIconStyle}
         previewIconImage={previewIconImage}
-        sourceViewerUrl={sourceViewerUrl}
-        sourceViewerLabel={sourceViewerLabel}
         onOpenVersionLinksPopup={onOpenVersionLinksPopup}
         onOpenInfoPopup={onOpenInfoPopup}
       />

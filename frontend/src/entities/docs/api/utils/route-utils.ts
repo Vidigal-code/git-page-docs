@@ -28,15 +28,18 @@ export function getLanguagesFromPathRecord(pathRecord: Record<string, string> | 
 export function getLanguages(
   config: GitPageDocsConfig,
   routesMd: (ContentTypeRouteConfig | RouteConfig)[],
+  routesSourceViewer: ContentTypeRouteConfig[],
   routesHtml: ContentTypeRouteConfig[],
   routesVideo: ContentTypeRouteConfig[],
   routesAudio?: ContentTypeRouteConfig[],
 ): LanguageCode[] {
   const firstMd = routesMd[0];
+  const firstSourceViewer = routesSourceViewer[0];
   const firstHtml = routesHtml[0];
   const firstVideo = routesVideo[0];
   const firstAudio = routesAudio?.[0];
   if (firstMd && hasPath(firstMd)) return getLanguagesFromPathRecord(firstMd.path);
+  if (firstSourceViewer?.title) return getLanguagesFromPathRecord(firstSourceViewer.title);
   if (firstHtml?.path) return getLanguagesFromPathRecord(firstHtml.path);
   if (firstVideo?.video?.pathVideo) return getLanguagesFromPathRecord(firstVideo.video.pathVideo);
   if (firstAudio && hasAudio(firstAudio)) return getLanguagesFromPathRecord(firstAudio.audio.pathAudio);

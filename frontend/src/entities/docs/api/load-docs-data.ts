@@ -65,6 +65,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const languages = getLanguages(
     effectiveConfig,
     merged.routesMd,
+    merged.routesSourceViewer,
     merged.routesHtml,
     merged.routesVideo,
     merged.routesAudio,
@@ -73,6 +74,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const { pages, pathToPageMap } = await loadPages({
     sortedIds,
     routesMd: merged.routesMd,
+    routesSourceViewer: merged.routesSourceViewer,
     routesHtml: merged.routesHtml,
     routesVideo: merged.routesVideo,
     routesAudio: merged.routesAudio,

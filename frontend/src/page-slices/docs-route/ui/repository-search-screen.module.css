@@ -91,12 +91,6 @@
   gap: 10px;
 }
 
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
 .input,
 .select,
 .button {
@@ -118,18 +112,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-}
-
-.secondaryButton {
-  min-height: 42px;
-  min-width: 160px;
-  border-radius: 10px;
-  border: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--card-background) 88%, var(--primary) 12%);
-  color: var(--text);
-  padding: 0 14px;
-  font-weight: 700;
   cursor: pointer;
 }
 
@@ -157,9 +139,6 @@
     width: 100%;
   }
 
-  .secondaryButton {
-    width: 100%;
-  }
 }
 
 @media (max-width: 640px) {

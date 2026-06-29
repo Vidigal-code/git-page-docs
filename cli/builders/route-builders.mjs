@@ -109,3 +109,17 @@ export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles
   if (authorization !== undefined) obj.authorization = authorization;
   return obj;
 }
+
+export function buildSourceViewerRoute(routeId, sourceViewerPath, titles, descriptions, options = {}) {
+  const base = buildMdRoute("", routeId, {}, titles, descriptions, {
+    ...options,
+    fullscreenEnabled: false,
+    RouteguideBrand: false,
+  });
+  delete base.path;
+  return {
+    ...base,
+    "source-viewer": true,
+    "source-viewer-path": sourceViewerPath,
+  };
+}
