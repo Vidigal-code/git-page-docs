@@ -1,4 +1,18 @@
 .browser {
+  --source-browser-editor: color-mix(in srgb, var(--card-background) 86%, var(--background) 14%);
+  --source-browser-editor-rail: color-mix(in srgb, var(--background) 88%, var(--card-background) 12%);
+  --source-browser-sidebar: color-mix(in srgb, var(--background) 78%, var(--card-background) 22%);
+  --source-browser-panel: color-mix(in srgb, var(--card-background) 92%, var(--background) 8%);
+  --source-browser-line: var(--card-border);
+  --source-browser-muted: var(--text-secondary);
+  --source-browser-control: var(--control-background, color-mix(in srgb, var(--card-background) 88%, var(--background) 12%));
+  --source-browser-control-border: var(--control-border, 1px solid var(--card-border));
+  --source-browser-hover: color-mix(in srgb, var(--primary) 14%, var(--card-background) 86%);
+  --source-browser-active: color-mix(in srgb, var(--primary) 22%, var(--card-background) 78%);
+  --source-browser-focus: var(--button-glow, 0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent));
+  --source-browser-radius: min(var(--card-radius, 8px), 8px);
+  --source-browser-control-radius: min(var(--control-radius, 8px), 8px);
+
   width: 100%;
   color: var(--text);
 }
@@ -29,11 +43,37 @@
 .treeButton,
 .modeButton,
 .breadcrumbButton {
-  border: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--card-background) 90%, var(--primary) 10%);
+  border: var(--source-browser-control-border);
+  background: var(--source-browser-control);
   color: var(--text);
-  border-radius: 8px;
+  border-radius: var(--source-browser-control-radius);
   cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease;
+}
+
+.externalLink:hover,
+.button:hover,
+.treeButton:hover,
+.modeButton:hover,
+.breadcrumbButton:hover {
+  background: var(--source-browser-hover);
+  border-color: color-mix(in srgb, var(--primary) 46%, var(--source-browser-line) 54%);
+}
+
+.externalLink:focus-visible,
+.button:focus-visible,
+.treeButton:focus-visible,
+.modeButton:focus-visible,
+.breadcrumbButton:focus-visible,
+.input:focus-visible,
+.treeItem:focus-visible,
+.fileRow:focus-visible {
+  outline: 0;
+  box-shadow: var(--source-browser-focus);
 }
 
 .externalLink {
@@ -55,11 +95,16 @@
 .input {
   min-width: 0;
   height: 40px;
-  border-radius: 8px;
-  border: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--background) 92%, transparent);
+  border-radius: var(--source-browser-control-radius);
+  border: var(--source-browser-control-border);
+  background: var(--source-browser-control);
   color: var(--text);
   padding: 0 10px;
+}
+
+.input::placeholder {
+  color: var(--source-browser-muted);
+  opacity: 1;
 }
 
 .button {
@@ -70,17 +115,35 @@
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
+  grid-template-columns: 44px minmax(220px, 300px) minmax(0, 1fr);
+  min-height: clamp(560px, 74vh, 980px);
+  border: 1px solid var(--source-browser-line);
+  border-radius: var(--source-browser-radius);
   overflow: hidden;
-  background: color-mix(in srgb, var(--card-background) 94%, var(--background) 6%);
+  background: var(--source-browser-editor);
+  box-shadow: var(--card-shadow, none);
+}
+
+.layout::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 44px;
+  border-right: 1px solid var(--source-browser-line);
+  background:
+    radial-gradient(circle at 50% 28px, var(--primary) 0 5px, transparent 6px),
+    radial-gradient(circle at 50% 58px, var(--source-browser-muted) 0 4px, transparent 5px),
+    radial-gradient(circle at 50% 86px, var(--source-browser-muted) 0 4px, transparent 5px),
+    var(--source-browser-editor-rail);
 }
 
 .sidebar {
+  grid-column: 2;
   min-width: 0;
-  border-right: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--background) 82%, var(--card-background) 18%);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border-right: 1px solid var(--source-browser-line);
+  background: var(--source-browser-sidebar);
 }
 
 .sidebarHeader {
@@ -88,7 +151,8 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
   padding: 10px;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--source-browser-line);
+  background: color-mix(in srgb, var(--source-browser-sidebar) 88%, var(--primary) 12%);
 }
 
 .treeButton {
@@ -101,9 +165,12 @@
 }
 
 .tree {
-  max-height: min(68vh, 760px);
+  min-height: 0;
+  max-height: none;
+  height: 100%;
   overflow: auto;
   padding: 6px;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 .treeItem,
@@ -130,7 +197,12 @@
 .treeItem:hover,
 .treeItemActive,
 .fileRow:hover {
-  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  background: var(--source-browser-hover);
+}
+
+.treeItemActive {
+  color: var(--text);
+  box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .fileName {
@@ -141,14 +213,17 @@
 }
 
 .main {
+  grid-column: 3;
   min-width: 0;
   display: grid;
   grid-template-rows: auto minmax(320px, 1fr);
+  background: var(--source-browser-editor);
 }
 
 .panel {
   min-width: 0;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--source-browser-line);
+  background: var(--source-browser-panel);
 }
 
 .breadcrumb {
@@ -158,7 +233,8 @@
   gap: 6px;
   flex-wrap: wrap;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--source-browser-line);
+  background: color-mix(in srgb, var(--source-browser-panel) 92%, var(--primary) 8%);
 }
 
 .breadcrumbButton {
@@ -169,17 +245,18 @@
 .fileList {
   max-height: 260px;
   overflow: auto;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 .fileRow {
   grid-template-columns: auto minmax(0, 1fr) auto;
   min-height: 38px;
   padding: 0 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--card-border) 70%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--source-browser-line) 70%, transparent);
 }
 
 .fileMeta {
-  color: var(--text-secondary);
+  color: var(--source-browser-muted);
   font-size: 0.86rem;
 }
 
@@ -188,6 +265,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
+  background: var(--source-browser-editor);
 }
 
 .viewerHeader {
@@ -197,7 +275,8 @@
   justify-content: space-between;
   gap: 10px;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--source-browser-line);
+  background: color-mix(in srgb, var(--source-browser-editor) 88%, var(--primary) 12%);
 }
 
 .viewerTitle {
@@ -220,14 +299,19 @@
 }
 
 .modeButtonActive {
-  background: var(--primary);
-  color: var(--button-text);
+  border-color: var(--primary);
+  background: var(--source-browser-active);
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--primary);
 }
 
 .codeScroll {
   min-width: 0;
+  min-height: 0;
   overflow: auto;
   max-height: min(70vh, 820px);
+  background: var(--source-browser-editor);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 .codeTable {
@@ -235,21 +319,32 @@
   border-collapse: collapse;
   font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
+  line-height: 1.55;
+  background: var(--source-browser-editor);
+}
+
+.codeTable td {
+  vertical-align: top;
 }
 
 .lineNumber {
+  position: sticky;
+  left: 0;
+  z-index: 1;
   width: 1%;
   min-width: 48px;
   user-select: none;
-  color: var(--text-secondary);
+  color: var(--source-browser-muted);
   text-align: right;
   padding: 0 10px;
-  border-right: 1px solid var(--card-border);
+  border-right: 1px solid var(--source-browser-line);
+  background: var(--source-browser-editor-rail);
 }
 
 .lineCode {
   white-space: pre;
   padding: 0 12px;
+  color: var(--text);
 }
 
 .markdownPreview {
@@ -257,11 +352,42 @@
   line-height: 1.65;
   overflow: auto;
   max-height: min(70vh, 820px);
+  background: var(--source-browser-editor);
+  color: var(--text);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.markdownPreview :where(h1, h2, h3, h4, h5, h6, p, li, blockquote, td, th) {
+  color: inherit;
+}
+
+.markdownPreview code {
+  border: 1px solid var(--source-browser-line);
+  border-radius: 6px;
+  background: var(--source-browser-editor-rail);
+  color: var(--text);
+  padding: 0.12rem 0.28rem;
+}
+
+.markdownPreview pre {
+  overflow: auto;
+  border: 1px solid var(--source-browser-line);
+  border-radius: 6px;
+  background: var(--source-browser-editor-rail);
+  color: var(--text);
+  padding: 12px;
+}
+
+.markdownPreview pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
 }
 
 .state {
   padding: 18px;
-  color: var(--text-secondary);
+  color: var(--source-browser-muted);
+  background: transparent;
 }
 
 .error {
@@ -269,25 +395,38 @@
 }
 
 @media (max-width: 900px) {
-  .form,
   .layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .form {
     grid-template-columns: 1fr;
   }
 
+  .layout::before {
+    display: none;
+  }
+
   .sidebar {
+    grid-column: 1;
     border-right: 0;
-    border-bottom: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--source-browser-line);
   }
 
   .tree {
+    height: auto;
     max-height: 260px;
+  }
+
+  .main {
+    grid-column: 1;
   }
 }
 
 @media (max-width: 560px) {
   .form,
-  .sidebarHeader,
-  .viewerHeader {
+  .sidebarHeader {
     grid-template-columns: 1fr;
   }
 
@@ -303,11 +442,26 @@
     flex-direction: column;
   }
 
+  .breadcrumb,
+  .viewerHeader,
+  .fileRow {
+    padding-inline: 10px;
+  }
+
   .modeGroup {
     width: 100%;
   }
 
   .modeButton {
     flex: 1;
+  }
+
+  .lineNumber {
+    min-width: 40px;
+    padding-inline: 8px;
+  }
+
+  .lineCode {
+    padding-inline: 10px;
   }
 }
