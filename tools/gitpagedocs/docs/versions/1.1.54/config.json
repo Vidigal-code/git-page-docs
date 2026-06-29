@@ -156,12 +156,7 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false,
-      "authorization": {
-        "requiredRoles": [
-          "maintainer"
-        ]
-      }
+      "RouteguideBrandContainerTop": false
     },
     {
       "id": 4,
@@ -272,20 +267,7 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false,
-      "authorization": {
-        "accessKeyId": "docs-key",
-        "requiredRoles": [
-          "maintainer"
-        ],
-        "requireExternalAuth": true,
-        "allowedProviders": [
-          "authjs",
-          "clerk",
-          "firebase",
-          "jwt"
-        ]
-      }
+      "RouteguideBrandContainerTop": false
     }
   ],
   "routes-source-viewer": [
@@ -327,7 +309,7 @@
   "routes-html": [],
   "routes-video": [
     {
-      "id": 1,
+      "id": 8,
       "title": {
         "pt": "Interactive vs non-interactive modes | Copilot CLI for beginners",
         "en": "Interactive vs non-interactive modes | Copilot CLI for beginners",
@@ -364,19 +346,10 @@
           "en": "bdIJkGr2NV0",
           "es": "bdIJkGr2NV0"
         }
-      },
-      "authorization": {
-        "requireExternalAuth": true,
-        "allowedProviders": [
-          "authjs",
-          "clerk",
-          "firebase",
-          "jwt"
-        ]
       }
     },
     {
-      "id": 2,
+      "id": 9,
       "title": {
         "pt": "How to use GitHub issues and projects | GitHub for Beginners",
         "en": "How to use GitHub issues and projects | GitHub for Beginners",
@@ -413,19 +386,10 @@
           "en": "c67GaAkf1BE",
           "es": "c67GaAkf1BE"
         }
-      },
-      "authorization": {
-        "requireExternalAuth": true,
-        "allowedProviders": [
-          "authjs",
-          "clerk",
-          "firebase",
-          "jwt"
-        ]
       }
     },
     {
-      "id": 3,
+      "id": 10,
       "title": {
         "pt": "How I built an AI Python tutor with the GitHub Copilot SDK",
         "en": "How I built an AI Python tutor with the GitHub Copilot SDK",
@@ -462,19 +426,10 @@
           "en": "N3my6W_Rdwg",
           "es": "N3my6W_Rdwg"
         }
-      },
-      "authorization": {
-        "requireExternalAuth": true,
-        "allowedProviders": [
-          "authjs",
-          "clerk",
-          "firebase",
-          "jwt"
-        ]
       }
     },
     {
-      "id": 4,
+      "id": 11,
       "title": {
         "pt": "A brief introduction to Git for beginners | GitHub",
         "en": "A brief introduction to Git for beginners | GitHub",
@@ -511,15 +466,48 @@
           "en": "r8jQ9hVA2qs",
           "es": "r8jQ9hVA2qs"
         }
+      }
+    }
+  ],
+  "routes-audio": [
+    {
+      "id": 12,
+      "title": {
+        "pt": "Trilha de audio",
+        "en": "Audio track",
+        "es": "Pista de audio"
       },
-      "authorization": {
-        "requireExternalAuth": true,
-        "allowedProviders": [
-          "authjs",
-          "clerk",
-          "firebase",
-          "jwt"
-        ]
+      "description": {
+        "pt": "Ouça uma faixa de exemplo diretamente na documentacao.",
+        "en": "Listen to a sample track directly inside the documentation.",
+        "es": "Escucha una pista de ejemplo directamente en la documentacion."
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "titleIsVisible": true,
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "descriptionIsVisible": true,
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "audio": {
+        "audioType": {
+          "pt": "youtube",
+          "en": "youtube",
+          "es": "youtube"
+        },
+        "pathAudio": {
+          "pt": "0w80F8FffQ4",
+          "en": "0w80F8FffQ4",
+          "es": "0w80F8FffQ4"
+        }
       }
     }
   ],
@@ -635,63 +623,80 @@
   "menus-header-html": [],
   "menus-header-video": [
     {
-      "id": 1,
+      "id": 8,
       "pt": {
         "title": "Interactive vs non-interactive modes | C...",
-        "path-click": "page:1"
+        "path-click": "page:8"
       },
       "en": {
         "title": "Interactive vs non-interactive modes | C...",
-        "path-click": "page:1"
+        "path-click": "page:8"
       },
       "es": {
         "title": "Interactive vs non-interactive modes | C...",
-        "path-click": "page:1"
+        "path-click": "page:8"
       }
     },
     {
-      "id": 2,
+      "id": 9,
       "pt": {
         "title": "How to use GitHub issues and projects | ...",
-        "path-click": "page:2"
+        "path-click": "page:9"
       },
       "en": {
         "title": "How to use GitHub issues and projects | ...",
-        "path-click": "page:2"
+        "path-click": "page:9"
       },
       "es": {
         "title": "How to use GitHub issues and projects | ...",
-        "path-click": "page:2"
+        "path-click": "page:9"
       }
     },
     {
-      "id": 3,
+      "id": 10,
       "pt": {
         "title": "How I built an AI Python tutor with the ...",
-        "path-click": "page:3"
+        "path-click": "page:10"
       },
       "en": {
         "title": "How I built an AI Python tutor with the ...",
-        "path-click": "page:3"
+        "path-click": "page:10"
       },
       "es": {
         "title": "How I built an AI Python tutor with the ...",
-        "path-click": "page:3"
+        "path-click": "page:10"
       }
     },
     {
-      "id": 4,
+      "id": 11,
       "pt": {
         "title": "A brief introduction to Git for beginner...",
-        "path-click": "page:4"
+        "path-click": "page:11"
       },
       "en": {
         "title": "A brief introduction to Git for beginner...",
-        "path-click": "page:4"
+        "path-click": "page:11"
       },
       "es": {
         "title": "A brief introduction to Git for beginner...",
-        "path-click": "page:4"
+        "path-click": "page:11"
+      }
+    }
+  ],
+  "menus-header-audio": [
+    {
+      "id": 12,
+      "pt": {
+        "title": "Trilha de audio",
+        "path-click": "page:12"
+      },
+      "en": {
+        "title": "Audio track",
+        "path-click": "page:12"
+      },
+      "es": {
+        "title": "Pista de audio",
+        "path-click": "page:12"
       }
     }
   ],

@@ -3,6 +3,7 @@
 import {
   ROUTE_PATHS,
   VIDEO_IDS,
+  AUDIO_IDS,
   PAGE2_AUDIO,
 } from "../data/path-mappings.mjs";
 import {
@@ -16,10 +17,11 @@ import {
   VIDEO_META_ID2,
   VIDEO_META_ID3,
   VIDEO_META_ID4,
+  AUDIO_META_ID12,
   SOURCE_VIEWER_META,
   DEFAULT_HIERARCHY,
 } from "../data/route-metas.mjs";
-import { buildMdRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
+import { buildAudioRoute, buildMdRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
 
 const ROUTE_METAS = {
   1: ROUTE_META_ID1,
@@ -43,17 +45,6 @@ function buildVersionMdRoutes(versionId) {
     };
     const routeOptions = {
       ...(id === 2 ? { audio: PAGE2_AUDIO } : {}),
-      ...(id === 3 ? { authorization: { requiredRoles: ["maintainer"] } } : {}),
-      ...(id === 6
-        ? {
-            authorization: {
-              accessKeyId: "docs-key",
-              requiredRoles: ["maintainer"],
-              requireExternalAuth: true,
-              allowedProviders: ["authjs", "clerk", "firebase", "jwt"],
-            },
-          }
-        : {}),
     };
     return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions, routeOptions);
   });
@@ -63,19 +54,26 @@ function buildVersionVideoRoutes(versionId) {
   return [1, 2, 3, 4].map((id) =>
     buildVideoRoute(
       versionId,
-      id,
+      id + 7,
       "youtube",
       VIDEO_IDS[id - 1],
       VIDEO_METAS[id].title,
       VIDEO_METAS[id].description,
-      {
-        authorization: {
-          requireExternalAuth: true,
-          allowedProviders: ["authjs", "clerk", "firebase", "jwt"],
-        },
-      },
     )
   );
+}
+
+function buildVersionAudioRoutes(versionId) {
+  return [
+    buildAudioRoute(
+      versionId,
+      AUDIO_META_ID12.id,
+      "youtube",
+      AUDIO_IDS[0],
+      AUDIO_META_ID12.title,
+      AUDIO_META_ID12.description,
+    ),
+  ];
 }
 
 function buildVersionSourceViewerRoutes() {
@@ -98,11 +96,19 @@ function buildVersionMenus(versionId) {
     es: { title: ROUTE_METAS[id].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[id].es}` },
   }));
   const menuVideo = [1, 2, 3, 4].map((id) => ({
-    id,
-    pt: { title: `${VIDEO_METAS[id].title.pt.slice(0, 40)}...`, "path-click": `page:${id}` },
-    en: { title: `${VIDEO_METAS[id].title.en.slice(0, 40)}...`, "path-click": `page:${id}` },
-    es: { title: `${VIDEO_METAS[id].title.es.slice(0, 40)}...`, "path-click": `page:${id}` },
+    id: id + 7,
+    pt: { title: `${VIDEO_METAS[id].title.pt.slice(0, 40)}...`, "path-click": `page:${id + 7}` },
+    en: { title: `${VIDEO_METAS[id].title.en.slice(0, 40)}...`, "path-click": `page:${id + 7}` },
+    es: { title: `${VIDEO_METAS[id].title.es.slice(0, 40)}...`, "path-click": `page:${id + 7}` },
   }));
+  const menuAudio = [
+    {
+      id: AUDIO_META_ID12.id,
+      pt: { title: AUDIO_META_ID12.title.pt, "path-click": `page:${AUDIO_META_ID12.id}` },
+      en: { title: AUDIO_META_ID12.title.en, "path-click": `page:${AUDIO_META_ID12.id}` },
+      es: { title: AUDIO_META_ID12.title.es, "path-click": `page:${AUDIO_META_ID12.id}` },
+    },
+  ];
   const menuSourceViewer = [
     {
       id: SOURCE_VIEWER_META.id,
@@ -111,7 +117,7 @@ function buildVersionMenus(versionId) {
       es: { title: SOURCE_VIEWER_META.titles.es, "path-click": `page:${SOURCE_VIEWER_META.id}` },
     },
   ];
-  return { md: menuMd, sourceViewer: menuSourceViewer, html: [], video: menuVideo };
+  return { md: menuMd, sourceViewer: menuSourceViewer, html: [], video: menuVideo, audio: menuAudio };
 }
 
 /**
@@ -139,10 +145,12 @@ export function buildVersionConfig(versionId) {
     "routes-source-viewer": buildVersionSourceViewerRoutes(),
     "routes-html": [],
     "routes-video": buildVersionVideoRoutes(versionId),
+    "routes-audio": buildVersionAudioRoutes(versionId),
     "menus-header-md": menus.md,
     "menus-header-source-viewer": menus.sourceViewer,
     "menus-header-html": menus.html,
     "menus-header-video": menus.video,
+    "menus-header-audio": menus.audio,
     hierarchyPage: DEFAULT_HIERARCHY,
     hierarchyMenu: DEFAULT_HIERARCHY,
   };

@@ -46,6 +46,16 @@ export const SOURCE_VIEWER_META = {
   },
 };
 
+export const AUDIO_META_ID12 = {
+  id: 12,
+  title: { pt: "Trilha de audio", en: "Audio track", es: "Pista de audio" },
+  description: {
+    pt: "Ouça uma faixa de exemplo diretamente na documentacao.",
+    en: "Listen to a sample track directly inside the documentation.",
+    es: "Escucha una pista de ejemplo directamente en la documentacion.",
+  },
+};
+
 export const VIDEO_META_ID1 = {
   title: { pt: "Interactive vs non-interactive modes | Copilot CLI for beginners", en: "Interactive vs non-interactive modes | Copilot CLI for beginners", es: "Interactive vs non-interactive modes | Copilot CLI for beginners" },
   description: {

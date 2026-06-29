@@ -21,6 +21,53 @@ function check(label: string, cond: boolean, detail = ""): void {
   }
 }
 
+function readGeneratedVersionConfig(): Record<string, unknown> {
+  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/1.1.54/config.json", "utf8")) as Record<string, unknown>;
+}
+
+function asArray(value: unknown): Array<Record<string, unknown>> {
+  return Array.isArray(value) ? value as Array<Record<string, unknown>> : [];
+}
+
+function routeIds(config: Record<string, unknown>, routeKeys: string[]): Set<number> {
+  const ids = new Set<number>();
+  for (const key of routeKeys) {
+    for (const route of asArray(config[key])) {
+      const id = Number(route.id);
+      check(`generated config route id is valid for ${key}`, Number.isFinite(id), String(route.id));
+      check(`generated config route id ${id} is unique`, !ids.has(id), key);
+      ids.add(id);
+    }
+  }
+  return ids;
+}
+
+function assertGeneratedMenuContract(): void {
+  const config = readGeneratedVersionConfig();
+  const routeKeys = ["routes-md", "routes-source-viewer", "routes-html", "routes-video", "routes-audio"];
+  const menuKeys = ["menus-header-md", "menus-header-source-viewer", "menus-header-html", "menus-header-video", "menus-header-audio"];
+  const ids = routeIds(config, routeKeys);
+
+  check("generated config includes source viewer routes", asArray(config["routes-source-viewer"]).length > 0);
+  check("generated config includes video routes", asArray(config["routes-video"]).length > 0);
+  check("generated config includes audio routes", asArray(config["routes-audio"]).length > 0);
+  check("generated config includes source viewer menu", asArray(config["menus-header-source-viewer"]).length > 0);
+  check("generated config includes video menu", asArray(config["menus-header-video"]).length > 0);
+  check("generated config includes audio menu", asArray(config["menus-header-audio"]).length > 0);
+
+  for (const key of menuKeys) {
+    for (const item of asArray(config[key])) {
+      for (const lang of ["pt", "en", "es"]) {
+        const localized = item[lang] as { "path-click"?: string } | undefined;
+        const pathClick = localized?.["path-click"];
+        if (!pathClick?.startsWith("page:")) continue;
+        const id = Number(pathClick.slice("page:".length));
+        check(`generated ${key} ${lang} points to an existing route`, ids.has(id), pathClick);
+      }
+    }
+  }
+}
+
 async function main(): Promise<void> {
   console.log("[smoke:docs] marker patcher");
   const manual = "# My Project\n\nManual intro that must be preserved.\n";
@@ -71,6 +118,9 @@ async function main(): Promise<void> {
   check("providersSection lists 14 providers", (providersSection().match(/\| `/g) ?? []).length >= 14);
   check("providersSection deterministic", providersSection() === providersSection());
   check("cliCommandsSection lists commands", cliCommandsSection(CLI_COMMANDS).includes("gitpagedocs init"));
+
+  console.log("[smoke:docs] generated menu contract");
+  assertGeneratedMenuContract();
 
   if (failures > 0) {
     console.error(`\n[smoke:docs] FAILED with ${failures} failure(s).`);

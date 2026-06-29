@@ -110,6 +110,17 @@ export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles
   return obj;
 }
 
+export function buildAudioRoute(versionId, routeId, audioType, pathAudio, titles, descriptions, options = {}) {
+  const base = buildVideoRoute(versionId, routeId, audioType, pathAudio, titles, descriptions, options);
+  const audioTypeByLang = typeof audioType === "string" ? { pt: audioType, en: audioType, es: audioType } : audioType;
+  const pathAudioByLang = typeof pathAudio === "string" ? { pt: pathAudio, en: pathAudio, es: pathAudio } : pathAudio;
+  const { video, ...rest } = base;
+  return {
+    ...rest,
+    audio: { audioType: audioTypeByLang, pathAudio: pathAudioByLang },
+  };
+}
+
 export function buildSourceViewerRoute(routeId, sourceViewerPath, titles, descriptions, options = {}) {
   const base = buildMdRoute("", routeId, {}, titles, descriptions, {
     ...options,

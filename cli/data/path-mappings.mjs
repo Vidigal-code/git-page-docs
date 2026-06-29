@@ -10,6 +10,7 @@ export const ROUTE_PATHS = {
 };
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
+export const AUDIO_IDS = ["0w80F8FffQ4"];
 
 export const PAGE2_AUDIO = {
   enabled: true,
