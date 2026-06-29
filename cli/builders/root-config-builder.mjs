@@ -11,7 +11,7 @@ export function buildRootConfig(options = {}) {
   const useOfficialLayouts = !useLocalLayoutConfig;
   const githubOwner = options.githubOwner;
   const githubRepo = options.githubRepo;
-  const repositorySearchHome = false;
+  const repositorySearchHome = true;
   const renderingUrl =
     githubOwner && githubRepo
       ? `https://${githubOwner}.github.io/${githubRepo}/`
