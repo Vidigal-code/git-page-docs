@@ -17,6 +17,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_ACTIONS: "true"
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      GITPAGEDOCS_REPOSITORY_SEARCH: "true"
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -58,10 +62,6 @@ jobs:
       - name: Build search-home aggregator at the repository root
         run: pnpm exec next build frontend && mv frontend/out out
         working-directory: .gitpagedocs-runtime
-        env:
-          GITHUB_ACTIONS: "true"
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITPAGEDOCS_REPOSITORY_SEARCH: "true"
 
       - name: Add .nojekyll
         run: touch .gitpagedocs-runtime/out/.nojekyll 2>/dev/null || mkdir -p .gitpagedocs-runtime/out && touch .gitpagedocs-runtime/out/.nojekyll

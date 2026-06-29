@@ -12,9 +12,6 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
         run: pnpm exec next build frontend && mv frontend/out out
         working-directory: .gitpagedocs-runtime
         env:
-          GITHUB_ACTIONS: "true"
-          GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_REPOSITORY_SEARCH: "true"
           GITPAGEDOCS_PATH: "${pathSegment}"
 
       - name: Relocate output to custom docs path
@@ -25,11 +22,7 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
           mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out`
       : `      - name: Build static site with target repository path
         run: pnpm exec next build frontend && mv frontend/out out
-        working-directory: .gitpagedocs-runtime
-        env:
-          GITHUB_ACTIONS: "true"
-          GITHUB_REPOSITORY: \${{ github.repository }}
-          GITPAGEDOCS_REPOSITORY_SEARCH: "true"`;
+        working-directory: .gitpagedocs-runtime`;
   const currentBranch = getCurrentGitBranch();
   const workflowPath = ".github/workflows/gitpagedocs-pages.yml";
   const workflowContent = `name: Deploy GitPageDocs
@@ -51,6 +44,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_ACTIONS: "true"
+      GITHUB_REPOSITORY: \${{ github.repository }}
+      GITPAGEDOCS_REPOSITORY_SEARCH: "true"
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -88,40 +85,6 @@ jobs:
         working-directory: .gitpagedocs-runtime
 
 ${buildStepsBlock}
-
-      - name: Force root URL to docs entrypoint
-        env:
-          GITHUB_REPOSITORY: \${{ github.repository }}
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const path = require('path');
-          const pathSegment = ${JSON.stringify(pathSegment)};
-          const repoName = (process.env.GITHUB_REPOSITORY || '').split('/')[1] || '';
-          const isUserPage = repoName.toLowerCase().endsWith('.github.io');
-          const rootRedirectBase = pathSegment;
-          const cfgPath = path.join('.gitpagedocs-runtime', 'gitpagedocs', 'config.json');
-          if (!fs.existsSync(cfgPath)) process.exit(0);
-          const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
-          const defaultVersion = cfg?.site?.docsVersion || cfg?.VersionControl?.versions?.[0]?.id || '1.1.54';
-          const defaultLang = cfg?.site?.defaultLanguage || 'en';
-          const redirectTargetRoot = rootRedirectBase
-            ? './' + rootRedirectBase + '/v/' + defaultVersion + '/?lang=' + defaultLang
-            : './v/' + defaultVersion + '/?lang=' + defaultLang;
-          const redirectTargetProject = './v/' + defaultVersion + '/?lang=' + defaultLang;
-          const rootHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetRoot + '"/><script>window.location.replace("' + redirectTargetRoot + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
-          fs.writeFileSync(path.join('.gitpagedocs-runtime', 'out', 'index.html'), rootHtml);
-          const projectPathSegments = [];
-          if (repoName && !isUserPage) projectPathSegments.push(repoName);
-          if (pathSegment) projectPathSegments.push(pathSegment);
-          if (projectPathSegments.length > 0) {
-            const projectIndexPath = path.join('.gitpagedocs-runtime', 'out', ...projectPathSegments, 'index.html');
-            if (fs.existsSync(path.dirname(projectIndexPath))) {
-              const projectHtml = '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' + redirectTargetProject + '"/><script>window.location.replace("' + redirectTargetProject + '" + (window.location.search || ""));</script></head><body>Redirecting...</body></html>';
-              fs.writeFileSync(projectIndexPath, projectHtml);
-            }
-          }
-          NODE
 
       - name: Add .nojekyll
         run: touch .gitpagedocs-runtime/out/.nojekyll 2>/dev/null || mkdir -p .gitpagedocs-runtime/out && touch .gitpagedocs-runtime/out/.nojekyll

@@ -205,7 +205,8 @@ await (async () => {
   check("workflow no longer uses npm ci", !workflow.includes("npm ci"));
   check("workflow preserves .nojekyll step", workflow.includes(".nojekyll"));
   check("workflow preserves runtime clone", workflow.includes(".gitpagedocs-runtime"));
-  check("workflow preserves redirect/index generation", workflow.includes("out', 'index.html"));
+  check("workflow enables repository search during deploy", workflow.includes('GITPAGEDOCS_REPOSITORY_SEARCH: "true"'));
+  check("workflow keeps search home at the root", !workflow.includes("Force root URL to docs entrypoint"));
 })();
 
 if (failures > 0) {
