@@ -20,6 +20,7 @@ interface GithubTreeResponse {
 
 const GITHUB_API_BASE = "https://api.github.com";
 const RAW_GITHUB_BASE = "https://raw.githubusercontent.com";
+const UTF8_BOM = "\uFEFF";
 
 function buildGithubApiUrl(path: string): string {
   return `${GITHUB_API_BASE}${path}`;
@@ -44,6 +45,12 @@ function encodePathSegment(value: string): string {
 function buildRawFileUrl(owner: string, repo: string, branch: string, path: string): string {
   const encodedPath = path.split("/").map(encodePathSegment).join("/");
   return `${RAW_GITHUB_BASE}/${encodePathSegment(owner)}/${encodePathSegment(repo)}/${encodePathSegment(branch)}/${encodedPath}`;
+}
+
+async function readUtf8Text(response: Response): Promise<string> {
+  const decoder = new TextDecoder("utf-8");
+  const text = decoder.decode(await response.arrayBuffer());
+  return text.startsWith(UTF8_BOM) ? text.slice(UTF8_BOM.length) : text;
 }
 
 async function resolveTreeSha(owner: string, repo: string, branch: string): Promise<string> {
@@ -98,6 +105,6 @@ export async function loadSourceFile(owner: string, repo: string, branch: string
 
   return {
     path,
-    content: await response.text(),
+    content: await readUtf8Text(response),
   };
 }

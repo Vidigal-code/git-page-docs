@@ -147,15 +147,19 @@ function buildCrumbs(path: string): Array<{ label: string; path: string }> {
   return crumbs;
 }
 
+function splitCodeLines(content: string): string[] {
+  return content.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+}
+
 function CodeViewer({ content }: { content: string }) {
   return (
     <div className={styles.codeScroll}>
       <table className={styles.codeTable}>
         <tbody>
-          {content.split("\n").map((line, index) => (
+          {splitCodeLines(content).map((line, index) => (
             <tr key={index}>
               <td className={styles.lineNumber}>{index + 1}</td>
-              <td className={styles.lineCode}>{line || " "}</td>
+              <td className={styles.lineCode}>{line}</td>
             </tr>
           ))}
         </tbody>

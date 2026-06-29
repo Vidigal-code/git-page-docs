@@ -317,12 +317,14 @@
 }
 
 .codeTable {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
   line-height: 1.55;
   background: var(--source-browser-editor);
+  table-layout: auto;
 }
 
 .codeTable td {
@@ -345,6 +347,9 @@
 
 .lineCode {
   white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
   padding: 0 12px;
   color: var(--text);
 }
