@@ -121,6 +121,7 @@
   border: 1px solid var(--source-browser-line);
   border-radius: var(--source-browser-radius);
   overflow: hidden;
+  overscroll-behavior: contain;
   background: var(--source-browser-editor);
   box-shadow: var(--card-shadow, none);
 }
@@ -169,8 +170,10 @@
   min-height: 0;
   max-height: none;
   height: 100%;
-  overflow: auto;
+  overflow: scroll;
+  overscroll-behavior: contain;
   padding: 6px;
+  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -180,8 +183,8 @@
 
 .treeItem,
 .fileRow {
-  width: 100%;
-  min-width: max-content;
+  width: max-content;
+  min-width: 100%;
   border: 0;
   background: transparent;
   color: var(--text);
@@ -238,10 +241,12 @@
   align-items: center;
   gap: 6px;
   flex-wrap: nowrap;
-  overflow: auto hidden;
+  overflow: scroll hidden;
+  overscroll-behavior: contain;
   padding: 8px 12px;
   border-bottom: 1px solid var(--source-browser-line);
   background: color-mix(in srgb, var(--source-browser-panel) 92%, var(--primary) 8%);
+  scrollbar-gutter: stable;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -253,7 +258,9 @@
 
 .fileList {
   max-height: 260px;
-  overflow: auto;
+  overflow: scroll;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -294,10 +301,12 @@
 
 .viewerTitle {
   min-width: 0;
-  overflow: auto hidden;
+  overflow: scroll hidden;
+  overscroll-behavior: contain;
   text-overflow: clip;
   white-space: nowrap;
   font-weight: 700;
+  scrollbar-gutter: stable;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -323,8 +332,10 @@
   min-width: 0;
   min-height: 0;
   flex: 1;
-  overflow: auto;
+  overflow: scroll;
+  overscroll-behavior: contain;
   background: var(--source-browser-editor);
+  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -358,6 +369,7 @@
 }
 
 .lineCode {
+  min-width: max-content;
   white-space: pre;
   overflow-wrap: normal;
   word-break: normal;
@@ -371,9 +383,11 @@
   flex: 1;
   padding: 18px;
   line-height: 1.65;
-  overflow: auto;
+  overflow: scroll;
+  overscroll-behavior: contain;
   background: var(--source-browser-editor);
   color: var(--text);
+  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -390,12 +404,14 @@
 }
 
 .markdownPreview pre {
-  overflow: auto;
+  overflow: scroll;
+  overscroll-behavior: contain;
   border: 1px solid var(--source-browser-line);
   border-radius: 6px;
   background: var(--source-browser-editor-rail);
   color: var(--text);
   padding: 12px;
+  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -419,7 +435,7 @@
   .layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto minmax(0, 1fr);
-    height: clamp(620px, 78vh, 820px);
+    height: min(820px, max(560px, 78dvh));
     max-height: 820px;
   }
 
@@ -448,6 +464,11 @@
 }
 
 @media (max-width: 560px) {
+  .layout {
+    height: min(760px, calc(100dvh - 24px));
+    max-height: none;
+  }
+
   .form,
   .sidebarHeader {
     grid-template-columns: 1fr;
