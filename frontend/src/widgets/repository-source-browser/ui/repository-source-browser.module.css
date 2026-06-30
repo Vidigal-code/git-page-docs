@@ -170,7 +170,8 @@
   min-height: 0;
   max-height: none;
   height: 100%;
-  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
   overscroll-behavior: contain;
   padding: 6px;
   scrollbar-gutter: stable both-edges;
@@ -183,8 +184,8 @@
 
 .treeItem,
 .fileRow {
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: max-content;
   border: 0;
   background: transparent;
   color: var(--text);
@@ -225,12 +226,13 @@
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, auto) minmax(0, 1fr);
   background: var(--source-browser-editor);
 }
 
 .panel {
   min-width: 0;
+  min-height: 0;
   border-bottom: 1px solid var(--source-browser-line);
   background: var(--source-browser-panel);
 }
@@ -241,7 +243,8 @@
   align-items: center;
   gap: 6px;
   flex-wrap: nowrap;
-  overflow: scroll hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior: contain;
   padding: 8px 12px;
   border-bottom: 1px solid var(--source-browser-line);
@@ -257,8 +260,9 @@
 }
 
 .fileList {
-  max-height: 260px;
-  overflow: scroll;
+  max-height: min(28vh, 260px);
+  overflow-x: auto;
+  overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
@@ -301,7 +305,8 @@
 
 .viewerTitle {
   min-width: 0;
-  overflow: scroll hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior: contain;
   text-overflow: clip;
   white-space: nowrap;
@@ -332,7 +337,8 @@
   min-width: 0;
   min-height: 0;
   flex: 1;
-  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--source-browser-editor);
   scrollbar-gutter: stable both-edges;
@@ -383,7 +389,8 @@
   flex: 1;
   padding: 18px;
   line-height: 1.65;
-  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--source-browser-editor);
   color: var(--text);
@@ -404,7 +411,8 @@
 }
 
 .markdownPreview pre {
-  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
   overscroll-behavior: contain;
   border: 1px solid var(--source-browser-line);
   border-radius: 6px;
@@ -454,7 +462,7 @@
   }
 
   .tree {
-    height: auto;
+    height: min(260px, 32dvh);
     max-height: 260px;
   }
 

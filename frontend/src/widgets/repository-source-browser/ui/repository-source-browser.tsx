@@ -278,8 +278,11 @@ export function RepositorySourceBrowser({
     updateRoute(nextRoute);
   }
 
-  function toggleDirectory(path: string) {
+  function selectTreeDirectory(path: string) {
+    setCurrentDirectory(path);
+    setSelectedFile(null);
     setExpanded((prev) => ({ ...prev, [path]: !(prev[path] ?? true) }));
+    onRouteChange?.({ ...route, path });
   }
 
   function renderNode(node: TreeNode): React.ReactNode {
@@ -291,8 +294,7 @@ export function RepositorySourceBrowser({
           type="button"
           className={`${styles.treeItem} ${selectedFile?.path === node.entry.path ? styles.treeItemActive : ""}`}
           style={{ paddingLeft: `${8 + Math.max(0, getEntryDepth(node.entry.path)) * 12}px` }}
-          onClick={() => (isDirectory ? toggleDirectory(node.entry.path) : selectFile(node.entry))}
-          onDoubleClick={() => isDirectory && selectDirectory(node.entry.path)}
+          onClick={() => (isDirectory ? selectTreeDirectory(node.entry.path) : selectFile(node.entry))}
         >
           {isDirectory ? <FiFolder aria-hidden /> : <FiFile aria-hidden />}
           <span className={styles.fileName}>{node.entry.name}</span>
@@ -355,7 +357,7 @@ export function RepositorySourceBrowser({
                   type="button"
                   className={`${styles.treeItem} ${selectedFile?.path === entry.path ? styles.treeItemActive : ""}`}
                   style={{ paddingLeft: `${8 + Math.max(0, getEntryDepth(entry.path)) * 12}px` }}
-                  onClick={() => (entry.type === "tree" ? selectDirectory(entry.path) : selectFile(entry))}
+                  onClick={() => (entry.type === "tree" ? selectTreeDirectory(entry.path) : selectFile(entry))}
                 >
                   {entry.type === "tree" ? <FiFolder aria-hidden /> : <FiFile aria-hidden />}
                   <span className={styles.fileName}>{entry.path}</span>
