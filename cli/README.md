@@ -38,36 +38,36 @@ The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the
 
 ```
 cli/
-├── index.mjs                          # Node entry (bootstraps TS presentation via tsx)
-├── package.json                       # the published `gitpagedocs` package
-├── ai/                                # AI documentation CLI (provider/model/paths → markdown)
-├── contracts/                         # Stable contracts for external tooling
-│   └── doc-versions.mjs
-│
-├── presentation/                      # Interface/composition root
-│   ├── index.ts
-│   ├── options/
-│   └── ui/
-│
-├── application/                       # Use-cases and ports
-│   ├── config-only/handler.mjs
-│   ├── home/handler.mjs
-│   ├── report/config-only-reporter.mjs
-│   ├── use-cases/dispatch-mode.ts
-│   └── ports/cli-runtime-ports.ts
-│
-├── domain/                            # Business rules
-│   └── services/sanitize-segment.mjs
-│
-├── infrastructure/                    # Side effects and adapters
-│   ├── config-only/runtime.mjs
-│   └── home/runtime.mjs
-│
-├── builders/                          # Pure config builders
-├── data/                              # Constants and metadata
-├── content/                           # Static docs content
-├── runtime/                           # Low-level runtime helpers
-└── home/                              # Home templates/files
+|-- index.mjs                          # Node entry (bootstraps TS presentation via tsx)
+|-- package.json                       # the published `gitpagedocs` package
+|-- ai/                                # AI documentation CLI (provider/model/paths → markdown)
+|-- contracts/                         # Stable contracts for external tooling
+|   `-- doc-versions.mjs
+|
+|-- presentation/                      # Interface/composition root
+|   |-- index.ts
+|   |-- options/
+|   `-- ui/
+|
+|-- application/                       # Use-cases and ports
+|   |-- config-only/handler.mjs
+|   |-- home/handler.mjs
+|   |-- report/config-only-reporter.mjs
+|   |-- use-cases/dispatch-mode.ts
+|   `-- ports/cli-runtime-ports.ts
+|
+|-- domain/                            # Business rules
+|   `-- services/sanitize-segment.mjs
+|
+|-- infrastructure/                    # Side effects and adapters
+|   |-- config-only/runtime.mjs
+|   `-- home/runtime.mjs
+|
+|-- builders/                          # Pure config builders
+|-- data/                              # Constants and metadata
+|-- content/                           # Static docs content
+|-- runtime/                           # Low-level runtime helpers
+`-- home/                              # Home templates/files
 ```
 
 ## SOLID Principles

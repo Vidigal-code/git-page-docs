@@ -21,17 +21,17 @@ next build frontend      # produces frontend/out/  (the Pages workflow then move
 
 ```text
 frontend/
-├── package.json              # @gitpagedocs/frontend (private) — declares next/react/… deps
-├── next.config.ts            # output:export, basePath logic, transpilePackages
-├── tsconfig.json             # extends ../tsconfig.base.json (@/* → ./src/*)
-├── public/                   # static assets, robots.txt, sitemap.xml (export-safe)
-├── .env / .env.example       # GITPAGEDOCS_REPOSITORY_SEARCH, GITPAGEDOCS_PATH
-└── src/
-    ├── app/                  # App Router: [[...repo]] catch-all, /ai, layout, not-found
-    ├── widgets/              # docs-shell, ai-chat-drawer
-    ├── features/             # ask-ai (chat), ai-console, route-authorization
-    ├── entities/            # docs (config/content/io/layouts), ai-config
-    └── shared/               # ui, lib (ai-storage, ai-secure-storage, base-path), config, icons
+|-- package.json              # @gitpagedocs/frontend (private) — declares next/react/… deps
+|-- next.config.ts            # output:export, basePath logic, transpilePackages
+|-- tsconfig.json             # extends ../tsconfig.base.json (@/* → ./src/*)
+|-- public/                   # static assets, robots.txt, sitemap.xml (export-safe)
+|-- .env / .env.example       # GITPAGEDOCS_REPOSITORY_SEARCH, GITPAGEDOCS_PATH
+`-- src/
+    |-- app/                  # App Router: [[...repo]] catch-all, /ai, layout, not-found
+    |-- widgets/              # docs-shell, ai-chat-drawer
+    |-- features/             # ask-ai (chat), ai-console, route-authorization
+    |-- entities/            # docs (config/content/io/layouts), ai-config
+    `-- shared/               # ui, lib (ai-storage, ai-secure-storage, base-path), config, icons
 ```
 
 FSD import direction is enforced by the root `eslint.config.mjs` (`app → widgets → features → entities → shared`).
