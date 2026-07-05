@@ -8,6 +8,7 @@ It does **not** generate `index.html` or `index.js`.
 ## Table of Contents
 
 - [Project Architecture (Monorepo)](#project-architecture-monorepo)
+- [UI Icon Policy](#ui-icon-policy)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Layout Strategy](#layout-strategy)
@@ -61,6 +62,19 @@ API keys are never stored in plaintext. Both the `/ai` console and the in-docs c
 - **GitHub Actions**: CI (`ci.yml`) + GitHub Pages deploy (`gitpagedocs-pages.yml`)
 
 > The sections below document the published `gitpagedocs` CLI and its runtime contract. For frontend-specific development (the Next.js viewer), see [`frontend/README.md`](frontend/README.md).
+
+## UI Icon Policy
+
+Frontend controls, navigation actions, status buttons, and visual affordances use `react-icons`.
+Do not hardcode emojis or decorative Unicode symbols in React components, CLI output, or generated docs references.
+
+Use the existing icon resolver flow where configuration is supported:
+
+- `ReactIconByTag` for configurable frontend icon tags.
+- `ResolvedNavMenuIconConfig` and related resolvers for menu, sidebar, lock, audio, and chat controls.
+- Direct `react-icons` imports only for local, typed fallback icons.
+
+When an icon-only button already exposes its accessible name through `aria-label` or `title`, mark the rendered icon with `aria-hidden`.
 
 ## Prerequisites
 
