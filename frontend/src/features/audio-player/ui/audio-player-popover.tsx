@@ -1,37 +1,13 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import Image from "next/image";
 import { FiRefreshCw, FiRepeat, FiX } from "react-icons/fi";
 import { FaPause } from "react-icons/fa";
 import { CiPlay1 } from "react-icons/ci";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { AudioTrackConfig } from "@/entities/docs";
 import { getDisplaySourceLabel } from "../lib/get-display-source-label";
-
-function renderIcon(icon: ResolvedNavMenuIconConfig | undefined, fallback: React.ReactNode) {
-  if (!icon) return fallback;
-  if (icon.useReactIcon) {
-    return (
-      <span style={icon.reactIconStyle}>
-        <ReactIconByTag tag={icon.reactIconTag} style={icon.reactIconStyle} fallback={fallback} ariaHidden />
-      </span>
-    );
-  }
-  if (icon.iconImage) {
-    return (
-      <Image
-        src={icon.iconImage}
-        alt=""
-        width={icon.iconImgWidth}
-        height={icon.iconImgHeight}
-        unoptimized
-      />
-    );
-  }
-  return fallback;
-}
+import { renderAudioControlIcon } from "./audio-control-icon";
 
 function getTrackLabel(track: AudioTrackConfig, language: string): string {
   const title = track.title as Record<string, string> | undefined;
@@ -140,7 +116,7 @@ export function AudioPlayerPopover({
 }: AudioPlayerPopoverProps) {
   if (!isOpen || !tracks.length) return null;
 
-  const closeButtonContent = renderIcon(closeIcon, <FiX aria-hidden />);
+  const closeButtonContent = renderAudioControlIcon(closeIcon, <FiX aria-hidden />);
 
   const displaySource =
     currentTrack &&
@@ -249,7 +225,7 @@ export function AudioPlayerPopover({
             title={playStatusLabel}
             data-active={playing || undefined}
           >
-            {renderIcon(playing ? pauseIcon : playIcon, playing ? <FaPause aria-hidden /> : <CiPlay1 aria-hidden />)}
+            {renderAudioControlIcon(playing ? pauseIcon : playIcon, playing ? <FaPause aria-hidden /> : <CiPlay1 aria-hidden />)}
             <span>{playStatusLabel}</span>
           </button>
           <button
@@ -259,7 +235,7 @@ export function AudioPlayerPopover({
             aria-label={restartLabel}
             title={restartLabel}
           >
-            {renderIcon(restartIcon, <FiRefreshCw aria-hidden />)}
+            {renderAudioControlIcon(restartIcon, <FiRefreshCw aria-hidden />)}
             <span>{restartLabel}</span>
           </button>
           <button
@@ -270,7 +246,7 @@ export function AudioPlayerPopover({
             title={loopStatusLabel}
             data-active={loopEnabled || undefined}
           >
-            {renderIcon(loopEnabled ? loopOnIcon : loopOffIcon, <FiRepeat aria-hidden />)}
+            {renderAudioControlIcon(loopEnabled ? loopOnIcon : loopOffIcon, <FiRepeat aria-hidden />)}
             <span>{loopStatusLabel}</span>
           </button>
         </div>

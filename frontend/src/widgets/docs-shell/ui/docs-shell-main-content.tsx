@@ -17,6 +17,7 @@ import { DocsShellHeader } from "./docs-shell-header";
 import { PageContentArea } from "./page-content-area";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
+import { buildAudioRouteControlsConfig } from "./content-type-containers/audio-route-controls-config";
 import styles from "../docs-shell.module.css";
 
 export interface DocsShellMainContentProps {
@@ -122,6 +123,7 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
     footerEnabled,
     footerConfig,
   } = props;
+  const audioRouteControlsConfig = buildAudioRouteControlsConfig(controlsProps);
 
   return (
     <div className={styles.contentArea}>
@@ -172,6 +174,7 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
           homePathClick={homePathClick}
           homeAncestorKeys={homeAncestorKeys}
           routeGuideIconConfig={routeGuideIconConfig}
+          audioRouteControlsConfig={audioRouteControlsConfig}
           onFullscreenOpen={onFullscreenOpen}
           onFullscreenClose={onFullscreenClose}
         />

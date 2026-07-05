@@ -22,6 +22,7 @@ import { DocsShellVersionLinksOverlay } from "./docs-shell-version-links-overlay
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { DocsShellControlsProps } from "./docs-shell-controls";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
+import { buildAudioRouteControlsConfig } from "./content-type-containers/audio-route-controls-config";
 
 export interface DocsShellOverlaysControlsConfig {
   activeNavigation: boolean;
@@ -108,6 +109,7 @@ export interface DocsShellOverlaysProps {
 
 export function DocsShellOverlays(props: DocsShellOverlaysProps) {
   const { controlsProps, controlsConfig } = props;
+  const audioRouteControlsConfig = buildAudioRouteControlsConfig(controlsProps);
   return (
     <>
       <DocsShellMobileDrawer
@@ -200,6 +202,7 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
         homePathClick={props.homePathClick}
         homeAncestorKeys={props.homeAncestorKeys}
         routeGuideIconConfig={props.routeGuideIconConfig}
+        audioRouteControlsConfig={audioRouteControlsConfig}
         onClose={props.closeUrlFullscreen}
       />
     </>

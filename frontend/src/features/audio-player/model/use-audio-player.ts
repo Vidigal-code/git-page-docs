@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { AudioTrackConfig, LanguageCode } from "@/entities/docs";
 import {
   getAudioSrc,
-  getEmbedUrlWithAutoplay,
+  getEmbedUrlWithPlaybackParams,
   isEmbedTrack,
   isNativePlayableTrack,
 } from "./get-audio-src";
@@ -186,7 +186,7 @@ export function useAudioPlayer({
     : "";
   const embedUrl =
     currentTrack && isEmbedTrack(currentTrack.type)
-      ? getEmbedUrlWithAutoplay(audioSrc, playing)
+      ? getEmbedUrlWithPlaybackParams(audioSrc, { autoplay: playing, loop: loopEnabled })
       : "";
 
   return {

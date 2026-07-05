@@ -758,6 +758,78 @@
   top: -120px;
 }
 
+.audioRoutePlayer {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.audioRouteControls {
+  width: min(100%, 240px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(44px, 1fr));
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 14px);
+}
+
+.audioRouteControlButton {
+  width: 100%;
+  min-width: 44px;
+  min-height: 44px;
+  aspect-ratio: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--background) 42%, var(--card-background));
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.audioRouteControlButton:hover {
+  border-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 12%, var(--card-background));
+}
+
+.audioRouteControlButton:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.audioRouteControlButton[data-active] {
+  border-color: var(--secondary);
+  box-shadow: var(--button-glow);
+}
+
+.audioRouteControlButton svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.audioRouteControlButton img {
+  max-width: 22px;
+  max-height: 22px;
+  object-fit: contain;
+}
+
+.audioRouteHiddenMedia {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .footerActions {
   margin-top: 18px;
   display: flex;

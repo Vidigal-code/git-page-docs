@@ -1,7 +1,8 @@
 "use client";
 
-import { getEmbedUrl, isNativeAudio, isNativeVideo, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
+import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
+import { AudioRouteControls, type AudioRouteControlsConfig } from "./audio-route-controls";
 import styles from "../../docs-shell.module.css";
 
 function parseCssToStyle(css: string | undefined): React.CSSProperties {
@@ -31,6 +32,7 @@ interface AudioContainerProps {
   /** When true, hide title and description - e.g. in URL fullscreen overlay */
   hideTitleDescription?: boolean;
   browseNav?: BrowseNavProps;
+  controlsConfig?: AudioRouteControlsConfig;
   /** Called when fullscreen is about to open (for URL sync) */
   onFullscreenOpen?: () => void;
   /** Called when fullscreen is about to close (for URL sync) */
@@ -47,51 +49,17 @@ export function AudioContainer({
   fullscreenExpandLabel,
   isDarkMode = false,
   browseNav,
+  controlsConfig,
   onFullscreenOpen,
   onFullscreenClose,
   hideTitleDescription = false,
 }: AudioContainerProps) {
-  const type = String(audioType).toLowerCase();
-  const embedUrl = getEmbedUrl(audioType, pathAudio, language);
-
   const title = config?.title?.[language] ?? config?.title?.en;
   const description = config?.description?.[language] ?? config?.description?.en;
   const titleIsVisible = config?.titleIsVisible ?? false;
   const descriptionIsVisible = config?.descriptionIsVisible ?? false;
   const titleCss = isDarkMode ? config?.titleDarkCss ?? config?.titleCss : config?.titleLightCss ?? config?.titleCss;
   const descCss = isDarkMode ? config?.descriptionDarkCss ?? config?.descriptionCss : config?.descriptionLightCss ?? config?.descriptionCss;
-
-  const mediaElement = (() => {
-    if (isNativeAudio(type)) {
-      return (
-        <div className={styles.audioWrapper}>
-          <audio controls className={styles.videoNative} src={embedUrl}>
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      );
-    }
-    if (isNativeVideo(type)) {
-      return (
-        <div className={styles.audioWrapper}>
-          <audio controls className={styles.videoNative} src={embedUrl}>
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      );
-    }
-    return (
-      <div className={styles.audioEmbedWrapper}>
-        <iframe
-          title="Audio embed"
-          className={styles.audioEmbedIframe}
-          src={embedUrl}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
-      </div>
-    );
-  })();
 
   const content = (
     <article className={styles.card}>
@@ -103,7 +71,14 @@ export function AudioContainer({
           {title}
         </h1>
       )}
-      {mediaElement}
+      {controlsConfig && (
+        <AudioRouteControls
+          audioType={audioType}
+          pathAudio={pathAudio}
+          language={language}
+          controls={controlsConfig}
+        />
+      )}
       {!hideTitleDescription && descriptionIsVisible && description && (
         <h3
           className={styles.contentDescriptionVideoInside}

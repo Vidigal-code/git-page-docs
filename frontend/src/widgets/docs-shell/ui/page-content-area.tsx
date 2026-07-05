@@ -23,6 +23,7 @@ import {
   buildBrowseNavConfig,
 } from "./page-content-browse-nav";
 import { HtmlContainer, MdContainer, VideoContainer, AudioContainer, SourceViewerContainer } from "./content-type-containers";
+import type { AudioRouteControlsConfig } from "./content-type-containers/audio-route-controls";
 import styles from "../docs-shell.module.css";
 
 interface PageContentAreaProps {
@@ -58,6 +59,7 @@ interface PageContentAreaProps {
   homePathClick?: string;
   homeAncestorKeys?: string[];
   routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
+  audioRouteControlsConfig?: AudioRouteControlsConfig;
   /** Called when fullscreen opens (for URL sync so user can share). */
   onFullscreenOpen?: (params: FullscreenParams) => void;
   /** Called when fullscreen closes (for URL sync). */
@@ -93,6 +95,7 @@ export function PageContentArea({
   homePathClick,
   homeAncestorKeys = [],
   routeGuideIconConfig,
+  audioRouteControlsConfig,
   contentTypeFilter,
   isUrlFullscreen = false,
   onFullscreenOpen,
@@ -311,6 +314,7 @@ export function PageContentArea({
               fullscreenExpandLabel={fullscreenExpandLabel}
               fullscreenCloseLabel={fullscreenCloseLabel}
               browseNav={audioBrowseNav}
+              controlsConfig={audioRouteControlsConfig}
               onFullscreenOpen={audioFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
               hideTitleDescription={isUrlFullscreen}

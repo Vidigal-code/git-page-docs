@@ -15,6 +15,7 @@ import type {
 } from "@/entities/docs";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
+import type { AudioRouteControlsConfig } from "./content-type-containers/audio-route-controls";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellUrlFullscreenOverlayProps {
@@ -47,6 +48,7 @@ interface DocsShellUrlFullscreenOverlayProps {
   homePathClick?: string;
   homeAncestorKeys?: string[];
   routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
+  audioRouteControlsConfig?: AudioRouteControlsConfig;
   onClose: () => void;
 }
 
@@ -80,6 +82,7 @@ export function DocsShellUrlFullscreenOverlay({
   homePathClick,
   homeAncestorKeys = [],
   routeGuideIconConfig,
+  audioRouteControlsConfig,
   onClose,
 }: DocsShellUrlFullscreenOverlayProps) {
   const fullscreenInnerRef = useRef<HTMLDivElement>(null);
@@ -203,6 +206,7 @@ export function DocsShellUrlFullscreenOverlay({
           homePathClick={homePathClick}
           homeAncestorKeys={homeAncestorKeys}
           routeGuideIconConfig={routeGuideIconConfig}
+          audioRouteControlsConfig={audioRouteControlsConfig}
         />
         </TocScrollContainerProvider>
       </div>

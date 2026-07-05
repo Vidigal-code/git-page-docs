@@ -36,11 +36,38 @@ export function getAudioSrc(track: AudioTrackConfig, language: LanguageCode): st
   return url;
 }
 
+interface EmbedPlaybackParams {
+  autoplay: boolean;
+  loop?: boolean;
+}
+
+function getYouTubeEmbedId(embedUrl: string): string | null {
+  const match = embedUrl.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+  return match?.[1] ?? null;
+}
+
+/**
+ * Appends playback params used by iframe-based audio providers.
+ */
+export function getEmbedUrlWithPlaybackParams(embedUrl: string, { autoplay, loop = false }: EmbedPlaybackParams): string {
+  if (!autoplay && !loop) return embedUrl;
+
+  const sep = embedUrl.includes("?") ? "&" : "?";
+  const params = new URLSearchParams();
+  const youtubeId = getYouTubeEmbedId(embedUrl);
+
+  if (autoplay) params.set("autoplay", "1");
+  if (loop) {
+    params.set("loop", "1");
+    if (youtubeId) params.set("playlist", youtubeId);
+  }
+
+  return `${embedUrl}${sep}${params.toString()}`;
+}
+
 /**
  * Appends autoplay param to embed URL if needed.
  */
 export function getEmbedUrlWithAutoplay(embedUrl: string, autoplay: boolean): string {
-  if (!autoplay) return embedUrl;
-  const sep = embedUrl.includes("?") ? "&" : "?";
-  return `${embedUrl}${sep}autoplay=1`;
+  return getEmbedUrlWithPlaybackParams(embedUrl, { autoplay });
 }
