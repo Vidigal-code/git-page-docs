@@ -348,42 +348,114 @@ All routes for accessing documentation files on the official site or self-hosted
 
 ### Example URLs (git-page-docs, English)
 
-**Markdown pages**
+Base URL used below:
 
-- Getting Started (v1.1.54, aurora-dark theme):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&theme=aurora-dark&menu=en&id=1
-- Project overview:
+```text
+https://vidigal-code.github.io/git-page-docs
+```
+
+**Base docs paths**
+
+- Repository search home:
+  https://vidigal-code.github.io/git-page-docs/
+- Repository default version:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en
+- Repository pinned version:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en
+- Project version path without owner/repo:
+  https://vidigal-code.github.io/git-page-docs/v/1.1.54/?lang=en
+- Version through query parameter:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=1.1.54
+
+**Markdown pages by route id**
+
+- Getting Started (`id=1`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=1
+- Project overview (`id=2`):
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=2
-- GitHub issues and projects:
+- Functionalities (`id=3`):
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=3
-- Introduction to Git:
+- GitHub issues and projects (`id=4`):
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=4
+- Introduction to Git (`id=5`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=5
+- Authorized routes (`id=6`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=6
 
-**By slug (`name`)**
+**Markdown pages by slug (`name`)**
 
 - Getting Started:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=getting-started
 - Project overview:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=project-overview
+- Functionalities:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=functionalities
+- GitHub issues and projects:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=github-issues-projects
+- Introduction to Git:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=git-introduction
+- Authorized routes:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&name=authorized-routes
 
-**Video pages** (route id 1–4; pages combine MD + HTML + Video by id)
+**Source viewer**
 
-- Video 1:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=1
+- Source viewer page inside the docs shell (`id=7`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=7
+- Standalone source viewer root:
+  https://vidigal-code.github.io/git-page-docs/source-viewer
+- Standalone source viewer for this repository:
+  https://vidigal-code.github.io/git-page-docs/source-viewer/Vidigal-code/git-page-docs/tree/main
+- Standalone source viewer for a nested path:
+  https://vidigal-code.github.io/git-page-docs/source-viewer/Vidigal-code/git-page-docs/tree/main/frontend/src
+
+**Video pages**
+
+- Interactive vs non-interactive modes (`id=8`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=8
+- GitHub issues and projects video (`id=9`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=9
+- Python tutor video (`id=10`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=10
+- Git introduction video (`id=11`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=11
+
+**Audio pages**
+
+- Audio track (`id=12`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=12
 
 **Fullscreen modes**
 
 - Markdown fullscreen:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?mdfull=en&file=gitpagedocs/docs/versions/1.1.54/en/getting-started.md
-- Video fullscreen:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?videofull=en&id=1
+- HTML fullscreen pattern (requires a configured HTML route):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?htmlfull=en&file=gitpagedocs/docs/versions/1.1.54/en/example.html
+- Video fullscreen by route id:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?videofull=en&id=8
+- Video fullscreen by slug:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?videofull=en&slug=bdIJkGr2NV0
+- Audio fullscreen by route id:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?audiofull=en&id=12
+- Audio fullscreen by slug:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?audiofull=en&slug=0w80F8FffQ4
 
-**Theme selection**
+**Theme and heading selection**
 
-- aurora-dark (default dark):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?theme=aurora-dark
-- aurora-light:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?theme=aurora-light
+- aurora-dark theme:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&theme=aurora-dark
+- aurora-light theme:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&theme=aurora-light
+- Legacy mode parameter:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&modetheme=dark
+- Scroll to a Markdown heading:
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.54/?lang=en&menu=en&id=1#quick-start
+
+**Standalone app routes**
+
+- AI console:
+  https://vidigal-code.github.io/git-page-docs/ai
+- Introduction guide:
+  https://vidigal-code.github.io/git-page-docs/introduction-guide
 
 ## Authorized Routes
 
