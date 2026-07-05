@@ -39,11 +39,15 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     env:
       GITHUB_ACTIONS: "true"
       GITHUB_REPOSITORY: \${{ github.repository }}
@@ -58,10 +62,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Prepare runtime source
         run: |
@@ -100,10 +106,17 @@ ${buildStepsBlock}
       url: \${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 900000
+          error_count: 30
+          reporting_interval: 10000
 `;
   await writeText(workflowPath, workflowContent);
 }
