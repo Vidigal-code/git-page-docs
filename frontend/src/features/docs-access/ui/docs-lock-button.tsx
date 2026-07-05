@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { FiLock } from "react-icons/fi";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { ConfirmPopup } from "@/shared/ui/confirm-popup/confirm-popup";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/icons/nav-menu/resolve-nav-menu-icon";
@@ -37,7 +38,11 @@ export function DocsLockButton({ icon, texts, onConfirmBlock, className }: DocsL
       >
         {icon.useReactIcon ? (
           <span style={icon.reactIconStyle}>
-            <ReactIconByTag tag={icon.reactIconTag || "FiLock"} style={icon.reactIconStyle} />
+            <ReactIconByTag
+              tag={icon.reactIconTag || "FiLock"}
+              style={icon.reactIconStyle}
+              fallback={<FiLock aria-hidden />}
+            />
           </span>
         ) : icon.iconImage ? (
           <Image
@@ -48,7 +53,7 @@ export function DocsLockButton({ icon, texts, onConfirmBlock, className }: DocsL
             unoptimized
           />
         ) : (
-          "🔒"
+          <FiLock aria-hidden />
         )}
       </button>
       <ConfirmPopup

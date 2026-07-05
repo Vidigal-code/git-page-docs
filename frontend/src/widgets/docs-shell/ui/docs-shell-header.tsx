@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
+import { FaBars } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import styles from "../docs-shell.module.css";
@@ -40,6 +42,7 @@ export function DocsShellHeader({
   const menuToggleIcon = menuOpen
     ? navMenuConfig.navMenuMobileCloseIcon
     : navMenuConfig.navMenuMobileOpenIcon;
+
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
@@ -61,7 +64,7 @@ export function DocsShellHeader({
               unoptimized
             />
           ) : null}
-          <strong>{headerName}</strong>
+          <strong className={styles.headerTitle}>{headerName}</strong>
           <button
             className={`${styles.button} ${styles.mobileToggle}`}
             onClick={onToggleMenu}
@@ -70,7 +73,11 @@ export function DocsShellHeader({
           >
             {menuToggleIcon.useReactIcon ? (
               <span style={menuToggleIcon.reactIconStyle}>
-                <ReactIconByTag tag={menuToggleIcon.reactIconTag} style={menuToggleIcon.reactIconStyle} />
+                <ReactIconByTag
+                  tag={menuToggleIcon.reactIconTag}
+                  style={menuToggleIcon.reactIconStyle}
+                  fallback={menuOpen ? <IoMdClose aria-hidden /> : <FaBars aria-hidden />}
+                />
               </span>
             ) : menuToggleIcon.iconImage ? (
               <Image
@@ -80,8 +87,10 @@ export function DocsShellHeader({
                 height={menuToggleIcon.iconImgHeight}
                 unoptimized
               />
+            ) : menuOpen ? (
+              <IoMdClose aria-hidden />
             ) : (
-              menuOpen ? "✕" : "☰"
+              <FaBars aria-hidden />
             )}
           </button>
         </div>

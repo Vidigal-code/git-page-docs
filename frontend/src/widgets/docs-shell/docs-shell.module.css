@@ -267,6 +267,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+
+.headerTitle {
+  min-width: 0;
 }
 
 .headerRight {
@@ -952,7 +957,9 @@
 .mobileDrawerHeader strong {
   min-width: 0;
   max-width: 100%;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-align: center;
 }
 
@@ -1354,6 +1361,13 @@
   .headerLeft {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .headerTitle {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .headerRight {

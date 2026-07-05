@@ -100,7 +100,7 @@ async function main(): Promise<void> {
 
       const pages = result.summary.pages ?? [];
       console.log(
-        `\n🎉 Processo completo! Páginas no padrão gitpagedocs: ${pages.join(", ") || "(nenhuma)"}`,
+        `\nProcesso completo. Páginas no padrão gitpagedocs: ${pages.join(", ") || "(nenhuma)"}`,
       );
       console.log(
         `[gitpagedocs:ai] ${result.summary.outputs.length} arquivos markdown gerados e conectados ao config.json da versão mais recente.`,

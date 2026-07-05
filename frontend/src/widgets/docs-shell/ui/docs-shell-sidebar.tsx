@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
+import { BsChatDots, BsMoonStarsFill, BsSunFill } from "react-icons/bs";
+import { FiChevronsLeft } from "react-icons/fi";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import { DocsLockButton, type DocsLockTexts } from "@/features/docs-access";
@@ -63,7 +64,10 @@ export function DocsShellSidebar({
       <div className={styles.brand}>
         {useReactHeaderIcon ? (
           <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-            <ReactIconByTag tag={reactHeaderIconTag} fallback={activeLayoutMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />} />
+            <ReactIconByTag
+              tag={reactHeaderIconTag}
+              fallback={activeLayoutMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
+            />
           </span>
         ) : iconImage ? (
           <Image src={iconImage} alt={siteName} width={iconImgWidth} height={iconImgHeight} className={styles.brandIcon} unoptimized />
@@ -100,23 +104,31 @@ export function DocsShellSidebar({
         <button data-testid="ai-chat-open" className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
           {aiChatIconConfig.open.useReactIcon ? (
             <span style={aiChatIconConfig.open.reactIconStyle}>
-              <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
+              <ReactIconByTag
+                tag={aiChatIconConfig.open.reactIconTag}
+                style={aiChatIconConfig.open.reactIconStyle}
+                fallback={<BsChatDots aria-hidden />}
+              />
             </span>
           ) : aiChatIconConfig.open.iconImage ? (
             <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
           ) : (
-            "✨"
+            <BsChatDots aria-hidden />
           )}
         </button>
         <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onCollapseSidebar} aria-label={menuCloseLabel} title={menuCloseLabel}>
           {navMenuConfig.sidebarCollapseIcon.useReactIcon ? (
             <span style={navMenuConfig.sidebarCollapseIcon.reactIconStyle}>
-              <ReactIconByTag tag={navMenuConfig.sidebarCollapseIcon.reactIconTag || "FiChevronsLeft"} style={navMenuConfig.sidebarCollapseIcon.reactIconStyle} />
+              <ReactIconByTag
+                tag={navMenuConfig.sidebarCollapseIcon.reactIconTag || "FiChevronsLeft"}
+                style={navMenuConfig.sidebarCollapseIcon.reactIconStyle}
+                fallback={<FiChevronsLeft aria-hidden />}
+              />
             </span>
           ) : navMenuConfig.sidebarCollapseIcon.iconImage ? (
             <Image src={navMenuConfig.sidebarCollapseIcon.iconImage} alt="Collapse sidebar" width={navMenuConfig.sidebarCollapseIcon.iconImgWidth} height={navMenuConfig.sidebarCollapseIcon.iconImgHeight} unoptimized />
           ) : (
-            "❮❮"
+            <FiChevronsLeft aria-hidden />
           )}
         </button>
       </div>

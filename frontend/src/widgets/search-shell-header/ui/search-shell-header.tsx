@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { FaBars } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
@@ -51,7 +53,7 @@ export function SearchShellHeader({
   getLanguageLabel,
 }: SearchShellHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  // Use "/" so Next.js Link adds basePath automatically when configured (avoids hydration mismatch)
+  // Use "/" so Next.js Link adds basePath automatically when configured.
   const homeHref = "/";
   const darkModeLabel = "Dark mode";
   const lightModeLabel = "Light mode";
@@ -121,7 +123,7 @@ export function SearchShellHeader({
             aria-label={menuOpen ? menuCloseLabel : menuOpenLabel}
             title={menuOpen ? menuCloseLabel : menuOpenLabel}
           >
-            {menuOpen ? "✕" : "☰"}
+            {menuOpen ? <IoMdClose aria-hidden /> : <FaBars aria-hidden />}
           </button>
         </div>
 
@@ -148,7 +150,7 @@ export function SearchShellHeader({
                 aria-label={menuCloseLabel}
                 title={menuCloseLabel}
               >
-                ✕
+                <IoMdClose aria-hidden />
               </button>
             </div>
             <div className={styles.mobileControls}>{controls}</div>

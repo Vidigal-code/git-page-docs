@@ -75,7 +75,7 @@ The version config can render a **Source code** container through `routes-source
 
 ## AI assistant
 
-The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the ✨ button in the sidebar, enabled via `site.AiChatEnabled`) and a dedicated **`/ai` console** page.
+The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the AI chat button in the sidebar, enabled via `site.AiChatEnabled`) and a dedicated **`/ai` console** page.
 
 - **14 providers** via one shared core: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
 - **Model selection** — pick from each provider's catalog (`gitpagedocs models <provider>`) or type a custom id.

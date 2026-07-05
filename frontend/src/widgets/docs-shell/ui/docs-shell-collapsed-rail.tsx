@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { FiChevronsRight } from "react-icons/fi";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
@@ -40,12 +41,16 @@ export function CollapsedNavRail({
       >
         {navMenuConfig.sidebarExpandIcon.useReactIcon ? (
           <span style={navMenuConfig.sidebarExpandIcon.reactIconStyle}>
-            <ReactIconByTag tag={navMenuConfig.sidebarExpandIcon.reactIconTag || "FiChevronsRight"} style={navMenuConfig.sidebarExpandIcon.reactIconStyle} />
+            <ReactIconByTag
+              tag={navMenuConfig.sidebarExpandIcon.reactIconTag || "FiChevronsRight"}
+              style={navMenuConfig.sidebarExpandIcon.reactIconStyle}
+              fallback={<FiChevronsRight aria-hidden />}
+            />
           </span>
         ) : navMenuConfig.sidebarExpandIcon.iconImage ? (
           <Image src={navMenuConfig.sidebarExpandIcon.iconImage} alt="Expand sidebar" width={navMenuConfig.sidebarExpandIcon.iconImgWidth} height={navMenuConfig.sidebarExpandIcon.iconImgHeight} unoptimized />
         ) : (
-          "❯❯"
+          <FiChevronsRight aria-hidden />
         )}
       </button>
     </div>

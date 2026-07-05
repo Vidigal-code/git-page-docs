@@ -50,7 +50,7 @@ export async function runDoctor(ctx: CommandContext): Promise<void> {
   console.log("\n  gitpagedocs doctor\n");
   for (const c of checks) {
     // eslint-disable-next-line no-console
-    console.log(`  ${c.ok ? "✓" : "✗"}  ${c.label.padEnd(22)} ${c.detail}`);
+    console.log(`  ${c.ok ? "[ok]" : "[x] "} ${c.label.padEnd(22)} ${c.detail}`);
   }
   const failed = checks.filter((c) => !c.ok && c.label !== "gh (GitHub CLI)").length;
   // eslint-disable-next-line no-console

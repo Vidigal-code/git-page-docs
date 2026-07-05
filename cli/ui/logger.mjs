@@ -1,7 +1,7 @@
 /** Consistent log formatting */
 
 export function logSuccess(msg) {
-  console.log(`  ✓ ${msg}`);
+  console.log(`  [ok] ${msg}`);
 }
 
 export function logInfo(msg) {
