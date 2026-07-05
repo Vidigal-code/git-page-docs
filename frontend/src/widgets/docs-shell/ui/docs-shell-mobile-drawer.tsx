@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { FiMessageCircle, FiX } from "react-icons/fi";
 import type { MenuNode } from "../model/menu-tree";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { DocsShellControls } from "./docs-shell-controls";
@@ -37,10 +38,22 @@ export function DocsShellMobileDrawer({
   if (!isOpen) {
     return null;
   }
+
   return (
     <div className={styles.mobileDrawerOverlay} onClick={onClose}>
       <aside className={styles.mobileDrawer} onClick={(event) => event.stopPropagation()}>
         <div className={styles.mobileDrawerHeader}>
+          <button data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligencia Artificial" title="Assistente de IA">
+            {aiChatIconConfig.open.useReactIcon ? (
+              <span style={aiChatIconConfig.open.reactIconStyle}>
+                <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
+              </span>
+            ) : aiChatIconConfig.open.iconImage ? (
+              <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
+            ) : (
+              <FiMessageCircle aria-hidden />
+            )}
+          </button>
           <strong>{siteName}</strong>
           <button className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>
             {navMenuCloseIcon?.useReactIcon ? (
@@ -56,18 +69,7 @@ export function DocsShellMobileDrawer({
                 unoptimized
               />
             ) : (
-              "✕"
-            )}
-          </button>
-          <button data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} style={{ marginLeft: 6, order: -1 }} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
-            {aiChatIconConfig.open.useReactIcon ? (
-              <span style={aiChatIconConfig.open.reactIconStyle}>
-                <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
-              </span>
-            ) : aiChatIconConfig.open.iconImage ? (
-              <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
-            ) : (
-              "✨"
+              <FiX aria-hidden />
             )}
           </button>
         </div>

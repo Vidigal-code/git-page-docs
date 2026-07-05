@@ -898,7 +898,9 @@
 .mobileMenu {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 8px;
+  width: 100%;
 }
 
 .mobileControls {
@@ -907,7 +909,9 @@
   border-top: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 12px;
+  width: 100%;
 }
 
 .mobileDrawerOverlay {
@@ -915,6 +919,8 @@
 }
 
 .mobileDrawer {
+  --mobile-drawer-content-width: min(100%, 340px);
+
   width: min(400px, 90vw);
   height: 100vh;
   margin-left: auto;
@@ -928,14 +934,37 @@
   padding: 18px 16px;
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.45);
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .mobileDrawerHeader {
-  display: flex;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
   align-items: center;
-  justify-content: space-between;
+  justify-items: center;
   gap: 12px;
+  width: var(--mobile-drawer-content-width);
   margin-bottom: 16px;
+}
+
+.mobileDrawerHeader strong {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.mobileDrawer .mobileMenu,
+.mobileDrawer .mobileControls {
+  width: var(--mobile-drawer-content-width);
+}
+
+.mobileDrawer .menuNode,
+.mobileDrawer .menuNodeRow,
+.mobileDrawer .menuActionContainer {
+  width: 100%;
 }
 
 .mobileDrawerClose {
