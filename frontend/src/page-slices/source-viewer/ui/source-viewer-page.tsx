@@ -13,7 +13,7 @@ import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/sear
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { RepositorySourceBrowser } from "@/widgets/repository-source-browser";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
-import { getBasePath } from "@/shared/lib/base-path";
+import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./source-viewer-page.module.css";
 
@@ -112,7 +112,11 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
           <RepositorySourceBrowser
             initialRoute={initialRoute}
             labels={labels}
-            onRouteChange={(route) => window.history.pushState(null, "", buildSourceViewerPath(route))}
+            onRouteChange={(route, options) => {
+              const url = toFullPath(buildSourceViewerPath(route));
+              if (options?.replace) window.history.replaceState(null, "", url);
+              else window.history.pushState(null, "", url);
+            }}
           />
         </div>
       </main>

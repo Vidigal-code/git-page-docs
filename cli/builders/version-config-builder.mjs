@@ -22,6 +22,19 @@ import {
   DEFAULT_HIERARCHY,
 } from "../data/route-metas.mjs";
 import { buildAudioRoute, buildMdRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
+import { resolveSourceViewerPath } from "./project-links.mjs";
+
+/** Demo route protections showcasing the "Authorized Routes" feature. They are
+ * applied only to the official (non-parameterized) scaffold — user sites
+ * generated with --owner/--repo stay public, since visitors of those sites
+ * have no discoverable unlock recipe. */
+const EXTERNAL_AUTH_PROVIDERS = ["authjs", "clerk", "firebase", "jwt"];
+const DOCS_ACCESS_KEY_ID = "docs-key";
+const MAINTAINER_ROLE = "maintainer";
+const VIDEO_ROUTE_AUTHORIZATION = {
+  requireExternalAuth: true,
+  allowedProviders: EXTERNAL_AUTH_PROVIDERS,
+};
 
 const ROUTE_METAS = {
   1: ROUTE_META_ID1,
@@ -33,7 +46,7 @@ const ROUTE_METAS = {
 };
 const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
 
-function buildVersionMdRoutes(versionId) {
+function buildVersionMdRoutes(versionId, includeDemoAuthorization) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
   return [1, 2, 3, 4, 5, 6].map((id) => {
     const paths = ROUTE_PATHS[id];
@@ -45,12 +58,25 @@ function buildVersionMdRoutes(versionId) {
     };
     const routeOptions = {
       ...(id === 2 ? { audio: PAGE2_AUDIO } : {}),
+      ...(includeDemoAuthorization && id === 3
+        ? { authorization: { requiredRoles: [MAINTAINER_ROLE] } }
+        : {}),
+      ...(includeDemoAuthorization && id === 6
+        ? {
+            authorization: {
+              accessKeyId: DOCS_ACCESS_KEY_ID,
+              requiredRoles: [MAINTAINER_ROLE],
+              requireExternalAuth: true,
+              allowedProviders: EXTERNAL_AUTH_PROVIDERS,
+            },
+          }
+        : {}),
     };
     return buildMdRoute(versionId, id, pathByLang, meta.titles, meta.descriptions, routeOptions);
   });
 }
 
-function buildVersionVideoRoutes(versionId) {
+function buildVersionVideoRoutes(versionId, includeDemoAuthorization) {
   return [1, 2, 3, 4].map((id) =>
     buildVideoRoute(
       versionId,
@@ -59,6 +85,7 @@ function buildVersionVideoRoutes(versionId) {
       VIDEO_IDS[id - 1],
       VIDEO_METAS[id].title,
       VIDEO_METAS[id].description,
+      includeDemoAuthorization ? { authorization: VIDEO_ROUTE_AUTHORIZATION } : {},
     )
   );
 }
@@ -76,11 +103,11 @@ function buildVersionAudioRoutes(versionId) {
   ];
 }
 
-function buildVersionSourceViewerRoutes() {
+function buildVersionSourceViewerRoutes(options = {}) {
   return [
     buildSourceViewerRoute(
       SOURCE_VIEWER_META.id,
-      "https://github.com/Vidigal-code/git-page-docs/tree/main",
+      resolveSourceViewerPath(options.githubOwner, options.githubRepo),
       SOURCE_VIEWER_META.titles,
       SOURCE_VIEWER_META.descriptions,
     ),
@@ -123,9 +150,11 @@ function buildVersionMenus(versionId) {
 /**
  * Build version config for a single doc version.
  * @param {string} versionId - e.g. "1.1.54"
+ * @param {object} [options] - { githubOwner, githubRepo } for the source-viewer link
  * @returns {object} Version config with routes, menus, and hierarchy
  */
-export function buildVersionConfig(versionId) {
+export function buildVersionConfig(versionId, options = {}) {
+  const includeDemoAuthorization = !options.githubOwner && !options.githubRepo;
   const menus = buildVersionMenus(versionId);
 
   return {
@@ -141,10 +170,10 @@ export function buildVersionConfig(versionId) {
         { type: "jwt", enabled: true, tokenStorageKey: "git-page-docs:jwt-token", rolesClaimPath: "roles" },
       ],
     },
-    "routes-md": buildVersionMdRoutes(versionId),
-    "routes-source-viewer": buildVersionSourceViewerRoutes(),
+    "routes-md": buildVersionMdRoutes(versionId, includeDemoAuthorization),
+    "routes-source-viewer": buildVersionSourceViewerRoutes(options),
     "routes-html": [],
-    "routes-video": buildVersionVideoRoutes(versionId),
+    "routes-video": buildVersionVideoRoutes(versionId, includeDemoAuthorization),
     "routes-audio": buildVersionAudioRoutes(versionId),
     "menus-header-md": menus.md,
     "menus-header-source-viewer": menus.sourceViewer,

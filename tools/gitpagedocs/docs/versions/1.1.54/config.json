@@ -156,7 +156,12 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
+      "RouteguideBrandContainerTop": false,
+      "authorization": {
+        "requiredRoles": [
+          "maintainer"
+        ]
+      }
     },
     {
       "id": 4,
@@ -267,7 +272,20 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
+      "RouteguideBrandContainerTop": false,
+      "authorization": {
+        "accessKeyId": "docs-key",
+        "requiredRoles": [
+          "maintainer"
+        ],
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
+      }
     }
   ],
   "routes-source-viewer": [
@@ -346,6 +364,15 @@
           "en": "bdIJkGr2NV0",
           "es": "bdIJkGr2NV0"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     },
     {
@@ -386,6 +413,15 @@
           "en": "c67GaAkf1BE",
           "es": "c67GaAkf1BE"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     },
     {
@@ -426,6 +462,15 @@
           "en": "N3my6W_Rdwg",
           "es": "N3my6W_Rdwg"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     },
     {
@@ -466,6 +511,15 @@
           "en": "r8jQ9hVA2qs",
           "es": "r8jQ9hVA2qs"
         }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": [
+          "authjs",
+          "clerk",
+          "firebase",
+          "jwt"
+        ]
       }
     }
   ],

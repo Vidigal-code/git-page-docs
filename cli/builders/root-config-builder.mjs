@@ -1,5 +1,6 @@
 /** Build root config for gitpagedocs */
 import { OFFICIAL_LAYOUTS_CONFIG_URL, OFFICIAL_LAYOUTS_TEMPLATES_URL } from "../data/urls.mjs";
+import { resolveProjectLink, resolveRenderingUrl, resolveSourceViewerPath } from "./project-links.mjs";
 import { DOCS } from "../content/docs.mjs";
 import { DOC_VERSIONS } from "../data/version-constants.mjs";
 import { defaultLangMenu } from "../data/i18n-langmenu.mjs";
@@ -12,15 +13,9 @@ export function buildRootConfig(options = {}) {
   const githubOwner = options.githubOwner;
   const githubRepo = options.githubRepo;
   const repositorySearchHome = true;
-  const renderingUrl =
-    githubOwner && githubRepo
-      ? `https://${githubOwner}.github.io/${githubRepo}/`
-      : "https://vidigal-code.github.io/git-page-docs/";
-  const projectLink =
-    githubOwner && githubRepo
-      ? `https://github.com/${githubOwner}/${githubRepo}`
-      : "https://github.com/Vidigal-code/git-page-docs";
-  const sourceViewerPath = `${projectLink}/tree/main`;
+  const renderingUrl = resolveRenderingUrl(githubOwner, githubRepo);
+  const projectLink = resolveProjectLink(githubOwner, githubRepo);
+  const sourceViewerPath = resolveSourceViewerPath(githubOwner, githubRepo);
 
   const versionEntries = DOC_VERSIONS.map((id) => ({
     id,

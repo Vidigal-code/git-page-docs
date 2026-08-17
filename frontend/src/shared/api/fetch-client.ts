@@ -2,19 +2,29 @@ import { REMOTE_FETCH_TIMEOUT_MS } from "../config/remote-urls";
 import { parseJsonSafely } from "@/shared/lib/parse-json-safely";
 import { buildGithubRawCandidates, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 
-export async function tryFetchText(url: string): Promise<string | null> {
+export async function fetchWithTimeout(
+  url: string,
+  init?: RequestInit,
+  timeoutMs: number = REMOTE_FETCH_TIMEOUT_MS,
+): Promise<Response> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REMOTE_FETCH_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function tryFetchText(url: string): Promise<string | null> {
+  try {
+    const response = await fetchWithTimeout(url, { cache: "no-store" });
     if (!response.ok) {
       return null;
     }
     return await response.text();
   } catch {
     return null;
-  } finally {
-    clearTimeout(timer);
   }
 }
 

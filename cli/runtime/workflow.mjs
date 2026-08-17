@@ -19,7 +19,10 @@ export async function ensureGitHubPagesWorkflow(getCurrentGitBranch, writeText, 
           mkdir -p .gitpagedocs-runtime/out_new/${pathSegment}
           mv .gitpagedocs-runtime/out/* .gitpagedocs-runtime/out_new/${pathSegment}/
           rm -rf .gitpagedocs-runtime/out
-          mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out`
+          mv .gitpagedocs-runtime/out_new .gitpagedocs-runtime/out
+
+      - name: Redirect site root to custom docs path
+        run: printf '%s' '<!doctype html><meta http-equiv="refresh" content="0; url=./${pathSegment}/"><title>Redirecting</title><a href="./${pathSegment}/">Documentation</a>' > .gitpagedocs-runtime/out/index.html`
       : `      - name: Build static site with target repository path
         run: pnpm exec next build frontend && mv frontend/out out
         working-directory: .gitpagedocs-runtime`;

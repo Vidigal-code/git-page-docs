@@ -25,14 +25,16 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 5"] } },
   ],
   webServer: {
-    command: "pnpm dev",
+    // Local docs mode: the specs exercise the docs shell (AI chat drawer,
+    // overflow) at the site root, so repository search stays disabled.
+    command: "pnpm dev:e2e",
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
     stdout: "ignore",
     stderr: "pipe",
-    // Specs navigate from the site root; force an empty base path so the dev
-    // server (search mode) does not mount the app under /<repository-name>.
+    // Specs navigate from the site root; force an empty base path so a local
+    // GITPAGEDOCS_PATH override cannot mount the app under a subpath.
     env: { ...process.env, GITPAGEDOCS_BASE_PATH: "" },
   },
 });

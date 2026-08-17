@@ -7,7 +7,7 @@ export {
   parseGithubTreeUrl,
   parseSourceViewerRoute,
 } from "./model/route";
-export { loadSourceFile, loadSourceRepository } from "./api/github-source";
+export { loadSourceFile, loadSourceRepository, resolveSourceRepository } from "./api/github-source";
 export type {
   SourceFileContent,
   SourceTreeEntry,

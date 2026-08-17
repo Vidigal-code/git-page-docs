@@ -236,8 +236,8 @@ npm start
 - Enable Pages for your repository (Settings -> Pages).
 - Use the repository workflow to build/deploy static output.
 - Optional one-command bootstrap:
-  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs at `https://<owner>.github.io/<repo>/<repo>/v/<version>/?lang=en` (e.g. `https://vidigal-code.github.io/energy-bill-ai-parser/energy-bill-ai-parser/v/1.1.54/?lang=en`); root redirects there; base path uses repo name so CSS/JS load correctly
-  - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/v/<version>/`
+  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs served at `https://<owner>.github.io/<repo>/` (base path uses the repo name so CSS/JS load correctly)
+  - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/`; the site root redirects there
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
   - The generated workflow clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds, and deploys to your GitHub Pages URL.
   - The workflow trigger uses your current git branch automatically.

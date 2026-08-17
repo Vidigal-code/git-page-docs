@@ -16,6 +16,7 @@
   "scripts": {
     "predev": "node -e \"const fs=require('fs'); const s='gitpagedocs/icon.svg'; const d='frontend/public/icon.svg'; if(fs.existsSync(s)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(s,d);}\"",
     "dev": "cross-env GITPAGEDOCS_REPOSITORY_SEARCH=true next dev frontend",
+    "dev:e2e": "npm run predev && cross-env GITPAGEDOCS_REPOSITORY_SEARCH=false next dev frontend",
     "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('frontend/.next',{recursive:true})}catch(e){}\"",
     "build": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend",
     "build:prebuilt": "node cli/index.mjs && node -e \"const fs=require('fs'); const src='gitpagedocs/icon.svg'; const dest='frontend/public/icon.svg'; if(fs.existsSync(src)){fs.mkdirSync('frontend/public',{recursive:true}); fs.copyFileSync(src,dest);}\" && next build frontend && node -e \"const fs=require('fs'); if(fs.existsSync('cli/prebuilt')) fs.rmSync('cli/prebuilt',{recursive:true}); fs.cpSync('frontend/out','cli/prebuilt',{recursive:true}); fs.writeFileSync('cli/prebuilt/.nojekyll','')\"",

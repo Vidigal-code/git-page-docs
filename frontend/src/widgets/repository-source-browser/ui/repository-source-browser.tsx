@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { marked } from "marked";
 import { FiExternalLink, FiFile, FiFolder, FiSearch } from "react-icons/fi";
 import {
@@ -8,7 +8,7 @@ import {
   buildSourceViewerPath,
   DEFAULT_SOURCE_VIEWER_BRANCH,
   loadSourceFile,
-  loadSourceRepository,
+  resolveSourceRepository,
   type SourceFileContent,
   type SourceTreeEntry,
   type SourceViewerRepository,
@@ -48,7 +48,7 @@ interface RepositorySourceBrowserProps {
     code: string;
   };
   showSearchForm?: boolean;
-  onRouteChange?: (route: SourceViewerRoute) => void;
+  onRouteChange?: (route: SourceViewerRoute, options?: { replace?: boolean }) => void;
 }
 
 function normalizeInput(value: string): string {
@@ -89,6 +89,9 @@ function filterEntries(entries: SourceTreeEntry[], query: string): SourceTreeEnt
 
 function buildTree(entries: SourceTreeEntry[]): TreeNode[] {
   const directories = new Map<string, TreeNode>();
+  const directoryEntriesByPath = new Map<string, SourceTreeEntry>(
+    entries.filter((entry) => entry.type === "tree").map((entry) => [entry.path, entry]),
+  );
   const roots: TreeNode[] = [];
 
   function ensureDirectory(entry: SourceTreeEntry): TreeNode {
@@ -98,7 +101,7 @@ function buildTree(entries: SourceTreeEntry[]): TreeNode[] {
     directories.set(entry.path, node);
     const parentPath = getParentPath(entry.path);
     if (parentPath) {
-      const parentEntry = entries.find((item) => item.path === parentPath && item.type === "tree");
+      const parentEntry = directoryEntriesByPath.get(parentPath);
       if (parentEntry) ensureDirectory(parentEntry).children.push(node);
     } else {
       roots.push(node);
@@ -151,12 +154,13 @@ function splitCodeLines(content: string): string[] {
   return content.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
 }
 
-function CodeViewer({ content }: { content: string }) {
+const CodeViewer = memo(function CodeViewer({ content }: { content: string }) {
+  const lines = useMemo(() => splitCodeLines(content), [content]);
   return (
     <div className={styles.codeScroll}>
       <table className={styles.codeTable}>
         <tbody>
-          {splitCodeLines(content).map((line, index) => (
+          {lines.map((line, index) => (
             <tr key={index}>
               <td className={styles.lineNumber}>{index + 1}</td>
               <td className={styles.lineCode}>{line}</td>
@@ -166,12 +170,12 @@ function CodeViewer({ content }: { content: string }) {
       </table>
     </div>
   );
-}
+});
 
-function MarkdownPreview({ content }: { content: string }) {
+const MarkdownPreview = memo(function MarkdownPreview({ content }: { content: string }) {
   const html = useMemo(() => marked.parse(content) as string, [content]);
   return <div className={styles.markdownPreview} dangerouslySetInnerHTML={{ __html: html }} />;
-}
+});
 
 export function RepositorySourceBrowser({
   initialRoute,
@@ -192,6 +196,11 @@ export function RepositorySourceBrowser({
   const [isLoadingTree, setIsLoadingTree] = useState(true);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const [error, setError] = useState("");
+  const onRouteChangeRef = useRef(onRouteChange);
+  onRouteChangeRef.current = onRouteChange;
+  // One-shot handoff of an already-fetched tree across the branch-correction
+  // re-entry, so a slashed-branch URL does not fetch the same tree twice.
+  const correctionCacheRef = useRef<{ key: string; repository: SourceViewerRepository } | null>(null);
 
   const filteredEntries = useMemo(() => filterEntries(repository?.entries ?? [], treeQuery), [repository?.entries, treeQuery]);
   const treeNodes = useMemo(() => buildTree(repository?.entries ?? []), [repository?.entries]);
@@ -206,10 +215,32 @@ export function RepositorySourceBrowser({
       setError("");
       setSelectedFile(null);
       try {
-        const nextRepository = await loadSourceRepository(route.owner, route.repo, route.branch);
-        if (cancelled) return;
-        setRepository(nextRepository);
-        const initialSelection = findInitialSelection(nextRepository.entries, route.path);
+        const cached = correctionCacheRef.current;
+        correctionCacheRef.current = null;
+        let repository: SourceViewerRepository;
+        let effectivePath = route.path;
+        if (cached && cached.key === `${route.owner}/${route.repo}/${route.branch}`) {
+          repository = cached.repository;
+        } else {
+          const resolved = await resolveSourceRepository(route);
+          if (cancelled) return;
+          if (resolved.route.branch !== route.branch) {
+            // A slashed branch name was folded out of the path: hand the tree
+            // to the corrected re-entry and replace (not push) the URL so the
+            // Back button is not trapped on the mis-parsed address.
+            correctionCacheRef.current = {
+              key: `${route.owner}/${route.repo}/${resolved.route.branch}`,
+              repository: resolved.repository,
+            };
+            setRoute(resolved.route);
+            onRouteChangeRef.current?.(resolved.route, { replace: true });
+            return;
+          }
+          repository = resolved.repository;
+          effectivePath = resolved.route.path;
+        }
+        setRepository(repository);
+        const initialSelection = findInitialSelection(repository.entries, effectivePath);
         setCurrentDirectory(initialSelection.directoryPath);
         setExpanded({});
         if (initialSelection.file) {

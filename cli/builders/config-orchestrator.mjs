@@ -20,7 +20,7 @@ export function buildConfigArtifacts(options = {}) {
 
   const versionConfigs = {};
   for (const versionId of DOC_VERSIONS) {
-    versionConfigs[versionId] = buildVersionConfig(versionId);
+    versionConfigs[versionId] = buildVersionConfig(versionId, options);
   }
 
   return {
