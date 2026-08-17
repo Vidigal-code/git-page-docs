@@ -38,6 +38,7 @@
     "smoke:docs": "node --import tsx tools/smoke/docs-selftest.ts",
     "smoke:all": "npm run smoke:cli && npm run smoke:flags && npm run smoke:core && npm run smoke:ai && npm run smoke:secweb && npm run smoke:mcp && npm run smoke:docs && npm run baseline:check",
     "test": "npm run smoke:all",
+    "layouts:sync": "node tools/gen-gitpagelayouts.mjs",
     "baseline:site": "node tools/gen-site-baseline.mjs",
     "baseline:create": "node tools/gen-site-baseline.mjs && node tools/smoke/create-baseline.mjs",
     "baseline:check": "node tools/smoke/check-baseline.mjs",

@@ -150,7 +150,17 @@ later plain `gitpagedocs` rebuild drops the wiring — re-run `gitpagedocs ai` t
 
 ### `.gitpagedocsconfig` (manual mode)
 
-You can create/edit this file manually and then run `npx gitpagedocs ai`:
+The file lives in the per-user OS config directory (never inside the repository, so
+the API key cannot be committed by accident) and is written with owner-only
+permissions on POSIX systems:
+
+- Windows: `%APPDATA%\gitpagedocs\.gitpagedocsconfig`
+- macOS: `~/Library/Application Support/gitpagedocs/.gitpagedocsconfig`
+- Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
+
+Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; a legacy
+`.gitpagedocsconfig` in the repository root is migrated automatically on the next
+run. You can create/edit this file manually and then run `npx gitpagedocs ai`:
 
 ```json
 {

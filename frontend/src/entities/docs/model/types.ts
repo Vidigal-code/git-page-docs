@@ -1,6 +1,21 @@
 export type { LanguageCode, ThemeMode, SiteConfig, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
 export type { VersionEntry, VersionControlConfig } from "./types/version";
-export type { LayoutItem, LayoutsConfig, ThemeTemplate } from "./types/theme";
+export type {
+  LayoutItem,
+  LayoutsConfig,
+  ThemeAnimations,
+  ThemeButtonComponent,
+  ThemeCardComponent,
+  ThemeCheckboxComponent,
+  ThemeColors,
+  ThemeComponents,
+  ThemeFooterComponent,
+  ThemeHeaderComponent,
+  ThemeHeaderControlsComponent,
+  ThemeSelectComponent,
+  ThemeTemplate,
+  ThemeTypography,
+} from "./types/theme";
 export type {
   ContentType,
   ExternalAuthProviderType,

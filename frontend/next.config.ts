@@ -19,15 +19,17 @@ const explicitBasePath = "GITPAGEDOCS_BASE_PATH" in process.env
     : process.env.GITPAGEDOCS_BASE_PATH)
   : null;
 
-const basePath =
-  explicitBasePath ??
-  (isLocalMode
+// `!== null` keeps the explicit-root override working: an explicit ""/"/" maps
+// to `undefined` above and must NOT fall through to the derived base path.
+const basePath = explicitBasePath !== null
+  ? explicitBasePath
+  : isLocalMode
     ? (docsPathSegment ? `/${docsPathSegment}` : undefined)
     : emulateGithubPagesRuntime
       ? (isUserPage
         ? (docsPathSegment ? `/${docsPathSegment}` : undefined)
         : `/${repositoryName}${docsPathSegment ? `/${docsPathSegment}` : ""}`)
-      : undefined);
+      : undefined;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

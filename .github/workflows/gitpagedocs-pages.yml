@@ -46,6 +46,10 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/Vidigal-code/git-page-docs.git .gitpagedocs-runtime
           cp .gitpagedocs-runtime/gitpagedocs/icon.svg /tmp/default-icon.svg 2>/dev/null || true
+          if [ -d gitpagelayouts ]; then
+            rm -rf .gitpagedocs-runtime/gitpagelayouts
+            cp -R gitpagelayouts .gitpagedocs-runtime/gitpagelayouts
+          fi
           if [ -d gitpagedocs ]; then
             rm -rf .gitpagedocs-runtime/gitpagedocs
             cp -R gitpagedocs .gitpagedocs-runtime/gitpagedocs

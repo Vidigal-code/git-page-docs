@@ -1,4 +1,11 @@
-import type { SiteConfig, ThemeTemplate } from "@/entities/docs/model/types";
+import type {
+  SiteConfig,
+  ThemeButtonComponent,
+  ThemeCardComponent,
+  ThemeHeaderComponent,
+  ThemeSelectComponent,
+  ThemeTemplate,
+} from "@/entities/docs/model/types";
 import type { CSSProperties } from "react";
 
 const TOC_SCROLL_MAX_HEIGHT_DESKTOP_DEFAULT = "min(65vh, 400px)";
@@ -13,6 +20,22 @@ const DEFAULT_COLORS = {
   cardBackground: "#0f172a",
   cardBorder: "#334155",
 } as const;
+
+const DEFAULT_HEADER: Required<Pick<ThemeHeaderComponent, "backgroundColor" | "borderBottom">> = {
+  backgroundColor: "#0b1220",
+  borderBottom: "1px solid #334155",
+};
+
+const DEFAULT_BUTTON: ThemeButtonComponent = { borderRadius: "10px", border: "1px solid #334155" };
+const DEFAULT_SELECT: ThemeSelectComponent = {
+  borderRadius: "10px",
+  border: "1px solid #334155",
+  backgroundColor: "#0f172a",
+};
+const DEFAULT_CARD: ThemeCardComponent = {
+  borderRadius: "16px",
+  boxShadow: "0 18px 60px rgba(0, 0, 0, 0.35)",
+};
 
 export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSProperties {
   const colors = theme?.colors ?? {};
@@ -35,42 +58,16 @@ export function toDocsShellCssVars(
   site?: SiteConfig,
 ): CSSProperties {
   const base = toBaseThemeCssVars(theme);
-  const button = (theme?.components.button as
-    | {
-        borderRadius?: string;
-        border?: string;
-        hoverGlow?: string;
-      }
-    | undefined) ?? { borderRadius: "10px", border: "1px solid #334155" };
-  const select = (theme?.components.select as
-    | {
-        borderRadius?: string;
-        border?: string;
-        backgroundColor?: string;
-      }
-    | undefined) ?? { borderRadius: "10px", border: "1px solid #334155", backgroundColor: "#0f172a" };
-  const card = (theme?.components.card as
-    | {
-        borderRadius?: string;
-        boxShadow?: string;
-      }
-    | undefined) ?? { borderRadius: "16px", boxShadow: "0 18px 60px rgba(0, 0, 0, 0.35)" };
-  const headerControls = (theme?.components.headerControls as
-    | {
-        common?: {
-          borderRadius?: string;
-          border?: string;
-          backgroundColor?: string;
-        };
-      }
-    | undefined)?.common;
+  const components = theme?.components ?? {};
+  const button = components.button ?? DEFAULT_BUTTON;
+  const select = components.select ?? DEFAULT_SELECT;
+  const card = components.card ?? DEFAULT_CARD;
+  const headerControls = components.headerControls?.common;
 
   return {
     ...base,
-    ["--header-background" as string]:
-      (theme?.components.header as { backgroundColor?: string } | undefined)?.backgroundColor ?? "#0b1220",
-    ["--header-border" as string]:
-      (theme?.components.header as { borderBottom?: string } | undefined)?.borderBottom ?? "1px solid #334155",
+    ["--header-background" as string]: components.header?.backgroundColor ?? DEFAULT_HEADER.backgroundColor,
+    ["--header-border" as string]: components.header?.borderBottom ?? DEFAULT_HEADER.borderBottom,
     ["--card-shadow" as string]: card.boxShadow,
     ["--card-radius" as string]: card.borderRadius,
     ["--control-radius" as string]: headerControls?.borderRadius ?? button.borderRadius ?? "10px",
@@ -91,7 +88,7 @@ export function toDocsShellCssVars(
 export function toSearchShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
   const base = toBaseThemeCssVars(theme);
   const colors = theme?.colors ?? {};
-  const header = (theme?.components.header as { backgroundColor?: string; borderBottom?: string } | undefined) ?? {};
+  const header = theme?.components.header ?? {};
   return {
     ...base,
     ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? DEFAULT_COLORS.cardBackground,

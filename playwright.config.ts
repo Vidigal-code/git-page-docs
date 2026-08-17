@@ -31,5 +31,8 @@ export default defineConfig({
     timeout: 180_000,
     stdout: "ignore",
     stderr: "pipe",
+    // Specs navigate from the site root; force an empty base path so the dev
+    // server (search mode) does not mount the app under /<repository-name>.
+    env: { ...process.env, GITPAGEDOCS_BASE_PATH: "" },
   },
 });

@@ -2,42 +2,102 @@ import path from "node:path";
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
 import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type { LayoutItem, LayoutsConfig, ThemeTemplate } from "@/entities/docs/model/types";
+import {
+  LAYOUTS_CONFIG_FILENAME,
+  LAYOUTS_DIR_CANDIDATES,
+  OFFICIAL_LAYOUTS_CONFIG_URLS,
+} from "@/shared/config/remote-urls";
 import { tryReadJsonFile } from "../io/file-reader";
 import { readRemoteJson, readRemoteJsonFromRepo, buildRepoRawBase } from "../io/remote-fetcher";
+import { buildRemoteTemplateUrl, templatesBaseFromConfigUrl } from "./remote-template-urls";
 
-const DEFAULT_LAYOUTS_PATH = "gitpagedocs/layouts/layoutsConfig.json";
-const DEFAULT_TEMPLATES_BASE_PATH = "gitpagedocs/layouts/";
-
-function deriveRemoteTemplatesBaseUrl(
-  layoutsConfigPath: string | undefined,
-  templatesPathOverride: string | undefined,
-  owner: string | undefined,
-  repo: string | undefined,
-): string | undefined {
-  if (templatesPathOverride) {
-    return ensureTrailingSlash(toRawGithubUrl(templatesPathOverride));
-  }
-
-  if (layoutsConfigPath) {
-    const rawUrl = toRawGithubUrl(layoutsConfigPath);
-    return ensureTrailingSlash(rawUrl.slice(0, rawUrl.lastIndexOf("/") + 1));
-  }
-
-  if (owner && repo) {
-    return buildRepoRawBase(owner, repo, DEFAULT_TEMPLATES_BASE_PATH);
-  }
-
-  return undefined;
+interface ResolvedLayoutsSource {
+  layoutsConfig: LayoutsConfig;
+  /** Base URL for fetching templates when the config came from a remote source. */
+  remoteTemplatesBaseUrl?: string;
+  /** Repo-relative folder that held the config when it was read locally. */
+  localTemplatesBasePath?: string;
 }
 
-function buildRemoteTemplateUrl(layoutFile: string, remoteTemplatesBaseUrl: string): string {
-  const normalizedBase = ensureTrailingSlash(remoteTemplatesBaseUrl);
-  const basePath = new URL(normalizedBase).pathname;
-  const baseEndsWithTemplates = /\/templates\/$/i.test(basePath);
-  const normalizedFile = layoutFile.replace(/^\.\//, "");
-  const fileWithoutTemplatesPrefix = normalizedFile.replace(/^templates\//i, "");
-  const filePath = baseEndsWithTemplates ? fileWithoutTemplatesPrefix : normalizedFile;
-  return new URL(filePath, normalizedBase).toString();
+function resolveTemplatesOverride(templatesPathOverride: string | undefined): string | undefined {
+  return templatesPathOverride ? ensureTrailingSlash(toRawGithubUrl(templatesPathOverride)) : undefined;
+}
+
+async function readLocalLayouts(): Promise<ResolvedLayoutsSource | null> {
+  for (const dir of LAYOUTS_DIR_CANDIDATES) {
+    const config = await tryReadJsonFile<LayoutsConfig>(`${dir}${LAYOUTS_CONFIG_FILENAME}`);
+    if (config?.layouts?.length) {
+      return { layoutsConfig: config, localTemplatesBasePath: dir };
+    }
+  }
+  return null;
+}
+
+async function readRemoteLayoutsByUrl(
+  layoutsConfigUrl: string,
+  templatesPathOverride: string | undefined,
+): Promise<ResolvedLayoutsSource | null> {
+  const remoteConfig = await readRemoteJson<LayoutsConfig>(layoutsConfigUrl);
+  if (!remoteConfig?.layouts?.length) return null;
+  return {
+    layoutsConfig: remoteConfig,
+    remoteTemplatesBaseUrl:
+      resolveTemplatesOverride(templatesPathOverride) ?? templatesBaseFromConfigUrl(layoutsConfigUrl),
+  };
+}
+
+async function readRepoLayouts(
+  owner: string,
+  repo: string,
+  templatesPathOverride: string | undefined,
+): Promise<ResolvedLayoutsSource | null> {
+  for (const dir of LAYOUTS_DIR_CANDIDATES) {
+    const config = await readRemoteJsonFromRepo<LayoutsConfig>(owner, repo, `${dir}${LAYOUTS_CONFIG_FILENAME}`);
+    if (config?.layouts?.length) {
+      return {
+        layoutsConfig: config,
+        remoteTemplatesBaseUrl:
+          resolveTemplatesOverride(templatesPathOverride) ?? buildRepoRawBase(owner, repo, dir),
+      };
+    }
+  }
+  return null;
+}
+
+async function readLocalTemplate(
+  layoutFile: string,
+  preferredBasePath: string | undefined,
+): Promise<ThemeTemplate | null> {
+  const bases = preferredBasePath
+    ? [preferredBasePath, ...LAYOUTS_DIR_CANDIDATES.filter((dir) => dir !== preferredBasePath)]
+    : [...LAYOUTS_DIR_CANDIDATES];
+  for (const base of bases) {
+    const template = await tryReadJsonFile<ThemeTemplate>(path.join(base, layoutFile));
+    if (template) return template;
+  }
+  return null;
+}
+
+async function loadTemplate(
+  layoutItem: LayoutItem,
+  source: ResolvedLayoutsSource,
+  isLocal: boolean,
+): Promise<ThemeTemplate | null> {
+  const { remoteTemplatesBaseUrl, localTemplatesBasePath } = source;
+  if (remoteTemplatesBaseUrl && !isLocal) {
+    const templateUrl = buildRemoteTemplateUrl(layoutItem.file, remoteTemplatesBaseUrl);
+    const remote = await readRemoteJson<ThemeTemplate>(templateUrl);
+    if (remote) return remote;
+  }
+
+  const local = await readLocalTemplate(layoutItem.file, localTemplatesBasePath);
+  if (local) return local;
+
+  if (remoteTemplatesBaseUrl && !isLocal) {
+    const templateUrl = buildRemoteTemplateUrl(layoutItem.file, remoteTemplatesBaseUrl);
+    return readRemoteJson<ThemeTemplate>(templateUrl);
+  }
+  return null;
 }
 
 export async function loadLayoutsAndThemes(options: {
@@ -53,8 +113,6 @@ export async function loadLayoutsAndThemes(options: {
   layoutsConfig: LayoutsConfig;
   themes: Record<string, ThemeTemplate>;
 }> {
-  let layoutsConfig: LayoutsConfig | null = null;
-  let remoteTemplatesBaseUrl: string | undefined;
   const preferredRemoteLayoutsPath = options.useOfficialLayouts
     ? options.officialLayoutsConfigPath || options.layoutsConfigPath
     : options.layoutsConfigPath;
@@ -62,89 +120,51 @@ export async function loadLayoutsAndThemes(options: {
     ? options.officialLayoutsTemplatesPath || options.layoutsConfigPathTemplates
     : options.layoutsConfigPathTemplates;
 
-  if (options.useOfficialLayouts && preferredRemoteLayoutsPath) {
-    const remoteConfig = await readRemoteJson<LayoutsConfig>(preferredRemoteLayoutsPath);
-    if (remoteConfig?.layouts?.length) {
-      layoutsConfig = remoteConfig;
-      remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
-        preferredRemoteLayoutsPath,
-        preferredRemoteTemplatesPath,
-        options.owner,
-        options.repo,
-      );
+  let source: ResolvedLayoutsSource | null = null;
+
+  if (options.useOfficialLayouts) {
+    const officialCandidates = Array.from(
+      new Set([preferredRemoteLayoutsPath, ...OFFICIAL_LAYOUTS_CONFIG_URLS]),
+    ).filter((candidate): candidate is string => Boolean(candidate));
+    for (const configUrl of officialCandidates) {
+      source = await readRemoteLayoutsByUrl(configUrl, preferredRemoteTemplatesPath);
+      if (source) break;
     }
   }
 
-  if (!layoutsConfig && options.isLocal) {
-    layoutsConfig = await tryReadJsonFile<LayoutsConfig>(DEFAULT_LAYOUTS_PATH);
-  } else if (!layoutsConfig) {
+  if (!source && options.isLocal) {
+    source = await readLocalLayouts();
+  } else if (!source) {
     if (preferredRemoteLayoutsPath) {
-      const remoteConfig = await readRemoteJson<LayoutsConfig>(preferredRemoteLayoutsPath);
-      if (remoteConfig?.layouts?.length) {
-        layoutsConfig = remoteConfig;
-        remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
-          preferredRemoteLayoutsPath,
-          preferredRemoteTemplatesPath,
-          options.owner,
-          options.repo,
-        );
-      }
+      source = await readRemoteLayoutsByUrl(preferredRemoteLayoutsPath, preferredRemoteTemplatesPath);
     }
-
-    if (!layoutsConfig && options.owner && options.repo) {
-      const repoLayouts = await readRemoteJsonFromRepo<LayoutsConfig>(options.owner, options.repo, DEFAULT_LAYOUTS_PATH);
-      if (repoLayouts?.layouts?.length) {
-        layoutsConfig = repoLayouts;
-        remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
-          undefined,
-          preferredRemoteTemplatesPath,
-          options.owner,
-          options.repo,
-        );
-      }
+    if (!source && options.owner && options.repo) {
+      source = await readRepoLayouts(options.owner, options.repo, preferredRemoteTemplatesPath);
     }
-
-    if (!layoutsConfig?.layouts?.length) {
-      layoutsConfig = await tryReadJsonFile<LayoutsConfig>(DEFAULT_LAYOUTS_PATH);
+    if (!source) {
+      source = await readLocalLayouts();
     }
   }
 
-  if (!layoutsConfig?.layouts?.length) {
+  if (!source) {
     return buildFallbackLayoutsAndThemes();
   }
 
+  const resolvedSource = source;
   const themes: Record<string, ThemeTemplate> = {};
 
   await Promise.all(
-    layoutsConfig.layouts.map(async (layoutItem: LayoutItem) => {
+    resolvedSource.layoutsConfig.layouts.map(async (layoutItem: LayoutItem) => {
       try {
-        let template: ThemeTemplate | null = null;
-
-        if (remoteTemplatesBaseUrl && !options.isLocal) {
-          const templateUrl = buildRemoteTemplateUrl(layoutItem.file, remoteTemplatesBaseUrl);
-          template = await readRemoteJson<ThemeTemplate>(templateUrl);
+        const template = await loadTemplate(layoutItem, resolvedSource, options.isLocal);
+        if (template) {
+          themes[layoutItem.id] = template;
         }
-
-        if (!template) {
-          const templatePath = path.join("gitpagedocs/layouts", layoutItem.file);
-          template = await tryReadJsonFile<ThemeTemplate>(templatePath);
-        }
-
-        if (!template && remoteTemplatesBaseUrl && !options.isLocal) {
-          const templateUrl = buildRemoteTemplateUrl(layoutItem.file, remoteTemplatesBaseUrl);
-          template = await readRemoteJson<ThemeTemplate>(templateUrl);
-        }
-
-        if (!template) {
-          return;
-        }
-
-        themes[layoutItem.id] = template;
       } catch {
         // Keep app resilient even if one template is missing.
       }
     }),
   );
 
-  return { layoutsConfig, themes };
+  return { layoutsConfig: resolvedSource.layoutsConfig, themes };
 }

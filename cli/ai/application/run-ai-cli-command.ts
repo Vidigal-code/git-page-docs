@@ -131,7 +131,11 @@ export async function runAiCliCommand(options: {
   onScaffold?: () => Promise<void>;
 }): Promise<{ summary: AiCliRunSummary; runConfigScaffold: boolean }> {
   const logInfo = options.onInfo ?? (() => undefined);
-  const configRepo = new AiConfigFileRepository(options.cwd);
+  const configRepo = new AiConfigFileRepository({
+    cwd: options.cwd,
+    onMigrate: (fromPath, toPath) =>
+      logInfo(`[gitpagedocs:ai] Moved configuration from ${fromPath} to ${toPath} (secure user config directory).`),
+  });
 
   const existingConfig = await configRepo.read();
   const plan = await runAiInteractivePrompt(existingConfig);

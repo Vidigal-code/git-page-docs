@@ -17,11 +17,13 @@ import type {
 } from "@/entities/docs/model/types";
 import { dedupeVersionEntriesById } from "../lib/dedupe-version-entries";
 import {
-  DEFAULT_LAYOUTS_PATH,
-  DEFAULT_TEMPLATES_BASE_PATH,
+  LAYOUTS_CONFIG_FILENAME,
+  LAYOUTS_DIR_CANDIDATES,
   OFFICIAL_LAYOUTS_CONFIG_URL,
+  OFFICIAL_LAYOUTS_CONFIG_URLS,
   OFFICIAL_LAYOUTS_TEMPLATES_URL,
 } from "@/shared/config/remote-urls";
+import { buildRemoteTemplateUrl, templatesBaseFromConfigUrl } from "./layouts/remote-template-urls";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 import {
   fetchRepoText,
@@ -55,15 +57,20 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
   themes: Record<string, ThemeTemplate>;
 }> {
   try {
-    const rawLayoutsUrl = toRawGithubUrl(OFFICIAL_LAYOUTS_CONFIG_URL);
-    const layoutsConfig = await fetchUrlJson<LayoutsConfig>(rawLayoutsUrl);
-    if (!layoutsConfig?.layouts?.length) {
+    let layoutsConfig: LayoutsConfig | null = null;
+    let templatesBaseUrl: string | undefined;
+    for (const officialConfigUrl of OFFICIAL_LAYOUTS_CONFIG_URLS) {
+      layoutsConfig = await fetchUrlJson<LayoutsConfig>(toRawGithubUrl(officialConfigUrl));
+      if (layoutsConfig?.layouts?.length) {
+        templatesBaseUrl = ensureTrailingSlash(`${templatesBaseFromConfigUrl(officialConfigUrl)}templates/`);
+        break;
+      }
+      layoutsConfig = null;
+    }
+    if (!layoutsConfig || !templatesBaseUrl) {
       return buildFallbackLayoutsAndThemes();
     }
     const layoutsToLoad = layoutsConfig.layouts;
-    const templatesBaseUrl = ensureTrailingSlash(
-      rawLayoutsUrl.slice(0, rawLayoutsUrl.lastIndexOf("/") + 1) + "templates/",
-    );
     const themes: Record<string, ThemeTemplate> = {};
     const results = await Promise.allSettled(
       layoutsToLoad.map(async (layout: LayoutItem) => {
@@ -225,25 +232,28 @@ function deriveRemoteTemplatesBaseUrl(
   templatesPathOverride: string | undefined,
   owner: string,
   repo: string,
+  repoLayoutsDir: string,
 ): string {
   if (templatesPathOverride) {
     return ensureTrailingSlash(toRawGithubUrl(templatesPathOverride));
   }
   if (layoutsConfigPath) {
-    const rawUrl = toRawGithubUrl(layoutsConfigPath);
-    return ensureTrailingSlash(rawUrl.slice(0, rawUrl.lastIndexOf("/") + 1));
+    return templatesBaseFromConfigUrl(layoutsConfigPath);
   }
-  return ensureTrailingSlash(`https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${DEFAULT_TEMPLATES_BASE_PATH}`);
+  return ensureTrailingSlash(`https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${repoLayoutsDir}`);
 }
 
-function buildRemoteTemplateUrl(layoutFile: string, remoteTemplatesBaseUrl: string): string {
-  const normalizedBase = ensureTrailingSlash(remoteTemplatesBaseUrl);
-  const basePath = new URL(normalizedBase).pathname;
-  const baseEndsWithTemplates = /\/templates\/$/i.test(basePath);
-  const normalizedFile = layoutFile.replace(/^\.\//, "");
-  const fileWithoutTemplatesPrefix = normalizedFile.replace(/^templates\//i, "");
-  const filePath = baseEndsWithTemplates ? fileWithoutTemplatesPrefix : normalizedFile;
-  return new URL(filePath, normalizedBase).toString();
+async function fetchRepoLayoutsConfig(
+  owner: string,
+  repo: string,
+): Promise<{ config: LayoutsConfig; dir: string } | null> {
+  for (const dir of LAYOUTS_DIR_CANDIDATES) {
+    const config = await fetchRepoJson<LayoutsConfig>(owner, repo, `${dir}${LAYOUTS_CONFIG_FILENAME}`);
+    if (config?.layouts?.length) {
+      return { config, dir };
+    }
+  }
+  return null;
 }
 
 async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, repo: string): Promise<{
@@ -259,36 +269,55 @@ async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, re
     : config.site.layoutsConfigPathTemplates;
 
   let layoutsConfig: LayoutsConfig | null = null;
-  if (useOfficialLayouts) {
-    layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath ?? OFFICIAL_LAYOUTS_CONFIG_URL);
+  let resolvedConfigUrl: string | undefined;
+  let repoLayoutsDir: string | undefined;
+
+  if (useOfficialLayouts && preferredLayoutsConfigPath) {
+    layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
+    if (layoutsConfig?.layouts?.length) resolvedConfigUrl = preferredLayoutsConfigPath;
   }
   if (!layoutsConfig?.layouts?.length && !useOfficialLayouts && preferredLayoutsConfigPath) {
     layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
   }
   if (!layoutsConfig?.layouts?.length) {
-    layoutsConfig = await fetchRepoJson<LayoutsConfig>(owner, repo, DEFAULT_LAYOUTS_PATH);
+    const repoLayouts = await fetchRepoLayoutsConfig(owner, repo);
+    if (repoLayouts) {
+      layoutsConfig = repoLayouts.config;
+      repoLayoutsDir = repoLayouts.dir;
+    }
   }
   if (!layoutsConfig?.layouts?.length && useOfficialLayouts) {
-    layoutsConfig = await fetchUrlJson<LayoutsConfig>(OFFICIAL_LAYOUTS_CONFIG_URL);
+    for (const officialConfigUrl of OFFICIAL_LAYOUTS_CONFIG_URLS) {
+      layoutsConfig = await fetchUrlJson<LayoutsConfig>(officialConfigUrl);
+      if (layoutsConfig?.layouts?.length) {
+        resolvedConfigUrl = officialConfigUrl;
+        break;
+      }
+    }
   }
   if (!layoutsConfig?.layouts?.length) {
     throw new Error("Could not load layouts configuration.");
   }
 
   const remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
-    useOfficialLayouts ? preferredLayoutsConfigPath : undefined,
+    useOfficialLayouts ? resolvedConfigUrl ?? preferredLayoutsConfigPath : undefined,
     preferredTemplatesPath,
     owner,
     repo,
+    repoLayoutsDir ?? LAYOUTS_DIR_CANDIDATES[0],
   );
+  const repoTemplateDirs = repoLayoutsDir
+    ? [repoLayoutsDir, ...LAYOUTS_DIR_CANDIDATES.filter((dir) => dir !== repoLayoutsDir)]
+    : [...LAYOUTS_DIR_CANDIDATES];
 
   const themes: Record<string, ThemeTemplate> = {};
   await Promise.all(
     layoutsConfig.layouts.map(async (layout: LayoutItem) => {
       const templateUrl = buildRemoteTemplateUrl(layout.file, remoteTemplatesBaseUrl);
       let template = await fetchUrlJson<ThemeTemplate>(templateUrl);
-      if (!template) {
-        template = await fetchRepoJson<ThemeTemplate>(owner, repo, `gitpagedocs/layouts/${layout.file}`);
+      for (const dir of repoTemplateDirs) {
+        if (template) break;
+        template = await fetchRepoJson<ThemeTemplate>(owner, repo, `${dir}${layout.file}`);
       }
       if (template) {
         themes[layout.id] = template;

@@ -36,7 +36,8 @@ git-page-docs/
 |-- cli/          # Hexagonal CLI, published as the `gitpagedocs` npm bin
 |-- mcp/          # Model Context Protocol server (@gitpagedocs/mcp)
 |-- tools/        # @gitpagedocs/tools — the ONLY home for shared business logic
-|-- gitpagedocs/  # User contract: config + versioned docs + layouts (kept stable)
+|-- gitpagedocs/  # User contract: config + versioned docs + legacy layouts mirror (kept stable)
+|-- gitpagelayouts/ # Canonical layouts home: JSON + generated per-layout docs (layouts:sync)
 |-- e2e/          # Playwright end-to-end specs
 `-- tsconfig.base.json · turbo.json · pnpm-workspace.yaml · vitest.config.ts
 ```
@@ -159,8 +160,10 @@ docker run -p 3000:80 gitpagedocshome
 ### 1) Default mode (`npx gitpagedocs`)
 
 - `gitpagedocs/config.json` (or `config.js` / `config.ts`) is generated with official layout source enabled.
-- Layouts/templates are loaded from the official repository URLs:
-  - `https://github.com/Vidigal-code/git-page-docs/tree/main/gitpagedocs/layouts`
+- Layouts/templates are loaded from the official repository URLs (the documented `gitpagelayouts/` home):
+  - `https://github.com/Vidigal-code/git-page-docs/tree/main/gitpagelayouts`
+  - Legacy deployments keep working: `gitpagedocs/layouts` stays online as a mirror.
+- Every official layout is documented (palette, typography, usage) in [`gitpagelayouts/README.md`](gitpagelayouts/README.md).
 - Best option if you want to focus only on writing docs.
 
 ### 2) Local layout mode (`npx gitpagedocs --layoutconfig`)
@@ -171,6 +174,9 @@ docker run -p 3000:80 gitpagedocshome
   - `templates/*.json`
 - Official layout URLs are disabled in generated config.
 - Best option if you want to create and maintain your own templates in your own repository.
+- The viewer also resolves a root-level `gitpagelayouts/` folder in your repository
+  (used when the legacy `gitpagedocs/layouts/` location is absent), so you can host
+  your own layouts in the same documented structure as the official home.
 
 ### Fallback behavior
 
@@ -275,7 +281,7 @@ Main layout source keys in `gitpagedocs/config.json` (or `config.js` / `config.t
 Behavior:
 
 - If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
-- If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagedocs/layouts/**` or your custom paths).
+- If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagelayouts/**`, the legacy `gitpagedocs/layouts/**`, or your custom paths).
 
 ## Version selector visibility
 
@@ -557,7 +563,17 @@ idempotent — re-running `gitpagedocs ai` replaces them instead of duplicating.
 
 ### Manual config (`.gitpagedocsconfig`)
 
-You can run manually with a persisted config in repository root:
+The config is stored securely in the per-user OS config directory (never inside the
+repository, so the API key cannot be committed by accident), with owner-only file
+permissions on POSIX systems:
+
+- Windows: `%APPDATA%\gitpagedocs\.gitpagedocsconfig`
+- macOS: `~/Library/Application Support/gitpagedocs/.gitpagedocsconfig`
+- Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
+
+Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. A legacy
+`.gitpagedocsconfig` in the repository root is migrated there automatically on the
+next `gitpagedocs ai` run. File contents:
 
 ```json
 {
