@@ -61,6 +61,38 @@ describe("fetchUrlJson mirror fallback", () => {
     expect(attempts.some((url) => url.includes("cdn.jsdelivr.net"))).toBe(true);
   });
 
+  it("remembers the working mirror and tries it first on later fetches", async () => {
+    let healthyHost = "raw.githubusercontent.com";
+    let current: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        current.push(url);
+        if (url.includes(healthyHost)) {
+          return { ok: true, text: async () => JSON.stringify({ ok: true }) };
+        }
+        return { ok: false, status: 429, text: async () => "" };
+      }),
+    );
+
+    // Anchor the sticky mirror on raw while only raw is healthy.
+    await fetchUrlJson("https://github.com/owner/repo/blob/main/a.json");
+
+    // Raw starts throttling and jsDelivr takes over: this call must walk...
+    healthyHost = "cdn.jsdelivr.net";
+    current = [];
+    await fetchUrlJson("https://github.com/owner/repo/blob/main/b.json");
+    expect(current.length).toBeGreaterThan(1);
+    expect(current[current.length - 1]).toContain("cdn.jsdelivr.net");
+
+    // ...and the next call goes straight to the mirror that worked.
+    current = [];
+    await fetchUrlJson("https://github.com/owner/repo/blob/main/c.json");
+    expect(current[0]).toContain("cdn.jsdelivr.net");
+    expect(current).toHaveLength(1);
+  });
+
   it("fetches non-GitHub URLs directly", async () => {
     vi.stubGlobal(
       "fetch",

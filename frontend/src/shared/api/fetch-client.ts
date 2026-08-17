@@ -28,11 +28,21 @@ export async function tryFetchText(url: string): Promise<string | null> {
   }
 }
 
+/** Index of the last mirror that served content. Trying it first turns a
+ * throttled-host storm (e.g. dozens of template fetches during a rate limit)
+ * into one request per file instead of a doomed walk over every mirror. */
+let stickyMirrorIndex = 0;
+
 export async function fetchRepoText(owner: string, repo: string, relativePath: string): Promise<string | null> {
   const candidates = buildGithubRawCandidates(owner, repo, relativePath);
-  for (const candidate of candidates) {
-    const content = await tryFetchText(candidate);
+  const order = [
+    stickyMirrorIndex,
+    ...candidates.map((_, index) => index).filter((index) => index !== stickyMirrorIndex),
+  ];
+  for (const index of order) {
+    const content = await tryFetchText(candidates[index]);
     if (content !== null) {
+      stickyMirrorIndex = index;
       return content;
     }
   }
