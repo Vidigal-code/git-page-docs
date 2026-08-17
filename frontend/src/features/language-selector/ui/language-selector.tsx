@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { LanguageCode } from "@/entities/docs";
 import styles from "./language-selector.module.css";
 
@@ -151,23 +152,29 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
         </ul>
       )}
 
-      {isOpen && isSmallScreen && (
-        <div className={styles.overlay} onClick={() => setIsOpen(false)}>
-          <div
-            ref={dialogRef}
-            className={styles.dialog}
-            role="dialog"
-            aria-modal="true"
-            aria-label={label}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <p className={styles.dialogTitle}>{label}</p>
-            {languages.map((lang) => (
-              <span key={lang}>{renderOption(lang, styles.dialogOption)}</span>
-            ))}
-          </div>
-        </div>
-      )}
+      {isOpen &&
+        isSmallScreen &&
+        // Portaled to <body> so transformed/filtered ancestors (e.g. the
+        // sliding mobile drawer) cannot capture the fixed overlay and knock
+        // the dialog off-center.
+        createPortal(
+          <div className={styles.overlay} onClick={() => setIsOpen(false)}>
+            <div
+              ref={dialogRef}
+              className={styles.dialog}
+              role="dialog"
+              aria-modal="true"
+              aria-label={label}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <p className={styles.dialogTitle}>{label}</p>
+              {languages.map((lang) => (
+                <span key={lang}>{renderOption(lang, styles.dialogOption)}</span>
+              ))}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

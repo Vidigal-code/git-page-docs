@@ -28,6 +28,17 @@
   box-shadow: var(--card-shadow, 0 12px 32px rgba(0, 0, 0, 0.25));
 }
 
+/* Invisible hover bridge over the visual gap between trigger and menu, so
+ * moving the pointer down never leaves the selector (which would close it). */
+.menu::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 0;
+  right: 0;
+  height: 6px;
+}
+
 .item {
   margin: 0;
   padding: 0;
@@ -67,7 +78,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
