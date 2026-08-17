@@ -57,17 +57,37 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
     }
   };
 
+  const handleTriggerClick = () => {
+    // On hover-capable devices hover already opened the menu, so a click must
+    // keep it open (a toggle would close it under the pointer); touch toggles.
+    setIsOpen((prev) => (supportsHover() ? true : !prev));
+  };
+
+  const handleFocusOut = (event: React.FocusEvent<HTMLDivElement>) => {
+    if (!containerRef.current?.contains(event.relatedTarget as Node | null)) {
+      setIsOpen(false);
+    }
+  };
+
+  const selectLanguage = (lang: LanguageCode) => {
+    onChange(lang);
+    setIsOpen(false);
+    // The option list unmounts; keep keyboard focus on the trigger.
+    containerRef.current?.querySelector("button")?.focus();
+  };
+
   return (
     <div
       ref={containerRef}
       style={{ position: "relative", display: "inline-block" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onBlur={handleFocusOut}
     >
       <button
         type="button"
         className={className}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleTriggerClick}
         aria-label={label}
         aria-expanded={isOpen}
         title={label}
@@ -111,10 +131,7 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
                 <button
                   type="button"
                   aria-current={isSelected || undefined}
-                  onClick={() => {
-                    onChange(lang);
-                    setIsOpen(false);
-                  }}
+                  onClick={() => selectLanguage(lang)}
                   style={{
                     display: "block",
                     width: "100%",

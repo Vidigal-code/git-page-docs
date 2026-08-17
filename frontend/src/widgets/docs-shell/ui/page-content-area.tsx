@@ -22,7 +22,14 @@ import {
   isBrowseAllEnabled,
   buildBrowseNavConfig,
 } from "./page-content-browse-nav";
-import { HtmlContainer, MdContainer, VideoContainer, AudioContainer, SourceViewerContainer } from "./content-type-containers";
+import dynamic from "next/dynamic";
+import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
+
+// The source browser (tree building + markdown preview) is only needed on
+// source-viewer routes, so it is code-split out of the docs bundle.
+const SourceViewerContainer = dynamic(
+  () => import("./content-type-containers/source-viewer-container").then((mod) => mod.SourceViewerContainer),
+);
 import type { AudioRouteControlsConfig } from "./content-type-containers/audio-route-controls";
 import styles from "../docs-shell.module.css";
 

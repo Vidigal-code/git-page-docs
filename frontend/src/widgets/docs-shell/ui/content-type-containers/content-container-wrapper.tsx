@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { FiX } from "react-icons/fi";
-import { MdFullscreen } from "react-icons/md";
+import { FiX } from "@/shared/ui/fallback-icons";
+import { MdFullscreen } from "@/shared/ui/fallback-icons";
 import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentBrowseNav, type BrowseNavConfig } from "../page-content-browse-nav";
 import styles from "../../docs-shell.module.css";

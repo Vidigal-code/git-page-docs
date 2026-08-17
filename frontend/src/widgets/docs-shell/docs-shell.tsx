@@ -28,7 +28,14 @@ import { DocsShellMainContent } from "./ui/docs-shell-main-content";
 import { DocsShellOverlays } from "./ui/docs-shell-overlays";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellProvider } from "./model/docs-shell-context";
-import { AiChatDrawer } from "../ai-chat-drawer/ui/ai-chat-drawer";
+import dynamic from "next/dynamic";
+
+// The AI chat drawer (vault + provider stack) is heavy and only needed after
+// the user opens the chat, so it is code-split and mounted on first open.
+const AiChatDrawer = dynamic(
+  () => import("../ai-chat-drawer/ui/ai-chat-drawer").then((mod) => mod.AiChatDrawer),
+  { ssr: false },
+);
 import { resolveAiChatOpenIconConfig, resolveAiChatCloseIconConfig, resolveAiChatSettingsIconConfig, resolveAiChatSendIconConfig, resolveAiChatCancelIconConfig, resolveAiChatTrashIconConfig, resolveAiChatClearChatIconConfig, resolveAiChatClearDataIconConfig, resolveAiChatExpandIconConfig, resolveAiChatCollapseIconConfig, resolveAiChatLockIconConfig } from "@/shared/lib/icons/ai-chat/resolve-ai-chat-icon";
 import styles from "./docs-shell.module.css";
 
@@ -381,6 +388,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     : undefined;
 
   const [isAiChatOpen, setAiChatOpen] = useState(false);
+  // Latched on first open so the drawer chunk is never fetched before needed.
+  const [isAiChatMounted, setAiChatMounted] = useState(false);
+  const openAiChat = useCallback(() => {
+    setAiChatMounted(true);
+    setAiChatOpen(true);
+  }, []);
   const aiChatIconConfig = useMemo(
     () => ({
       open: resolveAiChatOpenIconConfig(data.config.site, (activeLayout?.mode ?? "dark") as "light" | "dark", getBasePath()),
@@ -481,7 +494,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           blockMenuOnNav={blockMenuOnNav}
           setBlockMenuOnNav={setBlockMenuOnNav}
           navMenuConfig={navMenuConfig}
-          onOpenAiChat={() => setAiChatOpen(true)}
+          onOpenAiChat={openAiChat}
           aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}
           docsLock={docsLockProps}
         />
@@ -625,10 +638,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           browseNextLabel={labels.browseNextLabel}
           fullscreenExpandLabel={labels.fullscreenExpandLabel}
           closeUrlFullscreen={closeUrlFullscreen}
-          onOpenAiChat={() => setAiChatOpen(true)}
+          onOpenAiChat={openAiChat}
           aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}
         />
-        {isAiChatEnabledGlobal && (
+        {isAiChatEnabledGlobal && isAiChatMounted && (
           <AiChatDrawer
             isOpen={isAiChatOpen}
             onClose={() => setAiChatOpen(false)}

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
-import { FaBars } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
+import { BsMoonStarsFill, BsSunFill } from "@/shared/ui/fallback-icons";
+import { FaBars } from "@/shared/ui/fallback-icons";
+import { IoMdClose } from "@/shared/ui/fallback-icons";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import styles from "../docs-shell.module.css";

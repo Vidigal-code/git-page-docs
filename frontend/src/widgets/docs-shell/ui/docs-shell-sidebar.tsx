@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { BsChatDots, BsMoonStarsFill, BsSunFill } from "react-icons/bs";
-import { FiChevronsLeft } from "react-icons/fi";
+import { BsChatDots, BsMoonStarsFill, BsSunFill } from "@/shared/ui/fallback-icons";
+import { FiChevronsLeft } from "@/shared/ui/fallback-icons";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import { DocsLockButton, type DocsLockTexts } from "@/features/docs-access";

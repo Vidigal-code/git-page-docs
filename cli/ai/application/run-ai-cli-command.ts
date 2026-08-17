@@ -76,8 +76,15 @@ async function collectFilesWithInteractiveFallback(
   };
 }
 
-async function runPlan(plan: AiCliRunPlan, cwd: string): Promise<AiCliRunSummary> {
-  const provider = createAiProvider({
+/** Factory seam so tests can inject a deterministic provider (DIP). */
+export type AiProviderFactory = typeof createAiProvider;
+
+export async function executeAiRunPlan(
+  plan: AiCliRunPlan,
+  cwd: string,
+  createProvider: AiProviderFactory = createAiProvider,
+): Promise<AiCliRunSummary> {
+  const provider = createProvider({
     provider: plan.config.ai.provider,
     model: plan.config.ai.model,
     apiKey: plan.config.ai.apiKey,
@@ -85,7 +92,7 @@ async function runPlan(plan: AiCliRunPlan, cwd: string): Promise<AiCliRunSummary
   });
 
   const aiService = new AiCommandService(provider);
-  const fileSystem = new FileSystemAdapter();
+  const fileSystem = new FileSystemAdapter(cwd);
 
   const { files, scanned, skipped } = await collectFilesWithInteractiveFallback(
     fileSystem,
@@ -152,7 +159,7 @@ export async function runAiCliCommand(options: {
     await options.onScaffold();
   }
 
-  const summary = await runPlan(plan, options.cwd);
+  const summary = await executeAiRunPlan(plan, options.cwd);
   return {
     summary,
     runConfigScaffold: plan.runConfigScaffold,

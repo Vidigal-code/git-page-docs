@@ -1,9 +1,9 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { FiRefreshCw, FiRepeat, FiX } from "react-icons/fi";
-import { FaPause } from "react-icons/fa";
-import { CiPlay1 } from "react-icons/ci";
+import { FiRefreshCw, FiRepeat, FiX } from "@/shared/ui/fallback-icons";
+import { FaPause } from "@/shared/ui/fallback-icons";
+import { CiPlay1 } from "@/shared/ui/fallback-icons";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { AudioTrackConfig } from "@/entities/docs";
 import { getDisplaySourceLabel } from "../lib/get-display-source-label";

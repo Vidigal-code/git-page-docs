@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { FiX } from "react-icons/fi";
+import { FiX } from "@/shared/ui/fallback-icons";
 import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentArea } from "./page-content-area";
 import type {

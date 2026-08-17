@@ -1,4 +1,4 @@
-import { FiX } from "react-icons/fi";
+import { FiX } from "@/shared/ui/fallback-icons";
 import styles from "../docs-shell.module.css";
 
 interface VersionLinkOption {

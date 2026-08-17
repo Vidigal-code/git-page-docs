@@ -14,7 +14,8 @@ import {
   type ProviderConfig,
 } from "@gitpagedocs/tools";
 
-const ENV_KEYS: Record<AiProviderId, string[]> = {
+/** Environment variable names checked per provider (exported for tooling/tests). */
+export const PROVIDER_ENV_KEYS: Record<AiProviderId, string[]> = {
   openai: ["OPENAI_API_KEY"],
   anthropic: ["ANTHROPIC_API_KEY", "CLAUDE_API_KEY"],
   gemini: ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
@@ -66,7 +67,7 @@ export class ServerContext {
   }
 
   private resolveKey(providerId: AiProviderId): string | undefined {
-    for (const name of ENV_KEYS[providerId]) {
+    for (const name of PROVIDER_ENV_KEYS[providerId]) {
       const value = process.env[name];
       if (value) return value;
     }
@@ -85,7 +86,7 @@ export class ServerContext {
     const apiKey = this.resolveKey(id);
     if (spec.auth !== "none" && !apiKey) {
       throw new ProviderError(
-        `No API key for ${spec.label}. Set ${ENV_KEYS[id].join(" or ")} in the environment.`,
+        `No API key for ${spec.label}. Set ${PROVIDER_ENV_KEYS[id].join(" or ")} in the environment.`,
       );
     }
     const baseUrl =

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FiMessageCircle, FiX } from "react-icons/fi";
+import { FiMessageCircle, FiX } from "@/shared/ui/fallback-icons";
 import type { MenuNode } from "../model/menu-tree";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { DocsShellControls } from "./docs-shell-controls";

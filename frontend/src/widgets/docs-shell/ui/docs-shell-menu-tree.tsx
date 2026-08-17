@@ -1,4 +1,4 @@
-import { FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { FiChevronDown, FiChevronRight } from "@/shared/ui/fallback-icons";
 import type { MenuNode } from "../model/menu-tree";
 import styles from "../docs-shell.module.css";
 

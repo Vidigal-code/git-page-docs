@@ -8,12 +8,14 @@ export interface FilePayload {
 }
 
 export class FileSystemAdapter {
+    constructor(private readonly baseDir: string = process.cwd()) {}
+
     splitExistingDirectories(targetDirectories: string[]): { existing: string[]; missing: string[] } {
         const existing: string[] = [];
         const missing: string[] = [];
 
         for (const targetDirectory of targetDirectories) {
-            const absolutePath = path.resolve(process.cwd(), targetDirectory);
+            const absolutePath = path.resolve(this.baseDir, targetDirectory);
             try {
                 const stat = statSync(absolutePath);
                 if (stat.isDirectory()) {
@@ -30,7 +32,7 @@ export class FileSystemAdapter {
     }
 
     async readDirectoryRecursively(targetDirectory: string): Promise<FilePayload[]> {
-        const absolutePath = path.resolve(process.cwd(), targetDirectory);
+        const absolutePath = path.resolve(this.baseDir, targetDirectory);
         const resolvedFiles: FilePayload[] = [];
 
         try {
@@ -76,7 +78,7 @@ export class FileSystemAdapter {
     }
 
     async writeDocumentationOutput(outputContent: string, targetPath: string = "documentation-output.md"): Promise<void> {
-        const absoluteDest = path.resolve(process.cwd(), targetPath);
+        const absoluteDest = path.resolve(this.baseDir, targetPath);
         await fs.mkdir(path.dirname(absoluteDest), { recursive: true });
         await fs.writeFile(absoluteDest, outputContent, 'utf-8');
     }

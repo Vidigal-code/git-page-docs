@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { FiLock } from "react-icons/fi";
+import { FiLock } from "@/shared/ui/fallback-icons";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { ConfirmPopup } from "@/shared/ui/confirm-popup/confirm-popup";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/icons/nav-menu/resolve-nav-menu-icon";

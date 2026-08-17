@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { marked } from "marked";
-import { FiExternalLink, FiFile, FiFolder, FiSearch } from "react-icons/fi";
+import { FiExternalLink, FiFile, FiFolder, FiSearch } from "@/shared/ui/fallback-icons";
 import {
   buildGithubTreeUrl,
   buildSourceViewerPath,

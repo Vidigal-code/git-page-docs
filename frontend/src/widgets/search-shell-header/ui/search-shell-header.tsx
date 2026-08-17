@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaBars } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
+import { FaBars } from "@/shared/ui/fallback-icons";
+import { IoMdClose } from "@/shared/ui/fallback-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";

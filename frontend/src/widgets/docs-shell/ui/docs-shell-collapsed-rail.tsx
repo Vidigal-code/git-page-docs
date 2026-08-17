@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FiChevronsRight } from "react-icons/fi";
+import { FiChevronsRight } from "@/shared/ui/fallback-icons";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";

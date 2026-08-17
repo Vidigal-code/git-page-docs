@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { CiPlay1 } from "react-icons/ci";
-import { FaPause } from "react-icons/fa";
-import { FiRefreshCw, FiRepeat } from "react-icons/fi";
+import { CiPlay1 } from "@/shared/ui/fallback-icons";
+import { FaPause } from "@/shared/ui/fallback-icons";
+import { FiRefreshCw, FiRepeat } from "@/shared/ui/fallback-icons";
 import { renderAudioControlIcon, useAudioPlayer } from "@/features/audio-player";
 import type { AudioTrackConfig, LanguageCode } from "@/entities/docs";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";

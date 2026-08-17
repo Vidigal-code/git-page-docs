@@ -1,4 +1,4 @@
-import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
+import { BsMoonStarsFill, BsSunFill } from "@/shared/ui/fallback-icons";
 
 interface ThemeModeToggleProps {
   isDarkMode: boolean;
