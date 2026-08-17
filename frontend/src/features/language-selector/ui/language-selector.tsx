@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { LanguageCode } from "@/entities/docs";
+import styles from "./language-selector.module.css";
 
 interface LanguageSelectorProps {
   languages: LanguageCode[];
@@ -10,13 +11,30 @@ interface LanguageSelectorProps {
   ariaLabel?: string;
 }
 
+/** Below this width the selector opens as a centered modal instead of a dropdown. */
+const SMALL_SCREEN_QUERY = "(max-width: 640px)";
+
 function supportsHover(): boolean {
   return window.matchMedia("(hover: hover)").matches;
+}
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+    const sync = () => setMatches(mediaQuery.matches);
+    sync();
+    mediaQuery.addEventListener("change", sync);
+    return () => mediaQuery.removeEventListener("change", sync);
+  }, [query]);
+  return matches;
 }
 
 export function LanguageSelector({ languages, value, getLabel, onChange, className, ariaLabel }: LanguageSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const isSmallScreen = useMediaQuery(SMALL_SCREEN_QUERY);
   const label = ariaLabel ?? "Language";
 
   // Close on outside interaction (covers touch, where mouseleave never fires)
@@ -24,17 +42,21 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
   useEffect(() => {
     if (!isOpen) return;
     const handlePointerDown = (event: PointerEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) {
+      const insideDialog = dialogRef.current?.contains(event.target as Node);
+      if (!containerRef.current?.contains(event.target as Node) && !insideDialog) {
         setIsOpen(false);
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setIsOpen(false);
-      // Only reclaim focus when it was inside the menu — an Escape aimed at
-      // another surface (filter input, chat drawer) must not steal focus.
-      if (containerRef.current?.contains(document.activeElement)) {
-        containerRef.current.querySelector("button")?.focus();
+      // Only reclaim focus when it was inside the selector — an Escape aimed
+      // at another surface must not steal focus.
+      if (
+        containerRef.current?.contains(document.activeElement) ||
+        dialogRef.current?.contains(document.activeElement)
+      ) {
+        containerRef.current?.querySelector("button")?.focus();
       }
     };
     document.addEventListener("pointerdown", handlePointerDown);
@@ -45,26 +67,35 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
     };
   }, [isOpen]);
 
+  // Move focus into the modal so keyboard and screen-reader users land on it.
+  useEffect(() => {
+    if (isOpen && isSmallScreen) {
+      dialogRef.current?.querySelector("button")?.focus();
+    }
+  }, [isOpen, isSmallScreen]);
+
   const handleMouseEnter = () => {
-    if (supportsHover()) {
+    if (!isSmallScreen && supportsHover()) {
       setIsOpen(true);
     }
   };
 
   const handleMouseLeave = () => {
-    if (supportsHover()) {
+    if (!isSmallScreen && supportsHover()) {
       setIsOpen(false);
     }
   };
 
   const handleTriggerClick = () => {
-    // On hover-capable devices hover already opened the menu, so a click must
-    // keep it open (a toggle would close it under the pointer); touch toggles.
-    setIsOpen((prev) => (supportsHover() ? true : !prev));
+    // On hover-capable desktop screens hover already opened the dropdown, so a
+    // click must keep it open (a toggle would close it under the pointer);
+    // small screens and touch toggle the modal.
+    setIsOpen((prev) => (!isSmallScreen && supportsHover() ? true : !prev));
   };
 
   const handleFocusOut = (event: React.FocusEvent<HTMLDivElement>) => {
-    if (!containerRef.current?.contains(event.relatedTarget as Node | null)) {
+    const next = event.relatedTarget as Node | null;
+    if (!containerRef.current?.contains(next) && !dialogRef.current?.contains(next)) {
       setIsOpen(false);
     }
   };
@@ -76,93 +107,66 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
     containerRef.current?.querySelector("button")?.focus();
   };
 
+  const renderOption = (lang: LanguageCode, extraClassName?: string) => {
+    const isSelected = lang === value;
+    return (
+      <button
+        type="button"
+        aria-current={isSelected || undefined}
+        onClick={() => selectLanguage(lang)}
+        className={`${styles.option} ${isSelected ? styles.optionSelected : ""} ${extraClassName ?? ""}`}
+      >
+        {getLabel(lang)}
+      </button>
+    );
+  };
+
   return (
     <div
       ref={containerRef}
-      style={{ position: "relative", display: "inline-block" }}
+      className={styles.container}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onBlur={handleFocusOut}
     >
       <button
         type="button"
-        className={className}
+        className={`${className ?? ""} ${styles.trigger}`}
         onClick={handleTriggerClick}
         aria-label={label}
         aria-expanded={isOpen}
+        aria-haspopup={isSmallScreen ? "dialog" : "true"}
         title={label}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-        }}
       >
         <span>{getLabel(value)}</span>
       </button>
 
-      {isOpen && (
-        <ul
-          aria-label={label}
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            margin: 0,
-            padding: 0,
-            listStyle: "none",
-            zIndex: 50,
-            backgroundColor: "rgba(127, 127, 127, 0.15)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            color: "inherit",
-            borderRight: "1px solid rgba(127, 127, 127, 0.3)",
-            borderBottom: "1px solid rgba(127, 127, 127, 0.3)",
-            borderLeft: "1px solid rgba(127, 127, 127, 0.3)",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          }}
-        >
-          {languages.map((lang) => {
-            const isSelected = lang === value;
-
-            return (
-              <li key={lang} style={{ margin: 0, padding: 0 }}>
-                <button
-                  type="button"
-                  aria-current={isSelected || undefined}
-                  onClick={() => selectLanguage(lang)}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    border: "none",
-                    padding: "8px 12px",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    color: "inherit",
-                    fontFamily: "inherit",
-                    fontSize: "0.95rem",
-                    textAlign: "center",
-                    backgroundColor: isSelected ? "rgba(127, 127, 127, 0.25)" : "transparent",
-                    transition: "background-color 0.1s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isSelected) {
-                      e.currentTarget.style.backgroundColor = "rgba(127, 127, 127, 0.1)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isSelected) {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }
-                  }}
-                >
-                  {getLabel(lang)}
-                </button>
-              </li>
-            );
-          })}
+      {isOpen && !isSmallScreen && (
+        <ul className={styles.menu} aria-label={label}>
+          {languages.map((lang) => (
+            <li key={lang} className={styles.item}>
+              {renderOption(lang)}
+            </li>
+          ))}
         </ul>
+      )}
+
+      {isOpen && isSmallScreen && (
+        <div className={styles.overlay} onClick={() => setIsOpen(false)}>
+          <div
+            ref={dialogRef}
+            className={styles.dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-label={label}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <p className={styles.dialogTitle}>{label}</p>
+            {languages.map((lang) => (
+              <span key={lang}>{renderOption(lang, styles.dialogOption)}</span>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { REMOTE_FETCH_TIMEOUT_MS } from "../config/remote-urls";
 import { parseJsonSafely } from "@/shared/lib/parse-json-safely";
-import { buildGithubRawCandidates, toRawGithubUrl } from "@/shared/lib/remote/github-url";
+import { buildGithubRawCandidates, parseGithubResource, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 
 export async function fetchWithTimeout(
   url: string,
@@ -40,6 +40,13 @@ export async function fetchRepoText(owner: string, repo: string, relativePath: s
 }
 
 export async function fetchUrlText(url: string): Promise<string | null> {
+  // GitHub-hosted files go through the full mirror list (raw + jsDelivr), so a
+  // rate-limited or unavailable host degrades to the next one instead of
+  // failing the load outright.
+  const resource = parseGithubResource(url);
+  if (resource) {
+    return fetchRepoText(resource.owner, resource.repo, resource.path);
+  }
   return tryFetchText(toRawGithubUrl(url));
 }
 
