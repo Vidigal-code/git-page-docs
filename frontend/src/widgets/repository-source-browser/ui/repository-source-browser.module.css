@@ -446,6 +446,66 @@
   color: var(--danger, #ef4444);
 }
 
+/* Directed state moments: icon + message + one clear next action. */
+.stateCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 32px 18px;
+}
+
+.stateIcon {
+  font-size: 1.6rem;
+  opacity: 0.75;
+}
+
+.stateMessage {
+  margin: 0;
+  max-width: 36ch;
+}
+
+/* Loading signature: a quiet skeleton of the file tree. */
+.skeletonTree {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.skeletonRow {
+  height: 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--source-browser-muted, currentColor) 20%, transparent);
+  animation: sourceSkeletonPulse 1.4s ease-in-out infinite;
+}
+
+.skeletonRow:nth-child(2n) {
+  animation-delay: 0.2s;
+}
+
+.skeletonRow:nth-child(3n) {
+  animation-delay: 0.4s;
+}
+
+@keyframes sourceSkeletonPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonRow {
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: 1fr;

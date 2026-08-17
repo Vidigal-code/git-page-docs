@@ -413,6 +413,19 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   const isAiChatEnabledGlobal = data.config.site.AiChatEnabled !== false;
 
+  // Warm the code-split drawer chunk off the critical path (idle time after
+  // hydration) so the first open is instant without touching first load.
+  useEffect(() => {
+    if (!isAiChatEnabledGlobal) return;
+    const warm = () => void import("../ai-chat-drawer/ui/ai-chat-drawer");
+    if (typeof window.requestIdleCallback === "function") {
+      const handle = window.requestIdleCallback(warm);
+      return () => window.cancelIdleCallback(handle);
+    }
+    const timer = window.setTimeout(warm, 2000);
+    return () => window.clearTimeout(timer);
+  }, [isAiChatEnabledGlobal]);
+
   const aiContext = useMemo(() => {
     let rawContent = labels.aiChatEmptyPageContent;
     if (currentPage?.md) {

@@ -2,10 +2,9 @@
 
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { marked } from "marked";
-import { FiExternalLink, FiFile, FiFolder, FiSearch } from "@/shared/ui/fallback-icons";
+import { FiAlertCircle, FiExternalLink, FiFile, FiFolder, FiRefreshCw, FiSearch, FiX } from "@/shared/ui/fallback-icons";
 import {
   buildGithubTreeUrl,
-  buildSourceViewerPath,
   DEFAULT_SOURCE_VIEWER_BRANCH,
   loadSourceFile,
   resolveSourceRepository,
@@ -15,6 +14,7 @@ import {
   type SourceViewerRoute,
 } from "@/entities/source-viewer";
 import { SourceViewerSearchForm } from "@/features/source-viewer-search";
+import type { SourceViewerLabels } from "../model/source-viewer-labels";
 import styles from "./repository-source-browser.module.css";
 
 type ViewMode = "code" | "preview";
@@ -31,25 +31,13 @@ interface TreeNode {
 
 interface RepositorySourceBrowserProps {
   initialRoute: SourceViewerRoute;
-  labels: {
-    owner: string;
-    repo: string;
-    branch: string;
-    submit: string;
-    filter: string;
-    clear: string;
-    loadingTree: string;
-    loadingFile: string;
-    notFound: string;
-    fileError: string;
-    empty: string;
-    selectFile: string;
-    preview: string;
-    code: string;
-  };
+  labels: SourceViewerLabels;
   showSearchForm?: boolean;
   onRouteChange?: (route: SourceViewerRoute, options?: { replace?: boolean }) => void;
 }
+
+/** Sidebar placeholder line widths while the tree loads (mimics a file tree). */
+const SKELETON_ROW_WIDTHS = ["72%", "58%", "84%", "64%", "48%", "76%"];
 
 function normalizeInput(value: string): string {
   return value.trim().replace(/^\/+|\/+$/g, "");
@@ -298,6 +286,11 @@ export function RepositorySourceBrowser({
     onRouteChange?.({ ...route, path });
   }
 
+  function retryLoad() {
+    // A fresh route identity re-runs the tree effect for the same target.
+    setRoute((previous) => ({ ...previous }));
+  }
+
   function submitSearch() {
     const nextRoute = {
       owner: normalizeInput(ownerInput),
@@ -380,7 +373,13 @@ export function RepositorySourceBrowser({
           </div>
           <div className={styles.tree}>
             {isLoadingTree ? (
-              <div className={styles.state}>{labels.loadingTree}</div>
+              <div className={styles.state} role="status" aria-label={labels.loadingTree}>
+                <div className={styles.skeletonTree} aria-hidden>
+                  {SKELETON_ROW_WIDTHS.map((width, index) => (
+                    <span key={index} className={styles.skeletonRow} style={{ width }} />
+                  ))}
+                </div>
+              </div>
             ) : treeQuery ? (
               filteredEntries.map((entry) => (
                 <button
@@ -428,7 +427,15 @@ export function RepositorySourceBrowser({
                   </button>
                 ))
               ) : (
-                <div className={styles.state}>{labels.empty}</div>
+                <div className={`${styles.state} ${styles.stateCard}`}>
+                  <FiFolder aria-hidden className={styles.stateIcon} />
+                  <p className={styles.stateMessage}>{labels.empty}</p>
+                  {treeQuery ? (
+                    <button type="button" className={styles.treeButton} onClick={() => setTreeQuery("")}>
+                      <FiX aria-hidden /> {labels.clear}
+                    </button>
+                  ) : null}
+                </div>
               )}
             </div>
           </section>
@@ -447,7 +454,15 @@ export function RepositorySourceBrowser({
                 </div>
               ) : null}
             </div>
-            {error ? <div className={`${styles.state} ${styles.error}`}>{error}</div> : null}
+            {error ? (
+              <div className={`${styles.state} ${styles.stateCard}`} role="alert">
+                <FiAlertCircle aria-hidden className={`${styles.stateIcon} ${styles.error}`} />
+                <p className={`${styles.stateMessage} ${styles.error}`}>{error}</p>
+                <button type="button" className={styles.button} onClick={retryLoad}>
+                  <FiRefreshCw aria-hidden /> {labels.retry}
+                </button>
+              </div>
+            ) : null}
             {isLoadingFile ? <div className={styles.state}>{labels.loadingFile}</div> : null}
             {!isLoadingFile && selectedFile && viewMode === "preview" && selectedIsMarkdown ? <MarkdownPreview content={selectedFile.content} /> : null}
             {!isLoadingFile && selectedFile && (viewMode === "code" || !selectedIsMarkdown) ? <CodeViewer content={selectedFile.content} /> : null}

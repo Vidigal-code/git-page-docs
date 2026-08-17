@@ -5,13 +5,12 @@ import { buildSourceViewerPath, parseSourceViewerRoute, type SourceViewerRoute }
 import {
   buildFooterConfigFromData,
   getLanguageLabelFromMenu,
-  getLangMenuLabelFromMenu,
   toSearchShellCssVars,
   type LoadedDocsData,
 } from "@/entities/docs";
 import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
-import { RepositorySourceBrowser } from "@/widgets/repository-source-browser";
+import { RepositorySourceBrowser, buildSourceViewerLabels } from "@/widgets/repository-source-browser";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { SOURCE_VIEWER_FALLBACK_PARAM } from "@/shared/lib/source-viewer-fallback";
@@ -23,25 +22,6 @@ interface SourceViewerPageProps {
   initialRoute: SourceViewerRoute;
 }
 
-function buildSourceViewerLabels(data: LoadedDocsData, language: string) {
-  const langmenu = data.config.site.langmenu;
-  return {
-    owner: getLangMenuLabelFromMenu(langmenu, language, "searchOwnerLabel", "Owner"),
-    repo: getLangMenuLabelFromMenu(langmenu, language, "searchRepoLabel", "Repository"),
-    branch: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerBranchLabel", "Branch"),
-    submit: getLangMenuLabelFromMenu(langmenu, language, "searchButtonLabel", "Search"),
-    filter: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerFilterLabel", "Filter files"),
-    clear: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerClearLabel", "Clear"),
-    loadingTree: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerLoadingTree", "Loading source tree..."),
-    loadingFile: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerLoadingFile", "Loading file..."),
-    notFound: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerNotFound", "Repository, branch, or source tree was not found."),
-    fileError: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerFileError", "File could not be loaded."),
-    empty: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerEmpty", "No entries found."),
-    selectFile: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerSelectFile", "Select a file"),
-    preview: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerPreview", "Preview"),
-    code: getLangMenuLabelFromMenu(langmenu, language, "sourceViewerCode", "Code"),
-  };
-}
 
 export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) {
   // Deep links reach the exported /source-viewer/ page through the 404
@@ -89,7 +69,7 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
     () => resolveHeaderIconConfig(data.config.site, activeLayout?.mode ?? "dark", basePath),
     [data.config.site, activeLayout?.mode, basePath],
   );
-  const labels = useMemo(() => buildSourceViewerLabels(data, language), [data, language]);
+  const labels = useMemo(() => buildSourceViewerLabels(data.config.site.langmenu, language), [data.config.site.langmenu, language]);
 
   const header = (
     <SearchShellHeader
