@@ -1,3 +1,5 @@
+import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
+
 export const docsEn = {
     index: `# Git Page Docs
 
@@ -295,9 +297,9 @@ Supported adapters:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/1.1.54/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/1.1.54/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/1.1.54/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/${PACKAGE_VERSION}/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/${PACKAGE_VERSION}/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/${PACKAGE_VERSION}/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",

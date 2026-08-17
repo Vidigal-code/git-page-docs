@@ -1,5 +1,6 @@
 /** Build theme JSON template from layout definition */
 
+import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 import { THEME_COLORS } from "../data/theme-colors.mjs";
 
 export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
@@ -9,7 +10,7 @@ export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
     id: layout.id,
     name: layout.name,
     author: layout.author,
-    version: "1.1.54",
+    version: PACKAGE_VERSION,
     mode: layout.mode,
     supportsLightAndDarkModes: layout.supportsLightAndDarkModes,
     colors,
