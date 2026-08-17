@@ -18,6 +18,7 @@ export type CommandHandler = (ctx: CommandContext) => Promise<void>;
 import { runVersion, runDoctor, runUpdate } from "./diagnostics";
 import { runProvider, runModels } from "./ai-info";
 import { runConfig } from "./config-info";
+import { runConfigClear } from "./config-clear";
 import { runMcp } from "./mcp";
 import { runDocs } from "./docs";
 import { runPagesActions, runPagesDeploy } from "./pages";
@@ -52,6 +53,11 @@ export async function runNewCommand(argv: string[], pkgRoot: string): Promise<bo
   // push flow, print URL). Bare `pages`/`deploy` still fall through to legacy.
   if (args[0] === "pages" && args[1] === "deploy") {
     await runPagesDeploy(ctx);
+    return true;
+  }
+  // Wipe the stored AI credentials config: `config clear`.
+  if (args[0] === "config" && args[1] === "clear") {
+    await runConfigClear(ctx);
     return true;
   }
 

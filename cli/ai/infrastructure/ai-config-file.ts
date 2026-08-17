@@ -52,6 +52,22 @@ export class AiConfigFileRepository {
     return this.migrateLegacyConfig();
   }
 
+  /** Delete the stored configuration (secure and legacy locations), wiping
+   * any saved credentials. Returns the paths that were actually removed. */
+  async clear(): Promise<string[]> {
+    const removed: string[] = [];
+    const candidates = new Set([this.getConfigPath(), this.getLegacyConfigPath()].map((p) => path.resolve(p)));
+    for (const configPath of candidates) {
+      try {
+        await fs.rm(configPath);
+        removed.push(configPath);
+      } catch {
+        // Missing file: nothing to remove at this location.
+      }
+    }
+    return removed;
+  }
+
   async write(config: AiCliConfig): Promise<void> {
     const configPath = this.getConfigPath();
     await fs.mkdir(path.dirname(configPath), { recursive: true, mode: CONFIG_DIR_MODE });

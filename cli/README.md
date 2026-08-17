@@ -27,6 +27,7 @@ npx @gitpagedocs/cli
 | `gitpagedocs password` | Set a documentation access password (writes the public key to `config.json`, prints the private key) |
 | `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
 | `gitpagedocs docs` | Refresh managed regions of README/CONTRIBUTING/SECURITY |
+| `gitpagedocs config clear` | Delete the stored `.gitpagedocsconfig` (wipes saved AI credentials) |
 | `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / update hint |
 | `gitpagedocs mcp start` | Start the MCP server over stdio |
 
@@ -158,7 +159,8 @@ permissions on POSIX systems:
 - macOS: `~/Library/Application Support/gitpagedocs/.gitpagedocsconfig`
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
-Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; a legacy
+Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; delete the stored file
+and its credentials with `gitpagedocs config clear`; a legacy
 `.gitpagedocsconfig` in the repository root is migrated automatically on the next
 run. You can create/edit this file manually and then run `npx gitpagedocs ai`:
 

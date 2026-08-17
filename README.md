@@ -571,7 +571,8 @@ permissions on POSIX systems:
 - macOS: `~/Library/Application Support/gitpagedocs/.gitpagedocsconfig`
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
-Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. A legacy
+Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. Delete the stored file
+and its credentials at any time with `npx gitpagedocs config clear`. A legacy
 `.gitpagedocsconfig` in the repository root is migrated there automatically on the
 next `gitpagedocs ai` run. File contents:
 

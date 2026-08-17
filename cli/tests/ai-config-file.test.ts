@@ -83,6 +83,25 @@ describe("AiConfigFileRepository", () => {
     expect(existsSync(repo.getConfigPath())).toBe(false);
   });
 
+  it("clear removes the stored config from both locations and wipes credentials", async () => {
+    const repo = new AiConfigFileRepository({ cwd, configDir });
+    await repo.write(VALID_CONFIG);
+    writeFileSync(path.join(cwd, AI_CLI_CONFIG_FILENAME), JSON.stringify(VALID_CONFIG), "utf-8");
+
+    const removed = await repo.clear();
+
+    const expected = [repo.getConfigPath(), repo.getLegacyConfigPath()].map((p) => path.resolve(p)).sort();
+    expect([...removed].sort()).toEqual(expected);
+    expect(existsSync(repo.getConfigPath())).toBe(false);
+    expect(existsSync(repo.getLegacyConfigPath())).toBe(false);
+    expect(await repo.read()).toBeNull();
+  });
+
+  it("clear returns an empty list when nothing is stored", async () => {
+    const repo = new AiConfigFileRepository({ cwd, configDir });
+    expect(await repo.clear()).toEqual([]);
+  });
+
   it("prefers the user config directory over a legacy file", async () => {
     const repo = new AiConfigFileRepository({ cwd, configDir });
     await repo.write(VALID_CONFIG);
