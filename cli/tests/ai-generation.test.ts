@@ -128,6 +128,28 @@ describe("executeAiRunPlan (full generation pipeline)", () => {
     expect(config["routes-md"].map((route) => route.id)).toEqual([1, 1001, 1002]);
   });
 
+  it("scans multiple paths, including a ../ path outside the working repository", async () => {
+    const sibling = mkdtempSync(path.join(os.tmpdir(), "gpd-ai-sibling-"));
+    try {
+      mkdirSync(path.join(sibling, "src"), { recursive: true });
+      writeFileSync(path.join(sibling, "src", "other.ts"), "export const other = 1;\n", "utf-8");
+      const relativeSibling = path
+        .join("..", path.basename(sibling), "src")
+        .split(path.sep)
+        .join("/");
+
+      const plan = buildPlan(["en"]);
+      plan.config.ai.paths = ["src", relativeSibling];
+      const summary = await executeAiRunPlan(plan, cwd, () => provider);
+
+      expect(summary.scannedDirectories).toEqual(["src", relativeSibling]);
+      expect(summary.skippedDirectories).toEqual([]);
+      expect(summary.scannedFilesCount).toBe(2);
+    } finally {
+      rmSync(sibling, { recursive: true, force: true });
+    }
+  });
+
   it("returns an empty summary when no files match the scanned paths", async () => {
     rmSync(path.join(cwd, "src"), { recursive: true, force: true });
     mkdirSync(path.join(cwd, "src"));
