@@ -256,7 +256,7 @@ async function fetchRepoLayoutsConfig(
   return null;
 }
 
-async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, repo: string): Promise<{
+export async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, repo: string): Promise<{
   layoutsConfig: LayoutsConfig;
   themes: Record<string, ThemeTemplate>;
 }> {
@@ -270,14 +270,17 @@ async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, re
 
   let layoutsConfig: LayoutsConfig | null = null;
   let resolvedConfigUrl: string | undefined;
+  let configuredUrlDelivered = false;
   let repoLayoutsDir: string | undefined;
 
-  if (useOfficialLayouts && preferredLayoutsConfigPath) {
+  if (preferredLayoutsConfigPath) {
     layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
-    if (layoutsConfig?.layouts?.length) resolvedConfigUrl = preferredLayoutsConfigPath;
-  }
-  if (!layoutsConfig?.layouts?.length && !useOfficialLayouts && preferredLayoutsConfigPath) {
-    layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
+    if (layoutsConfig?.layouts?.length) {
+      resolvedConfigUrl = preferredLayoutsConfigPath;
+      configuredUrlDelivered = true;
+    } else {
+      layoutsConfig = null;
+    }
   }
   if (!layoutsConfig?.layouts?.length) {
     const repoLayouts = await fetchRepoLayoutsConfig(owner, repo);
@@ -299,9 +302,13 @@ async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, re
     throw new Error("Could not load layouts configuration.");
   }
 
+  // The configured templates override is only trustworthy when the configured
+  // index URL itself delivered the config: stale configs (pointing at the
+  // retired official location) must not misdirect templates away from the
+  // source that actually worked.
   const remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
-    useOfficialLayouts ? resolvedConfigUrl ?? preferredLayoutsConfigPath : undefined,
-    preferredTemplatesPath,
+    resolvedConfigUrl,
+    configuredUrlDelivered ? preferredTemplatesPath : undefined,
     owner,
     repo,
     repoLayoutsDir ?? LAYOUTS_DIR_CANDIDATES[0],

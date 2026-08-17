@@ -127,7 +127,10 @@ export async function loadLayoutsAndThemes(options: {
       new Set([preferredRemoteLayoutsPath, ...OFFICIAL_LAYOUTS_CONFIG_URLS]),
     ).filter((candidate): candidate is string => Boolean(candidate));
     for (const configUrl of officialCandidates) {
-      source = await readRemoteLayoutsByUrl(configUrl, preferredRemoteTemplatesPath);
+      // A stale configured templates override must not misdirect templates
+      // when the config was served by a fallback candidate instead.
+      const templatesOverride = configUrl === preferredRemoteLayoutsPath ? preferredRemoteTemplatesPath : undefined;
+      source = await readRemoteLayoutsByUrl(configUrl, templatesOverride);
       if (source) break;
     }
   }
@@ -139,7 +142,11 @@ export async function loadLayoutsAndThemes(options: {
       source = await readRemoteLayoutsByUrl(preferredRemoteLayoutsPath, preferredRemoteTemplatesPath);
     }
     if (!source && options.owner && options.repo) {
-      source = await readRepoLayouts(options.owner, options.repo, preferredRemoteTemplatesPath);
+      source = await readRepoLayouts(
+        options.owner,
+        options.repo,
+        options.useOfficialLayouts ? undefined : preferredRemoteTemplatesPath,
+      );
     }
     if (!source) {
       source = await readLocalLayouts();
