@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { buildSourceViewerPath, type SourceViewerRoute } from "@/entities/source-viewer";
+import { useEffect, useMemo, useState } from "react";
+import { buildSourceViewerPath, parseSourceViewerRoute, type SourceViewerRoute } from "@/entities/source-viewer";
 import {
   buildFooterConfigFromData,
   getLanguageLabelFromMenu,
@@ -14,6 +14,7 @@ import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { RepositorySourceBrowser } from "@/widgets/repository-source-browser";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
+import { SOURCE_VIEWER_FALLBACK_PARAM } from "@/shared/lib/source-viewer-fallback";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./source-viewer-page.module.css";
 
@@ -43,6 +44,21 @@ function buildSourceViewerLabels(data: LoadedDocsData, language: string) {
 }
 
 export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) {
+  // Deep links reach the exported /source-viewer/ page through the 404
+  // fallback with the route in a query param; restore it (and the canonical
+  // URL) before mounting the browser.
+  const [resolvedInitialRoute, setResolvedInitialRoute] = useState<SourceViewerRoute | null>(null);
+  useEffect(() => {
+    const deepRoute = new URLSearchParams(window.location.search).get(SOURCE_VIEWER_FALLBACK_PARAM);
+    if (deepRoute) {
+      const route = parseSourceViewerRoute(deepRoute.split("/").filter(Boolean));
+      window.history.replaceState(null, "", toFullPath(buildSourceViewerPath(route)));
+      setResolvedInitialRoute(route);
+      return;
+    }
+    setResolvedInitialRoute(initialRoute);
+  }, [initialRoute]);
+
   const defaultLanguage = data.config.site.defaultLanguage;
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
   const initialThemeBaseId = data.config.site.ThemeDefault || data.layoutsConfig.layouts[0]?.id;
@@ -109,15 +125,19 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
     >
       <main className={styles.shell}>
         <div className={styles.workspace}>
-          <RepositorySourceBrowser
-            initialRoute={initialRoute}
-            labels={labels}
-            onRouteChange={(route, options) => {
-              const url = toFullPath(buildSourceViewerPath(route));
-              if (options?.replace) window.history.replaceState(null, "", url);
-              else window.history.pushState(null, "", url);
-            }}
-          />
+          {resolvedInitialRoute ? (
+            <RepositorySourceBrowser
+              initialRoute={resolvedInitialRoute}
+              labels={labels}
+              onRouteChange={(route, options) => {
+                const url = toFullPath(buildSourceViewerPath(route));
+                if (options?.replace) window.history.replaceState(null, "", url);
+                else window.history.pushState(null, "", url);
+              }}
+            />
+          ) : (
+            <p style={{ margin: 0, color: "var(--text-secondary)", textAlign: "center" }}>{labels.loadingTree}</p>
+          )}
         </div>
       </main>
     </SearchShellLayout>

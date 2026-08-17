@@ -9,6 +9,7 @@ import {
   toSearchShellCssVars,
 } from "@/widgets/not-found-shell";
 import { parseRepoPathFromLocation } from "@/shared/lib/parse-repo-path";
+import { redirectSourceViewerDeepLink } from "@/shared/lib/source-viewer-fallback";
 import type { LoadedDocsData } from "@/widgets/not-found-shell";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
@@ -105,6 +106,11 @@ function NotFoundContent() {
     getLanguageLabelFromMenu(standaloneConfig?.siteConfig?.langmenu ?? FALLBACK_LANGMENU, lang, targetLang);
 
   useEffect(() => {
+    // Deep source-viewer URLs are not prerendered; hand them to the exported
+    // /source-viewer/ page instead of treating them as an owner/repo path.
+    if (redirectSourceViewerDeepLink()) {
+      return;
+    }
     setMounted(true);
     function syncFromCurrentLocation() {
       const parsed = parseRepoPathFromLocation(parseSupportedLanguage);
