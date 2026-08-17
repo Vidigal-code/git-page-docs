@@ -36,7 +36,7 @@ git-page-docs/
 |-- cli/          # Hexagonal CLI, published as the `gitpagedocs` npm bin
 |-- mcp/          # Model Context Protocol server (@gitpagedocs/mcp)
 |-- tools/        # @gitpagedocs/tools — the ONLY home for shared business logic
-|-- gitpagedocs/  # User contract: config + versioned docs + legacy layouts mirror (kept stable)
+|-- gitpagedocs/  # User contract: config + versioned docs (kept stable)
 |-- gitpagelayouts/ # Canonical layouts home: JSON + generated per-layout docs (layouts:sync)
 |-- e2e/          # Playwright end-to-end specs
 `-- tsconfig.base.json · turbo.json · pnpm-workspace.yaml · vitest.config.ts
@@ -48,7 +48,7 @@ git-page-docs/
 | **cli/** | `gitpagedocs` (`bin`) | Hexagonal CLI (`@clack/prompts`) that scaffolds `gitpagedocs/`, generates docs with AI, configures GitHub Pages, and launches the MCP server. |
 | **mcp/** | `@gitpagedocs/mcp` | MCP server (SDK 1.29): 20 tools + 7 resources for repository analysis and AI doc generation, all delegating to `tools/`. |
 | **tools/** | `@gitpagedocs/tools` | Shared core: 14-provider AI system (registry/factory, no switch chains), encrypted credential vault (AES-256-GCM) + password gate, logger with secret redaction, caches, config loader, filesystem + documentation services. Browser-safe subpath exports (`./ai`, `./crypto/web`, `./security/web`, …). |
-| **gitpagedocs/** | — | The user-facing contract: `config.{json,js,ts}`, `docs/versions/**`, `layouts/**`. Never broken by refactors. |
+| **gitpagedocs/** | — | The user-facing contract: `config.{json,js,ts}` and `docs/versions/**`. Never broken by refactors. |
 
 ### Security: encrypted AI credentials
 
@@ -162,7 +162,7 @@ docker run -p 3000:80 gitpagedocshome
 - `gitpagedocs/config.json` (or `config.js` / `config.ts`) is generated with official layout source enabled.
 - Layouts/templates are loaded from the official repository URLs (the documented `gitpagelayouts/` home):
   - `https://github.com/Vidigal-code/git-page-docs/tree/main/gitpagelayouts`
-  - Legacy deployments keep working: `gitpagedocs/layouts` stays online as a mirror.
+  - Repositories generated with `--layoutconfig` keep their own local `gitpagedocs/layouts/` and it is still resolved first.
 - Every official layout is documented (palette, typography, usage) in [`gitpagelayouts/README.md`](gitpagelayouts/README.md).
 - Best option if you want to focus only on writing docs.
 
