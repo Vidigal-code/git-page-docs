@@ -23,3 +23,23 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* WCAG touch-target floor on touch devices: every control reaches 44px tall
+ * without changing widths or pointer-precise (desktop) layouts. Inline prose
+ * links are exempt per WCAG 2.5.8; standalone header/footer links opt in via
+ * their own modules. */
+@media (pointer: coarse) {
+  button,
+  select,
+  [role="button"],
+  input:not([type="checkbox"]):not([type="radio"]) {
+    min-height: 44px;
+  }
+
+  header a,
+  footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}

@@ -588,3 +588,17 @@
     padding-inline: 10px;
   }
 }
+
+/* Touch-target floor: the browser's dense desktop controls inflate to 44px on
+ * touch devices (WCAG 2.5.5), overriding the compact min-heights above. */
+@media (pointer: coarse) {
+  .button,
+  .treeButton,
+  .modeButton,
+  .externalLink,
+  .breadcrumbButton,
+  .treeItem,
+  .fileRow {
+    min-height: 44px;
+  }
+}
