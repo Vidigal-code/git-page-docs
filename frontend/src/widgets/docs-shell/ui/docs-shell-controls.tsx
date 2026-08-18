@@ -183,6 +183,7 @@ export function DocsShellControls({
           value={selectedVersionValue}
           onChange={onVersionChange}
           ariaLabel={versionLabel}
+          themeVarsStyle={themeVarsStyle}
         />
       )}
       {isLanguageSelectVisible && (

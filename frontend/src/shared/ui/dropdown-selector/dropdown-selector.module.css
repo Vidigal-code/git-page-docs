@@ -10,15 +10,13 @@
   cursor: pointer;
 }
 
-/* Dropdown (pointer-first screens): themed like the shell controls. */
+/* Dropdown panel (pointer-first screens): themed like the shell controls. */
 .menu {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  margin: 0;
   padding: 4px;
-  list-style: none;
   z-index: 50;
   min-width: max-content;
   background: var(--control-background, var(--card-background, rgba(127, 127, 127, 0.15)));
@@ -39,6 +37,18 @@
   left: 0;
   right: 0;
   height: 6px;
+}
+
+/* Long option sets (e.g. the theme list) scroll inside the panel instead of
+ * growing past the viewport. */
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .item {
