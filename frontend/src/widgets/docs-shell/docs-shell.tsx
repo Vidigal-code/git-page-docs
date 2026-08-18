@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { toDocsShellCssVars, type LoadedDocsData } from "@/entities/docs";
+import {
+  hasMarkdownDocument,
+  resolvePageMarkdownHtml,
+  toDocsShellCssVars,
+  type LoadedDocsData,
+} from "@/entities/docs";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
 import { useDocsShellKeyboard } from "./model/use-docs-shell-keyboard";
@@ -132,10 +137,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
   const safeAccessiblePageIndex = isPageAccessible(safePageIndex) ? safePageIndex : firstAccessiblePageIndex;
   const currentPage = data.pages?.[safeAccessiblePageIndex];
-  const markdownHtml =
-    currentPage?.md?.markdownByLanguage[language] ??
-    data.docs?.[safeAccessiblePageIndex]?.markdownByLanguage[language] ??
-    "<p>Document not found for this language.</p>";
+  const markdownHtml = resolvePageMarkdownHtml(currentPage, data.docs, safeAccessiblePageIndex, language);
+  // Focus mode reads the page's markdown, so routes without one (source-viewer,
+  // media-only, untranslated) must not offer it at all.
+  const pageHasMarkdown = hasMarkdownDocument(markdownHtml);
 
   const {
     headerMenuTree,
@@ -195,6 +200,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     canToggleMode,
     nextMode === "dark",
     currentPage,
+    pageHasMarkdown,
   );
 
   useDocsShellUrlParams(

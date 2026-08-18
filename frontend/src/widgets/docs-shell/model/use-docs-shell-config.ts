@@ -110,6 +110,8 @@ export function useDocsShellConfig(
   canToggleMode: boolean,
   nextModeIsDark: boolean,
   currentPage: LoadedPage | undefined,
+  /** Whether the current page has markdown in the active language (gates focus mode). */
+  pageHasMarkdown: boolean,
 ) {
   const basePath = getBasePath();
   const mode = (activeLayout?.mode ?? "dark") as "dark" | "light";
@@ -128,6 +130,7 @@ export function useDocsShellConfig(
     canToggleMode,
     nextModeIsDark,
     currentPage,
+    pageHasMarkdown,
   );
 
   const navMenuConfig = useBuildNavMenuConfig(data.config, mode, language);

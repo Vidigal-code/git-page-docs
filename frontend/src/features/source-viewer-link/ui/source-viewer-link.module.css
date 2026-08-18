@@ -1,0 +1,76 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* Separated from the search form it follows, without inventing a new scale. */
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--card-border) 70%, transparent);
+}
+
+.hint {
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* Wraps to full width when the label cannot fit beside the icon. */
+  max-width: 100%;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--secondary) 45%, var(--card-border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--secondary) 12%, transparent);
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.action:hover {
+  border-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary) 20%, transparent);
+}
+
+.action:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 55%, white 45%);
+  outline-offset: 2px;
+}
+
+.icon {
+  flex-shrink: 0;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 760px) {
+  .action {
+    width: 100%;
+  }
+}
+
+/* WCAG 2.5.5 touch-target floor on coarse pointers. */
+@media (pointer: coarse) {
+  .action {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action {
+    transition: none;
+  }
+}

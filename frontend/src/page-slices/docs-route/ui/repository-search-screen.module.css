@@ -1,5 +1,8 @@
 .page {
+  /* dvh tracks the collapsing mobile browser chrome; vh is the fallback for
+   * engines without dynamic viewport units. */
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,11 +72,18 @@
 .title {
   margin: 2px 0 0;
   text-align: center;
+  /* Scales with the viewport so a long site name never overflows at 320px. */
+  font-size: clamp(1.35rem, 5vw, 2rem);
+  line-height: 1.2;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .description {
   margin: 0;
   text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -87,13 +97,16 @@
 
 .form {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  /* minmax(0,…) lets the columns shrink below their content width instead of
+   * forcing the grid — and the card — wider than the viewport. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 10px;
 }
 
 .input,
 .select,
 .button {
+  min-width: 0;
   height: 42px;
   border-radius: 10px;
   border: 1px solid var(--card-border);
@@ -148,5 +161,15 @@
 
   .card {
     padding: clamp(14px, 2.5vw, 20px);
+    border-radius: 12px;
+  }
+}
+
+/* WCAG 2.5.5 touch-target floor on coarse pointers. */
+@media (pointer: coarse) {
+  .input,
+  .select,
+  .button {
+    height: 44px;
   }
 }

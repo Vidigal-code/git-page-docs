@@ -2,6 +2,7 @@ export {
   DEFAULT_SOURCE_VIEWER_BRANCH,
   DEFAULT_SOURCE_VIEWER_OWNER,
   DEFAULT_SOURCE_VIEWER_REPO,
+  SOURCE_VIEWER_BASE_PATH,
   buildGithubTreeUrl,
   buildSourceViewerPath,
   parseGithubTreeUrl,

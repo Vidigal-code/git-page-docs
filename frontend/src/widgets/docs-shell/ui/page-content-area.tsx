@@ -23,12 +23,17 @@ import {
   buildBrowseNavConfig,
 } from "./page-content-browse-nav";
 import dynamic from "next/dynamic";
+import { SourceBrowserSkeleton } from "@/widgets/repository-source-browser/ui/source-browser-skeleton";
 import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
 
 // The source browser (tree building + markdown preview) is only needed on
-// source-viewer routes, so it is code-split out of the docs bundle.
+// source-viewer routes, so it is loaded lazily. Its skeleton reserves the
+// browser's height while the import resolves, so the card never renders
+// collapsed and then stretches. The skeleton comes from its own module rather
+// than the widget barrel, to keep this import to the placeholder alone.
 const SourceViewerContainer = dynamic(
   () => import("./content-type-containers/source-viewer-container").then((mod) => mod.SourceViewerContainer),
+  { loading: () => <SourceBrowserSkeleton showSearchForm={false} /> },
 );
 import type { AudioRouteControlsConfig } from "./content-type-containers/audio-route-controls";
 import styles from "../docs-shell.module.css";

@@ -11,6 +11,12 @@ import {
   type LoadedDocsData,
 } from "@/entities/docs";
 import { RepositorySearchForm } from "@/features/repository-search-form";
+import { SourceViewerLink } from "@/features/source-viewer-link";
+import {
+  DEFAULT_SOURCE_VIEWER_BRANCH,
+  SOURCE_VIEWER_BASE_PATH,
+  buildSourceViewerPath,
+} from "@/entities/source-viewer";
 import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
@@ -92,6 +98,29 @@ export function RepositorySearchScreen({
   const currentMessage = repositoryNotUsingGitPageDocs ? localizedMessage : localizedDescription;
   const footerEnabled = data.config.site.FooterEnabled !== false;
 
+  const sourceViewerHint = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "sourceViewerEntryHint",
+    "Browse a repository's files without opening its documentation.",
+  );
+  const sourceViewerAction = getLangMenuLabelFromMenu(
+    data.config.site.langmenu,
+    language,
+    "sourceViewerEntryAction",
+    "Open the source viewer",
+  );
+  // Point the viewer at whatever the visitor already typed, so the reference
+  // continues their search instead of restarting it on the default repository.
+  const sourceViewerHref = useMemo(() => {
+    const owner = ownerInput.trim();
+    const repo = repoInput.trim();
+    if (!owner || !repo) {
+      return SOURCE_VIEWER_BASE_PATH;
+    }
+    return buildSourceViewerPath({ owner, repo, branch: DEFAULT_SOURCE_VIEWER_BRANCH, path: "" });
+  }, [ownerInput, repoInput]);
+
   // Read #/owner/repo only once to avoid URL/React state races after first mount.
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
@@ -164,6 +193,11 @@ export function RepositorySearchScreen({
             input: styles.input,
             button: styles.button,
           }}
+        />
+        <SourceViewerLink
+          href={sourceViewerHref}
+          hint={sourceViewerHint}
+          actionLabel={sourceViewerAction}
         />
       </section>
     </SearchShellLayout>

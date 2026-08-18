@@ -475,6 +475,24 @@
   padding: 4px 2px;
 }
 
+/* Skeleton rows standing in for a pane's content need the padding that the
+ * real rows carry themselves. */
+.skeletonPane {
+  padding: 12px;
+}
+
+/* Inline placeholder that adopts the surrounding type size, so a heading it
+ * stands in for reserves the same line box as the real text. */
+.skeletonInline {
+  display: inline-block;
+  width: min(220px, 60%);
+  height: 1em;
+  vertical-align: middle;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--source-browser-muted, currentColor) 20%, transparent);
+  animation: sourceSkeletonPulse 1.4s ease-in-out infinite;
+}
+
 .skeletonRow {
   height: 12px;
   border-radius: 6px;
@@ -501,7 +519,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeletonRow {
+  .skeletonRow,
+  .skeletonInline {
     animation: none;
   }
 }

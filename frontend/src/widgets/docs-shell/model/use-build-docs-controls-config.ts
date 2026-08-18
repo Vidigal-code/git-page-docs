@@ -82,6 +82,8 @@ export function useBuildDocsControlsConfig(
   canToggleMode: boolean,
   nextModeIsDark: boolean,
   currentPage: LoadedPage | undefined,
+  /** Whether the current page has markdown in the active language (gates focus mode). */
+  pageHasMarkdown: boolean,
 ): DocsShellControlsConfig {
   const versionLinkOptions = useMemo(() => buildVersionLinkOptions(data.activeVersion), [data.activeVersion]);
   const branchLabel = getLabel(data.config.site, language, "branchLabel", "Branch");
@@ -170,7 +172,9 @@ export function useBuildDocsControlsConfig(
         [site.IconPreviewProjectLinkDarkImg, site.IconPreviewProjectLinkHeaderDark],
         [site.IconPreviewProjectLinkLightImg, site.IconPreviewProjectLinkLight],
       ),
-      focusModeEnabled: Boolean(site.FocusMode),
+      // Focus mode paginates the page's markdown, so it stays hidden on routes
+      // that have none (source-viewer, media-only, untranslated document).
+      focusModeEnabled: Boolean(site.FocusMode) && pageHasMarkdown,
       focusModeLabel: getLabel(site, language, "focusMode", "Focus mode"),
       activeNavigation: Boolean(site.ActiveNavigation),
       quickNavLabel: getLabel(site, language, "quickNavigation", "Ctrl+K"),
@@ -246,6 +250,7 @@ export function useBuildDocsControlsConfig(
       nextModeIsDark,
       audioPlayerConfig,
       basePath,
+      pageHasMarkdown,
     ],
   );
 }

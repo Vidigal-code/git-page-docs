@@ -6,6 +6,9 @@ export const DEFAULT_SOURCE_VIEWER_BRANCH = "main";
 
 const TREE_SEGMENT = "tree";
 
+/** Entry route of the standalone source viewer (owner/repo default when omitted). */
+export const SOURCE_VIEWER_BASE_PATH = "/source-viewer";
+
 function sanitizeSegment(value: string | undefined, fallback: string): string {
   const trimmed = value?.trim().replace(/^\/+|\/+$/g, "");
   return trimmed || fallback;
@@ -35,7 +38,7 @@ export function buildSourceViewerPath(route: SourceViewerRoute): string {
     ? `/${route.path.split("/").map(encodeURIComponent).join("/")}`
     : "";
 
-  return `/source-viewer/${encodeURIComponent(route.owner)}/${encodeURIComponent(route.repo)}/tree/${encodeURIComponent(route.branch)}${encodedPath}`;
+  return `${SOURCE_VIEWER_BASE_PATH}/${encodeURIComponent(route.owner)}/${encodeURIComponent(route.repo)}/${TREE_SEGMENT}/${encodeURIComponent(route.branch)}${encodedPath}`;
 }
 
 export function buildGithubTreeUrl(route: SourceViewerRoute): string {

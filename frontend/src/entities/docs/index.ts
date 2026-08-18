@@ -12,6 +12,7 @@ export { buildFooterConfigFromData } from "./lib/footer/build-footer-config";
 export { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "./lib/i18n/lang-menu";
 export { resolveTranslation } from "./lib/i18n/resolve-translation";
 export { extractHeadingsFromHtml, type HeadingItem } from "./lib/markdown/extract-headings";
+export { hasMarkdownDocument, resolvePageMarkdownHtml } from "./lib/markdown/resolve-page-markdown";
 export { buildVersionPath } from "./lib/routing/version-path";
 export { resolveThemeByMode } from "./lib/theme/resolve-theme-by-mode";
 export { toBaseThemeCssVars, toDocsShellCssVars, toSearchShellCssVars } from "./lib/theme/to-css-vars";

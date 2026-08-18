@@ -10,7 +10,7 @@ import {
 } from "@/entities/docs";
 import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
-import { RepositorySourceBrowser, buildSourceViewerLabels } from "@/widgets/repository-source-browser";
+import { RepositorySourceBrowser, SourceBrowserSkeleton, buildSourceViewerLabels } from "@/widgets/repository-source-browser";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { SOURCE_VIEWER_FALLBACK_PARAM } from "@/shared/lib/source-viewer-fallback";
@@ -117,7 +117,7 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
               }}
             />
           ) : (
-            <p style={{ margin: 0, color: "var(--text-secondary)", textAlign: "center" }}>{labels.loadingTree}</p>
+            <SourceBrowserSkeleton label={labels.loadingTree} />
           )}
         </div>
       </main>
