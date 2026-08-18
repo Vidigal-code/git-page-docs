@@ -243,6 +243,7 @@ export function AudioPlayerPopover({
             className={controlButtonClassName}
             onClick={onToggleLoop}
             aria-label={loopStatusLabel}
+            aria-pressed={loopEnabled}
             title={loopStatusLabel}
             data-active={loopEnabled || undefined}
           >

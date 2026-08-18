@@ -781,6 +781,7 @@
 }
 
 .audioRouteControlButton {
+  position: relative;
   width: 36px;
   min-width: 36px;
   height: 36px;
@@ -808,9 +809,23 @@
 }
 
 .audioRouteControlButton[data-active] {
-  border-color: color-mix(in srgb, var(--secondary) 55%, transparent);
-  background: color-mix(in srgb, var(--secondary) 14%, transparent);
-  color: var(--text);
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  color: var(--primary);
+}
+
+/* Non-color cue for the active toggle: a dot under the icon, so the state
+ * reads even without hue discrimination. */
+.audioRouteControlButton[data-active]::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .audioRouteControlButton svg {
@@ -1312,6 +1327,26 @@
   border: 1px solid var(--card-border);
   background: color-mix(in srgb, var(--background) 40%, transparent);
 }
+
+.audioPlayerPopoverControlButton[data-active] {
+  position: relative;
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  color: var(--primary);
+}
+
+.audioPlayerPopoverControlButton[data-active]::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 
 .audioPlayerPopoverFooter button[data-active] {
   border-color: var(--secondary);

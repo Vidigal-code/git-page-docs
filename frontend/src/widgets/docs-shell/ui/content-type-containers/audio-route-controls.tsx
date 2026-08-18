@@ -97,6 +97,7 @@ export function AudioRouteControls({ audioType, pathAudio, language, controls }:
           className={styles.audioRouteControlButton}
           onClick={toggleLoop}
           aria-label={loopStatusLabel}
+          aria-pressed={loopEnabled}
           title={loopStatusLabel}
           data-active={loopEnabled || undefined}
         >
