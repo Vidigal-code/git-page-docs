@@ -15,7 +15,19 @@ export { extractHeadingsFromHtml, type HeadingItem } from "./lib/markdown/extrac
 export { hasMarkdownDocument, resolvePageMarkdownHtml } from "./lib/markdown/resolve-page-markdown";
 export { buildVersionPath } from "./lib/routing/version-path";
 export { resolveThemeByMode } from "./lib/theme/resolve-theme-by-mode";
-export { toBaseThemeCssVars, toDocsShellCssVars, toSearchShellCssVars } from "./lib/theme/to-css-vars";
+export { ThemePreloadScript } from "./ui/theme-preload-script/theme-preload-script";
+export {
+  SHELL_THEME_CACHE_KEY,
+  readCachedShellThemes,
+  writeCachedShellThemes,
+  type CachedShellThemes,
+} from "./lib/theme/theme-cache";
+export {
+  THEME_CSS_VAR_BY_COLOR,
+  toBaseThemeCssVars,
+  toDocsShellCssVars,
+  toSearchShellCssVars,
+} from "./lib/theme/to-css-vars";
 export { getEmbedUrl, isNativeAudio, isNativeVideo } from "./lib/video/embed-url";
 export { getBackgroundAudioConfig, type ResolvedBackgroundAudioConfig } from "./lib/audio";
 export { buildVersionLinkOptions, type VersionLinkOption } from "./lib/version-links";

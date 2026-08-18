@@ -21,6 +21,23 @@ const DEFAULT_COLORS = {
   cardBorder: "#334155",
 } as const;
 
+/**
+ * Theme colour field to CSS custom property. Shared with the pre-paint theme
+ * script so both write the same variables from the same palette.
+ */
+export const THEME_CSS_VAR_BY_COLOR = {
+  background: "--background",
+  primary: "--primary",
+  secondary: "--secondary",
+  text: "--text",
+  textSecondary: "--text-secondary",
+  cardBackground: "--card-background",
+  cardBorder: "--card-border",
+  scrollbarTrack: "--scrollbar-track",
+  scrollbarThumb: "--scrollbar-thumb",
+  scrollbarThumbHover: "--scrollbar-thumb-hover",
+} as const;
+
 const DEFAULT_HEADER: Required<Pick<ThemeHeaderComponent, "backgroundColor" | "borderBottom">> = {
   backgroundColor: "#0b1220",
   borderBottom: "1px solid #334155",
@@ -38,19 +55,24 @@ const DEFAULT_CARD: ThemeCardComponent = {
 };
 
 export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSProperties {
-  const colors = theme?.colors ?? {};
-  return {
-    ["--background" as string]: colors.background ?? DEFAULT_COLORS.background,
-    ["--primary" as string]: colors.primary ?? DEFAULT_COLORS.primary,
-    ["--secondary" as string]: colors.secondary ?? DEFAULT_COLORS.secondary,
-    ["--text" as string]: colors.text ?? DEFAULT_COLORS.text,
-    ["--text-secondary" as string]: colors.textSecondary ?? DEFAULT_COLORS.textSecondary,
-    ["--card-background" as string]: colors.cardBackground ?? DEFAULT_COLORS.cardBackground,
-    ["--card-border" as string]: colors.cardBorder ?? DEFAULT_COLORS.cardBorder,
-    ["--scrollbar-track" as string]: colors.scrollbarTrack ?? "transparent",
-    ["--scrollbar-thumb" as string]: colors.scrollbarThumb ?? "color-mix(in srgb, var(--text-secondary) 40%, transparent)",
-    ["--scrollbar-thumb-hover" as string]: colors.scrollbarThumbHover ?? "color-mix(in srgb, var(--text-secondary) 60%, transparent)",
-  };
+  // No theme yet: emit nothing so the page inherits the :root defaults instead
+  // of freezing them into prerendered markup. That keeps the pre-paint theme
+  // script (which sets :root) able to show a cached palette in the first
+  // painted frame, rather than being shadowed by an inline default.
+  if (!theme) {
+    return {};
+  }
+  const colors = theme.colors ?? {};
+  // Colours the theme does not define are left out so the :root defaults apply,
+  // which keeps one canonical default palette instead of a second copy here.
+  const vars: Record<string, string> = {};
+  for (const [colorKey, cssVar] of Object.entries(THEME_CSS_VAR_BY_COLOR)) {
+    const value = colors[colorKey as keyof typeof THEME_CSS_VAR_BY_COLOR];
+    if (value) {
+      vars[cssVar] = value;
+    }
+  }
+  return vars as CSSProperties;
 }
 
 export function toDocsShellCssVars(
@@ -86,9 +108,12 @@ export function toDocsShellCssVars(
 }
 
 export function toSearchShellCssVars(theme: ThemeTemplate | undefined): CSSProperties {
+  if (!theme) {
+    return {};
+  }
   const base = toBaseThemeCssVars(theme);
-  const colors = theme?.colors ?? {};
-  const header = theme?.components.header ?? {};
+  const colors = theme.colors ?? {};
+  const header = theme.components.header ?? {};
   return {
     ...base,
     ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? DEFAULT_COLORS.cardBackground,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { loadSiteMetadata } from "@/processes/site-metadata";
+import { ThemePreloadScript } from "@/entities/docs";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -51,6 +52,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <ThemePreloadScript />
+      </head>
       <body>{children}</body>
     </html>
   );

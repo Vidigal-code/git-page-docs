@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { resolveThemeByMode, type LanguageCode, type LayoutItem } from "@/entities/docs";
 import { THEME_URL_PARAM } from "@/shared/config/constants";
 import { toFullPath } from "@/shared/lib/base-path";
+import { useIsomorphicLayoutEffect } from "@/shared/lib/use-isomorphic-layout-effect";
 
 const STORAGE_KEY_PREFIX = "git-page-docs";
 
@@ -113,7 +114,9 @@ export function useStandaloneShellPreferences({
   // Restore theme from URL (theme param) → localStorage (once layouts are available).
   // Standalone pages load `layouts` asynchronously; without the length guard the
   // effect would "restore" against an empty array and lock onto layouts[0].
-  useEffect(() => {
+  // This runs before paint so that when the layouts arrive from cache, the
+  // requested theme is already active in the first painted frame.
+  useIsomorphicLayoutEffect(() => {
     if (themeRestored || layouts.length === 0) return;
     const urlThemeId = safeSearchParams.get(THEME_URL_PARAM);
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
@@ -138,7 +141,6 @@ export function useStandaloneShellPreferences({
       /* ignore */
     }
     setThemeRestored(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only restore once, skip when themeRestored
   }, [safeSearchParams, configuredDefaultMode, layouts, initialThemeBaseId, themeModeStorageKey, themeLayoutStorageKey]);
 
   // Persist language when changed

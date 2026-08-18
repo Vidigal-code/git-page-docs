@@ -1,5 +1,22 @@
 :root {
   color-scheme: dark;
+
+  /* Canonical default palette. Shells emit a theme's own values as inline
+   * custom properties and omit them entirely until a theme resolves, so these
+   * are what a page shows before its theme is known — and what the pre-paint
+   * theme script overrides when a cached palette is available. */
+  --background: #0b0f15;
+  --primary: #7c3aed;
+  --secondary: #22d3ee;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --card-background: #0f172a;
+  --card-border: #334155;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: color-mix(in srgb, var(--text-secondary) 40%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+  --header-background: #0f172a;
+  --header-border: 1px solid #334155;
 }
 
 * {
