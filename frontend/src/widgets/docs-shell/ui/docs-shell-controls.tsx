@@ -3,6 +3,7 @@ import { DocsShellControlsIcons } from "./docs-shell-controls-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { QuickNavigationTrigger } from "@/features/quick-navigation";
 import { ThemeModeToggle } from "@/features/theme-switcher";
+import { ThemeSelector } from "@/features/theme-selector";
 import { VersionSelector } from "@/features/version-selector";
 import type {
   DocsShellControlsBaseProps,
@@ -192,16 +193,18 @@ export function DocsShellControls({
           onChange={onLanguageChange}
           getLabel={languageLabelResolver}
           ariaLabel="Language selector"
+          themeVarsStyle={themeVarsStyle}
         />
       )}
       {!hideThemeSelector && (
-        <select className={styles.select} value={activeThemeId} onChange={(event) => onThemeChange(event.target.value)} aria-label="Theme selector">
-          {layouts.map((layout) => (
-            <option key={layout.id} value={layout.id}>
-              {layout.name}
-            </option>
-          ))}
-        </select>
+        <ThemeSelector
+          className={styles.select}
+          layouts={layouts}
+          value={activeThemeId}
+          onChange={onThemeChange}
+          ariaLabel="Theme selector"
+          themeVarsStyle={themeVarsStyle}
+        />
       )}
       <ThemeModeToggle
         className={`${styles.button} ${styles.modeIconButton}`}

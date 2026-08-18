@@ -7,6 +7,7 @@ import { FaBars } from "@/shared/ui/fallback-icons";
 import { IoMdClose } from "@/shared/ui/fallback-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
+import { ThemeSelector } from "@/features/theme-selector";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { LanguageCode, LayoutItem } from "@/entities/docs";
 import styles from "../search-shell-header.module.css";
@@ -30,6 +31,8 @@ interface SearchShellHeaderProps {
   reactHeaderIconTag?: string;
   headerReactIconStyle?: React.CSSProperties;
   getLanguageLabel: (lang: LanguageCode) => string;
+  /** Theme CSS variables forwarded to selector modals (portaled to <body>). */
+  themeVarsStyle?: React.CSSProperties;
 }
 
 export function SearchShellHeader({
@@ -51,6 +54,7 @@ export function SearchShellHeader({
   reactHeaderIconTag,
   headerReactIconStyle,
   getLanguageLabel,
+  themeVarsStyle,
 }: SearchShellHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   // Use "/" so Next.js Link adds basePath automatically when configured.
@@ -63,18 +67,14 @@ export function SearchShellHeader({
   const controls = (
     <>
       {layouts.length > 1 && (
-        <select
+        <ThemeSelector
           className={styles.select}
+          layouts={layouts}
           value={activeThemeId}
-          onChange={(e) => onThemeChange(e.target.value)}
-          aria-label="Theme selector"
-        >
-          {layouts.map((layout) => (
-            <option key={layout.id} value={layout.id}>
-              {layout.name}
-            </option>
-          ))}
-        </select>
+          onChange={onThemeChange}
+          ariaLabel="Theme selector"
+          themeVarsStyle={themeVarsStyle}
+        />
       )}
 
       <ThemeModeToggle
@@ -93,6 +93,7 @@ export function SearchShellHeader({
           onChange={onLanguageChange}
           getLabel={getLanguageLabel}
           ariaLabel="Language selector"
+          themeVarsStyle={themeVarsStyle}
         />
       )}
     </>

@@ -80,6 +80,7 @@ export function IntroductionGuidePage() {
 
   const header = (
     <SearchShellHeader
+      themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}
       language={language}

@@ -73,6 +73,7 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
 
   const header = (
     <SearchShellHeader
+      themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}
       language={language}

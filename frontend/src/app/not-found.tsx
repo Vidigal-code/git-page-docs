@@ -102,6 +102,7 @@ function NotFoundContent() {
     pt: { en: "English", pt: "Português", es: "Español" },
     es: { en: "English", pt: "Português", es: "Español" },
   } as const;
+
   const getLanguageLabel = (targetLang: string) =>
     getLanguageLabelFromMenu(standaloneConfig?.siteConfig?.langmenu ?? FALLBACK_LANGMENU, lang, targetLang);
 
@@ -230,6 +231,7 @@ function NotFoundContent() {
 
   const header = standaloneConfig ? (
     <SearchShellHeader
+      themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}
       language={lang}
@@ -251,6 +253,7 @@ function NotFoundContent() {
     />
   ) : (
     <SearchShellHeader
+      themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}
       language={lang}

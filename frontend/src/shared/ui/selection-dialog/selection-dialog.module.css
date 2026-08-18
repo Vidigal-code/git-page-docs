@@ -1,0 +1,100 @@
+/* Centered selection modal (small screens): themed like the focus overlay. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(24px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px))
+    max(24px, env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--background, #0b0f15) 62%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.dialog {
+  width: min(340px, 100%);
+  max-height: calc(100dvh - 48px);
+  background: var(--card-background, #0f172a);
+  color: var(--text, inherit);
+  border: 1px solid var(--card-border, #334155);
+  /* The dialog is a surface, not a control: follow the theme radius but cap it
+   * so pill-shaped tokens cannot ovalize the card. */
+  border-radius: min(var(--card-radius, 16px), 20px);
+  box-shadow: var(--card-shadow, 0 18px 60px rgba(0, 0, 0, 0.35));
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: selectionDialogIn 0.16s ease-out;
+}
+
+.title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Long option sets (e.g. every theme) scroll inside the card, never the page. */
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 12px;
+  min-height: 44px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: center;
+  border-radius: 10px;
+  transition: background-color 0.12s;
+}
+
+.option:hover {
+  background: color-mix(in srgb, var(--primary, #7c3aed) 12%, transparent);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--primary, #7c3aed);
+  outline-offset: -2px;
+}
+
+.optionSelected {
+  background: color-mix(in srgb, var(--primary, #7c3aed) 20%, transparent);
+  font-weight: 600;
+}
+
+@keyframes selectionDialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog {
+    animation: none;
+  }
+
+  .option {
+    transition: none;
+  }
+}

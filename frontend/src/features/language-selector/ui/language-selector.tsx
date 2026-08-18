@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import type { LanguageCode } from "@/entities/docs";
+import { SelectionDialog } from "@/shared/ui/selection-dialog";
+import { useMediaQuery } from "@/shared/lib/use-media-query";
+import { SMALL_SCREEN_MEDIA_QUERY } from "@/shared/config/constants";
 import styles from "./language-selector.module.css";
 
 interface LanguageSelectorProps {
@@ -10,41 +12,35 @@ interface LanguageSelectorProps {
   onChange: (lang: LanguageCode) => void;
   className?: string;
   ariaLabel?: string;
+  /** Theme CSS variables forwarded to the small-screen modal (portaled to <body>). */
+  themeVarsStyle?: React.CSSProperties;
 }
-
-/** Below this width the selector opens as a centered modal instead of a dropdown. */
-const SMALL_SCREEN_QUERY = "(max-width: 640px)";
 
 function supportsHover(): boolean {
   return window.matchMedia("(hover: hover)").matches;
 }
 
-function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query);
-    const sync = () => setMatches(mediaQuery.matches);
-    sync();
-    mediaQuery.addEventListener("change", sync);
-    return () => mediaQuery.removeEventListener("change", sync);
-  }, [query]);
-  return matches;
-}
-
-export function LanguageSelector({ languages, value, getLabel, onChange, className, ariaLabel }: LanguageSelectorProps) {
+export function LanguageSelector({
+  languages,
+  value,
+  getLabel,
+  onChange,
+  className,
+  ariaLabel,
+  themeVarsStyle,
+}: LanguageSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const isSmallScreen = useMediaQuery(SMALL_SCREEN_QUERY);
+  const isSmallScreen = useMediaQuery(SMALL_SCREEN_MEDIA_QUERY);
   const label = ariaLabel ?? "Language";
 
-  // Close on outside interaction (covers touch, where mouseleave never fires)
-  // and on Escape, returning focus to the trigger for keyboard users.
+  // Dropdown only: close on outside interaction (covers touch, where mouseleave
+  // never fires) and on Escape, returning focus to the trigger for keyboard
+  // users. The small-screen modal owns its own dismissal (backdrop + Escape).
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isSmallScreen) return;
     const handlePointerDown = (event: PointerEvent) => {
-      const insideDialog = dialogRef.current?.contains(event.target as Node);
-      if (!containerRef.current?.contains(event.target as Node) && !insideDialog) {
+      if (!containerRef.current?.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -53,10 +49,7 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
       setIsOpen(false);
       // Only reclaim focus when it was inside the selector — an Escape aimed
       // at another surface must not steal focus.
-      if (
-        containerRef.current?.contains(document.activeElement) ||
-        dialogRef.current?.contains(document.activeElement)
-      ) {
+      if (containerRef.current?.contains(document.activeElement)) {
         containerRef.current?.querySelector("button")?.focus();
       }
     };
@@ -66,13 +59,6 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen]);
-
-  // Move focus into the modal so keyboard and screen-reader users land on it.
-  useEffect(() => {
-    if (isOpen && isSmallScreen) {
-      dialogRef.current?.querySelector("button")?.focus();
-    }
   }, [isOpen, isSmallScreen]);
 
   const handleMouseEnter = () => {
@@ -95,31 +81,24 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
   };
 
   const handleFocusOut = (event: React.FocusEvent<HTMLDivElement>) => {
+    // The modal lives in a portal outside this container; leaving the trigger
+    // to enter it must not close the selection.
+    if (isSmallScreen) return;
     const next = event.relatedTarget as Node | null;
-    if (!containerRef.current?.contains(next) && !dialogRef.current?.contains(next)) {
+    if (!containerRef.current?.contains(next)) {
       setIsOpen(false);
     }
   };
 
-  const selectLanguage = (lang: LanguageCode) => {
-    onChange(lang);
+  const closeAndRefocusTrigger = () => {
     setIsOpen(false);
     // The option list unmounts; keep keyboard focus on the trigger.
     containerRef.current?.querySelector("button")?.focus();
   };
 
-  const renderOption = (lang: LanguageCode, extraClassName?: string) => {
-    const isSelected = lang === value;
-    return (
-      <button
-        type="button"
-        aria-current={isSelected || undefined}
-        onClick={() => selectLanguage(lang)}
-        className={`${styles.option} ${isSelected ? styles.optionSelected : ""} ${extraClassName ?? ""}`}
-      >
-        {getLabel(lang)}
-      </button>
-    );
+  const selectLanguage = (lang: LanguageCode) => {
+    onChange(lang);
+    closeAndRefocusTrigger();
   };
 
   return (
@@ -144,37 +123,34 @@ export function LanguageSelector({ languages, value, getLabel, onChange, classNa
 
       {isOpen && !isSmallScreen && (
         <ul className={styles.menu} aria-label={label}>
-          {languages.map((lang) => (
-            <li key={lang} className={styles.item}>
-              {renderOption(lang)}
-            </li>
-          ))}
+          {languages.map((lang) => {
+            const isSelected = lang === value;
+            return (
+              <li key={lang} className={styles.item}>
+                <button
+                  type="button"
+                  aria-current={isSelected || undefined}
+                  onClick={() => selectLanguage(lang)}
+                  className={`${styles.option} ${isSelected ? styles.optionSelected : ""}`}
+                >
+                  {getLabel(lang)}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
 
-      {isOpen &&
-        isSmallScreen &&
-        // Portaled to <body> so transformed/filtered ancestors (e.g. the
-        // sliding mobile drawer) cannot capture the fixed overlay and knock
-        // the dialog off-center.
-        createPortal(
-          <div className={styles.overlay} onClick={() => setIsOpen(false)}>
-            <div
-              ref={dialogRef}
-              className={styles.dialog}
-              role="dialog"
-              aria-modal="true"
-              aria-label={label}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <p className={styles.dialogTitle}>{label}</p>
-              {languages.map((lang) => (
-                <span key={lang}>{renderOption(lang, styles.dialogOption)}</span>
-              ))}
-            </div>
-          </div>,
-          document.body,
-        )}
+      {isOpen && isSmallScreen && (
+        <SelectionDialog
+          title={label}
+          options={languages.map((lang) => ({ id: lang, label: getLabel(lang) }))}
+          selectedId={value}
+          onSelect={(lang) => selectLanguage(lang as LanguageCode)}
+          onClose={closeAndRefocusTrigger}
+          themeVarsStyle={themeVarsStyle}
+        />
+      )}
     </div>
   );
 }

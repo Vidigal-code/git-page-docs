@@ -116,6 +116,7 @@ export function RepositorySearchScreen({
 
   const header = (
     <SearchShellHeader
+      themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}
       language={language}
