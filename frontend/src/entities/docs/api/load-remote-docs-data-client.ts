@@ -30,7 +30,7 @@ import {
   fetchRepoJson,
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
-import { SITE_CONFIG_DEFAULTS, withConfigDefaults } from "../lib/with-config-defaults";
+import { withConfigDefaults } from "../lib/with-config-defaults";
 import { markdownToHtml } from "./utils/markdown";
 
 type VersionConfig = {
@@ -437,11 +437,12 @@ export async function loadRemoteDocsData(
   const effectiveConfig: GitPageDocsConfig = {
     ...config,
     auth,
+    // ThemeDefault/ThemeModeDefault stay as loaded: the repository's own values
+    // win, and withConfigDefaults already backfilled them when absent. Forcing
+    // the runtime site's defaults here would ignore a repository's fixed theme.
     site: {
       ...config.site,
       defaultLanguage: preferredLanguage,
-      ThemeDefault: SITE_CONFIG_DEFAULTS.ThemeDefault,
-      ThemeModeDefault: SITE_CONFIG_DEFAULTS.ThemeModeDefault,
     },
     routes: routesForConfig,
     "menus-header": menusHeaderMd,

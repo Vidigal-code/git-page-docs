@@ -54,6 +54,11 @@ export function useStandaloneShellPreferences({
 
   const [activeThemeId, setActiveThemeId] = useState(initialThemeId);
   const [themeRestored, setThemeRestored] = useState(false);
+  // True only when the theme came from the URL or a user action. The internal
+  // default must never be written back to the URL: standalone wrappers mount
+  // before remote repository configs load, and a polluted `theme` param would
+  // override the repository's ThemeDefault.
+  const [themeExplicit, setThemeExplicit] = useState(false);
 
   function getCurrentPathname(): string {
     if (typeof window !== "undefined") {
@@ -114,12 +119,16 @@ export function useStandaloneShellPreferences({
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
     if (layoutFromUrl) {
       setActiveThemeId(layoutFromUrl.id);
+      setThemeExplicit(true);
       setThemeRestored(true);
       return;
     }
     const urlMode = safeSearchParams.get("modetheme");
     try {
       const mode = urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
+      if (urlMode === "dark" || urlMode === "light") {
+        setThemeExplicit(true);
+      }
       const baseLayout = layouts.find((l) => l.id === initialThemeBaseId) ?? layouts[0];
       if (baseLayout) {
         const resolved = resolveThemeByMode(layouts, baseLayout, mode);
@@ -156,9 +165,10 @@ export function useStandaloneShellPreferences({
     }
   }, [themeRestored, activeThemeId, layouts, themeModeStorageKey, themeLayoutStorageKey]);
 
-  // Always reflect theme in URL after restore
+  // Reflect the theme in the URL only when it was explicitly chosen (URL param
+  // or user action) — never for the internal default (see themeExplicit).
   useEffect(() => {
-    if (!themeRestored || !activeThemeId) return;
+    if (!themeRestored || !themeExplicit || !activeThemeId) return;
     const activeLayout = layouts.find((l) => l.id === activeThemeId);
     if (!activeLayout?.mode) return;
     const params = getCurrentSearchParams();
@@ -168,7 +178,7 @@ export function useStandaloneShellPreferences({
       replaceUrl(getCurrentPathname(), params);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync once when restored
-  }, [themeRestored, activeThemeId]);
+  }, [themeRestored, themeExplicit, activeThemeId]);
 
   function onLanguageChange(newLang: LanguageCode) {
     setLanguage(newLang);
@@ -185,6 +195,7 @@ export function useStandaloneShellPreferences({
   }
 
   function onThemeChange(themeId: string) {
+    setThemeExplicit(true);
     setActiveThemeId(themeId);
     const layout = layouts.find((l) => l.id === themeId);
     syncThemeToUrl(themeId, layout?.mode === "dark" || layout?.mode === "light" ? layout.mode : undefined);
@@ -195,6 +206,7 @@ export function useStandaloneShellPreferences({
     if (!activeLayout?.supportsLightAndDarkModes) return;
     const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
     const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
+    setThemeExplicit(true);
     setActiveThemeId(paired.id);
     syncThemeToUrl(paired.id, paired.mode === "dark" || paired.mode === "light" ? paired.mode : undefined);
   }
