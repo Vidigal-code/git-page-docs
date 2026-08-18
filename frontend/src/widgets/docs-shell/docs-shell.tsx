@@ -417,7 +417,10 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
   // hydration) so the first open is instant without touching first load.
   useEffect(() => {
     if (!isAiChatEnabledGlobal) return;
-    const warm = () => void import("../ai-chat-drawer/ui/ai-chat-drawer");
+    // Best-effort: a stale chunk URL (dev recompile, fresh deploy under an
+    // open tab) must not surface as an unhandled rejection — the real open
+    // retries the import.
+    const warm = () => void import("../ai-chat-drawer/ui/ai-chat-drawer").catch(() => undefined);
     if (typeof window.requestIdleCallback === "function") {
       const handle = window.requestIdleCallback(warm);
       return () => window.cancelIdleCallback(handle);

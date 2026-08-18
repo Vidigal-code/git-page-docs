@@ -1,4 +1,12 @@
 export const THEME_COLORS = {
+  "duet-light": {
+    background: "#FFFFFF", primary: "#000000", secondary: "#5E5E5E", text: "#000000",
+    textSecondary: "#5E5E5E", cardBackground: "#FFFFFF", cardBorder: "#E2E2E2", error: "#000000", success: "#000000",
+  },
+  "duet-dark": {
+    background: "#000000", primary: "#FFFFFF", secondary: "#AFAFAF", text: "#FFFFFF",
+    textSecondary: "#AFAFAF", cardBackground: "#282828", cardBorder: "#4B4B4B", error: "#FFFFFF", success: "#FFFFFF",
+  },
   "matrix-dark": {
     background: "#030606",
     primary: "#22C55E",

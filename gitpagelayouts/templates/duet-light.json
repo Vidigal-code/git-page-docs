@@ -1,0 +1,77 @@
+{
+  "id": "duet-light",
+  "name": "Duet Light",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFFFFF",
+    "primary": "#000000",
+    "secondary": "#5E5E5E",
+    "text": "#000000",
+    "textSecondary": "#5E5E5E",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E2E2E2",
+    "error": "#000000",
+    "success": "#000000"
+  },
+  "typography": {
+    "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.5rem",
+      "xlarge": "2.25rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "64px",
+      "backgroundColor": "#FFFFFF",
+      "borderBottom": "1px solid #E2E2E2"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#000000",
+      "borderTop": "1px solid #000000"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "none"
+    },
+    "button": {
+      "borderRadius": "999px",
+      "padding": "10px 16px",
+      "border": "1px solid #000000",
+      "hoverGlow": "0 0 0 3px rgba(0, 0, 0, 0.12)"
+    },
+    "select": {
+      "borderRadius": "999px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #E2E2E2",
+      "backgroundColor": "#EFEFEF",
+      "textAlign": "center",
+      "iconColor": "#000000",
+      "hoverBorderColor": "#000000",
+      "focusBorderColor": "#000000",
+      "focusGlow": "0 0 0 3px rgba(0, 0, 0, 0.16)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#000000",
+      "borderColor": "#AFAFAF",
+      "hoverBorderColor": "#000000",
+      "checkMarkColor": "#FFFFFF",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": false,
+    "transitionDuration": "0.15s"
+  }
+}

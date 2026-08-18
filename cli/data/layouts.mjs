@@ -43,6 +43,26 @@ export const MODERN_LAYOUTS = MODERN_LAYOUT_DEFS.map(([id, name, mode, preview])
 
 export const LAYOUTS = [
   {
+    id: "duet-dark",
+    name: "Duet Dark",
+    author: "Kauan Vidigal",
+    file: "templates/duet-dark.json",
+    preview: "Polarity-flipped ink duet: white pill controls and flat elevated cards on black",
+    supportsLightAndDarkModes: true,
+    supportsLightAndDarkModesReference: "duet-1",
+    mode: "dark",
+  },
+  {
+    id: "duet-light",
+    name: "Duet Light",
+    author: "Kauan Vidigal",
+    file: "templates/duet-light.json",
+    preview: "Black-and-white editorial duet: pill controls, flat 16px cards, ink footer band",
+    supportsLightAndDarkModes: true,
+    supportsLightAndDarkModesReference: "duet-1",
+    mode: "light",
+  },
+  {
     id: "matrix-dark",
     name: "Matrix Dark",
     author: "Kauan Vidigal",

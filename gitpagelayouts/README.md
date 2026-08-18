@@ -19,7 +19,7 @@ regenerate this catalog with `npm run layouts:sync`.
 - [`templates/`](templates) — one JSON theme template per layout.
 - [`docs/`](docs) — one markdown page per layout (generated).
 
-## Layouts (62)
+## Layouts (64)
 
 | Id | Name | Mode | Pair | Description |
 | --- | --- | --- | --- | --- |
@@ -85,3 +85,5 @@ regenerate this catalog with `npm run layouts:sync`.
 | [`azure-light`](docs/azure-light.md) | Azure | `light` | — | Open sky-blue accents on a bright canvas |
 | [`sand-light`](docs/sand-light.md) | Sand | `light` | — | Warm desert sand and beige on light canvas |
 | [`velvet-dark`](docs/velvet-dark.md) | Velvet | `dark` | — | Royal purple velvet with warm gold accents |
+| [`duet-dark`](docs/duet-dark.md) | Duet Dark | `dark` | `duet-1` | Polarity-flipped ink duet: white pill controls and flat elevated cards on black |
+| [`duet-light`](docs/duet-light.md) | Duet Light | `light` | `duet-1` | Black-and-white editorial duet: pill controls, flat 16px cards, ink footer band |
