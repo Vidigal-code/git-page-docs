@@ -38,71 +38,25 @@ export interface DocsShellControlsAudioProps {
 export function DocsShellControlsAudio({
   showAudioPlayer,
   audioPlayerConfig,
-  language,
-  themeVarsStyle,
   audioPlayIconTag,
   audioPlayIconStyle,
   audioPauseIconTag,
-  audioPauseIconStyle: _audioPauseIconStyle,
   audioPlayLabel = "Play",
   audioPauseLabel = "Pause",
-  audioPlaylistTitle = "Choose track",
-  audioPlaylistDescription = "",
-  audioPopoverCloseLabel = "Close",
-  audioPopoverCloseIcon,
-  audioPopoverPlayIcon,
-  audioPopoverPauseIcon,
-  audioPopoverRestartIcon,
-  audioPopoverLoopOnIcon,
-  audioPopoverLoopOffIcon,
-  audioPopoverNowPlayingLabel = "Now playing",
-  audioPopoverRestartLabel = "Restart",
-  audioPopoverLoopOnLabel = "Loop on",
-  audioPopoverLoopOffLabel = "Loop off",
-  audioPopoverSourceLabel = "File",
-  audioPopoverHideSource = false,
-  audioPopoverSourceCustomLabel,
-  audioPopoverShowMinutes = true,
-  audioPopoverStatusPlayingLabel,
-  audioPopoverStatusPausedLabel,
-  audioPopoverStatusLoopOnLabel,
-  audioPopoverStatusLoopOffLabel,
 }: DocsShellControlsAudioProps) {
   if (!showAudioPlayer || !audioPlayerConfig) {
     return null;
   }
 
+  // Only the toggle button renders per controls instance (header + drawer).
+  // The engine, popover and media elements live once in DocsShellAudioSurface.
   return (
     <DocsShellAudioPlayer
-      config={audioPlayerConfig}
-      language={language}
-      themeVarsStyle={themeVarsStyle}
       playIconTag={audioPlayIconTag}
       pauseIconTag={audioPauseIconTag}
       iconStyle={audioPlayIconStyle}
       playLabel={audioPlayLabel}
       pauseLabel={audioPauseLabel}
-      playlistTitle={audioPlaylistTitle}
-      playlistDescription={audioPlaylistDescription}
-      closeLabel={audioPopoverCloseLabel}
-      closeIcon={audioPopoverCloseIcon}
-      playIcon={audioPopoverPlayIcon}
-      pauseIcon={audioPopoverPauseIcon}
-      restartIcon={audioPopoverRestartIcon}
-      loopOnIcon={audioPopoverLoopOnIcon}
-      loopOffIcon={audioPopoverLoopOffIcon}
-      nowPlayingLabel={audioPopoverNowPlayingLabel}
-      restartLabel={audioPopoverRestartLabel}
-      loopOnLabel={audioPopoverLoopOnLabel}
-      loopOffLabel={audioPopoverLoopOffLabel}
-      sourceLabel={audioPopoverSourceLabel}
-      hideSource={audioPopoverHideSource}
-      customSourceLabel={audioPopoverSourceCustomLabel}
-      showMinutes={audioPopoverShowMinutes}
-      statusPlayingLabel={audioPopoverStatusPlayingLabel}
-      statusPausedLabel={audioPopoverStatusPausedLabel}
-      statusLoopOnLabel={audioPopoverStatusLoopOnLabel}
-      statusLoopOffLabel={audioPopoverStatusLoopOffLabel}
     />
   );
 }

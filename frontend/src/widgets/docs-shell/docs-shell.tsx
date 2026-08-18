@@ -27,7 +27,9 @@ import { CollapsedNavRail } from "./ui/docs-shell-collapsed-rail";
 import { DocsShellMainContent } from "./ui/docs-shell-main-content";
 import { DocsShellOverlays } from "./ui/docs-shell-overlays";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
+import { DocsShellAudioSurface } from "./ui/docs-shell-audio-surface";
 import { DocsShellProvider } from "./model/docs-shell-context";
+import { AudioPlayerProvider } from "@/features/audio-player";
 import dynamic from "next/dynamic";
 
 // The AI chat drawer (vault + provider stack) is heavy and only needed after
@@ -491,6 +493,11 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
 
   return (
     <DocsShellProvider value={contextValue}>
+      <AudioPlayerProvider
+        config={controlsConfig.audioPlayerConfig}
+        enabled={controlsConfig.showAudioPlayer}
+        language={language}
+      >
       <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
         <DocsShellSidebar
           siteName={headerName}
@@ -666,7 +673,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
             systemContext={aiContext}
           />
         )}
+        <DocsShellAudioSurface {...controlsProps} />
       </div>
+      </AudioPlayerProvider>
     </DocsShellProvider>
   );
 }
