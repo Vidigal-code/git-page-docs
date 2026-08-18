@@ -22,7 +22,7 @@ function check(label: string, cond: boolean, detail = ""): void {
 }
 
 function readGeneratedVersionConfig(): Record<string, unknown> {
-  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/1.1.56/config.json", "utf8")) as Record<string, unknown>;
+  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/1.1.57/config.json", "utf8")) as Record<string, unknown>;
 }
 
 function asArray(value: unknown): Array<Record<string, unknown>> {
