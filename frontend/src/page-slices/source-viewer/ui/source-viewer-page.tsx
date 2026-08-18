@@ -104,7 +104,8 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
       style={cssVars}
       footerConfig={buildFooterConfigFromData(data, language)}
     >
-      <main className={styles.shell}>
+      {/* A plain wrapper: SearchShellLayout already provides the page's <main>. */}
+      <div className={styles.shell}>
         <div className={styles.workspace}>
           {resolvedInitialRoute ? (
             <RepositorySourceBrowser
@@ -120,7 +121,7 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
             <SourceBrowserSkeleton label={labels.loadingTree} />
           )}
         </div>
-      </main>
+      </div>
     </SearchShellLayout>
   );
 }

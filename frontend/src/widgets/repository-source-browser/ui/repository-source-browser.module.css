@@ -259,6 +259,17 @@
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
+/* Each crumb wraps its button and trailing separator. Keeping them unshrunk on
+ * a single line stops the separators from dropping to a second row on narrow
+ * screens — the row scrolls horizontally instead. */
+.breadcrumb > * {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .breadcrumbButton {
   min-height: 28px;
   padding: 0 8px;
