@@ -46,11 +46,11 @@ This guide configures your repository from zero to running docs.
 ## Install and generate
 
 1. Install package:
-   - \`npm install gitpagedocs\`
+   - \`npm install @gitpagedocs/cli\`
 2. Generate docs config and versions:
-   - \`npx gitpagedocs\`
+   - \`npx @gitpagedocs/cli\`
 3. Optional: generate local layouts/templates:
-   - \`npx gitpagedocs --layoutconfig\`
+   - \`npx @gitpagedocs/cli --layoutconfig\`
 
 ## Local run
 
@@ -62,7 +62,7 @@ This guide configures your repository from zero to running docs.
 
 ## CLI behavior
 
-\`npx gitpagedocs\` generates only artifacts in \`gitpagedocs/\`:
+\`npx @gitpagedocs/cli\` generates only artifacts in \`gitpagedocs/\`:
 
 - JSON + markdown docs assets
 - No \`index.html\`
@@ -85,7 +85,7 @@ Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's \`git
 ## Monorepo packages
 
 - **frontend/** — Next.js 15 (App Router, React 19) documentation viewer, static-exported for GitHub Pages.
-- **cli/** — the published \`gitpagedocs\` npm package (\`npm install -g gitpagedocs\`): scaffolds the docs contract, generates docs with AI, configures Pages, and runs the MCP server.
+- **cli/** — the published \`@gitpagedocs/cli\` npm package (\`npm install -g @gitpagedocs/cli\`): scaffolds the docs contract, generates docs with AI, configures Pages, and runs the MCP server.
 - **tools/** — \`@gitpagedocs/tools\`, the shared business-logic core: the 14-provider AI system, the encrypted credential vault, the config loader, caches, and the logger.
 - **mcp/** — \`@gitpagedocs/mcp\`, a Model Context Protocol server (20 tools + 7 resources).
 - **gitpagedocs/** — the user contract: \`config.json\`, versioned docs, and layouts.
@@ -122,10 +122,10 @@ Complete reference of CLI options, configuration keys, and runtime features.
 | \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Generate documentation with AI |
 | \`gitpagedocs deploy\` / \`pages [actions\\|deploy]\` | Configure GitHub Pages via Actions + push |
 | \`gitpagedocs docs\` | Refresh README/CONTRIBUTING/SECURITY managed regions |
-| \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnostics / version / update hint |
+| \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnostics / version / registry update check |
 | \`gitpagedocs mcp start\` | Start the MCP server over stdio |
 
-Install globally with \`npm install -g gitpagedocs\`, or run one-off with \`npx gitpagedocs\`.
+Install globally with \`npm install -g @gitpagedocs/cli\`, or run one-off with \`npx @gitpagedocs/cli\`.
 
 ## CLI options
 
@@ -419,8 +419,8 @@ Provide owner + repository to load docs from repositories that contain \`gitpage
 ## Self-hosted GitHub Pages
 
 1. Generate docs:
-   - \`npx gitpagedocs\`
-   - or \`npx gitpagedocs --layoutconfig\` for local templates
+   - \`npx @gitpagedocs/cli\`
+   - or \`npx @gitpagedocs/cli --layoutconfig\` for local templates
 2. Set \`site.rendering\` in \`gitpagedocs/config.json\`:
    - \`https://<your-user>.github.io/<your-repo>/\`
 3. Build and validate:
@@ -485,8 +485,8 @@ Themes are JSON templates mapped by \`layoutsConfig.json\`.
 
 ## Strategy options
 
-- Default mode (\`npx gitpagedocs\`): use official layouts/templates from the upstream repository.
-- Local mode (\`npx gitpagedocs --layoutconfig\`): generate and use local templates from your repository.
+- Default mode (\`npx @gitpagedocs/cli\`): use official layouts/templates from the upstream repository.
+- Local mode (\`npx @gitpagedocs/cli --layoutconfig\`): generate and use local templates from your repository.
 
 ## Local layout files
 

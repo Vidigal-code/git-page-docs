@@ -7,7 +7,7 @@
       "pt": "Um conjunto de ferramentas open-source para criar, gerar e publicar documentação multilíngue e versionada no GitHub Pages — com assistente de IA integrado, servidor MCP e um shell de docs com temas.",
       "es": "Un conjunto de herramientas open-source para crear, generar y publicar documentación multilingüe y versionada en GitHub Pages — con asistente de IA integrado, servidor MCP y un shell de docs con temas."
     },
-    "install": "npx gitpagedocs",
+    "install": "npx @gitpagedocs/cli",
     "ctaPrimary": { "en": "Get started", "pt": "Começar", "es": "Empezar" },
     "ctaSecondary": { "en": "View on GitHub", "pt": "Ver no GitHub", "es": "Ver en GitHub" }
   },
@@ -73,7 +73,7 @@
         {
           "type": "code",
           "lang": "bash",
-          "code": "# one-off, no install\nnpx gitpagedocs\n\n# include local theme layouts\nnpx gitpagedocs --layoutconfig\n\n# configure GitHub Pages + commit + push\nnpx gitpagedocs deploy --owner <you> --repo <repo>"
+          "code": "# one-off, no install\nnpx @gitpagedocs/cli\n\n# include local theme layouts\nnpx @gitpagedocs/cli --layoutconfig\n\n# configure GitHub Pages + commit + push\nnpx @gitpagedocs/cli deploy --owner <you> --repo <repo>"
         },
         {
           "type": "callout",
