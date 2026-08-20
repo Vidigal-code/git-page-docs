@@ -80,5 +80,5 @@ export const CLI_COMMANDS: readonly CommandDoc[] = [
   { name: "doctor", summary: "diagnose the environment" },
   { name: "mcp start", summary: "start the MCP server over stdio" },
   { name: "version", summary: "print the CLI version" },
-  { name: "update", summary: "show how to update the CLI" },
+  { name: "update", summary: "check the registry for a newer CLI and print the install command" },
 ];

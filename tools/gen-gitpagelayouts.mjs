@@ -95,7 +95,7 @@ consume these layouts:
   point at this folder's \`layoutsConfig.json\` and \`templates/\`.
 - **Self-hosted:** copy this folder to the root of your repository as
   \`gitpagelayouts/\` (or generate a local \`gitpagedocs/layouts/\` with
-  \`npx gitpagedocs --layoutconfig\`) and the viewer resolves it automatically.
+  \`npx @gitpagedocs/cli --layoutconfig\`) and the viewer resolves it automatically.
 
 The JSON files here are the source of truth. After changing any of them,
 regenerate this catalog with \`npm run layouts:sync\`.

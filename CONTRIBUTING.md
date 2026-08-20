@@ -25,5 +25,5 @@ This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the publi
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio
 - `gitpagedocs version` — print the CLI version
-- `gitpagedocs update` — show how to update the CLI
+- `gitpagedocs update` — check the registry for a newer CLI and print the install command
 <!-- gitpagedocs:end -->

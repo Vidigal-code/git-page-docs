@@ -99,38 +99,38 @@ npx @gitpagedocs/cli
 Generate docs config and versioned files (recommended default):
 
 ```bash
-npx gitpagedocs
+npx @gitpagedocs/cli
 ```
 
 Generate docs plus local layout templates:
 
 ```bash
-npx gitpagedocs --layoutconfig
+npx @gitpagedocs/cli --layoutconfig
 ```
 
 Generate docs, configure GitHub Pages URL, create workflow, and push:
 
 ```bash
-npx gitpagedocs --push --owner your-user --repo your-repository
+npx @gitpagedocs/cli --push --owner your-user --repo your-repository
 ```
 
-Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/1.1.60/?lang=en`.
+Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/1.1.61/?lang=en`.
 
 Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 
 ```bash
-npx gitpagedocs --push --owner your-user --repo your-repository --path docs
+npx @gitpagedocs/cli --push --owner your-user --repo your-repository --path docs
 ```
 
-Then docs are at `https://your-user.github.io/your-repository/docs/v/1.1.60/?lang=en`.
+Then docs are at `https://your-user.github.io/your-repository/docs/v/1.1.61/?lang=en`.
 
 Shortcut syntax also supported:
 
 ```bash
-npx gitpagedocs --push --your-user --your-repository
+npx @gitpagedocs/cli --push --your-user --your-repository
 ```
 
-### Standalone home distribution (`npx gitpagedocs --home`)
+### Standalone home distribution (`npx @gitpagedocs/cli --home`)
 
 Generates a self-contained `gitpagedocshome/` folder with:
 
@@ -140,7 +140,7 @@ Generates a self-contained `gitpagedocshome/` folder with:
 - `README.md` with usage instructions
 
 ```bash
-npx gitpagedocs --home
+npx @gitpagedocs/cli --home
 cd gitpagedocshome
 npx serve .
 ```
@@ -157,7 +157,7 @@ docker run -p 3000:80 gitpagedocshome
 
 `gitpagedocs` supports two layout strategies:
 
-### 1) Default mode (`npx gitpagedocs`)
+### 1) Default mode (`npx @gitpagedocs/cli`)
 
 - `gitpagedocs/config.json` (or `config.js` / `config.ts`) is generated with official layout source enabled.
 - Layouts/templates are loaded from the official repository URLs (the documented `gitpagelayouts/` home):
@@ -166,7 +166,7 @@ docker run -p 3000:80 gitpagedocshome
 - Every official layout is documented (palette, typography, usage) in [`gitpagelayouts/README.md`](gitpagelayouts/README.md).
 - Best option if you want to focus only on writing docs.
 
-### 2) Local layout mode (`npx gitpagedocs --layoutconfig`)
+### 2) Local layout mode (`npx @gitpagedocs/cli --layoutconfig`)
 
 - Generates local files in `gitpagedocs/layouts/**`:
   - `layoutsConfig.json`
@@ -199,13 +199,13 @@ This means your docs can run independently from the official domain when you pub
 
 ```bash
 npm install
-npx gitpagedocs
+npx @gitpagedocs/cli
 ```
 
 Or, if you want local templates:
 
 ```bash
-npx gitpagedocs --layoutconfig
+npx @gitpagedocs/cli --layoutconfig
 ```
 
 ### 2) Configure runtime URL (`site.rendering`)
@@ -236,8 +236,8 @@ npm start
 - Enable Pages for your repository (Settings -> Pages).
 - Use the repository workflow to build/deploy static output.
 - Optional one-command bootstrap:
-  - `npx gitpagedocs --push --owner your-user --repo your-repository` — docs served at `https://<owner>.github.io/<repo>/` (base path uses the repo name so CSS/JS load correctly)
-  - `npx gitpagedocs --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/`; the site root redirects there
+  - `npx @gitpagedocs/cli --push --owner your-user --repo your-repository` — docs served at `https://<owner>.github.io/<repo>/` (base path uses the repo name so CSS/JS load correctly)
+  - `npx @gitpagedocs/cli --push --owner your-user --repo your-repository --path docs` — docs at `https://<owner>.github.io/<repo>/docs/`; the site root redirects there
   - This creates `.github/workflows/gitpagedocs-pages.yml`, sets `site.rendering`, commits generated artifacts, and pushes to `origin`.
   - The generated workflow clones the official `git-page-docs` runtime in CI, injects your `gitpagedocs/` folder, builds, and deploys to your GitHub Pages URL.
   - The workflow trigger uses your current git branch automatically.
@@ -255,8 +255,8 @@ gitpagedocs/
   icon.svg
   docs/
     versions/
-      1.1.60/config.json
-      1.1.60/{en,pt,es}/*.md
+      1.1.61/config.json
+      1.1.61/{en,pt,es}/*.md
 ```
 
 Local layout mode adds:
@@ -340,7 +340,7 @@ All routes for accessing documentation files on the official site or self-hosted
 | `lang` | `en`, `pt`, `es` | UI and content language |
 | `theme` | layout id (e.g. `aurora-dark`, `aurora-light`) | Active theme; always reflected in URL |
 | `modetheme` | `dark`, `light` | Theme mode (legacy; `theme` takes precedence) |
-| `version` | e.g. `1.1.60` | Version (alternative to path) |
+| `version` | e.g. `1.1.61` | Version (alternative to path) |
 | `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `name`) |
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
 | `name` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
@@ -367,46 +367,46 @@ https://vidigal-code.github.io/git-page-docs
 - Repository default version:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en
 - Repository pinned version:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en
 - Project version path without owner/repo:
-  https://vidigal-code.github.io/git-page-docs/v/1.1.60/?lang=en
+  https://vidigal-code.github.io/git-page-docs/v/1.1.61/?lang=en
 - Version through query parameter:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=1.1.60
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=1.1.61
 
 **Markdown pages by route id**
 
 - Getting Started (`id=1`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=1
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=1
 - Project overview (`id=2`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=2
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=2
 - Functionalities (`id=3`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=3
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=3
 - GitHub issues and projects (`id=4`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=4
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=4
 - Introduction to Git (`id=5`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=5
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=5
 - Authorized routes (`id=6`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=6
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=6
 
 **Markdown pages by slug (`name`)**
 
 - Getting Started:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&name=getting-started
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&name=getting-started
 - Project overview:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&name=project-overview
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&name=project-overview
 - Functionalities:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&name=functionalities
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&name=functionalities
 - GitHub issues and projects:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&name=github-issues-projects
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&name=github-issues-projects
 - Introduction to Git:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&name=git-introduction
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&name=git-introduction
 - Authorized routes:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&name=authorized-routes
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&name=authorized-routes
 
 **Source viewer**
 
 - Source viewer page inside the docs shell (`id=7`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=7
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=7
 - Standalone source viewer root:
   https://vidigal-code.github.io/git-page-docs/source-viewer
 - Standalone source viewer for this repository:
@@ -417,44 +417,44 @@ https://vidigal-code.github.io/git-page-docs
 **Video pages**
 
 - Interactive vs non-interactive modes (`id=8`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=8
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=8
 - GitHub issues and projects video (`id=9`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=9
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=9
 - Python tutor video (`id=10`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=10
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=10
 - Git introduction video (`id=11`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=11
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=11
 
 **Audio pages**
 
 - Audio track (`id=12`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=12
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=12
 
 **Fullscreen modes**
 
 - Markdown fullscreen:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?mdfull=en&file=gitpagedocs/docs/versions/1.1.60/en/getting-started.md
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?mdfull=en&file=gitpagedocs/docs/versions/1.1.61/en/getting-started.md
 - HTML fullscreen pattern (requires a configured HTML route):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?htmlfull=en&file=gitpagedocs/docs/versions/1.1.60/en/example.html
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?htmlfull=en&file=gitpagedocs/docs/versions/1.1.61/en/example.html
 - Video fullscreen by route id:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?videofull=en&id=8
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?videofull=en&id=8
 - Video fullscreen by slug:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?videofull=en&slug=bdIJkGr2NV0
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?videofull=en&slug=bdIJkGr2NV0
 - Audio fullscreen by route id:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?audiofull=en&id=12
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?audiofull=en&id=12
 - Audio fullscreen by slug:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?audiofull=en&slug=0w80F8FffQ4
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?audiofull=en&slug=0w80F8FffQ4
 
 **Theme and heading selection**
 
 - aurora-dark theme:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&theme=aurora-dark
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&theme=aurora-dark
 - aurora-light theme:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&theme=aurora-light
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&theme=aurora-light
 - Legacy mode parameter:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&modetheme=dark
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&modetheme=dark
 - Scroll to a Markdown heading:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.60/?lang=en&menu=en&id=1#quick-start
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/1.1.61/?lang=en&menu=en&id=1#quick-start
 
 **Standalone app routes**
 
@@ -496,9 +496,9 @@ Example:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/1.1.60/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/1.1.60/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/1.1.60/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/1.1.61/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/1.1.61/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/1.1.61/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",
@@ -529,7 +529,7 @@ Example:
 | `--serve` | Compatibility flag |
 | `--full` | Compatibility flag |
 
-Shortcut syntax: `npx gitpagedocs --push --<owner> --<repo>` (e.g. `--Vidigal-code --git-page-docs`) is equivalent to `--owner <owner> --repo <repo>`.
+Shortcut syntax: `npx @gitpagedocs/cli --push --<owner> --<repo>` (e.g. `--Vidigal-code --git-page-docs`) is equivalent to `--owner <owner> --repo <repo>`.
 
 With `--home`, output is `gitpagedocshome/` (or `--output` value). Otherwise, output remains `gitpagedocs/` (or `--output` value).
 
@@ -538,7 +538,7 @@ With `--home`, output is `gitpagedocshome/` (or `--output` value). Otherwise, ou
 Run:
 
 ```bash
-npx gitpagedocs ai
+npx @gitpagedocs/cli ai
 ```
 
 This mode provides:
@@ -572,7 +572,7 @@ permissions on POSIX systems:
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
 Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. Delete the stored file
-and its credentials at any time with `npx gitpagedocs config clear`. A legacy
+and its credentials at any time with `npx @gitpagedocs/cli config clear`. A legacy
 `.gitpagedocsconfig` in the repository root is migrated there automatically on the
 next `gitpagedocs ai` run. File contents:
 
@@ -656,5 +656,5 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio
 - `gitpagedocs version` — print the CLI version
-- `gitpagedocs update` — show how to update the CLI
+- `gitpagedocs update` — check the registry for a newer CLI and print the install command
 <!-- gitpagedocs:end -->

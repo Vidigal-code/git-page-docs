@@ -28,7 +28,7 @@ npx @gitpagedocs/cli
 | `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
 | `gitpagedocs docs` | Refresh managed regions of README/CONTRIBUTING/SECURITY |
 | `gitpagedocs config clear` | Delete the stored `.gitpagedocsconfig` (wipes saved AI credentials) |
-| `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / update hint |
+| `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / registry update check |
 | `gitpagedocs mcp start` | Start the MCP server over stdio |
 
 The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the published package is self-contained).
@@ -114,7 +114,7 @@ Generated artifacts include:
 Example:
 
 ```bash
-npx gitpagedocs --owner vidigal-code --repo energy-bill-ai-parser --path git-docs --push
+npx @gitpagedocs/cli --owner vidigal-code --repo energy-bill-ai-parser --path git-docs --push
 ```
 
 Expected URL after deployment:
@@ -128,7 +128,7 @@ https://vidigal-code.github.io/energy-bill-ai-parser/git-docs/
 The CLI now includes a dedicated interactive AI mode:
 
 ```bash
-npx gitpagedocs ai
+npx @gitpagedocs/cli ai
 ```
 
 ### What it does
@@ -162,7 +162,7 @@ permissions on POSIX systems:
 Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; delete the stored file
 and its credentials with `gitpagedocs config clear`; a legacy
 `.gitpagedocsconfig` in the repository root is migrated automatically on the next
-run. You can create/edit this file manually and then run `npx gitpagedocs ai`:
+run. You can create/edit this file manually and then run `npx @gitpagedocs/cli ai`:
 
 ```json
 {

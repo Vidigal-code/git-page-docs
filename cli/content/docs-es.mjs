@@ -55,7 +55,7 @@ Esta guia lleva el proyecto desde cero hasta docs corriendo.
 
 ## Comportamiento de la CLI
 
-\`npx gitpagedocs\` (o \`npm run gitpagedocs\`) genera artefactos en la carpeta oficial \`gitpagedocs/\`.
+\`npx @gitpagedocs/cli\` (o \`npm run gitpagedocs\`) genera artefactos en la carpeta oficial \`gitpagedocs/\`.
 
 - Genera solo markdown/json
 - No genera \`index.html\`
@@ -78,7 +78,7 @@ Git Page Docs es un monorepo pnpm + turborepo que convierte la carpeta \`gitpage
 ## Paquetes del monorepo
 
 - **frontend/** — visor Next.js 15 (App Router, React 19), exportado estaticamente para GitHub Pages.
-- **cli/** — el paquete npm publicado \`gitpagedocs\` (\`npm install -g gitpagedocs\`): genera la estructura de docs, documenta con IA, configura Pages y ejecuta el servidor MCP.
+- **cli/** — el paquete npm publicado \`@gitpagedocs/cli\` (\`npm install -g @gitpagedocs/cli\`): genera la estructura de docs, documenta con IA, configura Pages y ejecuta el servidor MCP.
 - **tools/** — \`@gitpagedocs/tools\`, el nucleo de logica compartido: sistema de IA con 14 proveedores, boveda de credenciales cifrada, cargador de config, caches y logger.
 - **mcp/** — \`@gitpagedocs/mcp\`, servidor Model Context Protocol (20 herramientas + 7 recursos).
 - **gitpagedocs/** — el contrato del usuario: \`config.json\`, docs versionados y layouts.
@@ -105,11 +105,11 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 
 | Comando | Descripcion |
 |---------|-------------|
-| \`npx gitpagedocs\` | Genera config y docs en \`gitpagedocs/\` |
-| \`npx gitpagedocs --layoutconfig\` | Tambien genera layouts/templates locales |
-| \`npx gitpagedocs --home\` | Distribucion standalone (\`gitpagedocshome/\`) |
-| \`npx gitpagedocs --push --owner X --repo Y\` | Configura workflow, commit, push |
-| \`npx gitpagedocs --interactive\` / \`-i\` | Modo interactivo con prompts |
+| \`npx @gitpagedocs/cli\` | Genera config y docs en \`gitpagedocs/\` |
+| \`npx @gitpagedocs/cli --layoutconfig\` | Tambien genera layouts/templates locales |
+| \`npx @gitpagedocs/cli --home\` | Distribucion standalone (\`gitpagedocshome/\`) |
+| \`npx @gitpagedocs/cli --push --owner X --repo Y\` | Configura workflow, commit, push |
+| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interactivo con prompts |
 
 ## Opciones CLI
 
