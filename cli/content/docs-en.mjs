@@ -21,8 +21,8 @@ The runtime expects this structure:
 - \`gitpagedocs/docs/<lang>/*.md\`
 - \`gitpagedocs/docs/versions/<version>/config.json\`
 - \`gitpagedocs/docs/versions/<version>/<lang>/*.md\`
-- \`gitpagedocs/layouts/layoutsConfig.json\`
-- \`gitpagedocs/layouts/templates/*.json\`
+- \`gitpagelayouts/layoutsConfig.json\` (only with \`--layoutconfig\`)
+- \`gitpagelayouts/templates/*.json\` (only with \`--layoutconfig\`)
 
 ## Quick navigation
 
@@ -113,10 +113,11 @@ Complete reference of CLI options, configuration keys, and runtime features.
 | Command | Description |
 |---------|--------------|
 | \`gitpagedocs\` | Generate config and docs in \`gitpagedocs/\` |
-| \`gitpagedocs --layoutconfig\` | Also generate local layouts/templates |
+| \`gitpagedocs --layoutconfig\` | Also generate local layouts/templates in \`gitpagelayouts/\` |
 | \`gitpagedocs --home\` | Standalone distribution (\`gitpagedocshome/\`) |
 | \`gitpagedocs --push --owner X --repo Y\` | Setup workflow, commit, push |
-| \`gitpagedocs --interactive\` / \`-i\` | Interactive mode with prompts |
+| \`gitpagedocs --interactive\` / \`-i\` | Interactive mode with prompts (the default in a terminal) |
+| \`gitpagedocs --no-interactive\` / \`--yes\` / \`-y\` | Never prompt; use flags and defaults |
 | \`gitpagedocs ai\` | Interactive AI documentation generator |
 | \`gitpagedocs provider [id]\` / \`models [provider]\` | List AI providers / catalog models |
 | \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Generate documentation with AI |
@@ -136,7 +137,8 @@ Install globally with \`npm install -g @gitpagedocs/cli\`, or run one-off with \
 | \`--path <subpath>\` | Docs subpath (e.g. \`docs\`); without it, base path = repo name for correct CSS/JS on project sites |
 | \`--output <dir>\` | Output directory (default: \`gitpagedocs\`) |
 | \`--search true|false\` | Enable/disable repository search (\`--home\`) |
-| \`--layoutconfig\` | Generate \`gitpagedocs/layouts/\` |
+| \`--layoutconfig\` | Generate local layouts in \`gitpagelayouts/\` |
+| \`--layouts-dir <dir>\` | Folder for local layouts (default: \`gitpagelayouts\`) |
 | \`--push\` | Create workflow, commit artifacts, push |
 | \`--home\` | Generate \`gitpagedocshome/\` (static + .env + Dockerfile) |
 
@@ -146,7 +148,7 @@ Install globally with \`npm install -g @gitpagedocs/cli\`, or run one-off with \
 - \`gitpagedocs/icon.svg\` – default icon
 - \`gitpagedocs/docs/versions/<ver>/config.json\` – per-version routes
 - \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – markdown docs
-- \`gitpagedocs/layouts/\` – only with \`--layoutconfig\`
+- \`gitpagelayouts/\` – only with \`--layoutconfig\` (folder configurable with \`--layouts-dir\`)
 
 ## Content types
 
@@ -490,9 +492,11 @@ Themes are JSON templates mapped by \`layoutsConfig.json\`.
 
 ## Local layout files
 
-- \`gitpagedocs/layouts/layoutsConfig.json\`
-- \`gitpagedocs/layouts/layoutsFallbackConfig.json\`
-- \`gitpagedocs/layouts/templates/*.json\`
+- \`gitpagelayouts/layoutsConfig.json\`
+- \`gitpagelayouts/layoutsFallbackConfig.json\`
+- \`gitpagelayouts/templates/*.json\`
+
+The legacy \`gitpagedocs/layouts/\` location is no longer generated. It is still read by the viewer, and the CLI offers to move it into the layouts home - only after you confirm.
 
 ## Template model
 

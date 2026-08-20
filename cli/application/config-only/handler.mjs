@@ -24,6 +24,7 @@ export async function executeConfigOnly(params, runtime) {
 
   const artifacts = buildConfigArtifacts({
     useLocalLayoutConfig: options.useLocalLayoutConfig,
+    layoutsDir: options.layoutsDir,
     githubOwner: sanitizeSegment(options.githubOwner),
     githubRepo: sanitizeSegment(options.githubRepo),
     root,
@@ -33,6 +34,7 @@ export async function executeConfigOnly(params, runtime) {
     root,
     pkgRoot,
     outputDir: options.outputDir,
+    layoutsDir: options.layoutsDir,
     artifacts,
     useLocalLayoutConfig: options.useLocalLayoutConfig,
     layouts,

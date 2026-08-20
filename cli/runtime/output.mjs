@@ -8,12 +8,7 @@ import {
   withVersionBadge,
   normalizeToOutputPath,
 } from "./doc-path-resolver.mjs";
-
-/** True when `child` is the same as, or nested inside, `parent` (path-safe). */
-function isWithin(parent, child) {
-  const rel = path.relative(parent, child);
-  return !rel.startsWith("..") && !path.isAbsolute(rel);
-}
+import { layoutsArtifactPaths } from "../contracts/layouts-paths.mjs";
 
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,6 +52,29 @@ export async function writeText(root, relativePath, data) {
   await writeFile(absolutePath, data, "utf-8");
 }
 
+/**
+ * Write the local layout artifacts into the standalone layouts home.
+ *
+ * No layouts folder is ever deleted here. The legacy `<outputDir>/layouts/`
+ * folder can hold hand-edited templates and the viewer still reads it, so
+ * relocating it is an explicit, confirmed migration rather than a side effect of
+ * generating. Switching back to official layouts likewise leaves an existing
+ * layouts home in place: `layoutsConfigPathOficial` already decides which source
+ * the viewer uses, so the files are inert rather than harmful.
+ */
+async function writeLayoutArtifacts(options) {
+  const { root, layoutsDir, useLocalLayoutConfig, layouts, artifacts, createThemeTemplate } = options;
+
+  if (!useLocalLayoutConfig) return;
+
+  const paths = layoutsArtifactPaths(layoutsDir);
+  await writeJson(root, paths.config, artifacts.layoutsConfig);
+  await writeJson(root, paths.fallbackConfig, artifacts.fallbackLayoutsConfig);
+  for (const layout of layouts) {
+    await writeJson(root, `${paths.root}/${layout.file}`, createThemeTemplate(layout));
+  }
+}
+
 export async function writeConfigOnlyOutput(options) {
   const {
     root,
@@ -64,6 +82,7 @@ export async function writeConfigOnlyOutput(options) {
     outputDir,
     artifacts,
     useLocalLayoutConfig,
+    layoutsDir,
     layouts,
     createThemeTemplate,
   } = options;
@@ -78,20 +97,14 @@ export async function writeConfigOnlyOutput(options) {
 
   await writeJson(root, `${outputDir}/config.json`, artifacts.rootConfig);
   await writeText(root, `${outputDir}/icon.svg`, DEFAULT_ICON_SVG);
-  const layoutsPath = path.join(root, outputDir, "layouts");
-  if (useLocalLayoutConfig) {
-    await writeJson(root, `${outputDir}/layouts/layoutsConfig.json`, artifacts.layoutsConfig);
-    await writeJson(root, `${outputDir}/layouts/layoutsFallbackConfig.json`, artifacts.fallbackLayoutsConfig);
-    for (const layout of layouts) {
-      const template = createThemeTemplate(layout);
-      await writeJson(root, `${outputDir}/layouts/${layout.file}`, template);
-    }
-  } else if (existsSync(layoutsPath) && !isWithin(root, pkgRoot)) {
-    // Only clean a stale local layouts/ when the CLI runs from OUTSIDE the
-    // project (a real install) — never when pkgRoot is inside the project being
-    // generated (the gitpagedocs source repo), so committed layouts survive.
-    rmSync(layoutsPath, { recursive: true, force: true });
-  }
+  await writeLayoutArtifacts({
+    root,
+    layoutsDir,
+    useLocalLayoutConfig,
+    layouts,
+    artifacts,
+    createThemeTemplate,
+  });
 
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
     await writeJson(root, `${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);

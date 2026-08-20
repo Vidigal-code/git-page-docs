@@ -332,6 +332,8 @@
     "layoutsConfigPathOficial": true,
     "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/templates",
     "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/layoutsConfig.json",
+    "layoutsConfigPath": "",
+    "layoutsConfigPathTemplates": "",
     "repositorySearchHome": true,
     "rendering": "https://vidigal-code.github.io/git-page-docs/",
     "AiChatEnabled": true,
@@ -690,10 +692,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "1.1.61",
-        "path": "gitpagedocs/docs/versions/1.1.61/config.json",
+        "id": "1.1.62",
+        "path": "gitpagedocs/docs/versions/1.1.62/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.1.61/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/1.1.62/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

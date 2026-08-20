@@ -41,6 +41,7 @@ export async function executeHome(params, runtime) {
 
   const artifacts = buildConfigArtifacts({
     useLocalLayoutConfig: false,
+    layoutsDir: options.layoutsDir,
     githubOwner: "",
     githubRepo: "",
     root,
@@ -50,6 +51,7 @@ export async function executeHome(params, runtime) {
     root,
     pkgRoot,
     outputDir: ARTIFACTS_DIR,
+    layoutsDir: options.layoutsDir,
     artifacts,
     useLocalLayoutConfig: false,
     layouts,

@@ -3,7 +3,7 @@ import { parseOwnerRepoFromUrl } from "@/shared/lib/runtime/parse-owner-repo";
 import { getRepoFromPackage } from "@/shared/config/repo-from-package";
 import { isRepositorySearchEnabled } from "@/shared/lib/repository-search";
 
-const DEFAULT_VERSIONS = ["1.1.61"];
+const DEFAULT_VERSIONS = ["1.1.62"];
 const FALLBACK_OWNER = "Vidigal-code";
 const FALLBACK_REPO = "git-page-docs";
 

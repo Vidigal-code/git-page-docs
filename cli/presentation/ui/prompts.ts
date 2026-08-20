@@ -4,26 +4,19 @@ import { execSync } from "node:child_process";
 import type { CliOptions } from "../../domain/models/cli-options";
 import { DEFAULTS } from "../options/schema";
 import { askText, askConfirm, note } from "./clack";
+import { interactivePromptsAvailable, promptingEnabled } from "./tty";
+import { askLayoutsSource, askLayoutsDir } from "./layouts-prompts";
 
-function isCiOrNonTty(): boolean {
-  if (process.env.CI === "true") return true;
-  if (process.env.GITHUB_ACTIONS === "true") return true;
-  if (process.stdin && !process.stdin.isTTY) return true;
-  return false;
-}
+export { interactivePromptsAvailable };
 
-/** True when clack prompts can run (interactive TTY, not CI). */
-export function interactivePromptsAvailable(): boolean {
-  return !isCiOrNonTty();
-}
-
+/**
+ * Every command prompts when it runs in a real terminal, so a bare invocation
+ * reflects what the user actually needs instead of silently taking defaults.
+ * CI, a piped stdin, and an explicit `--no-interactive` / `--yes` / `-y` opt out;
+ * `--interactive` / `-i` remains accepted and reads the same either way.
+ */
 export function shouldRunInteractive(argv: string[]): boolean {
-  if (isCiOrNonTty()) return false;
-  const args = argv.slice(2);
-  if (args.includes("--interactive") || args.includes("-i")) return true;
-  if (args.length === 0) return true;
-  if (args.length === 1 && args[0] === "--home") return true;
-  return false;
+  return promptingEnabled(argv.slice(2));
 }
 
 export async function promptHomeOptions(parsed: CliOptions): Promise<CliOptions> {
@@ -115,23 +108,38 @@ export async function ensureGitRepoInteractive(root: string): Promise<void> {
   }
 }
 
+/**
+ * Ask only for what the command line did not already answer, so an explicit
+ * flag is never second-guessed by a prompt.
+ */
 export async function promptConfigOnlyOptions(parsed: CliOptions): Promise<CliOptions> {
-  const useLocalLayoutConfig = await askConfirm(
-    "Generate local layout templates?",
-    parsed.useLocalLayoutConfig ?? false,
-  );
-  const githubOwner = await askText({
-    message: "GitHub owner (optional):",
-    defaultValue: parsed.githubOwner ?? "",
-  });
-  const githubRepo = await askText({
-    message: "GitHub repo (optional):",
-    defaultValue: parsed.githubRepo ?? "",
-  });
+  const useLocalLayoutConfig = parsed.explicit.useLocalLayoutConfig
+    ? parsed.useLocalLayoutConfig
+    : await askLayoutsSource(parsed.useLocalLayoutConfig ?? false);
+
+  const layoutsDir =
+    useLocalLayoutConfig && !parsed.explicit.layoutsDir
+      ? await askLayoutsDir(parsed.layoutsDir)
+      : parsed.layoutsDir;
+
+  const githubOwner = parsed.explicit.githubOwner
+    ? parsed.githubOwner
+    : await askText({
+        message: "GitHub owner (optional):",
+        defaultValue: parsed.githubOwner ?? "",
+      });
+
+  const githubRepo = parsed.explicit.githubRepo
+    ? parsed.githubRepo
+    : await askText({
+        message: "GitHub repo (optional):",
+        defaultValue: parsed.githubRepo ?? "",
+      });
 
   return {
     ...parsed,
     useLocalLayoutConfig,
+    layoutsDir,
     githubOwner: githubOwner?.trim() ?? "",
     githubRepo: githubRepo?.trim() ?? "",
   };

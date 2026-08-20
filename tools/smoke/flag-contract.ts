@@ -147,7 +147,7 @@ console.log("[smoke:flags] Asserting reporter output contract...");
   check("report: no-index line", lines.includes("No index.html/index.js generated."));
   check(
     "report: remote layouts default line",
-    lines.includes("Using official remote layouts config by default (no local gitpagedocs/layouts generated)."),
+    lines.includes("Using official remote layouts config by default (no local gitpagelayouts/ generated)."),
   );
 }
 
@@ -156,7 +156,7 @@ console.log("[smoke:flags] Asserting reporter output contract...");
   const lines: string[] = reportAll(layout, false);
   check(
     "report: --layoutconfig local layouts line",
-    lines.includes("Local layouts generated in gitpagedocs/layouts/ (--layoutconfig)."),
+    lines.includes("Local layouts generated in gitpagelayouts/ (--layoutconfig)."),
   );
 }
 

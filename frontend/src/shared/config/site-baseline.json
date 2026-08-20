@@ -331,6 +331,8 @@
   "layoutsConfigPathOficial": true,
   "layoutsConfigPathTemplatesOficial": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/templates",
   "layoutsConfigPathOficialUrl": "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/layoutsConfig.json",
+  "layoutsConfigPath": "",
+  "layoutsConfigPathTemplates": "",
   "repositorySearchHome": true,
   "rendering": "https://vidigal-code.github.io/git-page-docs/",
   "AiChatEnabled": true,

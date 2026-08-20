@@ -19,8 +19,8 @@ O runtime espera esta estrutura:
 - \`gitpagedocs/docs/<lang>/*.md\`
 - \`gitpagedocs/docs/versions/<versao>/config.json\`
 - \`gitpagedocs/docs/versions/<versao>/<lang>/*.md\`
-- \`gitpagedocs/layouts/layoutsConfig.json\`
-- \`gitpagedocs/layouts/templates/*.json\`
+- \`gitpagelayouts/layoutsConfig.json\`
+- \`gitpagelayouts/templates/*.json\`
 
 ## Navegacao rapida
 
@@ -106,10 +106,11 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 | Comando | Descricao |
 |---------|------------|
 | \`npx @gitpagedocs/cli\` | Gera config e docs em \`gitpagedocs/\` |
-| \`npx @gitpagedocs/cli --layoutconfig\` | Tambem gera layouts/templates locais |
+| \`npx @gitpagedocs/cli --layoutconfig\` | Tambem gera layouts/templates locais em \`gitpagelayouts/\` |
 | \`npx @gitpagedocs/cli --home\` | Distribuicao standalone (\`gitpagedocshome/\`) |
 | \`npx @gitpagedocs/cli --push --owner X --repo Y\` | Configura workflow, commit, push |
-| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interativo com prompts |
+| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interativo com prompts (padrao em um terminal) |
+| \`npx @gitpagedocs/cli --no-interactive\` / \`-y\` | Nunca pergunta; usa flags e padroes |
 
 ## Opcoes da CLI
 
@@ -120,7 +121,8 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 | \`--path <subpath>\` | Subcaminho dos docs (ex: \`docs\`); sem ele, base path = nome do repo para CSS/JS em project sites |
 | \`--output <dir>\` | Diretorio de saida (padrao: \`gitpagedocs\`) |
 | \`--search true|false\` | Habilita/desabilita busca de repositorio (\`--home\`) |
-| \`--layoutconfig\` | Gera \`gitpagedocs/layouts/\` |
+| \`--layoutconfig\` | Gera layouts locais em \`gitpagelayouts/\` |
+| \`--layouts-dir <dir>\` | Pasta dos layouts locais (padrao: \`gitpagelayouts\`) |
 | \`--push\` | Cria workflow, commit de artefatos, push |
 | \`--home\` | Gera \`gitpagedocshome/\` (estatico + .env + Dockerfile) |
 
@@ -130,7 +132,7 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 - \`gitpagedocs/icon.svg\` – icone padrao
 - \`gitpagedocs/docs/versions/<ver>/config.json\` – rotas por versao
 - \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – docs em markdown
-- \`gitpagedocs/layouts/\` – apenas com \`--layoutconfig\`
+- \`gitpagelayouts/\` – apenas com \`--layoutconfig\` (pasta configuravel com \`--layouts-dir\`)
 
 ## Tipos de conteudo
 
@@ -400,9 +402,9 @@ Temas sao templates JSON mapeados por \`layoutsConfig.json\`.
 
 ## Arquivos
 
-- \`gitpagedocs/layouts/layoutsConfig.json\`
-- \`gitpagedocs/layouts/layoutsFallbackConfig.json\`
-- \`gitpagedocs/layouts/templates/*.json\`
+- \`gitpagelayouts/layoutsConfig.json\`
+- \`gitpagelayouts/layoutsFallbackConfig.json\`
+- \`gitpagelayouts/templates/*.json\`
 
 ## Modelo de template
 

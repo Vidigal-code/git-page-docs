@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { printBanner, printCredits } from "./ui/banner";
 import { resolveOptions } from "./options/resolver";
+import { migrateLegacyLayoutsInteractive } from "./ui/layouts-prompts";
 import { runNewCommand } from "./commands/run-command";
 import { dispatchMode } from "../application/use-cases/dispatch-mode";
 import type {
@@ -57,6 +58,13 @@ async function main(): Promise<void> {
   }
 
   const options = await resolveOptions(process.argv, process.env);
+
+  // Layouts moved out of <outputDir>/layouts/. Offer to relocate anything left
+  // behind before generating, so the config written next points at one folder.
+  if (options.mode === "config-only") {
+    await migrateLegacyLayoutsInteractive(root, options);
+  }
+
   const configOnlyRuntime = createConfigOnlyRuntime() as ConfigOnlyRuntimePort;
   const homeRuntime = createHomeRuntime() as HomeRuntimePort;
   await dispatchMode(options, params, {

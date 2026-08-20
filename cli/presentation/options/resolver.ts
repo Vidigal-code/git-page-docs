@@ -34,15 +34,13 @@ export async function resolveOptions(argv: string[], env: NodeJS.ProcessEnv): Pr
     return resolved;
   }
 
-  const runHomeInteractive = parsed.isInteractive || (shouldRunInteractive(argv) && parsed.mode === "home");
-  if (runHomeInteractive && parsed.mode === "home") {
-    return promptHomeOptions(parsed);
-  }
+  // Every command prompts in a real terminal; shouldRunInteractive owns the
+  // CI / piped-stdin / --no-interactive opt-outs, and each prompt asks only for
+  // what the command line left unanswered.
+  if (!shouldRunInteractive(argv)) return parsed;
 
-  const runConfigInteractive = parsed.isInteractive || (shouldRunInteractive(argv) && parsed.mode === "config-only");
-  if (runConfigInteractive && parsed.mode === "config-only") {
-    return promptConfigOnlyOptions(parsed);
-  }
+  if (parsed.mode === "home") return promptHomeOptions(parsed);
+  if (parsed.mode === "config-only") return promptConfigOnlyOptions(parsed);
 
   return parsed;
 }

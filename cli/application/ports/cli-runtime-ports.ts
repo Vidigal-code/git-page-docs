@@ -2,6 +2,8 @@ import type { CliOptions } from "../../domain/models/cli-options";
 
 export interface BuildArtifactsInput {
   useLocalLayoutConfig: boolean;
+  /** Repo-relative layouts home the generated config should reference. */
+  layoutsDir: string;
   githubOwner: string;
   githubRepo: string;
   root: string;
@@ -44,6 +46,8 @@ export interface ConfigOnlyOutputInput {
   root: string;
   pkgRoot: string;
   outputDir: string;
+  /** Repo-relative layouts home local layouts are written to. */
+  layoutsDir: string;
   artifacts: BuiltConfigArtifacts;
   useLocalLayoutConfig: boolean;
   layouts: LayoutDefinition[];

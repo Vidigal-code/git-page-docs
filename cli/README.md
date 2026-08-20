@@ -17,7 +17,9 @@ npx @gitpagedocs/cli
 | Command | Description |
 |---|---|
 | `gitpagedocs` | Generate `gitpagedocs/` config + versioned docs (config-only) |
-| `gitpagedocs --layoutconfig` | Also emit local layout templates in `gitpagedocs/layouts/` |
+| `gitpagedocs --layoutconfig` | Also emit local layout templates in `gitpagelayouts/` |
+| `gitpagedocs --layouts-dir <dir>` | Folder for local layouts (default: `gitpagelayouts`) |
+| `gitpagedocs --no-interactive` / `-y` | Never prompt; use flags and defaults |
 | `gitpagedocs --push --owner <o> --repo <r> [--path <sub>]` | Generate, configure Pages, create workflow, commit + push |
 | `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`: static site + .env + Dockerfile) |
 | `gitpagedocs -i` / `--interactive` | Interactive prompts |

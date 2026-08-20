@@ -19,8 +19,8 @@ El runtime espera esta estructura:
 - \`gitpagedocs/docs/<lang>/*.md\`
 - \`gitpagedocs/docs/versions/<version>/config.json\`
 - \`gitpagedocs/docs/versions/<version>/<lang>/*.md\`
-- \`gitpagedocs/layouts/layoutsConfig.json\`
-- \`gitpagedocs/layouts/templates/*.json\`
+- \`gitpagelayouts/layoutsConfig.json\`
+- \`gitpagelayouts/templates/*.json\`
 
 ## Navegacion rapida
 
@@ -106,10 +106,11 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 | Comando | Descripcion |
 |---------|-------------|
 | \`npx @gitpagedocs/cli\` | Genera config y docs en \`gitpagedocs/\` |
-| \`npx @gitpagedocs/cli --layoutconfig\` | Tambien genera layouts/templates locales |
+| \`npx @gitpagedocs/cli --layoutconfig\` | Tambien genera layouts/templates locales en \`gitpagelayouts/\` |
 | \`npx @gitpagedocs/cli --home\` | Distribucion standalone (\`gitpagedocshome/\`) |
 | \`npx @gitpagedocs/cli --push --owner X --repo Y\` | Configura workflow, commit, push |
-| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interactivo con prompts |
+| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interactivo con prompts (por defecto en una terminal) |
+| \`npx @gitpagedocs/cli --no-interactive\` / \`-y\` | Nunca pregunta; usa flags y valores por defecto |
 
 ## Opciones CLI
 
@@ -120,7 +121,8 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 | \`--path <subpath>\` | Subruta de docs (ej: \`docs\`); sin ella, base path = nombre del repo para CSS/JS en project sites |
 | \`--output <dir>\` | Directorio de salida (default: \`gitpagedocs\`) |
 | \`--search true|false\` | Habilita/deshabilita busqueda de repositorio (\`--home\`) |
-| \`--layoutconfig\` | Genera \`gitpagedocs/layouts/\` |
+| \`--layoutconfig\` | Genera layouts locales en \`gitpagelayouts/\` |
+| \`--layouts-dir <dir>\` | Carpeta de layouts locales (por defecto: \`gitpagelayouts\`) |
 | \`--push\` | Crea workflow, commit de artefactos, push |
 | \`--home\` | Genera \`gitpagedocshome/\` (estatico + .env + Dockerfile) |
 
@@ -130,7 +132,7 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 - \`gitpagedocs/icon.svg\` – icono por defecto
 - \`gitpagedocs/docs/versions/<ver>/config.json\` – rutas por version
 - \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – docs en markdown
-- \`gitpagedocs/layouts/\` – solo con \`--layoutconfig\`
+- \`gitpagelayouts/\` – solo con \`--layoutconfig\` (carpeta configurable con \`--layouts-dir\`)
 
 ## Tipos de contenido
 
@@ -400,9 +402,9 @@ Los temas son templates JSON mapeados por \`layoutsConfig.json\`.
 
 ## Archivos
 
-- \`gitpagedocs/layouts/layoutsConfig.json\`
-- \`gitpagedocs/layouts/layoutsFallbackConfig.json\`
-- \`gitpagedocs/layouts/templates/*.json\`
+- \`gitpagelayouts/layoutsConfig.json\`
+- \`gitpagelayouts/layoutsFallbackConfig.json\`
+- \`gitpagelayouts/templates/*.json\`
 
 ## Modelo de template
 

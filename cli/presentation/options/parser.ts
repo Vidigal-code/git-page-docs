@@ -1,5 +1,6 @@
 import type { CliOptions } from "../../domain/models/cli-options";
 import { DEFAULTS } from "./schema";
+import { normalizeLayoutsDir } from "../../contracts/layouts-paths.mjs";
 
 const KNOWN_FLAGS = new Set([
   "--build",
@@ -11,8 +12,12 @@ const KNOWN_FLAGS = new Set([
   "--search",
   "--path",
   "--output",
+  "--layouts-dir",
   "--interactive",
   "-i",
+  "--no-interactive",
+  "--yes",
+  "-y",
   "--ai",
   "--pages-actions",
 ]);
@@ -35,6 +40,7 @@ export function parseCliOptions(argv: string[], env: NodeJS.ProcessEnv): CliOpti
   let githubRepo = readOptionValue(args, "--repo");
   const docsPath = readOptionValue(args, "--path");
   const outputDir = readOptionValue(args, "--output");
+  const layoutsDir = readOptionValue(args, "--layouts-dir");
   const searchRaw = readOptionValue(args, "--search");
 
   const fallbackDashedArgs = args
@@ -45,6 +51,7 @@ export function parseCliOptions(argv: string[], env: NodeJS.ProcessEnv): CliOpti
     .filter((a) => !a.startsWith("--path"))
     .filter((a) => !a.startsWith("--home"))
     .filter((a) => !a.startsWith("--output"))
+    .filter((a) => !a.startsWith("--layouts-dir"))
     .filter((a) => !a.startsWith("--search"))
     .map((a) => a.replace(/^--/, "").trim())
     .filter(Boolean);
@@ -91,6 +98,7 @@ export function parseCliOptions(argv: string[], env: NodeJS.ProcessEnv): CliOpti
     mode,
     aiCommand,
     outputDir: outputDir || (isHome ? DEFAULTS.home.outputDir : DEFAULTS.outputDir),
+    layoutsDir: normalizeLayoutsDir(layoutsDir || DEFAULTS.layoutsDir),
     useLocalLayoutConfig,
     shouldPush,
     githubOwner,
@@ -100,5 +108,12 @@ export function parseCliOptions(argv: string[], env: NodeJS.ProcessEnv): CliOpti
     repositorySearch,
     isInteractive,
     hasArgs: args.length > 0,
+    explicit: {
+      useLocalLayoutConfig,
+      layoutsDir: Boolean(layoutsDir),
+      githubOwner: Boolean(githubOwner),
+      githubRepo: Boolean(githubRepo),
+      outputDir: Boolean(outputDir),
+    },
   };
 }

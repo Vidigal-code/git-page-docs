@@ -55,11 +55,23 @@ describe("E2E: CLI bin in a temp project", () => {
     expect(cfg.VersionControl).toBeTruthy();
   });
 
-  it("--layoutconfig emits local layout templates", () => {
+  it("--layoutconfig emits local layout templates into the standalone home", () => {
     const res = runCli(["--layoutconfig"], dir);
     expect(res.status).toBe(0);
-    expect(existsSync(path.join(dir, "gitpagedocs", "layouts"))).toBe(true);
+    expect(existsSync(path.join(dir, "gitpagelayouts", "layoutsConfig.json"))).toBe(true);
+    expect(existsSync(path.join(dir, "gitpagelayouts", "templates"))).toBe(true);
+    // The legacy folder is no longer generated.
+    expect(existsSync(path.join(dir, "gitpagedocs", "layouts"))).toBe(false);
     expect(res.stdout).toContain("Local layouts generated");
+  });
+
+  it("--layouts-dir generates into the requested folder and references it", () => {
+    const res = runCli(["--layoutconfig", "--layouts-dir", "meus-temas", "--owner", "acme", "--repo", "docs"], dir);
+    expect(res.status).toBe(0);
+    expect(existsSync(path.join(dir, "meus-temas", "layoutsConfig.json"))).toBe(true);
+    const cfg = JSON.parse(readFileSync(path.join(dir, "gitpagedocs", "config.json"), "utf8"));
+    expect(cfg.site.layoutsConfigPath).toContain("meus-temas/layoutsConfig.json");
+    expect(cfg.site.layoutsConfigPathTemplates).toContain("meus-temas/templates");
   });
 
   it("--push without owner/repo fails with a clear error (contract)", () => {

@@ -1,16 +1,17 @@
 /** Config-only command output messages - SRP: single place for all report messages */
 import { resolveRenderingUrl } from "../../builders/project-links.mjs";
+import { normalizeLayoutsDir } from "../../contracts/layouts-paths.mjs";
 
 export function reportConfigOnlySuccess(options) {
   return [`Generated: ${options.outputDir}/ (config-only)`, "No index.html/index.js generated."];
 }
 
 export function reportLayoutConfig(options) {
+  const layoutsDir = normalizeLayoutsDir(options.layoutsDir);
   if (options.useLocalLayoutConfig) {
-    return ["Local layouts generated in gitpagedocs/layouts/ (--layoutconfig)."];
-  } else {
-    return ["Using official remote layouts config by default (no local gitpagedocs/layouts generated)."];
+    return [`Local layouts generated in ${layoutsDir}/ (--layoutconfig).`];
   }
+  return [`Using official remote layouts config by default (no local ${layoutsDir}/ generated).`];
 }
 
 export function reportRenderingUrl(options) {
