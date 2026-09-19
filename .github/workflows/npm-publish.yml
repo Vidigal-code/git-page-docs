@@ -1,0 +1,78 @@
+name: Publish npm packages
+
+# Publishes @gitpagedocs/tools, @gitpagedocs/mcp and @gitpagedocs/cli on every
+# push to main whose workspace version is not yet on the registry. Pushes that
+# do not bump the version are a no-op here (GitHub Pages still redeploys via
+# gitpagedocs-pages.yml). Requires the NPM_TOKEN repository secret: an npm
+# automation token with publish rights to the @gitpagedocs scope.
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Decide whether this version needs publishing
+        id: version
+        run: |
+          VERSION=$(node -p "require('./cli/package.json').version")
+          PUBLISHED=$(npm view "@gitpagedocs/cli@${VERSION}" version 2>/dev/null || true)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          if [ "$PUBLISHED" = "$VERSION" ]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "@gitpagedocs/cli@${VERSION} is already on the registry - nothing to publish."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "@gitpagedocs/cli@${VERSION} is not on the registry yet - publishing."
+          fi
+
+      - name: Require NPM_TOKEN
+        if: steps.version.outputs.publish == 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::The NPM_TOKEN repository secret is not configured. Create an npm automation token (npmjs.com > Access Tokens > Automation) with publish rights to the @gitpagedocs scope and add it under Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        if: steps.version.outputs.publish == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        if: steps.version.outputs.publish == 'true'
+        run: pnpm run typecheck
+
+      - name: Contract and self tests
+        if: steps.version.outputs.publish == 'true'
+        run: pnpm run test:ci
+
+      - name: Publish workspaces (topological, tools before cli)
+        if: steps.version.outputs.publish == 'true'
+        run: pnpm -r publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

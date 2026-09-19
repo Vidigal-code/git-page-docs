@@ -128,7 +128,25 @@ export function useStandaloneShellPreferences({
     }
     const urlMode = safeSearchParams.get("modetheme");
     try {
-      const mode = urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
+      // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo
+      // default. Storage restores stay non-explicit so they are never written back
+      // to the URL (see themeExplicit).
+      if (urlMode !== "dark" && urlMode !== "light") {
+        const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
+        const savedLayout = savedThemeId ? layouts.find((l) => l.id === savedThemeId) : null;
+        if (savedLayout) {
+          setActiveThemeId(savedLayout.id);
+          setThemeRestored(true);
+          return;
+        }
+      }
+      const savedMode = window.localStorage.getItem(themeModeStorageKey);
+      const mode =
+        urlMode === "dark" || urlMode === "light"
+          ? urlMode
+          : savedMode === "dark" || savedMode === "light"
+            ? savedMode
+            : configuredDefaultMode;
       if (urlMode === "dark" || urlMode === "light") {
         setThemeExplicit(true);
       }

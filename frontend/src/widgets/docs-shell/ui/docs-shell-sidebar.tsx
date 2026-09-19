@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BsChatDots, BsMoonStarsFill, BsSunFill } from "@/shared/ui/fallback-icons";
+import { BsMoonStarsFill, BsRobot, BsSunFill } from "@/shared/ui/fallback-icons";
 import { FiChevronsLeft } from "@/shared/ui/fallback-icons";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
@@ -107,13 +107,13 @@ export function DocsShellSidebar({
               <ReactIconByTag
                 tag={aiChatIconConfig.open.reactIconTag}
                 style={aiChatIconConfig.open.reactIconStyle}
-                fallback={<BsChatDots aria-hidden />}
+                fallback={<BsRobot aria-hidden />}
               />
             </span>
           ) : aiChatIconConfig.open.iconImage ? (
             <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
           ) : (
-            <BsChatDots aria-hidden />
+            <BsRobot aria-hidden />
           )}
         </button>
         <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onCollapseSidebar} aria-label={menuCloseLabel} title={menuCloseLabel}>

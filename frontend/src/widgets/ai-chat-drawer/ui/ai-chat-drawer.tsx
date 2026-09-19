@@ -4,7 +4,7 @@
  */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { BsChatDots } from 'react-icons/bs';
+import { BsRobot } from '@/shared/ui/fallback-icons';
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { ApiKeyForm } from '../../../features/ask-ai/ui/api-key-form';
 import { aiStorage } from '../../../shared/lib/ai-storage';
@@ -122,7 +122,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         if (config.useReactIcon) {
             return (
                 <span style={config.reactIconStyle}>
-                    <ReactIconByTag tag={config.reactIconTag || defaultTag} fallback={<BsChatDots />} />
+                    <ReactIconByTag tag={config.reactIconTag || defaultTag} fallback={<BsRobot />} />
                 </span>
             );
         }
@@ -273,12 +273,12 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                 <div className={styles.header}>
                     <div className={styles.headerTitle}>
                         <div className={styles.aiIcon}>
-                            {renderIcon(icons.open, "BsChatDots")}
+                            {renderIcon(icons.open, "BsRobot")}
                         </div>
                         <h2 className={styles.titleText}>{labels.aiChatTitle}</h2>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    <div className={styles.headerActions}>
                         <button
                             onClick={() => setIsClearChatPopupOpen(true)}
                             aria-label={"Clear Chat"}
@@ -431,7 +431,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                             {messages.length === 0 && (
                                 <div className={styles.messageRow}>
                                     <div className={styles.avatarAi}>
-                                        {renderIcon(icons.open, "BsChatDots")}
+                                        {renderIcon(icons.open, "BsRobot")}
                                     </div>
                                     <div className={styles.bubbleAi}>
                                         <p>
@@ -449,7 +449,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                                 return (
                                     <div key={msg.id || index.toString()} className={isUser ? styles.messageRowUser : styles.messageRow}>
                                         <div className={isUser ? styles.avatarUser : styles.avatarAi}>
-                                            {isUser ? (labels.aiChatUserLabel || 'You') : renderIcon(icons.open, "BsChatDots")}
+                                            {isUser ? (labels.aiChatUserLabel || 'You') : renderIcon(icons.open, "BsRobot")}
                                         </div>
                                         <div className={isUser ? styles.bubbleUser : styles.bubbleAi}>
                                             <div
@@ -464,7 +464,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                             {isLoading && messages[messages.length - 1]?.role === 'user' && (
                                 <div className={styles.messageRow}>
                                     <div className={styles.avatarAi}>
-                                        {renderIcon(icons.open, "BsChatDots")}
+                                        {renderIcon(icons.open, "BsRobot")}
                                     </div>
                                     <div className={styles.bubbleAi} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <div className={styles.typingIndicator}>

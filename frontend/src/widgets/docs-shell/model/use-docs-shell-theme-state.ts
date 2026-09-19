@@ -49,8 +49,25 @@ export function useDocsShellThemeState({
         return;
       }
       const urlMode = searchParams.get("modetheme");
+      // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo default.
+      if (urlMode !== "dark" && urlMode !== "light") {
+        const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
+        const savedLayout = savedThemeId ? layouts.find((layout) => layout.id === savedThemeId) : null;
+        if (savedLayout) {
+          queueMicrotask(() => {
+            setActiveThemeId(savedLayout.id);
+            setThemeModeRestored(true);
+          });
+          return;
+        }
+      }
+      const savedMode = window.localStorage.getItem(themeModeStorageKey);
       const targetMode =
-        urlMode === "dark" || urlMode === "light" ? urlMode : configuredDefaultMode;
+        urlMode === "dark" || urlMode === "light"
+          ? urlMode
+          : savedMode === "dark" || savedMode === "light"
+            ? savedMode
+            : configuredDefaultMode;
       const baseLayout = layouts.find((layout) => layout.id === initialThemeBaseId) ?? layouts[0];
       if (baseLayout) {
         const resolved = resolveThemeByMode(layouts, baseLayout, targetMode);

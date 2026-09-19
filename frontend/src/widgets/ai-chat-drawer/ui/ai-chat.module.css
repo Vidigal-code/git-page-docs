@@ -57,6 +57,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* Wrap instead of clipping: on very narrow viewports the action buttons
+       (including the close button) drop to a second row and stay reachable. */
+    flex-wrap: wrap;
+    row-gap: 4px;
     padding: 12px 16px;
     border-bottom: 1px solid var(--card-border);
     background: color-mix(in srgb, var(--card-background) 80%, transparent);
@@ -66,6 +70,15 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
 .aiIcon {
@@ -107,6 +120,34 @@
 .closeButton:hover {
     background: color-mix(in srgb, var(--text) 10%, transparent);
     color: var(--text);
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 10px 12px;
+    }
+
+    .headerTitle {
+        gap: 8px;
+    }
+
+    .headerActions {
+        gap: 0;
+    }
+
+    .headerActions .closeButton {
+        padding: 6px;
+    }
+
+    .aiIcon {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+    }
+
+    .titleText {
+        font-size: 0.95rem;
+    }
 }
 
 .messagesArea {

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FiMessageCircle, FiX } from "@/shared/ui/fallback-icons";
+import { BsRobot, FiX } from "@/shared/ui/fallback-icons";
 import type { MenuNode } from "../model/menu-tree";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { DocsShellControls } from "./docs-shell-controls";
@@ -51,7 +51,7 @@ export function DocsShellMobileDrawer({
             ) : aiChatIconConfig.open.iconImage ? (
               <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
             ) : (
-              <FiMessageCircle aria-hidden />
+              <BsRobot aria-hidden />
             )}
           </button>
           <strong>{siteName}</strong>

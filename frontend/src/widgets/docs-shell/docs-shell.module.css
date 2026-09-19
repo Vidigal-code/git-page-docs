@@ -293,8 +293,9 @@
 
 .select {
   min-width: 130px;
-  padding: 0 14px 0 14px;
-  padding-right: 36px;
+  /* Symmetric gutters (the right one hosts the arrow) so the centered label
+     is truly centered instead of skewed toward the left. */
+  padding: 0 36px;
   border-radius: var(--select-radius);
   border: var(--select-border);
   background: color-mix(in srgb, var(--card-background) 98%, var(--background));

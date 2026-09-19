@@ -210,7 +210,7 @@ export function getDefaultSiteConfig(DOCS, projectLink) {
         IconAiChatOpenLightImg: "",
         IconAiChatOpenDarkImg: "",
         IconAiChatOpenReactIcones: true,
-        IconAiChatOpenReactIconesTag: "BsChatDots",
+        IconAiChatOpenReactIconesTag: "BsRobot",
         IconAiChatOpenReactIconesTagColorDark: "White",
         IconAiChatOpenReactIconesTagColorLight: "black",
         IconAiChatOpenReactIconesTagSize: "22px",

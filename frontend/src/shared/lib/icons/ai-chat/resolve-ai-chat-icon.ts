@@ -22,7 +22,7 @@ export function resolveAiChatOpenIconConfig(site: any, mode: "dark" | "light", b
         return {
             iconImage: resolveIconPath(DEFAULT_IMG, basePath),
             useReactIcon: true,
-            reactIconTag: "BsChatDots",
+            reactIconTag: "BsRobot",
             reactIconStyle: {},
             iconImgWidth: 20,
             iconImgHeight: 20,
@@ -30,7 +30,7 @@ export function resolveAiChatOpenIconConfig(site: any, mode: "dark" | "light", b
     }
     const rawImage = mode === "dark" ? site.IconAiChatOpenDarkImg : site.IconAiChatOpenLightImg;
     const useReactIcon = (site.IconAiChatOpenReactIcones ?? !rawImage);
-    const reactIconTag = site.IconAiChatOpenReactIconesTag || "BsChatDots";
+    const reactIconTag = site.IconAiChatOpenReactIconesTag || "BsRobot";
     const color = mode === "dark" ? site.IconAiChatOpenReactIconesTagColorDark : site.IconAiChatOpenReactIconesTagColorLight;
     const size = site.IconAiChatOpenReactIconesTagSize;
     return {

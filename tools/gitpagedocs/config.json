@@ -222,7 +222,7 @@
     "IconAiChatOpenLightImg": "",
     "IconAiChatOpenDarkImg": "",
     "IconAiChatOpenReactIcones": true,
-    "IconAiChatOpenReactIconesTag": "BsChatDots",
+    "IconAiChatOpenReactIconesTag": "BsRobot",
     "IconAiChatOpenReactIconesTagColorDark": "White",
     "IconAiChatOpenReactIconesTagColorLight": "black",
     "IconAiChatOpenReactIconesTagSize": "22px",
@@ -692,10 +692,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "1.1.62",
-        "path": "gitpagedocs/docs/versions/1.1.62/config.json",
+        "id": "1.1.63",
+        "path": "gitpagedocs/docs/versions/1.1.63/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.1.62/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/1.1.63/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",
