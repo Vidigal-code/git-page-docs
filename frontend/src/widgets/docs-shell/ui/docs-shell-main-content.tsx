@@ -150,6 +150,7 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
           data={data}
           language={language}
           isDarkMode={nextMode === "dark"}
+          activeThemeId={controlsProps.activeThemeId}
           fullscreenCloseLabel={menuCloseLabel}
           fullscreenExpandLabel={fullscreenExpandLabel}
           previousLabel={previousLabel}

@@ -43,6 +43,8 @@ interface PageContentAreaProps {
   data: LoadedDocsData;
   language: LanguageCode;
   isDarkMode?: boolean;
+  /** Active site layout id: picks the source viewer's matching token palette. */
+  activeThemeId?: string;
   /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull/audiofull) */
   contentTypeFilter?: ContentType;
   /** When true, content is inside URL fullscreen overlay - hide expand button, overlay provides close */
@@ -83,6 +85,7 @@ export function PageContentArea({
   data,
   language,
   isDarkMode = false,
+  activeThemeId,
   fullscreenCloseLabel,
   fullscreenExpandLabel,
   previousLabel,
@@ -272,6 +275,7 @@ export function PageContentArea({
               site={data.config.site}
               language={language}
               isDarkMode={isDarkMode}
+              activeThemeId={activeThemeId}
             />
           );
         }

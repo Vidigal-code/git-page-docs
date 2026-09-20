@@ -13,6 +13,8 @@ interface SourceViewerContainerProps {
   site: GitPageDocsConfig["site"];
   language: LanguageCode;
   isDarkMode?: boolean;
+  /** Active site layout id: picks the matching VS Code token palette. */
+  activeThemeId?: string;
 }
 
 function resolveInitialRoute(sourceViewerPath: string) {
@@ -32,6 +34,7 @@ export function SourceViewerContainer({
   site,
   language,
   isDarkMode = false,
+  activeThemeId,
 }: SourceViewerContainerProps) {
   const header = <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
 
@@ -49,6 +52,7 @@ export function SourceViewerContainer({
           initialRoute={resolveInitialRoute(sourceViewerPath)}
           labels={buildSourceViewerLabels(site.langmenu, language)}
           showSearchForm={false}
+          themeId={activeThemeId}
           themeMode={isDarkMode ? "dark" : "light"}
         />
       </article>

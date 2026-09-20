@@ -34,7 +34,9 @@ interface RepositorySourceBrowserProps {
   initialRoute: SourceViewerRoute;
   labels: SourceViewerLabels;
   showSearchForm?: boolean;
-  /** Active site theme's mode: picks the VS Code token palette (Dark+/Light+). */
+  /** Active site layout id: picks the matching VS Code token palette. */
+  themeId?: string;
+  /** Active site theme's mode: fallback palette (Dark+/Light+) for unmapped layouts. */
   themeMode?: HighlightThemeMode;
   onRouteChange?: (route: SourceViewerRoute, options?: { replace?: boolean }) => void;
 }
@@ -148,23 +150,41 @@ function normalizeLineEndings(content: string): string {
 interface CodeViewerProps {
   content: string;
   filePath: string;
+  themeId: string | undefined;
   themeMode: HighlightThemeMode;
 }
 
-const CodeViewer = memo(function CodeViewer({ content, filePath, themeMode }: CodeViewerProps) {
+/**
+ * Repaints the editor surface (background, gutter, rules) with the resolved
+ * Shiki theme's own palette, so tokens sit on the background they were
+ * designed for while the rest of the browser chrome keeps the site theme.
+ */
+function buildEditorSurfaceStyle(highlighted: ReturnType<typeof useHighlightedLines>): React.CSSProperties | undefined {
+  if (!highlighted?.background) return undefined;
+  const foreground = highlighted.foreground ?? "currentColor";
+  return {
+    "--source-browser-editor": highlighted.background,
+    "--source-browser-editor-rail": highlighted.background,
+    "--source-browser-line": `color-mix(in srgb, ${foreground} 16%, transparent)`,
+    "--source-browser-muted": `color-mix(in srgb, ${foreground} 45%, transparent)`,
+    color: foreground,
+  } as React.CSSProperties;
+}
+
+const CodeViewer = memo(function CodeViewer({ content, filePath, themeId, themeMode }: CodeViewerProps) {
   // Both the plain split and the tokenizer receive the same normalized text
   // so token rows stay aligned with line numbers on CRLF files.
   const normalizedContent = useMemo(() => normalizeLineEndings(content), [content]);
   const lines = useMemo(() => normalizedContent.split("\n"), [normalizedContent]);
   // VS Code-grade tokens (Shiki); null while loading or unsupported, in which
   // case each row falls back to the plain text it already renders today.
-  const highlightedLines = useHighlightedLines(normalizedContent, filePath, themeMode);
+  const highlighted = useHighlightedLines(normalizedContent, filePath, themeId, themeMode);
   return (
-    <div className={styles.codeScroll}>
+    <div className={styles.codeScroll} style={buildEditorSurfaceStyle(highlighted)}>
       <table className={styles.codeTable}>
         <tbody>
           {lines.map((line, index) => {
-            const tokens = highlightedLines?.[index];
+            const tokens = highlighted?.lines[index];
             return (
               <tr key={index}>
                 <td className={styles.lineNumber}>{index + 1}</td>
@@ -195,6 +215,7 @@ export function RepositorySourceBrowser({
   initialRoute,
   labels,
   showSearchForm = true,
+  themeId,
   themeMode = "dark",
   onRouteChange,
 }: RepositorySourceBrowserProps) {
@@ -493,7 +514,7 @@ export function RepositorySourceBrowser({
             {isLoadingFile ? <div className={styles.state}>{labels.loadingFile}</div> : null}
             {!isLoadingFile && selectedFile && viewMode === "preview" && selectedIsMarkdown ? <MarkdownPreview content={selectedFile.content} /> : null}
             {!isLoadingFile && selectedFile && (viewMode === "code" || !selectedIsMarkdown) ? (
-              <CodeViewer content={selectedFile.content} filePath={selectedFile.path} themeMode={themeMode} />
+              <CodeViewer content={selectedFile.content} filePath={selectedFile.path} themeId={themeId} themeMode={themeMode} />
             ) : null}
             {!isLoadingFile && !selectedFile && !error ? <div className={styles.state}>{labels.selectFile}</div> : null}
           </section>
