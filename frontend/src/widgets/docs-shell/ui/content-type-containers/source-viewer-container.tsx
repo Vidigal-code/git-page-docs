@@ -49,6 +49,7 @@ export function SourceViewerContainer({
           initialRoute={resolveInitialRoute(sourceViewerPath)}
           labels={buildSourceViewerLabels(site.langmenu, language)}
           showSearchForm={false}
+          themeMode={isDarkMode ? "dark" : "light"}
         />
       </article>
     </ContentContainerWrapper>

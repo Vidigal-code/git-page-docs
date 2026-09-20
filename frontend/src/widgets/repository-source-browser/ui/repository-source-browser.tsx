@@ -14,6 +14,7 @@ import {
   type SourceViewerRoute,
 } from "@/entities/source-viewer";
 import { SourceViewerSearchForm } from "@/features/source-viewer-search";
+import { toTokenStyle, useHighlightedLines, type HighlightThemeMode } from "@/features/source-code-highlight";
 import type { SourceViewerLabels } from "../model/source-viewer-labels";
 import styles from "./repository-source-browser.module.css";
 
@@ -33,6 +34,8 @@ interface RepositorySourceBrowserProps {
   initialRoute: SourceViewerRoute;
   labels: SourceViewerLabels;
   showSearchForm?: boolean;
+  /** Active site theme's mode: picks the VS Code token palette (Dark+/Light+). */
+  themeMode?: HighlightThemeMode;
   onRouteChange?: (route: SourceViewerRoute, options?: { replace?: boolean }) => void;
 }
 
@@ -138,22 +141,45 @@ function buildCrumbs(path: string): Array<{ label: string; path: string }> {
   return crumbs;
 }
 
-function splitCodeLines(content: string): string[] {
-  return content.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+function normalizeLineEndings(content: string): string {
+  return content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 }
 
-const CodeViewer = memo(function CodeViewer({ content }: { content: string }) {
-  const lines = useMemo(() => splitCodeLines(content), [content]);
+interface CodeViewerProps {
+  content: string;
+  filePath: string;
+  themeMode: HighlightThemeMode;
+}
+
+const CodeViewer = memo(function CodeViewer({ content, filePath, themeMode }: CodeViewerProps) {
+  // Both the plain split and the tokenizer receive the same normalized text
+  // so token rows stay aligned with line numbers on CRLF files.
+  const normalizedContent = useMemo(() => normalizeLineEndings(content), [content]);
+  const lines = useMemo(() => normalizedContent.split("\n"), [normalizedContent]);
+  // VS Code-grade tokens (Shiki); null while loading or unsupported, in which
+  // case each row falls back to the plain text it already renders today.
+  const highlightedLines = useHighlightedLines(normalizedContent, filePath, themeMode);
   return (
     <div className={styles.codeScroll}>
       <table className={styles.codeTable}>
         <tbody>
-          {lines.map((line, index) => (
-            <tr key={index}>
-              <td className={styles.lineNumber}>{index + 1}</td>
-              <td className={styles.lineCode}>{line}</td>
-            </tr>
-          ))}
+          {lines.map((line, index) => {
+            const tokens = highlightedLines?.[index];
+            return (
+              <tr key={index}>
+                <td className={styles.lineNumber}>{index + 1}</td>
+                <td className={styles.lineCode}>
+                  {tokens
+                    ? tokens.map((token, tokenIndex) => (
+                        <span key={tokenIndex} style={toTokenStyle(token)}>
+                          {token.content}
+                        </span>
+                      ))
+                    : line}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -169,6 +195,7 @@ export function RepositorySourceBrowser({
   initialRoute,
   labels,
   showSearchForm = true,
+  themeMode = "dark",
   onRouteChange,
 }: RepositorySourceBrowserProps) {
   const [route, setRoute] = useState(initialRoute);
@@ -465,7 +492,9 @@ export function RepositorySourceBrowser({
             ) : null}
             {isLoadingFile ? <div className={styles.state}>{labels.loadingFile}</div> : null}
             {!isLoadingFile && selectedFile && viewMode === "preview" && selectedIsMarkdown ? <MarkdownPreview content={selectedFile.content} /> : null}
-            {!isLoadingFile && selectedFile && (viewMode === "code" || !selectedIsMarkdown) ? <CodeViewer content={selectedFile.content} /> : null}
+            {!isLoadingFile && selectedFile && (viewMode === "code" || !selectedIsMarkdown) ? (
+              <CodeViewer content={selectedFile.content} filePath={selectedFile.path} themeMode={themeMode} />
+            ) : null}
             {!isLoadingFile && !selectedFile && !error ? <div className={styles.state}>{labels.selectFile}</div> : null}
           </section>
         </div>

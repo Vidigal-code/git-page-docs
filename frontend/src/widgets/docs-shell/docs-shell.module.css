@@ -1,20 +1,18 @@
 .wrapper {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 280px 1fr;
+  /* Only the collapsed rail lives in the grid: the expanded sidebar floats
+     over the content (position: fixed below), so opening the menu never
+     pushes or reflows the page. */
+  grid-template-columns: 28px 1fr;
   background:
     radial-gradient(circle at 10% -20%, color-mix(in srgb, var(--primary) 22%, transparent), transparent 44%),
     radial-gradient(circle at 90% -30%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 42%),
     var(--background);
   color: var(--text);
-  transition: grid-template-columns 0.2s ease;
   width: 100%;
   max-width: 100%;
   overflow-x: clip;
-}
-
-.wrapperCollapsed {
-  grid-template-columns: 28px 1fr;
 }
 
 .sidebar {
@@ -24,15 +22,33 @@
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--card-background) 94%, transparent),
-      color-mix(in srgb, var(--background) 88%, transparent)
+      color-mix(in srgb, var(--card-background) 96%, var(--background)),
+      color-mix(in srgb, var(--background) 92%, var(--card-background))
     );
   padding: 18px 14px;
-  position: sticky;
+  /* Overlay panel: above the page content (header is z-index 20), below
+     every popup/drawer surface (quick nav 40, mobile drawer 50, ...). */
+  position: fixed;
   top: 0;
-  height: 100vh;
+  left: 0;
+  height: 100dvh;
+  width: 280px;
+  z-index: 30;
   overflow-y: auto;
-  transition: opacity 0.2s ease;
+  box-shadow: 16px 0 48px rgba(0, 0, 0, 0.45);
+  animation: sidebarSlideIn 0.2s ease;
+}
+
+@keyframes sidebarSlideIn {
+  from {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .wrapperCollapsed .sidebar {
@@ -237,6 +253,15 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* The expanded sidebar is out of the grid flow (fixed overlay), so the
+   content must stay pinned to the second column even when the collapsed
+   rail is not rendered. Scoped to desktop: mobile uses a single column. */
+@media (min-width: 1025px) {
+  .contentArea {
+    grid-column: 2;
+  }
 }
 
 .header {

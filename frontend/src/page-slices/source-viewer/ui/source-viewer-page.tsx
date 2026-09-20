@@ -111,6 +111,7 @@ export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) 
             <RepositorySourceBrowser
               initialRoute={resolvedInitialRoute}
               labels={labels}
+              themeMode={activeLayout?.mode === "light" ? "light" : "dark"}
               onRouteChange={(route, options) => {
                 const url = toFullPath(buildSourceViewerPath(route));
                 if (options?.replace) window.history.replaceState(null, "", url);
