@@ -25,6 +25,13 @@ export interface ProviderSpec {
   readonly auth: AuthStyle;
   readonly capabilities: ProviderCapabilities;
   readonly models: readonly ModelDescriptor[];
+  /**
+   * Environment variables that hold this provider's API key, in priority order.
+   * The single source for env-based credential detection; consumers read the
+   * first non-empty one instead of hardcoding names. Empty for keyless
+   * providers (Ollama).
+   */
+  readonly envVars: readonly string[];
 }
 
 const TEXT: ProviderCapabilities = { streaming: true, vision: false, audio: false };
@@ -38,6 +45,7 @@ function models(...ids: string[]): ModelDescriptor[] {
 export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   openai: {
     id: "openai",
+    envVars: ["OPENAI_API_KEY"],
     label: "OpenAI",
     family: "openai-compatible",
     defaultModel: "gpt-4o-mini",
@@ -48,6 +56,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   anthropic: {
     id: "anthropic",
+    envVars: ["ANTHROPIC_API_KEY"],
     label: "Anthropic",
     family: "anthropic",
     // Latest Claude API model IDs.
@@ -59,6 +68,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   gemini: {
     id: "gemini",
+    envVars: ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
     label: "Google Gemini",
     family: "gemini",
     defaultModel: "gemini-2.0-flash",
@@ -69,6 +79,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   openrouter: {
     id: "openrouter",
+    envVars: ["OPENROUTER_API_KEY"],
     label: "OpenRouter",
     family: "openai-compatible",
     defaultModel: "openai/gpt-4o-mini",
@@ -79,6 +90,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   ollama: {
     id: "ollama",
+    envVars: [],
     label: "Ollama (local)",
     family: "ollama",
     defaultModel: "llama3",
@@ -90,6 +102,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   "azure-openai": {
     id: "azure-openai",
+    envVars: ["AZURE_OPENAI_API_KEY"],
     label: "Azure OpenAI",
     family: "openai-compatible",
     defaultModel: "gpt-4o-mini",
@@ -101,6 +114,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   mistral: {
     id: "mistral",
+    envVars: ["MISTRAL_API_KEY"],
     label: "Mistral",
     family: "openai-compatible",
     defaultModel: "mistral-large-latest",
@@ -111,6 +125,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   deepseek: {
     id: "deepseek",
+    envVars: ["DEEPSEEK_API_KEY"],
     label: "DeepSeek",
     family: "openai-compatible",
     defaultModel: "deepseek-chat",
@@ -121,6 +136,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   cohere: {
     id: "cohere",
+    envVars: ["COHERE_API_KEY"],
     label: "Cohere",
     family: "cohere",
     defaultModel: "command-r-plus",
@@ -131,6 +147,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   groq: {
     id: "groq",
+    envVars: ["GROQ_API_KEY"],
     label: "Groq",
     family: "openai-compatible",
     defaultModel: "llama-3.3-70b-versatile",
@@ -141,6 +158,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   xai: {
     id: "xai",
+    envVars: ["XAI_API_KEY"],
     label: "xAI Grok",
     family: "openai-compatible",
     defaultModel: "grok-2-latest",
@@ -151,6 +169,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   together: {
     id: "together",
+    envVars: ["TOGETHER_API_KEY"],
     label: "Together AI",
     family: "openai-compatible",
     defaultModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
@@ -161,6 +180,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   fireworks: {
     id: "fireworks",
+    envVars: ["FIREWORKS_API_KEY"],
     label: "Fireworks AI",
     family: "openai-compatible",
     defaultModel: "accounts/fireworks/models/llama-v3p3-70b-instruct",
@@ -171,6 +191,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
   },
   perplexity: {
     id: "perplexity",
+    envVars: ["PERPLEXITY_API_KEY"],
     label: "Perplexity",
     family: "openai-compatible",
     defaultModel: "sonar",

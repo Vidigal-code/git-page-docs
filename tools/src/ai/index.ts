@@ -21,6 +21,11 @@ export { GeminiProvider } from "./providers/gemini-provider";
 export { OllamaProvider } from "./providers/ollama-provider";
 export { CohereProvider } from "./providers/cohere-provider";
 export {
+  resolveApiKeyFromEnv,
+  detectConfiguredProviders,
+  type EnvLookup,
+} from "./env-credentials";
+export {
   legacyProviderToCatalogId,
   parseLegacyProviderAndModel,
 } from "./legacy-adapter";

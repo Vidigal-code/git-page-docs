@@ -45,8 +45,9 @@ const params: CliRuntimeParams = {
 };
 
 async function main(): Promise<void> {
-  // `mcp start` owns stdout (the MCP stdio channel) — no banner/credits there.
-  const stdoutOwnedByCommand = process.argv[2] === "mcp";
+  // Commands that own stdout get no banner/credits: `mcp start` (the MCP stdio
+  // channel) and `chat` (streamed model output must be the only thing on stdout).
+  const stdoutOwnedByCommand = process.argv[2] === "mcp" || process.argv[2] === "chat";
   if (!stdoutOwnedByCommand) printBanner();
 
   // New informational/utility commands (version, doctor, provider, models,

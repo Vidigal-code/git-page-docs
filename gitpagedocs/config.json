@@ -692,10 +692,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "1.1.66",
-        "path": "gitpagedocs/docs/versions/1.1.66/config.json",
+        "id": "1.1.67",
+        "path": "gitpagedocs/docs/versions/1.1.67/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.1.66/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/1.1.67/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

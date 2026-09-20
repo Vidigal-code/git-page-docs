@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-09-20T01:00:49.611Z",
+  "generatedAt": "2026-09-20T04:59:33.163Z",
   "targets": [
     "gitpagedocs/config.json",
-    "gitpagedocs/docs/versions/1.1.66/config.json"
+    "gitpagedocs/docs/versions/1.1.67/config.json"
   ],
   "hashes": {
-    "gitpagedocs/config.json": "d085a0f18e56e488c08a42b9e824979e64a5be448989e5e10f020ca6b3c93109",
-    "gitpagedocs/docs/versions/1.1.66/config.json": "00ec2e707d734e47433f6a412873d990b35f203e9471007b99728d72176db77e"
+    "gitpagedocs/config.json": "a4b68e4b60d25a4af110c95e4fccc651dbde8cf778028e573d1a51d43f1b6b1e",
+    "gitpagedocs/docs/versions/1.1.67/config.json": "c8c77eab9b26881dd0c897e7470d9f3339b49d1be2dd58e03e2cfacffbc5537e"
   }
 }
