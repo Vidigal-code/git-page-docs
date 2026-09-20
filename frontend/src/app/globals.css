@@ -23,6 +23,16 @@
   box-sizing: border-box;
 }
 
+/* Every scroll surface follows the active theme. Declared per element (not
+   inherited from :root) so var() resolves against the nearest theme wrapper's
+   palette; the window scrollbar resolves against <html>, which the shells keep
+   in step with the active theme. Legacy engines without scrollbar-color keep
+   the ::-webkit-scrollbar styling declared in the shell stylesheets. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
 html,
 body {
   margin: 0;

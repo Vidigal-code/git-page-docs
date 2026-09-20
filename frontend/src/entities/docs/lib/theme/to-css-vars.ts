@@ -72,6 +72,20 @@ export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSPropert
       vars[cssVar] = value;
     }
   }
+  // Scrollbars must follow the active palette. Themes rarely declare explicit
+  // scrollbar colours, and the :root fallbacks bake in the default palette
+  // (custom properties resolve var() where they are declared), so derive them
+  // here on the theme wrapper, where var(--primary) is the theme's own accent.
+  // Explicit theme values (the loop above) win over these.
+  if (!colors.scrollbarTrack) {
+    vars["--scrollbar-track"] = "transparent";
+  }
+  if (!colors.scrollbarThumb) {
+    vars["--scrollbar-thumb"] = "color-mix(in srgb, var(--primary) 45%, transparent)";
+  }
+  if (!colors.scrollbarThumbHover) {
+    vars["--scrollbar-thumb-hover"] = "color-mix(in srgb, var(--primary) 70%, transparent)";
+  }
   return vars as CSSProperties;
 }
 

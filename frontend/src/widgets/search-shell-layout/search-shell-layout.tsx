@@ -1,5 +1,8 @@
+"use client";
+
 import type { ReactNode, CSSProperties } from "react";
 import { SiteFooter, type FooterConfig, type FooterDateMode } from "@/shared/ui/site-footer";
+import { useDocumentThemeVars } from "@/shared/lib/use-document-theme-vars";
 import styles from "./search-shell-layout.module.css";
 
 const DEFAULT_FOOTER_LABELS: Record<string, string> = {
@@ -29,6 +32,9 @@ export function SearchShellLayout({
   style,
   footerConfig,
 }: SearchShellLayoutProps) {
+  // Keeps the window scrollbar (owned by <html>, outside this wrapper) on the
+  // active palette across live theme switches.
+  useDocumentThemeVars(style);
   const resolvedFooter = footerConfig ?? {
     projectLabel: DEFAULT_FOOTER_LABELS[language] ?? DEFAULT_FOOTER_LABELS.en,
     linkName: "GitPageDocs",

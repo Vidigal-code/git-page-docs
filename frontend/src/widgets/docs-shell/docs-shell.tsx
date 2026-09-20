@@ -20,6 +20,7 @@ import { useDocsShellLabels } from "./model/use-docs-shell-labels";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
 import { getBreadcrumbTrail, getUrlParamsForPathClick } from "./model/menu-tree";
 import { getBasePath } from "@/shared/lib/base-path";
+import { useDocumentThemeVars } from "@/shared/lib/use-document-theme-vars";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
 import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference";
@@ -343,6 +344,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     () => toDocsShellCssVars(activeTheme, data.config.site),
     [activeTheme, data.config.site],
   );
+  // Keeps the window scrollbar (owned by <html>, outside the themed wrapper)
+  // on the active palette across live theme switches.
+  useDocumentThemeVars(cssVars);
   const labels = useDocsShellLabels(data, language);
 
   const {
