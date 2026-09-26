@@ -659,6 +659,18 @@
   max-width: 100%;
 }
 
+/* Content without a scrolling body (audio) sits in the middle of the
+ * viewport instead of hugging the top. Auto block margins center the card
+ * when there is room and fall back to top alignment when it overflows. */
+.contentContainerFullscreenInnerCentered {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentContainerFullscreenInnerCentered > * {
+  margin-block: auto;
+}
+
 /* Fullscreen: TOC center layout respected, scroll container for TOC navigation */
 .contentContainerFullscreenInner [data-toc-wrapper] {
   width: 100%;

@@ -1,5 +1,7 @@
 import type { GitPageDocsConfig, LoadedDocsData } from "@/entities/docs/model/types";
 import { loadRootConfig } from "./io/config-loader";
+import { tryReadJsonFile } from "./io/file-reader";
+import { localizeConfig } from "./config/localize-config";
 import { getLanguages } from "./utils/route-utils";
 import { resolveActiveVersionId, loadVersionConfig } from "./version/resolve-version";
 import { loadLayoutsAndThemes } from "./layouts/load-layouts";
@@ -11,7 +13,7 @@ import { buildEffectiveConfig } from "./config/build-effective-config";
 import { dedupeVersionEntriesById } from "../lib/dedupe-version-entries";
 
 export async function loadDocsData(slug: string[] | undefined, selectedVersionId?: string): Promise<LoadedDocsData> {
-  const localConfig = await loadRootConfig<GitPageDocsConfig>();
+  const localConfig = await localizeConfig(await loadRootConfig<GitPageDocsConfig>(), tryReadJsonFile);
   const {
     source,
     owner,

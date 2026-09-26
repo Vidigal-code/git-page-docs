@@ -16,6 +16,7 @@ export * from "./security";
 export * from "./config";
 export * from "./constants";
 export * from "./platform";
+export * from "./i18n";
 
 // Phase 5 — shared AI system.
 export * from "./ai";

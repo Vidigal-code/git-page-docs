@@ -129,18 +129,26 @@
       "icon": "FiSettings",
       "title": { "en": "Configuration", "pt": "Configuração", "es": "Configuración" },
       "lead": {
-        "en": "Everything in config.json: site, translations and versions.",
-        "pt": "Tudo no config.json: site, traduções e versões.",
-        "es": "Todo en config.json: site, traducciones y versiones."
+        "en": "config.json for site and versions; langs/ for every UI string.",
+        "pt": "config.json para site e versões; langs/ para todos os textos da UI.",
+        "es": "config.json para site y versiones; langs/ para todos los textos de la UI."
       },
-      "keywords": ["config", "configuration", "config.json", "site", "translations", "version", "versioncontrol", "settings"],
+      "keywords": ["config", "configuration", "config.json", "site", "translations", "langs", "langs.json", "langmenu", "language", "version", "versioncontrol", "settings"],
       "blocks": [
         {
           "type": "paragraph",
           "text": {
-            "en": "config.json has three top-level sections. site holds the chrome (name, languages, theme defaults, header icons, langmenu, AiChatEnabled, docsAccess). translations holds navigation/footer/not-found labels per language. VersionControl lists the documentation versions.",
-            "pt": "O config.json tem três seções no topo. site contém a aparência (name, idiomas, temas padrão, ícones do cabeçalho, langmenu, AiChatEnabled, docsAccess). translations contém os rótulos de navegação/rodapé/404 por idioma. VersionControl lista as versões da documentação.",
-            "es": "config.json tiene tres secciones de nivel superior. site contiene la apariencia (name, idiomas, temas por defecto, iconos de cabecera, langmenu, AiChatEnabled, docsAccess). translations contiene las etiquetas de navegación/pie/404 por idioma. VersionControl lista las versiones de la documentación."
+            "en": "config.json has two top-level sections. site holds the chrome (name, defaultLanguage, theme defaults, header icons, AiChatEnabled, docsAccess). VersionControl lists the documentation versions.",
+            "pt": "O config.json tem duas seções no topo. site contém a aparência (name, defaultLanguage, temas padrão, ícones do cabeçalho, AiChatEnabled, docsAccess). VersionControl lista as versões da documentação.",
+            "es": "config.json tiene dos secciones de nivel superior. site contiene la apariencia (name, defaultLanguage, temas por defecto, iconos de cabecera, AiChatEnabled, docsAccess). VersionControl lista las versiones de la documentación."
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "UI text lives next to it: gitpagedocs/langs.json lists the languages in menu order ({ \"languages\": [\"en\", \"pt\", \"es\"] }) and gitpagedocs/langs/<lang>.json holds that language's langmenu (header, search, source viewer, audio player, AI chat, docs-access labels) and translations (notFound, navigation, footer). To add a language, create its file and append the code to langs.json.",
+            "pt": "Os textos da UI ficam ao lado: gitpagedocs/langs.json lista os idiomas na ordem do menu ({ \"languages\": [\"en\", \"pt\", \"es\"] }) e gitpagedocs/langs/<lang>.json guarda o langmenu daquele idioma (cabeçalho, busca, visualizador de código, player de áudio, chat de IA, acesso aos docs) e as translations (notFound, navigation, footer). Para adicionar um idioma, crie o arquivo e inclua o código em langs.json.",
+            "es": "Los textos de la UI viven al lado: gitpagedocs/langs.json lista los idiomas en el orden del menú ({ \"languages\": [\"en\", \"pt\", \"es\"] }) y gitpagedocs/langs/<lang>.json guarda el langmenu de ese idioma (cabecera, búsqueda, visor de código, reproductor de audio, chat de IA, acceso a los docs) y las translations (notFound, navigation, footer). Para agregar un idioma, crea su archivo y agrega el código a langs.json."
           }
         },
         {
@@ -157,9 +165,9 @@
           "type": "callout",
           "tone": "info",
           "text": {
-            "en": "Old config.json files keep working: any missing site or translations field is backfilled from the current baseline, so icons and en/pt/es text never render empty.",
-            "pt": "config.json antigos continuam funcionando: qualquer campo ausente em site ou translations é preenchido a partir do baseline atual, então ícones e textos en/pt/es nunca ficam vazios.",
-            "es": "Los config.json antiguos siguen funcionando: cualquier campo ausente en site o translations se completa desde el baseline actual, así los iconos y el texto en/pt/es nunca quedan vacíos."
+            "en": "Old config.json files keep working, including ones that still inline site.langmenu / translations: the langs/ files win when both exist, and any missing site or text field is backfilled from the current baseline, so icons and en/pt/es text never render empty.",
+            "pt": "config.json antigos continuam funcionando, inclusive os que ainda trazem site.langmenu / translations inline: os arquivos de langs/ prevalecem quando os dois existem, e qualquer campo ausente em site ou nos textos é preenchido a partir do baseline atual, então ícones e textos en/pt/es nunca ficam vazios.",
+            "es": "Los config.json antiguos siguen funcionando, incluidos los que aún traen site.langmenu / translations inline: los archivos de langs/ prevalecen cuando existen ambos, y cualquier campo ausente en site o en los textos se completa desde el baseline actual, así los iconos y el texto en/pt/es nunca quedan vacíos."
           }
         }
       ]

@@ -8,6 +8,10 @@ import {
   isEmbedTrack,
   isNativePlayableTrack,
 } from "./get-audio-src";
+import { useExclusivePlayback } from "./use-exclusive-playback";
+
+/** Lets the media element mount before the autoplay attempt. */
+const AUTOPLAY_DELAY_MS = 300;
 
 function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -48,25 +52,35 @@ export function useAudioPlayer({
 
   const toggleLoop = useCallback(() => setLoopEnabled((prev) => !prev), []);
 
-  const play = useCallback(() => {
-    if (!currentTrack) return;
-    if (isNativePlayableTrack(currentTrack.type)) {
-      const el = audioRef.current;
-      if (el) {
-        el.loop = loopEnabled;
-        el.play().then(() => setPlaying(true)).catch(() => {});
-      }
-    } else if (isEmbedTrack(currentTrack.type)) {
-      setPlaying(true);
-    }
-  }, [currentTrack, loopEnabled]);
-
   const pause = useCallback(() => {
     if (isNativePlayableTrack(currentTrack?.type ?? "")) {
       audioRef.current?.pause();
     }
     setPlaying(false);
   }, [currentTrack?.type]);
+
+  const claimPlayback = useExclusivePlayback(pause);
+
+  const playNativeElement = useCallback(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    el.loop = loopEnabled;
+    el.play().then(() => setPlaying(true)).catch(() => {});
+  }, [loopEnabled]);
+
+  // Every path that starts sound goes through here, so the other players on
+  // the page are paused before this one makes a noise.
+  const play = useCallback(() => {
+    if (!currentTrack) return;
+    const isNative = isNativePlayableTrack(currentTrack.type);
+    if (!isNative && !isEmbedTrack(currentTrack.type)) return;
+    claimPlayback();
+    if (isNative) {
+      playNativeElement();
+    } else {
+      setPlaying(true);
+    }
+  }, [currentTrack, claimPlayback, playNativeElement]);
 
   const shouldPlayAfterSelectRef = useRef(false);
 
@@ -77,25 +91,23 @@ export function useAudioPlayer({
       setCurrentIndex(index);
       const track = tracks[index];
       if (track && isEmbedTrack(track.type)) {
+        claimPlayback();
         setPlaying(true);
       } else {
         shouldPlayAfterSelectRef.current = true;
       }
     },
-    [tracks]
+    [tracks, claimPlayback]
   );
 
   useEffect(() => {
     if (!shouldPlayAfterSelectRef.current || !currentTrack) return;
     if (isNativePlayableTrack(currentTrack.type)) {
-      const el = audioRef.current;
-      if (el) {
-        el.loop = loopEnabled;
-        el.play().then(() => setPlaying(true)).catch(() => {});
-      }
+      claimPlayback();
+      playNativeElement();
     }
     shouldPlayAfterSelectRef.current = false;
-  }, [currentIndex, currentTrack, loopEnabled]);
+  }, [currentIndex, currentTrack, claimPlayback, playNativeElement]);
 
   const togglePlay = useCallback(() => {
     if (needsPopoverForPlay) {
@@ -123,31 +135,18 @@ export function useAudioPlayer({
       const el = audioRef.current;
       if (el) {
         el.currentTime = 0;
-        if (playing) {
-          el.loop = loopEnabled;
-          el.play().then(() => setPlaying(true)).catch(() => {});
-        }
+        if (playing) playNativeElement();
       }
     } else if (isEmbedTrack(currentTrack.type)) {
       setRestartKey((k) => k + 1);
     }
-  }, [currentTrack, playing, loopEnabled]);
+  }, [currentTrack, playing, playNativeElement]);
 
   useEffect(() => {
     if (!autoPlayOnLoad || !currentTrack || tracks.length === 0) return;
-    const t = setTimeout(() => {
-      if (isNativePlayableTrack(currentTrack.type)) {
-        const el = audioRef.current;
-        if (el) {
-          el.loop = loopEnabled;
-          el.play().then(() => setPlaying(true)).catch(() => {});
-        }
-      } else if (isEmbedTrack(currentTrack.type)) {
-        setPlaying(true);
-      }
-    }, 300);
+    const t = setTimeout(play, AUTOPLAY_DELAY_MS);
     return () => clearTimeout(t);
-  }, [autoPlayOnLoad, currentTrack, loopEnabled, tracks.length]);
+  }, [autoPlayOnLoad, currentTrack, tracks.length, play]);
 
   const isNativeTrack = Boolean(currentTrack && isNativePlayableTrack(currentTrack.type));
 

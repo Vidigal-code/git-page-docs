@@ -16,6 +16,7 @@ import type {
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import type { AudioRouteControlsConfig } from "./content-type-containers/audio-route-controls";
+import { getFullscreenAlign, getFullscreenInnerClassName } from "./content-type-containers/fullscreen-alignment";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellUrlFullscreenOverlayProps {
@@ -148,6 +149,7 @@ export function DocsShellUrlFullscreenOverlay({
   })();
 
   const currentPage = data.pages?.[pageIndex] ?? data.pages?.[0];
+  const innerClassName = getFullscreenInnerClassName(getFullscreenAlign(params.type));
 
   return (
     <div
@@ -169,7 +171,7 @@ export function DocsShellUrlFullscreenOverlay({
       >
         <FiX aria-hidden />
       </button>
-      <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
+      <div ref={fullscreenInnerRef} className={innerClassName}>
         <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
           <PageContentArea
           currentPage={currentPage}

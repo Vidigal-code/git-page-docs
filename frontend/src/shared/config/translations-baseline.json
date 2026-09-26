@@ -1,57 +1,57 @@
 {
   "notFound": {
     "title": {
-      "pt": "Pagina nao encontrada",
       "en": "Page not found",
+      "pt": "Pagina nao encontrada",
       "es": "Pagina no encontrada"
     },
     "description": {
-      "pt": "A pagina de documentacao solicitada nao existe neste contexto de repositorio.",
       "en": "The requested documentation page does not exist in this repository context.",
+      "pt": "A pagina de documentacao solicitada nao existe neste contexto de repositorio.",
       "es": "La pagina de documentacion solicitada no existe en este contexto de repositorio."
     },
     "returnHome": {
-      "pt": "Voltar para inicio",
       "en": "Return Home",
+      "pt": "Voltar para inicio",
       "es": "Volver al inicio"
     }
   },
   "navigation": {
     "previous": {
-      "pt": "Voltar",
       "en": "Previous",
+      "pt": "Voltar",
       "es": "Volver"
     },
     "next": {
-      "pt": "Proximo",
       "en": "Next",
+      "pt": "Proximo",
       "es": "Siguiente"
     },
     "menuOpen": {
-      "pt": "Menu",
       "en": "Menu",
+      "pt": "Menu",
       "es": "Menu"
     },
     "menuClose": {
-      "pt": "Fechar",
       "en": "Close",
+      "pt": "Fechar",
       "es": "Cerrar"
     },
     "browsePrev": {
-      "pt": "Anterior",
       "en": "Previous",
+      "pt": "Anterior",
       "es": "Anterior"
     },
     "browseNext": {
-      "pt": "Proximo",
       "en": "Next",
+      "pt": "Proximo",
       "es": "Siguiente"
     }
   },
   "footer": {
     "footerLabel": {
-      "pt": "Projeto",
       "en": "Project",
+      "pt": "Projeto",
       "es": "Proyecto"
     }
   }

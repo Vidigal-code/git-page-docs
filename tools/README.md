@@ -15,11 +15,12 @@ The **shared business-logic core** of the [Git Page Docs](../README.md) monorepo
 | `errors/` | `AppError` + typed subclasses |
 | `filesystem/` | `FileService` (root-bounded list/read/write/search) |
 | `documentation/` | `DocumentationService`, `patchManagedRegion`, `DocUpdater` |
+| `i18n/` | Language bundles (`gitpagedocs/langs.json` + `langs/<lang>.json`): `loadLanguageBundles`, `applyLanguageBundles` (fold into legacy `site.langmenu` / `translations`), `splitLanguageBundles` (generator side); browser-safe |
 | `ports/` | Type-only contracts (logger, cache, crypto, security, config, ai) |
 
 ## Entry points (`exports`)
 
-`.` (full barrel) · `./ai` · `./errors` · `./ports` · `./crypto/web` · `./security/web` · `./cache/web` — the `web` subpaths are browser-safe (no `node:` imports) for the Next.js bundle.
+`.` (full barrel) · `./ai` · `./errors` · `./i18n` · `./ports` · `./crypto/web` · `./security/web` · `./cache/web` — the `web` subpaths and `./i18n` are browser-safe (no `node:` imports) for the Next.js bundle.
 
 ## Usage
 

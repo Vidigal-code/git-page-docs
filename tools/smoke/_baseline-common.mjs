@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { DOC_VERSIONS } from "../../cli/contracts/doc-versions.mjs";
+import { languageArtifactPaths } from "../../cli/contracts/langs-paths.mjs";
+import { SUPPORTED_LANGUAGES } from "../../cli/contracts/languages.mjs";
 
 export const BASELINE_FILE = path.join("tools", "smoke", "baseline.snapshot.json");
 
@@ -10,7 +12,8 @@ function toPortablePath(relativePath) {
 }
 
 export function getBaselineTargets() {
-  const targets = ["gitpagedocs/config.json"];
+  const langs = languageArtifactPaths("gitpagedocs");
+  const targets = ["gitpagedocs/config.json", langs.manifest, ...SUPPORTED_LANGUAGES.map(langs.bundle)];
   for (const version of DOC_VERSIONS) {
     targets.push(`gitpagedocs/docs/versions/${version}/config.json`);
   }

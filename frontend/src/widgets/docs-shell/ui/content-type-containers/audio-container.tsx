@@ -3,6 +3,7 @@
 import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
 import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
 import { AudioRouteControls, type AudioRouteControlsConfig } from "./audio-route-controls";
+import { getFullscreenAlign } from "./fullscreen-alignment";
 import styles from "../../docs-shell.module.css";
 
 function parseCssToStyle(css: string | undefined): React.CSSProperties {
@@ -29,8 +30,6 @@ interface AudioContainerProps {
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
   isDarkMode?: boolean;
-  /** When true, hide title and description - e.g. in URL fullscreen overlay */
-  hideTitleDescription?: boolean;
   browseNav?: BrowseNavProps;
   controlsConfig?: AudioRouteControlsConfig;
   /** Called when fullscreen is about to open (for URL sync) */
@@ -52,7 +51,6 @@ export function AudioContainer({
   controlsConfig,
   onFullscreenOpen,
   onFullscreenClose,
-  hideTitleDescription = false,
 }: AudioContainerProps) {
   const title = config?.title?.[language] ?? config?.title?.en;
   const description = config?.description?.[language] ?? config?.description?.en;
@@ -63,7 +61,7 @@ export function AudioContainer({
 
   const content = (
     <article className={styles.card}>
-      {!hideTitleDescription && titleIsVisible && title && (
+      {titleIsVisible && title && (
         <h1
           className={styles.contentTitleVideoInside}
           style={{ textAlign: "center", ...parseCssToStyle(titleCss) }}
@@ -79,7 +77,7 @@ export function AudioContainer({
           controls={controlsConfig}
         />
       )}
-      {!hideTitleDescription && descriptionIsVisible && description && (
+      {descriptionIsVisible && description && (
         <h3
           className={styles.contentDescriptionVideoInside}
           style={{ textAlign: "center", ...parseCssToStyle(descCss) }}
@@ -100,6 +98,7 @@ export function AudioContainer({
       marginTop={config?.marginTop}
       marginBottom={config?.marginBottom}
       browseNav={browseNav}
+      fullscreenAlign={getFullscreenAlign("audio")}
     >
       {content}
     </ContentContainerWrapper>

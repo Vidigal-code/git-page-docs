@@ -53,6 +53,21 @@ describe("E2E: CLI bin in a temp project", () => {
     const cfg = JSON.parse(readFileSync(path.join(dir, "gitpagedocs", "config.json"), "utf8"));
     expect(cfg.site).toBeTruthy();
     expect(cfg.VersionControl).toBeTruthy();
+    expect(cfg.site.langmenu).toBeUndefined();
+    expect(cfg.translations).toBeUndefined();
+  });
+
+  it("config-only ships the language manifest and one UI-strings bundle per language", () => {
+    const res = runCli([], dir);
+    expect(res.status).toBe(0);
+    const manifest = JSON.parse(readFileSync(path.join(dir, "gitpagedocs", "langs.json"), "utf8"));
+    expect(manifest.languages).toEqual(["en", "pt", "es"]);
+    for (const language of manifest.languages) {
+      const bundle = JSON.parse(readFileSync(path.join(dir, "gitpagedocs", "langs", `${language}.json`), "utf8"));
+      expect(typeof bundle.langmenu.menuOpen).toBe("string");
+      expect(typeof bundle.translations.navigation.next).toBe("string");
+    }
+    expect(res.stdout).toContain("gitpagedocs/langs.json");
   });
 
   it("--layoutconfig emits local layout templates into the standalone home", () => {

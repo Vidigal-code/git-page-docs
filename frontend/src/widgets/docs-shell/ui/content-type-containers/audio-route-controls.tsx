@@ -77,6 +77,7 @@ export function AudioRouteControls({ audioType, pathAudio, language, controls }:
           aria-label={playStatusLabel}
           title={playStatusLabel}
           data-active={playing || undefined}
+          data-testid="audio-route-toggle"
         >
           {renderAudioControlIcon(
             playing ? controls.pauseIcon : controls.playIcon,

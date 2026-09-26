@@ -36,12 +36,13 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 
 ## 3. Generated artifacts (config-only — `node cli/index.mjs`)
 
-- `gitpagedocs/config.json` (has `site` + `VersionControl`).
+- `gitpagedocs/config.json` (has `site` + `VersionControl`; no inline UI strings since 1.1.68).
+- `gitpagedocs/langs.json` (`{ "languages": ["en","pt","es"] }`) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
 - `gitpagedocs/icon.svg`.
 - Per version in `DOC_VERSIONS = ["1.0.0","1.1.0","1.1.1"]` (`cli/contracts/doc-versions.mjs`):
   `gitpagedocs/docs/versions/<v>/config.json` with array `routes-md` + `routes-html`.
 - `gitpagedocs/docs/versions/1.0.0/en/source-viewer` (HTML snapshot of the repo source — **drifts on every source change; not a regression signal**, see memory).
-- **Contract invariant** for the refactor = the `config.json` files stay byte-stable (baseline.snapshot.json). `source-viewer` drift is expected.
+- **Contract invariant** for the refactor = the `config.json`, `langs.json` and `langs/*.json` files stay byte-stable (baseline.snapshot.json). `source-viewer` drift is expected.
 
 ## 4. Human-facing report lines (`cli/application/report/config-only-reporter.mjs`)
 
@@ -77,7 +78,7 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 ```
 pnpm run smoke:cli       # config-only artifacts + schemas
 pnpm run smoke:flags     # parser + reporter flag contract (Phase 3)
-pnpm run baseline:check  # byte-level config.json contract
+pnpm run baseline:check  # byte-level config.json + langs contract
 pnpm run smoke:all       # all of the above
 ```
 <!-- gitpagedocs:audit-end -->

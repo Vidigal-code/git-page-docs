@@ -1,9 +1,16 @@
 /** Config-only command output messages - SRP: single place for all report messages */
 import { resolveRenderingUrl } from "../../builders/project-links.mjs";
 import { normalizeLayoutsDir } from "../../contracts/layouts-paths.mjs";
+import { languageArtifactPaths } from "../../contracts/langs-paths.mjs";
+import { SUPPORTED_LANGUAGES } from "../../contracts/languages.mjs";
 
 export function reportConfigOnlySuccess(options) {
-  return [`Generated: ${options.outputDir}/ (config-only)`, "No index.html/index.js generated."];
+  const langs = languageArtifactPaths(options.outputDir);
+  return [
+    `Generated: ${options.outputDir}/ (config-only)`,
+    `UI strings: ${langs.manifest} + ${langs.dir}/{${SUPPORTED_LANGUAGES.join(",")}}.json`,
+    "No index.html/index.js generated.",
+  ];
 }
 
 export function reportLayoutConfig(options) {

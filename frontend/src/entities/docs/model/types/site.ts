@@ -5,6 +5,8 @@ export type ThemeMode = "light" | "dark";
 export interface SiteConfig {
   name: string;
   defaultLanguage: LanguageCode;
+  /** Filled from gitpagedocs/langs.json when present; legacy configs may list it inline. */
+  supportedLanguages?: LanguageCode[];
   HideThemeSelector: boolean;
   ThemeDefault: string;
   ThemeModeDefault?: ThemeMode;
@@ -400,6 +402,7 @@ export interface SiteConfig {
   layoutsConfigPathTemplates?: string;
   repositorySearchHome?: boolean;
   rendering: string;
+  /** UI strings per language; assembled from gitpagedocs/langs/<lang>.json or read inline from legacy configs. */
   langmenu: Record<LanguageCode, Record<LanguageCode, string>>;
 }
 
@@ -407,7 +410,8 @@ export interface UiTranslationEntry {
   [language: string]: string;
 }
 
-export interface UiTranslationsConfig {
+/** A type alias (not an interface) so it stays assignable to the tools' inline-translations shape. */
+export type UiTranslationsConfig = {
   notFound?: {
     title?: UiTranslationEntry;
     description?: UiTranslationEntry;
@@ -424,4 +428,4 @@ export interface UiTranslationsConfig {
   footer?: {
     footerLabel?: UiTranslationEntry;
   };
-}
+};

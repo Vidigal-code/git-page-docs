@@ -6,10 +6,7 @@ import {
   resolveSourceViewerPath,
   resolveLayoutsLinks,
 } from "./project-links.mjs";
-import { DOCS } from "../content/docs.mjs";
 import { DOC_VERSIONS } from "../data/version-constants.mjs";
-import { defaultLangMenu } from "../data/i18n-langmenu.mjs";
-import { defaultTranslations } from "../data/i18n-translations.mjs";
 import { getDefaultSiteConfig } from "../data/default-site-config.mjs";
 
 export function buildRootConfig(options = {}) {
@@ -37,7 +34,7 @@ export function buildRootConfig(options = {}) {
     "source-viewer-path": sourceViewerPath,
   }));
 
-  const baseSiteConfig = getDefaultSiteConfig(DOCS, projectLink);
+  const baseSiteConfig = getDefaultSiteConfig(projectLink);
 
   return {
     site: {
@@ -51,11 +48,9 @@ export function buildRootConfig(options = {}) {
       rendering: renderingUrl,
       AiChatEnabled: true,
       docsAccess: { enabled: false, publicKey: "" },
-      langmenu: defaultLangMenu,
     },
     VersionControl: {
       versions: versionEntries,
     },
-    translations: defaultTranslations,
   };
 }

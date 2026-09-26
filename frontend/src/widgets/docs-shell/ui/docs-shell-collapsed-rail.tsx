@@ -38,6 +38,7 @@ export function CollapsedNavRail({
         onClick={onExpand}
         aria-label={menuOpenLabel}
         title={menuOpenLabel}
+        data-testid="sidebar-expand"
       >
         {navMenuConfig.sidebarExpandIcon.useReactIcon ? (
           <span style={navMenuConfig.sidebarExpandIcon.reactIconStyle}>

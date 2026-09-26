@@ -172,9 +172,10 @@ The version config can render a **Source code** container through \`routes-sourc
 
 ## Config keys (site)
 
-- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
+- \`name\`, \`defaultLanguage\`
 - \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
 - \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+- Languages and UI strings: \`gitpagedocs/langs.json\` + \`gitpagedocs/langs/<lang>.json\`
 
 ## Environment variables
 
@@ -316,7 +317,14 @@ Supported adapters:
 `,
     configuration: `# Configuration
 
-Runtime configuration lives in \`gitpagedocs/config.json\`.
+Runtime configuration lives in \`gitpagedocs/config.json\`. UI text lives next to it, one file per language.
+
+## Languages (\`langs.json\` + \`langs/\`)
+
+- \`gitpagedocs/langs.json\` lists the shipped languages in menu order: \`{ "languages": ["en", "pt", "es"] }\`.
+- \`gitpagedocs/langs/<lang>.json\` holds that language's strings: \`langmenu\` (header, search, source viewer, audio player, AI chat and docs-access labels) and \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
+- To add a language, create \`langs/<lang>.json\` and append its code to \`langs.json\`.
+- Older \`config.json\` files that still inline \`site.langmenu\` / \`translations\` keep working; when both exist, the \`langs/\` files win and any missing key is backfilled from the current release.
 
 ## \`site\` section
 
@@ -324,7 +332,6 @@ Important keys:
 
 - \`name\`
 - \`defaultLanguage\`
-- \`supportedLanguages\`
 - \`docsVersion\`
 - \`rendering\`
 - \`ThemeDefault\`
@@ -453,7 +460,7 @@ A pnpm + turborepo monorepo where all business logic lives in one shared core (\
 
 - **frontend/** — Next.js viewer (Feature-Sliced: \`app / widgets / features / entities / shared\`); static export.
 - **cli/** — the published \`gitpagedocs\` bin (hexagonal: \`presentation / application / domain / infrastructure\`) + \`cli/ai/\` (the AI documentation CLI).
-- **tools/** — \`@gitpagedocs/tools\`: \`ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ ports/\`.
+- **tools/** — \`@gitpagedocs/tools\`: \`ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ i18n/ ports/\`.
 - **mcp/** — \`@gitpagedocs/mcp\`: MCP tools + resources delegating to \`tools/\`.
 
 ## Main runtime modules (frontend)

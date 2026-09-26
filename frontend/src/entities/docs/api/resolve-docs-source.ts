@@ -3,6 +3,7 @@ import { readRemoteJsonFromRepo } from "./io/remote-fetcher";
 import { parseOwnerRepoFromRenderingUrl } from "./utils/url-utils";
 import { DEFAULT_CONFIG_PATH } from "@/shared/config/constants";
 import { withConfigDefaults } from "../lib/with-config-defaults";
+import { localizeConfig } from "./config/localize-config";
 import { isRepositorySearchEnabled, isGithubPagesBuild as isGithubPagesBuildFn } from "@/shared/lib/repository-search";
 
 export interface ResolvedDocsSource {
@@ -81,7 +82,7 @@ export async function resolveDocsSource(
   if (owner && repo) {
     const remoteConfig = await readRemoteJsonFromRepo<GitPageDocsConfig>(owner, repo, DEFAULT_CONFIG_PATH);
     if (remoteConfig) {
-      config = remoteConfig;
+      config = await localizeConfig(remoteConfig, (relativePath) => readRemoteJsonFromRepo(owner, repo, relativePath));
     } else if (isRepositoryRouteRequest) {
       hasGitPageDocs = false;
       config = localConfig;

@@ -34,6 +34,7 @@ export function AudioPlayerButton({
       onClick={onToggle}
       aria-label={label}
       title={label}
+      data-testid="audio-player-toggle"
     >
       <ReactIconByTag tag={iconTag} style={iconStyle} />
     </button>

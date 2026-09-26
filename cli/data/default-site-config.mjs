@@ -1,8 +1,8 @@
-export function getDefaultSiteConfig(DOCS, projectLink) {
+/** Site chrome defaults. The language list and UI strings live in langs.json + langs/. */
+export function getDefaultSiteConfig(projectLink) {
     return {
         name: "Git Pages Docs",
         defaultLanguage: "en",
-        supportedLanguages: Object.keys(DOCS || { en: 1, pt: 1, es: 1 }),
         HideThemeSelector: false,
         ThemeDefault: "aurora-dark",
         ThemeModeDefault: "dark",

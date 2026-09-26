@@ -9,6 +9,8 @@ import {
   normalizeToOutputPath,
 } from "./doc-path-resolver.mjs";
 import { layoutsArtifactPaths } from "../contracts/layouts-paths.mjs";
+import { languageArtifactPaths } from "../contracts/langs-paths.mjs";
+import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
 
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +31,7 @@ function listExistingVersionIds(root, outputDir) {
 function removeLegacySourceViewerFiles(root, outputDir) {
   const versionIds = listExistingVersionIds(root, outputDir);
   for (const versionId of versionIds) {
-    for (const language of ["pt", "en", "es"]) {
+    for (const language of SUPPORTED_LANGUAGES) {
       for (const fileName of ["source-viewer", "source-viewer.html"]) {
         const legacyPath = path.join(root, outputDir, "docs", "versions", versionId, language, fileName);
         if (existsSync(legacyPath)) {
@@ -75,6 +77,15 @@ async function writeLayoutArtifacts(options) {
   }
 }
 
+/** Write the language manifest and one UI-strings bundle per shipped language. */
+async function writeLanguageArtifacts(root, outputDir, artifacts) {
+  const paths = languageArtifactPaths(outputDir);
+  await writeJson(root, paths.manifest, artifacts.languageManifest);
+  for (const [language, bundle] of Object.entries(artifacts.languageBundles)) {
+    await writeJson(root, paths.bundle(language), bundle);
+  }
+}
+
 export async function writeConfigOnlyOutput(options) {
   const {
     root,
@@ -88,7 +99,7 @@ export async function writeConfigOnlyOutput(options) {
   } = options;
 
   // Keep only versioned docs output in docs/, removing legacy root language folders.
-  for (const legacyLanguageDir of ["en", "pt", "es"]) {
+  for (const legacyLanguageDir of SUPPORTED_LANGUAGES) {
     const legacyPath = path.join(root, outputDir, "docs", legacyLanguageDir);
     if (existsSync(legacyPath)) {
       rmSync(legacyPath, { recursive: true, force: true });
@@ -96,6 +107,7 @@ export async function writeConfigOnlyOutput(options) {
   }
 
   await writeJson(root, `${outputDir}/config.json`, artifacts.rootConfig);
+  await writeLanguageArtifacts(root, outputDir, artifacts);
   await writeText(root, `${outputDir}/icon.svg`, DEFAULT_ICON_SVG);
   await writeLayoutArtifacts({
     root,
@@ -146,7 +158,7 @@ export async function writeConfigOnlyOutput(options) {
     }
 
     // Ensure version folders always include an index file.
-    for (const language of ["pt", "en", "es"]) {
+    for (const language of SUPPORTED_LANGUAGES) {
       const fallbackIndex = artifacts.docs?.[language]?.index;
       if (!fallbackIndex) continue;
       const versionIndexPath = `${outputDir}/docs/versions/${versionId}/${language}/index.md`;

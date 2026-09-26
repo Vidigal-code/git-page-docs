@@ -333,7 +333,6 @@ export function PageContentArea({
               controlsConfig={audioRouteControlsConfig}
               onFullscreenOpen={audioFullscreenOpen}
               onFullscreenClose={onFullscreenClose}
-              hideTitleDescription={isUrlFullscreen}
             />
           );
         }

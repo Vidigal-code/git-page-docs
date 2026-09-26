@@ -1,19 +1,25 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * The in-docs AI chat drawer: password gate + encrypted credential storage,
  * mirroring the /ai console guarantees. A desktop-width viewport is forced so
- * the sidebar's AI button is visible under both the desktop and mobile
+ * the sidebar's AI button is reachable under both the desktop and mobile
  * projects — the gate/vault logic is viewport-independent.
  */
 test.describe("AI chat drawer", () => {
   const openButton = '[data-testid="ai-chat-open"]:visible';
 
+  /** The desktop sidebar starts collapsed; its AI button lives in the expanded overlay. */
+  async function openAiChat(page: Page): Promise<void> {
+    await page.locator('[data-testid="sidebar-expand"]:visible').first().click();
+    await page.locator(openButton).first().click();
+  }
+
   test("password gate, encrypted key storage, and persistence across reload", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/");
 
-    await page.locator(openButton).first().click();
+    await openAiChat(page);
 
     // First run → create-password gate inside the drawer.
     await expect(page.getByTestId("ai-chat-gate")).toBeVisible();
@@ -35,7 +41,7 @@ test.describe("AI chat drawer", () => {
 
     // Reload → vault persists → reopening the drawer requires the password.
     await page.reload();
-    await page.locator(openButton).first().click();
+    await openAiChat(page);
     await expect(page.getByTestId("drawer-password-input")).toBeVisible();
 
     // Wrong password is rejected.

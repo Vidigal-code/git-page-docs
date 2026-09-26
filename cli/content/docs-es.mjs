@@ -156,9 +156,10 @@ El config de version puede renderizar un contenedor **Codigo fuente** via \`rout
 
 ## Claves de config (site)
 
-- \`name\`, \`defaultLanguage\`, \`supportedLanguages\`
+- \`name\`, \`defaultLanguage\`
 - \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
 - \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
+- Idiomas y textos de la UI: \`gitpagedocs/langs.json\` + \`gitpagedocs/langs/<lang>.json\`
 
 ## Variables de entorno
 
@@ -167,7 +168,14 @@ El config de version puede renderizar un contenedor **Codigo fuente** via \`rout
 `,
     configuration: `# Configuracion
 
-La configuracion de runtime esta en \`gitpagedocs/config.json\`.
+La configuracion de runtime esta en \`gitpagedocs/config.json\`. Los textos de la UI viven al lado, un archivo por idioma.
+
+## Idiomas (\`langs.json\` + \`langs/\`)
+
+- \`gitpagedocs/langs.json\` lista los idiomas disponibles en el orden del menu: \`{ "languages": ["en", "pt", "es"] }\`.
+- \`gitpagedocs/langs/<lang>.json\` guarda los textos de ese idioma: \`langmenu\` (cabecera, busqueda, visor de codigo, reproductor de audio, chat de IA y acceso a los docs) y \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
+- Para agregar un idioma, crea \`langs/<lang>.json\` y agrega su codigo a \`langs.json\`.
+- Los \`config.json\` antiguos que aun traen \`site.langmenu\` / \`translations\` inline siguen funcionando; cuando existen ambos, los archivos de \`langs/\` prevalecen y cualquier clave ausente se completa desde la version actual.
 
 ## Seccion \`site\`
 
@@ -175,7 +183,6 @@ Claves principales:
 
 - \`name\`: titulo del proyecto en UI
 - \`defaultLanguage\`: idioma por defecto
-- \`supportedLanguages\`: lista de idiomas disponibles
 - \`HideThemeSelector\`: ocultar/mostrar selector de tema
 - \`ThemeDefault\`: id del tema inicial
 - \`ThemeModeDefault\`: modo inicial (\`light\` o \`dark\`)
@@ -293,7 +300,7 @@ El proyecto esta organizado por fronteras de feature y responsabilidades de runt
 
 - **frontend/** — visor Next.js (Feature-Sliced: app / widgets / features / entities / shared); export estatico.
 - **cli/** — el bin publicado \`gitpagedocs\` (hexagonal) + \`cli/ai/\` (CLI de documentacion con IA).
-- **tools/** — \`@gitpagedocs/tools\`: ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ ports/.
+- **tools/** — \`@gitpagedocs/tools\`: ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ i18n/ ports/.
 - **mcp/** — \`@gitpagedocs/mcp\`: herramientas + recursos MCP que delegan a tools/.
 
 ## Modulos principales (frontend)

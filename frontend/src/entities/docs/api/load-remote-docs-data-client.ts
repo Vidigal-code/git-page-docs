@@ -24,13 +24,14 @@ import {
   OFFICIAL_LAYOUTS_TEMPLATES_URL,
 } from "@/shared/config/remote-urls";
 import { buildRemoteTemplateUrl, templatesBaseFromConfigUrl } from "./layouts/remote-template-urls";
-import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
+import { DEFAULT_CONFIG_PATH, DEFAULT_HIERARCHY } from "@/shared/config/constants";
 import {
   fetchRepoText,
   fetchRepoJson,
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
 import { withConfigDefaults } from "../lib/with-config-defaults";
+import { localizeConfig } from "./config/localize-config";
 import { markdownToHtml } from "./utils/markdown";
 
 type VersionConfig = {
@@ -115,13 +116,20 @@ export interface OfficialSiteConfig {
   langmenu?: Record<string, Record<string, string>>;
 }
 
+const OFFICIAL_REPO = { owner: "Vidigal-code", repo: "git-page-docs" } as const;
+
+/** Reads a repo's config.json and folds its language bundles in (null when the repo has none). */
+async function fetchLocalizedRepoConfig(owner: string, repo: string): Promise<GitPageDocsConfig | null> {
+  const rawConfig = await fetchRepoJson<GitPageDocsConfig>(owner, repo, DEFAULT_CONFIG_PATH);
+  if (!rawConfig) {
+    return null;
+  }
+  return localizeConfig(rawConfig, (relativePath) => fetchRepoJson(owner, repo, relativePath));
+}
+
 export async function fetchOfficialSiteConfig(): Promise<OfficialSiteConfig | null> {
-  const config = await fetchRepoJson<{ site?: OfficialSiteConfig }>(
-    "Vidigal-code",
-    "git-page-docs",
-    "gitpagedocs/config.json",
-  );
-  return config?.site ?? null;
+  const config = await fetchLocalizedRepoConfig(OFFICIAL_REPO.owner, OFFICIAL_REPO.repo);
+  return (config?.site as OfficialSiteConfig | undefined) ?? null;
 }
 
 export function parseSupportedLanguage(input: string | null | undefined): SupportedLanguage {
@@ -364,13 +372,13 @@ export async function loadRemoteDocsData(
   selectedVersionId?: string,
   selectedLanguage: SupportedLanguage = "en",
 ): Promise<LoadedDocsData | null> {
-  const rawConfig = await fetchRepoJson<GitPageDocsConfig>(owner, repo, "gitpagedocs/config.json");
-  if (!rawConfig) {
+  const localizedConfig = await fetchLocalizedRepoConfig(owner, repo);
+  if (!localizedConfig) {
     return null;
   }
   // Backfill the `site` section so OLD config.json files inherit the current
   // config.json defaults (header control icons, en/pt/es langmenu, language).
-  const config = withConfigDefaults(rawConfig);
+  const config = withConfigDefaults(localizedConfig);
 
   const versions = dedupeVersionEntriesById(config.VersionControl?.versions ?? []);
   const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);

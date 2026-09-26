@@ -5,6 +5,7 @@ import { FiX } from "@/shared/ui/fallback-icons";
 import { MdFullscreen } from "@/shared/ui/fallback-icons";
 import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentBrowseNav, type BrowseNavConfig } from "../page-content-browse-nav";
+import { getFullscreenInnerClassName, type FullscreenAlign } from "./fullscreen-alignment";
 import styles from "../../docs-shell.module.css";
 
 const DEFAULT_CONTAINER_MARGIN = "0";
@@ -33,6 +34,8 @@ interface ContentContainerWrapperProps {
   marginBottom?: string;
   browseNav?: BrowseNavProps;
   browseNavPosition?: "top" | "bottom" | "both";
+  /** Vertical placement of the content inside the fullscreen dialog. */
+  fullscreenAlign?: FullscreenAlign;
 }
 
 export function ContentContainerWrapper({
@@ -47,6 +50,7 @@ export function ContentContainerWrapper({
   marginBottom,
   browseNav,
   browseNavPosition = "top",
+  fullscreenAlign = "start",
 }: ContentContainerWrapperProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const fullscreenInnerRef = useRef<HTMLDivElement>(null);
@@ -124,7 +128,7 @@ export function ContentContainerWrapper({
           >
             <FiX aria-hidden />
           </button>
-          <div ref={fullscreenInnerRef} className={styles.contentContainerFullscreenInner}>
+          <div ref={fullscreenInnerRef} className={getFullscreenInnerClassName(fullscreenAlign)}>
             <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
               {resolveChildren(null, { contentOnly: true })}
             </TocScrollContainerProvider>

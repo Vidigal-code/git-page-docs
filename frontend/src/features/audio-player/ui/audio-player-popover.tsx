@@ -196,6 +196,7 @@ export function AudioPlayerPopover({
                   <button
                     type="button"
                     onClick={() => onSelect(index)}
+                    data-testid="audio-track-option"
                     style={{
                       width: "100%",
                       padding: "10px 16px",
