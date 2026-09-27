@@ -56,58 +56,6 @@
   flex: 0 1 auto;
 }
 
-/* Brand and the optional back link travel together, so the mobile
-   space-between row keeps them on the left and the menu toggle on the right. */
-.brandGroup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  height: clamp(38px, 1.2vw + 30px, 42px);
-  padding: 0 12px;
-  border-radius: var(--control-radius, 10px);
-  border: var(--control-border, 1px solid var(--card-border));
-  background: var(--control-background, var(--card-background));
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: clamp(0.82rem, 0.4vw + 0.72rem, 0.95rem);
-  white-space: nowrap;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-}
-
-.backLink:hover {
-  color: var(--secondary);
-  border-color: color-mix(in srgb, var(--secondary) 55%, var(--card-border));
-}
-
-.backLink:focus-visible {
-  outline: none;
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--secondary) 28%, transparent);
-}
-
-@media (max-width: 640px) {
-  /* Icon-only on narrow screens; the label stays as the accessible name/tooltip. */
-  .backLink {
-    width: 42px;
-    min-width: 42px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .backLinkText {
-    display: none;
-  }
-}
-
 .brandLink {
   display: flex;
   align-items: center;

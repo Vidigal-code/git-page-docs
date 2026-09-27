@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaBars, FiArrowLeft, IoMdClose } from "@/shared/ui/fallback-icons";
+import { FaBars, IoMdClose } from "@/shared/ui/fallback-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ThemeSelector } from "@/features/theme-selector";
@@ -46,16 +46,9 @@ function SearchShellBrandIcon({
   );
 }
 
-/** An optional "back" affordance rendered beside the brand (e.g. the source viewer returning to the docs). */
-export interface SearchShellBackLink {
-  href: string;
-  label: string;
-}
-
 interface SearchShellHeaderProps {
   siteName: string;
   basePath: string;
-  backLink?: SearchShellBackLink;
   language: LanguageCode;
   languages: LanguageCode[];
   onLanguageChange: (lang: LanguageCode) => void;
@@ -79,7 +72,6 @@ interface SearchShellHeaderProps {
 export function SearchShellHeader({
   siteName,
   basePath: _basePath,
-  backLink,
   language,
   languages,
   onLanguageChange,
@@ -161,25 +153,17 @@ export function SearchShellHeader({
     <header className={styles.header}>
       <div className={styles.headerInner}>
         <div className={styles.headerLeft}>
-          <div className={styles.brandGroup}>
-            <Link href={homeHref} className={styles.brandLink} aria-label={siteName}>
-              <SearchShellBrandIcon
-                useReactHeaderIcon={useReactHeaderIcon}
-                reactHeaderIconTag={reactHeaderIconTag}
-                headerReactIconStyle={headerReactIconStyle}
-                iconImage={iconImage}
-                iconImgWidth={iconImgWidth}
-                iconImgHeight={iconImgHeight}
-              />
-              <strong>{siteName}</strong>
-            </Link>
-            {backLink && (
-              <Link href={backLink.href} className={styles.backLink} aria-label={backLink.label} title={backLink.label}>
-                <FiArrowLeft aria-hidden />
-                <span className={styles.backLinkText}>{backLink.label}</span>
-              </Link>
-            )}
-          </div>
+          <Link href={homeHref} className={styles.brandLink} aria-label={siteName}>
+            <SearchShellBrandIcon
+              useReactHeaderIcon={useReactHeaderIcon}
+              reactHeaderIconTag={reactHeaderIconTag}
+              headerReactIconStyle={headerReactIconStyle}
+              iconImage={iconImage}
+              iconImgWidth={iconImgWidth}
+              iconImgHeight={iconImgHeight}
+            />
+            <strong>{siteName}</strong>
+          </Link>
           <button
             type="button"
             className={styles.mobileToggle}

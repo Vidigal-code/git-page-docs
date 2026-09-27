@@ -38,6 +38,14 @@
   overflow-wrap: anywhere;
 }
 
+/* Actions on the title row: the optional back link and the GitHub link, side by side. */
+.titleActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .externalLink,
 .button,
 .treeButton,
@@ -593,6 +601,16 @@ output.state {
     width: 100%;
     min-width: 0;
     justify-content: center;
+  }
+
+  /* Back + GitHub share one full-width row instead of stacking. */
+  .titleActions {
+    width: 100%;
+  }
+
+  .titleActions .externalLink {
+    flex: 1 1 0;
+    width: auto;
   }
 
   .viewerHeader {

@@ -81,7 +81,6 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
       themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}
-      backLink={backLink}
       language={language}
       languages={data.availableLanguages}
       onLanguageChange={onLanguageChange}
@@ -117,6 +116,7 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
             <RepositorySourceBrowser
               initialRoute={resolvedInitialRoute}
               labels={labels}
+              backLink={backLink}
               themeId={activeThemeId}
               themeMode={activeLayout?.mode === "light" ? "light" : "dark"}
               onRouteChange={(route, options) => {

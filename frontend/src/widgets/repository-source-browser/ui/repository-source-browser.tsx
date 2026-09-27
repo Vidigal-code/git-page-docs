@@ -1,8 +1,9 @@
 "use client";
 
 import { memo, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { marked } from "marked";
-import { FiAlertCircle, FiExternalLink, FiFile, FiFolder, FiRefreshCw, FiSearch, FiX } from "@/shared/ui/fallback-icons";
+import { FiAlertCircle, FiArrowLeft, FiExternalLink, FiFile, FiFolder, FiRefreshCw, FiSearch, FiX } from "@/shared/ui/fallback-icons";
 import { trimSlashes } from "@/shared/lib/base-path";
 import {
   buildGithubTreeUrl,
@@ -60,6 +61,8 @@ interface RepositorySourceBrowserProps {
   /** Active site theme's mode: fallback palette (Dark+/Light+) for unmapped layouts. */
   themeMode?: HighlightThemeMode;
   onRouteChange?: (route: SourceViewerRoute, options?: { replace?: boolean }) => void;
+  /** Standalone page only: a link back to the site, rendered beside the GitHub link. */
+  backLink?: { href: string; label: string };
 }
 
 /** Sidebar placeholder line widths while the tree loads (mimics a file tree). */
@@ -379,6 +382,7 @@ export function RepositorySourceBrowser({
   themeId,
   themeMode = "dark",
   onRouteChange,
+  backLink,
 }: Readonly<RepositorySourceBrowserProps>) {
   const [route, setRoute] = useState(initialRoute);
   const [ownerInput, setOwnerInput] = useState(initialRoute.owner);
@@ -570,9 +574,16 @@ export function RepositorySourceBrowser({
           <h2 className={styles.title}>
             {route.owner}/{route.repo}
           </h2>
-          <a className={styles.externalLink} href={buildGithubTreeUrl(route)} target="_blank" rel="noreferrer">
-            <FiExternalLink aria-hidden /> GitHub
-          </a>
+          <div className={styles.titleActions}>
+            {backLink && (
+              <Link className={styles.externalLink} href={backLink.href} title={backLink.label}>
+                <FiArrowLeft aria-hidden /> {backLink.label}
+              </Link>
+            )}
+            <a className={styles.externalLink} href={buildGithubTreeUrl(route)} target="_blank" rel="noreferrer">
+              <FiExternalLink aria-hidden /> GitHub
+            </a>
+          </div>
         </div>
         {showSearchForm ? (
           <SourceViewerSearchForm
