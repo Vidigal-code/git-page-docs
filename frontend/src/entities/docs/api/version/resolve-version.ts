@@ -1,3 +1,4 @@
+import { expandVersionConfig } from "../../lib/expand-version-config";
 import type {
   AuthConfig,
   ContentTypeRouteConfig,
@@ -133,6 +134,7 @@ export async function loadVersionConfig(options: LoadVersionConfigOptions): Prom
     return undefined;
   }
 
-  const versionConfig = await readVersionConfig(versionPath, options);
+  const stored = await readVersionConfig(versionPath, options);
+  const versionConfig = stored ? expandVersionConfig(stored) : null;
   return versionConfig && hasVersionContent(versionConfig) ? versionConfig : undefined;
 }

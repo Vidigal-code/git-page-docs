@@ -10,6 +10,7 @@
     "./ai": "./src/ai/index.ts",
     "./errors": "./src/errors/index.ts",
     "./i18n": "./src/i18n/index.ts",
+    "./config-format": "./src/config-format/index.ts",
     "./ports": "./src/ports/index.ts",
     "./crypto/web": "./src/crypto/web.ts",
     "./security/web": "./src/security/web.ts",

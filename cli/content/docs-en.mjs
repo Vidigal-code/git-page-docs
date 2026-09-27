@@ -391,6 +391,10 @@ Version configs support multiple content types:
 
 Each route can include \`title\`, \`description\` (per language), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 
+Settings every route shares are written once in \`routeDefaults\` at the top of the version config; each route keeps only its own values, and a value written on a route wins over \`routeDefaults\`.
+
+Header icons live in \`site.icons\`: \`defaults\` holds what all icons share (\`reactIcon\`, \`colorDark\`, \`colorLight\`, \`size\`, \`imgDark\`, \`imgLight\`, \`imgWidth\`, \`imgHeight\`) and each icon entry sets its \`tag\` plus any difference (\`null\` removes a field). The older flat keys (\`IconNavMenuOpenReactIconesTag\`, …) still work and win when both are present.
+
 ## Route-level variables (blockLink, container, url, browseAll)
 
 Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`routes-audio\`:

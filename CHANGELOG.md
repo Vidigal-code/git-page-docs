@@ -5,6 +5,18 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
 
 ## Unreleased
 
+### Compact gitpagedocs config (no repeated values)
+
+- `gitpagedocs/config.json` stores the header icons as `site.icons` (`defaults` + one entry per icon
+  with its `tag` and differences) instead of 279 flat `Icon*` keys: 16 KB -> 5.4 KB.
+- Version configs store the settings every route shares once in `routeDefaults`: 26.5 KB -> 18.5 KB
+  for the shipped version.
+- New browser-safe `@gitpagedocs/tools/config-format` (`compactSiteIcons` / `expandSiteIcons`,
+  `factorRouteDefaults` / `applyRouteDefaults`): the generator compacts on write, the viewer expands in
+  `withConfigDefaults` and in both version-config readers, and the site baseline stays flat. Flat
+  0.0.x configs keep working; a flat key or a value on a route wins over the compact form. Round-trip
+  tests guard that expanding a compacted config gives back exactly the original.
+
 ### Introduction guide motion
 
 - `/introduction-guide` gains scroll motion built with Motion for React (`motion` 13, `LazyMotion` +

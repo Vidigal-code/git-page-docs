@@ -1,3 +1,4 @@
+import { applyRouteDefaults, expandSiteIcons } from "@gitpagedocs/tools/config-format";
 import type { GitPageDocsConfig, SiteConfig, UiTranslationsConfig } from "@/entities/docs/model/types";
 import siteBaseline from "@/shared/config/site-baseline.json";
 import translationsBaseline from "@/shared/config/translations-baseline.json";
@@ -51,11 +52,15 @@ function deepMergeDefaults<T>(base: T, override: unknown): T {
 
 /**
  * Returns a config whose `site` and `translations` sections are backfilled with the
- * baseline defaults. Only chrome defaults are merged — routes, menus, auth and
- * VersionControl come from the loaded config untouched (they are deployment content).
+ * baseline defaults. The compact forms are expanded first (`site.icons` into the
+ * flat `Icon*` keys, `routeDefaults` under every route), so every consumer reads
+ * one shape. Only chrome defaults are merged — routes, menus, auth and
+ * VersionControl come from the loaded config (they are deployment content).
  */
 export function withConfigDefaults(config: GitPageDocsConfig): GitPageDocsConfig {
-  const mergedSite = deepMergeDefaults(SITE_CONFIG_DEFAULTS, config?.site);
-  const mergedTranslations = deepMergeDefaults(TRANSLATIONS_CONFIG_DEFAULTS, config?.translations);
-  return { ...config, site: mergedSite, translations: mergedTranslations };
+  const expanded = applyRouteDefaults(config as unknown as Record<string, unknown>) as unknown as GitPageDocsConfig;
+  const site = expanded?.site ? (expandSiteIcons(expanded.site as unknown as Record<string, unknown>) as unknown as SiteConfig) : undefined;
+  const mergedSite = deepMergeDefaults(SITE_CONFIG_DEFAULTS, site);
+  const mergedTranslations = deepMergeDefaults(TRANSLATIONS_CONFIG_DEFAULTS, expanded?.translations);
+  return { ...expanded, site: mergedSite, translations: mergedTranslations };
 }

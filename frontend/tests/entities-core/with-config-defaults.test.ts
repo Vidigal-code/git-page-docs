@@ -57,3 +57,46 @@ describe("withConfigDefaults", () => {
     expect(JSON.stringify(TRANSLATIONS_CONFIG_DEFAULTS)).toBe(translationsBefore);
   });
 });
+
+describe("withConfigDefaults with the compact config format", () => {
+  it("expands site.icons into the flat Icon* keys the viewer reads", () => {
+    const config = {
+      site: {
+        name: "Compact",
+        icons: {
+          defaults: { reactIcon: true, colorDark: "White", colorLight: "black", size: "25px" },
+          NavMenuOpen: { tag: "FaBars", size: "22px" },
+        },
+      },
+    } as unknown as GitPageDocsConfig;
+
+    const site = withConfigDefaults(config).site as unknown as Record<string, unknown>;
+
+    expect(site).not.toHaveProperty("icons");
+    expect(site.IconNavMenuOpenReactIconesTag).toBe("FaBars");
+    expect(site.IconNavMenuOpenReactIconesTagSize).toBe("22px");
+    expect(site.IconNavMenuOpenReactIconesTagColorDark).toBe("White");
+  });
+
+  it("applies routeDefaults under every route, keeping route values", () => {
+    const config = {
+      site: { name: "Routes" },
+      routeDefaults: { titleCss: "font-weight: 700;", marginTop: "" },
+      "routes-md": [{ id: 1, marginTop: "8px" }, { id: 2 }],
+    } as unknown as GitPageDocsConfig;
+
+    const merged = withConfigDefaults(config) as unknown as Record<string, unknown>;
+
+    expect(merged).not.toHaveProperty("routeDefaults");
+    expect(merged["routes-md"]).toEqual([
+      { id: 1, titleCss: "font-weight: 700;", marginTop: "8px" },
+      { id: 2, titleCss: "font-weight: 700;", marginTop: "" },
+    ]);
+  });
+
+  it("keeps a flat 0.0.x config working unchanged", () => {
+    const config = { site: { name: "Flat", IconNavMenuOpenReactIconesTag: "FaBars" } } as unknown as GitPageDocsConfig;
+    const site = withConfigDefaults(config).site as unknown as Record<string, unknown>;
+    expect(site.IconNavMenuOpenReactIconesTag).toBe("FaBars");
+  });
+});

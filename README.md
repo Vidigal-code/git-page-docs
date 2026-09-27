@@ -289,6 +289,28 @@ Behavior:
 - If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
 - If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagelayouts/**` or your custom paths).
 
+## Compact config format
+
+`gitpagedocs/config.json` and each version config store every shared value once:
+
+- `site.icons` replaces the 279 flat `Icon*` keys: `defaults` holds what all header icons share
+  (`reactIcon`, `colorDark`, `colorLight`, `size`, `imgDark`, `imgLight`, `imgWidth`, `imgHeight`),
+  and each icon entry sets its `tag` plus any difference (`null` removes a field):
+
+  ```json
+  "icons": {
+    "defaults": { "reactIcon": true, "colorDark": "White", "colorLight": "black", "size": "25px" },
+    "NavMenuOpen": { "tag": "FaBars", "size": "22px" }
+  }
+  ```
+
+- `routeDefaults` (version config) holds the route settings every route shares (title/description
+  CSS, positions, visibility, margins, `blockLink`, `browseAll`); routes keep only their own values.
+
+The viewer expands both forms when it loads a config (`@gitpagedocs/tools/config-format`), so the
+flat keys still work: 0.0.x configs load unchanged, and a flat key or a value written on a route wins
+over the compact form.
+
 ## Version selector visibility
 
 In the docs shell, the **version** dropdown is hidden when `VersionControl.versions` resolves to **at most one unique** `id`:

@@ -55,6 +55,23 @@ describe("loadVersionConfig", () => {
     expect(requestedUrls(fetchSpy)).toEqual(["https://raw.githubusercontent.com/o/r/main/gitpagedocs/docs/v1/config.json"]);
   });
 
+  it("expands routeDefaults stored in the version config into every route", async () => {
+    stubFetch([
+      [
+        "example.com/compact.json",
+        { routeDefaults: { blockLink: true, marginTop: "" }, "routes-md": [{ id: 1, marginTop: "4px" }, { id: 2 }] },
+      ],
+    ]);
+
+    const result = await loadVersionConfig({ versionEntry: { id: "v1", path: "https://example.com/compact.json" }, source: "local" });
+
+    expect(result).not.toHaveProperty("routeDefaults");
+    expect(result?.["routes-md"]).toEqual([
+      { id: 1, blockLink: true, marginTop: "4px" },
+      { id: 2, blockLink: true, marginTop: "" },
+    ]);
+  });
+
   it("prefers PathConfig over path", async () => {
     const fetchSpy = stubFetch([["from-path-config.json", routesOnly]]);
 

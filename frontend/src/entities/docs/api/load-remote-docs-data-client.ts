@@ -32,6 +32,7 @@ import {
   fetchUrlJson,
 } from "@/shared/api/fetch-client";
 import { withConfigDefaults } from "../lib/with-config-defaults";
+import { expandVersionConfig } from "../lib/expand-version-config";
 import { localizeConfig } from "./config/localize-config";
 import { applyLanguageToggles } from "./utils/route-utils";
 import { markdownToHtml } from "./utils/markdown";
@@ -221,7 +222,8 @@ async function loadVersionConfig(owner: string, repo: string, versionEntry: Vers
   }
 
   if (/^https?:\/\//i.test(versionPath)) {
-    return await fetchUrlJson<VersionConfig>(versionPath);
+    const fetched = await fetchUrlJson<VersionConfig>(versionPath);
+    return fetched ? expandVersionConfig(fetched) : null;
   }
 
   const normalizedPathCandidates = Array.from(
@@ -230,7 +232,7 @@ async function loadVersionConfig(owner: string, repo: string, versionEntry: Vers
   for (const pathCandidate of normalizedPathCandidates) {
     const candidateConfig = await fetchRepoJson<VersionConfig>(owner, repo, pathCandidate);
     if (candidateConfig) {
-      return candidateConfig;
+      return expandVersionConfig(candidateConfig);
     }
   }
 

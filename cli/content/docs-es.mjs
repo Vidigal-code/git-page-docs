@@ -205,6 +205,7 @@ Claves principales:
 - \`docsVersion\`: version seleccionada por defecto
 - \`ActiveNavigation\`: habilita anterior/siguiente
 - \`FocusMode\`: habilita modo foco/lectura
+- \`icons\`: iconos de la cabecera. \`icons.defaults\` guarda lo que todos comparten (\`reactIcon\`, \`colorDark\`, \`colorLight\`, \`size\`, \`imgDark\`, \`imgLight\`, \`imgWidth\`, \`imgHeight\`) y cada icono define su \`tag\` y lo que cambia (\`null\` quita un campo). Las claves planas de abajo siguen valiendo y ganan cuando existen ambas formas.
 - \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamano del icono principal
 - \`IconImageMenuHeaderLightImg\`, \`IconImageMenuHeaderDarkImg\`: icono principal (light/dark)
 - \`IconProjectLinkImgWidth\`, \`IconProjectLinkImgHeight\`: tamano del icono enlace del proyecto
@@ -255,6 +256,8 @@ Los configs de version soportan multiples tipos:
 - \`hierarchyMenu\`: orden de secciones del menu \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
 
 Cada ruta puede incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
+
+Los ajustes que comparten todas las rutas se escriben una sola vez en \`routeDefaults\`, al inicio del config de la version; cada ruta guarda solo sus propios valores, y un valor escrito en la ruta gana sobre \`routeDefaults\`.
 
 ## Variables por ruta (blockLink, container, url, browseAll)
 

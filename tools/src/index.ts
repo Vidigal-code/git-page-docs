@@ -21,6 +21,9 @@ export * from "./i18n";
 // Phase 5 — shared AI system.
 export * from "./ai";
 
+// Compact config formats (icons + route defaults).
+export * from "./config-format";
+
 // Phase 7 — filesystem + documentation services.
 export * from "./filesystem";
 export * from "./documentation";

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-27T19:30:43.671Z",
+  "generatedAt": "2026-09-27T20:17:08.483Z",
   "targets": [
     "gitpagedocs/config.json",
     "gitpagedocs/langs/en.json",
@@ -8,10 +8,10 @@
     "gitpagedocs/docs/versions/0.0.3/config.json"
   ],
   "hashes": {
-    "gitpagedocs/config.json": "13b078c5033730d17e3225553a59179ab960d2eca8c464f8fb1a3c3305c08d9d",
+    "gitpagedocs/config.json": "0085bbe40c294890ff99e157571153255dead4089bd33d244bab3bf5262c65e2",
     "gitpagedocs/langs/en.json": "5efaddcd0429f5f2e632850a13d923d2da2a8720292bb00d642f81357772eee1",
     "gitpagedocs/langs/pt.json": "f29cfa74721179058914edffc078beb9a5bd30a6f811aa9ef11ff9eb89212f85",
     "gitpagedocs/langs/es.json": "bfd6093ba9112be0568817b40ef2d1bc73f0c96f3c8cdb3461af421df946a0cd",
-    "gitpagedocs/docs/versions/0.0.3/config.json": "3fcf4338ce749ccf279bd020602ec23062ffb2f168312fb5c03bc55ccbd8eb31"
+    "gitpagedocs/docs/versions/0.0.3/config.json": "a32d92911de90617e3a5770f586dc49119ee74ebbfb63821583b11c3f61e97f4"
   }
 }

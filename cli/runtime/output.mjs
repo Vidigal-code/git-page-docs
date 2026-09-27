@@ -11,6 +11,7 @@ import {
 import { layoutsArtifactPaths } from "../contracts/layouts-paths.mjs";
 import { languageArtifactPaths } from "../contracts/langs-paths.mjs";
 import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
+import { compactSiteIcons, factorRouteDefaults } from "@gitpagedocs/tools/config-format";
 
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,7 +66,7 @@ async function writeLanguageArtifacts(root, outputDir, artifacts) {
 
 async function writeVersionConfigs(root, outputDir, versionConfigs) {
   for (const [versionId, versionConfig] of Object.entries(versionConfigs)) {
-    await writeJson(root, `${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);
+    await writeJson(root, `${outputDir}/docs/versions/${versionId}/config.json`, factorRouteDefaults(versionConfig));
   }
 }
 
@@ -143,7 +144,8 @@ export async function writeConfigOnlyOutput(options) {
     createThemeTemplate,
   } = options;
 
-  await writeJson(root, `${outputDir}/config.json`, artifacts.rootConfig);
+  // Stored compact: shared icon values and route settings are written once.
+  await writeJson(root, `${outputDir}/config.json`, { ...artifacts.rootConfig, site: compactSiteIcons(artifacts.rootConfig.site) });
   await writeLanguageArtifacts(root, outputDir, artifacts);
   await writeText(root, `${outputDir}/icon.svg`, DEFAULT_ICON_SVG);
   await writeLayoutArtifacts({

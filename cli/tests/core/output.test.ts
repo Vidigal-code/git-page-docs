@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import os from "node:os";
 import path from "node:path";
 // @ts-expect-error .mjs runtime module is type-less in this package.
+import { applyRouteDefaults, expandSiteIcons } from "@gitpagedocs/tools/config-format";
 import * as output from "../../runtime/output.mjs";
 // @ts-expect-error .mjs runtime module is type-less in this package.
 import * as orchestrator from "../../builders/config-orchestrator.mjs";
@@ -114,7 +115,10 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
 
     const rootConfigText = readFileSync(at(root, "gitpagedocs/config.json"), "utf8");
     expect(rootConfigText.endsWith("\n")).toBe(true);
-    expect(JSON.parse(rootConfigText)).toEqual(artifacts.rootConfig);
+    // Stored compact (icons written once); expanding it gives back the generated config.
+    const storedRoot = JSON.parse(rootConfigText);
+    expect(storedRoot.site.icons).toBeDefined();
+    expect({ ...storedRoot, site: expandSiteIcons(storedRoot.site) }).toEqual(artifacts.rootConfig);
     expect(readFileSync(at(root, "gitpagedocs/icon.svg"), "utf8").startsWith("<?xml")).toBe(true);
 
     for (const language of SUPPORTED_LANGUAGES) {
@@ -128,7 +132,7 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
     }
 
     for (const id of DOC_VERSIONS) {
-      expect(readJson(root, `gitpagedocs/docs/versions/${id}/config.json`)).toEqual(artifacts.versionConfigs[id]);
+      expect(applyRouteDefaults(readJson(root, `gitpagedocs/docs/versions/${id}/config.json`))).toEqual(artifacts.versionConfigs[id]);
       for (const language of SUPPORTED_LANGUAGES) {
         const badge = `${BADGES[language]}${id}`;
         const gettingStarted = readFileSync(at(root, `gitpagedocs/docs/versions/${id}/${language}/getting-started.md`), "utf8");
@@ -221,7 +225,7 @@ describe("writeConfigOnlyOutput with synthetic artifacts", () => {
 
     expect(readJson(root, "out/config.json")).toEqual(artifacts.rootConfig);
     expect(readJson(root, "out/langs/en.json")).toEqual(artifacts.languageBundles.en);
-    expect(readJson(root, `out/docs/versions/${versionId}/config.json`)).toEqual(artifacts.versionConfigs[versionId]);
+    expect(applyRouteDefaults(readJson(root, `out/docs/versions/${versionId}/config.json`))).toEqual(artifacts.versionConfigs[versionId]);
     expect(readJson(root, "out/docs/versions/0.0.1/config.json")).toEqual({});
 
     // Already tagged content is written unchanged; unknown keys and languages are skipped.

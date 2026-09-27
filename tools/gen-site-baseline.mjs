@@ -25,6 +25,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { applyLanguageBundles, loadConfigLanguageBundles } from "./src/i18n/language-bundles.ts";
+import { expandSiteIcons } from "./src/config-format/site-icons.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const configPath = path.join(root, "gitpagedocs", "config.json");
@@ -49,7 +50,8 @@ if (!bundles) {
 }
 const config = applyLanguageBundles(rawConfig, bundles);
 
-const siteBaseline = { ...config.site };
+// config.json stores icons compactly; the baseline keeps the flat keys the viewer reads.
+const siteBaseline = { ...expandSiteIcons(config.site) };
 delete siteBaseline.languages;
 delete siteBaseline.supportedLanguages;
 

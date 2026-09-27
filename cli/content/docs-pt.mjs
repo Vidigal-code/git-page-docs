@@ -205,6 +205,7 @@ Principais chaves:
 - \`docsVersion\`: versao inicial selecionada
 - \`ActiveNavigation\`: habilita comportamento de anterior/proximo
 - \`FocusMode\`: habilita modo foco/leitura
+- \`icons\`: icones do cabecalho. \`icons.defaults\` guarda o que todos compartilham (\`reactIcon\`, \`colorDark\`, \`colorLight\`, \`size\`, \`imgDark\`, \`imgLight\`, \`imgWidth\`, \`imgHeight\`) e cada icone define seu \`tag\` e o que muda (\`null\` remove um campo). As chaves planas abaixo continuam valendo e vencem quando as duas formas existem.
 - \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamanho do icone principal
 - \`IconImageMenuHeaderLightImg\`, \`IconImageMenuHeaderDarkImg\`: icone principal (light/dark)
 - \`IconProjectLinkImgWidth\`, \`IconProjectLinkImgHeight\`: tamanho do icone link do projeto
@@ -255,6 +256,8 @@ Configs de versao suportam multiplos tipos:
 - \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 }\`
 
 Cada rota pode incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
+
+Configuracoes que todas as rotas compartilham ficam uma unica vez em \`routeDefaults\`, no topo do config da versao; cada rota guarda so os proprios valores, e um valor escrito na rota vence o \`routeDefaults\`.
 
 ## Variaveis por rota (blockLink, container, url, browseAll)
 
