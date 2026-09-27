@@ -34,6 +34,7 @@
     "sourceViewerCode": "Codigo",
     "sourceViewerEntryHint": "Explore os arquivos de um repositorio sem abrir a documentacao.",
     "sourceViewerEntryAction": "Abrir o visualizador de codigo",
+    "sourceViewerBackLabel": "Voltar",
     "lastUpdateVersionLabel": "Ultima versao de atualizacao",
     "darkMode": "Modo escuro",
     "lightMode": "Modo claro",

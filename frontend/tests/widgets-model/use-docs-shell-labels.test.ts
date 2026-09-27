@@ -108,16 +108,20 @@ describe("buildSourceViewerLabels", () => {
       selectFile: "Select a file",
       preview: "Preview",
       code: "Code",
+      back: "Back",
     });
 
     const langmenu = {
       en: { searchOwnerLabel: "Org", sourceViewerCode: "Source" },
-      pt: { searchOwnerLabel: "Organização" },
+      pt: { searchOwnerLabel: "Organização", sourceViewerBackLabel: "Voltar" },
     };
     expect(buildSourceViewerLabels(langmenu, "pt")).toMatchObject({
       owner: "Organização",
       code: "Source",
       repo: "Repository",
+      back: "Voltar",
     });
+    // No `back` copy for the language and none in English either: the built-in fallback stays.
+    expect(buildSourceViewerLabels(langmenu, "en").back).toBe("Back");
   });
 });

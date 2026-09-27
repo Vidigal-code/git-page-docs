@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { act, renderHook, cleanup } from "@testing-library/react";
 import type { LayoutItem } from "@/entities/docs";
 import { useStandaloneShellPreferences } from "@/widgets/search-shell-header/model/use-standalone-shell-preferences";
+import { buildHomeHref } from "@/widgets/search-shell-header/model/home-href";
 import { STORAGE_KEYS, makeLayouts, setWindowUrl } from "./fixtures";
 
 const nav = vi.hoisted(() => ({ searchParams: new URLSearchParams(), pathname: "/search", replace: vi.fn() }));
@@ -167,5 +168,23 @@ describe("useStandaloneShellPreferences", () => {
     expect(result.current.language).toBe("pt");
     act(() => result.current.onToggleMode());
     expect(result.current.activeThemeId).toBe("aurora-light");
+  });
+});
+
+describe("buildHomeHref", () => {
+  it("returns the site root carrying the active theme and its mode", () => {
+    expect(buildHomeHref({ themeId: "skyline-dark", mode: "dark" })).toBe("/?theme=skyline-dark&modetheme=dark");
+    expect(buildHomeHref({ themeId: "aurora-light", mode: "light" })).toBe("/?theme=aurora-light&modetheme=light");
+  });
+
+  it("carries whichever of theme or mode is known and encodes the id", () => {
+    expect(buildHomeHref({ themeId: "skyline-dark" })).toBe("/?theme=skyline-dark");
+    expect(buildHomeHref({ mode: "dark" })).toBe("/?modetheme=dark");
+    expect(buildHomeHref({ themeId: "my theme/x", mode: "dark" })).toBe("/?theme=my+theme%2Fx&modetheme=dark");
+  });
+
+  it("returns the bare root when nothing is known", () => {
+    expect(buildHomeHref()).toBe("/");
+    expect(buildHomeHref({ themeId: "" })).toBe("/");
   });
 });

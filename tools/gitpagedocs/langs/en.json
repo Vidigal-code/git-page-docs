@@ -34,6 +34,7 @@
     "sourceViewerCode": "Code",
     "sourceViewerEntryHint": "Browse a repository's files without opening its documentation.",
     "sourceViewerEntryAction": "Open the source viewer",
+    "sourceViewerBackLabel": "Back",
     "lastUpdateVersionLabel": "Last update version",
     "darkMode": "Dark mode",
     "lightMode": "Light mode",

@@ -70,6 +70,11 @@ export const FiAlertCircle = createFallbackIcon({
   html: "<circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"></line><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"></line>",
 });
 
+export const FiArrowLeft = createFallbackIcon({
+  attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
+  html: "<line x1=\"19\" y1=\"12\" x2=\"5\" y2=\"12\"></line><polyline points=\"12 19 5 12 12 5\"></polyline>",
+});
+
 export const FiChevronDown = createFallbackIcon({
   attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
   html: "<polyline points=\"6 9 12 15 18 9\"></polyline>",

@@ -17,6 +17,8 @@ export interface SourceViewerLabels {
   selectFile: string;
   preview: string;
   code: string;
+  /** Standalone page: the header link back to the site root. */
+  back: string;
 }
 
 /** Single source for the source-viewer copy (langmenu-overridable, shared by
@@ -43,5 +45,6 @@ export function buildSourceViewerLabels(
     selectFile: label("sourceViewerSelectFile", "Select a file"),
     preview: label("sourceViewerPreview", "Preview"),
     code: label("sourceViewerCode", "Code"),
+    back: label("sourceViewerBackLabel", "Back"),
   };
 }

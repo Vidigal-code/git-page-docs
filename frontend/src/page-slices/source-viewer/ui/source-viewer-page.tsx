@@ -8,7 +8,7 @@ import {
   toSearchShellCssVars,
   type LoadedDocsData,
 } from "@/entities/docs";
-import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
+import { SearchShellHeader, buildHomeHref, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { RepositorySourceBrowser, SourceBrowserSkeleton, buildSourceViewerLabels } from "@/widgets/repository-source-browser";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
@@ -70,12 +70,18 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
     [data.config.site, activeLayout?.mode, basePath],
   );
   const labels = useMemo(() => buildSourceViewerLabels(data.config.site.langmenu, language), [data.config.site.langmenu, language]);
+  // Back to the site root in the look the visitor picked here (theme + mode travel in the URL).
+  const backLink = useMemo(
+    () => ({ href: buildHomeHref({ themeId: activeThemeId, mode: activeLayout?.mode }), label: labels.back }),
+    [activeThemeId, activeLayout?.mode, labels.back],
+  );
 
   const header = (
     <SearchShellHeader
       themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}
+      backLink={backLink}
       language={language}
       languages={data.availableLanguages}
       onLanguageChange={onLanguageChange}
