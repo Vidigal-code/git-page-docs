@@ -3,7 +3,7 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
-## Unreleased
+## 0.0.4 - 2026-09-27 - AI chat guide, markdown actions, compact config, layouts v2, guide motion
 
 ### Compact gitpagedocs config (no repeated values)
 
@@ -56,8 +56,8 @@ the earlier 1.1.x formats are gone:
   `document.execCommand` copy fallback (Clipboard API only) and the copy status announced through
   `<output>`. The chat guide sections are data-driven (`INFO_SECTIONS`) instead of a five-argument
   helper with flag parameters.
-- `AGENTS.md` (Codex) and `CLAUDE.md` (Claude Code) describe this repository's workflow: TDD, the
-  validation commands, SonarQube per changed file and how generated artifacts are refreshed.
+- `AGENTS.md` describes this repository's contributor workflow: TDD, the validation commands,
+  SonarQube per changed file and how generated artifacts are refreshed.
 
 ### Frontend viewer
 
