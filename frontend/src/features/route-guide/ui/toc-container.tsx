@@ -24,7 +24,7 @@ export function TocContainer({
   useDefaultScrollBehavior = false,
   contentActions,
   containerTop = true,
-}: TocContainerProps) {
+}: Readonly<TocContainerProps>) {
   if (headings.length === 0) {
     return <>{markdownContent}</>;
   }

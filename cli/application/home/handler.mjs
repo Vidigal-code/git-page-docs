@@ -1,6 +1,7 @@
 /** Home distribution use case - static site + auxiliary files */
 
 import { STATIC_OUTPUT_DIR, ARTIFACTS_DIR } from "../../home/constants.mjs";
+import { trimSlashes } from "../../contracts/path-segments.mjs";
 
 /**
  * Execute home distribution use case
@@ -30,7 +31,7 @@ export async function executeHome(params, runtime) {
     runtime.ensureDirEmpty(root, outputDir);
   }
 
-  const pathSegment = basePath ? basePath.replace(/^\/+|\/+$/g, "") : "";
+  const pathSegment = basePath ? trimSlashes(basePath) : "";
   const buildEnv = {
     ...process.env,
     GITHUB_ACTIONS: "true",
@@ -83,3 +84,4 @@ export async function executeHome(params, runtime) {
   runtime.logInfo(`Serve: cd ${cdDir} && npx serve .`);
   runtime.logInfo(`Docker: cd ${cdDir} && docker build -t gitpagedocshome . && docker run -p 3000:80 gitpagedocshome`);
 }
+

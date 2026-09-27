@@ -75,6 +75,18 @@ describe("resolveExternalProviderState", () => {
       expect(state).toEqual({ provider: "jwt", authenticated: true, roles: ["maintainer"] });
     });
 
+    it("maps every base64url character (- and _) back to base64 before decoding", async () => {
+      // "~~~???" makes the payload segment carry both url-safe characters; if
+      // either one were left unmapped the segment would not decode to JSON.
+      const token = encodeJwt({ roles: ["maintainer"], sub: "~~~???" });
+      const segment = token.split(".")[1];
+      expect(segment).toMatch(/-/);
+      expect(segment).toMatch(/_/);
+      stubBrowser({ storage: { [storageKey]: token } });
+      const state = await resolveExternalProviderState(config);
+      expect(state).toEqual({ provider: "jwt", authenticated: true, roles: ["maintainer"] });
+    });
+
     it("flags malformed tokens instead of throwing", async () => {
       stubBrowser({ storage: { [storageKey]: "not-a-jwt" } });
       const state = await resolveExternalProviderState(config);

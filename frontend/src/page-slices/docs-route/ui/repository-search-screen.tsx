@@ -20,17 +20,17 @@ import {
 import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
-import { getBasePath } from "@/shared/lib/base-path";
+import { getBasePath, trimSlashes } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./repository-search-screen.module.css";
 
 export function RepositorySearchScreen({
   data,
   repositoryNotUsingGitPageDocs,
-}: {
+}: Readonly<{
   data: LoadedDocsData;
   repositoryNotUsingGitPageDocs: boolean;
-}) {
+}>) {
   const router = useRouter();
   const defaultLanguage = data.config.site.defaultLanguage;
   const configuredDefaultMode = data.config.site.ThemeModeDefault === "light" ? "light" : "dark";
@@ -134,8 +134,8 @@ export function RepositorySearchScreen({
   }, []);
 
   function onSearch() {
-    const owner = ownerInput.trim().replace(/^\/+|\/+$/g, "");
-    const repo = repoInput.trim().replace(/^\/+|\/+$/g, "");
+    const owner = trimSlashes(ownerInput.trim());
+    const repo = trimSlashes(repoInput.trim());
     if (!owner || !repo) {
       return;
     }

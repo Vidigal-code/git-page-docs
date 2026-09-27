@@ -2,6 +2,11 @@
   "site": {
     "name": "Git Pages Docs",
     "defaultLanguage": "en",
+    "languages": {
+      "en": true,
+      "pt": true,
+      "es": true
+    },
     "HideThemeSelector": false,
     "ThemeDefault": "aurora-dark",
     "ThemeModeDefault": "dark",
@@ -340,10 +345,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "1.1.68",
-        "path": "gitpagedocs/docs/versions/1.1.68/config.json",
+        "id": "1.1.69",
+        "path": "gitpagedocs/docs/versions/1.1.69/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/1.1.68/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/1.1.69/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

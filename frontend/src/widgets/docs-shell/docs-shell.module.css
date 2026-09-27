@@ -493,7 +493,6 @@
   width: 100%;
   min-width: 0;
   overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 .markdown :global(h1),
@@ -516,7 +515,6 @@
   padding: 2px 5px;
   white-space: break-spaces;
   overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 .markdown :global(pre) {
@@ -617,6 +615,20 @@
   display: flex;
   flex-direction: column;
   padding: 48px 16px 16px;
+}
+
+/* Native <dialog> reset: the panel is opened with the `open` attribute (non-modal,
+   React owns the close button and Escape), so drop the UA dialog box model and
+   keep the fixed, viewport-filling <div> box it replaced. */
+dialog.contentContainerFullscreen {
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  overflow: visible;
+  color: inherit;
 }
 
 .fullscreenCloseButton {
@@ -1144,6 +1156,17 @@
   margin: auto;
 }
 
+/* Native <dialog> reset: the card is opened with the `open` attribute (non-modal,
+   the overlay button behind it closes it), so drop the UA dialog box model. */
+dialog.versionLinksCard {
+  position: static;
+  inset: auto;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  color: inherit;
+}
+
 .versionLinksHeader {
   display: flex;
   align-items: center;
@@ -1217,6 +1240,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--background) 40%, transparent);
 }
 
 .audioPlayerPopoverList {
@@ -1331,7 +1357,6 @@
   max-height: min(64vh, calc(100dvh - 220px));
   background: color-mix(in srgb, var(--background) 86%, transparent);
   overflow-wrap: anywhere;
-  word-break: break-word;
   min-width: 0;
 }
 
@@ -1358,12 +1383,6 @@
   flex: 1 1 min(200px, 100%);
   min-width: 0;
   white-space: nowrap;
-}
-
-.audioPlayerPopoverControlButton {
-  color: var(--text);
-  border: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--background) 40%, transparent);
 }
 
 .audioPlayerPopoverControlButton[data-active] {
@@ -1577,12 +1596,14 @@
     max-height: calc(100dvh - 16px);
     padding: 12px;
     border-radius: 12px;
+    text-align: center;
   }
 
   .focusModeBody {
     min-height: 120px;
     max-height: calc(100dvh - 200px);
     padding: 12px;
+    text-align: center;
   }
 
   .focusModeFooter {
@@ -1596,6 +1617,8 @@
   }
 
   .focusModeCloseButton {
+    top: 14px;
+    right: 14px;
     min-width: 44px;
     width: 44px;
     height: 44px;
@@ -1641,25 +1664,9 @@
     padding-left: max(8px, env(safe-area-inset-left, 0px));
   }
 
-  .focusModeCard {
-    width: 100%;
-    max-width: calc(100% - 16px);
-    padding: 12px;
-    text-align: center;
-  }
-
   .focusModeHeader {
     justify-content: flex-start;
     padding-right: 52px;
-  }
-
-  .focusModeCloseButton {
-    top: 14px;
-    right: 14px;
-  }
-
-  .focusModeBody {
-    text-align: center;
   }
 
   .audioPlayerPopoverFooter {
@@ -1743,4 +1750,21 @@
 
 .wrapper ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
+}
+
+/* Pointer-only click-away surface for the modal overlays: a native <button>
+ * kept out of the tab order (keyboard users have Escape and the close
+ * button), painted beneath the card so the card needs no click handler. */
+.overlayBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: default;
 }

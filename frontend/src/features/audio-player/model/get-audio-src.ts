@@ -42,7 +42,7 @@ interface EmbedPlaybackParams {
 }
 
 function getYouTubeEmbedId(embedUrl: string): string | null {
-  const match = embedUrl.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+  const match = /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/.exec(embedUrl);
   return match?.[1] ?? null;
 }
 

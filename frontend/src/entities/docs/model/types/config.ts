@@ -1,6 +1,5 @@
-import type { LanguageCode } from "./site";
+import type { LanguageCode, SiteConfig, UiTranslationsConfig } from "./site";
 import type { VersionControlConfig } from "./version";
-import type { SiteConfig, UiTranslationsConfig } from "./site";
 
 export type ContentType = "md" | "source-viewer" | "html" | "video" | "audio";
 export const CONTENT_TYPES: ContentType[] = ["md", "source-viewer", "html", "video", "audio"];
@@ -47,11 +46,21 @@ export interface HierarchyConfig {
 export interface VideoRouteConfig {
   videoType: Record<LanguageCode, string>;
   pathVideo: Record<LanguageCode, string>;
+  /**
+   * Optional WebVTT captions per language. When absent the player still renders a
+   * captions <track> pointing at the empty `captions/empty.vtt` shipped with the site.
+   */
+  captions?: Record<LanguageCode, string>;
 }
 
 export interface AudioRouteConfig {
   audioType: Record<LanguageCode, string>;
   pathAudio: Record<LanguageCode, string>;
+  /**
+   * Optional WebVTT captions per language. When absent the player still renders a
+   * captions <track> pointing at the empty `captions/empty.vtt` shipped with the site.
+   */
+  captions?: Record<LanguageCode, string>;
 }
 
 /** Single track for site.audioTracks or route.audio.tracks (background music player) */
@@ -61,6 +70,11 @@ export interface AudioTrackConfig {
   title?: Record<LanguageCode, string>;
   /** Custom source label per language (override of "File" / "Arquivo" display) */
   sourceLabel?: Record<LanguageCode, string>;
+  /**
+   * Optional WebVTT captions per language. When absent the player still renders a
+   * captions <track> pointing at the empty `captions/empty.vtt` shipped with the site.
+   */
+  captions?: Record<LanguageCode, string>;
 }
 
 /** Per-route background audio (routes-md, routes-html, routes-video) */

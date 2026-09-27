@@ -1,0 +1,18 @@
+/* Native <dialog> reset: the card is opened with the `open` attribute inside
+   the caller's overlay (the backdrop button behind it closes it), so drop the
+   UA dialog box model. `:where()` keeps this at zero specificity, so every
+   property the caller's card class sets still wins over the reset. */
+:where(dialog.card) {
+  position: static;
+  inset: auto;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}

@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { CiPlay1 } from "@/shared/ui/fallback-icons";
-import { FaPause } from "@/shared/ui/fallback-icons";
-import { FiRefreshCw, FiRepeat } from "@/shared/ui/fallback-icons";
+import { CiPlay1, FaPause, FiRefreshCw, FiRepeat } from "@/shared/ui/fallback-icons";
 import { renderAudioControlIcon, useAudioPlayer } from "@/features/audio-player";
 import type { AudioTrackConfig, LanguageCode } from "@/entities/docs";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
+import { resolveCaptionsTrackProps, type CaptionsByLanguage } from "./captions-track";
 import styles from "../../docs-shell.module.css";
 
 export interface AudioRouteControlsConfig {
@@ -31,12 +30,20 @@ interface AudioRouteControlsProps {
   pathAudio: string;
   language: LanguageCode;
   controls: AudioRouteControlsConfig;
+  /** Per-language WebVTT captions of the route; the empty site track is used when absent. */
+  captions?: CaptionsByLanguage;
 }
 
-export function AudioRouteControls({ audioType, pathAudio, language, controls }: AudioRouteControlsProps) {
+export function AudioRouteControls({
+  audioType,
+  pathAudio,
+  language,
+  controls,
+  captions,
+}: Readonly<AudioRouteControlsProps>) {
   const tracks = useMemo<AudioTrackConfig[]>(
-    () => [{ type: audioType, url: pathAudio }],
-    [audioType, pathAudio],
+    () => [{ type: audioType, url: pathAudio, captions }],
+    [audioType, pathAudio, captions],
   );
 
   const {
@@ -111,10 +118,11 @@ export function AudioRouteControls({ audioType, pathAudio, language, controls }:
           src={audioSrc}
           loop={loopEnabled}
           onEnded={onNativeEnded}
-          playsInline
           className={styles.audioRouteHiddenMedia}
-          aria-hidden
-        />
+          tabIndex={-1}
+        >
+          <track kind="captions" {...resolveCaptionsTrackProps(captions, language)} />
+        </audio>
       )}
       {!isNativeTrack && embedUrl && playing && (
         <iframe

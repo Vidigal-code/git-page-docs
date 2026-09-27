@@ -1,23 +1,13 @@
 "use client";
 
-import type {
-  BrowseItem,
-  BreadcrumbItem,
-  LoadedAudioContent,
-  LoadedDocsData,
-  LoadedHtmlContent,
-  LoadedMdContent,
-  LoadedPage,
-  LoadedVideoContent,
-} from "@/entities/docs";
+import type { LoadedDocsData, LoadedPage } from "@/entities/docs";
 import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
-import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { DocsShellControls, type DocsShellControlsProps } from "./docs-shell-controls";
 import { DocsShellHeader } from "./docs-shell-header";
 import { PageContentArea } from "./page-content-area";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
-import { buildAudioRouteControlsConfig } from "./content-type-containers/audio-route-controls-config";
+import type { BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
 import styles from "../docs-shell.module.css";
 
 export interface DocsShellMainContentProps {
@@ -30,7 +20,6 @@ export interface DocsShellMainContentProps {
   iconImgHeight: number;
   menuOpen: boolean;
   menuOpenLabel: string;
-  menuCloseLabel: string;
   onToggleMenu: () => void;
   activeLayoutMode?: "light" | "dark";
   controlsProps: DocsShellControlsProps;
@@ -39,29 +28,9 @@ export interface DocsShellMainContentProps {
   data: LoadedDocsData;
   language: string;
   nextMode: string;
-  previousLabel: string;
-  nextLabel: string;
-  browsePrevLabel: string;
-  browseNextLabel: string;
-  fullscreenExpandLabel: string;
-  mdBrowseIndex: number;
-  htmlBrowseIndex: number;
-  videoBrowseIndex: number;
-  audioBrowseIndex: number;
-  setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
-  mdItems: BrowseItem<LoadedMdContent>[];
-  htmlItems: BrowseItem<LoadedHtmlContent>[];
-  videoItems: BrowseItem<LoadedVideoContent>[];
-  audioItems: BrowseItem<LoadedAudioContent>[];
-  routeGuideEnabled: boolean;
-  breadcrumbTrail: BreadcrumbItem[];
-  onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;
-  homePathClick: string | undefined;
-  homeAncestorKeys: string[];
-  routeGuideIconConfig: ResolvedRouteGuideIconConfig;
+  labels: ContentLabels;
+  browse: BrowseState;
+  navigation: BrowseNavigationProps;
   onFullscreenOpen: (params: FullscreenParams) => void;
   onFullscreenClose: () => void;
   linearNavigationEntries: { pathClick: string; ancestorKeys: string[] }[];
@@ -72,7 +41,7 @@ export interface DocsShellMainContentProps {
   footerConfig: FooterConfig;
 }
 
-export function DocsShellMainContent(props: DocsShellMainContentProps) {
+export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>) {
   const {
     headerName,
     iconImage,
@@ -83,7 +52,6 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
     iconImgHeight,
     menuOpen,
     menuOpenLabel,
-    menuCloseLabel,
     onToggleMenu,
     activeLayoutMode,
     controlsProps,
@@ -91,29 +59,9 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
     data,
     language,
     nextMode,
-    previousLabel,
-    nextLabel,
-    browsePrevLabel,
-    browseNextLabel,
-    fullscreenExpandLabel,
-    mdBrowseIndex,
-    htmlBrowseIndex,
-    videoBrowseIndex,
-    audioBrowseIndex,
-    setMdBrowseIndex,
-    setHtmlBrowseIndex,
-    setVideoBrowseIndex,
-    setAudioBrowseIndex,
-    mdItems,
-    htmlItems,
-    videoItems,
-    audioItems,
-    routeGuideEnabled,
-    breadcrumbTrail,
-    onMenuClick,
-    homePathClick,
-    homeAncestorKeys,
-    routeGuideIconConfig,
+    labels,
+    browse,
+    navigation,
     onFullscreenOpen,
     onFullscreenClose,
     linearNavigationEntries,
@@ -123,7 +71,6 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
     footerEnabled,
     footerConfig,
   } = props;
-  const audioRouteControlsConfig = buildAudioRouteControlsConfig(controlsProps);
 
   return (
     <div className={styles.contentArea}>
@@ -137,7 +84,7 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
         iconImgHeight={iconImgHeight}
         menuOpen={menuOpen}
         menuOpenLabel={menuOpenLabel}
-        menuCloseLabel={menuCloseLabel}
+        menuCloseLabel={labels.menuCloseLabel}
         onToggleMenu={onToggleMenu}
         activeLayoutMode={activeLayoutMode}
         navMenuConfig={props.navMenuConfig}
@@ -151,41 +98,19 @@ export function DocsShellMainContent(props: DocsShellMainContentProps) {
           language={language}
           isDarkMode={nextMode === "dark"}
           activeThemeId={controlsProps.activeThemeId}
-          fullscreenCloseLabel={menuCloseLabel}
-          fullscreenExpandLabel={fullscreenExpandLabel}
-          previousLabel={previousLabel}
-          nextLabel={nextLabel}
-          browsePrevLabel={browsePrevLabel}
-          browseNextLabel={browseNextLabel}
-          mdBrowseIndex={mdBrowseIndex}
-          htmlBrowseIndex={htmlBrowseIndex}
-          videoBrowseIndex={videoBrowseIndex}
-          audioBrowseIndex={audioBrowseIndex}
-          setMdBrowseIndex={setMdBrowseIndex}
-          setHtmlBrowseIndex={setHtmlBrowseIndex}
-          setVideoBrowseIndex={setVideoBrowseIndex}
-          setAudioBrowseIndex={setAudioBrowseIndex}
-          mdItems={mdItems}
-          htmlItems={htmlItems}
-          videoItems={videoItems}
-          audioItems={audioItems}
-          routeGuideEnabled={routeGuideEnabled}
-          breadcrumbTrail={breadcrumbTrail}
-          onMenuClick={onMenuClick}
-          homePathClick={homePathClick}
-          homeAncestorKeys={homeAncestorKeys}
-          routeGuideIconConfig={routeGuideIconConfig}
-          audioRouteControlsConfig={audioRouteControlsConfig}
+          labels={labels}
+          browse={browse}
+          navigation={navigation}
           onFullscreenOpen={onFullscreenOpen}
           onFullscreenClose={onFullscreenClose}
         />
         {linearNavigationEntries.length > 1 && (
           <div className={styles.footerActions}>
             <button className={styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious}>
-              {previousLabel}
+              {labels.previousLabel}
             </button>
             <button className={styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext}>
-              {nextLabel}
+              {labels.nextLabel}
             </button>
           </div>
         )}

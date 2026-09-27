@@ -1,11 +1,24 @@
-export type LanguageCode = "pt" | "en" | "es" | string;
+import type { IconConfigFields } from "@/shared/lib/icons/icon-config-fields";
+
+/**
+ * Any language code a site may ship ("pt", "en" and "es" are the bundled ones).
+ * Deliberately open: `Record<LanguageCode, string>` must accept any language so
+ * sites can add one without touching the frontend types. The template-literal
+ * form keeps the domain name distinct from a bare `string` alias.
+ */
+export type LanguageCode = `${string}`;
 
 export type ThemeMode = "light" | "dark";
 
-export interface SiteConfig {
+export interface SiteConfig extends IconConfigFields<StandardIconName> {
   name: string;
   defaultLanguage: LanguageCode;
-  /** Filled from gitpagedocs/langs.json when present; legacy configs may list it inline. */
+  /**
+   * Enable (true) / disable (false) each language, in menu order. A disabled
+   * language is hidden from the selector and its langs/<lang>.json is skipped.
+   */
+  languages?: Record<LanguageCode, boolean>;
+  /** The languages whose gitpagedocs/langs/<lang>.json loaded; legacy configs may list it inline. */
   supportedLanguages?: LanguageCode[];
   HideThemeSelector: boolean;
   ThemeDefault: string;
@@ -21,154 +34,22 @@ export interface SiteConfig {
   FooterDateCustom?: string;
   SiteIconPath?: string;
   SiteHeaderName?: string;
-  IconImageMenuHeaderImgWidth?: string | number;
-  IconImageMenuHeaderImgHeight?: string | number;
+  /** Header brand icon: single-image and per-mode aliases beside the standard IconImageMenuHeader* fields */
   IconImageMenuHeader?: string;
-  IconImageMenuHeaderLightImg?: string;
-  IconImageMenuHeaderDarkImg?: string;
   IconImageMenuHeaderLight?: string;
   IconImageMenuHeaderDark?: string;
-  IconImageMenuHeaderReactIcones?: boolean;
-  IconImageMenuHeaderReactIconesTag?: string;
-  IconImageMenuHeaderReactIconesTagColorDark?: string;
-  IconImageMenuHeaderReactIconesTagColorLight?: string;
-  IconImageMenuHeaderReactIconesTagSize?: string;
-  IconProjectLinkLightImg?: string;
-  IconProjectLinkDarkImg?: string;
-  IconProjectLinkImgWidth?: string | number;
-  IconProjectLinkImgHeight?: string | number;
-  IconProjectLinkReactIcones?: boolean;
-  IconProjectLinkReactIconesTag?: string;
-  IconProjectLinkReactIconesTagColorDark?: string;
-  IconProjectLinkReactIconesTagColorLight?: string;
-  IconProjectLinkReactIconesTagSize?: string;
-  IconVersionLinksLightImg?: string;
-  IconVersionLinksDarkImg?: string;
-  IconVersionLinksImgWidth?: string | number;
-  IconVersionLinksImgHeight?: string | number;
+  /** Version links icon: extra per-mode aliases beside the standard IconVersionLinks* fields */
   IconVersionLinksLight?: string;
   IconVersionLinksHeaderDark?: string;
-  IconVersionLinksReactIcones?: boolean;
-  IconVersionLinksReactIconesTag?: string;
-  IconVersionLinksReactIconesTagColorDark?: string;
-  IconVersionLinksReactIconesTagColorLight?: string;
-  IconVersionLinksReactIconesTagSize?: string;
-  IconInfoHeaderMenuLightImg?: string;
-  IconInfoHeaderMenuDarkImg?: string;
-  IconInfoHeaderMenuImgWidth?: string | number;
-  IconInfoHeaderMenuImgHeight?: string | number;
+  /** Info header menu icon: extra per-mode aliases beside the standard IconInfoHeaderMenu* fields */
   IconInfoHeaderMenuLight?: string;
   IconInfoHeaderMenuHeaderDark?: string;
-  IconInfoHeaderMenuReactIcones?: boolean;
-  IconInfoHeaderMenuReactIconesTag?: string;
-  IconInfoHeaderMenuReactIconesTagColorDark?: string;
-  IconInfoHeaderMenuReactIconesTagColorLight?: string;
-  IconInfoHeaderMenuReactIconesTagSize?: string;
-  IconPreviewProjectLinkLightImg?: string;
-  IconPreviewProjectLinkDarkImg?: string;
-  IconPreviewProjectLinkImgWidth?: string | number;
-  IconPreviewProjectLinkImgHeight?: string | number;
+  /** Preview project link icon: extra per-mode aliases beside the standard IconPreviewProjectLink* fields */
   IconPreviewProjectLinkLight?: string;
   IconPreviewProjectLinkHeaderDark?: string;
-  IconPreviewProjectLinkReactIcones?: boolean;
-  IconPreviewProjectLinkReactIconesTag?: string;
-  IconPreviewProjectLinkReactIconesTagColorDark?: string;
-  IconPreviewProjectLinkReactIconesTagColorLight?: string;
-  IconPreviewProjectLinkReactIconesTagSize?: string;
-  /** Nav menu toggle: open button icon */
-  IconNavMenuOpenLightImg?: string;
-  IconNavMenuOpenDarkImg?: string;
-  IconNavMenuOpenReactIcones?: boolean;
-  IconNavMenuOpenReactIconesTag?: string;
-  IconNavMenuOpenReactIconesTagColorDark?: string;
-  IconNavMenuOpenReactIconesTagColorLight?: string;
-  IconNavMenuOpenReactIconesTagSize?: string;
-  IconNavMenuOpenImgWidth?: string | number;
-  IconNavMenuOpenImgHeight?: string | number;
-  /** Nav menu toggle: close button icon */
-  IconNavMenuCloseLightImg?: string;
-  IconNavMenuCloseDarkImg?: string;
-  IconNavMenuCloseReactIcones?: boolean;
-  IconNavMenuCloseReactIconesTag?: string;
-  IconNavMenuCloseReactIconesTagColorDark?: string;
-  IconNavMenuCloseReactIconesTagColorLight?: string;
-  IconNavMenuCloseReactIconesTagSize?: string;
-  IconNavMenuCloseImgWidth?: string | number;
-  IconNavMenuCloseImgHeight?: string | number;
-  /** Nav menu mobile drawer: open button / hamburger (override; falls back to IconNavMenuOpen) */
-  IconNavMenuMobileOpenLightImg?: string;
-  IconNavMenuMobileOpenDarkImg?: string;
-  IconNavMenuMobileOpenReactIcones?: boolean;
-  IconNavMenuMobileOpenReactIconesTag?: string;
-  IconNavMenuMobileOpenReactIconesTagColorDark?: string;
-  IconNavMenuMobileOpenReactIconesTagColorLight?: string;
-  IconNavMenuMobileOpenReactIconesTagSize?: string;
-  IconNavMenuMobileOpenImgWidth?: string | number;
-  IconNavMenuMobileOpenImgHeight?: string | number;
-  /** Nav menu mobile drawer: close button (override; falls back to IconNavMenuClose) */
-  IconNavMenuMobileCloseLightImg?: string;
-  IconNavMenuMobileCloseDarkImg?: string;
-  IconNavMenuMobileCloseReactIcones?: boolean;
-  IconNavMenuMobileCloseReactIconesTag?: string;
-  IconNavMenuMobileCloseReactIconesTagColorDark?: string;
-  IconNavMenuMobileCloseReactIconesTagColorLight?: string;
-  IconNavMenuMobileCloseReactIconesTagSize?: string;
-  IconNavMenuMobileCloseImgWidth?: string | number;
-  IconNavMenuMobileCloseImgHeight?: string | number;
-
-  /** Sidebar toggle: collapse icon */
-  IconSidebarCollapseLightImg?: string;
-  IconSidebarCollapseDarkImg?: string;
-  IconSidebarCollapseReactIcones?: boolean;
-  IconSidebarCollapseReactIconesTag?: string;
-  IconSidebarCollapseReactIconesTagColorDark?: string;
-  IconSidebarCollapseReactIconesTagColorLight?: string;
-  IconSidebarCollapseReactIconesTagSize?: string;
-  IconSidebarCollapseImgWidth?: string | number;
-  IconSidebarCollapseImgHeight?: string | number;
-
-  /** Sidebar toggle: expand icon */
-  IconSidebarExpandLightImg?: string;
-  IconSidebarExpandDarkImg?: string;
-  IconSidebarExpandReactIcones?: boolean;
-  IconSidebarExpandReactIconesTag?: string;
-  IconSidebarExpandReactIconesTagColorDark?: string;
-  IconSidebarExpandReactIconesTagColorLight?: string;
-  IconSidebarExpandReactIconesTagSize?: string;
-  IconSidebarExpandImgWidth?: string | number;
-  IconSidebarExpandImgHeight?: string | number;
-  /** Documentation lock button (clears the access cache to re-block the docs) */
-  IconDocsLockLightImg?: string;
-  IconDocsLockDarkImg?: string;
-  IconDocsLockReactIcones?: boolean;
-  IconDocsLockReactIconesTag?: string;
-  IconDocsLockReactIconesTagColorDark?: string;
-  IconDocsLockReactIconesTagColorLight?: string;
-  IconDocsLockReactIconesTagSize?: string;
-  IconDocsLockImgWidth?: string | number;
-  IconDocsLockImgHeight?: string | number;
-  /** Block menu on nav toggle: active (blocking) state icon */
-  IconNavMenuBlockActiveLightImg?: string;
-  IconNavMenuBlockActiveDarkImg?: string;
-  IconNavMenuBlockActiveReactIcones?: boolean;
-  IconNavMenuBlockActiveReactIconesTag?: string;
-  IconNavMenuBlockActiveReactIconesTagColorDark?: string;
-  IconNavMenuBlockActiveReactIconesTagColorLight?: string;
-  IconNavMenuBlockActiveReactIconesTagSize?: string;
-  IconNavMenuBlockActiveImgWidth?: string | number;
-  IconNavMenuBlockActiveImgHeight?: string | number;
-  /** Block menu on nav toggle: inactive state icon */
-  IconNavMenuBlockInactiveLightImg?: string;
-  IconNavMenuBlockInactiveDarkImg?: string;
-  IconNavMenuBlockInactiveReactIcones?: boolean;
-  IconNavMenuBlockInactiveReactIconesTag?: string;
-  IconNavMenuBlockInactiveReactIconesTagColorDark?: string;
-  IconNavMenuBlockInactiveReactIconesTagColorLight?: string;
-  IconNavMenuBlockInactiveReactIconesTagSize?: string;
-  IconNavMenuBlockInactiveImgWidth?: string | number;
-  IconNavMenuBlockInactiveImgHeight?: string | number;
   /** If true, show breadcrumb (icon > ancestor > current) above MD container */
   RouteGuide?: boolean;
+  /** Route guide breadcrumb icon: declared inline because its dimensions are numbers, unlike IconConfigFields */
   IconRouteGuideLightImg?: string;
   IconRouteGuideDarkImg?: string;
   IconRouteGuideReactIcones?: boolean;
@@ -194,6 +75,7 @@ export interface SiteConfig {
   audioSequentialPlayback?: boolean;
   /** Background music: site-level tracks (used when no per-page audio) */
   audioTracks?: { url: string; type: string; title?: Record<string, string> }[];
+  /** Header play/pause buttons: react icon only (no image or dimension fields) */
   IconAudioPlayReactIcones?: boolean;
   IconAudioPlayReactIconesTag?: string;
   IconAudioPlayReactIconesTagColorDark?: string;
@@ -204,66 +86,6 @@ export interface SiteConfig {
   IconAudioPauseReactIconesTagColorDark?: string;
   IconAudioPauseReactIconesTagColorLight?: string;
   IconAudioPauseReactIconesTagSize?: string;
-  /** Audio player popover (choose track): close button icon */
-  IconAudioPlayerPopoverCloseLightImg?: string;
-  IconAudioPlayerPopoverCloseDarkImg?: string;
-  IconAudioPlayerPopoverCloseReactIcones?: boolean;
-  IconAudioPlayerPopoverCloseReactIconesTag?: string;
-  IconAudioPlayerPopoverCloseReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverCloseReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverCloseReactIconesTagSize?: string;
-  IconAudioPlayerPopoverCloseImgWidth?: string | number;
-  IconAudioPlayerPopoverCloseImgHeight?: string | number;
-  /** Audio player popover: play button icon */
-  IconAudioPlayerPopoverPlayLightImg?: string;
-  IconAudioPlayerPopoverPlayDarkImg?: string;
-  IconAudioPlayerPopoverPlayReactIcones?: boolean;
-  IconAudioPlayerPopoverPlayReactIconesTag?: string;
-  IconAudioPlayerPopoverPlayReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverPlayReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverPlayReactIconesTagSize?: string;
-  IconAudioPlayerPopoverPlayImgWidth?: string | number;
-  IconAudioPlayerPopoverPlayImgHeight?: string | number;
-  /** Audio player popover: pause button icon */
-  IconAudioPlayerPopoverPauseLightImg?: string;
-  IconAudioPlayerPopoverPauseDarkImg?: string;
-  IconAudioPlayerPopoverPauseReactIcones?: boolean;
-  IconAudioPlayerPopoverPauseReactIconesTag?: string;
-  IconAudioPlayerPopoverPauseReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverPauseReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverPauseReactIconesTagSize?: string;
-  IconAudioPlayerPopoverPauseImgWidth?: string | number;
-  IconAudioPlayerPopoverPauseImgHeight?: string | number;
-  /** Audio player popover: restart button icon */
-  IconAudioPlayerPopoverRestartLightImg?: string;
-  IconAudioPlayerPopoverRestartDarkImg?: string;
-  IconAudioPlayerPopoverRestartReactIcones?: boolean;
-  IconAudioPlayerPopoverRestartReactIconesTag?: string;
-  IconAudioPlayerPopoverRestartReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverRestartReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverRestartReactIconesTagSize?: string;
-  IconAudioPlayerPopoverRestartImgWidth?: string | number;
-  IconAudioPlayerPopoverRestartImgHeight?: string | number;
-  /** Audio player popover: loop on icon */
-  IconAudioPlayerPopoverLoopOnLightImg?: string;
-  IconAudioPlayerPopoverLoopOnDarkImg?: string;
-  IconAudioPlayerPopoverLoopOnReactIcones?: boolean;
-  IconAudioPlayerPopoverLoopOnReactIconesTag?: string;
-  IconAudioPlayerPopoverLoopOnReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverLoopOnReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverLoopOnReactIconesTagSize?: string;
-  IconAudioPlayerPopoverLoopOnImgWidth?: string | number;
-  IconAudioPlayerPopoverLoopOnImgHeight?: string | number;
-  /** Audio player popover: loop off icon */
-  IconAudioPlayerPopoverLoopOffLightImg?: string;
-  IconAudioPlayerPopoverLoopOffDarkImg?: string;
-  IconAudioPlayerPopoverLoopOffReactIcones?: boolean;
-  IconAudioPlayerPopoverLoopOffReactIconesTag?: string;
-  IconAudioPlayerPopoverLoopOffReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverLoopOffReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverLoopOffReactIconesTagSize?: string;
-  IconAudioPlayerPopoverLoopOffImgWidth?: string | number;
-  IconAudioPlayerPopoverLoopOffImgHeight?: string | number;
 
   /** AI Chat toggle: enable/disable entirely */
   AiChatEnabled?: boolean;
@@ -274,116 +96,6 @@ export interface SiteConfig {
     enabled?: boolean;
     publicKey?: string;
   };
-
-  /** AI Chat toggle: open icon */
-  IconAiChatOpenLightImg?: string;
-  IconAiChatOpenDarkImg?: string;
-  IconAiChatOpenReactIcones?: boolean;
-  IconAiChatOpenReactIconesTag?: string;
-  IconAiChatOpenReactIconesTagColorDark?: string;
-  IconAiChatOpenReactIconesTagColorLight?: string;
-  IconAiChatOpenReactIconesTagSize?: string;
-  IconAiChatOpenImgWidth?: string | number;
-  IconAiChatOpenImgHeight?: string | number;
-
-  /** AI Chat toggle: close icon */
-  IconAiChatCloseLightImg?: string;
-  IconAiChatCloseDarkImg?: string;
-  IconAiChatCloseReactIcones?: boolean;
-  IconAiChatCloseReactIconesTag?: string;
-  IconAiChatCloseReactIconesTagColorDark?: string;
-  IconAiChatCloseReactIconesTagColorLight?: string;
-  IconAiChatCloseReactIconesTagSize?: string;
-  IconAiChatCloseImgWidth?: string | number;
-  IconAiChatCloseImgHeight?: string | number;
-
-  /** AI Chat: settings icon */
-  IconAiChatSettingsLightImg?: string;
-  IconAiChatSettingsDarkImg?: string;
-  IconAiChatSettingsReactIcones?: boolean;
-  IconAiChatSettingsReactIconesTag?: string;
-  IconAiChatSettingsReactIconesTagColorDark?: string;
-  IconAiChatSettingsReactIconesTagColorLight?: string;
-  IconAiChatSettingsReactIconesTagSize?: string;
-  IconAiChatSettingsImgWidth?: string | number;
-  IconAiChatSettingsImgHeight?: string | number;
-
-  /** AI Chat: send button icon */
-  IconAiChatSendLightImg?: string;
-  IconAiChatSendDarkImg?: string;
-  IconAiChatSendReactIcones?: boolean;
-  IconAiChatSendReactIconesTag?: string;
-  IconAiChatSendReactIconesTagColorDark?: string;
-  IconAiChatSendReactIconesTagColorLight?: string;
-  IconAiChatSendReactIconesTagSize?: string;
-  IconAiChatSendImgWidth?: string | number;
-  IconAiChatSendImgHeight?: string | number;
-
-  /** AI Chat: cancel generation icon */
-  IconAiChatCancelLightImg?: string;
-  IconAiChatCancelDarkImg?: string;
-  IconAiChatCancelReactIcones?: boolean;
-  IconAiChatCancelReactIconesTag?: string;
-  IconAiChatCancelReactIconesTagColorDark?: string;
-  IconAiChatCancelReactIconesTagColorLight?: string;
-  IconAiChatCancelReactIconesTagSize?: string;
-  IconAiChatCancelImgWidth?: string | number;
-  IconAiChatCancelImgHeight?: string | number;
-
-  /** AI Chat: trash/clear icon */
-  IconAiChatTrashLightImg?: string;
-  IconAiChatTrashDarkImg?: string;
-  IconAiChatTrashReactIcones?: boolean;
-  IconAiChatTrashReactIconesTag?: string;
-  IconAiChatTrashReactIconesTagColorDark?: string;
-  IconAiChatTrashReactIconesTagColorLight?: string;
-  IconAiChatTrashReactIconesTagSize?: string;
-  IconAiChatTrashImgWidth?: string | number;
-  IconAiChatTrashImgHeight?: string | number;
-
-  /** AI Chat: clear chat icon */
-  IconAiChatClearChatLightImg?: string;
-  IconAiChatClearChatDarkImg?: string;
-  IconAiChatClearChatReactIcones?: boolean;
-  IconAiChatClearChatReactIconesTag?: string;
-  IconAiChatClearChatReactIconesTagColorDark?: string;
-  IconAiChatClearChatReactIconesTagColorLight?: string;
-  IconAiChatClearChatReactIconesTagSize?: string;
-  IconAiChatClearChatImgWidth?: string | number;
-  IconAiChatClearChatImgHeight?: string | number;
-
-  /** AI Chat: clear data icon */
-  IconAiChatClearDataLightImg?: string;
-  IconAiChatClearDataDarkImg?: string;
-  IconAiChatClearDataReactIcones?: boolean;
-  IconAiChatClearDataReactIconesTag?: string;
-  IconAiChatClearDataReactIconesTagColorDark?: string;
-  IconAiChatClearDataReactIconesTagColorLight?: string;
-  IconAiChatClearDataReactIconesTagSize?: string;
-  IconAiChatClearDataImgWidth?: string | number;
-  IconAiChatClearDataImgHeight?: string | number;
-
-  /** AI Chat: expand to popup mode icon */
-  IconAiChatExpandLightImg?: string;
-  IconAiChatExpandDarkImg?: string;
-  IconAiChatExpandReactIcones?: boolean;
-  IconAiChatExpandReactIconesTag?: string;
-  IconAiChatExpandReactIconesTagColorDark?: string;
-  IconAiChatExpandReactIconesTagColorLight?: string;
-  IconAiChatExpandReactIconesTagSize?: string;
-  IconAiChatExpandImgWidth?: string | number;
-  IconAiChatExpandImgHeight?: string | number;
-
-  /** AI Chat: collapse to drawer mode icon */
-  IconAiChatCollapseLightImg?: string;
-  IconAiChatCollapseDarkImg?: string;
-  IconAiChatCollapseReactIcones?: boolean;
-  IconAiChatCollapseReactIconesTag?: string;
-  IconAiChatCollapseReactIconesTagColorDark?: string;
-  IconAiChatCollapseReactIconesTagColorLight?: string;
-  IconAiChatCollapseReactIconesTagSize?: string;
-  IconAiChatCollapseImgWidth?: string | number;
-  IconAiChatCollapseImgHeight?: string | number;
 
   /** If true, hide the "File: ID" line in the audio popover Now playing block */
   audioPopoverHideSource?: boolean;
@@ -402,9 +114,79 @@ export interface SiteConfig {
   layoutsConfigPathTemplates?: string;
   repositorySearchHome?: boolean;
   rendering: string;
-  /** UI strings per language; assembled from gitpagedocs/langs/<lang>.json or read inline from legacy configs. */
+  /** UI strings per language; assembled from the gitpagedocs/langs/<lang>.json files `languages` enables, or read inline from legacy configs. */
   langmenu: Record<LanguageCode, Record<LanguageCode, string>>;
 }
+
+export type { IconConfigFields };
+
+/**
+ * Icon slots `SiteConfig` configures through the standard nine `Icon<Name>*`
+ * fields of `IconConfigFields` (light/dark image, react-icon toggle, tag,
+ * per-mode colors, size and image dimensions). Each name here stands for one
+ * such group; slots with a different shape stay declared inline above.
+ */
+export type StandardIconName =
+  /** Header brand icon */
+  | "ImageMenuHeader"
+  /** Project link icon */
+  | "ProjectLink"
+  /** Version links icon */
+  | "VersionLinks"
+  /** Info header menu icon */
+  | "InfoHeaderMenu"
+  /** Preview project link icon */
+  | "PreviewProjectLink"
+  /** Nav menu toggle: open button icon */
+  | "NavMenuOpen"
+  /** Nav menu toggle: close button icon */
+  | "NavMenuClose"
+  /** Nav menu mobile drawer: open button / hamburger (override; falls back to IconNavMenuOpen) */
+  | "NavMenuMobileOpen"
+  /** Nav menu mobile drawer: close button (override; falls back to IconNavMenuClose) */
+  | "NavMenuMobileClose"
+  /** Sidebar toggle: collapse icon */
+  | "SidebarCollapse"
+  /** Sidebar toggle: expand icon */
+  | "SidebarExpand"
+  /** Documentation lock button (clears the access cache to re-block the docs) */
+  | "DocsLock"
+  /** Block menu on nav toggle: active (blocking) state icon */
+  | "NavMenuBlockActive"
+  /** Block menu on nav toggle: inactive state icon */
+  | "NavMenuBlockInactive"
+  /** Audio player popover (choose track): close button icon */
+  | "AudioPlayerPopoverClose"
+  /** Audio player popover: play button icon */
+  | "AudioPlayerPopoverPlay"
+  /** Audio player popover: pause button icon */
+  | "AudioPlayerPopoverPause"
+  /** Audio player popover: restart button icon */
+  | "AudioPlayerPopoverRestart"
+  /** Audio player popover: loop on icon */
+  | "AudioPlayerPopoverLoopOn"
+  /** Audio player popover: loop off icon */
+  | "AudioPlayerPopoverLoopOff"
+  /** AI Chat toggle: open icon */
+  | "AiChatOpen"
+  /** AI Chat toggle: close icon */
+  | "AiChatClose"
+  /** AI Chat: settings icon */
+  | "AiChatSettings"
+  /** AI Chat: send button icon */
+  | "AiChatSend"
+  /** AI Chat: cancel generation icon */
+  | "AiChatCancel"
+  /** AI Chat: trash/clear icon */
+  | "AiChatTrash"
+  /** AI Chat: clear chat icon */
+  | "AiChatClearChat"
+  /** AI Chat: clear data icon */
+  | "AiChatClearData"
+  /** AI Chat: expand to popup mode icon */
+  | "AiChatExpand"
+  /** AI Chat: collapse to drawer mode icon */
+  | "AiChatCollapse";
 
 export interface UiTranslationEntry {
   [language: string]: string;

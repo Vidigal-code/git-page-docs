@@ -1,5 +1,4 @@
 import { DocsRoutePage } from "@/page-slices/docs-route";
-import { generateDocsStaticParams } from "@/processes/docs-routing";
 
 interface PageProps {
   params: Promise<{ repo?: string[] }>;
@@ -7,9 +6,9 @@ interface PageProps {
 
 export const dynamic = "force-static";
 
-export const generateStaticParams = generateDocsStaticParams;
+export { generateDocsStaticParams as generateStaticParams } from "@/processes/docs-routing";
 
-export default async function DocsPage({ params }: PageProps) {
+export default async function DocsPage({ params }: Readonly<PageProps>) {
   const { repo } = await params;
   return <DocsRoutePage repoSlug={repo} />;
 }

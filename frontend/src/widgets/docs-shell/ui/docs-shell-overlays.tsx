@@ -1,17 +1,6 @@
 "use client";
 
-import type {
-  BrowseItem,
-  BreadcrumbItem,
-  LoadedAudioContent,
-  LoadedDocsData,
-  LoadedHtmlContent,
-  LoadedMdContent,
-  LoadedVideoContent,
-  MenuNode,
-  VersionLinkOption,
-} from "@/entities/docs";
-import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
+import type { LoadedDocsData, MenuNode, VersionLinkOption } from "@/entities/docs";
 import type { MenuEntry } from "../model/menu-tree";
 import { DocsShellFocusOverlay } from "./docs-shell-focus-overlay";
 import { DocsShellInfoOverlay } from "./docs-shell-info-overlay";
@@ -22,7 +11,7 @@ import { DocsShellVersionLinksOverlay } from "./docs-shell-version-links-overlay
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { DocsShellControlsProps } from "./docs-shell-controls";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
-import { buildAudioRouteControlsConfig } from "./content-type-containers/audio-route-controls-config";
+import type { BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
 
 export interface DocsShellOverlaysControlsConfig {
   activeNavigation: boolean;
@@ -39,13 +28,13 @@ export interface DocsShellOverlaysProps {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   headerName: string;
   headerMenuTree: MenuNode[];
-  menuCloseLabel: string;
   onMenuClick: (pathClick: string, ancestorKeys: string[], options?: { fromLinearNav?: boolean; fromQuickNav?: boolean }) => void;
   toggleNode: (key: string) => void;
   isNodeExpanded: (key: string) => boolean;
   controlsProps: DocsShellControlsProps;
   navMenuConfig: NavMenuConfig;
   controlsConfig: DocsShellOverlaysControlsConfig;
+  labels: ContentLabels;
   versionLinksPopupOpen: boolean;
   setVersionLinksPopupOpen: (v: boolean) => void;
   infoPopupOpen: boolean;
@@ -67,8 +56,6 @@ export interface DocsShellOverlaysProps {
   setQuickNavActiveIndex: (nextIndex: number | ((prev: number) => number)) => void;
   focusModeOpen: boolean;
   focusModeLabel: string;
-  previousLabel: string;
-  nextLabel: string;
   focusModeCurrentHtml: string;
   canFocusModeGoPrevious: boolean;
   canFocusModeGoNext: boolean;
@@ -81,42 +68,23 @@ export interface DocsShellOverlaysProps {
   urlFullscreenParams: FullscreenParams | null;
   data: LoadedDocsData;
   language: string;
-  mdBrowseIndex: number;
-  htmlBrowseIndex: number;
-  videoBrowseIndex: number;
-  audioBrowseIndex: number;
-  setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
-  mdItems: BrowseItem<LoadedMdContent>[];
-  htmlItems: BrowseItem<LoadedHtmlContent>[];
-  videoItems: BrowseItem<LoadedVideoContent>[];
-  audioItems: BrowseItem<LoadedAudioContent>[];
-  routeGuideEnabled: boolean;
-  breadcrumbTrail: BreadcrumbItem[];
-  homePathClick: string | undefined;
-  homeAncestorKeys: string[];
-  routeGuideIconConfig: ResolvedRouteGuideIconConfig;
-  closeUrlFullscreen: () => void;
   nextMode: string;
-  browsePrevLabel: string;
-  browseNextLabel: string;
-  fullscreenExpandLabel: string;
+  browse: BrowseState;
+  navigation: BrowseNavigationProps;
+  closeUrlFullscreen: () => void;
   onOpenAiChat: () => void;
   aiChatIconConfig: any;
 }
 
-export function DocsShellOverlays(props: DocsShellOverlaysProps) {
-  const { controlsProps, controlsConfig } = props;
-  const audioRouteControlsConfig = buildAudioRouteControlsConfig(controlsProps);
+export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
+  const { controlsProps, controlsConfig, labels } = props;
   return (
     <>
       <DocsShellMobileDrawer
         isOpen={props.menuOpen}
         siteName={props.headerName}
         menuNodes={props.headerMenuTree}
-        menuCloseLabel={props.menuCloseLabel}
+        menuCloseLabel={labels.menuCloseLabel}
         onClose={() => props.setMenuOpen(false)}
         onMenuClick={props.onMenuClick}
         onToggleNode={props.toggleNode}
@@ -129,7 +97,7 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
       <DocsShellQuickNavOverlay
         isOpen={controlsConfig.activeNavigation && props.quickNavOpen}
         quickNavPlaceholder={props.quickNavPlaceholder}
-        menuCloseLabel={props.menuCloseLabel}
+        menuCloseLabel={labels.menuCloseLabel}
         quickNavQuery={props.quickNavQuery}
         filteredQuickNavEntries={props.filteredQuickNavEntries}
         quickNavActiveIndex={props.quickNavActiveIndex}
@@ -148,9 +116,9 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
       <DocsShellFocusOverlay
         isOpen={controlsConfig.focusModeEnabled && props.focusModeOpen}
         focusModeLabel={props.focusModeLabel}
-        menuCloseLabel={props.menuCloseLabel}
-        previousLabel={props.previousLabel}
-        nextLabel={props.nextLabel}
+        menuCloseLabel={labels.menuCloseLabel}
+        previousLabel={labels.previousLabel}
+        nextLabel={labels.nextLabel}
         focusModeCurrentHtml={props.focusModeCurrentHtml}
         canFocusModeGoPrevious={props.canFocusModeGoPrevious}
         canFocusModeGoNext={props.canFocusModeGoNext}
@@ -160,7 +128,7 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
       <DocsShellVersionLinksOverlay
         isOpen={props.versionLinksPopupOpen}
         versionLinksLabel={props.versionLinksLabel}
-        menuCloseLabel={props.menuCloseLabel}
+        menuCloseLabel={labels.menuCloseLabel}
         options={props.versionLinkOptionsWithLabels}
         onClose={() => props.setVersionLinksPopupOpen(false)}
         onOpenVersionLink={(url) => window.open(url, "_blank", "noreferrer")}
@@ -169,7 +137,7 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
         isOpen={props.infoPopupOpen}
         lastUpdateLabel={props.lastUpdateLabel}
         updateDate={props.updateDate}
-        menuCloseLabel={props.menuCloseLabel}
+        menuCloseLabel={labels.menuCloseLabel}
         onClose={() => props.setInfoPopupOpen(false)}
       />
       <DocsShellUrlFullscreenOverlay
@@ -178,31 +146,9 @@ export function DocsShellOverlays(props: DocsShellOverlaysProps) {
         data={props.data}
         language={props.language}
         isDarkMode={props.nextMode === "dark"}
-        menuCloseLabel={props.menuCloseLabel}
-        fullscreenExpandLabel={props.fullscreenExpandLabel}
-        previousLabel={props.previousLabel}
-        nextLabel={props.nextLabel}
-        browsePrevLabel={props.browsePrevLabel}
-        browseNextLabel={props.browseNextLabel}
-        mdBrowseIndex={props.mdBrowseIndex}
-        htmlBrowseIndex={props.htmlBrowseIndex}
-        videoBrowseIndex={props.videoBrowseIndex}
-        audioBrowseIndex={props.audioBrowseIndex}
-        setMdBrowseIndex={props.setMdBrowseIndex}
-        setHtmlBrowseIndex={props.setHtmlBrowseIndex}
-        setVideoBrowseIndex={props.setVideoBrowseIndex}
-        setAudioBrowseIndex={props.setAudioBrowseIndex}
-        mdItems={props.mdItems}
-        htmlItems={props.htmlItems}
-        videoItems={props.videoItems}
-        audioItems={props.audioItems}
-        routeGuideEnabled={props.routeGuideEnabled}
-        breadcrumbTrail={props.breadcrumbTrail}
-        onMenuClick={props.onMenuClick}
-        homePathClick={props.homePathClick}
-        homeAncestorKeys={props.homeAncestorKeys}
-        routeGuideIconConfig={props.routeGuideIconConfig}
-        audioRouteControlsConfig={audioRouteControlsConfig}
+        labels={labels}
+        browse={props.browse}
+        navigation={props.navigation}
         onClose={props.closeUrlFullscreen}
       />
     </>

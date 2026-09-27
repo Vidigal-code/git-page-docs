@@ -1,38 +1,18 @@
-import type { LanguageCode, ResolvedBackgroundAudioConfig } from "@/entities/docs";
+import type { ResolvedBackgroundAudioConfig } from "@/entities/docs";
 import { DocsShellAudioPlayer } from "./docs-shell-audio-player";
 
+/**
+ * Toggle-button props. The playlist popover's labels and icons are consumed
+ * by DocsShellAudioSurface, the single render site of the shared engine.
+ */
 export interface DocsShellControlsAudioProps {
   showAudioPlayer?: boolean;
   audioPlayerConfig?: ResolvedBackgroundAudioConfig | null;
-  language: LanguageCode;
-  themeVarsStyle?: React.CSSProperties;
   audioPlayIconTag?: string;
   audioPlayIconStyle?: React.CSSProperties;
   audioPauseIconTag?: string;
-  audioPauseIconStyle?: React.CSSProperties;
   audioPlayLabel?: string;
   audioPauseLabel?: string;
-  audioPlaylistTitle?: string;
-  audioPlaylistDescription?: string;
-  audioPopoverCloseLabel?: string;
-  audioPopoverCloseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverPlayIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverPauseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverRestartIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverLoopOnIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverLoopOffIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverNowPlayingLabel?: string;
-  audioPopoverRestartLabel?: string;
-  audioPopoverLoopOnLabel?: string;
-  audioPopoverLoopOffLabel?: string;
-  audioPopoverSourceLabel?: string;
-  audioPopoverHideSource?: boolean;
-  audioPopoverSourceCustomLabel?: Record<string, string>;
-  audioPopoverShowMinutes?: boolean;
-  audioPopoverStatusPlayingLabel?: string;
-  audioPopoverStatusPausedLabel?: string;
-  audioPopoverStatusLoopOnLabel?: string;
-  audioPopoverStatusLoopOffLabel?: string;
 }
 
 export function DocsShellControlsAudio({
@@ -43,7 +23,7 @@ export function DocsShellControlsAudio({
   audioPauseIconTag,
   audioPlayLabel = "Play",
   audioPauseLabel = "Pause",
-}: DocsShellControlsAudioProps) {
+}: Readonly<DocsShellControlsAudioProps>) {
   if (!showAudioPlayer || !audioPlayerConfig) {
     return null;
   }

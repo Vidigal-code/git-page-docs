@@ -23,7 +23,7 @@ export function AudioPlayerButton({
   playLabel,
   pauseLabel,
   className,
-}: AudioPlayerButtonProps) {
+}: Readonly<AudioPlayerButtonProps>) {
   const label = isPlaying ? pauseLabel : playLabel;
   const iconTag = isPlaying ? pauseIconTag : playIconTag;
 

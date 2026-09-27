@@ -33,8 +33,8 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   if (parts.length < 2) return null;
   try {
     const payloadRaw = parts[1]
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
+      .replaceAll("-", "+")
+      .replaceAll("_", "/")
       .padEnd(Math.ceil(parts[1].length / 4) * 4, "=");
     const decoded = atob(payloadRaw);
     return JSON.parse(decoded) as Record<string, unknown>;

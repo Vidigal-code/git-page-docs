@@ -16,6 +16,8 @@ export interface LayoutDefinition {
 
 export interface BuiltConfigArtifacts {
   rootConfig: unknown;
+  /** UI-string bundle per language, written to `<outputDir>/langs/<lang>.json`. */
+  languageBundles: Record<string, unknown>;
   layoutsConfig: unknown;
   fallbackLayoutsConfig: unknown;
   docs?: Record<string, Record<string, string>>;

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { cpSync, existsSync, readdirSync, rmSync } from "node:fs";
-import { execSync } from "node:child_process";
+import { runExecutable } from "../../runtime/exec.mjs";
 import { writeConfigOnlyOutput, writeText } from "../../runtime/output.mjs";
 import { writeHomeFiles } from "../../home/home-file-writer.mjs";
 import { logInfo, logSuccess } from "../../ui/logger.mjs";
@@ -17,7 +17,7 @@ function copyRecursive(src, dest) {
 }
 
 function runNextBuild(root, env) {
-  execSync("npx next build frontend", { cwd: root, env, stdio: "inherit" });
+  runExecutable("npx", ["next", "build", "frontend"], { cwd: root, env, stdio: "inherit" });
 }
 
 export function createHomeRuntime() {

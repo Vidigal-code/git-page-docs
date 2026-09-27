@@ -2,7 +2,7 @@ import type { GuideBlock as GuideBlockModel } from "../model/types";
 import styles from "./guide-content.module.css";
 
 /** Renders a single content block. One small component per block type keeps each render path trivial. */
-export function GuideBlock({ block }: { block: GuideBlockModel }) {
+export function GuideBlock({ block }: Readonly<{ block: GuideBlockModel }>) {
   switch (block.type) {
     case "paragraph":
       return <p className={styles.paragraph}>{block.text}</p>;
@@ -35,7 +35,7 @@ export function GuideBlock({ block }: { block: GuideBlockModel }) {
   }
 }
 
-function GuideTable({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function GuideTable({ headers, rows }: Readonly<{ headers: string[]; rows: string[][] }>) {
   return (
     <div className={styles.tableScroll}>
       <table className={styles.table}>

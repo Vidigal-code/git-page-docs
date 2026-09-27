@@ -40,13 +40,14 @@ export function DocsShellQuickNavOverlay({
   onQueryChange,
   onActiveIndexChange,
   onMenuClick,
-}: DocsShellQuickNavOverlayProps) {
+}: Readonly<DocsShellQuickNavOverlayProps>) {
   if (!isOpen) {
     return null;
   }
   return (
-    <div className={styles.quickNavOverlay} onClick={onClose}>
-      <div className={styles.quickNavCard} onClick={(event) => event.stopPropagation()}>
+    <div className={styles.quickNavOverlay}>
+      <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
+      <div className={styles.quickNavCard}>
         <div className={styles.quickNavHeader}>
           <span className={styles.quickNavHeaderTitle}>{quickNavPlaceholder}</span>
           <button className={`${styles.button} ${styles.quickNavCloseButton}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>

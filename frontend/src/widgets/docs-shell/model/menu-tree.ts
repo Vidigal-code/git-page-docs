@@ -1,8 +1,5 @@
 import {
-  getBreadcrumbTrail,
   getPageIndexByPathClick,
-  getUrlParamsForPathClick,
-  type BreadcrumbItem,
   type ContentType,
   type HeaderMenuItem,
   type HeaderMenuLocalizedContent,
@@ -13,21 +10,33 @@ import {
 } from "@/entities/docs";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 
-export type { MenuEntry, MenuNode, BreadcrumbItem };
-export { getBreadcrumbTrail, getPageIndexByPathClick };
-export { getUrlParamsForPathClick };
+export type { MenuEntry, MenuNode };
+export { getPageIndexByPathClick };
+export { getBreadcrumbTrail, getUrlParamsForPathClick, type BreadcrumbItem } from "@/entities/docs";
+
+/** What every level of a menu tree needs to resolve pages and filter paths. */
+interface MenuTreeContext {
+  data: LoadedDocsData;
+  language: LanguageCode;
+  pageIndex: number;
+  isPathAllowed?: (pathClick: string) => boolean;
+}
+
+/** Where a nested submenu list hangs in the tree being built. */
+interface SubmenuPosition {
+  parentKey: string;
+  parentTrail: string[];
+  parentAncestors: string[];
+  level: number;
+}
 
 function buildLocalizedSubmenuTree(
   submenus: HeaderMenuLocalizedContent[],
-  parentKey: string,
-  parentTrail: string[],
-  parentAncestors: string[],
-  level: number,
-  data: LoadedDocsData,
-  language: LanguageCode,
-  pageIndex: number,
-  isPathAllowed?: (pathClick: string) => boolean,
+  position: SubmenuPosition,
+  context: MenuTreeContext,
 ): MenuNode[] {
+  const { parentKey, parentTrail, parentAncestors, level } = position;
+  const { data, pageIndex, isPathAllowed } = context;
   const entries: MenuNode[] = [];
   submenus.forEach((submenu, index) => {
     const pathClick = submenu["path-click"] ?? "";
@@ -38,14 +47,8 @@ function buildLocalizedSubmenuTree(
     const children = submenu.submenus?.length
       ? buildLocalizedSubmenuTree(
           submenu.submenus,
-          key,
-          trail,
-          [...ancestorKeys, key],
-          level + 1,
-          data,
-          language,
-          pageIndex,
-          isPathAllowed,
+          { parentKey: key, parentTrail: trail, parentAncestors: [...ancestorKeys, key], level: level + 1 },
+          context,
         )
       : [];
     const allowed = !pathClick || isPathAllowed?.(pathClick) !== false;
@@ -67,16 +70,24 @@ function buildLocalizedSubmenuTree(
   return entries;
 }
 
+export interface BuildHeaderMenuTreeOptions {
+  /** Nesting depth of `menus` (0 = top level). */
+  level?: number;
+  /** Titles of the ancestors, used to build stable keys and search labels. */
+  parentTrail?: string[];
+  /** Keys of the ancestors (expansion map). */
+  parentAncestors?: string[];
+  isPathAllowed?: (pathClick: string) => boolean;
+}
+
 export function buildHeaderMenuTree(
   menus: HeaderMenuItem[],
   data: LoadedDocsData,
   language: LanguageCode,
   pageIndex: number,
-  level = 0,
-  parentTrail: string[] = [],
-  parentAncestors: string[] = [],
-  isPathAllowed?: (pathClick: string) => boolean,
+  options: BuildHeaderMenuTreeOptions = {},
 ): MenuNode[] {
+  const { level = 0, parentTrail = [], parentAncestors = [], isPathAllowed } = options;
   const entries: MenuNode[] = [];
   menus.forEach((menu) => {
     const value = menu[language] as HeaderMenuLocalizedContent | undefined;
@@ -86,28 +97,18 @@ export function buildHeaderMenuTree(
     const key = `${trail.join("-")}-${menu.id}`;
     const ancestorKeys = [...parentAncestors];
     const nestedByItem = Array.isArray(menu.submenus)
-      ? buildHeaderMenuTree(
-          menu.submenus,
-          data,
-          language,
-          pageIndex,
-          level + 1,
-          trail,
-          [...ancestorKeys, key],
+      ? buildHeaderMenuTree(menu.submenus, data, language, pageIndex, {
+          level: level + 1,
+          parentTrail: trail,
+          parentAncestors: [...ancestorKeys, key],
           isPathAllowed,
-        )
+        })
       : [];
     const nestedByLanguage = value?.submenus?.length
       ? buildLocalizedSubmenuTree(
           value.submenus,
-          `${menu.id}`,
-          trail,
-          [...ancestorKeys, key],
-          level + 1,
-          data,
-          language,
-          pageIndex,
-          isPathAllowed,
+          { parentKey: `${menu.id}`, parentTrail: trail, parentAncestors: [...ancestorKeys, key], level: level + 1 },
+          { data, language, pageIndex, isPathAllowed },
         )
       : [];
     const allowed = !pathClick || isPathAllowed?.(pathClick) !== false;
@@ -180,16 +181,12 @@ export function buildUnifiedHeaderMenuTree(
         isSectionHeader: true,
       });
     }
-    const sectionNodes = buildHeaderMenuTree(
-      menus,
-      data,
-      language,
-      pageIndex,
-      showSectionLabels ? 1 : 0,
-      showSectionLabels ? [] : [],
-      [],
+    // Section labels are sibling rows, not hierarchy parents: the title trail
+    // (keys, search labels) and the ancestor keys start fresh in every section.
+    const sectionNodes = buildHeaderMenuTree(menus, data, language, pageIndex, {
+      level: showSectionLabels ? 1 : 0,
       isPathAllowed,
-    );
+    });
     if (sectionNodes.length === 0) {
       if (showSectionLabels) {
         result.pop();

@@ -35,7 +35,7 @@ export function SourceViewerContainer({
   language,
   isDarkMode = false,
   activeThemeId,
-}: SourceViewerContainerProps) {
+}: Readonly<SourceViewerContainerProps>) {
   const header = <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
 
   return (

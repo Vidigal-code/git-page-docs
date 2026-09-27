@@ -5,7 +5,7 @@
 import { ILLMProvider } from '../core/ports/illm-provider';
 
 export class AiCommandService {
-    constructor(private provider: ILLMProvider) { }
+    constructor(private readonly provider: ILLMProvider) { }
 
     /**
      * Executes the AI Documentation Generation for a specific content

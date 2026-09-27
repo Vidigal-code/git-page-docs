@@ -1,4 +1,4 @@
-import { getBasePath } from "./base-path";
+import { getBasePath, trimSlashes } from "./base-path";
 
 const SOURCE_VIEWER_PREFIX = "/source-viewer";
 
@@ -20,10 +20,7 @@ export function redirectSourceViewerDeepLink(): boolean {
   if (withoutBase !== SOURCE_VIEWER_PREFIX && !withoutBase.startsWith(`${SOURCE_VIEWER_PREFIX}/`)) {
     return false;
   }
-  const deepRoute = withoutBase
-    .slice(SOURCE_VIEWER_PREFIX.length)
-    .replace(/^\/+/, "")
-    .replace(/\/+$/, "");
+  const deepRoute = trimSlashes(withoutBase.slice(SOURCE_VIEWER_PREFIX.length));
   const query = deepRoute ? `?${SOURCE_VIEWER_FALLBACK_PARAM}=${encodeURIComponent(deepRoute)}` : "";
   window.location.replace(`${base}${SOURCE_VIEWER_PREFIX}/${query}`);
   return true;

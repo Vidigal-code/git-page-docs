@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+// @ts-expect-error .mjs runtime module is type-less in this package.
+import { runExecutable } from "../../runtime/exec.mjs";
 import type { CliOptions } from "../../domain/models/cli-options";
 import { DEFAULTS } from "../options/schema";
 import { askText, askConfirm, note } from "./clack";
@@ -23,7 +24,7 @@ export async function promptHomeOptions(parsed: CliOptions): Promise<CliOptions>
   const outputDir = await askText({
     message: "Output directory:",
     defaultValue: parsed.outputDir ?? DEFAULTS.home.outputDir,
-    validate: (v) => (v && v.trim() ? undefined : "Required"),
+    validate: (v) => (v?.trim() ? undefined : "Required"),
   });
   const repositorySearch = await askConfirm(
     "Enable repository search home?",
@@ -54,12 +55,12 @@ export async function askOwnerRepo(
   const owner = await askText({
     message: "GitHub owner (user or organization):",
     defaultValue: defaults?.owner || detected?.owner || "",
-    validate: (v) => (v && v.trim() ? undefined : "Owner is required."),
+    validate: (v) => (v?.trim() ? undefined : "Owner is required."),
   });
   const repo = await askText({
     message: "GitHub repository name:",
     defaultValue: defaults?.repo || detected?.repo || "",
-    validate: (v) => (v && v.trim() ? undefined : "Repository is required."),
+    validate: (v) => (v?.trim() ? undefined : "Repository is required."),
   });
   return { owner: owner.trim(), repo: repo.trim() };
 }
@@ -101,7 +102,7 @@ export async function ensureGitRepoInteractive(root: string): Promise<void> {
     return;
   }
   try {
-    execSync("git init", { cwd: root, stdio: "ignore" });
+    runExecutable("git", ["init"], { cwd: root, stdio: "ignore" });
     note("Initialized an empty git repository.", "git");
   } catch {
     note("Could not run `git init`. Initialize git manually, then retry.", "git");

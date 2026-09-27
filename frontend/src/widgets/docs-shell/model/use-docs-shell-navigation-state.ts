@@ -11,6 +11,7 @@ import type {
   LoadedVideoContent,
 } from "@/entities/docs";
 import { getPageIndexByPathClick } from "./menu-tree";
+import type { BrowseState } from "./content-browse-props";
 
 export type { BrowseItem };
 
@@ -35,8 +36,8 @@ function getAudioItems(pages: LoadedPage[]): BrowseItem<LoadedAudioContent>[] {
 }
 
 function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): number {
-  const idx = items.findIndex((x) => x.pageIndex === pageIndex);
-  return idx >= 0 ? idx : 0;
+  // findIndex yields -1 for a page outside the list, which browses from the first item.
+  return Math.max(items.findIndex((x) => x.pageIndex === pageIndex), 0);
 }
 
 export interface OnMenuClickOptions {
@@ -131,6 +132,21 @@ export function useDocsShellNavigationState({
     });
   }
 
+  const browse: BrowseState = {
+    mdBrowseIndex,
+    htmlBrowseIndex,
+    videoBrowseIndex,
+    audioBrowseIndex,
+    setMdBrowseIndex,
+    setHtmlBrowseIndex,
+    setVideoBrowseIndex,
+    setAudioBrowseIndex,
+    mdItems,
+    htmlItems,
+    videoItems,
+    audioItems,
+  };
+
   return {
     pageIndex,
     setPageIndex,
@@ -139,21 +155,10 @@ export function useDocsShellNavigationState({
     onMenuClick,
     toggleNode,
     isNodeExpanded,
-    mdBrowseIndex,
-    htmlBrowseIndex,
+    browse,
     sourceViewerBrowseIndex,
-    videoBrowseIndex,
-    audioBrowseIndex,
-    setMdBrowseIndex,
-    setHtmlBrowseIndex,
     setSourceViewerBrowseIndex,
-    setVideoBrowseIndex,
-    setAudioBrowseIndex,
-    mdItems,
-    htmlItems,
     sourceViewerItems,
-    videoItems,
-    audioItems,
     expandAncestors,
   };
 }

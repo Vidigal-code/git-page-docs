@@ -36,7 +36,7 @@ export function DropdownSelector({
   onSelect,
   className,
   themeVarsStyle,
-}: DropdownSelectorProps) {
+}: Readonly<DropdownSelectorProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);

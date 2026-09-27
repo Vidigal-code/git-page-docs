@@ -159,7 +159,7 @@ El config de version puede renderizar un contenedor **Codigo fuente** via \`rout
 - \`name\`, \`defaultLanguage\`
 - \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
 - \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
-- Idiomas y textos de la UI: \`gitpagedocs/langs.json\` + \`gitpagedocs/langs/<lang>.json\`
+- Idiomas: \`site.languages\` (activa/desactiva cada uno); textos de la UI: \`gitpagedocs/langs/<lang>.json\`
 
 ## Variables de entorno
 
@@ -170,11 +170,11 @@ El config de version puede renderizar un contenedor **Codigo fuente** via \`rout
 
 La configuracion de runtime esta en \`gitpagedocs/config.json\`. Los textos de la UI viven al lado, un archivo por idioma.
 
-## Idiomas (\`langs.json\` + \`langs/\`)
+## Idiomas (\`site.languages\` + \`langs/\`)
 
-- \`gitpagedocs/langs.json\` lista los idiomas disponibles en el orden del menu: \`{ "languages": ["en", "pt", "es"] }\`.
+- \`site.languages\` en \`gitpagedocs/config.json\` activa (\`true\`) o desactiva (\`false\`) cada idioma, en el orden del menu: \`{ "languages": { "en": true, "pt": true, "es": false } }\`. Un idioma en \`false\` desaparece del selector de idiomas y sus textos no se cargan, aunque existan sus docs.
 - \`gitpagedocs/langs/<lang>.json\` guarda los textos de ese idioma: \`langmenu\` (cabecera, busqueda, visor de codigo, reproductor de audio, chat de IA y acceso a los docs) y \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
-- Para agregar un idioma, crea \`langs/<lang>.json\` y agrega su codigo a \`langs.json\`.
+- Para agregar un idioma, crea \`langs/<lang>.json\` y agrega \`"<lang>": true\` en \`site.languages\`. Ya no existe \`langs.json\`: un manifiesto dejado por la version 1.1.68 aun se lee en configs antiguos sin \`site.languages\`, y el generador lo elimina.
 - Los \`config.json\` antiguos que aun traen \`site.langmenu\` / \`translations\` inline siguen funcionando; cuando existen ambos, los archivos de \`langs/\` prevalecen y cualquier clave ausente se completa desde la version actual.
 
 ## Seccion \`site\`

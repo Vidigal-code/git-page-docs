@@ -9,13 +9,14 @@ interface DocsShellInfoOverlayProps {
   onClose: () => void;
 }
 
-export function DocsShellInfoOverlay({ isOpen, lastUpdateLabel, updateDate, menuCloseLabel, onClose }: DocsShellInfoOverlayProps) {
+export function DocsShellInfoOverlay({ isOpen, lastUpdateLabel, updateDate, menuCloseLabel, onClose }: Readonly<DocsShellInfoOverlayProps>) {
   if (!isOpen) {
     return null;
   }
   return (
-    <div className={styles.versionLinksOverlay} onClick={onClose} role="presentation">
-      <div className={styles.versionLinksCard} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={lastUpdateLabel}>
+    <div className={styles.versionLinksOverlay}>
+      <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
+      <dialog open className={styles.versionLinksCard} aria-modal="true" aria-label={lastUpdateLabel}>
         <div className={styles.versionLinksHeader}>
           <strong>{lastUpdateLabel}</strong>
           <button className={`${styles.button} ${styles.versionLinksCloseButton}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>
@@ -25,7 +26,7 @@ export function DocsShellInfoOverlay({ isOpen, lastUpdateLabel, updateDate, menu
         <div className={styles.versionLinksList}>
           <p className={styles.infoOverlayDate}>{updateDate}</p>
         </div>
-      </div>
+      </dialog>
     </div>
   );
 }

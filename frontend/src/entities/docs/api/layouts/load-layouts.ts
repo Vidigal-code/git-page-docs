@@ -19,6 +19,22 @@ interface ResolvedLayoutsSource {
   localTemplatesBasePath?: string;
 }
 
+interface LoadLayoutsOptions {
+  isLocal: boolean;
+  owner?: string;
+  repo?: string;
+  useOfficialLayouts?: boolean;
+  officialLayoutsConfigPath?: string;
+  officialLayoutsTemplatesPath?: string;
+  layoutsConfigPath?: string;
+  layoutsConfigPathTemplates?: string;
+}
+
+interface PreferredRemotePaths {
+  layoutsPath: string | undefined;
+  templatesPath: string | undefined;
+}
+
 function resolveTemplatesOverride(templatesPathOverride: string | undefined): string | undefined {
   return templatesPathOverride ? ensureTrailingSlash(toRawGithubUrl(templatesPathOverride)) : undefined;
 }
@@ -100,70 +116,64 @@ async function loadTemplate(
   return null;
 }
 
-export async function loadLayoutsAndThemes(options: {
-  isLocal: boolean;
-  owner?: string;
-  repo?: string;
-  useOfficialLayouts?: boolean;
-  officialLayoutsConfigPath?: string;
-  officialLayoutsTemplatesPath?: string;
-  layoutsConfigPath?: string;
-  layoutsConfigPathTemplates?: string;
-}): Promise<{
-  layoutsConfig: LayoutsConfig;
-  themes: Record<string, ThemeTemplate>;
-}> {
-  const preferredRemoteLayoutsPath = options.useOfficialLayouts
-    ? options.officialLayoutsConfigPath || options.layoutsConfigPath
-    : options.layoutsConfigPath;
-  const preferredRemoteTemplatesPath = options.useOfficialLayouts
-    ? options.officialLayoutsTemplatesPath || options.layoutsConfigPathTemplates
-    : options.layoutsConfigPathTemplates;
-
-  let source: ResolvedLayoutsSource | null = null;
-
+/** With official layouts on, the official urls take precedence over the repository's own. */
+function resolvePreferredRemotePaths(options: LoadLayoutsOptions): PreferredRemotePaths {
   if (options.useOfficialLayouts) {
-    const officialCandidates = Array.from(
-      new Set([preferredRemoteLayoutsPath, ...OFFICIAL_LAYOUTS_CONFIG_URLS]),
-    ).filter((candidate): candidate is string => Boolean(candidate));
-    for (const configUrl of officialCandidates) {
-      // A stale configured templates override must not misdirect templates
-      // when the config was served by a fallback candidate instead.
-      const templatesOverride = configUrl === preferredRemoteLayoutsPath ? preferredRemoteTemplatesPath : undefined;
-      source = await readRemoteLayoutsByUrl(configUrl, templatesOverride);
-      if (source) break;
-    }
+    return {
+      layoutsPath: options.officialLayoutsConfigPath || options.layoutsConfigPath,
+      templatesPath: options.officialLayoutsTemplatesPath || options.layoutsConfigPathTemplates,
+    };
   }
+  return { layoutsPath: options.layoutsConfigPath, templatesPath: options.layoutsConfigPathTemplates };
+}
 
-  if (!source && options.isLocal) {
-    source = await readLocalLayouts();
-  } else if (!source) {
-    if (preferredRemoteLayoutsPath) {
-      source = await readRemoteLayoutsByUrl(preferredRemoteLayoutsPath, preferredRemoteTemplatesPath);
-    }
-    if (!source && options.owner && options.repo) {
-      source = await readRepoLayouts(
-        options.owner,
-        options.repo,
-        options.useOfficialLayouts ? undefined : preferredRemoteTemplatesPath,
-      );
-    }
-    if (!source) {
-      source = await readLocalLayouts();
-    }
+/** Configured official url first, then every known official location. */
+async function readOfficialLayouts(preferred: PreferredRemotePaths): Promise<ResolvedLayoutsSource | null> {
+  const officialCandidates = Array.from(
+    new Set([preferred.layoutsPath, ...OFFICIAL_LAYOUTS_CONFIG_URLS]),
+  ).filter((candidate): candidate is string => Boolean(candidate));
+  for (const configUrl of officialCandidates) {
+    // A stale configured templates override must not misdirect templates
+    // when the config was served by a fallback candidate instead.
+    const templatesOverride = configUrl === preferred.layoutsPath ? preferred.templatesPath : undefined;
+    const source = await readRemoteLayoutsByUrl(configUrl, templatesOverride);
+    if (source) return source;
   }
+  return null;
+}
 
-  if (!source) {
-    return buildFallbackLayoutsAndThemes();
+/** Remote runtime: configured url, then the repository's layouts folder, then the local workspace. */
+async function readRemoteRuntimeLayouts(
+  options: LoadLayoutsOptions,
+  preferred: PreferredRemotePaths,
+): Promise<ResolvedLayoutsSource | null> {
+  if (preferred.layoutsPath) {
+    const configured = await readRemoteLayoutsByUrl(preferred.layoutsPath, preferred.templatesPath);
+    if (configured) return configured;
   }
+  if (options.owner && options.repo) {
+    const repoTemplatesOverride = options.useOfficialLayouts ? undefined : preferred.templatesPath;
+    const fromRepo = await readRepoLayouts(options.owner, options.repo, repoTemplatesOverride);
+    if (fromRepo) return fromRepo;
+  }
+  return readLocalLayouts();
+}
 
-  const resolvedSource = source;
+async function resolveLayoutsSource(options: LoadLayoutsOptions): Promise<ResolvedLayoutsSource | null> {
+  const preferred = resolvePreferredRemotePaths(options);
+  if (options.useOfficialLayouts) {
+    const official = await readOfficialLayouts(preferred);
+    if (official) return official;
+  }
+  return options.isLocal ? readLocalLayouts() : readRemoteRuntimeLayouts(options, preferred);
+}
+
+async function loadThemes(source: ResolvedLayoutsSource, isLocal: boolean): Promise<Record<string, ThemeTemplate>> {
   const themes: Record<string, ThemeTemplate> = {};
-
   await Promise.all(
-    resolvedSource.layoutsConfig.layouts.map(async (layoutItem: LayoutItem) => {
+    source.layoutsConfig.layouts.map(async (layoutItem: LayoutItem) => {
       try {
-        const template = await loadTemplate(layoutItem, resolvedSource, options.isLocal);
+        const template = await loadTemplate(layoutItem, source, isLocal);
         if (template) {
           themes[layoutItem.id] = template;
         }
@@ -172,6 +182,16 @@ export async function loadLayoutsAndThemes(options: {
       }
     }),
   );
+  return themes;
+}
 
-  return { layoutsConfig: resolvedSource.layoutsConfig, themes };
+export async function loadLayoutsAndThemes(options: LoadLayoutsOptions): Promise<{
+  layoutsConfig: LayoutsConfig;
+  themes: Record<string, ThemeTemplate>;
+}> {
+  const source = await resolveLayoutsSource(options);
+  if (!source) {
+    return buildFallbackLayoutsAndThemes();
+  }
+  return { layoutsConfig: source.layoutsConfig, themes: await loadThemes(source, options.isLocal) };
 }

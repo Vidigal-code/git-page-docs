@@ -25,6 +25,19 @@
     animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Native <dialog> reset: the modal is opened with the `open` attribute (non-modal,
+   the backdrop button behind it closes it), so drop the UA dialog box model and
+   let the flex overlay keep centering it exactly as before. */
+dialog.modal {
+    position: static;
+    inset: auto;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    overflow: visible;
+    color: inherit;
+}
+
 .title {
     margin: 0;
     font-size: 1.2rem;
@@ -66,14 +79,16 @@
     background: color-mix(in srgb, var(--text, #0f172a) 5%, transparent);
 }
 
+/* White label on the destructive button: #dc2626 reaches 4.8:1 (WCAG AA), the
+   hover shade 6.4:1; both are fixed brand reds independent of the theme. */
 .buttonConfirm {
-    background: #ef4444;
+    background: #dc2626;
     color: white;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
 
 .buttonConfirm:hover {
-    background: #dc2626;
+    background: #b91c1c;
 }
 
 @media (max-width: 640px) {
@@ -107,4 +122,19 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+/* Pointer-only click-away surface: native <button> out of the tab order,
+ * painted beneath the modal so the modal needs no click handler. */
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: default;
 }

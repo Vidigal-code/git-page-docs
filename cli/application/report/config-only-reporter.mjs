@@ -8,7 +8,7 @@ export function reportConfigOnlySuccess(options) {
   const langs = languageArtifactPaths(options.outputDir);
   return [
     `Generated: ${options.outputDir}/ (config-only)`,
-    `UI strings: ${langs.manifest} + ${langs.dir}/{${SUPPORTED_LANGUAGES.join(",")}}.json`,
+    `UI strings: ${langs.dir}/{${SUPPORTED_LANGUAGES.join(",")}}.json (enable/disable each language in ${langs.config} -> site.languages)`,
     "No index.html/index.js generated.",
   ];
 }
@@ -51,10 +51,7 @@ export function reportPrebuiltDetected() {
 }
 
 export function reportAll(options, prebuiltDetected) {
-  const lines = [];
-  lines.push(...reportConfigOnlySuccess(options));
-  lines.push(...reportLayoutConfig(options));
-  lines.push(...reportRenderingUrl(options));
+  const lines = [...reportConfigOnlySuccess(options), ...reportLayoutConfig(options), ...reportRenderingUrl(options)];
   if (options.shouldPush) {
     lines.push(...reportPushMode());
   }

@@ -83,7 +83,7 @@ function resolvePageRouteTarget(
   pathClick: string,
   language: LanguageCode,
 ): RouteAuthorizationTarget | undefined {
-  const pageMatch = pathClick.match(/^page:(\d+)$/);
+  const pageMatch = /^page:(\d+)$/.exec(pathClick);
   if (!pageMatch) return undefined;
   const routeId = Number.parseInt(pageMatch[1] ?? "", 10);
   if (Number.isNaN(routeId)) return undefined;

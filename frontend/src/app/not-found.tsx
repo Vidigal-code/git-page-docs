@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
+import type { CSSProperties, ReactNode, SubmitEvent } from "react";
 import {
   checkRepositoryHasGitPageDocs,
   getLanguageLabelFromMenu,
@@ -23,10 +24,6 @@ import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import notFoundStyles from "./not-found.module.css";
 import { DocsShell } from "@/widgets/docs-shell";
 import {
-  NOT_INSTALLED,
-  INSTALLED_NOT_PRERENDERED,
-  SEARCH_PROMPT,
-  INSTALLED_PROMPT,
   RETURN_HOME,
   LOADING_DOCUMENTATION,
   REPOSITORY_DETECTED,
@@ -38,15 +35,23 @@ import {
   SEARCH_BUTTON,
   LOADING_FALLBACK,
 } from "@/shared/config/i18n/not-found-dict";
-
-type RepoStatus = "unknown" | "checking" | "installed" | "not_installed";
-
-
-
-type SupportedLanguage = "en" | "pt" | "es";
+import {
+  buildRepositoryPath,
+  isRepositoryResolving,
+  pickNotFoundText,
+  resolveLoadingProgressWidth,
+  resolveNotFoundCopy,
+  type RepoStatus,
+  type SupportedLanguage,
+} from "./not-found-state";
 
 const MIN_LOADING_TRANSITION_MS = 700;
 const SEARCH_LANGUAGES: SupportedLanguage[] = ["en", "pt", "es"];
+const FALLBACK_LANGMENU = {
+  en: { en: "English", pt: "Português", es: "Español" },
+  pt: { en: "English", pt: "Português", es: "Español" },
+  es: { en: "English", pt: "Português", es: "Español" },
+} as const;
 
 function NotFoundFallback() {
   return (
@@ -58,22 +63,161 @@ function NotFoundFallback() {
   );
 }
 
-function NotFoundContent() {
+interface RepoPath {
+  owner: string | null;
+  repo: string | null;
+  version: string | undefined;
+}
+
+const EMPTY_REPO_PATH: RepoPath = { owner: null, repo: null, version: undefined };
+
+/**
+ * Owner/repo/version read from the URL and re-synced on history navigation.
+ * `mounted` flips once the client took over (never for source-viewer deep
+ * links, which are redirected away before anything renders).
+ */
+function useRepoPathFromLocation() {
   const [mounted, setMounted] = useState(false);
-  const [pathOwner, setPathOwner] = useState<string | null>(null);
-  const [pathRepo, setPathRepo] = useState<string | null>(null);
-  const [pathVersion, setPathVersion] = useState<string | undefined>(undefined);
+  const [path, setPath] = useState<RepoPath>(EMPTY_REPO_PATH);
+
+  useEffect(() => {
+    // Deep source-viewer URLs are not prerendered; hand them to the exported
+    // /source-viewer/ page instead of treating them as an owner/repo path.
+    if (redirectSourceViewerDeepLink()) {
+      return;
+    }
+    setMounted(true);
+    function syncFromCurrentLocation() {
+      const parsed = parseRepoPathFromLocation(parseSupportedLanguage);
+      if (!parsed) {
+        return;
+      }
+      setPath({ owner: parsed.owner, repo: parsed.repo, version: parsed.version });
+    }
+    syncFromCurrentLocation();
+    window.addEventListener("popstate", syncFromCurrentLocation);
+    window.addEventListener("hashchange", syncFromCurrentLocation);
+    return () => {
+      window.removeEventListener("popstate", syncFromCurrentLocation);
+      window.removeEventListener("hashchange", syncFromCurrentLocation);
+    };
+  }, []);
+
+  return { mounted, path, setPath };
+}
+
+/** Probes whether the repository ships gitpagedocs whenever owner/repo change. */
+function useRepositoryStatus(owner: string | null, repo: string | null) {
   const [repoStatus, setRepoStatus] = useState<RepoStatus>("unknown");
+
+  useEffect(() => {
+    if (!owner || !repo) {
+      return;
+    }
+    let cancelled = false;
+    setRepoStatus("checking");
+    checkRepositoryHasGitPageDocs(owner, repo).then((hasGitPageDocs) => {
+      if (cancelled) {
+        return;
+      }
+      setRepoStatus(hasGitPageDocs ? "installed" : "not_installed");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [owner, repo]);
+
+  return { repoStatus, setRepoStatus };
+}
+
+/** Fetches the remote docs once the repository is known to have gitpagedocs. */
+function useRemoteDocs(path: RepoPath, repoStatus: RepoStatus, language: SupportedLanguage) {
+  const { owner, repo, version } = path;
   const [loadedData, setLoadedData] = useState<LoadedDocsData | null>(null);
   const [appLoading, setAppLoading] = useState(false);
   const [appLoadFailed, setAppLoadFailed] = useState(false);
-  const [loaderDots, setLoaderDots] = useState(1);
-  const [loadingTransitionDone, setLoadingTransitionDone] = useState(false);
 
+  useEffect(() => {
+    if (!owner || !repo || repoStatus !== "installed") {
+      setLoadedData(null);
+      setAppLoading(false);
+      setAppLoadFailed(false);
+      return;
+    }
+    let cancelled = false;
+    setLoadedData(null);
+    setAppLoading(true);
+    setAppLoadFailed(false);
+    loadRemoteDocsData(owner, repo, version, language)
+      .then((data) => {
+        if (cancelled) return;
+        if (data) {
+          setLoadedData(data);
+          return;
+        }
+        setAppLoadFailed(true);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setAppLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [owner, repo, version, repoStatus, language]);
+
+  return { loadedData, setLoadedData, appLoading, appLoadFailed };
+}
+
+/** Keeps the loading view up for a minimum time so the hand-off never flickers. */
+function useLoadingTransitionDone(isResolving: boolean, path: RepoPath, language: string): boolean {
+  const { owner, repo, version } = path;
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!isResolving) {
+      setDone(true);
+      return;
+    }
+    setDone(false);
+    const timer = window.setTimeout(() => {
+      setDone(true);
+    }, MIN_LOADING_TRANSITION_MS);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isResolving, owner, repo, version, language]);
+
+  return done;
+}
+
+/** Animates the "Loading documentation..." dots while resolving. */
+function useLoaderDots(isResolving: boolean): number {
+  const [loaderDots, setLoaderDots] = useState(1);
+
+  useEffect(() => {
+    if (!isResolving) {
+      setLoaderDots(1);
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setLoaderDots((prev) => (prev >= 3 ? 1 : prev + 1));
+    }, 280);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isResolving]);
+
+  return loaderDots;
+}
+
+/** Standalone shell chrome (theme, language, header) shared by every 404 view. */
+function useNotFoundShell() {
   const { config: standaloneConfig } = useStandaloneShellConfig();
   const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
   const themes = standaloneConfig?.themes ?? {};
-  const siteName = standaloneConfig?.siteConfig?.name ?? "GitPageDocs";
+  const siteConfig = standaloneConfig?.siteConfig;
+  const siteName = siteConfig?.name ?? "GitPageDocs";
   const initialThemeBaseId = layouts.find((l) => l.id === "aurora-dark")?.id ?? layouts[0]?.id;
 
   const {
@@ -97,161 +241,24 @@ function NotFoundContent() {
   const activeTheme = themes[activeLayout?.id ?? ""];
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
-  const FALLBACK_LANGMENU = {
-    en: { en: "English", pt: "Português", es: "Español" },
-    pt: { en: "English", pt: "Português", es: "Español" },
-    es: { en: "English", pt: "Português", es: "Español" },
-  } as const;
-
   const getLanguageLabel = (targetLang: string) =>
-    getLanguageLabelFromMenu(standaloneConfig?.siteConfig?.langmenu ?? FALLBACK_LANGMENU, lang, targetLang);
-
-  useEffect(() => {
-    // Deep source-viewer URLs are not prerendered; hand them to the exported
-    // /source-viewer/ page instead of treating them as an owner/repo path.
-    if (redirectSourceViewerDeepLink()) {
-      return;
-    }
-    setMounted(true);
-    function syncFromCurrentLocation() {
-      const parsed = parseRepoPathFromLocation(parseSupportedLanguage);
-      if (!parsed) {
-        return;
-      }
-      setPathOwner(parsed.owner);
-      setPathRepo(parsed.repo);
-      setPathVersion(parsed.version);
-    }
-    syncFromCurrentLocation();
-    if (typeof window !== "undefined") {
-      window.addEventListener("popstate", syncFromCurrentLocation);
-      window.addEventListener("hashchange", syncFromCurrentLocation);
-    }
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("popstate", syncFromCurrentLocation);
-        window.removeEventListener("hashchange", syncFromCurrentLocation);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!pathOwner || !pathRepo) {
-      return;
-    }
-    let cancelled = false;
-    setRepoStatus("checking");
-    checkRepositoryHasGitPageDocs(pathOwner, pathRepo).then((hasGitPageDocs) => {
-      if (cancelled) {
-        return;
-      }
-      setRepoStatus(hasGitPageDocs ? "installed" : "not_installed");
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [pathOwner, pathRepo]);
-
-  useEffect(() => {
-    if (!pathOwner || !pathRepo || repoStatus !== "installed") {
-      setLoadedData(null);
-      setAppLoading(false);
-      setAppLoadFailed(false);
-      return;
-    }
-    let cancelled = false;
-    setLoadedData(null);
-    setAppLoading(true);
-    setAppLoadFailed(false);
-    loadRemoteDocsData(pathOwner, pathRepo, pathVersion, lang as SupportedLanguage)
-      .then((data) => {
-        if (cancelled) return;
-        if (data) {
-          setLoadedData(data);
-          return;
-        }
-        setAppLoadFailed(true);
-      })
-      .finally(() => {
-        if (cancelled) return;
-        setAppLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [pathOwner, pathRepo, pathVersion, repoStatus, lang]);
-
-  const isRepoPath = pathOwner && pathRepo;
-  const isCheckingOrLoading =
-    Boolean(isRepoPath) && (repoStatus === "unknown" || repoStatus === "checking" || (repoStatus === "installed" && appLoading));
-
-  useEffect(() => {
-    if (!isCheckingOrLoading) {
-      setLoadingTransitionDone(true);
-      return;
-    }
-    setLoadingTransitionDone(false);
-    const timer = window.setTimeout(() => {
-      setLoadingTransitionDone(true);
-    }, MIN_LOADING_TRANSITION_MS);
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [isCheckingOrLoading, pathOwner, pathRepo, pathVersion, lang]);
-
-  useEffect(() => {
-    if (!isCheckingOrLoading) {
-      setLoaderDots(1);
-      return;
-    }
-    const timer = window.setInterval(() => {
-      setLoaderDots((prev) => (prev >= 3 ? 1 : prev + 1));
-    }, 280);
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, [isCheckingOrLoading]);
+    getLanguageLabelFromMenu(siteConfig?.langmenu ?? FALLBACK_LANGMENU, lang, targetLang);
 
   const basePath = getBasePath();
-  const siteConfig = standaloneConfig?.siteConfig;
+  const mode: "dark" | "light" = nextModeIsDark ? "dark" : "light";
   const headerIconConfig = useMemo(
-    () =>
-      resolveHeaderIconConfig(siteConfig ?? undefined, nextModeIsDark ? "dark" : "light", basePath),
-    [siteConfig, nextModeIsDark, basePath],
+    () => resolveHeaderIconConfig(siteConfig ?? undefined, mode, basePath),
+    [siteConfig, mode, basePath],
   );
-  const {
-    iconImage,
-    headerName,
-    useReactIcon: useReactHeaderIcon,
-    reactIconTag: reactHeaderIconTag,
-    reactIconStyle: headerReactIconStyle,
-    iconImgWidth,
-    iconImgHeight,
-  } = headerIconConfig;
+  const { iconImage, headerName, useReactIcon, reactIconTag, reactIconStyle, iconImgWidth, iconImgHeight } =
+    headerIconConfig;
 
-  const header = standaloneConfig ? (
-    <SearchShellHeader
-      themeVarsStyle={cssVars}
-      siteName={headerName}
-      basePath={basePath}
-      language={lang}
-      languages={SEARCH_LANGUAGES}
-      onLanguageChange={(l) => onLanguageChange(l as SupportedLanguage)}
-      activeThemeId={activeThemeId}
-      layouts={layouts}
-      onThemeChange={onThemeChange}
-      nextModeIsDark={nextModeIsDark}
-      canToggleMode={canToggleMode}
-      onToggleMode={onToggleMode}
-      iconImage={iconImage}
-      iconImgWidth={iconImgWidth}
-      iconImgHeight={iconImgHeight}
-      useReactHeaderIcon={useReactHeaderIcon}
-      reactHeaderIconTag={reactHeaderIconTag}
-      headerReactIconStyle={headerReactIconStyle}
-      getLanguageLabel={getLanguageLabel}
-    />
-  ) : (
+  // The React header icon is only wired once the standalone config resolved.
+  const reactIconProps = standaloneConfig
+    ? { useReactHeaderIcon: useReactIcon, reactHeaderIconTag: reactIconTag, headerReactIconStyle: reactIconStyle }
+    : {};
+
+  const header = (
     <SearchShellHeader
       themeVarsStyle={cssVars}
       siteName={headerName}
@@ -269,127 +276,154 @@ function NotFoundContent() {
       iconImgWidth={iconImgWidth}
       iconImgHeight={iconImgHeight}
       getLanguageLabel={getLanguageLabel}
+      {...reactIconProps}
     />
   );
 
-  const safeLang = lang as SupportedLanguage;
+  return { lang, header, cssVars, basePath };
+}
 
-  if (!mounted) {
-    return (
-      <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-        <section className={notFoundStyles.section}>
-          <p style={styles.loading}>{LOADING_FALLBACK[safeLang] || LOADING_FALLBACK.en}</p>
-        </section>
-      </SearchShellLayout>
-    );
-  }
+interface NotFoundFrameProps {
+  header: ReactNode;
+  language: string;
+  cssVars: CSSProperties;
+  children: ReactNode;
+}
 
-  if (loadedData && loadingTransitionDone) {
-    return <DocsShell data={loadedData} />;
-  }
+function NotFoundFrame({ header, language, cssVars, children }: Readonly<NotFoundFrameProps>) {
+  return (
+    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars}>
+      <section className={notFoundStyles.section}>{children}</section>
+    </SearchShellLayout>
+  );
+}
 
-  if (isCheckingOrLoading) {
-    const loadingTitleBase = LOADING_DOCUMENTATION[safeLang] || LOADING_DOCUMENTATION.en;
-    const loadingTitle = `${loadingTitleBase}${".".repeat(loaderDots)}`;
-    const progressWidth = loaderDots === 1 ? "34%" : loaderDots === 2 ? "68%" : "100%";
-    return (
-      <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-        <section className={notFoundStyles.section}>
-          <h1 style={styles.title}>{loadingTitle}</h1>
-          <p style={styles.description}>
-            {REPOSITORY_DETECTED[safeLang] || REPOSITORY_DETECTED.en}
-          </p>
-          <div style={styles.loadingTrack}>
-            <div style={{ ...styles.loadingBar, width: progressWidth }} />
-          </div>
-        </section>
-      </SearchShellLayout>
-    );
-  }
+function LoadingBody({ language, loaderDots }: Readonly<{ language: SupportedLanguage; loaderDots: number }>) {
+  const loadingTitle = `${pickNotFoundText(LOADING_DOCUMENTATION, language)}${".".repeat(loaderDots)}`;
+  return (
+    <>
+      <h1 style={styles.title}>{loadingTitle}</h1>
+      <p style={styles.description}>{pickNotFoundText(REPOSITORY_DETECTED, language)}</p>
+      <div style={styles.loadingTrack}>
+        <div style={{ ...styles.loadingBar, width: resolveLoadingProgressWidth(loaderDots) }} />
+      </div>
+    </>
+  );
+}
 
-  if (Boolean(isRepoPath) && repoStatus === "installed" && appLoadFailed) {
-    return (
-      <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-        <section className={notFoundStyles.section}>
-          <h1 style={styles.title}>{COULD_NOT_LOAD[safeLang] || COULD_NOT_LOAD.en}</h1>
-          <p style={styles.description}>
-            {NETWORK_FAILURE_RETRY[safeLang] || NETWORK_FAILURE_RETRY.en}
-          </p>
-          <button
-            type="button"
-            className={notFoundStyles.buttonFull}
-            onClick={() => {
-              setRepoStatus("checking");
-            }}
-          >
-            {TRY_AGAIN[safeLang] || TRY_AGAIN.en}
-          </button>
-        </section>
-      </SearchShellLayout>
-    );
-  }
+function LoadFailedBody({ language, onRetry }: Readonly<{ language: SupportedLanguage; onRetry: () => void }>) {
+  return (
+    <>
+      <h1 style={styles.title}>{pickNotFoundText(COULD_NOT_LOAD, language)}</h1>
+      <p style={styles.description}>{pickNotFoundText(NETWORK_FAILURE_RETRY, language)}</p>
+      <button type="button" className={notFoundStyles.buttonFull} onClick={onRetry}>
+        {pickNotFoundText(TRY_AGAIN, language)}
+      </button>
+    </>
+  );
+}
 
-  const message = isRepoPath
-    ? repoStatus === "installed"
-      ? INSTALLED_NOT_PRERENDERED[safeLang] || INSTALLED_NOT_PRERENDERED.en
-      : NOT_INSTALLED[safeLang] || NOT_INSTALLED.en
-    : "Page not found";
-  const prompt = isRepoPath
-    ? repoStatus === "installed"
-      ? INSTALLED_PROMPT[safeLang] || INSTALLED_PROMPT.en
-      : SEARCH_PROMPT[safeLang] || SEARCH_PROMPT.en
-    : "The requested page does not exist.";
-  const returnLabel = RETURN_HOME[safeLang] || RETURN_HOME.en;
+interface RepositorySearchBodyProps {
+  language: SupportedLanguage;
+  basePath: string;
+  isRepoPath: boolean;
+  repoStatus: RepoStatus;
+  path: RepoPath;
+  onSearch: (owner: string, repo: string) => void;
+}
+
+function RepositorySearchBody({ language, basePath, isRepoPath, repoStatus, path, onSearch }: Readonly<RepositorySearchBodyProps>) {
+  const copy = resolveNotFoundCopy(isRepoPath, repoStatus, language);
+
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const owner = (form.querySelector('[name="owner"]') as HTMLInputElement)?.value?.trim();
+    const repo = (form.querySelector('[name="repo"]') as HTMLInputElement)?.value?.trim();
+    if (owner && repo) {
+      onSearch(owner, repo);
+    }
+  };
 
   return (
-    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={lang} style={cssVars}>
-      <section className={notFoundStyles.section}>
-        {(repoStatus === "not_installed" || !isRepoPath) && <p style={styles.code}>404</p>}
-        <h1 style={styles.title}>{message}</h1>
-        <p style={styles.description}>{prompt}</p>
+    <>
+      {copy.showCode && <p style={styles.code}>404</p>}
+      <h1 style={styles.title}>{copy.message}</h1>
+      <p style={styles.description}>{copy.prompt}</p>
 
-        {isRepoPath && (
-          <form
-            className={notFoundStyles.form}
-            onSubmit={(e) => {
-              e.preventDefault();
-              const form = e.target as HTMLFormElement;
-              const owner = (form.querySelector('[name="owner"]') as HTMLInputElement)?.value?.trim();
-              const repo = (form.querySelector('[name="repo"]') as HTMLInputElement)?.value?.trim();
-              if (owner && repo) {
-                setPathOwner(owner);
-                setPathRepo(repo);
-                setPathVersion(undefined);
-                setRepoStatus("unknown");
-                setLoadedData(null);
-                const nextPath = `${basePath ? basePath + "/" : "/"}${owner}/${repo}/`;
-                window.history.replaceState({}, "", nextPath);
-              }
-            }}
-          >
-            <input
-              name="owner"
-              placeholder={SEARCH_OWNER_PLACEHOLDER[safeLang] || SEARCH_OWNER_PLACEHOLDER.en}
-              defaultValue={pathOwner ?? ""}
-              className={notFoundStyles.input}
-            />
-            <input
-              name="repo"
-              placeholder={SEARCH_REPO_PLACEHOLDER[safeLang] || SEARCH_REPO_PLACEHOLDER.en}
-              defaultValue={pathRepo ?? ""}
-              className={notFoundStyles.input}
-            />
-            <button type="submit" className={notFoundStyles.button}>
-              {SEARCH_BUTTON[safeLang] || SEARCH_BUTTON.en}
-            </button>
-          </form>
-        )}
+      {isRepoPath && (
+        <form className={notFoundStyles.form} onSubmit={handleSubmit}>
+          <input
+            name="owner"
+            placeholder={pickNotFoundText(SEARCH_OWNER_PLACEHOLDER, language)}
+            defaultValue={path.owner ?? ""}
+            className={notFoundStyles.input}
+          />
+          <input
+            name="repo"
+            placeholder={pickNotFoundText(SEARCH_REPO_PLACEHOLDER, language)}
+            defaultValue={path.repo ?? ""}
+            className={notFoundStyles.input}
+          />
+          <button type="submit" className={notFoundStyles.button}>
+            {pickNotFoundText(SEARCH_BUTTON, language)}
+          </button>
+        </form>
+      )}
 
-        <a href={basePath ? `${basePath}/` : "/"} className={notFoundStyles.link}>
-          {returnLabel}
-        </a>
-      </section>
-    </SearchShellLayout>
+      <a href={basePath ? `${basePath}/` : "/"} className={notFoundStyles.link}>
+        {pickNotFoundText(RETURN_HOME, language)}
+      </a>
+    </>
+  );
+}
+
+function NotFoundContent() {
+  const { lang, header, cssVars, basePath } = useNotFoundShell();
+  const safeLang = lang as SupportedLanguage;
+
+  const { mounted, path, setPath } = useRepoPathFromLocation();
+  const { repoStatus, setRepoStatus } = useRepositoryStatus(path.owner, path.repo);
+  const { loadedData, setLoadedData, appLoading, appLoadFailed } = useRemoteDocs(path, repoStatus, safeLang);
+
+  const isRepoPath = Boolean(path.owner && path.repo);
+  const isResolving = isRepositoryResolving(isRepoPath, repoStatus, appLoading);
+  const loadingTransitionDone = useLoadingTransitionDone(isResolving, path, lang);
+  const loaderDots = useLoaderDots(isResolving);
+
+  const handleSearch = (owner: string, repo: string) => {
+    setPath({ owner, repo, version: undefined });
+    setRepoStatus("unknown");
+    setLoadedData(null);
+    window.history.replaceState({}, "", buildRepositoryPath(basePath, owner, repo));
+  };
+
+  let body: ReactNode;
+  if (!mounted) {
+    body = <p style={styles.loading}>{pickNotFoundText(LOADING_FALLBACK, safeLang)}</p>;
+  } else if (loadedData && loadingTransitionDone) {
+    return <DocsShell data={loadedData} />;
+  } else if (isResolving) {
+    body = <LoadingBody language={safeLang} loaderDots={loaderDots} />;
+  } else if (isRepoPath && repoStatus === "installed" && appLoadFailed) {
+    body = <LoadFailedBody language={safeLang} onRetry={() => setRepoStatus("checking")} />;
+  } else {
+    body = (
+      <RepositorySearchBody
+        language={safeLang}
+        basePath={basePath}
+        isRepoPath={isRepoPath}
+        repoStatus={repoStatus}
+        path={path}
+        onSearch={handleSearch}
+      />
+    );
+  }
+
+  return (
+    <NotFoundFrame header={header} language={lang} cssVars={cssVars}>
+      {body}
+    </NotFoundFrame>
   );
 }
 
@@ -401,7 +435,7 @@ export default function NotFound() {
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
+const styles: Record<string, CSSProperties> = {
   loading: {
     margin: 0,
     color: "var(--text-secondary)",

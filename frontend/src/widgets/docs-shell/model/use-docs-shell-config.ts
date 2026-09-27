@@ -2,117 +2,62 @@ import { useMemo } from "react";
 import { buildFooterConfigFromData, type LoadedDocsData, type LoadedPage } from "@/entities/docs";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
+import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
+import type {
+  DocsShellAudioConfig,
+  DocsShellHeaderConfig,
+  DocsShellThemeNavConfig,
+  DocsShellVersionConfig,
+} from "./docs-shell-config-types";
 import { useBuildDocsControlsConfig } from "./use-build-docs-controls-config";
 import { useBuildNavMenuConfig } from "./use-build-nav-menu-config";
 
-export interface DocsShellControlsConfig {
-  fallbackProjectLink: string | undefined;
-  projectLabel: string;
-  useReactProjectLinkIcon: boolean;
-  projectLinkReactIconTag: string | undefined;
-  projectLinkReactIconStyle: React.CSSProperties;
-  versionLinkOptionsWithLabels: { id: "branch" | "release" | "commit"; label: string; url: string }[];
-  versionLinksLabel: string;
-  useReactVersionLinksIcon: boolean;
-  versionLinksIconTag: string | undefined;
-  versionLinksIconStyle: React.CSSProperties;
-  versionLinksIconImage: string | undefined;
-  versionLinksIconImgWidth: number;
-  versionLinksIconImgHeight: number;
-  infoIconImgWidth: number;
-  infoIconImgHeight: number;
-  previewIconImgWidth: number;
-  previewIconImgHeight: number;
-  showInfoButton: boolean;
-  updateDate: string;
-  lastUpdateLabel: string;
-  useReactInfoIcon: boolean;
-  infoIconTag: string | undefined;
-  infoIconStyle: React.CSSProperties;
-  infoIconImage: string | undefined;
-  showPreviewButton: boolean;
-  previewProjectUrl: string;
-  useReactPreviewIcon: boolean;
-  previewIconTag: string | undefined;
-  previewIconStyle: React.CSSProperties;
-  previewIconImage: string | undefined;
-  focusModeEnabled: boolean;
-  focusModeLabel: string;
-  activeNavigation: boolean;
-  quickNavLabel: string;
-  showVersionSelector: boolean;
-  availableVersions: import("@/entities/docs").VersionEntry[];
-  selectedVersionValue: string;
-  versionLabel: string;
-  isLanguageSelectVisible: boolean;
-  availableLanguages: string[];
-  language: string;
-  languageLabelResolver: (lang: string) => string;
-  hideThemeSelector: boolean;
-  activeThemeId: string;
-  layouts: import("@/entities/docs").LayoutItem[];
-  canToggleMode: boolean;
-  nextModeIsDark: boolean;
-  darkModeLabel: string;
-  lightModeLabel: string;
-  showAudioPlayer: boolean;
-  audioPlayerConfig: import("@/entities/docs").ResolvedBackgroundAudioConfig | null;
-  useReactAudioPlayIcon: boolean;
-  audioPlayIconTag: string | undefined;
-  audioPlayIconStyle: React.CSSProperties;
-  useReactAudioPauseIcon: boolean;
-  audioPauseIconTag: string | undefined;
-  audioPauseIconStyle: React.CSSProperties;
-  audioPlayLabel: string;
-  audioPauseLabel: string;
-  audioPlaylistTitle: string;
-  audioPlaylistDescription: string;
-  audioPopoverCloseLabel: string;
-  audioPopoverCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverPlayIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverPauseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverRestartIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverLoopOnIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverLoopOffIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  audioPopoverNowPlayingLabel: string;
-  audioPopoverRestartLabel: string;
-  audioPopoverLoopOnLabel: string;
-  audioPopoverLoopOffLabel: string;
-  audioPopoverSourceLabel: string;
-  audioPopoverHideSource: boolean;
-  audioPopoverSourceCustomLabel: Record<string, string> | undefined;
-  audioPopoverShowMinutes: boolean;
-  audioPopoverStatusPlayingLabel: string;
-  audioPopoverStatusPausedLabel: string;
-  audioPopoverStatusLoopOnLabel: string;
-  audioPopoverStatusLoopOffLabel: string;
-}
+/**
+ * Everything the header controls render, assembled from the four config groups:
+ * project/header links, version selector, theme and navigation toggles, audio player.
+ */
+export type DocsShellControlsConfig = DocsShellHeaderConfig &
+  DocsShellVersionConfig &
+  DocsShellThemeNavConfig &
+  DocsShellAudioConfig;
 
 export interface NavMenuConfig {
-  navMenuOpenIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  navMenuCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  navMenuMobileOpenIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  navMenuMobileCloseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  navMenuBlockActiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  navMenuBlockInactiveIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  sidebarCollapseIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
-  sidebarExpandIcon: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuOpenIcon: ResolvedNavMenuIconConfig;
+  navMenuCloseIcon: ResolvedNavMenuIconConfig;
+  navMenuMobileOpenIcon: ResolvedNavMenuIconConfig;
+  navMenuMobileCloseIcon: ResolvedNavMenuIconConfig;
+  navMenuBlockActiveIcon: ResolvedNavMenuIconConfig;
+  navMenuBlockInactiveIcon: ResolvedNavMenuIconConfig;
+  sidebarCollapseIcon: ResolvedNavMenuIconConfig;
+  sidebarExpandIcon: ResolvedNavMenuIconConfig;
   blockMenuOnNavLabelActive: string;
   blockMenuOnNavLabelInactive: string;
 }
 
-export function useDocsShellConfig(
-  data: LoadedDocsData,
-  activeLayout: { mode?: "dark" | "light" } | undefined,
-  language: string,
-  selectedVersionValue: string,
-  activeThemeId: string,
-  canToggleMode: boolean,
-  nextModeIsDark: boolean,
-  currentPage: LoadedPage | undefined,
+export interface UseDocsShellConfigOptions {
+  data: LoadedDocsData;
+  activeLayout: { mode?: "dark" | "light" } | undefined;
+  language: string;
+  selectedVersionValue: string;
+  activeThemeId: string;
+  canToggleMode: boolean;
+  nextModeIsDark: boolean;
+  currentPage: LoadedPage | undefined;
   /** Whether the current page has markdown in the active language (gates focus mode). */
-  pageHasMarkdown: boolean,
-) {
+  pageHasMarkdown: boolean;
+}
+
+export function useDocsShellConfig({
+  data,
+  activeLayout,
+  language,
+  selectedVersionValue,
+  activeThemeId,
+  canToggleMode,
+  nextModeIsDark,
+  currentPage,
+  pageHasMarkdown,
+}: UseDocsShellConfigOptions) {
   const basePath = getBasePath();
   const mode = (activeLayout?.mode ?? "dark") as "dark" | "light";
 
@@ -121,7 +66,7 @@ export function useDocsShellConfig(
     [data.config.site, mode, basePath],
   );
 
-  const controlsConfig = useBuildDocsControlsConfig(
+  const controlsConfig = useBuildDocsControlsConfig({
     data,
     activeLayout,
     language,
@@ -131,7 +76,7 @@ export function useDocsShellConfig(
     nextModeIsDark,
     currentPage,
     pageHasMarkdown,
-  );
+  });
 
   const navMenuConfig = useBuildNavMenuConfig(data.config, mode, language);
 

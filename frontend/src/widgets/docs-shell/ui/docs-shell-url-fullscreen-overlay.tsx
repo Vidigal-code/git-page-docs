@@ -4,18 +4,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { FiX } from "@/shared/ui/fallback-icons";
 import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentArea } from "./page-content-area";
-import type {
-  BrowseItem,
-  BreadcrumbItem,
-  LoadedAudioContent,
-  LoadedDocsData,
-  LoadedHtmlContent,
-  LoadedMdContent,
-  LoadedVideoContent,
-} from "@/entities/docs";
+import type { LoadedDocsData } from "@/entities/docs";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
-import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import type { AudioRouteControlsConfig } from "./content-type-containers/audio-route-controls";
+import type { BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
+import { resolveFullscreenPageIndex } from "../model/use-docs-shell-fullscreen.helpers";
 import { getFullscreenAlign, getFullscreenInnerClassName } from "./content-type-containers/fullscreen-alignment";
 import styles from "../docs-shell.module.css";
 
@@ -25,31 +17,9 @@ interface DocsShellUrlFullscreenOverlayProps {
   data: LoadedDocsData;
   language: string;
   isDarkMode: boolean;
-  menuCloseLabel: string;
-  fullscreenExpandLabel: string;
-  previousLabel: string;
-  nextLabel: string;
-  browsePrevLabel?: string;
-  browseNextLabel?: string;
-  mdBrowseIndex: number;
-  htmlBrowseIndex: number;
-  videoBrowseIndex: number;
-  audioBrowseIndex: number;
-  setMdBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setHtmlBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setVideoBrowseIndex: (v: number | ((p: number) => number)) => void;
-  setAudioBrowseIndex: (v: number | ((p: number) => number)) => void;
-  mdItems: BrowseItem<LoadedMdContent>[];
-  htmlItems: BrowseItem<LoadedHtmlContent>[];
-  videoItems: BrowseItem<LoadedVideoContent>[];
-  audioItems: BrowseItem<LoadedAudioContent>[];
-  routeGuideEnabled?: boolean;
-  breadcrumbTrail?: BreadcrumbItem[];
-  onMenuClick?: (pathClick: string, ancestorKeys: string[]) => void;
-  homePathClick?: string;
-  homeAncestorKeys?: string[];
-  routeGuideIconConfig?: ResolvedRouteGuideIconConfig;
-  audioRouteControlsConfig?: AudioRouteControlsConfig;
+  labels: ContentLabels;
+  browse: BrowseState;
+  navigation: BrowseNavigationProps;
   onClose: () => void;
 }
 
@@ -59,33 +29,11 @@ export function DocsShellUrlFullscreenOverlay({
   data,
   language,
   isDarkMode,
-  menuCloseLabel,
-  fullscreenExpandLabel,
-  previousLabel,
-  nextLabel,
-  browsePrevLabel,
-  browseNextLabel,
-  mdBrowseIndex,
-  htmlBrowseIndex,
-  videoBrowseIndex,
-  audioBrowseIndex,
-  setMdBrowseIndex,
-  setHtmlBrowseIndex,
-  setVideoBrowseIndex,
-  setAudioBrowseIndex,
-  mdItems,
-  htmlItems,
-  videoItems,
-  audioItems,
-  routeGuideEnabled = false,
-  breadcrumbTrail = [],
-  onMenuClick,
-  homePathClick,
-  homeAncestorKeys = [],
-  routeGuideIconConfig,
-  audioRouteControlsConfig,
+  labels,
+  browse,
+  navigation,
   onClose,
-}: DocsShellUrlFullscreenOverlayProps) {
+}: Readonly<DocsShellUrlFullscreenOverlayProps>) {
   const fullscreenInnerRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown = useCallback(
@@ -115,48 +63,16 @@ export function DocsShellUrlFullscreenOverlay({
   }
 
   const overlayLanguage = params.lang ?? language;
-
-  const pageIndex = (() => {
-    if (params.type === "md" && params.file) {
-      return data.pathToPageMap?.[params.file]?.pageIndex ?? 0;
-    }
-    if (params.type === "html" && params.file) {
-      return data.pathToPageMap?.[params.file]?.pageIndex ?? 0;
-    }
-    if (params.type === "video") {
-      if (params.id != null) {
-        return data.pathToPageMap?.[`page:${params.id}`]?.pageIndex ?? 0;
-      }
-      if (params.slug) {
-        const entry = Object.entries(data.pathToPageMap ?? {}).find(
-          ([k, v]) => v.contentType === "video" && k.toLowerCase().includes(params.slug!.toLowerCase()),
-        );
-        return entry?.[1]?.pageIndex ?? 0;
-      }
-    }
-    if (params.type === "audio") {
-      if (params.id != null) {
-        return data.pathToPageMap?.[`page:${params.id}`]?.pageIndex ?? 0;
-      }
-      if (params.slug) {
-        const entry = Object.entries(data.pathToPageMap ?? {}).find(
-          ([k, v]) => v.contentType === "audio" && k.toLowerCase().includes(params.slug!.toLowerCase()),
-        );
-        return entry?.[1]?.pageIndex ?? 0;
-      }
-    }
-    return 0;
-  })();
-
+  const pageIndex = resolveFullscreenPageIndex(data, params);
   const currentPage = data.pages?.[pageIndex] ?? data.pages?.[0];
   const innerClassName = getFullscreenInnerClassName(getFullscreenAlign(params.type));
 
   return (
-    <div
+    <dialog
+      open
       className={styles.contentContainerFullscreen}
-      role="dialog"
       aria-modal="true"
-      aria-label={menuCloseLabel}
+      aria-label={labels.menuCloseLabel}
     >
       <button
         type="button"
@@ -166,52 +82,26 @@ export function DocsShellUrlFullscreenOverlay({
           e.stopPropagation();
           onClose();
         }}
-        aria-label={menuCloseLabel}
-        title={menuCloseLabel}
+        aria-label={labels.menuCloseLabel}
+        title={labels.menuCloseLabel}
       >
         <FiX aria-hidden />
       </button>
       <div ref={fullscreenInnerRef} className={innerClassName}>
         <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
           <PageContentArea
-          currentPage={currentPage}
-          data={data}
-          language={overlayLanguage}
-          isDarkMode={isDarkMode}
-          contentTypeFilter={
-            params.type === "md" || params.type === "html" || params.type === "video" || params.type === "audio"
-              ? params.type
-              : undefined
-          }
-          isUrlFullscreen={true}
-          fullscreenCloseLabel={menuCloseLabel}
-          fullscreenExpandLabel={fullscreenExpandLabel}
-          previousLabel={previousLabel}
-          nextLabel={nextLabel}
-          browsePrevLabel={browsePrevLabel}
-          browseNextLabel={browseNextLabel}
-          mdBrowseIndex={mdBrowseIndex}
-          htmlBrowseIndex={htmlBrowseIndex}
-          videoBrowseIndex={videoBrowseIndex}
-          audioBrowseIndex={audioBrowseIndex}
-          setMdBrowseIndex={setMdBrowseIndex}
-          setHtmlBrowseIndex={setHtmlBrowseIndex}
-          setVideoBrowseIndex={setVideoBrowseIndex}
-          setAudioBrowseIndex={setAudioBrowseIndex}
-          mdItems={mdItems}
-          htmlItems={htmlItems}
-          videoItems={videoItems}
-          audioItems={audioItems}
-          routeGuideEnabled={routeGuideEnabled}
-          breadcrumbTrail={breadcrumbTrail}
-          onMenuClick={onMenuClick}
-          homePathClick={homePathClick}
-          homeAncestorKeys={homeAncestorKeys}
-          routeGuideIconConfig={routeGuideIconConfig}
-          audioRouteControlsConfig={audioRouteControlsConfig}
-        />
+            currentPage={currentPage}
+            data={data}
+            language={overlayLanguage}
+            isDarkMode={isDarkMode}
+            contentTypeFilter={params.type ?? undefined}
+            isUrlFullscreen={true}
+            labels={labels}
+            browse={browse}
+            navigation={navigation}
+          />
         </TocScrollContainerProvider>
       </div>
-    </div>
+    </dialog>
   );
 }

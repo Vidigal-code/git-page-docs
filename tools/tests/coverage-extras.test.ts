@@ -68,7 +68,23 @@ describe("provider shared helpers", () => {
     };
     const mapped = toOpenAiMessages(req) as Array<{ role: string; content: unknown }>;
     expect(mapped[0]).toEqual({ role: "system", content: "sys" });
-    expect(Array.isArray(mapped[1].content)).toBe(true);
+    expect(mapped[1]).toEqual({
+      role: "user",
+      content: [
+        { type: "text", text: "look" },
+        { type: "image_url", image_url: { url: "data:image/png;base64,AAA" } },
+      ],
+    });
+  });
+
+  it("keeps plain string content for text-only messages and drops the text part when it is empty", () => {
+    const textOnly = toOpenAiMessages({ messages: [{ role: "user", content: "hi" }] }) as Array<{ content: unknown }>;
+    expect(textOnly[0].content).toBe("hi");
+
+    const imageOnly = toOpenAiMessages({
+      messages: [{ role: "user", content: "", attachments: [{ kind: "image", mimeType: "image/png", data: "BBB" }] }],
+    }) as Array<{ content: unknown }>;
+    expect(imageOnly[0].content).toEqual([{ type: "image_url", image_url: { url: "data:image/png;base64,BBB" } }]);
   });
 });
 

@@ -69,30 +69,8 @@ export function DocsShellControls({
   audioPlayIconTag,
   audioPlayIconStyle,
   audioPauseIconTag,
-  audioPauseIconStyle,
   audioPlayLabel,
   audioPauseLabel,
-  audioPlaylistTitle,
-  audioPlaylistDescription,
-  audioPopoverCloseLabel,
-  audioPopoverCloseIcon,
-  audioPopoverPlayIcon,
-  audioPopoverPauseIcon,
-  audioPopoverRestartIcon,
-  audioPopoverLoopOnIcon,
-  audioPopoverLoopOffIcon,
-  audioPopoverNowPlayingLabel,
-  audioPopoverRestartLabel,
-  audioPopoverLoopOnLabel,
-  audioPopoverLoopOffLabel,
-  audioPopoverSourceLabel,
-  audioPopoverHideSource,
-  audioPopoverSourceCustomLabel,
-  audioPopoverShowMinutes,
-  audioPopoverStatusPlayingLabel,
-  audioPopoverStatusPausedLabel,
-  audioPopoverStatusLoopOnLabel,
-  audioPopoverStatusLoopOffLabel,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
   onOpenFocusMode,
@@ -140,35 +118,11 @@ export function DocsShellControls({
       <DocsShellControlsAudio
         showAudioPlayer={showAudioPlayer}
         audioPlayerConfig={audioPlayerConfig}
-        language={language}
-        themeVarsStyle={themeVarsStyle}
         audioPlayIconTag={audioPlayIconTag}
         audioPlayIconStyle={audioPlayIconStyle}
         audioPauseIconTag={audioPauseIconTag}
-        audioPauseIconStyle={audioPauseIconStyle}
         audioPlayLabel={audioPlayLabel}
         audioPauseLabel={audioPauseLabel}
-        audioPlaylistTitle={audioPlaylistTitle}
-        audioPlaylistDescription={audioPlaylistDescription}
-        audioPopoverCloseLabel={audioPopoverCloseLabel}
-        audioPopoverCloseIcon={audioPopoverCloseIcon}
-        audioPopoverPlayIcon={audioPopoverPlayIcon}
-        audioPopoverPauseIcon={audioPopoverPauseIcon}
-        audioPopoverRestartIcon={audioPopoverRestartIcon}
-        audioPopoverLoopOnIcon={audioPopoverLoopOnIcon}
-        audioPopoverLoopOffIcon={audioPopoverLoopOffIcon}
-        audioPopoverNowPlayingLabel={audioPopoverNowPlayingLabel}
-        audioPopoverRestartLabel={audioPopoverRestartLabel}
-        audioPopoverLoopOnLabel={audioPopoverLoopOnLabel}
-        audioPopoverLoopOffLabel={audioPopoverLoopOffLabel}
-        audioPopoverSourceLabel={audioPopoverSourceLabel}
-        audioPopoverHideSource={audioPopoverHideSource}
-        audioPopoverSourceCustomLabel={audioPopoverSourceCustomLabel}
-        audioPopoverShowMinutes={audioPopoverShowMinutes}
-        audioPopoverStatusPlayingLabel={audioPopoverStatusPlayingLabel}
-        audioPopoverStatusPausedLabel={audioPopoverStatusPausedLabel}
-        audioPopoverStatusLoopOnLabel={audioPopoverStatusLoopOnLabel}
-        audioPopoverStatusLoopOffLabel={audioPopoverStatusLoopOffLabel}
       />
       {focusModeEnabled && (
         <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>

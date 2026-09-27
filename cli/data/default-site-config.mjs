@@ -1,8 +1,15 @@
-/** Site chrome defaults. The language list and UI strings live in langs.json + langs/. */
-export function getDefaultSiteConfig(projectLink) {
+/**
+ * Site chrome defaults. `languages` enables (true) / disables (false) each
+ * language; the UI strings themselves live in langs/<lang>.json.
+ */
+import { buildLanguageToggles } from "@gitpagedocs/tools/i18n";
+import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
+
+export function getDefaultSiteConfig(projectLink, languageToggles = buildLanguageToggles(SUPPORTED_LANGUAGES)) {
     return {
         name: "Git Pages Docs",
         defaultLanguage: "en",
+        languages: { ...languageToggles },
         HideThemeSelector: false,
         ThemeDefault: "aurora-dark",
         ThemeModeDefault: "dark",

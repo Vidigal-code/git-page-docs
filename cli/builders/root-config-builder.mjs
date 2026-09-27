@@ -34,7 +34,7 @@ export function buildRootConfig(options = {}) {
     "source-viewer-path": sourceViewerPath,
   }));
 
-  const baseSiteConfig = getDefaultSiteConfig(projectLink);
+  const baseSiteConfig = getDefaultSiteConfig(projectLink, options.languageToggles);
 
   return {
     site: {

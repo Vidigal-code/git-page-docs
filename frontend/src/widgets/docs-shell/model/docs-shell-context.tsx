@@ -32,10 +32,10 @@ const DocsShellContext = createContext<DocsShellContextValue | null>(null);
 export function DocsShellProvider({
   value,
   children,
-}: {
+}: Readonly<{
   value: DocsShellContextValue;
   children: ReactNode;
-}) {
+}>) {
   return <DocsShellContext.Provider value={value}>{children}</DocsShellContext.Provider>;
 }
 

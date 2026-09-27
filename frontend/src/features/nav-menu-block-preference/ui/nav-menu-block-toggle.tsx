@@ -12,6 +12,29 @@ interface NavMenuBlockToggleProps {
   className?: string;
 }
 
+/** Configured react icon, then image, then the react icon resolver's own fallback. */
+function renderToggleIcon(icon: ResolvedNavMenuIconConfig) {
+  if (icon.useReactIcon) {
+    return (
+      <span style={icon.reactIconStyle}>
+        <ReactIconByTag tag={icon.reactIconTag} style={icon.reactIconStyle} />
+      </span>
+    );
+  }
+  if (icon.iconImage) {
+    return (
+      <Image
+        src={icon.iconImage}
+        alt=""
+        width={icon.iconImgWidth}
+        height={icon.iconImgHeight}
+        unoptimized
+      />
+    );
+  }
+  return <ReactIconByTag tag={icon.reactIconTag} style={icon.reactIconStyle} />;
+}
+
 export function NavMenuBlockToggle({
   blockMenuOnNav,
   onToggle,
@@ -20,7 +43,7 @@ export function NavMenuBlockToggle({
   labelActive,
   labelInactive,
   className,
-}: NavMenuBlockToggleProps) {
+}: Readonly<NavMenuBlockToggleProps>) {
   const icon = blockMenuOnNav ? activeIcon : inactiveIcon;
   const label = blockMenuOnNav ? labelActive : labelInactive;
 
@@ -32,21 +55,7 @@ export function NavMenuBlockToggle({
       title={label}
       type="button"
     >
-      {icon.useReactIcon ? (
-        <span style={icon.reactIconStyle}>
-          <ReactIconByTag tag={icon.reactIconTag} style={icon.reactIconStyle} />
-        </span>
-      ) : icon.iconImage ? (
-        <Image
-          src={icon.iconImage}
-          alt=""
-          width={icon.iconImgWidth}
-          height={icon.iconImgHeight}
-          unoptimized
-        />
-      ) : (
-        <ReactIconByTag tag={icon.reactIconTag} style={icon.reactIconStyle} />
-      )}
+      {renderToggleIcon(icon)}
     </button>
   );
 }

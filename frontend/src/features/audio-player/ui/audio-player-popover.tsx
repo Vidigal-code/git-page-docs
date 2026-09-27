@@ -1,13 +1,12 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { FiRefreshCw, FiRepeat, FiX } from "@/shared/ui/fallback-icons";
-import { FaPause } from "@/shared/ui/fallback-icons";
-import { CiPlay1 } from "@/shared/ui/fallback-icons";
+import { CiPlay1, FaPause, FiRefreshCw, FiRepeat, FiX } from "@/shared/ui/fallback-icons";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { AudioTrackConfig } from "@/entities/docs";
 import { getDisplaySourceLabel } from "../lib/get-display-source-label";
 import { renderAudioControlIcon } from "./audio-control-icon";
+import styles from "./audio-player-popover.module.css";
 
 function getTrackLabel(track: AudioTrackConfig, language: string): string {
   const title = track.title as Record<string, string> | undefined;
@@ -131,15 +130,28 @@ export function AudioPlayerPopover({
   const loopStatusLabel = loopEnabled ? (statusLoopOffLabel ?? loopOffLabel) : (statusLoopOnLabel ?? loopOnLabel);
 
   const overlay = (
-    <div
-      className={overlayClassName}
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className={`${cardClassName ?? ""} ${className ?? ""}`}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
+    <div className={overlayClassName}>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label={closeLabel}
+        tabIndex={-1}
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: -1,
+          margin: 0,
+          padding: 0,
+          border: 0,
+          borderRadius: 0,
+          background: "transparent",
+          appearance: "none",
+          cursor: "default",
+        }}
+      />
+      <dialog
+        open
+        className={`${styles.card} ${cardClassName ?? ""} ${className ?? ""}`}
         aria-label={title}
       >
         <div className={headerClassName}>
@@ -190,7 +202,7 @@ export function AudioPlayerPopover({
           <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
             {tracks.map((track, index) => {
               const label = getTrackLabel(track, language);
-              const isActive = currentTrack && currentTrack.url === track.url;
+              const isActive = currentTrack?.url === track.url;
               return (
                 <li key={`${track.url}-${index}`}>
                   <button
@@ -252,7 +264,7 @@ export function AudioPlayerPopover({
             <span>{loopStatusLabel}</span>
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   );
 

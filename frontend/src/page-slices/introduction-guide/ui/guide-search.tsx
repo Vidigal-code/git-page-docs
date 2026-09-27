@@ -6,11 +6,11 @@ export function GuideSearch({
   value,
   placeholder,
   onChange,
-}: {
+}: Readonly<{
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
-}) {
+}>) {
   return (
     <label className={styles.search}>
       <span className={styles.searchIcon} aria-hidden>

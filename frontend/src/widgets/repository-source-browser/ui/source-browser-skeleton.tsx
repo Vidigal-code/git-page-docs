@@ -4,8 +4,8 @@ import styles from "./repository-source-browser.module.css";
 const SIDEBAR_ROW_WIDTHS = ["72%", "58%", "84%", "64%", "48%", "76%"] as const;
 const PANEL_ROW_WIDTHS = ["46%", "62%", "38%"] as const;
 const VIEWER_ROW_WIDTHS = ["88%", "74%", "92%", "60%", "80%", "68%", "84%"] as const;
-/** Field count of the browser's owner/repo/branch/submit toolbar form. */
-const FORM_FIELD_COUNT = 3;
+/** Fields of the browser's owner/repo/branch/submit toolbar form. */
+const FORM_FIELDS = ["owner", "repo", "branch"] as const;
 
 interface SourceBrowserSkeletonProps {
   /**
@@ -17,11 +17,12 @@ interface SourceBrowserSkeletonProps {
   showSearchForm?: boolean;
 }
 
-function SkeletonRows({ widths }: { widths: ReadonlyArray<string> }) {
+/** Widths are distinct per pane, so each one doubles as its row's key. */
+function SkeletonRows({ widths }: Readonly<{ widths: ReadonlyArray<string> }>) {
   return (
     <div className={`${styles.skeletonTree} ${styles.skeletonPane}`} aria-hidden>
-      {widths.map((width, index) => (
-        <span key={index} className={styles.skeletonRow} style={{ width }} />
+      {widths.map((width) => (
+        <span key={width} className={styles.skeletonRow} style={{ width }} />
       ))}
     </div>
   );
@@ -35,7 +36,7 @@ function SkeletonRows({ widths }: { widths: ReadonlyArray<string> }) {
  * it while the browser's chunk or its initial route resolves keeps the
  * surrounding card from loading collapsed and then stretching.
  */
-export function SourceBrowserSkeleton({ label, showSearchForm = true }: SourceBrowserSkeletonProps) {
+export function SourceBrowserSkeleton({ label, showSearchForm = true }: Readonly<SourceBrowserSkeletonProps>) {
   return (
     <div
       className={styles.browser}
@@ -50,8 +51,8 @@ export function SourceBrowserSkeleton({ label, showSearchForm = true }: SourceBr
         </div>
         {showSearchForm ? (
           <div className={styles.form}>
-            {Array.from({ length: FORM_FIELD_COUNT }, (_, index) => (
-              <span key={index} className={styles.input} />
+            {FORM_FIELDS.map((field) => (
+              <span key={field} className={styles.input} />
             ))}
             <span className={styles.button} />
           </div>

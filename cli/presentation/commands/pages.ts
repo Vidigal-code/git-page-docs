@@ -5,6 +5,7 @@ import { askConfirm } from "../ui/clack";
 import { askOwnerRepo, interactivePromptsAvailable } from "../ui/prompts";
 // @ts-expect-error .mjs runtime module
 import { detectRepoFromGit, getCurrentGitBranch, tryConfigurePagesToGitHubActions } from "../../runtime/git-ops.mjs";
+import { trimSlashes } from "../../contracts/path-segments.mjs";
 
 /** Read `--name value` (or `--name=value`) from a raw arg list. */
 function readFlag(args: string[], name: string): string {
@@ -73,8 +74,9 @@ export async function runPagesDeploy(ctx: CommandContext): Promise<void> {
     repo = answered.repo;
   }
 
+  const pathSuffix = docsPath ? ` (path: ${docsPath})` : "";
   // eslint-disable-next-line no-console
-  console.log(`\n  Deploy ${owner}/${repo} to GitHub Pages via Actions${docsPath ? ` (path: ${docsPath})` : ""}.`);
+  console.log(`\n  Deploy ${owner}/${repo} to GitHub Pages via Actions${pathSuffix}.`);
   const ok = await askConfirm(
     `Generate docs + workflow, commit, push, and switch Pages to Actions for ${owner}/${repo}?`,
     false,
@@ -91,7 +93,7 @@ export async function runPagesDeploy(ctx: CommandContext): Promise<void> {
   const result = spawnSync(process.execPath, [bin, ...pushArgs], { stdio: "inherit", cwd: ctx.cwd, env: process.env });
 
   if (result.status === 0) {
-    const seg = docsPath ? `/${docsPath.replace(/^\/+|\/+$/g, "")}` : "";
+    const seg = docsPath ? `/${trimSlashes(docsPath)}` : "";
     // eslint-disable-next-line no-console
     console.log(`\n  Deployed. Final URL: https://${owner}.github.io/${repo}${seg}/\n`);
   } else {

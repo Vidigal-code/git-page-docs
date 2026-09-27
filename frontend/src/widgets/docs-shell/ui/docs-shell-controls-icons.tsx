@@ -37,6 +37,23 @@ export interface DocsShellControlsIconsProps {
   onOpenInfoPopup: () => void;
 }
 
+interface ControlIconSource {
+  useReactIcon: boolean;
+  tag: string | undefined;
+  style: React.CSSProperties;
+  image: string | undefined;
+  imgWidth: number;
+  imgHeight: number;
+}
+
+/** The configured image when no react icon is requested, else the react icon slot (which also renders the default tag). */
+function renderControlIcon({ useReactIcon, tag, style, image, imgWidth, imgHeight }: ControlIconSource) {
+  if (!useReactIcon && image) {
+    return <Image src={image} alt="" width={imgWidth} height={imgHeight} className={styles.headerIcon} unoptimized />;
+  }
+  return <ReactIconByTag tag={tag} style={style} />;
+}
+
 export function DocsShellControlsIcons({
   fallbackProjectLink,
   projectLabel,
@@ -69,7 +86,7 @@ export function DocsShellControlsIcons({
   previewIconImage,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
-}: DocsShellControlsIconsProps) {
+}: Readonly<DocsShellControlsIconsProps>) {
   return (
     <>
       {fallbackProjectLink && (
@@ -95,24 +112,26 @@ export function DocsShellControlsIcons({
       )}
       {!!versionLinkOptionsWithLabels.length && (
         <button className={`${styles.button} ${styles.headerIconButton}`} onClick={onOpenVersionLinksPopup} aria-label={versionLinksLabel} title={versionLinksLabel}>
-          {useReactVersionLinksIcon ? (
-            <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
-          ) : versionLinksIconImage ? (
-            <Image src={versionLinksIconImage} alt="" width={versionLinksIconImgWidth} height={versionLinksIconImgHeight} className={styles.headerIcon} unoptimized />
-          ) : (
-            <ReactIconByTag tag={versionLinksIconTag} style={versionLinksIconStyle} />
-          )}
+          {renderControlIcon({
+            useReactIcon: useReactVersionLinksIcon,
+            tag: versionLinksIconTag,
+            style: versionLinksIconStyle,
+            image: versionLinksIconImage,
+            imgWidth: versionLinksIconImgWidth,
+            imgHeight: versionLinksIconImgHeight,
+          })}
         </button>
       )}
       {showInfoButton && (
         <button className={`${styles.button} ${styles.headerIconButton}`} onClick={onOpenInfoPopup} aria-label={lastUpdateLabel} title={lastUpdateLabel}>
-          {useReactInfoIcon ? (
-            <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
-          ) : infoIconImage ? (
-            <Image src={infoIconImage} alt="" width={infoIconImgWidth} height={infoIconImgHeight} className={styles.headerIcon} unoptimized />
-          ) : (
-            <ReactIconByTag tag={infoIconTag} style={infoIconStyle} />
-          )}
+          {renderControlIcon({
+            useReactIcon: useReactInfoIcon,
+            tag: infoIconTag,
+            style: infoIconStyle,
+            image: infoIconImage,
+            imgWidth: infoIconImgWidth,
+            imgHeight: infoIconImgHeight,
+          })}
         </button>
       )}
       {showPreviewButton && previewProjectUrl && (
@@ -124,13 +143,14 @@ export function DocsShellControlsIcons({
           aria-label="Preview"
           title="Preview"
         >
-          {useReactPreviewIcon ? (
-            <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
-          ) : previewIconImage ? (
-            <Image src={previewIconImage} alt="" width={previewIconImgWidth} height={previewIconImgHeight} className={styles.headerIcon} unoptimized />
-          ) : (
-            <ReactIconByTag tag={previewIconTag} style={previewIconStyle} />
-          )}
+          {renderControlIcon({
+            useReactIcon: useReactPreviewIcon,
+            tag: previewIconTag,
+            style: previewIconStyle,
+            image: previewIconImage,
+            imgWidth: previewIconImgWidth,
+            imgHeight: previewIconImgHeight,
+          })}
         </a>
       )}
     </>

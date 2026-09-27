@@ -14,21 +14,25 @@ export interface AiDocPage {
   body: string;
 }
 
-const PAGE_DELIMITER = /^===\s*PAGE:\s*(.+?)\s*\|\s*(.*?)\s*===\s*$/;
+// Slug is everything up to the first `|`, title everything up to the closing
+// `===`; both are trimmed by the caller. Kept free of overlapping quantifiers
+// so a hostile line cannot make the match super-linear.
+const PAGE_DELIMITER = /^===\s*PAGE:([^|]*)\|(.*)===\s*$/;
 
 /** Turn an arbitrary heading into a safe lowercase-kebab slug. */
 export function slugify(raw: string): string {
   const slug = (raw ?? "")
     .toLowerCase()
     .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+    .join("-")
     .slice(0, 60);
   return slug || "page";
 }
 
 export function parseAiPages(markdown: string): AiDocPage[] {
-  const text = (markdown ?? "").replace(/\r\n/g, "\n").trim();
+  const text = (markdown ?? "").replaceAll("\r\n", "\n").trim();
   if (!text) return [];
 
   const pages: AiDocPage[] = [];
@@ -41,7 +45,7 @@ export function parseAiPages(markdown: string): AiDocPage[] {
   };
 
   for (const line of text.split("\n")) {
-    const match = line.match(PAGE_DELIMITER);
+    const match = PAGE_DELIMITER.exec(line);
     if (match) {
       flush();
       const rawSlug = match[1].trim();

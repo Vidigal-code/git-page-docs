@@ -30,6 +30,18 @@
   animation: selectionDialogIn 0.16s ease-out;
 }
 
+/* Native <dialog> reset: the card is opened with the `open` attribute (non-modal,
+   the backdrop button behind it closes it), so drop the UA dialog box model and
+   let the flex overlay keep centering it exactly as before. */
+dialog.dialog {
+  position: static;
+  inset: auto;
+  height: auto;
+  max-width: none;
+  margin: 0;
+  overflow: visible;
+}
+
 .title {
   margin: 0 0 4px;
   font-size: 1rem;
@@ -97,4 +109,20 @@
   .option {
     transition: none;
   }
+}
+
+/* Pointer-only click-away surface: native <button> out of the tab order,
+ * painted beneath the dialog so the dialog needs no click handler. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: default;
 }

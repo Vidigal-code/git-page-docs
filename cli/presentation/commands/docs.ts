@@ -9,6 +9,12 @@ import {
 } from "@gitpagedocs/tools";
 import type { CommandContext } from "./run-command";
 
+/** Human-readable outcome of one managed-region update. */
+function describeUpdate(result: { changed: boolean; replaced: boolean }): string {
+  if (!result.changed) return "already up to date";
+  return result.replaced ? "managed region updated" : "managed region added";
+}
+
 /**
  * `gitpagedocs docs` — refresh the managed regions of the standard docs files
  * with deterministic content. Idempotent and marker-bounded: manual content
@@ -28,9 +34,8 @@ export async function runDocs(ctx: CommandContext): Promise<void> {
   // eslint-disable-next-line no-console
   console.log("");
   for (const r of results) {
-    const state = r.changed ? (r.replaced ? "managed region updated" : "managed region added") : "already up to date";
     // eslint-disable-next-line no-console
-    console.log(`  ${r.path}: ${state}.`);
+    console.log(`  ${r.path}: ${describeUpdate(r)}.`);
   }
   // eslint-disable-next-line no-console
   console.log("");

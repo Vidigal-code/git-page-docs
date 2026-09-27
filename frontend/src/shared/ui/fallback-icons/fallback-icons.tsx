@@ -15,7 +15,7 @@ interface FallbackIconDefinition {
 }
 
 function createFallbackIcon(definition: FallbackIconDefinition) {
-  function FallbackIcon(props: FallbackIconProps) {
+  function FallbackIcon(props: Readonly<FallbackIconProps>) {
     return (
       <svg
         width="1em"

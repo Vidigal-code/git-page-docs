@@ -1,25 +1,17 @@
 import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
+import type { IconConfigFields } from "../icon-config-fields";
 
 export const FALLBACK_HEADER_NAME = "Git Pages Docs";
 
 /** Minimal config shape for header icon resolution (SiteConfig satisfies this) */
-export interface HeaderIconConfigInput {
+export interface HeaderIconConfigInput extends IconConfigFields<"ImageMenuHeader"> {
   SiteHeaderName?: string;
   name?: string;
   SiteIconPath?: string;
   IconImageMenuHeader?: string;
-  IconImageMenuHeaderLightImg?: string;
-  IconImageMenuHeaderDarkImg?: string;
   IconImageMenuHeaderLight?: string;
   IconImageMenuHeaderDark?: string;
-  IconImageMenuHeaderReactIcones?: boolean;
-  IconImageMenuHeaderReactIconesTag?: string;
-  IconImageMenuHeaderReactIconesTagColorDark?: string;
-  IconImageMenuHeaderReactIconesTagColorLight?: string;
-  IconImageMenuHeaderReactIconesTagSize?: string;
-  IconImageMenuHeaderImgWidth?: string | number;
-  IconImageMenuHeaderImgHeight?: string | number;
 }
 
 export interface ResolvedHeaderIconConfig {

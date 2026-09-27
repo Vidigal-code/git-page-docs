@@ -1,25 +1,13 @@
 "use client";
 
 import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
-import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
+import type { BrowseNavConfig } from "../page-content-browse-nav";
+import { ContentContainerWrapper } from "./content-container-wrapper";
 import { AudioRouteControls, type AudioRouteControlsConfig } from "./audio-route-controls";
+import { getAudioRouteCaptions } from "./captions-track";
 import { getFullscreenAlign } from "./fullscreen-alignment";
+import { parseCssToStyle } from "./parse-css-to-style";
 import styles from "../../docs-shell.module.css";
-
-function parseCssToStyle(css: string | undefined): React.CSSProperties {
-  if (!css) return {};
-  const out: Record<string, string> = {};
-  css.split(";").forEach((part) => {
-    const idx = part.indexOf(":");
-    if (idx < 0) return;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (!k || !v) return;
-    const camel = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-    out[camel] = v;
-  });
-  return out as React.CSSProperties;
-}
 
 interface AudioContainerProps {
   audioType: string;
@@ -30,7 +18,7 @@ interface AudioContainerProps {
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
   isDarkMode?: boolean;
-  browseNav?: BrowseNavProps;
+  browseNav?: BrowseNavConfig;
   controlsConfig?: AudioRouteControlsConfig;
   /** Called when fullscreen is about to open (for URL sync) */
   onFullscreenOpen?: () => void;
@@ -51,7 +39,7 @@ export function AudioContainer({
   controlsConfig,
   onFullscreenOpen,
   onFullscreenClose,
-}: AudioContainerProps) {
+}: Readonly<AudioContainerProps>) {
   const title = config?.title?.[language] ?? config?.title?.en;
   const description = config?.description?.[language] ?? config?.description?.en;
   const titleIsVisible = config?.titleIsVisible ?? false;
@@ -75,6 +63,7 @@ export function AudioContainer({
           pathAudio={pathAudio}
           language={language}
           controls={controlsConfig}
+          captions={getAudioRouteCaptions(config)}
         />
       )}
       {descriptionIsVisible && description && (

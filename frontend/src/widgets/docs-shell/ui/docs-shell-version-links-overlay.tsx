@@ -23,13 +23,14 @@ export function DocsShellVersionLinksOverlay({
   options,
   onClose,
   onOpenVersionLink,
-}: DocsShellVersionLinksOverlayProps) {
+}: Readonly<DocsShellVersionLinksOverlayProps>) {
   if (!isOpen || !options.length) {
     return null;
   }
   return (
-    <div className={styles.versionLinksOverlay} onClick={onClose}>
-      <div className={styles.versionLinksCard} onClick={(event) => event.stopPropagation()}>
+    <div className={styles.versionLinksOverlay}>
+      <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
+      <div className={styles.versionLinksCard}>
         <div className={styles.versionLinksHeader}>
           <strong>{versionLinksLabel}</strong>
           <button className={`${styles.button} ${styles.versionLinksCloseButton}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>

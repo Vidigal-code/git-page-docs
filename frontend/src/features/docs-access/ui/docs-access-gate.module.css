@@ -13,15 +13,31 @@
 .card {
   width: 100%;
   max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
   padding: 2rem 1.75rem;
   border-radius: 16px;
   background: #ffffff;
   color: #111827;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   text-align: center;
+}
+
+/* Native <dialog> reset: the card is opened with the `open` attribute inside
+   the fixed overlay (which is what makes it modal), so drop the UA dialog box
+   model and let .card style it like the plain container it replaced. */
+dialog.card {
+  position: static;
+  inset: auto;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  overflow: visible;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
 .title {

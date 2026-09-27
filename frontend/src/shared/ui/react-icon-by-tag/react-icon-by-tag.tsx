@@ -19,7 +19,7 @@ export function ReactIconByTag({
   className,
   style,
   ariaHidden = true,
-}: ReactIconByTagProps) {
+}: Readonly<ReactIconByTagProps>) {
   const [IconComponent, setIconComponent] = useState<IconType | null>(null);
 
   useEffect(() => {

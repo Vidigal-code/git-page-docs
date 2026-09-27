@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import { buildVersionPath, type LanguageCode, type VersionEntry } from "@/entities/docs";
 import { toFullPath } from "@/shared/lib/base-path";
+import { buildVersionChangeParams, selectVersionValue } from "./use-version-routing.helpers";
+import { getVersionFromPath, stripVersionFromPath } from "./version-url";
+import { withQuery } from "./with-query";
 
 interface UseVersionRoutingArgs {
   pathname: string;
@@ -25,68 +28,23 @@ export function useVersionRouting({
   getCurrentSearchParams,
   routerReplace,
 }: UseVersionRoutingArgs) {
-  const versionFromPath = useMemo(() => {
-    const match = pathname.match(/\/v\/([^/]+)\/?$/);
-    return match?.[1];
-  }, [pathname]);
+  const versionFromPath = useMemo(() => getVersionFromPath(pathname), [pathname]);
 
-  const selectedVersionValue = useMemo(() => {
-    const isKnownVersion = (versionId: string | null | undefined) =>
-      Boolean(versionId && availableVersions.some((version) => version.id === versionId));
-    if (isKnownVersion(versionFromPath)) {
-      return versionFromPath as string;
-    }
-    if (isKnownVersion(versionFromQuery)) {
-      return versionFromQuery as string;
-    }
-    if (isKnownVersion(activeVersionId)) {
-      return activeVersionId as string;
-    }
-    return availableVersions[0]?.id ?? "";
-  }, [versionFromPath, versionFromQuery, activeVersionId, availableVersions]);
-
-  function buildPathFromCurrentLocation(versionId: string): { targetPath: string; params: URLSearchParams } {
-    const cleanPath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : getCurrentSearchParams();
-    return { targetPath: buildVersionPath(cleanPath, versionId), params };
-  }
+  const selectedVersionValue = useMemo(
+    () => selectVersionValue({ versionFromPath, versionFromQuery, activeVersionId, availableVersions }),
+    [versionFromPath, versionFromQuery, activeVersionId, availableVersions],
+  );
 
   function onVersionChange(versionId: string) {
-    const cleanPath = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-    const targetAppPath = buildVersionPath(cleanPath, versionId);
-
-    if (isRemoteRepositorySession) {
-      if (typeof window !== "undefined") {
-        const params = new URLSearchParams(window.location.search);
-        params.set("lang", String(language));
-        params.delete("version");
-        const qs = params.toString();
-        const fullUrl = qs ? `${toFullPath(targetAppPath)}?${qs}` : toFullPath(targetAppPath);
-        window.location.assign(fullUrl);
-      } else {
-        const params = getCurrentSearchParams();
-        params.delete("version");
-        params.set("lang", String(language));
-        const qs = params.toString();
-        routerReplace(qs ? `${targetAppPath}?${qs}` : targetAppPath);
-      }
+    const targetAppPath = buildVersionPath(stripVersionFromPath(pathname), versionId);
+    const hasWindow = typeof window !== "undefined";
+    const current = hasWindow ? new URLSearchParams(window.location.search) : getCurrentSearchParams();
+    const params = buildVersionChangeParams(current, { isRemoteRepositorySession, isLanguageSelectVisible, language });
+    if (hasWindow) {
+      window.location.assign(withQuery(toFullPath(targetAppPath), params));
       return;
     }
-
-    const { params } = buildPathFromCurrentLocation(versionId);
-    params.delete("version");
-    if (isLanguageSelectVisible) {
-      params.set("lang", language);
-    } else {
-      params.delete("lang");
-    }
-    const qs = params.toString();
-    const nextUrl = qs ? `${targetAppPath}?${qs}` : targetAppPath;
-    if (typeof window !== "undefined") {
-      window.location.assign(qs ? `${toFullPath(targetAppPath)}?${qs}` : toFullPath(targetAppPath));
-      return;
-    }
-    routerReplace(nextUrl);
+    routerReplace(withQuery(targetAppPath, params));
   }
 
   return { versionFromPath, selectedVersionValue, onVersionChange };

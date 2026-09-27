@@ -23,7 +23,7 @@ interface SourceViewerPageProps {
 }
 
 
-export function SourceViewerPage({ data, initialRoute }: SourceViewerPageProps) {
+export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPageProps>) {
   // Deep links reach the exported /source-viewer/ page through the 404
   // fallback with the route in a query param; restore it (and the canonical
   // URL) before mounting the browser.

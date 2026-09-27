@@ -11,6 +11,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RepoLayout({ children }: { children: React.ReactNode }) {
+export default function RepoLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <>{children}</>;
 }

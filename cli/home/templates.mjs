@@ -22,8 +22,11 @@ CMD ["nginx", "-g", "daemon off;"]
 `;
 }
 
-export function getReadmeTemplate({ outputDir = "gitpagedocshome" }) {
-  const cdDir = outputDir === "." || outputDir === "./" ? "." : outputDir;
+/**
+ * README shipped next to the static export. Every command runs from the
+ * folder the file lives in, so it never needs to know the output dir name.
+ */
+export function getReadmeTemplate() {
   return `# GitPageDocs Home
 
 Pre-built GitPageDocs static site by Vidigal-code.

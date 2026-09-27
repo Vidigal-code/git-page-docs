@@ -14,7 +14,7 @@ interface TocTreeProps {
   useDefaultScrollBehavior?: boolean;
 }
 
-export function TocTree({ headings, activeId, className, useDefaultScrollBehavior = false }: TocTreeProps) {
+export function TocTree({ headings, activeId, className, useDefaultScrollBehavior = false }: Readonly<TocTreeProps>) {
   const [active, setActive] = useState(activeId || "");
   const scrollContainerRef = useTocScrollContainer();
 

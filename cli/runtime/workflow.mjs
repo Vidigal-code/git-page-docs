@@ -1,6 +1,8 @@
+import { trimSlashes } from "../contracts/path-segments.mjs";
+
 function sanitizeDocsPath(docsPath) {
   if (!docsPath || typeof docsPath !== "string") return "";
-  const segment = docsPath.replace(/^\/+|\/+$/g, "").trim();
+  const segment = trimSlashes(docsPath).trim();
   return /^[A-Za-z0-9._-]+$/.test(segment) ? segment : "";
 }
 

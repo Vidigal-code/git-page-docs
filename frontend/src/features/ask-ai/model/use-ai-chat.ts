@@ -17,6 +17,42 @@ export interface ResolvedChatCredentials {
 
 export type ResolveChatCredentials = () => Promise<ResolvedChatCredentials | null>;
 
+/** Appends `text` to the message with `id`, leaving every other message untouched. */
+function appendToMessage(messages: ChatMessage[], id: string, text: string): ChatMessage[] {
+    return messages.map(m => m.id === id ? { ...m, content: m.content + text } : m);
+}
+
+/** Maps a failed completion to the label rendered inline in the reply. */
+function describeChatError(error: any, labels?: any): string | undefined {
+    const generic = labels?.aiChatErrorGeneric || "Generic Error";
+    if (error?.name !== 'LlmError') return generic;
+
+    const status = error.statusCode;
+    if (status === 0) return error.message;
+    if (status === 401 || status === 403) return labels?.aiChatError401;
+    if (status === 429) return labels?.aiChatError429;
+    if (status && status >= 500) return labels?.aiChatError500;
+    if (status) return labels?.aiChatErrorGeneric;
+    return generic;
+}
+
+/** History + (one) system prompt + the new user turn, in provider order. */
+function buildContextMessages(
+    history: ChatMessage[],
+    systemContext: string | undefined,
+    content: string,
+    attachments?: MultimodalAttachment[],
+): BaseChatMessage[] {
+    const contextMsg: BaseChatMessage[] = history.map(m => ({ role: m.role, content: m.content, attachments: m.attachments }));
+
+    if (systemContext && !contextMsg.some(m => m.role === 'system')) {
+        contextMsg.unshift({ role: 'system', content: systemContext, attachments: undefined });
+    }
+
+    contextMsg.push({ role: 'user', content, attachments });
+    return contextMsg;
+}
+
 export function useAiChat(
     systemContext?: string,
     labels?: any,
@@ -55,13 +91,12 @@ export function useAiChat(
 
         setMessages(prev => [...prev, aiMsgEmpty]);
 
-
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
+        abortControllerRef.current?.abort();
 
         const controller = new AbortController();
         abortControllerRef.current = controller;
+
+        const appendReply = (text: string) => setMessages(prev => appendToMessage(prev, aiMsgId, text));
 
         try {
             // Resolve credentials at send time. The caller (the chat drawer)
@@ -70,49 +105,20 @@ export function useAiChat(
             const creds = resolveCredentials ? await resolveCredentials() : legacyCredentials();
             if (!creds) {
                 const lockedError = labels?.aiChatError401 || labels?.aiChatErrorGeneric || 'Authentication error';
-                setMessages(prev =>
-                    prev.map(m => m.id === aiMsgId ? { ...m, content: m.content + `[${lockedError}]` } : m)
-                );
+                appendReply(`[${lockedError}]`);
                 return;
             }
 
             const llmService = getLlmService(creds.providerAndModel, { apiKey: creds.apiKey, baseUrl: creds.baseUrl });
 
-            const contextMsg = messages.map(m => ({ role: m.role, content: m.content, attachments: m.attachments }));
-
-            if (systemContext) {
-                const hasSystem = contextMsg.some(m => m.role === 'system');
-                if (!hasSystem) {
-                    contextMsg.unshift({ role: 'system', content: systemContext, attachments: undefined });
-                }
-            }
-
-            contextMsg.push({ role: 'user', content, attachments });
-
             await llmService.streamCompletion({
-                messages: contextMsg,
+                messages: buildContextMessages(messages, systemContext, content, attachments),
                 signal: controller.signal,
-                onChunk: (chunk: string) => {
-                    setMessages(prev =>
-                        prev.map(m => m.id === aiMsgId ? { ...m, content: m.content + chunk } : m)
-                    );
-                }
+                onChunk: appendReply,
             });
         } catch (error: any) {
-            if (error.name !== 'AbortError') {
-                let formattedError = labels?.aiChatErrorGeneric || "Generic Error";
-
-                if (error.name === 'LlmError') {
-                    if (error.statusCode === 0) formattedError = error.message;
-                    else if (error.statusCode === 401 || error.statusCode === 403) formattedError = labels?.aiChatError401;
-                    else if (error.statusCode === 429) formattedError = labels?.aiChatError429;
-                    else if (error.statusCode && error.statusCode >= 500) formattedError = labels?.aiChatError500;
-                    else if (error.statusCode) formattedError = labels?.aiChatErrorGeneric;
-                }
-
-                setMessages(prev =>
-                    prev.map(m => m.id === aiMsgId ? { ...m, content: m.content + `\n\n[${formattedError}]` } : m)
-                );
+            if (error?.name !== 'AbortError') {
+                appendReply(`\n\n[${describeChatError(error, labels)}]`);
             }
         } finally {
             setIsLoading(false);

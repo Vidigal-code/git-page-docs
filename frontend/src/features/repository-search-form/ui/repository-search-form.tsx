@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 
 interface RepositorySearchFormProps {
   owner: string;
@@ -26,8 +26,8 @@ export function RepositorySearchForm({
   onRepoChange,
   onSubmit,
   classNames,
-}: RepositorySearchFormProps) {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+}: Readonly<RepositorySearchFormProps>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     onSubmit();
   }

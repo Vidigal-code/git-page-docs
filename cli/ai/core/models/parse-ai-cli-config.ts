@@ -1,8 +1,10 @@
 import { AI_MODEL_DEFAULTS, type AiProviderId } from "../../config";
 import type { AiCliConfig } from "./ai-cli-config";
 
-const SUPPORTED_PROVIDERS = Object.keys(AI_MODEL_DEFAULTS) as AiProviderId[];
-const SUPPORTED_LANGUAGES: ReadonlyArray<AiCliConfig["ai"]["languages"][number]> = ["pt", "en", "es"];
+type SupportedLanguage = AiCliConfig["ai"]["languages"][number];
+
+const SUPPORTED_PROVIDERS: ReadonlySet<string> = new Set(Object.keys(AI_MODEL_DEFAULTS));
+const SUPPORTED_LANGUAGES: ReadonlySet<string> = new Set<SupportedLanguage>(["pt", "en", "es"]);
 
 /** Fallbacks for optional fields, mirroring the interactive prompt defaults. */
 const DEFAULT_LANGUAGES: AiCliConfig["ai"]["languages"] = ["en", "pt", "es"];
@@ -27,17 +29,13 @@ function asPaths(value: unknown): string[] {
 
 function asLanguages(value: unknown): AiCliConfig["ai"]["languages"] {
   const languages = Array.isArray(value)
-    ? value.filter((language): language is AiCliConfig["ai"]["languages"][number] =>
-        SUPPORTED_LANGUAGES.includes(language as AiCliConfig["ai"]["languages"][number]),
-      )
+    ? value.filter((language): language is SupportedLanguage => isString(language) && SUPPORTED_LANGUAGES.has(language))
     : [];
   return languages.length > 0 ? languages : [...DEFAULT_LANGUAGES];
 }
 
 function asProviderId(value: unknown): AiProviderId | null {
-  return isString(value) && SUPPORTED_PROVIDERS.includes(value as AiProviderId)
-    ? (value as AiProviderId)
-    : null;
+  return isString(value) && SUPPORTED_PROVIDERS.has(value) ? (value as AiProviderId) : null;
 }
 
 /**

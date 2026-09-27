@@ -9,8 +9,15 @@ import { useIsomorphicLayoutEffect } from "@/shared/lib/use-isomorphic-layout-ef
 
 const STORAGE_KEY_PREFIX = "git-page-docs";
 
+type ThemeMode = "light" | "dark";
+
 function buildStorageKey(prefix: string, siteName: string): string {
   return `${STORAGE_KEY_PREFIX}:${prefix}:${siteName.toLowerCase().replaceAll(" ", "-")}`;
+}
+
+/** The value as a theme mode, or null for anything else (missing param, stale storage). */
+function toThemeMode(value: string | null): ThemeMode | null {
+  return value === "dark" || value === "light" ? value : null;
 }
 
 export interface UseStandaloneShellPreferencesArgs {
@@ -126,12 +133,12 @@ export function useStandaloneShellPreferences({
       setThemeRestored(true);
       return;
     }
-    const urlMode = safeSearchParams.get("modetheme");
+    const urlMode = toThemeMode(safeSearchParams.get("modetheme"));
     try {
       // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo
       // default. Storage restores stay non-explicit so they are never written back
       // to the URL (see themeExplicit).
-      if (urlMode !== "dark" && urlMode !== "light") {
+      if (!urlMode) {
         const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
         const savedLayout = savedThemeId ? layouts.find((l) => l.id === savedThemeId) : null;
         if (savedLayout) {
@@ -140,14 +147,9 @@ export function useStandaloneShellPreferences({
           return;
         }
       }
-      const savedMode = window.localStorage.getItem(themeModeStorageKey);
-      const mode =
-        urlMode === "dark" || urlMode === "light"
-          ? urlMode
-          : savedMode === "dark" || savedMode === "light"
-            ? savedMode
-            : configuredDefaultMode;
-      if (urlMode === "dark" || urlMode === "light") {
+      const savedMode = toThemeMode(window.localStorage.getItem(themeModeStorageKey));
+      const mode = urlMode ?? savedMode ?? configuredDefaultMode;
+      if (urlMode) {
         setThemeExplicit(true);
       }
       const baseLayout = layouts.find((l) => l.id === initialThemeBaseId) ?? layouts[0];

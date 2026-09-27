@@ -31,7 +31,7 @@ export function SearchShellLayout({
   language,
   style,
   footerConfig,
-}: SearchShellLayoutProps) {
+}: Readonly<SearchShellLayoutProps>) {
   // Keeps the window scrollbar (owned by <html>, outside this wrapper) on the
   // active palette across live theme switches.
   useDocumentThemeVars(style);

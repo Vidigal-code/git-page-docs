@@ -65,7 +65,7 @@ function toTreeEntries(tree: NonNullable<GithubTreeResponse["tree"]>): SourceTre
       const parts = path.split("/");
       return {
         path,
-        name: parts[parts.length - 1] ?? path,
+        name: parts.at(-1) ?? path,
         type: entry.type as "tree" | "blob",
         size: entry.size,
       };

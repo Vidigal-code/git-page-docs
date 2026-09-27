@@ -1,65 +1,23 @@
 import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
+import type { IconConfigFields } from "../icon-config-fields";
 import type { ResolvedNavMenuIconConfig } from "../nav-menu/resolve-nav-menu-icon";
 import { DEFAULT_ICON_FALLBACK_URL } from "../../../config/icon-defaults";
 
 const DEFAULT_IMG = DEFAULT_ICON_FALLBACK_URL;
 
-type IconKeyPrefix =
-  | "IconAudioPlayerPopoverPlay"
-  | "IconAudioPlayerPopoverPause"
-  | "IconAudioPlayerPopoverRestart"
-  | "IconAudioPlayerPopoverLoopOn"
-  | "IconAudioPlayerPopoverLoopOff";
+/** Icon slots of the audio popover; each one is an `Icon<Name>*` field group of the site config. */
+type AudioPopoverIconName =
+  | "AudioPlayerPopoverPlay"
+  | "AudioPlayerPopoverPause"
+  | "AudioPlayerPopoverRestart"
+  | "AudioPlayerPopoverLoopOn"
+  | "AudioPlayerPopoverLoopOff";
+
+type IconKeyPrefix = `Icon${AudioPopoverIconName}`;
 
 /** Input for audio popover icon resolution; accepts site config or partial overlay */
-export interface AudioPlayerPopoverIconsConfigInput {
-  IconAudioPlayerPopoverPlayLightImg?: string;
-  IconAudioPlayerPopoverPlayDarkImg?: string;
-  IconAudioPlayerPopoverPlayReactIcones?: boolean;
-  IconAudioPlayerPopoverPlayReactIconesTag?: string;
-  IconAudioPlayerPopoverPlayReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverPlayReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverPlayReactIconesTagSize?: string;
-  IconAudioPlayerPopoverPlayImgWidth?: string | number;
-  IconAudioPlayerPopoverPlayImgHeight?: string | number;
-  IconAudioPlayerPopoverPauseLightImg?: string;
-  IconAudioPlayerPopoverPauseDarkImg?: string;
-  IconAudioPlayerPopoverPauseReactIcones?: boolean;
-  IconAudioPlayerPopoverPauseReactIconesTag?: string;
-  IconAudioPlayerPopoverPauseReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverPauseReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverPauseReactIconesTagSize?: string;
-  IconAudioPlayerPopoverPauseImgWidth?: string | number;
-  IconAudioPlayerPopoverPauseImgHeight?: string | number;
-  IconAudioPlayerPopoverRestartLightImg?: string;
-  IconAudioPlayerPopoverRestartDarkImg?: string;
-  IconAudioPlayerPopoverRestartReactIcones?: boolean;
-  IconAudioPlayerPopoverRestartReactIconesTag?: string;
-  IconAudioPlayerPopoverRestartReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverRestartReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverRestartReactIconesTagSize?: string;
-  IconAudioPlayerPopoverRestartImgWidth?: string | number;
-  IconAudioPlayerPopoverRestartImgHeight?: string | number;
-  IconAudioPlayerPopoverLoopOnLightImg?: string;
-  IconAudioPlayerPopoverLoopOnDarkImg?: string;
-  IconAudioPlayerPopoverLoopOnReactIcones?: boolean;
-  IconAudioPlayerPopoverLoopOnReactIconesTag?: string;
-  IconAudioPlayerPopoverLoopOnReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverLoopOnReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverLoopOnReactIconesTagSize?: string;
-  IconAudioPlayerPopoverLoopOnImgWidth?: string | number;
-  IconAudioPlayerPopoverLoopOnImgHeight?: string | number;
-  IconAudioPlayerPopoverLoopOffLightImg?: string;
-  IconAudioPlayerPopoverLoopOffDarkImg?: string;
-  IconAudioPlayerPopoverLoopOffReactIcones?: boolean;
-  IconAudioPlayerPopoverLoopOffReactIconesTag?: string;
-  IconAudioPlayerPopoverLoopOffReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverLoopOffReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverLoopOffReactIconesTagSize?: string;
-  IconAudioPlayerPopoverLoopOffImgWidth?: string | number;
-  IconAudioPlayerPopoverLoopOffImgHeight?: string | number;
-}
+export type AudioPlayerPopoverIconsConfigInput = IconConfigFields<AudioPopoverIconName>;
 
 function resolveAudioPopoverIcon(
   site: object | undefined,

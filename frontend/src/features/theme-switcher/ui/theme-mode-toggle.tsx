@@ -8,7 +8,7 @@ interface ThemeModeToggleProps {
   className?: string;
 }
 
-export function ThemeModeToggle({ isDarkMode, canToggle, label, onToggle, className }: ThemeModeToggleProps) {
+export function ThemeModeToggle({ isDarkMode, canToggle, label, onToggle, className }: Readonly<ThemeModeToggleProps>) {
   if (!canToggle) {
     return null;
   }

@@ -8,22 +8,23 @@ function buildStorageKey(siteName: string): string {
 
 export function useNavMenuBlockPreference(siteName: string) {
   const key = buildStorageKey(siteName);
-  const [blockMenuOnNav, setBlockMenuOnNavState] = useState(false);
+  const [blockMenuOnNav, setBlockMenuOnNav] = useState(false);
 
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(key);
       if (stored === "true" || stored === "false") {
-        setBlockMenuOnNavState(stored === "true");
+        setBlockMenuOnNav(stored === "true");
       }
     } catch {
       // Ignore (private mode, blocked storage)
     }
   }, [key]);
 
-  const setBlockMenuOnNav = useCallback(
+  /** Updates the preference and persists it for the next visit. */
+  const persistBlockMenuOnNav = useCallback(
     (value: boolean) => {
-      setBlockMenuOnNavState(value);
+      setBlockMenuOnNav(value);
       try {
         window.localStorage.setItem(key, String(value));
       } catch {
@@ -33,5 +34,5 @@ export function useNavMenuBlockPreference(siteName: string) {
     [key],
   );
 
-  return { blockMenuOnNav, setBlockMenuOnNav };
+  return { blockMenuOnNav, setBlockMenuOnNav: persistBlockMenuOnNav };
 }

@@ -175,10 +175,11 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     [keysStorageKey],
   );
 
+  /** Prompts for the key; returns the updated unlocked-key list on success, null otherwise. */
   const tryUnlockAccessKey = useCallback(
-    (accessKeyId: string): boolean => {
+    (accessKeyId: string): string[] | null => {
       const expected = authConfig?.accessKeys?.[accessKeyId];
-      if (!expected) return false;
+      if (!expected) return null;
       const promptLabelTemplate = getLangMenuLabelFromMenu(
         siteLangMenu,
         language,
@@ -187,28 +188,33 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
       );
       const promptLabel = promptLabelTemplate.replace("{accessKeyId}", accessKeyId);
       const input = window.prompt(promptLabel);
-      if (typeof input !== "string") return false;
-      if (input.trim() !== expected) return false;
+      if (typeof input !== "string") return null;
+      if (input.trim() !== expected) return null;
 
       const updated = unique([...unlockedKeyIds, accessKeyId]);
       setUnlockedKeyIds(updated);
       persistUnlockedKeys(updated);
-      return true;
+      return updated;
     },
     [authConfig?.accessKeys, language, persistUnlockedKeys, siteLangMenu, unlockedKeyIds],
   );
 
-  const evaluatePathAccess = useCallback(
-    (pathClick: string) => {
+  const evaluatePathAccessWithKeys = useCallback(
+    (pathClick: string, keyIds: string[]) => {
       const target = resolveRouteAuthorizationTarget(data, pathClick, language);
       const result = evaluateRouteAccess(target?.authorization, authConfig, {
-        unlockedKeyIds,
+        unlockedKeyIds: keyIds,
         roles: effectiveRoles,
         authenticatedProviders,
       });
       return { ...result, target };
     },
-    [authConfig, authenticatedProviders, data, effectiveRoles, language, unlockedKeyIds],
+    [authConfig, authenticatedProviders, data, effectiveRoles, language],
+  );
+
+  const evaluatePathAccess = useCallback(
+    (pathClick: string) => evaluatePathAccessWithKeys(pathClick, unlockedKeyIds),
+    [evaluatePathAccessWithKeys, unlockedKeyIds],
   );
 
   const ensurePathAccess = useCallback(
@@ -218,14 +224,16 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
 
       const accessKeyId = initial.target?.authorization?.accessKeyId;
       if (initial.reason === "missing_access_key" && accessKeyId) {
-        const unlocked = tryUnlockAccessKey(accessKeyId);
-        if (unlocked) {
-          return evaluatePathAccess(pathClick);
+        const unlockedKeyIdsNow = tryUnlockAccessKey(accessKeyId);
+        if (unlockedKeyIdsNow) {
+          // The state update above has not re-rendered yet, so evaluate with
+          // the freshly unlocked list instead of the memoized (stale) one.
+          return evaluatePathAccessWithKeys(pathClick, unlockedKeyIdsNow);
         }
       }
       return initial;
     },
-    [evaluatePathAccess, tryUnlockAccessKey],
+    [evaluatePathAccess, evaluatePathAccessWithKeys, tryUnlockAccessKey],
   );
 
   const isPageAccessible = useCallback(

@@ -23,6 +23,12 @@ describe("normalizeLayoutsDir", () => {
   it("collapses repeated separators", () => {
     expect(normalizeLayoutsDir("a//b")).toBe("a/b");
   });
+
+  it("strips runs of leading and trailing separators", () => {
+    expect(normalizeLayoutsDir("///a/b///")).toBe("a/b");
+    expect(normalizeLayoutsDir("\\\\themes\\")).toBe("themes");
+    expect(normalizeLayoutsDir("////")).toBe(DEFAULT_LAYOUTS_DIR);
+  });
 });
 
 describe("legacyLayoutsDir", () => {

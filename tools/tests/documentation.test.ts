@@ -38,6 +38,12 @@ describe("patchManagedRegion", () => {
     const src = `top\n${START_MARKER}\nold\n${END_MARKER}\nfooter\n`;
     expect(patchManagedRegion(src, "new").content).toContain("footer");
   });
+
+  it("collapses trailing whitespace before the appended block", () => {
+    const r = patchManagedRegion("intro\n\n \t\n", "GEN");
+    expect(r.replaced).toBe(false);
+    expect(r.content).toBe(`intro\n\n${START_MARKER}\nGEN\n${END_MARKER}\n`);
+  });
 });
 
 describe("DocUpdater", () => {

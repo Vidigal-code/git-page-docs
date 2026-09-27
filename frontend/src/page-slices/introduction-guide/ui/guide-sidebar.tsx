@@ -11,14 +11,14 @@ export function GuideSidebar({
   onQueryChange,
   activeId,
   onSelect,
-}: {
+}: Readonly<{
   ui: GuideUi;
   sections: GuideSection[];
   query: string;
   onQueryChange: (value: string) => void;
   activeId: string;
   onSelect: (id: string) => void;
-}) {
+}>) {
   return (
     <aside className={styles.sidebar}>
       <GuideSearch value={query} placeholder={ui.searchPlaceholder} onChange={onQueryChange} />

@@ -34,6 +34,17 @@ export const PROVIDER_ENV_KEYS: Record<AiProviderId, string[]> = {
 
 const SELECTION_FILE = ".gitpagedocs-mcp.json";
 
+/** Providers whose endpoint is user-hosted read their base URL from this variable. */
+const BASE_URL_ENV_KEYS: Partial<Record<AiProviderId, string>> = {
+  ollama: "OLLAMA_BASE_URL",
+  "azure-openai": "AZURE_OPENAI_BASE_URL",
+};
+
+function resolveBaseUrlFromEnv(providerId: AiProviderId): string | undefined {
+  const name = BASE_URL_ENV_KEYS[providerId];
+  return name ? process.env[name] : undefined;
+}
+
 interface ProviderSelection {
   provider: AiProviderId;
   model?: string;
@@ -89,15 +100,14 @@ export class ServerContext {
         `No API key for ${spec.label}. Set ${PROVIDER_ENV_KEYS[id].join(" or ")} in the environment.`,
       );
     }
-    const baseUrl =
-      id === "ollama"
-        ? process.env.OLLAMA_BASE_URL
-        : id === "azure-openai"
-          ? process.env.AZURE_OPENAI_BASE_URL
-          : undefined;
     return {
       provider: this.factory.create(id),
-      config: { providerId: id, model: model ?? selection.model ?? spec.defaultModel, apiKey, baseUrl },
+      config: {
+        providerId: id,
+        model: model ?? selection.model ?? spec.defaultModel,
+        apiKey,
+        baseUrl: resolveBaseUrlFromEnv(id),
+      },
     };
   }
 }

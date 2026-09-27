@@ -6,6 +6,15 @@ import type {
 } from "@/entities/docs/model/types";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 
+/** Config sections whose routes resolve to a `page:<id>` path click. */
+type PageRoutesKey = "routes-source-viewer" | "routes-video" | "routes-audio";
+
+const PAGE_ROUTES_KEY_BY_CONTENT_TYPE: Partial<Record<ContentType, PageRoutesKey>> = {
+  "source-viewer": "routes-source-viewer",
+  video: "routes-video",
+  audio: "routes-audio",
+};
+
 export function getRouteIndexByPath(data: LoadedDocsData, language: LanguageCode, filePath: string): number {
   return data.config.routes.findIndex((route) => route.path[language] === filePath);
 }
@@ -17,8 +26,22 @@ function getOrderedContentTypes(data: LoadedDocsData): ContentType[] {
   );
 }
 
+/** Value for the language, then English, then whichever language is declared first. */
+function getLocalizedValue(record: Record<string, string> | undefined, language: LanguageCode): string | undefined {
+  return record?.[language] ?? record?.en ?? Object.values(record ?? {})[0];
+}
+
 function getRoutePath(route: { path?: Record<string, string> }, language: LanguageCode): string | undefined {
-  return route.path?.[language] ?? route.path?.en ?? Object.values(route.path ?? {})[0];
+  return getLocalizedValue(route.path, language);
+}
+
+function toUrlPathClick(url: string | undefined): string | undefined {
+  return url ? `url:${url}` : undefined;
+}
+
+/** HTML routes may point at an external URL instead of a local file. */
+function getHtmlPathClick(route: ContentTypeRouteConfig, language: LanguageCode): string | undefined {
+  return getRoutePath(route, language) ?? toUrlPathClick(getLocalizedValue(route.url, language));
 }
 
 function findPathInRoutes(
@@ -43,10 +66,7 @@ function findPathClickByPageAndType(
     return getRoutePath(page.md.config, language);
   }
   if (contentType === "html" && page.html) {
-    const cfg = page.html.config;
-    const htmlPath = getRoutePath(cfg, language);
-    const htmlUrl = cfg.url?.[language] ?? cfg.url?.en ?? Object.values(cfg.url ?? {})[0];
-    return htmlPath ?? (htmlUrl ? `url:${htmlUrl}` : undefined);
+    return getHtmlPathClick(page.html.config, language);
   }
   if (contentType === "source-viewer" && page.sourceViewer) {
     return `page:${page.sourceViewer.routeId}`;
@@ -61,40 +81,42 @@ function findPathClickByPageAndType(
   return undefined;
 }
 
+/** Path click for a route id straight from the config sections, when no loaded page carries it. */
+function findPathClickInConfigRoutes(
+  data: LoadedDocsData,
+  routeId: number,
+  contentType: ContentType,
+  language: LanguageCode,
+): string | undefined {
+  if (contentType === "md") {
+    return findPathInRoutes(data.config["routes-md"] ?? data.config.routes, routeId, language);
+  }
+  if (contentType === "html") {
+    const route = data.config["routes-html"]?.find((candidate) => candidate.id === routeId);
+    return route ? getHtmlPathClick(route, language) : undefined;
+  }
+  const routesKey = PAGE_ROUTES_KEY_BY_CONTENT_TYPE[contentType];
+  const hasRoute = routesKey ? data.config[routesKey]?.some((route) => route.id === routeId) : false;
+  return hasRoute ? `page:${routeId}` : undefined;
+}
+
 export function getPathClickByRouteId(
   data: LoadedDocsData,
   routeId: number,
   language: LanguageCode,
 ): string | null {
+  const orderedContentTypes = getOrderedContentTypes(data);
   const pageIndex = data.pages?.findIndex((page) => page.id === routeId) ?? -1;
   if (pageIndex >= 0) {
-    for (const contentType of getOrderedContentTypes(data)) {
+    for (const contentType of orderedContentTypes) {
       const pathClick = findPathClickByPageAndType(data, pageIndex, contentType, language);
       if (pathClick) return pathClick;
     }
   }
 
-  for (const contentType of getOrderedContentTypes(data)) {
-    if (contentType === "md") {
-      const path = findPathInRoutes(data.config["routes-md"] ?? data.config.routes, routeId, language);
-      if (path) return path;
-    }
-    if (contentType === "html") {
-      const route = data.config["routes-html"]?.find((candidate) => candidate.id === routeId);
-      const path = route ? getRoutePath(route, language) : undefined;
-      const url = route?.url?.[language] ?? route?.url?.en ?? Object.values(route?.url ?? {})[0];
-      if (path) return path;
-      if (url) return `url:${url}`;
-    }
-    if (contentType === "source-viewer" && data.config["routes-source-viewer"]?.some((route) => route.id === routeId)) {
-      return `page:${routeId}`;
-    }
-    if (contentType === "video" && data.config["routes-video"]?.some((route) => route.id === routeId)) {
-      return `page:${routeId}`;
-    }
-    if (contentType === "audio" && data.config["routes-audio"]?.some((route) => route.id === routeId)) {
-      return `page:${routeId}`;
-    }
+  for (const contentType of orderedContentTypes) {
+    const pathClick = findPathClickInConfigRoutes(data, routeId, contentType, language);
+    if (pathClick) return pathClick;
   }
 
   return null;

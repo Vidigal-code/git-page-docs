@@ -1,3 +1,5 @@
+import { trimSlashes } from "./path-segments.mjs";
+
 /**
  * Canonical locations for layout artifacts.
  *
@@ -34,10 +36,8 @@ export const LEGACY_LAYOUTS_SUBDIR = "layouts";
  * @returns {string} Normalized path, or `DEFAULT_LAYOUTS_DIR` when empty.
  */
 export function normalizeLayoutsDir(dir) {
-  const normalized = String(dir ?? "")
-    .replace(/[\\/]+/g, "/")
-    .replace(/^\/+|\/+$/g, "")
-    .trim();
+  const collapsed = String(dir ?? "").replace(/[\\/]+/g, "/");
+  const normalized = trimSlashes(collapsed).trim();
   return normalized || DEFAULT_LAYOUTS_DIR;
 }
 

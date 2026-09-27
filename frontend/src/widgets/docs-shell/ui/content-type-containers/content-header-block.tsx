@@ -1,22 +1,8 @@
 "use client";
 
 import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
+import { parseCssToStyle } from "./parse-css-to-style";
 import styles from "../../docs-shell.module.css";
-
-function parseCssToStyle(css: string | undefined): React.CSSProperties {
-  if (!css) return {};
-  const out: Record<string, string> = {};
-  css.split(";").forEach((part) => {
-    const idx = part.indexOf(":");
-    if (idx < 0) return;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (!k || !v) return;
-    const camel = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-    out[camel] = v;
-  });
-  return out as React.CSSProperties;
-}
 
 export interface ContentHeaderBlockProps {
   config?: ContentTypeRouteConfig;
@@ -24,7 +10,7 @@ export interface ContentHeaderBlockProps {
   isDarkMode?: boolean;
 }
 
-export function ContentHeaderBlock({ config, language, isDarkMode = false }: ContentHeaderBlockProps) {
+export function ContentHeaderBlock({ config, language, isDarkMode = false }: Readonly<ContentHeaderBlockProps>) {
   const title = config?.title?.[language] ?? config?.title?.en;
   const description = config?.description?.[language] ?? config?.description?.en;
   const titleIsVisible = config?.titleIsVisible ?? false;

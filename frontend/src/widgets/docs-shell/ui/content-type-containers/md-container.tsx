@@ -3,11 +3,14 @@
 import { useMemo } from "react";
 import { extractHeadingsFromHtml, type BreadcrumbItem, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
+import type { BrowseNavConfig } from "../page-content-browse-nav";
+import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
 import { RouteGuideBreadcrumb, TocContainer } from "@/features/route-guide";
 import type { TocPosition } from "@/features/route-guide";
 import styles from "../../docs-shell.module.css";
+
+const VALID_TOC_POSITIONS: ReadonlySet<TocPosition> = new Set<TocPosition>(["center", "left", "right"]);
 
 function getContainerStyle(container: ContentTypeRouteConfig["container"]): React.CSSProperties {
   if (container === "full") {
@@ -27,7 +30,7 @@ interface MdContainerProps {
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
   isDarkMode?: boolean;
-  browseNav?: BrowseNavProps;
+  browseNav?: BrowseNavConfig;
   routeGuideEnabled?: boolean;
   breadcrumbTrail?: BreadcrumbItem[];
   onBreadcrumbClick?: (pathClick: string, ancestorKeys: string[]) => void;
@@ -69,7 +72,7 @@ export function MdContainer({
   contentOnly = false,
   onFullscreenOpen,
   onFullscreenClose,
-}: MdContainerProps) {
+}: Readonly<MdContainerProps>) {
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
     routeGuideEnabled &&
@@ -93,11 +96,10 @@ export function MdContainer({
     return extractHeadingsFromHtml(html, specificIds);
   }, [routeguideBrand, html, config]);
 
-  const validPositions: TocPosition[] = ["center", "left", "right"];
   const fromConfig = config && "RouteguideBrandPosition" in config ? config.RouteguideBrandPosition : undefined;
   const tocPosition: TocPosition =
-    (fromConfig && validPositions.includes(fromConfig as TocPosition) ? (fromConfig as TocPosition) : null) ??
-    (validPositions.includes(tocPositionDefault) ? tocPositionDefault : "center");
+    (fromConfig && VALID_TOC_POSITIONS.has(fromConfig) ? fromConfig : null) ??
+    (VALID_TOC_POSITIONS.has(tocPositionDefault) ? tocPositionDefault : "center");
 
   const markdownContent = (
     <article className={styles.card}>

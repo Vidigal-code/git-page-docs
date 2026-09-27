@@ -73,31 +73,39 @@ function getReactIconStyle(
   };
 }
 
-export function useBuildDocsControlsConfig(
-  data: LoadedDocsData,
-  activeLayout: { mode?: ThemeMode } | undefined,
-  language: string,
-  selectedVersionValue: string,
-  activeThemeId: string,
-  canToggleMode: boolean,
-  nextModeIsDark: boolean,
-  currentPage: LoadedPage | undefined,
+export interface UseBuildDocsControlsConfigArgs {
+  data: LoadedDocsData;
+  activeLayout: { mode?: ThemeMode } | undefined;
+  language: string;
+  selectedVersionValue: string;
+  activeThemeId: string;
+  canToggleMode: boolean;
+  nextModeIsDark: boolean;
+  currentPage: LoadedPage | undefined;
   /** Whether the current page has markdown in the active language (gates focus mode). */
-  pageHasMarkdown: boolean,
-): DocsShellControlsConfig {
+  pageHasMarkdown: boolean;
+}
+
+export function useBuildDocsControlsConfig({
+  data,
+  activeLayout,
+  language,
+  selectedVersionValue,
+  activeThemeId,
+  canToggleMode,
+  nextModeIsDark,
+  currentPage,
+  pageHasMarkdown,
+}: UseBuildDocsControlsConfigArgs): DocsShellControlsConfig {
   const versionLinkOptions = useMemo(() => buildVersionLinkOptions(data.activeVersion), [data.activeVersion]);
   const branchLabel = getLabel(data.config.site, language, "branchLabel", "Branch");
   const releaseLabel = getLabel(data.config.site, language, "releaseLabel", "Release");
   const commitLabel = getLabel(data.config.site, language, "commitLabel", "Commit");
 
-  const versionLinkOptionsWithLabels = useMemo(
-    () =>
-      versionLinkOptions.map((option) => ({
-        ...option,
-        label: option.id === "branch" ? branchLabel : option.id === "release" ? releaseLabel : commitLabel,
-      })),
-    [versionLinkOptions, branchLabel, releaseLabel, commitLabel],
-  );
+  const versionLinkOptionsWithLabels = useMemo(() => {
+    const labels = { branch: branchLabel, release: releaseLabel, commit: commitLabel };
+    return versionLinkOptions.map((option) => ({ ...option, label: labels[option.id] }));
+  }, [versionLinkOptions, branchLabel, releaseLabel, commitLabel]);
 
   const mode = activeLayout?.mode ?? "dark";
   const site = data.config.site;

@@ -1,91 +1,22 @@
 import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
+import type { IconConfigFields } from "../icon-config-fields";
 import { DEFAULT_ICON_FALLBACK_URL } from "../../../config/icon-defaults";
 
-/** Minimal config shape for nav menu icon resolution */
-export interface NavMenuIconConfigInput {
-  IconNavMenuOpenLightImg?: string;
-  IconNavMenuOpenDarkImg?: string;
-  IconNavMenuOpenReactIcones?: boolean;
-  IconNavMenuOpenReactIconesTag?: string;
-  IconNavMenuOpenReactIconesTagColorDark?: string;
-  IconNavMenuOpenReactIconesTagColorLight?: string;
-  IconNavMenuOpenReactIconesTagSize?: string;
-  IconNavMenuOpenImgWidth?: string | number;
-  IconNavMenuOpenImgHeight?: string | number;
-  IconNavMenuCloseLightImg?: string;
-  IconNavMenuCloseDarkImg?: string;
-  IconNavMenuCloseReactIcones?: boolean;
-  IconNavMenuCloseReactIconesTag?: string;
-  IconNavMenuCloseReactIconesTagColorDark?: string;
-  IconNavMenuCloseReactIconesTagColorLight?: string;
-  IconNavMenuCloseReactIconesTagSize?: string;
-  IconNavMenuCloseImgWidth?: string | number;
-  IconNavMenuCloseImgHeight?: string | number;
-  IconNavMenuMobileCloseLightImg?: string;
-  IconNavMenuMobileCloseDarkImg?: string;
-  IconNavMenuMobileCloseReactIcones?: boolean;
-  IconNavMenuMobileCloseReactIconesTag?: string;
-  IconNavMenuMobileCloseReactIconesTagColorDark?: string;
-  IconNavMenuMobileCloseReactIconesTagColorLight?: string;
-  IconNavMenuMobileCloseReactIconesTagSize?: string;
-  IconNavMenuMobileCloseImgWidth?: string | number;
-  IconNavMenuMobileCloseImgHeight?: string | number;
-  IconNavMenuMobileOpenLightImg?: string;
-  IconNavMenuMobileOpenDarkImg?: string;
-  IconNavMenuMobileOpenReactIcones?: boolean;
-  IconNavMenuMobileOpenReactIconesTag?: string;
-  IconNavMenuMobileOpenReactIconesTagColorDark?: string;
-  IconNavMenuMobileOpenReactIconesTagColorLight?: string;
-  IconNavMenuMobileOpenReactIconesTagSize?: string;
-  IconNavMenuMobileOpenImgWidth?: string | number;
-  IconNavMenuMobileOpenImgHeight?: string | number;
-  IconNavMenuBlockActiveLightImg?: string;
-  IconNavMenuBlockActiveDarkImg?: string;
-  IconNavMenuBlockActiveReactIcones?: boolean;
-  IconNavMenuBlockActiveReactIconesTag?: string;
-  IconNavMenuBlockActiveReactIconesTagColorDark?: string;
-  IconNavMenuBlockActiveReactIconesTagColorLight?: string;
-  IconNavMenuBlockActiveReactIconesTagSize?: string;
-  IconNavMenuBlockActiveImgWidth?: string | number;
-  IconNavMenuBlockActiveImgHeight?: string | number;
-  IconNavMenuBlockInactiveLightImg?: string;
-  IconNavMenuBlockInactiveDarkImg?: string;
-  IconNavMenuBlockInactiveReactIcones?: boolean;
-  IconNavMenuBlockInactiveReactIconesTag?: string;
-  IconNavMenuBlockInactiveReactIconesTagColorDark?: string;
-  IconNavMenuBlockInactiveReactIconesTagColorLight?: string;
-  IconNavMenuBlockInactiveReactIconesTagSize?: string;
-  IconNavMenuBlockInactiveImgWidth?: string | number;
-  IconNavMenuBlockInactiveImgHeight?: string | number;
-  IconSidebarCollapseLightImg?: string;
-  IconSidebarCollapseDarkImg?: string;
-  IconSidebarCollapseReactIcones?: boolean;
-  IconSidebarCollapseReactIconesTag?: string;
-  IconSidebarCollapseReactIconesTagColorDark?: string;
-  IconSidebarCollapseReactIconesTagColorLight?: string;
-  IconSidebarCollapseReactIconesTagSize?: string;
-  IconSidebarCollapseImgWidth?: string | number;
-  IconSidebarCollapseImgHeight?: string | number;
-  IconSidebarExpandLightImg?: string;
-  IconSidebarExpandDarkImg?: string;
-  IconSidebarExpandReactIcones?: boolean;
-  IconSidebarExpandReactIconesTag?: string;
-  IconSidebarExpandReactIconesTagColorDark?: string;
-  IconSidebarExpandReactIconesTagColorLight?: string;
-  IconSidebarExpandReactIconesTagSize?: string;
-  IconSidebarExpandImgWidth?: string | number;
-  IconSidebarExpandImgHeight?: string | number;
-  IconDocsLockLightImg?: string;
-  IconDocsLockDarkImg?: string;
-  IconDocsLockReactIcones?: boolean;
-  IconDocsLockReactIconesTag?: string;
-  IconDocsLockReactIconesTagColorDark?: string;
-  IconDocsLockReactIconesTagColorLight?: string;
-  IconDocsLockReactIconesTagSize?: string;
-  IconDocsLockImgWidth?: string | number;
-  IconDocsLockImgHeight?: string | number;
-}
+/** Icon slots this factory resolves; each one is an `Icon<Name>*` field group of the site config. */
+type NavMenuIconName =
+  | "NavMenuOpen"
+  | "NavMenuClose"
+  | "NavMenuMobileClose"
+  | "NavMenuMobileOpen"
+  | "NavMenuBlockActive"
+  | "NavMenuBlockInactive"
+  | "SidebarCollapse"
+  | "SidebarExpand"
+  | "DocsLock";
+
+/** Minimal config shape for nav menu icon resolution (SiteConfig satisfies this) */
+export type NavMenuIconConfigInput = IconConfigFields<NavMenuIconName>;
 
 export interface ResolvedNavMenuIconConfig {
   iconImage: string;

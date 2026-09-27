@@ -15,7 +15,7 @@ The **shared business-logic core** of the [Git Page Docs](../README.md) monorepo
 | `errors/` | `AppError` + typed subclasses |
 | `filesystem/` | `FileService` (root-bounded list/read/write/search) |
 | `documentation/` | `DocumentationService`, `patchManagedRegion`, `DocUpdater` |
-| `i18n/` | Language bundles (`gitpagedocs/langs.json` + `langs/<lang>.json`): `loadLanguageBundles`, `applyLanguageBundles` (fold into legacy `site.langmenu` / `translations`), `splitLanguageBundles` (generator side); browser-safe |
+| `i18n/` | Language bundles (`site.languages` toggles in `config.json` + `langs/<lang>.json`): `loadConfigLanguageBundles`, `applyLanguageBundles` (fold into legacy `site.langmenu` / `translations`), `filterEnabledLanguages`, `splitLanguageBundles` (generator side); browser-safe |
 | `ports/` | Type-only contracts (logger, cache, crypto, security, config, ai) |
 
 ## Entry points (`exports`)

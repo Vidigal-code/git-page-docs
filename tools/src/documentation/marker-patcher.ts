@@ -28,6 +28,6 @@ export function patchManagedRegion(existing: string, generated: string): PatchRe
     return { content: `${before}${block}${after}`, replaced: true };
   }
 
-  const separator = existing.trim() ? `${existing.replace(/\s+$/, "")}\n\n` : "";
+  const separator = existing.trim() ? `${existing.trimEnd()}\n\n` : "";
   return { content: `${separator}${block}\n`, replaced: false };
 }

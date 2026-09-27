@@ -29,7 +29,7 @@ export function ThemeSelector({
   className,
   ariaLabel,
   themeVarsStyle,
-}: ThemeSelectorProps) {
+}: Readonly<ThemeSelectorProps>) {
   return (
     <DropdownSelector
       label={ariaLabel ?? "Theme selector"}

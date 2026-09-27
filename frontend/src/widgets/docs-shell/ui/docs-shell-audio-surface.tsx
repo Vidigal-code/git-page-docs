@@ -1,10 +1,19 @@
 "use client";
 
 import { AudioPlayerPopover, useSharedAudioPlayer } from "@/features/audio-player";
-import type { DocsShellControlsAudioProps } from "./docs-shell-controls-audio";
+import type { DocsShellControlsAudioProps as DocsShellAudioConfigProps } from "../model/docs-shell-config-types";
+import { resolveCaptionsTrackProps } from "./content-type-containers/captions-track";
 import styles from "../docs-shell.module.css";
 
-type DocsShellAudioSurfaceProps = Omit<DocsShellControlsAudioProps, "showAudioPlayer" | "audioPlayerConfig">;
+/**
+ * Popover labels/icons of the shared player. The toggle-button props
+ * (`showAudioPlayer`, `audioPlayerConfig`, play/pause icon tags and styles)
+ * belong to `DocsShellControlsAudio` and are not read here.
+ */
+type DocsShellAudioSurfaceProps = Omit<
+  DocsShellAudioConfigProps,
+  "showAudioPlayer" | "audioPlayerConfig" | "audioPlayIconTag" | "audioPlayIconStyle" | "audioPauseIconTag" | "audioPauseIconStyle"
+>;
 
 /**
  * The single render site for the shared audio engine's output: the playlist
@@ -13,7 +22,6 @@ type DocsShellAudioSurfaceProps = Omit<DocsShellControlsAudioProps, "showAudioPl
  * pauses the one real <audio>/<iframe> regardless of screen size.
  */
 export function DocsShellAudioSurface({
-  language: _language,
   themeVarsStyle,
   audioPlayLabel = "Play",
   audioPauseLabel = "Pause",
@@ -38,7 +46,7 @@ export function DocsShellAudioSurface({
   audioPopoverStatusPausedLabel,
   audioPopoverStatusLoopOnLabel,
   audioPopoverStatusLoopOffLabel,
-}: DocsShellAudioSurfaceProps) {
+}: Readonly<DocsShellAudioSurfaceProps>) {
   const player = useSharedAudioPlayer();
   if (!player) {
     return null;
@@ -126,10 +134,10 @@ export function DocsShellAudioSurface({
           src={audioSrc}
           loop={loopEnabled}
           onEnded={onNativeEnded}
-          playsInline
           style={{ display: "none" }}
-          aria-hidden
-        />
+        >
+          <track kind="captions" {...resolveCaptionsTrackProps(currentTrack?.captions, language)} />
+        </audio>
       )}
       {isEmbed && playing && (
         <iframe

@@ -49,8 +49,8 @@ describe("AiConfigFileRepository", () => {
     expect(await repo.read()).toEqual(VALID_CONFIG);
   });
 
-  it("restricts file permissions to the owner on POSIX", async () => {
-    if (process.platform === "win32") return;
+  it("restricts file permissions to the owner on POSIX", async (context) => {
+    context.skip(process.platform === "win32", "File modes are not enforced on Windows.");
     const repo = new AiConfigFileRepository({ cwd, configDir });
     await repo.write(VALID_CONFIG);
     expect(statSync(repo.getConfigPath()).mode & 0o777).toBe(0o600);

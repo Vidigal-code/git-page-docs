@@ -20,7 +20,7 @@ export function RouteGuideBreadcrumb({
   iconConfig,
   homePathClick,
   homeAncestorKeys = [],
-}: RouteGuideBreadcrumbProps) {
+}: Readonly<RouteGuideBreadcrumbProps>) {
   const { iconImage, useReactIcon, reactIconTag, reactIconStyle, iconImgWidth, iconImgHeight } =
     iconConfig;
 

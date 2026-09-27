@@ -681,10 +681,5 @@
       "docsAccessBlockConfirmBtn": "Sí, bloquear",
       "docsAccessBlockCancelBtn": "Cancelar"
     }
-  },
-  "supportedLanguages": [
-    "en",
-    "pt",
-    "es"
-  ]
+  }
 }

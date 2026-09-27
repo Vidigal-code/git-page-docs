@@ -25,13 +25,14 @@ export function DocsShellFocusOverlay({
   canFocusModeGoNext,
   onClose,
   onNavigate,
-}: DocsShellFocusOverlayProps) {
+}: Readonly<DocsShellFocusOverlayProps>) {
   if (!isOpen) {
     return null;
   }
   return (
-    <div className={styles.focusModeOverlay} onClick={onClose}>
-      <div className={styles.focusModeCard} onClick={(event) => event.stopPropagation()}>
+    <div className={styles.focusModeOverlay}>
+      <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
+      <div className={styles.focusModeCard}>
         <div className={styles.focusModeHeader}>
           <strong>{focusModeLabel}</strong>
           <button className={`${styles.button} ${styles.focusModeCloseButton}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>

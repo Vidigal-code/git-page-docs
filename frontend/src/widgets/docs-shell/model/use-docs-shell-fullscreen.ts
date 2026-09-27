@@ -1,8 +1,13 @@
 import { useCallback, useRef, useState } from "react";
 import type { LoadedDocsData } from "@/entities/docs";
-import { buildUnifiedHeaderMenuTree, getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
 import { toFullPath } from "@/shared/lib/base-path";
-import type { FullscreenParams } from "./use-docs-shell-url-params";
+import {
+  applyFullscreenParams,
+  resolveFullscreenPathClick,
+  stripFullscreenParams,
+} from "./use-docs-shell-fullscreen.helpers";
+import { resolvePageTarget, type FullscreenParams } from "./use-docs-shell-url-params.helpers";
+import { withQuery } from "./with-query";
 
 interface UseDocsShellFullscreenArgs {
   data: LoadedDocsData;
@@ -13,6 +18,10 @@ interface UseDocsShellFullscreenArgs {
   setPageIndex: (index: number) => void;
   expandAncestors: (keys: string[]) => void;
   routerReplace: (url: string) => void;
+}
+
+function readWindowSearchParams(): URLSearchParams {
+  return new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
 }
 
 export function useDocsShellFullscreen(args: UseDocsShellFullscreenArgs) {
@@ -35,36 +44,11 @@ export function useDocsShellFullscreen(args: UseDocsShellFullscreenArgs) {
       if (skipUrlFullscreenFromInlineRef.current) {
         return;
       }
-      let pathClick: string | null = null;
-      const lang = params.lang ?? language;
-      if (params.type === "md" && params.file) {
-        pathClick = params.file;
-      } else if (params.type === "html" && params.file) {
-        pathClick = params.file;
-      } else if (params.type === "video" && params.id != null) {
-        pathClick = `page:${params.id}`;
-      } else if (params.type === "video" && params.slug) {
-        const entry = Object.entries(data.pathToPageMap ?? {}).find(
-          ([k, v]) => v.contentType === "video" && k.toLowerCase().includes(params.slug!.toLowerCase()),
-        );
-        pathClick = entry?.[0] ?? null;
-      } else if (params.type === "audio" && params.id != null) {
-        pathClick = `page:${params.id}`;
-      } else if (params.type === "audio" && params.slug) {
-        const entry = Object.entries(data.pathToPageMap ?? {}).find(
-          ([k, v]) => v.contentType === "audio" && k.toLowerCase().includes(params.slug!.toLowerCase()),
-        );
-        pathClick = entry?.[0] ?? null;
-      }
-      if (pathClick) {
-        const pageIdx = getPageIndexByPathClick(data, pathClick);
-        if (pageIdx >= 0) {
-          const tree = buildUnifiedHeaderMenuTree(data, lang, pageIdx);
-          const trail = getBreadcrumbTrail(tree, pathClick);
-          const ancestorKeys = trail.length > 0 ? trail[trail.length - 1].ancestorKeys : [];
-          setPageIndex(pageIdx);
-          expandAncestors(ancestorKeys);
-        }
+      const pathClick = resolveFullscreenPathClick(data, params);
+      const target = pathClick ? resolvePageTarget(data, params.lang ?? language, pathClick) : null;
+      if (target) {
+        setPageIndex(target.pageIndex);
+        expandAncestors(target.ancestorKeys);
       }
       setUrlFullscreenParams(params);
     },
@@ -72,21 +56,13 @@ export function useDocsShellFullscreen(args: UseDocsShellFullscreenArgs) {
   );
 
   const closeUrlFullscreen = useCallback(() => {
-    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-    params.delete("mdfull");
-    params.delete("htmlfull");
-    params.delete("videofull");
-    params.delete("audiofull");
-    params.delete("file");
-    params.delete("slug");
-    params.delete("id");
-    const qs = params.toString();
+    const params = readWindowSearchParams();
+    stripFullscreenParams(params, "always");
     const appPath = pathname ?? "/";
     if (typeof window !== "undefined") {
-      const fullUrl = qs ? `${toFullPath(appPath)}?${qs}` : toFullPath(appPath);
-      window.history.replaceState({}, "", fullUrl);
+      window.history.replaceState({}, "", withQuery(toFullPath(appPath), params));
     } else {
-      routerReplace(qs ? `${appPath}?${qs}` : appPath);
+      routerReplace(withQuery(appPath, params));
     }
     setUrlFullscreenParams(null);
   }, [pathname, routerReplace]);
@@ -95,21 +71,7 @@ export function useDocsShellFullscreen(args: UseDocsShellFullscreenArgs) {
     (params: FullscreenParams) => {
       skipUrlFullscreenFromInlineRef.current = true;
       const current = getCurrentSearchParams();
-      if (params.type === "md" && params.file) {
-        current.set("mdfull", params.lang);
-        current.set("file", params.file);
-      } else if (params.type === "html" && params.file) {
-        current.set("htmlfull", params.lang);
-        current.set("file", params.file);
-      } else if (params.type === "video") {
-        current.set("videofull", params.lang);
-        if (params.id != null) current.set("id", String(params.id));
-        if (params.slug) current.set("slug", params.slug);
-      } else if (params.type === "audio") {
-        current.set("audiofull", params.lang);
-        if (params.id != null) current.set("id", String(params.id));
-        if (params.slug) current.set("slug", params.slug);
-      }
+      applyFullscreenParams(current, params);
       replaceUrlWithoutNavigation(pathname ?? "/", current);
     },
     [getCurrentSearchParams, replaceUrlWithoutNavigation, pathname],
@@ -117,18 +79,8 @@ export function useDocsShellFullscreen(args: UseDocsShellFullscreenArgs) {
 
   const handleInlineFullscreenClose = useCallback(() => {
     skipUrlFullscreenFromInlineRef.current = false;
-    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-    const hadVideoFullscreen = params.has("videofull");
-    const hadAudioFullscreen = params.has("audiofull");
-    params.delete("mdfull");
-    params.delete("htmlfull");
-    params.delete("videofull");
-    params.delete("audiofull");
-    params.delete("file");
-    params.delete("slug");
-    if (hadVideoFullscreen || hadAudioFullscreen) {
-      params.delete("id");
-    }
+    const params = readWindowSearchParams();
+    stripFullscreenParams(params, "media-only");
     replaceUrlWithoutNavigation(pathname ?? "/", params);
     setUrlFullscreenParams(null);
   }, [pathname, replaceUrlWithoutNavigation]);

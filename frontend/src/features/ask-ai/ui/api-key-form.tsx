@@ -24,7 +24,7 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
         setProvider(withDefaultModel(savedProvider || 'openai'));
     }, []);
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleSave = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSave(provider, key);
         setKey('');

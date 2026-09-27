@@ -1,12 +1,10 @@
-import Image from "next/image";
-import { BsMoonStarsFill, BsRobot, BsSunFill } from "@/shared/ui/fallback-icons";
-import { FiChevronsLeft } from "@/shared/ui/fallback-icons";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { BsRobot, FiChevronsLeft } from "@/shared/ui/fallback-icons";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import { DocsLockButton, type DocsLockTexts } from "@/features/docs-access";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/icons/nav-menu/resolve-nav-menu-icon";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { MenuNode } from "../model/menu-tree";
+import { ConfiguredIcon, DocsShellBrandIcon } from "./docs-shell-icon";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
 import styles from "../docs-shell.module.css";
 
@@ -58,20 +56,25 @@ export function DocsShellSidebar({
   onOpenAiChat,
   aiChatIconConfig,
   docsLock,
-}: DocsShellSidebarProps) {
+}: Readonly<DocsShellSidebarProps>) {
+  const aiChatFallback = <BsRobot aria-hidden />;
+  const collapseFallback = <FiChevronsLeft aria-hidden />;
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        {useReactHeaderIcon ? (
-          <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-            <ReactIconByTag
-              tag={reactHeaderIconTag}
-              fallback={activeLayoutMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-            />
-          </span>
-        ) : iconImage ? (
-          <Image src={iconImage} alt={siteName} width={iconImgWidth} height={iconImgHeight} className={styles.brandIcon} unoptimized />
-        ) : null}
+        <DocsShellBrandIcon
+          useReactIcon={useReactHeaderIcon}
+          reactIconTag={reactHeaderIconTag}
+          reactIconStyle={headerReactIconStyle}
+          activeLayoutMode={activeLayoutMode}
+          iconImage={iconImage}
+          iconImgWidth={iconImgWidth}
+          iconImgHeight={iconImgHeight}
+          alt={siteName}
+          reactIconClassName={styles.brandReactIcon}
+          imageClassName={styles.brandIcon}
+        />
         <span>{siteName}</span>
       </div>
       <nav className={styles.menuList}>
@@ -102,34 +105,16 @@ export function DocsShellSidebar({
           className={`${styles.button} ${styles.sidebarRailButton}`}
         />
         <button data-testid="ai-chat-open" className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
-          {aiChatIconConfig.open.useReactIcon ? (
-            <span style={aiChatIconConfig.open.reactIconStyle}>
-              <ReactIconByTag
-                tag={aiChatIconConfig.open.reactIconTag}
-                style={aiChatIconConfig.open.reactIconStyle}
-                fallback={<BsRobot aria-hidden />}
-              />
-            </span>
-          ) : aiChatIconConfig.open.iconImage ? (
-            <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
-          ) : (
-            <BsRobot aria-hidden />
-          )}
+          <ConfiguredIcon icon={aiChatIconConfig.open} fallback={aiChatFallback} reactIconFallback={aiChatFallback} alt="IA" />
         </button>
         <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onCollapseSidebar} aria-label={menuCloseLabel} title={menuCloseLabel}>
-          {navMenuConfig.sidebarCollapseIcon.useReactIcon ? (
-            <span style={navMenuConfig.sidebarCollapseIcon.reactIconStyle}>
-              <ReactIconByTag
-                tag={navMenuConfig.sidebarCollapseIcon.reactIconTag || "FiChevronsLeft"}
-                style={navMenuConfig.sidebarCollapseIcon.reactIconStyle}
-                fallback={<FiChevronsLeft aria-hidden />}
-              />
-            </span>
-          ) : navMenuConfig.sidebarCollapseIcon.iconImage ? (
-            <Image src={navMenuConfig.sidebarCollapseIcon.iconImage} alt="Collapse sidebar" width={navMenuConfig.sidebarCollapseIcon.iconImgWidth} height={navMenuConfig.sidebarCollapseIcon.iconImgHeight} unoptimized />
-          ) : (
-            <FiChevronsLeft aria-hidden />
-          )}
+          <ConfiguredIcon
+            icon={navMenuConfig.sidebarCollapseIcon}
+            defaultTag="FiChevronsLeft"
+            fallback={collapseFallback}
+            reactIconFallback={collapseFallback}
+            alt="Collapse sidebar"
+          />
         </button>
       </div>
     </aside>

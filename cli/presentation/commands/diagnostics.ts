@@ -1,8 +1,15 @@
 import path from "node:path";
 import { readFileSync, existsSync } from "node:fs";
-import { execSync } from "node:child_process";
 import { defaultConfigLoader } from "@gitpagedocs/tools";
 import type { CommandContext } from "./run-command";
+// @ts-expect-error .mjs runtime module is type-less in this package.
+import { runExecutableCapture } from "../../runtime/exec.mjs";
+
+interface DoctorCheck {
+  label: string;
+  ok: boolean;
+  detail: string;
+}
 
 function readVersion(pkgRoot: string): string {
   try {
@@ -18,9 +25,10 @@ export async function runVersion(ctx: CommandContext): Promise<void> {
   console.log(`gitpagedocs ${readVersion(ctx.pkgRoot)} (node ${process.version})`);
 }
 
-function probe(label: string, command: string): { label: string; ok: boolean; detail: string } {
+/** Run `<program> --version` (argv array, no shell) and keep its first output line. */
+function probe(label: string, program: string): DoctorCheck {
   try {
-    const out = execSync(command, { stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
+    const out = String(runExecutableCapture(program, ["--version"], { stdio: ["ignore", "pipe", "ignore"] }));
     return { label, ok: true, detail: out.split("\n")[0] };
   } catch {
     return { label, ok: false, detail: "not found" };
@@ -28,23 +36,24 @@ function probe(label: string, command: string): { label: string; ok: boolean; de
 }
 
 export async function runDoctor(ctx: CommandContext): Promise<void> {
-  const checks: Array<{ label: string; ok: boolean; detail: string }> = [];
-  checks.push({ label: "node", ok: true, detail: process.version });
-  checks.push(probe("git", "git --version"));
-  checks.push(probe("gh (GitHub CLI)", "gh --version"));
-  checks.push(probe("pnpm", "pnpm --version"));
-
   const configPath = await defaultConfigLoader.resolveConfigPath(ctx.cwd);
-  checks.push({
-    label: "gitpagedocs config",
-    ok: Boolean(configPath),
-    detail: configPath ? path.relative(ctx.cwd, configPath) : "not found (run `gitpagedocs init`)",
-  });
-  checks.push({
-    label: "gitpagedocs/ directory",
-    ok: existsSync(path.join(ctx.cwd, "gitpagedocs")),
-    detail: existsSync(path.join(ctx.cwd, "gitpagedocs")) ? "present" : "missing",
-  });
+  const hasDocsDirectory = existsSync(path.join(ctx.cwd, "gitpagedocs"));
+  const checks: DoctorCheck[] = [
+    { label: "node", ok: true, detail: process.version },
+    probe("git", "git"),
+    probe("gh (GitHub CLI)", "gh"),
+    probe("pnpm", "pnpm"),
+    {
+      label: "gitpagedocs config",
+      ok: Boolean(configPath),
+      detail: configPath ? path.relative(ctx.cwd, configPath) : "not found (run `gitpagedocs init`)",
+    },
+    {
+      label: "gitpagedocs/ directory",
+      ok: hasDocsDirectory,
+      detail: hasDocsDirectory ? "present" : "missing",
+    },
+  ];
 
   // eslint-disable-next-line no-console
   console.log("\n  gitpagedocs doctor\n");
@@ -53,8 +62,9 @@ export async function runDoctor(ctx: CommandContext): Promise<void> {
     console.log(`  ${c.ok ? "[ok]" : "[x] "} ${c.label.padEnd(22)} ${c.detail}`);
   }
   const failed = checks.filter((c) => !c.ok && c.label !== "gh (GitHub CLI)").length;
+  const summary = failed === 0 ? "All required checks passed." : `${failed} check(s) need attention.`;
   // eslint-disable-next-line no-console
-  console.log(`\n  ${failed === 0 ? "All required checks passed." : `${failed} check(s) need attention.`}\n`);
+  console.log(`\n  ${summary}\n`);
 }
 
 /** Used only when package.json is unreadable — the CLI's published name. */

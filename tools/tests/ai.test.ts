@@ -6,7 +6,7 @@ import { RegistryProviderFactory } from "../src/ai/factory";
 import { CatalogModelRegistry } from "../src/ai/model-registry";
 import { createDefaultRegistry, createDefaultFactory, createModelRegistry } from "../src/ai/bootstrap";
 import { legacyProviderToCatalogId, parseLegacyProviderAndModel } from "../src/ai/legacy-adapter";
-import { resolveFetch, ensureOk, readSseData, readJsonLines, type FetchLike } from "../src/ai/http/streaming";
+import { resolveFetch, ensureOk, readLines, readSseData, readJsonLines, type FetchLike } from "../src/ai/http/streaming";
 import { ProviderError } from "../src/errors/app-error";
 
 function fakeFetch(body: string, status = 200): { fetch: FetchLike; lastInit: () => RequestInit | undefined } {
@@ -133,6 +133,45 @@ describe("streaming helpers", () => {
     const lines: string[] = [];
     for await (const l of readJsonLines(ndjson)) lines.push(l);
     expect(lines).toEqual(['{"x":1}', '{"y":2}']);
+  });
+
+  function chunkedBody(chunks: Array<string | Uint8Array>): ReadableStream<Uint8Array> {
+    const encoder = new TextEncoder();
+    return new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (const chunk of chunks) controller.enqueue(typeof chunk === "string" ? encoder.encode(chunk) : chunk);
+        controller.close();
+      },
+    });
+  }
+
+  async function collect(lines: AsyncGenerator<string>): Promise<string[]> {
+    const out: string[] = [];
+    for await (const line of lines) out.push(line);
+    return out;
+  }
+
+  it("readLines joins a line split across chunks, trims it, and yields the tail without a newline", async () => {
+    await expect(collect(readLines(chunkedBody(["ab", "c\r\nd", "e\n\n  tail"])))).resolves.toEqual(["abc", "de", "", "tail"]);
+    await expect(collect(readLines(chunkedBody(["only\n"])))).resolves.toEqual(["only", ""]);
+    await expect(collect(readLines(chunkedBody([])))).resolves.toEqual([""]);
+  });
+
+  it("readSseData reassembles data frames cut at chunk boundaries and a trailing frame without newline", async () => {
+    const body = chunkedBody(["data: hel", "lo\n\nda", "ta: wor", "ld"]);
+    await expect(collect(readSseData(body))).resolves.toEqual(["hello", "world"]);
+  });
+
+  it("readSseData keeps a multi-byte character split between chunks and skips non-data lines", async () => {
+    const bytes = new TextEncoder().encode("event: ping\n: keep-alive\ndata: café\n");
+    const cut = bytes.length - 2; // inside the two bytes of "é"
+    const body = chunkedBody([bytes.slice(0, cut), bytes.slice(cut)]);
+    await expect(collect(readSseData(body))).resolves.toEqual(["café"]);
+  });
+
+  it("readJsonLines joins a line split across chunks, drops blank lines and yields the last line without newline", async () => {
+    const body = chunkedBody(['{"a":', '1}\n\n{"b":2}\n', '{"c":3}']);
+    await expect(collect(readJsonLines(body))).resolves.toEqual(['{"a":1}', '{"b":2}', '{"c":3}']);
   });
 });
 

@@ -57,6 +57,8 @@ export async function verifyDocAccess(
 function hexEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
-  for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  // Hex digits are single code units, so codePointAt(i) never straddles a pair
+  // and is never undefined for i < length; the fallback only satisfies the type.
+  for (let i = 0; i < a.length; i += 1) diff |= (a.codePointAt(i) ?? 0) ^ (b.codePointAt(i) ?? 0);
   return diff === 0;
 }

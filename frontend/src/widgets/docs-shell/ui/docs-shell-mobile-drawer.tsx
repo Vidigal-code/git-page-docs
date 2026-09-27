@@ -1,7 +1,6 @@
-import Image from "next/image";
 import { BsRobot, FiX } from "@/shared/ui/fallback-icons";
 import type { MenuNode } from "../model/menu-tree";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { ConfiguredIcon } from "./docs-shell-icon";
 import { DocsShellControls } from "./docs-shell-controls";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
 import styles from "../docs-shell.module.css";
@@ -34,43 +33,22 @@ export function DocsShellMobileDrawer({
   navMenuCloseIcon,
   onOpenAiChat,
   aiChatIconConfig,
-}: DocsShellMobileDrawerProps) {
+}: Readonly<DocsShellMobileDrawerProps>) {
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className={styles.mobileDrawerOverlay} onClick={onClose}>
-      <aside className={styles.mobileDrawer} onClick={(event) => event.stopPropagation()}>
+    <div className={styles.mobileDrawerOverlay}>
+      <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
+      <aside className={styles.mobileDrawer}>
         <div className={styles.mobileDrawerHeader}>
           <button data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligencia Artificial" title="Assistente de IA">
-            {aiChatIconConfig.open.useReactIcon ? (
-              <span style={aiChatIconConfig.open.reactIconStyle}>
-                <ReactIconByTag tag={aiChatIconConfig.open.reactIconTag} style={aiChatIconConfig.open.reactIconStyle} />
-              </span>
-            ) : aiChatIconConfig.open.iconImage ? (
-              <Image src={aiChatIconConfig.open.iconImage} alt="IA" width={aiChatIconConfig.open.iconImgWidth} height={aiChatIconConfig.open.iconImgHeight} unoptimized />
-            ) : (
-              <BsRobot aria-hidden />
-            )}
+            <ConfiguredIcon icon={aiChatIconConfig.open} fallback={<BsRobot aria-hidden />} alt="IA" />
           </button>
           <strong>{siteName}</strong>
           <button className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>
-            {navMenuCloseIcon?.useReactIcon ? (
-              <span style={navMenuCloseIcon.reactIconStyle}>
-                <ReactIconByTag tag={navMenuCloseIcon.reactIconTag} style={navMenuCloseIcon.reactIconStyle} />
-              </span>
-            ) : navMenuCloseIcon?.iconImage ? (
-              <Image
-                src={navMenuCloseIcon.iconImage}
-                alt=""
-                width={navMenuCloseIcon.iconImgWidth}
-                height={navMenuCloseIcon.iconImgHeight}
-                unoptimized
-              />
-            ) : (
-              <FiX aria-hidden />
-            )}
+            <ConfiguredIcon icon={navMenuCloseIcon} fallback={<FiX aria-hidden />} />
           </button>
         </div>
         <nav className={styles.mobileMenu}>

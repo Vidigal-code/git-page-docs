@@ -4,7 +4,7 @@ import { GuideBlock } from "./guide-block";
 import styles from "./guide-content.module.css";
 
 /** Renders one documentation section: an anchored header plus its content blocks. */
-export function GuideSection({ section }: { section: GuideSectionModel }) {
+export function GuideSection({ section }: Readonly<{ section: GuideSectionModel }>) {
   return (
     <section id={section.id} className={styles.section}>
       <header className={styles.sectionHeader}>

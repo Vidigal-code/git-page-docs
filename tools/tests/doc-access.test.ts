@@ -30,4 +30,11 @@ describe("doc access key pair (docs password gate)", () => {
     expect(await verifyDocAccess("", publicKey, crypto)).toBe(false);
     expect(await verifyDocAccess("hunter2", "not-a-hash", crypto)).toBe(false);
   });
+
+  it("rejects a same-length key that differs in a single hex digit", async () => {
+    const { privateKey, publicKey } = await deriveDocAccessKeys("hunter2", crypto);
+    const flipped = publicKey.slice(0, -1) + (publicKey.endsWith("0") ? "1" : "0");
+    expect(await verifyDocAccess("hunter2", flipped, crypto)).toBe(false);
+    expect(await verifyDocAccess(privateKey, flipped, crypto)).toBe(false);
+  });
 });

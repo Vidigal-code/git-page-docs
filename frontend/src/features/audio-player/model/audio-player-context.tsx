@@ -14,7 +14,7 @@ interface ActiveAudioPlayerProviderProps {
   children: React.ReactNode;
 }
 
-function ActiveAudioPlayerProvider({ config, language, children }: ActiveAudioPlayerProviderProps) {
+function ActiveAudioPlayerProvider({ config, language, children }: Readonly<ActiveAudioPlayerProviderProps>) {
   const player = useAudioPlayer({
     tracks: config.tracks,
     language,
@@ -39,7 +39,7 @@ interface AudioPlayerProviderProps {
  * with per-control state each copy mounts its own <audio>/<iframe> and
  * pausing one leaves the other playing.
  */
-export function AudioPlayerProvider({ config, enabled = true, language, children }: AudioPlayerProviderProps) {
+export function AudioPlayerProvider({ config, enabled = true, language, children }: Readonly<AudioPlayerProviderProps>) {
   if (!enabled || !config || config.tracks.length === 0) {
     return <>{children}</>;
   }

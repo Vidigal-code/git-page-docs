@@ -330,7 +330,7 @@
 
 .markdownContent {
     white-space: normal;
-    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .markdownContent>*:first-child {
@@ -495,7 +495,25 @@
     transition: all 0.2s;
 }
 
+/* Danger text mixed with the theme text colour: deep red on light palettes,
+   pale red on dark ones, so the hover state keeps >= 4.5:1 on the tinted background
+   in both modes (default dark: ~6.1:1; light: ~6.5:1). */
 .btnClear:hover {
     background: color-mix(in srgb, #f87171 10%, transparent);
-    color: #fca5a5;
+    color: color-mix(in srgb, #ef4444 62%, var(--text));
+}
+/* Pointer-only click-away surface: native <button> out of the tab order,
+ * painted beneath the drawer so the drawer needs no click handler. */
+.drawerBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: default;
 }

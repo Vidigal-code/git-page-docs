@@ -1,16 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaBars } from "@/shared/ui/fallback-icons";
-import { IoMdClose } from "@/shared/ui/fallback-icons";
+import { FaBars, IoMdClose } from "@/shared/ui/fallback-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ThemeSelector } from "@/features/theme-selector";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import type { LanguageCode, LayoutItem } from "@/entities/docs";
 import styles from "../search-shell-header.module.css";
+
+interface SearchShellBrandIconProps {
+  useReactHeaderIcon?: boolean;
+  reactHeaderIconTag?: string;
+  headerReactIconStyle?: React.CSSProperties;
+  iconImage?: string;
+  iconImgWidth: number;
+  iconImgHeight: number;
+}
+
+/** Brand slot: the configured react icon, else the configured image, else the GitHub mark. */
+function SearchShellBrandIcon({
+  useReactHeaderIcon,
+  reactHeaderIconTag,
+  headerReactIconStyle,
+  iconImage,
+  iconImgWidth,
+  iconImgHeight,
+}: Readonly<SearchShellBrandIconProps>) {
+  if (useReactHeaderIcon && reactHeaderIconTag) {
+    return (
+      <span className={styles.brandReactIcon} style={headerReactIconStyle}>
+        <ReactIconByTag tag={reactHeaderIconTag} />
+      </span>
+    );
+  }
+  if (iconImage) {
+    return <Image src={iconImage} alt="" width={iconImgWidth} height={iconImgHeight} className={styles.brandIcon} unoptimized />;
+  }
+  return (
+    <span className={styles.brandReactIcon} style={headerReactIconStyle}>
+      <ReactIconByTag tag="FaGithubSquare" />
+    </span>
+  );
+}
 
 interface SearchShellHeaderProps {
   siteName: string;
@@ -55,8 +89,24 @@ export function SearchShellHeader({
   headerReactIconStyle,
   getLanguageLabel,
   themeVarsStyle,
-}: SearchShellHeaderProps) {
+}: Readonly<SearchShellHeaderProps>) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
+
+  // Escape closes the drawer while focus is inside it. Scoped to the drawer so
+  // an Escape aimed at a selector dialog portaled to <body> leaves it open.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (event.target instanceof Node && drawerRef.current?.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
+
   // Use "/" so Next.js Link adds basePath automatically when configured.
   const homeHref = "/";
   const darkModeLabel = "Dark mode";
@@ -104,17 +154,14 @@ export function SearchShellHeader({
       <div className={styles.headerInner}>
         <div className={styles.headerLeft}>
           <Link href={homeHref} className={styles.brandLink} aria-label={siteName}>
-            {useReactHeaderIcon && reactHeaderIconTag ? (
-              <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-                <ReactIconByTag tag={reactHeaderIconTag} />
-              </span>
-            ) : iconImage ? (
-              <Image src={iconImage} alt="" width={iconImgWidth} height={iconImgHeight} className={styles.brandIcon} unoptimized />
-            ) : (
-              <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-                <ReactIconByTag tag="FaGithubSquare" />
-              </span>
-            )}
+            <SearchShellBrandIcon
+              useReactHeaderIcon={useReactHeaderIcon}
+              reactHeaderIconTag={reactHeaderIconTag}
+              headerReactIconStyle={headerReactIconStyle}
+              iconImage={iconImage}
+              iconImgWidth={iconImgWidth}
+              iconImgHeight={iconImgHeight}
+            />
             <strong>{siteName}</strong>
           </Link>
           <button
@@ -132,16 +179,15 @@ export function SearchShellHeader({
       </div>
 
       {menuOpen && (
-        <div
-          className={styles.mobileDrawerOverlay}
-          onClick={() => setMenuOpen(false)}
-          onKeyDown={(e) => e.key === "Escape" && setMenuOpen(false)}
-        >
-          <aside
-            className={styles.mobileDrawer}
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => e.stopPropagation()}
-          >
+        <div className={styles.mobileDrawerOverlay}>
+          <button
+            type="button"
+            className={styles.overlayBackdrop}
+            onClick={() => setMenuOpen(false)}
+            aria-label={menuCloseLabel}
+            tabIndex={-1}
+          />
+          <aside ref={drawerRef} className={styles.mobileDrawer}>
             <div className={styles.mobileDrawerHeader}>
               <strong>{siteName}</strong>
               <button

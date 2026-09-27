@@ -11,9 +11,10 @@ function toPortablePath(relativePath) {
   return String(relativePath).replace(/[\\/]+/g, "/");
 }
 
+/** config.json (carries `site.languages`) + one bundle per shipped language + every version config. */
 export function getBaselineTargets() {
   const langs = languageArtifactPaths("gitpagedocs");
-  const targets = ["gitpagedocs/config.json", langs.manifest, ...SUPPORTED_LANGUAGES.map(langs.bundle)];
+  const targets = [langs.config, ...SUPPORTED_LANGUAGES.map(langs.bundle)];
   for (const version of DOC_VERSIONS) {
     targets.push(`gitpagedocs/docs/versions/${version}/config.json`);
   }

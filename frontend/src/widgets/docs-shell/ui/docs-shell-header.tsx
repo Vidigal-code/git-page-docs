@@ -1,9 +1,6 @@
-import Image from "next/image";
-import { BsMoonStarsFill, BsSunFill } from "@/shared/ui/fallback-icons";
-import { FaBars } from "@/shared/ui/fallback-icons";
-import { IoMdClose } from "@/shared/ui/fallback-icons";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { FaBars, IoMdClose } from "@/shared/ui/fallback-icons";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
+import { ConfiguredIcon, DocsShellBrandIcon } from "./docs-shell-icon";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellHeaderProps {
@@ -38,60 +35,37 @@ export function DocsShellHeader({
   activeLayoutMode,
   navMenuConfig,
   controls,
-}: DocsShellHeaderProps) {
+}: Readonly<DocsShellHeaderProps>) {
   const menuToggleIcon = menuOpen
     ? navMenuConfig.navMenuMobileCloseIcon
     : navMenuConfig.navMenuMobileOpenIcon;
+  const menuToggleLabel = menuOpen ? menuCloseLabel : menuOpenLabel;
+  const menuToggleFallback = menuOpen ? <IoMdClose aria-hidden /> : <FaBars aria-hidden />;
 
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
         <div className={styles.headerLeft}>
-          {useReactHeaderIcon ? (
-            <span className={styles.headerReactIcon} style={headerReactIconStyle}>
-              <ReactIconByTag
-                tag={reactHeaderIconTag}
-                fallback={activeLayoutMode === "dark" ? <BsMoonStarsFill aria-hidden /> : <BsSunFill aria-hidden />}
-              />
-            </span>
-          ) : iconImage ? (
-            <Image
-              src={iconImage}
-              alt={headerName}
-              width={iconImgWidth}
-              height={iconImgHeight}
-              className={styles.headerIcon}
-              unoptimized
-            />
-          ) : null}
+          <DocsShellBrandIcon
+            useReactIcon={useReactHeaderIcon}
+            reactIconTag={reactHeaderIconTag}
+            reactIconStyle={headerReactIconStyle}
+            activeLayoutMode={activeLayoutMode}
+            iconImage={iconImage}
+            iconImgWidth={iconImgWidth}
+            iconImgHeight={iconImgHeight}
+            alt={headerName}
+            reactIconClassName={styles.headerReactIcon}
+            imageClassName={styles.headerIcon}
+          />
           <strong className={styles.headerTitle}>{headerName}</strong>
           <button
             className={`${styles.button} ${styles.mobileToggle}`}
             onClick={onToggleMenu}
-            aria-label={menuOpen ? menuCloseLabel : menuOpenLabel}
-            title={menuOpen ? menuCloseLabel : menuOpenLabel}
+            aria-label={menuToggleLabel}
+            title={menuToggleLabel}
           >
-            {menuToggleIcon.useReactIcon ? (
-              <span style={menuToggleIcon.reactIconStyle}>
-                <ReactIconByTag
-                  tag={menuToggleIcon.reactIconTag}
-                  style={menuToggleIcon.reactIconStyle}
-                  fallback={menuOpen ? <IoMdClose aria-hidden /> : <FaBars aria-hidden />}
-                />
-              </span>
-            ) : menuToggleIcon.iconImage ? (
-              <Image
-                src={menuToggleIcon.iconImage}
-                alt=""
-                width={menuToggleIcon.iconImgWidth}
-                height={menuToggleIcon.iconImgHeight}
-                unoptimized
-              />
-            ) : menuOpen ? (
-              <IoMdClose aria-hidden />
-            ) : (
-              <FaBars aria-hidden />
-            )}
+            <ConfiguredIcon icon={menuToggleIcon} fallback={menuToggleFallback} reactIconFallback={menuToggleFallback} />
           </button>
         </div>
 

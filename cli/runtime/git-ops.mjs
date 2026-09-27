@@ -1,22 +1,22 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+import { runExecutable, runExecutableCapture } from "./exec.mjs";
 
 /** Detect { owner, repo } from the git `origin` remote URL, or null. */
 export function detectRepoFromGit(root) {
   try {
-    const url = execSync("git remote get-url origin", { cwd: root, stdio: "pipe" }).toString().trim();
+    const url = runExecutableCapture("git", ["remote", "get-url", "origin"], { cwd: root });
     const match = url.match(/[:/]([^/:]+)\/([^/]+?)(?:\.git)?$/);
     if (match) return { owner: match[1], repo: match[2] };
   } catch {
-    // no remote / not a repo
+    // no remote / not a repo / git not installed
   }
   return null;
 }
 
 export function tryConfigurePagesToGitHubActions(owner, repo, branch, root) {
   try {
-    execSync("gh --version", { cwd: root, stdio: "ignore" });
+    runExecutable("gh", ["--version"], { cwd: root, stdio: "ignore" });
   } catch {
     console.warn(
       "GitHub CLI (gh) not found. Could not auto-configure Pages source. Set GitHub Pages source to 'GitHub Actions' manually in repository settings.",
@@ -24,16 +24,19 @@ export function tryConfigurePagesToGitHubActions(owner, repo, branch, root) {
     return;
   }
 
+  // Each candidate is an argv array: owner/repo/branch travel as discrete
+  // arguments, never through a shell string.
+  const pagesEndpoint = `repos/${owner}/${repo}/pages`;
   const candidates = [
-    `gh api -X PUT "repos/${owner}/${repo}/pages" -f build_type=workflow`,
-    `gh api -X POST "repos/${owner}/${repo}/pages" -f build_type=workflow`,
-    `gh api -X POST "repos/${owner}/${repo}/pages" -f source[branch]=${branch} -f source[path]=/`,
-    `gh api -X PUT "repos/${owner}/${repo}/pages" -f source[branch]=${branch} -f source[path]=/ -f build_type=workflow`,
+    ["api", "-X", "PUT", pagesEndpoint, "-f", "build_type=workflow"],
+    ["api", "-X", "POST", pagesEndpoint, "-f", "build_type=workflow"],
+    ["api", "-X", "POST", pagesEndpoint, "-f", `source[branch]=${branch}`, "-f", "source[path]=/"],
+    ["api", "-X", "PUT", pagesEndpoint, "-f", `source[branch]=${branch}`, "-f", "source[path]=/", "-f", "build_type=workflow"],
   ];
 
-  for (const command of candidates) {
+  for (const args of candidates) {
     try {
-      execSync(command, { cwd: root, stdio: "ignore" });
+      runExecutable("gh", args, { cwd: root, stdio: "ignore" });
       console.log("GitHub Pages source configured for GitHub Actions.");
       return;
     } catch {
@@ -48,7 +51,7 @@ export function tryConfigurePagesToGitHubActions(owner, repo, branch, root) {
 
 export function getCurrentGitBranch(root) {
   try {
-    const branch = execSync("git branch --show-current", { cwd: root, stdio: "pipe" }).toString().trim();
+    const branch = runExecutableCapture("git", ["branch", "--show-current"], { cwd: root });
     return branch || "main";
   } catch {
     return "main";
@@ -67,17 +70,16 @@ export function runGitPushForGeneratedArtifacts(options, root, sanitizeSegment) 
 
   const repoUrl = `https://github.com/${owner}/${repo}.git`;
   try {
-    execSync("git remote get-url origin", { cwd: root, stdio: "ignore" });
+    runExecutable("git", ["remote", "get-url", "origin"], { cwd: root, stdio: "ignore" });
   } catch {
-    execSync(`git remote add origin "${repoUrl}"`, { cwd: root, stdio: "inherit" });
+    runExecutable("git", ["remote", "add", "origin", repoUrl], { cwd: root, stdio: "inherit" });
   }
 
-  execSync('git add "gitpagedocs" ".github/workflows/gitpagedocs-pages.yml"', { cwd: root, stdio: "inherit" });
+  runExecutable("git", ["add", "gitpagedocs", ".github/workflows/gitpagedocs-pages.yml"], { cwd: root, stdio: "inherit" });
 
   let hasStagedChanges = false;
   try {
-    execSync("git diff --cached --quiet", { cwd: root, stdio: "ignore" });
-    hasStagedChanges = false;
+    runExecutable("git", ["diff", "--cached", "--quiet"], { cwd: root, stdio: "ignore" });
   } catch {
     hasStagedChanges = true;
   }
@@ -86,11 +88,11 @@ export function runGitPushForGeneratedArtifacts(options, root, sanitizeSegment) 
     return;
   }
 
-  execSync('git commit -m "chore: setup gitpagedocs pages workflow"', { cwd: root, stdio: "inherit" });
+  runExecutable("git", ["commit", "-m", "chore: setup gitpagedocs pages workflow"], { cwd: root, stdio: "inherit" });
 
   const currentBranch = getCurrentGitBranch(root);
   try {
-    execSync(`git push -u origin ${currentBranch}`, { cwd: root, stdio: "inherit" });
+    runExecutable("git", ["push", "-u", "origin", currentBranch], { cwd: root, stdio: "inherit" });
     tryConfigurePagesToGitHubActions(owner, repo, currentBranch, root);
     return;
   } catch {
@@ -98,8 +100,8 @@ export function runGitPushForGeneratedArtifacts(options, root, sanitizeSegment) 
   }
 
   try {
-    execSync(`git pull --rebase origin ${currentBranch}`, { cwd: root, stdio: "inherit" });
-    execSync(`git push -u origin ${currentBranch}`, { cwd: root, stdio: "inherit" });
+    runExecutable("git", ["pull", "--rebase", "origin", currentBranch], { cwd: root, stdio: "inherit" });
+    runExecutable("git", ["push", "-u", "origin", currentBranch], { cwd: root, stdio: "inherit" });
   } catch {
     throw new Error(
       `Failed to push after automatic rebase on branch '${currentBranch}'. Resolve conflicts and run 'git push -u origin ${currentBranch}' manually.`,

@@ -1,17 +1,13 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { FiX } from "@/shared/ui/fallback-icons";
-import { MdFullscreen } from "@/shared/ui/fallback-icons";
+import { FiX, MdFullscreen } from "@/shared/ui/fallback-icons";
 import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentBrowseNav, type BrowseNavConfig } from "../page-content-browse-nav";
 import { getFullscreenInnerClassName, type FullscreenAlign } from "./fullscreen-alignment";
 import styles from "../../docs-shell.module.css";
 
 const DEFAULT_CONTAINER_MARGIN = "0";
-
-/** @deprecated Use BrowseNavConfig from page-content-browse-nav. Kept for backward compatibility. */
-export type BrowseNavProps = BrowseNavConfig;
 
 export interface ResolveChildrenOptions {
   contentOnly?: boolean;
@@ -32,7 +28,7 @@ interface ContentContainerWrapperProps {
   onAfterFullscreen?: () => void;
   marginTop?: string;
   marginBottom?: string;
-  browseNav?: BrowseNavProps;
+  browseNav?: BrowseNavConfig;
   browseNavPosition?: "top" | "bottom" | "both";
   /** Vertical placement of the content inside the fullscreen dialog. */
   fullscreenAlign?: FullscreenAlign;
@@ -51,7 +47,7 @@ export function ContentContainerWrapper({
   browseNav,
   browseNavPosition = "top",
   fullscreenAlign = "start",
-}: ContentContainerWrapperProps) {
+}: Readonly<ContentContainerWrapperProps>) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const fullscreenInnerRef = useRef<HTMLDivElement>(null);
   const marginTopVal = marginTop?.trim() || DEFAULT_CONTAINER_MARGIN;
@@ -110,9 +106,9 @@ export function ContentContainerWrapper({
       {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
       <div className={styles.contentContainerWithButton}>{resolvedChildren}</div>
       {isFullscreen && (
-        <div
+        <dialog
+          open
           className={styles.contentContainerFullscreen}
-          role="dialog"
           aria-modal="true"
           aria-label={fullscreenCloseLabel}
         >
@@ -133,7 +129,7 @@ export function ContentContainerWrapper({
               {resolveChildren(null, { contentOnly: true })}
             </TocScrollContainerProvider>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   );

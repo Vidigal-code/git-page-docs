@@ -1,6 +1,7 @@
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
 import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type {
+  AuthConfig,
   ContentTypeRouteConfig,
   GitPageDocsConfig,
   HeaderMenuItem,
@@ -32,10 +33,11 @@ import {
 } from "@/shared/api/fetch-client";
 import { withConfigDefaults } from "../lib/with-config-defaults";
 import { localizeConfig } from "./config/localize-config";
+import { applyLanguageToggles } from "./utils/route-utils";
 import { markdownToHtml } from "./utils/markdown";
 
 type VersionConfig = {
-  auth?: GitPageDocsConfig["auth"];
+  auth?: AuthConfig;
   routes?: RouteConfig[];
   "menus-header"?: HeaderMenuItem[];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
@@ -264,51 +266,130 @@ async function fetchRepoLayoutsConfig(
   return null;
 }
 
+type LayoutsAndThemes = {
+  layoutsConfig: LayoutsConfig;
+  themes: Record<string, ThemeTemplate>;
+};
+
+type LayoutsSourcePreferences = {
+  useOfficialLayouts: boolean;
+  preferredLayoutsConfigPath: string | undefined;
+  preferredTemplatesPath: string | undefined;
+};
+
+type ResolvedLayoutsConfig = {
+  layoutsConfig: LayoutsConfig;
+  /** The URL that delivered the index, when it did not come from a repository folder. */
+  resolvedConfigUrl: string | undefined;
+  /** True only when the configured index URL itself delivered the index. */
+  configuredUrlDelivered: boolean;
+  /** The repository folder that delivered the index, when it came from the repository. */
+  repoLayoutsDir: string | undefined;
+};
+
+/** Official mode prefers the official index/templates (plain paths as fallbacks); otherwise only the plain paths apply. */
+function resolveLayoutsSourcePreferences(config: GitPageDocsConfig): LayoutsSourcePreferences {
+  const { site } = config;
+  if (site.layoutsConfigPathOficial === true) {
+    return {
+      useOfficialLayouts: true,
+      preferredLayoutsConfigPath: site.layoutsConfigPathOficialUrl || site.layoutsConfigPath || OFFICIAL_LAYOUTS_CONFIG_URL,
+      preferredTemplatesPath: site.layoutsConfigPathTemplatesOficial || site.layoutsConfigPathTemplates || OFFICIAL_LAYOUTS_TEMPLATES_URL,
+    };
+  }
+  return {
+    useOfficialLayouts: false,
+    preferredLayoutsConfigPath: site.layoutsConfigPath,
+    preferredTemplatesPath: site.layoutsConfigPathTemplates,
+  };
+}
+
+async function fetchConfiguredLayoutsConfig(configUrl: string | undefined): Promise<LayoutsConfig | null> {
+  if (!configUrl) {
+    return null;
+  }
+  const layoutsConfig = await fetchUrlJson<LayoutsConfig>(configUrl);
+  return layoutsConfig?.layouts?.length ? layoutsConfig : null;
+}
+
+async function fetchOfficialLayoutsConfig(): Promise<{ config: LayoutsConfig; url: string } | null> {
+  for (const url of OFFICIAL_LAYOUTS_CONFIG_URLS) {
+    const config = await fetchUrlJson<LayoutsConfig>(url);
+    if (config?.layouts?.length) {
+      return { config, url };
+    }
+  }
+  return null;
+}
+
+/** Configured index URL first, then the repository's own layouts folders, then (official mode only) the official candidates. */
+async function resolveLayoutsConfig(preferences: LayoutsSourcePreferences, owner: string, repo: string): Promise<ResolvedLayoutsConfig> {
+  const configured = await fetchConfiguredLayoutsConfig(preferences.preferredLayoutsConfigPath);
+  if (configured) {
+    return {
+      layoutsConfig: configured,
+      resolvedConfigUrl: preferences.preferredLayoutsConfigPath,
+      configuredUrlDelivered: true,
+      repoLayoutsDir: undefined,
+    };
+  }
+  const repoLayouts = await fetchRepoLayoutsConfig(owner, repo);
+  if (repoLayouts) {
+    return { layoutsConfig: repoLayouts.config, resolvedConfigUrl: undefined, configuredUrlDelivered: false, repoLayoutsDir: repoLayouts.dir };
+  }
+  const official = preferences.useOfficialLayouts ? await fetchOfficialLayoutsConfig() : null;
+  if (official) {
+    return { layoutsConfig: official.config, resolvedConfigUrl: official.url, configuredUrlDelivered: false, repoLayoutsDir: undefined };
+  }
+  throw new Error("Could not load layouts configuration.");
+}
+
+/** A layout's template from next to the index first, then from each repository layouts folder in turn. */
+async function fetchLayoutTemplate(
+  layout: LayoutItem,
+  remoteTemplatesBaseUrl: string,
+  owner: string,
+  repo: string,
+  repoTemplateDirs: string[],
+): Promise<ThemeTemplate | null> {
+  const template = await fetchUrlJson<ThemeTemplate>(buildRemoteTemplateUrl(layout.file, remoteTemplatesBaseUrl));
+  if (template) {
+    return template;
+  }
+  for (const dir of repoTemplateDirs) {
+    const repoTemplate = await fetchRepoJson<ThemeTemplate>(owner, repo, `${dir}${layout.file}`);
+    if (repoTemplate) {
+      return repoTemplate;
+    }
+  }
+  return null;
+}
+
+async function loadThemes(
+  layouts: LayoutItem[],
+  remoteTemplatesBaseUrl: string,
+  owner: string,
+  repo: string,
+  repoTemplateDirs: string[],
+): Promise<Record<string, ThemeTemplate>> {
+  const themes: Record<string, ThemeTemplate> = {};
+  await Promise.all(
+    layouts.map(async (layout) => {
+      const template = await fetchLayoutTemplate(layout, remoteTemplatesBaseUrl, owner, repo, repoTemplateDirs);
+      if (template) {
+        themes[layout.id] = template;
+      }
+    }),
+  );
+  return themes;
+}
+
 export async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: string, repo: string): Promise<{
   layoutsConfig: LayoutsConfig;
   themes: Record<string, ThemeTemplate>;
 }> {
-  const useOfficialLayouts = config.site.layoutsConfigPathOficial === true;
-  const preferredLayoutsConfigPath = useOfficialLayouts
-    ? config.site.layoutsConfigPathOficialUrl || config.site.layoutsConfigPath || OFFICIAL_LAYOUTS_CONFIG_URL
-    : config.site.layoutsConfigPath;
-  const preferredTemplatesPath = useOfficialLayouts
-    ? config.site.layoutsConfigPathTemplatesOficial || config.site.layoutsConfigPathTemplates || OFFICIAL_LAYOUTS_TEMPLATES_URL
-    : config.site.layoutsConfigPathTemplates;
-
-  let layoutsConfig: LayoutsConfig | null = null;
-  let resolvedConfigUrl: string | undefined;
-  let configuredUrlDelivered = false;
-  let repoLayoutsDir: string | undefined;
-
-  if (preferredLayoutsConfigPath) {
-    layoutsConfig = await fetchUrlJson<LayoutsConfig>(preferredLayoutsConfigPath);
-    if (layoutsConfig?.layouts?.length) {
-      resolvedConfigUrl = preferredLayoutsConfigPath;
-      configuredUrlDelivered = true;
-    } else {
-      layoutsConfig = null;
-    }
-  }
-  if (!layoutsConfig?.layouts?.length) {
-    const repoLayouts = await fetchRepoLayoutsConfig(owner, repo);
-    if (repoLayouts) {
-      layoutsConfig = repoLayouts.config;
-      repoLayoutsDir = repoLayouts.dir;
-    }
-  }
-  if (!layoutsConfig?.layouts?.length && useOfficialLayouts) {
-    for (const officialConfigUrl of OFFICIAL_LAYOUTS_CONFIG_URLS) {
-      layoutsConfig = await fetchUrlJson<LayoutsConfig>(officialConfigUrl);
-      if (layoutsConfig?.layouts?.length) {
-        resolvedConfigUrl = officialConfigUrl;
-        break;
-      }
-    }
-  }
-  if (!layoutsConfig?.layouts?.length) {
-    throw new Error("Could not load layouts configuration.");
-  }
+  const preferences = resolveLayoutsSourcePreferences(config);
+  const { layoutsConfig, resolvedConfigUrl, configuredUrlDelivered, repoLayoutsDir } = await resolveLayoutsConfig(preferences, owner, repo);
 
   // The configured templates override is only trustworthy when the configured
   // index URL itself delivered the config: stale configs (pointing at the
@@ -316,7 +397,7 @@ export async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: str
   // source that actually worked.
   const remoteTemplatesBaseUrl = deriveRemoteTemplatesBaseUrl(
     resolvedConfigUrl,
-    configuredUrlDelivered ? preferredTemplatesPath : undefined,
+    configuredUrlDelivered ? preferences.preferredTemplatesPath : undefined,
     owner,
     repo,
     repoLayoutsDir ?? LAYOUTS_DIR_CANDIDATES[0],
@@ -324,21 +405,7 @@ export async function loadLayoutsAndThemes(config: GitPageDocsConfig, owner: str
   const repoTemplateDirs = repoLayoutsDir
     ? [repoLayoutsDir, ...LAYOUTS_DIR_CANDIDATES.filter((dir) => dir !== repoLayoutsDir)]
     : [...LAYOUTS_DIR_CANDIDATES];
-
-  const themes: Record<string, ThemeTemplate> = {};
-  await Promise.all(
-    layoutsConfig.layouts.map(async (layout: LayoutItem) => {
-      const templateUrl = buildRemoteTemplateUrl(layout.file, remoteTemplatesBaseUrl);
-      let template = await fetchUrlJson<ThemeTemplate>(templateUrl);
-      for (const dir of repoTemplateDirs) {
-        if (template) break;
-        template = await fetchRepoJson<ThemeTemplate>(owner, repo, `${dir}${layout.file}`);
-      }
-      if (template) {
-        themes[layout.id] = template;
-      }
-    }),
-  );
+  const themes = await loadThemes(layoutsConfig.layouts, remoteTemplatesBaseUrl, owner, repo, repoTemplateDirs);
 
   return { layoutsConfig, themes };
 }
@@ -366,6 +433,320 @@ export async function checkRepositoryHasGitPageDocs(owner: string, repo: string)
   return false;
 }
 
+type ContentSections = {
+  auth: AuthConfig | undefined;
+  routesMd: Array<ContentTypeRouteConfig | RouteConfig>;
+  routesSourceViewer: ContentTypeRouteConfig[];
+  routesHtml: ContentTypeRouteConfig[];
+  routesVideo: ContentTypeRouteConfig[];
+  routesAudio: ContentTypeRouteConfig[];
+  menusHeaderMd: HeaderMenuItem[];
+  menusHeaderSourceViewer: HeaderMenuItem[];
+  menusHeaderHtml: HeaderMenuItem[];
+  menusHeaderVideo: HeaderMenuItem[];
+  menusHeaderAudio: HeaderMenuItem[];
+  hierarchyPage: HierarchyConfig;
+  hierarchyMenu: HierarchyConfig;
+};
+
+type PageBuildContext = {
+  owner: string;
+  repo: string;
+  availableLanguages: LanguageCode[];
+  preferredLanguage: LanguageCode;
+  pathToPageMap: Record<string, PathToPageEntry>;
+};
+
+/** The first version-level list with entries, else the first root-level list that is set, else none. */
+function pickSection<T>(versionCandidates: Array<T[] | undefined>, rootCandidates: Array<T[] | undefined>): T[] {
+  const versionList = versionCandidates.find((candidate) => candidate?.length);
+  if (versionList) {
+    return versionList;
+  }
+  return rootCandidates.find((candidate) => candidate !== undefined && candidate !== null) ?? [];
+}
+
+/** The version-level value when it is set, else the root-level one. */
+function overrideWhenSet<T>(versionValue: T | undefined, rootValue: T): T {
+  if (versionValue) {
+    return versionValue;
+  }
+  return rootValue;
+}
+
+/** Root config sections, each replaced by the active version's own when that version provides it. */
+function resolveContentSections(config: GitPageDocsConfig, versionConfig: VersionConfig | null): ContentSections {
+  const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
+  const version: VersionConfig = versionConfig ?? {};
+  return {
+    auth: overrideWhenSet(version.auth, config.auth),
+    routesMd: pickSection<ContentTypeRouteConfig | RouteConfig>([version["routes-md"], version.routes], [config["routes-md"], config.routes]),
+    routesSourceViewer: pickSection([version["routes-source-viewer"]], [config["routes-source-viewer"]]),
+    routesHtml: pickSection([version["routes-html"]], [config["routes-html"]]),
+    routesVideo: pickSection([version["routes-video"]], [config["routes-video"]]),
+    routesAudio: pickSection([version["routes-audio"]], [config["routes-audio"]]),
+    menusHeaderMd: pickSection([version["menus-header-md"], version["menus-header"]], [config["menus-header-md"], config["menus-header"]]),
+    menusHeaderSourceViewer: pickSection([version["menus-header-source-viewer"]], [config["menus-header-source-viewer"]]),
+    menusHeaderHtml: pickSection([version["menus-header-html"]], [config["menus-header-html"]]),
+    menusHeaderVideo: pickSection([version["menus-header-video"]], [config["menus-header-video"]]),
+    menusHeaderAudio: pickSection([version["menus-header-audio"]], [config["menus-header-audio"]]),
+    hierarchyPage: overrideWhenSet(version.hierarchyPage, config.hierarchyPage ?? defaultHierarchy),
+    hierarchyMenu: overrideWhenSet(version.hierarchyMenu, config.hierarchyMenu ?? defaultHierarchy),
+  };
+}
+
+/** The selected language when the content offers it, else the site default when offered, else the first available. */
+function resolvePreferredLanguage(availableLanguages: LanguageCode[], selectedLanguage: LanguageCode, defaultLanguage: LanguageCode): LanguageCode {
+  if (availableLanguages.includes(selectedLanguage)) {
+    return selectedLanguage;
+  }
+  if (availableLanguages.includes(defaultLanguage)) {
+    return defaultLanguage;
+  }
+  return availableLanguages[0] ?? "en";
+}
+
+function buildEffectiveConfig(config: GitPageDocsConfig, sections: ContentSections, preferredLanguage: LanguageCode): GitPageDocsConfig {
+  const routesForConfig: RouteConfig[] = sections.routesMd.filter(routeHasPath).map((r) => ({ id: r.id, path: r.path }));
+  return {
+    ...config,
+    auth: sections.auth,
+    // ThemeDefault/ThemeModeDefault stay as loaded: the repository's own values
+    // win, and withConfigDefaults already backfilled them when absent. Forcing
+    // the runtime site's defaults here would ignore a repository's fixed theme.
+    site: {
+      ...config.site,
+      defaultLanguage: preferredLanguage,
+    },
+    routes: routesForConfig,
+    "menus-header": sections.menusHeaderMd,
+    "routes-md": sections.routesMd,
+    "routes-source-viewer": sections.routesSourceViewer,
+    "routes-html": sections.routesHtml,
+    "routes-video": sections.routesVideo,
+    "routes-audio": sections.routesAudio,
+    "menus-header-md": sections.menusHeaderMd,
+    "menus-header-source-viewer": sections.menusHeaderSourceViewer,
+    "menus-header-html": sections.menusHeaderHtml,
+    "menus-header-video": sections.menusHeaderVideo,
+    "menus-header-audio": sections.menusHeaderAudio,
+    hierarchyPage: sections.hierarchyPage,
+    hierarchyMenu: sections.hierarchyMenu,
+  };
+}
+
+function collectSortedRouteIds(sections: ContentSections): number[] {
+  const routeLists: Array<Array<{ id: number }>> = [
+    sections.routesMd,
+    sections.routesSourceViewer,
+    sections.routesHtml,
+    sections.routesVideo,
+    sections.routesAudio,
+  ];
+  const allIds = new Set<number>();
+  routeLists.forEach((routes) => routes.forEach((route) => allIds.add(route.id)));
+  return Array.from(allIds).sort((a, b) => a - b);
+}
+
+/** Maps every available language's value (when set), under an optional key prefix, to the page. */
+function registerLanguagePaths(
+  ctx: PageBuildContext,
+  valuesByLanguage: Record<LanguageCode, string>,
+  pageIndex: number,
+  contentType: PathToPageEntry["contentType"],
+  keyPrefix = "",
+): void {
+  ctx.availableLanguages.forEach((lang) => {
+    const value = valuesByLanguage[lang];
+    if (value) ctx.pathToPageMap[`${keyPrefix}${value}`] = { pageIndex, contentType };
+  });
+}
+
+/** Fetches one repository text file per available language; `render` maps the fetched body (null on failure) to page content. */
+async function fetchTextByLanguage(
+  ctx: PageBuildContext,
+  pathsByLanguage: Record<LanguageCode, string>,
+  missingPathContent: string,
+  render: (text: string | null) => string,
+): Promise<Record<LanguageCode, string>> {
+  const contentByLanguage: Record<LanguageCode, string> = {};
+  await Promise.all(
+    ctx.availableLanguages.map(async (langCode) => {
+      const relativePath = pathsByLanguage[langCode];
+      if (!relativePath) {
+        contentByLanguage[langCode] = missingPathContent;
+        return;
+      }
+      contentByLanguage[langCode] = render(await fetchRepoText(ctx.owner, ctx.repo, relativePath));
+    }),
+  );
+  return contentByLanguage;
+}
+
+/** Every available language's value, falling back to `en`, then to `fallback`. */
+function localizeByLanguage(valuesByLanguage: Record<LanguageCode, string>, languages: LanguageCode[], fallback: string): Record<LanguageCode, string> {
+  const localized: Record<LanguageCode, string> = {};
+  languages.forEach((lang) => {
+    localized[lang] = valuesByLanguage[lang] ?? valuesByLanguage.en ?? fallback;
+  });
+  return localized;
+}
+
+async function loadMarkdownSection(
+  ctx: PageBuildContext,
+  routesMd: ContentSections["routesMd"],
+  id: number,
+  pageIndex: number,
+): Promise<LoadedPage["md"]> {
+  const mdRoute = routesMd.find((route) => route.id === id);
+  if (!mdRoute || !routeHasPath(mdRoute)) {
+    return undefined;
+  }
+  const markdownByLanguage = await fetchTextByLanguage(ctx, mdRoute.path, "<p>Missing language file path in config.</p>", (markdown) =>
+    markdown ? markdownToHtml(markdown) : "<p>Unable to load remote markdown file.</p>",
+  );
+  const fullscreenEnabled = "fullscreenEnabled" in mdRoute ? mdRoute.fullscreenEnabled : true;
+  registerLanguagePaths(ctx, mdRoute.path, pageIndex, "md");
+  return { routeId: id, config: mdRoute, markdownByLanguage, fullscreenEnabled };
+}
+
+function resolveSourceViewerPath(rawPath: ContentTypeRouteConfig["source-viewer-path"], preferredLanguage: LanguageCode): string {
+  if (typeof rawPath === "string") {
+    return rawPath;
+  }
+  return rawPath?.[preferredLanguage] ?? rawPath?.en ?? Object.values(rawPath ?? {})[0] ?? "";
+}
+
+function resolveSourceViewerSection(
+  ctx: PageBuildContext,
+  routesSourceViewer: ContentTypeRouteConfig[],
+  id: number,
+  pageIndex: number,
+): LoadedPage["sourceViewer"] {
+  const sourceViewerRoute = routesSourceViewer.find((route) => route.id === id && route["source-viewer"] === true);
+  if (!sourceViewerRoute) {
+    return undefined;
+  }
+  const sourceViewerPath = resolveSourceViewerPath(sourceViewerRoute["source-viewer-path"], ctx.preferredLanguage);
+  ctx.pathToPageMap[`page:${id}`] = { pageIndex, contentType: "source-viewer" };
+  if (sourceViewerPath) ctx.pathToPageMap[`source-viewer:${sourceViewerPath}`] = { pageIndex, contentType: "source-viewer" };
+  return {
+    routeId: id,
+    config: sourceViewerRoute,
+    sourceViewerPath,
+    fullscreenEnabled: sourceViewerRoute.fullscreenEnabled ?? false,
+  };
+}
+
+async function loadHtmlSection(
+  ctx: PageBuildContext,
+  routesHtml: ContentTypeRouteConfig[],
+  id: number,
+  pageIndex: number,
+): Promise<LoadedPage["html"]> {
+  const htmlRoute = routesHtml.find((route) => route.id === id && (route.path || route.url));
+  if (!htmlRoute) {
+    return undefined;
+  }
+  let htmlByLanguage: Record<LanguageCode, string> = {};
+  if (htmlRoute.path) {
+    htmlByLanguage = await fetchTextByLanguage(ctx, htmlRoute.path, "<p>Missing HTML path.</p>", (html) => html ?? "<p>Unable to load remote HTML.</p>");
+    registerLanguagePaths(ctx, htmlRoute.path, pageIndex, "html");
+  } else if (htmlRoute.url) {
+    ctx.availableLanguages.forEach((lang) => {
+      htmlByLanguage[lang] = "";
+    });
+    registerLanguagePaths(ctx, htmlRoute.url, pageIndex, "html", "url:");
+  }
+  return {
+    routeId: id,
+    config: htmlRoute,
+    htmlByLanguage,
+    fullscreenEnabled: htmlRoute.fullscreenEnabled ?? true,
+  };
+}
+
+function resolveVideoSection(
+  ctx: PageBuildContext,
+  routesVideo: ContentTypeRouteConfig[],
+  id: number,
+  pageIndex: number,
+): LoadedPage["video"] {
+  const videoRoute = routesVideo.find((route) => route.id === id && routeHasVideo(route));
+  if (!videoRoute || !routeHasVideo(videoRoute)) {
+    return undefined;
+  }
+  const videoTypeByLanguage = localizeByLanguage(videoRoute.video.videoType, ctx.availableLanguages, "youtube");
+  const pathVideoByLanguage = localizeByLanguage(videoRoute.video.pathVideo, ctx.availableLanguages, "");
+  ctx.pathToPageMap[`page:${id}`] = { pageIndex, contentType: "video" };
+  registerLanguagePaths(ctx, pathVideoByLanguage, pageIndex, "video");
+  return {
+    routeId: id,
+    config: videoRoute,
+    videoTypeByLanguage,
+    pathVideoByLanguage,
+    fullscreenEnabled: videoRoute.fullscreenEnabled ?? true,
+  };
+}
+
+function resolveAudioSection(
+  ctx: PageBuildContext,
+  routesAudio: ContentTypeRouteConfig[],
+  id: number,
+  pageIndex: number,
+): LoadedPage["audio"] {
+  const audioRoute = routesAudio.find((route) => route.id === id && routeHasAudio(route));
+  if (!audioRoute || !routeHasAudio(audioRoute)) {
+    return undefined;
+  }
+  const audioTypeByLanguage = localizeByLanguage(audioRoute.audio.audioType, ctx.availableLanguages, "youtube");
+  const pathAudioByLanguage = localizeByLanguage(audioRoute.audio.pathAudio, ctx.availableLanguages, "");
+  ctx.pathToPageMap[`page:${id}`] = { pageIndex, contentType: "audio" };
+  registerLanguagePaths(ctx, pathAudioByLanguage, pageIndex, "audio");
+  return {
+    routeId: id,
+    config: audioRoute,
+    audioTypeByLanguage,
+    pathAudioByLanguage,
+    fullscreenEnabled: audioRoute.fullscreenEnabled ?? true,
+  };
+}
+
+/** One page per route id: each content type contributes its section and registers its paths, in md, source-viewer, html, video, audio order. */
+async function buildPage(ctx: PageBuildContext, sections: ContentSections, id: number, pageIndex: number): Promise<LoadedPage> {
+  const page: LoadedPage = { id };
+  const md = await loadMarkdownSection(ctx, sections.routesMd, id, pageIndex);
+  if (md) page.md = md;
+  const sourceViewer = resolveSourceViewerSection(ctx, sections.routesSourceViewer, id, pageIndex);
+  if (sourceViewer) page.sourceViewer = sourceViewer;
+  const html = await loadHtmlSection(ctx, sections.routesHtml, id, pageIndex);
+  if (html) page.html = html;
+  const video = resolveVideoSection(ctx, sections.routesVideo, id, pageIndex);
+  if (video) page.video = video;
+  const audio = resolveAudioSection(ctx, sections.routesAudio, id, pageIndex);
+  if (audio) page.audio = audio;
+  return page;
+}
+
+/** Pages are built one after another so their remote reads keep the route-id order. */
+async function buildPages(ctx: PageBuildContext, sections: ContentSections): Promise<LoadedPage[]> {
+  const sortedIds = collectSortedRouteIds(sections);
+  const pages: LoadedPage[] = [];
+  for (let pageIndex = 0; pageIndex < sortedIds.length; pageIndex++) {
+    pages.push(await buildPage(ctx, sections, sortedIds[pageIndex], pageIndex));
+  }
+  return pages;
+}
+
+/** The repository's layouts, degrading to the built-in fallback when none can be loaded. */
+async function loadLayoutsOrFallback(config: GitPageDocsConfig, owner: string, repo: string): Promise<LayoutsAndThemes> {
+  try {
+    return await loadLayoutsAndThemes(config, owner, repo);
+  } catch {
+    return buildFallbackLayoutsAndThemes();
+  }
+}
+
 export async function loadRemoteDocsData(
   owner: string,
   repo: string,
@@ -383,237 +764,32 @@ export async function loadRemoteDocsData(
   const versions = dedupeVersionEntriesById(config.VersionControl?.versions ?? []);
   const activeVersion = resolveActiveVersion(versions, selectedVersionId, config.site.docsVersion);
   const activeVersionId = activeVersion?.id;
+  const versionConfig = activeVersion ? await loadVersionConfig(owner, repo, activeVersion) : null;
+  const sections = resolveContentSections(config, versionConfig);
 
-  const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
-  let auth = config.auth;
-  let routesMd = config["routes-md"] ?? config.routes ?? [];
-  let routesSourceViewer = config["routes-source-viewer"] ?? [];
-  let routesHtml = config["routes-html"] ?? [];
-  let routesVideo = config["routes-video"] ?? [];
-  let routesAudio = config["routes-audio"] ?? [];
-  let menusHeaderMd = config["menus-header-md"] ?? config["menus-header"] ?? [];
-  let menusHeaderSourceViewer = config["menus-header-source-viewer"] ?? [];
-  let menusHeaderHtml = config["menus-header-html"] ?? [];
-  let menusHeaderVideo = config["menus-header-video"] ?? [];
-  let menusHeaderAudio = config["menus-header-audio"] ?? [];
-  let hierarchyPage = config.hierarchyPage ?? defaultHierarchy;
-  let hierarchyMenu = config.hierarchyMenu ?? defaultHierarchy;
-
-  if (activeVersion) {
-    const versionConfig = await loadVersionConfig(owner, repo, activeVersion);
-    if (versionConfig?.auth) auth = versionConfig.auth;
-    if (versionConfig?.["routes-md"]?.length) routesMd = versionConfig["routes-md"];
-    else if (versionConfig?.routes?.length) routesMd = versionConfig.routes;
-    if (versionConfig?.["routes-source-viewer"]?.length) routesSourceViewer = versionConfig["routes-source-viewer"];
-    if (versionConfig?.["routes-html"]?.length) routesHtml = versionConfig["routes-html"];
-    if (versionConfig?.["routes-video"]?.length) routesVideo = versionConfig["routes-video"];
-    if (versionConfig?.["routes-audio"]?.length) routesAudio = versionConfig["routes-audio"];
-    if (versionConfig?.["menus-header-md"]?.length) menusHeaderMd = versionConfig["menus-header-md"];
-    else if (versionConfig?.["menus-header"]?.length) menusHeaderMd = versionConfig["menus-header"];
-    if (versionConfig?.["menus-header-source-viewer"]?.length) menusHeaderSourceViewer = versionConfig["menus-header-source-viewer"];
-    if (versionConfig?.["menus-header-html"]?.length) menusHeaderHtml = versionConfig["menus-header-html"];
-    if (versionConfig?.["menus-header-video"]?.length) menusHeaderVideo = versionConfig["menus-header-video"];
-    if (versionConfig?.["menus-header-audio"]?.length) menusHeaderAudio = versionConfig["menus-header-audio"];
-    if (versionConfig?.hierarchyPage) hierarchyPage = versionConfig.hierarchyPage;
-    if (versionConfig?.hierarchyMenu) hierarchyMenu = versionConfig.hierarchyMenu;
-  }
-
-  const routesWithPath = routesMd.filter(routeHasPath);
-  const availableLanguages = getAvailableLanguagesFromContent(
-    routesMd,
-    routesSourceViewer,
-    routesHtml,
-    routesVideo,
-    routesAudio,
-    config.site.defaultLanguage,
+  const availableLanguages = applyLanguageToggles(
+    config,
+    getAvailableLanguagesFromContent(
+      sections.routesMd,
+      sections.routesSourceViewer,
+      sections.routesHtml,
+      sections.routesVideo,
+      sections.routesAudio,
+      config.site.defaultLanguage,
+    ),
   );
-  const preferredLanguage = availableLanguages.includes(selectedLanguage)
-    ? selectedLanguage
-    : availableLanguages.includes(config.site.defaultLanguage)
-      ? config.site.defaultLanguage
-      : availableLanguages[0] ?? "en";
-
-  const routesForConfig: RouteConfig[] = routesWithPath.map((r) => ({ id: r.id, path: r.path }));
-  const allIds = new Set<number>();
-  routesMd.forEach((route) => allIds.add(route.id));
-  routesSourceViewer.forEach((route) => allIds.add(route.id));
-  routesHtml.forEach((route) => allIds.add(route.id));
-  routesVideo.forEach((route) => allIds.add(route.id));
-  routesAudio.forEach((route) => allIds.add(route.id));
-  const sortedIds = Array.from(allIds).sort((a, b) => a - b);
-
-  const effectiveConfig: GitPageDocsConfig = {
-    ...config,
-    auth,
-    // ThemeDefault/ThemeModeDefault stay as loaded: the repository's own values
-    // win, and withConfigDefaults already backfilled them when absent. Forcing
-    // the runtime site's defaults here would ignore a repository's fixed theme.
-    site: {
-      ...config.site,
-      defaultLanguage: preferredLanguage,
-    },
-    routes: routesForConfig,
-    "menus-header": menusHeaderMd,
-    "routes-md": routesMd,
-    "routes-source-viewer": routesSourceViewer,
-    "routes-html": routesHtml,
-    "routes-video": routesVideo,
-    "routes-audio": routesAudio,
-    "menus-header-md": menusHeaderMd,
-    "menus-header-source-viewer": menusHeaderSourceViewer,
-    "menus-header-html": menusHeaderHtml,
-    "menus-header-video": menusHeaderVideo,
-    "menus-header-audio": menusHeaderAudio,
-    hierarchyPage,
-    hierarchyMenu,
-  };
+  const preferredLanguage = resolvePreferredLanguage(availableLanguages, selectedLanguage, config.site.defaultLanguage);
+  const effectiveConfig = buildEffectiveConfig(config, sections, preferredLanguage);
 
   const pathToPageMap: Record<string, PathToPageEntry> = {};
-  const pages: LoadedPage[] = [];
-
-  for (let pageIndex = 0; pageIndex < sortedIds.length; pageIndex++) {
-    const id = sortedIds[pageIndex];
-    const page: LoadedPage = { id };
-
-    const mdRoute = routesMd.find((route) => route.id === id);
-    if (mdRoute && routeHasPath(mdRoute)) {
-      const markdownByLanguage: Record<LanguageCode, string> = {};
-      await Promise.all(
-        availableLanguages.map(async (langCode) => {
-          const markdownPath = mdRoute.path[langCode];
-          if (!markdownPath) {
-            markdownByLanguage[langCode] = "<p>Missing language file path in config.</p>";
-            return;
-          }
-          const markdown = await fetchRepoText(owner, repo, markdownPath);
-          markdownByLanguage[langCode] = markdown
-            ? markdownToHtml(markdown)
-            : "<p>Unable to load remote markdown file.</p>";
-        }),
-      );
-      const fullscreenEnabled = "fullscreenEnabled" in mdRoute ? mdRoute.fullscreenEnabled : true;
-      page.md = { routeId: id, config: mdRoute, markdownByLanguage, fullscreenEnabled };
-      availableLanguages.forEach((lang) => {
-        const pathVal = mdRoute.path[lang];
-        if (pathVal) pathToPageMap[pathVal] = { pageIndex, contentType: "md" };
-      });
-    }
-
-    const sourceViewerRoute = routesSourceViewer.find((route) => route.id === id && route["source-viewer"] === true);
-    if (sourceViewerRoute) {
-      const rawPath = sourceViewerRoute["source-viewer-path"];
-      const sourceViewerPath =
-        typeof rawPath === "string"
-          ? rawPath
-          : rawPath?.[preferredLanguage] ?? rawPath?.en ?? Object.values(rawPath ?? {})[0] ?? "";
-      page.sourceViewer = {
-        routeId: id,
-        config: sourceViewerRoute,
-        sourceViewerPath,
-        fullscreenEnabled: sourceViewerRoute.fullscreenEnabled ?? false,
-      };
-      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "source-viewer" };
-      if (sourceViewerPath) pathToPageMap[`source-viewer:${sourceViewerPath}`] = { pageIndex, contentType: "source-viewer" };
-    }
-
-    const htmlRoute = routesHtml.find((route) => route.id === id && (route.path || route.url));
-    if (htmlRoute) {
-      const htmlByLanguage: Record<LanguageCode, string> = {};
-      if (htmlRoute.path) {
-        await Promise.all(
-          availableLanguages.map(async (langCode) => {
-            const htmlPath = htmlRoute.path?.[langCode];
-            if (!htmlPath) {
-              htmlByLanguage[langCode] = "<p>Missing HTML path.</p>";
-              return;
-            }
-            htmlByLanguage[langCode] = (await fetchRepoText(owner, repo, htmlPath)) ?? "<p>Unable to load remote HTML.</p>";
-          }),
-        );
-        availableLanguages.forEach((lang) => {
-          const pathVal = htmlRoute.path?.[lang];
-          if (pathVal) pathToPageMap[pathVal] = { pageIndex, contentType: "html" };
-        });
-      } else if (htmlRoute.url) {
-        availableLanguages.forEach((lang) => {
-          htmlByLanguage[lang] = "";
-          const urlVal = htmlRoute.url?.[lang];
-          if (urlVal) pathToPageMap[`url:${urlVal}`] = { pageIndex, contentType: "html" };
-        });
-      }
-      page.html = {
-        routeId: id,
-        config: htmlRoute,
-        htmlByLanguage,
-        fullscreenEnabled: htmlRoute.fullscreenEnabled ?? true,
-      };
-    }
-
-    const videoRoute = routesVideo.find((route) => route.id === id && routeHasVideo(route));
-    if (videoRoute && routeHasVideo(videoRoute)) {
-      const videoTypeByLanguage: Record<LanguageCode, string> = {};
-      const pathVideoByLanguage: Record<LanguageCode, string> = {};
-      availableLanguages.forEach((lang) => {
-        videoTypeByLanguage[lang] = videoRoute.video.videoType[lang] ?? videoRoute.video.videoType.en ?? "youtube";
-        pathVideoByLanguage[lang] = videoRoute.video.pathVideo[lang] ?? videoRoute.video.pathVideo.en ?? "";
-      });
-      page.video = {
-        routeId: id,
-        config: videoRoute,
-        videoTypeByLanguage,
-        pathVideoByLanguage,
-        fullscreenEnabled: videoRoute.fullscreenEnabled ?? true,
-      };
-      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "video" };
-      availableLanguages.forEach((lang) => {
-        const videoPath = pathVideoByLanguage[lang];
-        if (videoPath) pathToPageMap[videoPath] = { pageIndex, contentType: "video" };
-      });
-    }
-
-    const audioRoute = routesAudio.find((route) => route.id === id && routeHasAudio(route));
-    if (audioRoute && routeHasAudio(audioRoute)) {
-      const audioTypeByLanguage: Record<LanguageCode, string> = {};
-      const pathAudioByLanguage: Record<LanguageCode, string> = {};
-      availableLanguages.forEach((lang) => {
-        audioTypeByLanguage[lang] = audioRoute.audio.audioType[lang] ?? audioRoute.audio.audioType.en ?? "youtube";
-        pathAudioByLanguage[lang] = audioRoute.audio.pathAudio[lang] ?? audioRoute.audio.pathAudio.en ?? "";
-      });
-      page.audio = {
-        routeId: id,
-        config: audioRoute,
-        audioTypeByLanguage,
-        pathAudioByLanguage,
-        fullscreenEnabled: audioRoute.fullscreenEnabled ?? true,
-      };
-      pathToPageMap[`page:${id}`] = { pageIndex, contentType: "audio" };
-      availableLanguages.forEach((lang) => {
-        const audioPath = pathAudioByLanguage[lang];
-        if (audioPath) pathToPageMap[audioPath] = { pageIndex, contentType: "audio" };
-      });
-    }
-
-    pages.push(page);
-  }
-
+  const pages = await buildPages({ owner, repo, availableLanguages, preferredLanguage, pathToPageMap }, sections);
   const docs = pages
     .filter((page) => page.md)
     .map((page) => ({
       routeId: page.id,
       markdownByLanguage: page.md!.markdownByLanguage,
     }));
-
-  let layoutsConfig: LayoutsConfig;
-  let themes: Record<string, ThemeTemplate>;
-  try {
-    const loadedLayouts = await loadLayoutsAndThemes(effectiveConfig, owner, repo);
-    layoutsConfig = loadedLayouts.layoutsConfig;
-    themes = loadedLayouts.themes;
-  } catch {
-    const fallback = buildFallbackLayoutsAndThemes();
-    layoutsConfig = fallback.layoutsConfig;
-    themes = fallback.themes;
-  }
+  const { layoutsConfig, themes } = await loadLayoutsOrFallback(effectiveConfig, owner, repo);
 
   return {
     config: effectiveConfig,

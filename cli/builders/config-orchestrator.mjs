@@ -9,14 +9,12 @@ import { buildLanguageArtifacts } from "./language-bundles-builder.mjs";
 
 /**
  * Build all config artifacts (root, languages, layouts, versions, docs).
- * @param {object} options - { useLocalLayoutConfig, githubOwner, githubRepo, root }
- * @returns {object} { rootConfig, languageManifest, languageBundles, layoutsConfig, fallbackLayoutsConfig, docs, docsHtml, versionConfigs }
+ * @param {object} options - { useLocalLayoutConfig, githubOwner, githubRepo, layoutsDir }
+ * @returns {object} { rootConfig, languageBundles, layoutsConfig, fallbackLayoutsConfig, docs, docsHtml, versionConfigs }
  */
 export function buildConfigArtifacts(options = {}) {
-  const root = options.root ?? process.cwd();
-
-  const rootConfig = buildRootConfig(options);
-  const { languageManifest, languageBundles } = buildLanguageArtifacts();
+  const { languageToggles, languageBundles } = buildLanguageArtifacts();
+  const rootConfig = buildRootConfig({ ...options, languageToggles });
   const layoutsConfig = { layouts: LAYOUTS };
   const fallbackLayoutsConfig = { layouts: FALLBACK_LAYOUTS };
 
@@ -27,7 +25,6 @@ export function buildConfigArtifacts(options = {}) {
 
   return {
     rootConfig,
-    languageManifest,
     languageBundles,
     layoutsConfig,
     fallbackLayoutsConfig,

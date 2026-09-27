@@ -1,19 +1,11 @@
 import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
+import type { IconConfigFields } from "../icon-config-fields";
 import type { ResolvedNavMenuIconConfig } from "../nav-menu/resolve-nav-menu-icon";
 import { DEFAULT_ICON_FALLBACK_URL } from "../../../config/icon-defaults";
 
-export interface AudioPlayerPopoverCloseIconConfigInput {
-  IconAudioPlayerPopoverCloseLightImg?: string;
-  IconAudioPlayerPopoverCloseDarkImg?: string;
-  IconAudioPlayerPopoverCloseReactIcones?: boolean;
-  IconAudioPlayerPopoverCloseReactIconesTag?: string;
-  IconAudioPlayerPopoverCloseReactIconesTagColorDark?: string;
-  IconAudioPlayerPopoverCloseReactIconesTagColorLight?: string;
-  IconAudioPlayerPopoverCloseReactIconesTagSize?: string;
-  IconAudioPlayerPopoverCloseImgWidth?: string | number;
-  IconAudioPlayerPopoverCloseImgHeight?: string | number;
-}
+/** Input for the audio popover close icon (SiteConfig satisfies this) */
+export type AudioPlayerPopoverCloseIconConfigInput = IconConfigFields<"AudioPlayerPopoverClose">;
 
 const DEFAULT_IMG = DEFAULT_ICON_FALLBACK_URL;
 const FALLBACK_TAG = "IoMdClose";

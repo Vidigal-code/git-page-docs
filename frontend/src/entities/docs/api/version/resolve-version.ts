@@ -1,9 +1,16 @@
-import type { ContentTypeRouteConfig, GitPageDocsConfig, HierarchyConfig, RouteConfig, VersionEntry } from "@/entities/docs/model/types";
+import type {
+  AuthConfig,
+  ContentTypeRouteConfig,
+  GitPageDocsConfig,
+  HierarchyConfig,
+  RouteConfig,
+  VersionEntry,
+} from "@/entities/docs/model/types";
 import { readRemoteJson, readRemoteJsonFromRepo } from "../io/remote-fetcher";
 import { tryReadJsonFile } from "../io/file-reader";
 
 export interface VersionRoutesConfig {
-  auth?: GitPageDocsConfig["auth"];
+  auth?: AuthConfig;
   routes?: RouteConfig[];
   "menus-header"?: GitPageDocsConfig["menus-header"];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
@@ -19,6 +26,26 @@ export interface VersionRoutesConfig {
   hierarchyPage?: HierarchyConfig;
   hierarchyMenu?: HierarchyConfig;
 }
+
+type VersionListKey = Exclude<keyof VersionRoutesConfig, "auth" | "hierarchyPage" | "hierarchyMenu">;
+
+const ROUTE_LIST_KEYS: readonly VersionListKey[] = [
+  "routes",
+  "routes-md",
+  "routes-source-viewer",
+  "routes-html",
+  "routes-video",
+  "routes-audio",
+];
+
+const MENU_LIST_KEYS: readonly VersionListKey[] = [
+  "menus-header",
+  "menus-header-md",
+  "menus-header-source-viewer",
+  "menus-header-html",
+  "menus-header-video",
+  "menus-header-audio",
+];
 
 export function resolveActiveVersionId(
   versions: VersionEntry[],
@@ -40,62 +67,72 @@ export function resolveActiveVersionId(
   return versions[0]?.id;
 }
 
-export async function loadVersionConfig(options: {
+interface LoadVersionConfigOptions {
   versionEntry: VersionEntry;
   source: "local" | "remote";
   owner?: string;
   repo?: string;
-}): Promise<VersionRoutesConfig | undefined> {
-  const versionPath = options.versionEntry.PathConfig || options.versionEntry.path;
-  if (!versionPath) {
-    return undefined;
-  }
+}
 
-  let versionConfig: VersionRoutesConfig | null = null;
-  const normalizedPathCandidates = Array.from(
+/**
+ * Repo-relative locations a version config may live at: as written, without a
+ * `gitpagedocs/` prefix, and (for `docs/...` paths) under `gitpagedocs/`.
+ */
+function buildVersionPathCandidates(versionPath: string): string[] {
+  return Array.from(
     new Set([
       versionPath,
       versionPath.replace(/^gitpagedocs\//, ""),
       versionPath.startsWith("docs/") ? `gitpagedocs/${versionPath}` : versionPath,
     ]),
   );
+}
 
+async function readFirstAvailable(
+  candidates: string[],
+  read: (candidate: string) => Promise<VersionRoutesConfig | null>,
+): Promise<VersionRoutesConfig | null> {
+  for (const candidate of candidates) {
+    const versionConfig = await read(candidate);
+    if (versionConfig) {
+      return versionConfig;
+    }
+  }
+  return null;
+}
+
+/** Absolute URLs are fetched directly; anything else is resolved against the remote repo or the local workspace. */
+async function readVersionConfig(versionPath: string, options: LoadVersionConfigOptions): Promise<VersionRoutesConfig | null> {
   if (/^https?:\/\//i.test(versionPath)) {
-    versionConfig = await readRemoteJson<VersionRoutesConfig>(versionPath);
-  } else if (options.source === "remote" && options.owner && options.repo) {
-    for (const candidate of normalizedPathCandidates) {
-      versionConfig = await readRemoteJsonFromRepo<VersionRoutesConfig>(options.owner, options.repo, candidate);
-      if (versionConfig) {
-        break;
-      }
-    }
-  } else {
-    for (const candidate of normalizedPathCandidates) {
-      versionConfig = await tryReadJsonFile<VersionRoutesConfig>(candidate);
-      if (versionConfig) {
-        break;
-      }
-    }
+    return readRemoteJson<VersionRoutesConfig>(versionPath);
+  }
+  const candidates = buildVersionPathCandidates(versionPath);
+  const { source, owner, repo } = options;
+  if (source === "remote" && owner && repo) {
+    return readFirstAvailable(candidates, (candidate) => readRemoteJsonFromRepo<VersionRoutesConfig>(owner, repo, candidate));
+  }
+  return readFirstAvailable(candidates, (candidate) => tryReadJsonFile<VersionRoutesConfig>(candidate));
+}
+
+function hasAnyEntries(versionConfig: VersionRoutesConfig, keys: readonly VersionListKey[]): boolean {
+  return keys.some((key) => (versionConfig[key]?.length ?? 0) > 0);
+}
+
+/** A version config is only worth applying when it carries routes, menus or auth. */
+function hasVersionContent(versionConfig: VersionRoutesConfig): boolean {
+  return (
+    hasAnyEntries(versionConfig, ROUTE_LIST_KEYS) ||
+    hasAnyEntries(versionConfig, MENU_LIST_KEYS) ||
+    typeof versionConfig.auth === "object"
+  );
+}
+
+export async function loadVersionConfig(options: LoadVersionConfigOptions): Promise<VersionRoutesConfig | undefined> {
+  const versionPath = options.versionEntry.PathConfig || options.versionEntry.path;
+  if (!versionPath) {
+    return undefined;
   }
 
-  const hasAnyRoutes =
-    (versionConfig?.routes?.length ?? 0) > 0 ||
-    (versionConfig?.["routes-md"]?.length ?? 0) > 0 ||
-    (versionConfig?.["routes-source-viewer"]?.length ?? 0) > 0 ||
-    (versionConfig?.["routes-html"]?.length ?? 0) > 0 ||
-    (versionConfig?.["routes-video"]?.length ?? 0) > 0 ||
-    (versionConfig?.["routes-audio"]?.length ?? 0) > 0;
-  const hasAnyMenus =
-    (versionConfig?.["menus-header"]?.length ?? 0) > 0 ||
-    (versionConfig?.["menus-header-md"]?.length ?? 0) > 0 ||
-    (versionConfig?.["menus-header-source-viewer"]?.length ?? 0) > 0 ||
-    (versionConfig?.["menus-header-html"]?.length ?? 0) > 0 ||
-    (versionConfig?.["menus-header-video"]?.length ?? 0) > 0 ||
-    (versionConfig?.["menus-header-audio"]?.length ?? 0) > 0;
-  const hasAuthConfig = typeof versionConfig?.auth === "object";
-  if ((hasAnyRoutes || hasAnyMenus || hasAuthConfig) && versionConfig) {
-    return versionConfig;
-  }
-
-  return undefined;
+  const versionConfig = await readVersionConfig(versionPath, options);
+  return versionConfig && hasVersionContent(versionConfig) ? versionConfig : undefined;
 }

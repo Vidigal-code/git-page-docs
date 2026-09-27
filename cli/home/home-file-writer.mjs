@@ -1,8 +1,7 @@
 /** Write .env, Dockerfile, README to home output directory */
 
 import path from "node:path";
-import { mkdir } from "node:fs/promises";
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { getEnvTemplate, getDockerfileTemplate, getReadmeTemplate } from "./templates.mjs";
 
 /**
@@ -16,5 +15,5 @@ export async function writeHomeFiles(root, outputDir, opts = {}) {
 
   await writeFile(path.join(basePath, ".env"), getEnvTemplate(opts), "utf-8");
   await writeFile(path.join(basePath, "Dockerfile"), getDockerfileTemplate(), "utf-8");
-  await writeFile(path.join(basePath, "README.md"), getReadmeTemplate({ outputDir }), "utf-8");
+  await writeFile(path.join(basePath, "README.md"), getReadmeTemplate(), "utf-8");
 }

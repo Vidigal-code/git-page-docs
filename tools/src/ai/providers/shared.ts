@@ -1,4 +1,4 @@
-import type { AiMessage, GenerateRequest, ProviderConfig } from "../../ports/ai";
+import type { AiAttachment, AiMessage, GenerateRequest, ProviderConfig } from "../../ports/ai";
 import type { ProviderSpec } from "../catalog";
 import { ProviderError } from "../../errors/app-error";
 
@@ -36,11 +36,18 @@ export function requireKey(spec: ProviderSpec, config: ProviderConfig): void {
 }
 
 export function resolveBaseUrl(spec: ProviderSpec, config: ProviderConfig): string {
-  const base = (config.baseUrl ?? spec.baseUrl).replace(/\/+$/, "");
+  const base = trimTrailingSlashes(config.baseUrl ?? spec.baseUrl);
   if (spec.requiresBaseUrl && !config.baseUrl && !spec.baseUrl) {
     throw new ProviderError(`${spec.label} requires a baseUrl.`, { details: { provider: spec.id } });
   }
   return base;
+}
+
+/** Drop trailing `/` so request paths can be appended with a single separator. */
+function trimTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end -= 1;
+  return value.slice(0, end);
 }
 
 /** OpenAI chat-completions message shape (text + optional image parts). */
@@ -54,14 +61,29 @@ export function toOpenAiMessages(request: GenerateRequest): unknown[] {
 }
 
 function mapOpenAiMessage(msg: AiMessage): unknown {
+  const parts = toMultimodalParts(msg, (img) => ({
+    type: "image_url",
+    image_url: { url: `data:${img.mimeType};base64,${img.data}` },
+  }));
+  return { role: msg.role, content: parts ?? msg.content };
+}
+
+/**
+ * Splits a message into multimodal parts: its text (when present) followed by
+ * one part per image attachment, built by `toImagePart`. A message without
+ * images yields null so callers keep the plain `content` string the APIs
+ * expect for text-only turns.
+ */
+export function toMultimodalParts(
+  msg: AiMessage,
+  toImagePart: (image: AiAttachment) => unknown,
+): unknown[] | null {
   const images = (msg.attachments ?? []).filter((a) => a.kind === "image");
-  if (images.length === 0) return { role: msg.role, content: msg.content };
-  const content: unknown[] = [];
-  if (msg.content) content.push({ type: "text", text: msg.content });
-  for (const img of images) {
-    content.push({ type: "image_url", image_url: { url: `data:${img.mimeType};base64,${img.data}` } });
-  }
-  return { role: msg.role, content };
+  if (images.length === 0) return null;
+  const parts: unknown[] = [];
+  if (msg.content) parts.push({ type: "text", text: msg.content });
+  for (const image of images) parts.push(toImagePart(image));
+  return parts;
 }
 
 /** Drain an async iterable of text deltas into a single string. */

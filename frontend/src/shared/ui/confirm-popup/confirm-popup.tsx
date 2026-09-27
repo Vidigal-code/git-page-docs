@@ -35,14 +35,9 @@ export const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className={styles.overlay} onClick={onCancel}>
-            <div
-                className={styles.modal}
-                onClick={(e) => e.stopPropagation()}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="modal-title"
-            >
+        <div className={styles.overlay}>
+            <button type="button" className={styles.backdrop} onClick={onCancel} aria-label={cancelText} tabIndex={-1} />
+            <dialog open className={styles.modal} aria-modal="true" aria-labelledby="modal-title">
                 <h3 id="modal-title" className={styles.title}>{title}</h3>
                 <p className={styles.description}>{description}</p>
                 <div className={styles.actions}>
@@ -64,7 +59,7 @@ export const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
                         {confirmText}
                     </button>
                 </div>
-            </div>
+            </dialog>
         </div>
     );
 };

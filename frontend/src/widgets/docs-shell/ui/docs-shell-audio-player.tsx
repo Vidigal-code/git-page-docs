@@ -23,7 +23,7 @@ export function DocsShellAudioPlayer({
   iconStyle,
   playLabel,
   pauseLabel,
-}: DocsShellAudioPlayerProps) {
+}: Readonly<DocsShellAudioPlayerProps>) {
   const player = useSharedAudioPlayer();
   if (!player) {
     return null;

@@ -27,6 +27,12 @@ describe("FileService", () => {
     expect(recursive).toContain("sub/b.md");
   });
 
+  it("lists entries in code-unit order, independent of locale", async () => {
+    writeFileSync(path.join(dir, "B.md"), "", "utf8");
+    writeFileSync(path.join(dir, "_a.md"), "", "utf8");
+    expect(await fs.list(".")).toEqual(["B.md", "_a.md", "a.ts", "sub/"]);
+  });
+
   it("reads and writes files", async () => {
     expect(await fs.read("a.ts")).toContain("TOKEN");
     const written = await fs.write("out/new.txt", "data");

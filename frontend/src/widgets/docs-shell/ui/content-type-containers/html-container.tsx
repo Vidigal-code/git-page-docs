@@ -3,12 +3,14 @@
 import { useMemo } from "react";
 import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
 import { isFrameBlockedUrl } from "@/shared/lib/is-frame-blocked-url";
-import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
+import type { BrowseNavConfig } from "../page-content-browse-nav";
+import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
 import styles from "../../docs-shell.module.css";
 
 const BASE_TARGET_BLANK = "<base target=\"_blank\" />";
 const BASE_TARGET_SELF = "<base target=\"_self\" />";
+const IFRAME_SANDBOX = "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox";
 
 const EXTERNAL_LINK_LABELS: Record<string, { message: string; button: string }> = {
   pt: {
@@ -41,7 +43,7 @@ function ExternalLinkFallback({
   language,
   messageClassName,
   buttonClassName,
-}: ExternalLinkFallbackProps) {
+}: Readonly<ExternalLinkFallbackProps>) {
   const { message, button } = getExternalLinkLabels(language);
   return (
     <div className={styles.externalLinkCard}>
@@ -73,6 +75,47 @@ function getContainerStyle(container: ContentTypeRouteConfig["container"]): Reac
   return {};
 }
 
+interface HtmlBodyOptions {
+  isBlocked: boolean;
+  externalUrl: string | undefined;
+  language: string;
+  srcdoc: string | null;
+}
+
+/** The embedded page: an open-in-new-tab card when the host blocks framing, else the external or inline iframe. */
+function renderHtmlBody({ isBlocked, externalUrl, language, srcdoc }: HtmlBodyOptions): React.ReactNode {
+  if (isBlocked) {
+    return (
+      <ExternalLinkFallback
+        url={externalUrl ?? ""}
+        language={language}
+        messageClassName={styles.externalLinkMessage}
+        buttonClassName={styles.externalLinkButton}
+      />
+    );
+  }
+  if (externalUrl) {
+    return (
+      <iframe
+        title="HTML content"
+        className={styles.htmlIframe}
+        src={externalUrl}
+        sandbox={IFRAME_SANDBOX}
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
+  return (
+    <iframe
+      title="HTML content"
+      className={styles.htmlIframe}
+      srcDoc={srcdoc ?? undefined}
+      sandbox={IFRAME_SANDBOX}
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
 interface HtmlContainerProps {
   html?: string;
   url?: string;
@@ -84,7 +127,7 @@ interface HtmlContainerProps {
   /** When true, hide header (title/description) - e.g. in URL fullscreen overlay */
   hideHeader?: boolean;
   isDarkMode?: boolean;
-  browseNav?: BrowseNavProps;
+  browseNav?: BrowseNavConfig;
   /** Called when fullscreen is about to open (for URL sync) */
   onFullscreenOpen?: () => void;
   /** Called when fullscreen is about to close (for URL sync) */
@@ -104,7 +147,7 @@ export function HtmlContainer({
   onFullscreenOpen,
   onFullscreenClose,
   hideHeader = false,
-}: HtmlContainerProps) {
+}: Readonly<HtmlContainerProps>) {
   const blockLink = config?.blockLink !== false;
   const srcdoc = useMemo(
     () => (html ? injectBaseTarget(html, blockLink) : null),
@@ -123,30 +166,7 @@ export function HtmlContainer({
   const content = (
     <article className={styles.card}>
       <div className={wrapperClass} style={containerStyle}>
-        {isBlocked ? (
-          <ExternalLinkFallback
-            url={externalUrl ?? ""}
-            language={language}
-            messageClassName={styles.externalLinkMessage}
-            buttonClassName={styles.externalLinkButton}
-          />
-        ) : useExternalUrl ? (
-          <iframe
-            title="HTML content"
-            className={styles.htmlIframe}
-            src={externalUrl ?? ""}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <iframe
-            title="HTML content"
-            className={styles.htmlIframe}
-            srcDoc={srcdoc ?? undefined}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            referrerPolicy="no-referrer"
-          />
-        )}
+        {renderHtmlBody({ isBlocked, externalUrl, language, srcdoc })}
       </div>
     </article>
   );

@@ -1,7 +1,5 @@
-export type PlaybackOwnerId = string;
-
 export interface PlaybackRegistration {
-  id: PlaybackOwnerId;
+  id: string;
   pause: () => void;
 }
 
@@ -15,11 +13,11 @@ export interface PlaybackArbiter {
   /** Registers a pausable player and returns its unregister function. */
   register(registration: PlaybackRegistration): () => void;
   /** Pauses every registered player except the one identified by `ownerId`. */
-  claim(ownerId: PlaybackOwnerId): void;
+  claim(ownerId: string): void;
 }
 
 export function createPlaybackArbiter(): PlaybackArbiter {
-  const pauseByOwner = new Map<PlaybackOwnerId, () => void>();
+  const pauseByOwner = new Map<string, () => void>();
 
   return {
     register({ id, pause }) {

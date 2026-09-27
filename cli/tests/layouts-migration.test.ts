@@ -56,6 +56,15 @@ describe("planLayoutsMigration", () => {
     expect(plan.files).toEqual(["layoutsConfig.json", "templates/b.json"]);
   });
 
+  it("orders files by code unit so the plan is the same in every locale", () => {
+    const plan = planLayoutsMigration({
+      outputDir: "gitpagedocs",
+      layoutsDir: "gitpagelayouts",
+      legacyFiles: ["b.json", "a.json", "B.json", "templates/a.json", "_x.json"],
+    });
+    expect(plan.files).toEqual(["B.json", "_x.json", "a.json", "b.json", "templates/a.json"]);
+  });
+
   it("normalizes Windows separators so paths compare consistently", () => {
     const plan = planLayoutsMigration({
       outputDir: "gitpagedocs",
@@ -97,6 +106,14 @@ describe("listFilesRecursively", () => {
       "layoutsConfig.json",
       "templates/b.json",
     ]);
+  });
+
+  it("orders files by code unit, not locale", () => {
+    const root = makeRoot();
+    writeFileAt(root, "layouts/b.json", "{}");
+    writeFileAt(root, "layouts/A.json", "{}");
+    writeFileAt(root, "layouts/_z.json", "{}");
+    expect(listFilesRecursively(path.join(root, "layouts"))).toEqual(["A.json", "_z.json", "b.json"]);
   });
 });
 

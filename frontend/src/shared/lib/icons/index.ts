@@ -1,4 +1,5 @@
 export { FALLBACK_ICON_PATH, resolveIconPath } from "./resolve-icon-path";
+export type { IconConfigFields } from "./icon-config-fields";
 export {
   FALLBACK_HEADER_NAME,
   resolveHeaderName,

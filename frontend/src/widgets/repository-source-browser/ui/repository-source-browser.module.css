@@ -453,6 +453,12 @@
   background: transparent;
 }
 
+/* Native <output> (implicit role=status) is inline by default; keep the block box
+   the loading state had as a <div>. */
+output.state {
+  display: block;
+}
+
 .error {
   color: var(--danger, #ef4444);
 }

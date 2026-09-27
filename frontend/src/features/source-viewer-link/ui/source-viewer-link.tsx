@@ -16,7 +16,7 @@ interface SourceViewerLinkProps {
  * Rendered as a link (not a button) so it keeps native open-in-new-tab and
  * copy-address behaviour, and Next.js applies the configured basePath.
  */
-export function SourceViewerLink({ href, hint, actionLabel }: SourceViewerLinkProps) {
+export function SourceViewerLink({ href, hint, actionLabel }: Readonly<SourceViewerLinkProps>) {
   return (
     <aside className={styles.container}>
       <p className={styles.hint}>{hint}</p>

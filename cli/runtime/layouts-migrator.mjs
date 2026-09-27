@@ -48,7 +48,21 @@ export function listFilesRecursively(absoluteDir) {
   };
 
   walk(absoluteDir, "");
-  return found.sort();
+  return found.sort(compareCodeUnits);
+}
+
+/**
+ * Plain UTF-16 code-unit order (what `sort()` does by default), spelled out so
+ * the listing never depends on the runtime locale.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
+function compareCodeUnits(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
 }
 
 /**

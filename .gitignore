@@ -16,3 +16,6 @@ test-results
 playwright-report
 .gitpagedocs-mcp.json
 .gitpagedocsconfig
+
+# SonarQube scanner work dir
+.scannerwork

@@ -10,7 +10,7 @@ import type {
 } from "../../ports/ai";
 import type { ProviderSpec } from "../catalog";
 import { type FetchLike, ensureOk, readSseData, resolveFetch } from "../http/streaming";
-import { buildAuthHeaders, collect, resolveBaseUrl } from "./shared";
+import { buildAuthHeaders, collect, resolveBaseUrl, toMultimodalParts } from "./shared";
 
 /** Anthropic Messages API adapter (content_block_delta streaming). */
 export class AnthropicProvider implements AIProvider {
@@ -26,17 +26,11 @@ export class AnthropicProvider implements AIProvider {
   }
 
   private mapMessage(msg: AiMessage): unknown {
-    const images = (msg.attachments ?? []).filter((a) => a.kind === "image");
-    if (images.length === 0) return { role: msg.role, content: msg.content };
-    const content: unknown[] = [];
-    if (msg.content) content.push({ type: "text", text: msg.content });
-    for (const img of images) {
-      content.push({
-        type: "image",
-        source: { type: "base64", media_type: img.mimeType, data: img.data },
-      });
-    }
-    return { role: msg.role, content };
+    const parts = toMultimodalParts(msg, (img) => ({
+      type: "image",
+      source: { type: "base64", media_type: img.mimeType, data: img.data },
+    }));
+    return { role: msg.role, content: parts ?? msg.content };
   }
 
   async *stream(request: GenerateRequest, config: ProviderConfig): AsyncGenerator<string> {

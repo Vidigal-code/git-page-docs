@@ -1,6 +1,6 @@
 "use client";
 
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 
 interface SourceViewerSearchFormProps {
   owner: string;
@@ -34,8 +34,8 @@ export function SourceViewerSearchForm({
   onBranchChange,
   onSubmit,
   classNames,
-}: SourceViewerSearchFormProps) {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+}: Readonly<SourceViewerSearchFormProps>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     onSubmit();
   }

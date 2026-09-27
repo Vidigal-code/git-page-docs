@@ -26,7 +26,7 @@ export function LanguageSelector({
   className,
   ariaLabel,
   themeVarsStyle,
-}: LanguageSelectorProps) {
+}: Readonly<LanguageSelectorProps>) {
   return (
     <DropdownSelector
       label={ariaLabel ?? "Language"}

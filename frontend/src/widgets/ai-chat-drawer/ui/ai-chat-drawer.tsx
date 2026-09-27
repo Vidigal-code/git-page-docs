@@ -2,7 +2,7 @@
  * @file ai-chat-drawer.tsx
  * @description The floating/drawer chat interface widget supporting multimedia.
  */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useId } from 'react';
 import Image from 'next/image';
 import { BsRobot } from '@/shared/ui/fallback-icons';
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
@@ -15,13 +15,272 @@ import { ConfirmPopup } from '../../../shared/ui/confirm-popup/confirm-popup';
 import { marked } from 'marked';
 import styles from './ai-chat.module.css';
 
+/** Width change (px) per arrow key on the resize handle; the handle sits on the left edge. */
+const RESIZE_KEY_DELTAS: Record<string, number> = { ArrowLeft: 24, ArrowRight: -24 };
+const DEFAULT_PROVIDER_AND_MODEL = 'openai:gpt-4o-mini';
+
+type VaultState = 'loading' | 'create' | 'locked' | 'unlocked';
+type ChatMessage = ReturnType<typeof useAiChat>['messages'][number];
+
 interface AiChatDrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    isMobile?: boolean;
     icons: any;
     labels: any;
     systemContext?: string;
+}
+
+function renderIcon(config: any, defaultTag: string) {
+    if (!config) return null;
+    if (config.useReactIcon) {
+        return (
+            <span style={config.reactIconStyle}>
+                <ReactIconByTag tag={config.reactIconTag || defaultTag} fallback={<BsRobot />} />
+            </span>
+        );
+    }
+    return (
+        <Image
+            src={config.iconImage}
+            alt="Icon"
+            width={config.iconImgWidth}
+            height={config.iconImgHeight}
+            style={{ objectFit: 'contain' }}
+        />
+    );
+}
+
+function resolveResetPopupLabels(labels: any) {
+    return {
+        title: labels.aiChatResetPopupTitle || 'Reset password?',
+        description: labels.aiChatResetPopupDesc || 'This erases all saved API keys and the local password. You will then create a new password. This cannot be undone.',
+        confirmText: labels.aiChatResetConfirmBtn || 'Reset and erase',
+        cancelText: labels.aiChatResetCancelBtn || 'Cancel',
+    };
+}
+
+interface VaultGateProps {
+    vaultState: Exclude<VaultState, 'unlocked'>;
+    labels: any;
+    passwordInput: string;
+    gateError: string;
+    onPasswordChange: (value: string) => void;
+    onUnlock: () => void;
+    onRequestReset: () => void;
+}
+
+/** Password form of the vault gate: create on first run, unlock afterwards. */
+function VaultGateForm({
+    vaultState,
+    labels,
+    passwordInput,
+    gateError,
+    onPasswordChange,
+    onUnlock,
+    onRequestReset,
+}: Readonly<Omit<VaultGateProps, 'vaultState'> & { vaultState: 'create' | 'locked' }>) {
+    const isCreate = vaultState === 'create';
+    const description = isCreate
+        ? (labels.aiChatPasswordCreateDesc || 'Create a local password to encrypt your API keys.')
+        : (labels.aiChatPasswordUnlockDesc || 'Enter your local password to unlock.');
+    const unlockLabel = isCreate
+        ? (labels.aiChatCreatePasswordBtn || 'Create password')
+        : (labels.aiChatUnlockBtn || 'Unlock');
+    return (
+        <>
+            <p style={{ color: 'var(--text-secondary)' }}>{description}</p>
+            <input
+                data-testid="drawer-password-input"
+                type="password"
+                value={passwordInput}
+                onChange={e => onPasswordChange(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); onUnlock(); } }}
+                placeholder={labels.aiChatPasswordPlaceholder || 'Local password'}
+                className={styles.formInput}
+                style={{ maxWidth: 280 }}
+            />
+            <button
+                data-testid="drawer-unlock-button"
+                onClick={onUnlock}
+                className={styles.btnPrimary}
+            >
+                {unlockLabel}
+            </button>
+            {gateError && <p data-testid="drawer-gate-error" style={{ color: '#f85149' }}>{gateError}</p>}
+            {vaultState === 'locked' && (
+                <button
+                    type="button"
+                    data-testid="drawer-reset-password"
+                    onClick={onRequestReset}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}
+                >
+                    {labels.aiChatResetBtn || 'Forgot password? Reset (erases saved keys)'}
+                </button>
+            )}
+        </>
+    );
+}
+
+/** Encrypted-vault gate shown until the session password is known. */
+function VaultGate({ vaultState, ...formProps }: Readonly<VaultGateProps>) {
+    return (
+        <div
+            data-testid="ai-chat-gate"
+            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24, textAlign: 'center' }}
+        >
+            {vaultState === 'loading' ? (
+                <p style={{ color: 'var(--text-secondary)' }}>…</p>
+            ) : (
+                <VaultGateForm vaultState={vaultState} {...formProps} />
+            )}
+        </div>
+    );
+}
+
+interface ChatMessagesProps {
+    messages: ChatMessage[];
+    isLoading: boolean;
+    labels: any;
+    icons: any;
+    endRef: React.RefObject<HTMLDivElement | null>;
+}
+
+/** Conversation transcript: greeting, messages, and the typing indicator while a reply is pending. */
+function ChatMessages({ messages, isLoading, labels, icons, endRef }: Readonly<ChatMessagesProps>) {
+    const awaitingReply = isLoading && messages.at(-1)?.role === 'user';
+    return (
+        <>
+            {messages.length === 0 && (
+                <div className={styles.messageRow}>
+                    <div className={styles.avatarAi}>
+                        {renderIcon(icons.open, "BsRobot")}
+                    </div>
+                    <div className={styles.bubbleAi}>
+                        <p>
+                            {labels.aiChatEmptyStateGreeting}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {messages.map((msg, index) => {
+                if (msg.role === 'system') return null;
+
+                const isUser = msg.role === 'user';
+
+                return (
+                    <div key={msg.id || index.toString()} className={isUser ? styles.messageRowUser : styles.messageRow}>
+                        <div className={isUser ? styles.avatarUser : styles.avatarAi}>
+                            {isUser ? (labels.aiChatUserLabel || 'You') : renderIcon(icons.open, "BsRobot")}
+                        </div>
+                        <div className={isUser ? styles.bubbleUser : styles.bubbleAi}>
+                            <div
+                                className={styles.markdownContent}
+                                dangerouslySetInnerHTML={{ __html: marked.parse(msg.content) as string }}
+                            />
+                        </div>
+                    </div>
+                );
+            })}
+
+            {awaitingReply && (
+                <div className={styles.messageRow}>
+                    <div className={styles.avatarAi}>
+                        {renderIcon(icons.open, "BsRobot")}
+                    </div>
+                    <div className={styles.bubbleAi} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div className={styles.typingIndicator}>
+                            <div className={styles.dot} />
+                            <div className={styles.dot} />
+                            <div className={styles.dot} />
+                        </div>
+                    </div>
+                </div>
+            )}
+            <div ref={endRef} />
+        </>
+    );
+}
+
+interface ChatComposerProps {
+    inputValue: string;
+    onInputChange: (value: string) => void;
+    onKeyDown: (e: React.KeyboardEvent) => void;
+    onSend: () => void;
+    isLoading: boolean;
+    labels: any;
+    icons: any;
+    providerName: string;
+    pendingAttachments: MultimodalAttachment[];
+    onClearAttachments: () => void;
+    onFileAttachment: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    fileInputRef: React.RefObject<HTMLInputElement | null>;
+}
+
+/** Input area: pending attachments, the textarea, attach and send/cancel actions. */
+function ChatComposer({
+    inputValue,
+    onInputChange,
+    onKeyDown,
+    onSend,
+    isLoading,
+    labels,
+    icons,
+    providerName,
+    pendingAttachments,
+    onClearAttachments,
+    onFileAttachment,
+    fileInputRef,
+}: Readonly<ChatComposerProps>) {
+    const hasInput = inputValue.trim().length > 0;
+    return (
+        <div className={styles.inputArea}>
+            {pendingAttachments.length > 0 && (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '0 0 8px 8px', display: 'flex', alignItems: 'center' }}>
+                    {pendingAttachments.length} {labels.aiChatAttachedFilesLabel}
+                    <button onClick={onClearAttachments} style={{ marginLeft: 8, background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer' }}>{labels.aiChatRemoveAttachmentBtn}</button>
+                </div>
+            )}
+            <div className={styles.inputContainer}>
+                <textarea
+                    value={inputValue}
+                    onChange={e => onInputChange(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    placeholder={labels.aiChatPlaceholder}
+                    className={styles.textArea}
+                    rows={1}
+                />
+
+                <div className={styles.inputActions}>
+                    <div className={styles.actionButtons}>
+                        <button className={styles.actionButton} title={labels.aiChatAttachAriaLabel} onClick={() => fileInputRef.current?.click()}>
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            accept={providerName === 'gemini' ? 'image/*, audio/*' : 'image/*'}
+                            onChange={onFileAttachment}
+                        />
+                    </div>
+
+                    <button
+                        onClick={onSend}
+                        className={styles.sendButton}
+                        data-active={hasInput || isLoading}
+                        disabled={!hasInput && !isLoading}
+                        title={isLoading ? labels.aiChatCancelResponseLabel : labels.aiChatSendBtn}
+                    >
+                        {isLoading ? renderIcon(icons.cancel, "FiXCircle") : renderIcon(icons.send, "FiSend")}
+                    </button>
+                </div>
+            </div>
+            <div className={styles.disclaimer}>
+                {labels.aiChatDisclaimer}
+            </div>
+        </div>
+    );
 }
 
 export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, icons, labels, systemContext }) => {
@@ -38,7 +297,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
 
     // Encrypted-vault password gate (same vault the /ai console uses). The
     // session password lives only in memory; keys are stored AES-256-GCM.
-    const [vaultState, setVaultState] = useState<'loading' | 'create' | 'locked' | 'unlocked'>('loading');
+    const [vaultState, setVaultState] = useState<VaultState>('loading');
     const [sessionPassword, setSessionPassword] = useState<string | null>(null);
     const [passwordInput, setPasswordInput] = useState('');
     const [gateError, setGateError] = useState('');
@@ -53,7 +312,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
 
     const resolveCredentials = useCallback(async () => {
         if (!sessionPassword) return null;
-        const providerAndModel = aiStorage.getProvider() || 'openai:gpt-4o-mini';
+        const providerAndModel = aiStorage.getProvider() || DEFAULT_PROVIDER_AND_MODEL;
         const bare = providerAndModel.split(':')[0];
         if (bare === 'ollama') {
             const baseUrl = await aiSecureStorage.getKey(sessionPassword, 'ollama');
@@ -67,6 +326,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     const { messages, isLoading, sendMessage, cancelMessage, clearMessages } = useAiChat(systemContext, labels, resolveCredentials);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const titleId = useId();
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
         if (isExpanded) return;
@@ -95,7 +355,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     useEffect(() => {
         if (!isOpen) return;
         let cancelled = false;
-        const providerAndModel = aiStorage.getProvider() || 'openai:gpt-4o-mini';
+        const providerAndModel = aiStorage.getProvider() || DEFAULT_PROVIDER_AND_MODEL;
         setProviderName(providerAndModel);
         (async () => {
             if (sessionPassword) {
@@ -117,26 +377,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
 
     if (!isOpen) return null;
 
-    const renderIcon = (config: any, defaultTag: string) => {
-        if (!config) return null;
-        if (config.useReactIcon) {
-            return (
-                <span style={config.reactIconStyle}>
-                    <ReactIconByTag tag={config.reactIconTag || defaultTag} fallback={<BsRobot />} />
-                </span>
-            );
-        }
-        return (
-            <Image
-                src={config.iconImage}
-                alt="Icon"
-                width={config.iconImgWidth}
-                height={config.iconImgHeight}
-                style={{ objectFit: 'contain' }}
-            />
-        );
-    };
-
     const handleUnlock = async () => {
         const pw = passwordInput;
         if (!pw) return;
@@ -149,7 +389,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                 setGateError(labels.aiChatWrongPassword || 'Incorrect password.');
                 return;
             }
-            const providerAndModel = aiStorage.getProvider() || 'openai:gpt-4o-mini';
+            const providerAndModel = aiStorage.getProvider() || DEFAULT_PROVIDER_AND_MODEL;
             const legacyKey = aiStorage.getKey();
             if (legacyKey) {
                 await aiSecureStorage.migrateFromPlaintext(
@@ -188,6 +428,19 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         setVaultState('create');
     };
 
+    const handleClearData = async () => {
+        if (sessionPassword) {
+            const bare = (aiStorage.getProvider() || DEFAULT_PROVIDER_AND_MODEL).split(':')[0];
+            try { await aiSecureStorage.removeKey(sessionPassword, bare); } catch { /* ignore */ }
+        }
+        aiStorage.clearKey();
+        setHasKey(false);
+        setSessionPassword(null);
+        setVaultState('locked');
+        setIsClearDataPopupOpen(false);
+        clearMessages();
+    };
+
     const handleSaveKey = async (providerAndModel: string, key: string) => {
         if (!sessionPassword) return;
         aiStorage.saveProvider(providerAndModel);
@@ -205,8 +458,16 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result as string);
-            reader.onerror = error => reject(error);
+            reader.onerror = () => reject(reader.error ?? new Error('Failed to read the attached file'));
         });
+    };
+
+    // Keyboard counterpart of the drag handle: arrows move the left edge.
+    const handleResizeKeyDown = (e: React.KeyboardEvent) => {
+        const delta = RESIZE_KEY_DELTAS[e.key];
+        if (isExpanded || !delta) return;
+        e.preventDefault();
+        setDrawerWidth((width) => Math.max(300, Math.min(800, width + delta)));
     };
 
     const handleFileAttachment = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -243,25 +504,69 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         }
     };
 
+    const resetLabels = resolveResetPopupLabels(labels);
+    const expandIcon = isExpanded ? renderIcon(icons.collapse, "FiMinimize2") : renderIcon(icons.expand, "FiMaximize2");
+    const showComposer = vaultState === 'unlocked' && hasKey && !isSettingsOpen;
+
+    let messagesArea: React.ReactNode;
+    if (vaultState !== 'unlocked') {
+        messagesArea = (
+            <VaultGate
+                vaultState={vaultState}
+                labels={labels}
+                passwordInput={passwordInput}
+                gateError={gateError}
+                onPasswordChange={setPasswordInput}
+                onUnlock={() => void handleUnlock()}
+                onRequestReset={() => setIsResetPopupOpen(true)}
+            />
+        );
+    } else if (!hasKey || isSettingsOpen) {
+        messagesArea = (
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ApiKeyForm onSave={handleSaveKey} labels={labels} />
+            </div>
+        );
+    } else {
+        messagesArea = (
+            <ChatMessages
+                messages={messages}
+                isLoading={isLoading}
+                labels={labels}
+                icons={icons}
+                endRef={messagesEndRef}
+            />
+        );
+    }
+
     return (
-        <div className={`${styles.drawerOverlay} ${isExpanded ? styles.drawerOverlayExpanded : ''}`} onClick={onClose}>
+        <div className={`${styles.drawerOverlay} ${isExpanded ? styles.drawerOverlayExpanded : ''}`}>
+            <button type="button" className={styles.drawerBackdrop} onClick={onClose} aria-label={labels.aiChatCloseBtnAriaLabel} tabIndex={-1} />
             <div
                 className={`${styles.drawerContent} ${isExpanded ? styles.drawerExpanded : ''}`}
                 style={{
                     width: isExpanded ? undefined : `${drawerWidth}px`,
                     transition: isDragging ? 'none' : undefined
                 }}
-                onClick={(e) => e.stopPropagation()}
             >
                 {!isExpanded && (
-                    <div
+                    <button
+                        type="button"
+                        aria-labelledby={titleId}
+                        tabIndex={-1}
                         onMouseDown={handleMouseDown}
+                        onKeyDown={handleResizeKeyDown}
                         style={{
                             position: 'absolute',
                             left: 0,
                             top: 0,
                             bottom: 0,
                             width: '6px',
+                            margin: 0,
+                            padding: 0,
+                            border: 0,
+                            borderRadius: 0,
+                            appearance: 'none',
                             cursor: 'ew-resize',
                             zIndex: 10,
                             backgroundColor: 'transparent'
@@ -275,7 +580,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                         <div className={styles.aiIcon}>
                             {renderIcon(icons.open, "BsRobot")}
                         </div>
-                        <h2 className={styles.titleText}>{labels.aiChatTitle}</h2>
+                        <h2 id={titleId} className={styles.titleText}>{labels.aiChatTitle}</h2>
                     </div>
 
                     <div className={styles.headerActions}>
@@ -319,7 +624,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                             title={"Expand or Collapse"}
                             className={styles.closeButton}
                         >
-                            {renderIcon(isExpanded ? icons.collapse : icons.expand, isExpanded ? "FiMinimize2" : "FiMaximize2")}
+                            {expandIcon}
                         </button>
                         <button
                             onClick={onClose}
@@ -348,185 +653,40 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     description={labels.aiChatClearDataPopupDesc}
                     confirmText={labels.aiChatClearDataConfirmBtn}
                     cancelText={labels.aiChatClearDataCancelBtn}
-                    onConfirm={async () => {
-                        if (sessionPassword) {
-                            const bare = (aiStorage.getProvider() || 'openai:gpt-4o-mini').split(':')[0];
-                            try { await aiSecureStorage.removeKey(sessionPassword, bare); } catch { /* ignore */ }
-                        }
-                        aiStorage.clearKey();
-                        setHasKey(false);
-                        setSessionPassword(null);
-                        setVaultState('locked');
-                        setIsClearDataPopupOpen(false);
-                        clearMessages();
-                    }}
+                    onConfirm={handleClearData}
                     onCancel={() => setIsClearDataPopupOpen(false)}
                 />
 
                 <ConfirmPopup
                     isOpen={isResetPopupOpen}
-                    title={labels.aiChatResetPopupTitle || 'Reset password?'}
-                    description={labels.aiChatResetPopupDesc || 'This erases all saved API keys and the local password. You will then create a new password. This cannot be undone.'}
-                    confirmText={labels.aiChatResetConfirmBtn || 'Reset and erase'}
-                    cancelText={labels.aiChatResetCancelBtn || 'Cancel'}
+                    title={resetLabels.title}
+                    description={resetLabels.description}
+                    confirmText={resetLabels.confirmText}
+                    cancelText={resetLabels.cancelText}
                     isDestructive
                     onConfirm={() => void handleResetPassword()}
                     onCancel={() => setIsResetPopupOpen(false)}
                 />
 
                 <div className={styles.messagesArea}>
-                    {vaultState !== 'unlocked' ? (
-                        <div
-                            data-testid="ai-chat-gate"
-                            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24, textAlign: 'center' }}
-                        >
-                            {vaultState === 'loading' ? (
-                                <p style={{ color: 'var(--text-secondary)' }}>…</p>
-                            ) : (
-                                <>
-                                    <p style={{ color: 'var(--text-secondary)' }}>
-                                        {vaultState === 'create'
-                                            ? (labels.aiChatPasswordCreateDesc || 'Create a local password to encrypt your API keys.')
-                                            : (labels.aiChatPasswordUnlockDesc || 'Enter your local password to unlock.')}
-                                    </p>
-                                    <input
-                                        data-testid="drawer-password-input"
-                                        type="password"
-                                        value={passwordInput}
-                                        onChange={e => setPasswordInput(e.target.value)}
-                                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void handleUnlock(); } }}
-                                        placeholder={labels.aiChatPasswordPlaceholder || 'Local password'}
-                                        className={styles.formInput}
-                                        style={{ maxWidth: 280 }}
-                                    />
-                                    <button
-                                        data-testid="drawer-unlock-button"
-                                        onClick={() => void handleUnlock()}
-                                        className={styles.btnPrimary}
-                                    >
-                                        {vaultState === 'create'
-                                            ? (labels.aiChatCreatePasswordBtn || 'Create password')
-                                            : (labels.aiChatUnlockBtn || 'Unlock')}
-                                    </button>
-                                    {gateError && <p data-testid="drawer-gate-error" style={{ color: '#f85149' }}>{gateError}</p>}
-                                    {vaultState === 'locked' && (
-                                        <button
-                                            type="button"
-                                            data-testid="drawer-reset-password"
-                                            onClick={() => setIsResetPopupOpen(true)}
-                                            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}
-                                        >
-                                            {labels.aiChatResetBtn || 'Forgot password? Reset (erases saved keys)'}
-                                        </button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    ) : !hasKey || isSettingsOpen ? (
-                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <ApiKeyForm onSave={handleSaveKey} labels={labels} />
-                        </div>
-                    ) : (
-                        <>
-                            {messages.length === 0 && (
-                                <div className={styles.messageRow}>
-                                    <div className={styles.avatarAi}>
-                                        {renderIcon(icons.open, "BsRobot")}
-                                    </div>
-                                    <div className={styles.bubbleAi}>
-                                        <p>
-                                            {labels.aiChatEmptyStateGreeting}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {messages.map((msg, index) => {
-                                if (msg.role === 'system') return null;
-
-                                const isUser = msg.role === 'user';
-
-                                return (
-                                    <div key={msg.id || index.toString()} className={isUser ? styles.messageRowUser : styles.messageRow}>
-                                        <div className={isUser ? styles.avatarUser : styles.avatarAi}>
-                                            {isUser ? (labels.aiChatUserLabel || 'You') : renderIcon(icons.open, "BsRobot")}
-                                        </div>
-                                        <div className={isUser ? styles.bubbleUser : styles.bubbleAi}>
-                                            <div
-                                                className={styles.markdownContent}
-                                                dangerouslySetInnerHTML={{ __html: marked.parse(msg.content) as string }}
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-
-                            {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                                <div className={styles.messageRow}>
-                                    <div className={styles.avatarAi}>
-                                        {renderIcon(icons.open, "BsRobot")}
-                                    </div>
-                                    <div className={styles.bubbleAi} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div className={styles.typingIndicator}>
-                                            <div className={styles.dot} />
-                                            <div className={styles.dot} />
-                                            <div className={styles.dot} />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            <div ref={messagesEndRef} />
-                        </>
-                    )}
+                    {messagesArea}
                 </div>
 
-                {vaultState === 'unlocked' && hasKey && !isSettingsOpen && (
-                    <div className={styles.inputArea}>
-                        {pendingAttachments.length > 0 && (
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '0 0 8px 8px', display: 'flex', alignItems: 'center' }}>
-                                {pendingAttachments.length} {labels.aiChatAttachedFilesLabel}
-                                <button onClick={() => setPendingAttachments([])} style={{ marginLeft: 8, background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer' }}>{labels.aiChatRemoveAttachmentBtn}</button>
-                            </div>
-                        )}
-                        <div className={styles.inputContainer}>
-                            <textarea
-                                value={inputValue}
-                                onChange={e => setInputValue(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder={labels.aiChatPlaceholder}
-                                className={styles.textArea}
-                                rows={1}
-                            />
-
-                            <div className={styles.inputActions}>
-                                <div className={styles.actionButtons}>
-                                    <button className={styles.actionButton} title={labels.aiChatAttachAriaLabel} onClick={() => fileInputRef.current?.click()}>
-                                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                    </button>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        style={{ display: 'none' }}
-                                        accept={providerName === 'gemini' ? 'image/*, audio/*' : 'image/*'}
-                                        onChange={handleFileAttachment}
-                                    />
-                                </div>
-
-                                <button
-                                    onClick={handleSend}
-                                    className={styles.sendButton}
-                                    data-active={inputValue.trim().length > 0 || isLoading}
-                                    disabled={!inputValue.trim() && !isLoading}
-                                    title={isLoading ? labels.aiChatCancelResponseLabel : labels.aiChatSendBtn}
-                                >
-                                    {isLoading ? renderIcon(icons.cancel, "FiXCircle") : renderIcon(icons.send, "FiSend")}
-                                </button>
-                            </div>
-                        </div>
-                        <div className={styles.disclaimer}>
-                            {labels.aiChatDisclaimer}
-                        </div>
-                    </div>
+                {showComposer && (
+                    <ChatComposer
+                        inputValue={inputValue}
+                        onInputChange={setInputValue}
+                        onKeyDown={handleKeyDown}
+                        onSend={handleSend}
+                        isLoading={isLoading}
+                        labels={labels}
+                        icons={icons}
+                        providerName={providerName}
+                        pendingAttachments={pendingAttachments}
+                        onClearAttachments={() => setPendingAttachments([])}
+                        onFileAttachment={handleFileAttachment}
+                        fileInputRef={fileInputRef}
+                    />
                 )}
             </div>
         </div>

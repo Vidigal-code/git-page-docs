@@ -175,7 +175,7 @@ The version config can render a **Source code** container through \`routes-sourc
 - \`name\`, \`defaultLanguage\`
 - \`docsVersion\`, \`rendering\`, \`ThemeDefault\`, \`ThemeModeDefault\`
 - \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
-- Languages and UI strings: \`gitpagedocs/langs.json\` + \`gitpagedocs/langs/<lang>.json\`
+- Languages: \`site.languages\` (enable/disable each one); UI strings: \`gitpagedocs/langs/<lang>.json\`
 
 ## Environment variables
 
@@ -319,11 +319,11 @@ Supported adapters:
 
 Runtime configuration lives in \`gitpagedocs/config.json\`. UI text lives next to it, one file per language.
 
-## Languages (\`langs.json\` + \`langs/\`)
+## Languages (\`site.languages\` + \`langs/\`)
 
-- \`gitpagedocs/langs.json\` lists the shipped languages in menu order: \`{ "languages": ["en", "pt", "es"] }\`.
+- \`site.languages\` in \`gitpagedocs/config.json\` switches each language on (\`true\`) or off (\`false\`), in menu order: \`{ "languages": { "en": true, "pt": true, "es": false } }\`. A language set to \`false\` disappears from the language selector and its strings are not loaded, even when its docs exist.
 - \`gitpagedocs/langs/<lang>.json\` holds that language's strings: \`langmenu\` (header, search, source viewer, audio player, AI chat and docs-access labels) and \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
-- To add a language, create \`langs/<lang>.json\` and append its code to \`langs.json\`.
+- To add a language, create \`langs/<lang>.json\` and add \`"<lang>": true\` to \`site.languages\`. There is no \`langs.json\` any more: a manifest left by release 1.1.68 is still read by configs without \`site.languages\`, and the generator removes it.
 - Older \`config.json\` files that still inline \`site.langmenu\` / \`translations\` keep working; when both exist, the \`langs/\` files win and any missing key is backfilled from the current release.
 
 ## \`site\` section

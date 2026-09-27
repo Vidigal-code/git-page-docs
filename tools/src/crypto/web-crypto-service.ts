@@ -7,14 +7,16 @@ const DEFAULT_ITERATIONS = 210_000;
 
 function toBase64(bytes: Uint8Array): string {
   let binary = "";
-  for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i]);
+  for (const byte of bytes) binary += String.fromCodePoint(byte);
   return btoa(binary);
 }
 
 function fromBase64(b64: string): Uint8Array<ArrayBuffer> {
   const binary = atob(b64);
   const out = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) out[i] = binary.charCodeAt(i);
+  // atob yields one Latin-1 code unit per byte, so codePointAt(i) is that byte
+  // (never undefined for i < length; the fallback only satisfies the type).
+  for (let i = 0; i < binary.length; i += 1) out[i] = binary.codePointAt(i) ?? 0;
   return out;
 }
 

@@ -6,7 +6,7 @@ import { execSync } from "node:child_process";
 import { DOC_VERSIONS } from "../../cli/contracts/doc-versions.mjs";
 import { languageArtifactPaths } from "../../cli/contracts/langs-paths.mjs";
 import { SUPPORTED_LANGUAGES } from "../../cli/contracts/languages.mjs";
-import { parseLanguageBundle, parseLanguageManifest } from "../../tools/src/i18n/language-bundles.ts";
+import { getEnabledLanguages, parseLanguageBundle, parseLanguageToggles } from "../../tools/src/i18n/language-bundles.ts";
 
 const root = process.cwd();
 /** Every shipped bundle carries at least this many langmenu keys (the full UI vocabulary). */
@@ -45,14 +45,18 @@ if (!rootConfig.site || !rootConfig.VersionControl) {
 if (rootConfig.site.langmenu || rootConfig.translations) {
   throw new Error("Root config must not inline UI strings any more: they belong in gitpagedocs/langs/.");
 }
+if (rootConfig.site.supportedLanguages) {
+  throw new Error("Root config must not inline site.supportedLanguages: languages are toggled in site.languages.");
+}
 
 const langs = languageArtifactPaths("gitpagedocs");
-ensureExists(langs.manifest);
-const manifest = parseLanguageManifest(readJson(langs.manifest));
-if (!manifest || manifest.languages.join(",") !== SUPPORTED_LANGUAGES.join(",")) {
-  throw new Error(`Invalid language manifest: expected languages ${SUPPORTED_LANGUAGES.join(",")}.`);
+ensureMissing(langs.legacyManifest);
+const toggles = parseLanguageToggles(rootConfig.site.languages);
+const enabledLanguages = getEnabledLanguages(toggles);
+if (!toggles || Object.keys(toggles).join(",") !== SUPPORTED_LANGUAGES.join(",") || enabledLanguages.length !== SUPPORTED_LANGUAGES.length) {
+  throw new Error(`Invalid site.languages: expected ${SUPPORTED_LANGUAGES.join(",")} all enabled, in that order.`);
 }
-for (const language of manifest.languages) {
+for (const language of enabledLanguages) {
   ensureExists(langs.bundle(language));
   const bundle = parseLanguageBundle(readJson(langs.bundle(language)));
   const langmenuKeys = Object.keys(bundle?.langmenu ?? {});

@@ -17,7 +17,7 @@ export function generateStaticParams(): Array<{ source: string[] }> {
   ];
 }
 
-export default async function SourceViewerRoutePage({ params }: PageProps) {
+export default async function SourceViewerRoutePage({ params }: Readonly<PageProps>) {
   if (!isRepositorySearchEnabled()) {
     notFound();
   }

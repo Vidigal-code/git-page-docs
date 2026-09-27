@@ -2,41 +2,20 @@
 
 import { useEffect, useMemo } from "react";
 import type { LanguageCode, LoadedDocsData } from "@/entities/docs";
-import { getPathClickByRouteId } from "@/entities/docs";
 import { getCurrentHeadingHash, scrollToHeadingId } from "@/features/route-guide";
-import { getBreadcrumbTrail, getPageIndexByPathClick } from "./menu-tree";
-import { buildUnifiedHeaderMenuTree } from "./menu-tree";
+import {
+  parseFullscreenParams,
+  resolveMenuNavigationTarget,
+  resolveMenuSelection,
+  type FullscreenParams,
+} from "./use-docs-shell-url-params.helpers";
 
-export type FullscreenContentType = "md" | "html" | "video" | "audio" | null;
+export type { FullscreenContentType, FullscreenParams } from "./use-docs-shell-url-params.helpers";
 
 export interface UrlParamsAction {
   type: "navigate";
   pageIndex: number;
   ancestorKeys: string[];
-}
-
-export interface FullscreenParams {
-  type: FullscreenContentType;
-  lang: LanguageCode;
-  file?: string;
-  id?: number;
-  slug?: string;
-}
-
-function findPathClickBySlug(data: LoadedDocsData, slug: string, _lang: LanguageCode): string | null {
-  const keys = Object.keys(data.pathToPageMap ?? {});
-  const normalized = slug.toLowerCase().replace(/\.(md|html)$/, "");
-  for (const key of keys) {
-    const lower = key.toLowerCase();
-    if (
-      lower.endsWith(`/${normalized}`) ||
-      lower.endsWith(`/${normalized}.md`) ||
-      lower.endsWith(`/${normalized}.html`)
-    ) {
-      return key;
-    }
-  }
-  return null;
 }
 
 function scrollToCurrentHeadingHash(delayMs: number = 100): void {
@@ -50,96 +29,56 @@ function scrollToCurrentHeadingHash(delayMs: number = 100): void {
   }, delayMs);
 }
 
-export function useDocsShellUrlParams(
-  searchParams: URLSearchParams,
-  data: LoadedDocsData,
-  language: LanguageCode,
-  pageIndex: number,
-  setPageIndex: (idx: number) => void,
-  expandAncestors: (keys: string[]) => void,
-  canNavigateToPathClick?: (pathClick: string) => boolean,
-  onParamsProcessed?: (action: UrlParamsAction | null) => void,
-  onFullscreenRequest?: (params: FullscreenParams) => void
-) {
+export interface UseDocsShellUrlParamsOptions {
+  searchParams: URLSearchParams;
+  data: LoadedDocsData;
+  language: LanguageCode;
+  pageIndex: number;
+  setPageIndex: (idx: number) => void;
+  expandAncestors: (keys: string[]) => void;
+  canNavigateToPathClick?: (pathClick: string) => boolean;
+  onParamsProcessed?: (action: UrlParamsAction | null) => void;
+  onFullscreenRequest?: (params: FullscreenParams) => void;
+}
+
+export function useDocsShellUrlParams({
+  searchParams,
+  data,
+  language,
+  pageIndex,
+  setPageIndex,
+  expandAncestors,
+  canNavigateToPathClick,
+  onParamsProcessed,
+  onFullscreenRequest,
+}: UseDocsShellUrlParamsOptions) {
   const searchParamsKey = useMemo(() => searchParams.toString(), [searchParams]);
 
   useEffect(() => {
-    const menuLang = searchParams.get("menu") as LanguageCode | null;
-    const menuId = searchParams.get("id");
-    const menuSlug = searchParams.get("name") ?? searchParams.get("nome");
-    const urlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : searchParams;
-    const mdfull = urlParams.get("mdfull");
-    const mdfullFile = urlParams.get("file");
-    const videofull = urlParams.get("videofull");
-    const videofullId = urlParams.get("id");
-    const videofullSlug = urlParams.get("slug");
-    const htmlfull = urlParams.get("htmlfull");
-    const htmlfullFile = urlParams.get("file");
-    const audiofull = urlParams.get("audiofull");
-    const audiofullId = urlParams.get("id");
-    const audiofullSlug = urlParams.get("slug");
-
+    const hasWindow = typeof window !== "undefined";
     if (onFullscreenRequest) {
-      if (mdfull && mdfullFile) {
-        onFullscreenRequest({ type: "md", lang: mdfull as LanguageCode, file: mdfullFile });
-        return;
-      }
-      if (videofull) {
-        const id = videofullId ? parseInt(videofullId, 10) : undefined;
-        onFullscreenRequest({
-          type: "video",
-          lang: videofull as LanguageCode,
-          id: Number.isNaN(id) ? undefined : id,
-          slug: videofullSlug ?? undefined,
-        });
-        return;
-      }
-      if (htmlfull && htmlfullFile) {
-        onFullscreenRequest({ type: "html", lang: htmlfull as LanguageCode, file: htmlfullFile });
-        return;
-      }
-      if (audiofull) {
-        const id = audiofullId ? parseInt(audiofullId, 10) : undefined;
-        onFullscreenRequest({
-          type: "audio",
-          lang: audiofull as LanguageCode,
-          id: Number.isNaN(id) ? undefined : id,
-          slug: audiofullSlug ?? undefined,
-        });
+      // Fullscreen params come from the live URL: inline fullscreens rewrite it without navigating.
+      const fullscreen = parseFullscreenParams(hasWindow ? new URLSearchParams(window.location.search) : searchParams);
+      if (fullscreen) {
+        onFullscreenRequest(fullscreen);
         return;
       }
     }
 
-    if (menuLang && (menuId || menuSlug)) {
-      let pathClick: string | null = null;
-
-      if (menuId) {
-        const idNum = parseInt(menuId, 10);
-        if (!Number.isNaN(idNum)) {
-          pathClick = getPathClickByRouteId(data, idNum, menuLang);
-        }
-      } else if (menuSlug) {
-        pathClick = findPathClickBySlug(data, menuSlug, menuLang);
-      }
-
-      if (pathClick) {
-        if (canNavigateToPathClick && !canNavigateToPathClick(pathClick)) {
-          onParamsProcessed?.(null);
-          return;
-        }
-        const pageIdx = getPageIndexByPathClick(data, pathClick);
-        if (pageIdx >= 0 && pageIdx !== pageIndex) {
-          const tree = buildUnifiedHeaderMenuTree(data, menuLang, pageIdx);
-          const trail = getBreadcrumbTrail(tree, pathClick);
-          const ancestorKeys = trail.length > 0 ? trail[trail.length - 1].ancestorKeys : [];
-          setPageIndex(pageIdx);
-          expandAncestors(ancestorKeys);
-          onParamsProcessed?.({ type: "navigate", pageIndex: pageIdx, ancestorKeys });
-        }
-      }
+    const selection = resolveMenuSelection(data, searchParams);
+    if (selection && canNavigateToPathClick && !canNavigateToPathClick(selection.pathClick)) {
+      onParamsProcessed?.(null);
+      return;
     }
 
-    if (typeof window !== "undefined") {
+    const target = selection ? resolveMenuNavigationTarget(data, selection, pageIndex) : null;
+    if (target) {
+      setPageIndex(target.pageIndex);
+      expandAncestors(target.ancestorKeys);
+      onParamsProcessed?.({ type: "navigate", ...target });
+    }
+
+    if (hasWindow) {
       scrollToCurrentHeadingHash();
     }
 

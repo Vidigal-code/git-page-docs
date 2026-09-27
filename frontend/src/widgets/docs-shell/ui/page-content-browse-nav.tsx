@@ -62,7 +62,7 @@ interface PageContentBrowseNavProps {
   browseNav: BrowseNavConfig;
 }
 
-export function PageContentBrowseNav({ browseNav }: PageContentBrowseNavProps) {
+export function PageContentBrowseNav({ browseNav }: Readonly<PageContentBrowseNavProps>) {
   const countText = `${browseNav.currentIndex + 1}/${browseNav.total}`;
   return (
     <div className={styles.browseNavBar}>

@@ -115,9 +115,9 @@ export function useAiConsole() {
         if (!cfg) return;
         for await (const delta of factory.create(providerId).stream({ messages: [{ role: 'user', content: text }] }, cfg)) {
           setMessages((m) => {
-            const next = [...m];
-            next[next.length - 1] = { role: 'assistant', content: next[next.length - 1].content + delta };
-            return next;
+            const last = m.at(-1);
+            if (!last) return m;
+            return [...m.slice(0, -1), { role: 'assistant', content: last.content + delta }];
           });
         }
       } catch (e) {

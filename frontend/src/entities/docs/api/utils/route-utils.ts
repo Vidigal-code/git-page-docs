@@ -1,10 +1,11 @@
+import { filterEnabledLanguages, getSiteLanguageToggles } from "@gitpagedocs/tools/i18n";
 import type {
   AudioRouteConfig,
   ContentTypeRouteConfig,
   GitPageDocsConfig,
+  LanguageCode,
   RouteConfig,
 } from "@/entities/docs/model/types";
-import type { LanguageCode } from "@/entities/docs/model/types";
 
 export function hasPath(route: ContentTypeRouteConfig | RouteConfig): route is ContentTypeRouteConfig & { path: Record<LanguageCode, string> } {
   return "path" in route && typeof (route as ContentTypeRouteConfig).path === "object";
@@ -25,7 +26,16 @@ export function getLanguagesFromPathRecord(pathRecord: Record<string, string> | 
   return Object.keys(pathRecord);
 }
 
-export function getLanguages(
+/**
+ * Hides the languages `config.json` switches off in `site.languages`, keeping
+ * the content order. The default language survives when every one is off, so
+ * a site can never render without a language.
+ */
+export function applyLanguageToggles(config: GitPageDocsConfig, languages: LanguageCode[]): LanguageCode[] {
+  return filterEnabledLanguages(languages, getSiteLanguageToggles(config), config.site.defaultLanguage);
+}
+
+function getContentLanguages(
   config: GitPageDocsConfig,
   routesMd: (ContentTypeRouteConfig | RouteConfig)[],
   routesSourceViewer: ContentTypeRouteConfig[],
@@ -45,4 +55,19 @@ export function getLanguages(
   if (firstAudio && hasAudio(firstAudio)) return getLanguagesFromPathRecord(firstAudio.audio.pathAudio);
   if (config.routes?.[0]?.path) return getLanguagesFromPathRecord(config.routes[0].path);
   return [config.site.defaultLanguage];
+}
+
+/** Languages the content ships, minus the ones `site.languages` disables. */
+export function getLanguages(
+  config: GitPageDocsConfig,
+  routesMd: (ContentTypeRouteConfig | RouteConfig)[],
+  routesSourceViewer: ContentTypeRouteConfig[],
+  routesHtml: ContentTypeRouteConfig[],
+  routesVideo: ContentTypeRouteConfig[],
+  routesAudio?: ContentTypeRouteConfig[],
+): LanguageCode[] {
+  return applyLanguageToggles(
+    config,
+    getContentLanguages(config, routesMd, routesSourceViewer, routesHtml, routesVideo, routesAudio),
+  );
 }

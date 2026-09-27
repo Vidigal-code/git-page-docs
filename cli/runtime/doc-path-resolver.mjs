@@ -41,14 +41,16 @@ export function withVersionBadge(content, versionId, language) {
     return normalized;
   }
 
-  const label =
-    language === "pt"
-      ? `> Versao: ${versionId}`
-      : language === "es"
-        ? `> Version (ES): ${versionId}`
-        : `> Version: ${versionId}`;
+  const label = `> ${versionLabelPrefix(language)}: ${versionId}`;
 
   return `${normalized.trimEnd()}\n\n${label}\n`;
+}
+
+/** Badge wording per language; every other language reads the English form. */
+const VERSION_LABEL_PREFIXES = { pt: "Versao", es: "Version (ES)" };
+
+function versionLabelPrefix(language) {
+  return VERSION_LABEL_PREFIXES[language] ?? "Version";
 }
 
 export function normalizeToOutputPath(outputDir, configPath) {

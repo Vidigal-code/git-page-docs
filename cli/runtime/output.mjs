@@ -77,19 +77,101 @@ async function writeLayoutArtifacts(options) {
   }
 }
 
-/** Write the language manifest and one UI-strings bundle per shipped language. */
+/**
+ * Write one UI-strings bundle per shipped language. Which ones are on is
+ * `site.languages` in config.json, so the 1.1.68 `langs.json` manifest is
+ * removed: a stale copy would only mislead.
+ */
 async function writeLanguageArtifacts(root, outputDir, artifacts) {
   const paths = languageArtifactPaths(outputDir);
-  await writeJson(root, paths.manifest, artifacts.languageManifest);
+  rmSync(path.join(root, paths.legacyManifest), { force: true });
   for (const [language, bundle] of Object.entries(artifacts.languageBundles)) {
     await writeJson(root, paths.bundle(language), bundle);
+  }
+}
+
+/** Keep only versioned docs output in docs/, removing legacy root language folders. */
+function removeLegacyLanguageDirs(root, outputDir) {
+  for (const legacyLanguageDir of SUPPORTED_LANGUAGES) {
+    const legacyPath = path.join(root, outputDir, "docs", legacyLanguageDir);
+    if (existsSync(legacyPath)) {
+      rmSync(legacyPath, { recursive: true, force: true });
+    }
+  }
+}
+
+async function writeVersionConfigs(root, outputDir, versionConfigs) {
+  for (const [versionId, versionConfig] of Object.entries(versionConfigs)) {
+    await writeJson(root, `${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);
+  }
+}
+
+async function writeMarkdownDoc(root, outputDir, versionId, docPath, docs) {
+  const key = parseDocFileToKey(path.basename(docPath));
+  const language = extractLanguageFromPath(docPath);
+  const content = key && language ? docs?.[language]?.[key] : undefined;
+  if (!content) return;
+  const versionedContent = withVersionBadge(content, versionId, language);
+  await writeText(root, normalizeToOutputPath(outputDir, docPath), versionedContent);
+}
+
+async function writeVersionMarkdownDocs(root, outputDir, versionId, versionConfig, docs) {
+  const versionRoutesMd = versionConfig["routes-md"] ?? versionConfig.routes ?? [];
+  for (const route of versionRoutesMd) {
+    for (const docPath of Object.values(route.path ?? {})) {
+      await writeMarkdownDoc(root, outputDir, versionId, docPath, docs);
+    }
+  }
+}
+
+async function writeHtmlDoc(root, outputDir, docPath, docsHtml) {
+  const key = parseHtmlFileToKey(path.basename(docPath));
+  const language = extractLanguageFromPath(docPath);
+  const content = key && language ? docsHtml[key]?.[language] : undefined;
+  if (!content) return;
+  const normalizedHtmlPath = normalizeToOutputPath(outputDir, docPath);
+  await writeText(root, normalizedHtmlPath, content);
+  // Backward-compatible alias for tools or users that still expect ".html".
+  if (!path.extname(docPath)) {
+    await writeText(root, `${normalizedHtmlPath}.html`, content);
+  }
+}
+
+async function writeVersionHtmlDocs(root, outputDir, versionConfig, docsHtml) {
+  const versionRoutesHtml = versionConfig["routes-html"] ?? [];
+  for (const route of versionRoutesHtml) {
+    if (route.url) continue;
+    for (const docPath of Object.values(route.path ?? {})) {
+      await writeHtmlDoc(root, outputDir, docPath, docsHtml);
+    }
+  }
+}
+
+/** Ensure version folders always include an index file. */
+async function writeVersionFallbackIndexes(root, outputDir, versionId, docs) {
+  for (const language of SUPPORTED_LANGUAGES) {
+    const fallbackIndex = docs?.[language]?.index;
+    if (!fallbackIndex) continue;
+    const versionIndexPath = `${outputDir}/docs/versions/${versionId}/${language}/index.md`;
+    if (!existsSync(path.join(root, versionIndexPath))) {
+      const versionedFallbackIndex = withVersionBadge(fallbackIndex, versionId, language);
+      await writeText(root, versionIndexPath, versionedFallbackIndex);
+    }
+  }
+}
+
+async function writeVersionedDocs(root, outputDir, artifacts) {
+  const docsHtml = artifacts.docsHtml ?? {};
+  for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
+    await writeVersionMarkdownDocs(root, outputDir, versionId, versionConfig, artifacts.docs);
+    await writeVersionHtmlDocs(root, outputDir, versionConfig, docsHtml);
+    await writeVersionFallbackIndexes(root, outputDir, versionId, artifacts.docs);
   }
 }
 
 export async function writeConfigOnlyOutput(options) {
   const {
     root,
-    pkgRoot,
     outputDir,
     artifacts,
     useLocalLayoutConfig,
@@ -98,13 +180,7 @@ export async function writeConfigOnlyOutput(options) {
     createThemeTemplate,
   } = options;
 
-  // Keep only versioned docs output in docs/, removing legacy root language folders.
-  for (const legacyLanguageDir of SUPPORTED_LANGUAGES) {
-    const legacyPath = path.join(root, outputDir, "docs", legacyLanguageDir);
-    if (existsSync(legacyPath)) {
-      rmSync(legacyPath, { recursive: true, force: true });
-    }
-  }
+  removeLegacyLanguageDirs(root, outputDir);
 
   await writeJson(root, `${outputDir}/config.json`, artifacts.rootConfig);
   await writeLanguageArtifacts(root, outputDir, artifacts);
@@ -117,55 +193,9 @@ export async function writeConfigOnlyOutput(options) {
     artifacts,
     createThemeTemplate,
   });
-
-  for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
-    await writeJson(root, `${outputDir}/docs/versions/${versionId}/config.json`, versionConfig);
-  }
+  await writeVersionConfigs(root, outputDir, artifacts.versionConfigs);
 
   removeLegacySourceViewerFiles(root, outputDir);
 
-  for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
-    const versionRoutesMd = versionConfig["routes-md"] ?? versionConfig.routes ?? [];
-    for (const route of versionRoutesMd) {
-      for (const docPath of Object.values(route.path ?? {})) {
-        const fileName = path.basename(docPath);
-        const key = parseDocFileToKey(fileName);
-        const language = extractLanguageFromPath(docPath);
-        const content = key && language ? artifacts.docs?.[language]?.[key] : undefined;
-        if (!content) continue;
-        const versionedContent = withVersionBadge(content, versionId, language);
-        await writeText(root, normalizeToOutputPath(outputDir, docPath), versionedContent);
-      }
-    }
-
-    const versionRoutesHtml = versionConfig["routes-html"] ?? [];
-    const docsHtml = artifacts.docsHtml ?? {};
-    for (const route of versionRoutesHtml) {
-      if (route.url) continue;
-      for (const docPath of Object.values(route.path ?? {})) {
-        const fileName = path.basename(docPath);
-        const key = parseHtmlFileToKey(fileName);
-        const language = extractLanguageFromPath(docPath);
-        const content = key && language ? docsHtml[key]?.[language] : undefined;
-        if (!content) continue;
-        const normalizedHtmlPath = normalizeToOutputPath(outputDir, docPath);
-        await writeText(root, normalizedHtmlPath, content);
-        // Backward-compatible alias for tools or users that still expect ".html".
-        if (!path.extname(docPath)) {
-          await writeText(root, `${normalizedHtmlPath}.html`, content);
-        }
-      }
-    }
-
-    // Ensure version folders always include an index file.
-    for (const language of SUPPORTED_LANGUAGES) {
-      const fallbackIndex = artifacts.docs?.[language]?.index;
-      if (!fallbackIndex) continue;
-      const versionIndexPath = `${outputDir}/docs/versions/${versionId}/${language}/index.md`;
-      if (!existsSync(path.join(root, versionIndexPath))) {
-        const versionedFallbackIndex = withVersionBadge(fallbackIndex, versionId, language);
-        await writeText(root, versionIndexPath, versionedFallbackIndex);
-      }
-    }
-  }
+  await writeVersionedDocs(root, outputDir, artifacts);
 }

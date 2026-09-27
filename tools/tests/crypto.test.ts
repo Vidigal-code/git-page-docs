@@ -19,6 +19,12 @@ describe.each([
     expect(await crypto.decrypt(sealed, "pw")).toBe("super-secret");
   });
 
+  it("round trips every code point 0..255 through the base64 payload encoding", async () => {
+    const allBytes = String.fromCodePoint(...Array.from({ length: 256 }, (_, i) => i));
+    const sealed = await crypto.encrypt(allBytes, "pw");
+    expect(await crypto.decrypt(sealed, "pw")).toBe(allBytes);
+  });
+
   it("rejects wrong password with SecurityError", async () => {
     const sealed = await crypto.encrypt("x", "pw");
     await expect(crypto.decrypt(sealed, "bad")).rejects.toBeInstanceOf(SecurityError);

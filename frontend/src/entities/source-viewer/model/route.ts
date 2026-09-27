@@ -1,3 +1,4 @@
+import { trimSlashes } from "@/shared/lib/base-path";
 import type { SourceViewerRoute } from "./types";
 
 export const DEFAULT_SOURCE_VIEWER_OWNER = "Vidigal-code";
@@ -10,7 +11,7 @@ const TREE_SEGMENT = "tree";
 export const SOURCE_VIEWER_BASE_PATH = "/source-viewer";
 
 function sanitizeSegment(value: string | undefined, fallback: string): string {
-  const trimmed = value?.trim().replace(/^\/+|\/+$/g, "");
+  const trimmed = value ? trimSlashes(value.trim()) : "";
   return trimmed || fallback;
 }
 

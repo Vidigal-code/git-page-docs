@@ -22,9 +22,36 @@ interface DocsLockButtonProps {
   className?: string;
 }
 
+/** Configured react icon, then image, then the vendored lock glyph. */
+function renderLockIcon(icon: ResolvedNavMenuIconConfig, alt: string) {
+  if (icon.useReactIcon) {
+    return (
+      <span style={icon.reactIconStyle}>
+        <ReactIconByTag
+          tag={icon.reactIconTag || "FiLock"}
+          style={icon.reactIconStyle}
+          fallback={<FiLock aria-hidden />}
+        />
+      </span>
+    );
+  }
+  if (icon.iconImage) {
+    return (
+      <Image
+        src={icon.iconImage}
+        alt={alt}
+        width={icon.iconImgWidth}
+        height={icon.iconImgHeight}
+        unoptimized
+      />
+    );
+  }
+  return <FiLock aria-hidden />;
+}
+
 /** Menu button that re-locks the documentation (clears the unlock cache) after
  * a confirmation popup. Reuses the shared ConfirmPopup and icon resolver. */
-export function DocsLockButton({ icon, texts, onConfirmBlock, className }: DocsLockButtonProps) {
+export function DocsLockButton({ icon, texts, onConfirmBlock, className }: Readonly<DocsLockButtonProps>) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   return (
@@ -36,25 +63,7 @@ export function DocsLockButton({ icon, texts, onConfirmBlock, className }: DocsL
         aria-label={texts.tooltip}
         title={texts.tooltip}
       >
-        {icon.useReactIcon ? (
-          <span style={icon.reactIconStyle}>
-            <ReactIconByTag
-              tag={icon.reactIconTag || "FiLock"}
-              style={icon.reactIconStyle}
-              fallback={<FiLock aria-hidden />}
-            />
-          </span>
-        ) : icon.iconImage ? (
-          <Image
-            src={icon.iconImage}
-            alt={texts.tooltip}
-            width={icon.iconImgWidth}
-            height={icon.iconImgHeight}
-            unoptimized
-          />
-        ) : (
-          <FiLock aria-hidden />
-        )}
+        {renderLockIcon(icon, texts.tooltip)}
       </button>
       <ConfirmPopup
         isOpen={isPopupOpen}

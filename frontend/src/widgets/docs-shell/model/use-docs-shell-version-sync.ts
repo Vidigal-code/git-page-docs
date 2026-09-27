@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { buildVersionPath, type VersionEntry } from "@/entities/docs";
+import type { VersionEntry } from "@/entities/docs";
 import { toFullPath } from "@/shared/lib/base-path";
+import { readSavedVersion, resolveVersionSyncAction } from "./use-docs-shell-version-sync.helpers";
+import { withQuery } from "./with-query";
 
 export function useDocsShellVersionSync(options: {
   showVersionSelector: boolean;
@@ -23,65 +25,25 @@ export function useDocsShellVersionSync(options: {
 
   useEffect(() => {
     if (!showVersionSelector) return;
-    const params = new URLSearchParams(searchParams?.toString() ?? "");
-    const urlVersion = params.get("version");
-    const hasVersionInPath = /\/v\/[^/]+\/?$/.test(pathname);
-    const pathVersionMatch = pathname.match(/\/v\/([^/]+)\/?$/);
-    const versionFromPath = pathVersionMatch?.[1];
-    const hasVersionInConfig = (versionId: string | null | undefined) =>
-      Boolean(versionId && availableVersions.some((v) => v.id === versionId));
+    const action = resolveVersionSyncAction({
+      isRemoteRepositorySession,
+      pathname,
+      params: new URLSearchParams(searchParams?.toString() ?? ""),
+      availableVersions,
+      savedVersion: isRemoteRepositorySession ? null : readSavedVersion(versionStorageKey),
+    });
+    if (!action) return;
 
-    if (isRemoteRepositorySession) {
-      const validUrlVersion = hasVersionInConfig(urlVersion) ? urlVersion : undefined;
-      const validPathVersion = hasVersionInConfig(versionFromPath) ? versionFromPath : undefined;
-
-      if (validUrlVersion && validUrlVersion !== validPathVersion) {
-        const appBase = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
-        params.delete("version");
-        const targetAppPath = buildVersionPath(appBase, validUrlVersion);
-        const qs = params.toString();
-        const nextUrl = qs ? `${targetAppPath}?${qs}` : targetAppPath;
-        if (typeof window !== "undefined") {
-          window.location.replace(qs ? `${toFullPath(targetAppPath)}?${qs}` : toFullPath(targetAppPath));
-        } else {
-          routerReplace(nextUrl);
-        }
-        return;
-      }
-
-      if (urlVersion && !validUrlVersion) {
-        params.delete("version");
-        if (typeof window !== "undefined") {
-          const qs = params.toString();
-          const nextUrl = qs ? `${toFullPath(pathname)}?${qs}` : toFullPath(pathname);
-          window.history.replaceState({}, "", nextUrl);
-        } else {
-          const qs = params.toString();
-          routerReplace(qs ? `${pathname}?${qs}` : pathname);
-        }
-      }
+    const hasWindow = typeof window !== "undefined";
+    if (action.kind === "hard-redirect" && hasWindow) {
+      window.location.replace(withQuery(toFullPath(action.path), action.params));
       return;
     }
-
-    params.delete("version");
-    if (urlVersion && availableVersions.some((v) => v.id === urlVersion) && !hasVersionInPath) {
-      const appBase = pathname.replace(/\/$/, "") || pathname;
-      const target = `${appBase}/v/${urlVersion}`;
-      const qs = params.toString();
-      routerReplace(qs ? `${target}?${qs}` : target);
+    if (action.kind === "rewrite-url" && hasWindow) {
+      window.history.replaceState({}, "", withQuery(toFullPath(action.path), action.params));
       return;
     }
-    try {
-      const savedVersion = window.localStorage.getItem(versionStorageKey);
-      if (savedVersion && availableVersions.some((v) => v.id === savedVersion) && !hasVersionInPath) {
-        const appBase = pathname.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "") || pathname;
-        const target = buildVersionPath(appBase, savedVersion);
-        const qs = params.toString();
-        routerReplace(qs ? `${target}?${qs}` : target);
-      }
-    } catch {
-      // Ignore localStorage errors (private mode / blocked storage).
-    }
+    routerReplace(withQuery(action.path, action.params));
   }, [
     showVersionSelector,
     isRemoteRepositorySession,

@@ -9,13 +9,13 @@ export function GuideHero({
   backToSearchHref,
   backToSearchLabel,
   onPrimary,
-}: {
+}: Readonly<{
   hero: GuideHeroModel;
   projectUrl: string;
   backToSearchHref: string;
   backToSearchLabel: string;
   onPrimary: () => void;
-}) {
+}>) {
   return (
     <header className={styles.hero}>
       <a className={styles.backLink} href={backToSearchHref}>

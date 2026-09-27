@@ -1,23 +1,11 @@
 "use client";
 
 import { getEmbedUrl, isNativeAudio, isNativeVideo, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
-import { ContentContainerWrapper, type BrowseNavProps } from "./content-container-wrapper";
+import type { BrowseNavConfig } from "../page-content-browse-nav";
+import { ContentContainerWrapper } from "./content-container-wrapper";
+import { resolveCaptionsTrackProps } from "./captions-track";
+import { parseCssToStyle } from "./parse-css-to-style";
 import styles from "../../docs-shell.module.css";
-
-function parseCssToStyle(css: string | undefined): React.CSSProperties {
-  if (!css) return {};
-  const out: Record<string, string> = {};
-  css.split(";").forEach((part) => {
-    const idx = part.indexOf(":");
-    if (idx < 0) return;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (!k || !v) return;
-    const camel = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-    out[camel] = v;
-  });
-  return out as React.CSSProperties;
-}
 
 interface VideoContainerProps {
   videoType: string;
@@ -30,7 +18,7 @@ interface VideoContainerProps {
   isDarkMode?: boolean;
   /** When true, hide title and description - e.g. in URL fullscreen overlay */
   hideTitleDescription?: boolean;
-  browseNav?: BrowseNavProps;
+  browseNav?: BrowseNavConfig;
   /** Called when fullscreen is about to open (for URL sync) */
   onFullscreenOpen?: () => void;
   /** Called when fullscreen is about to close (for URL sync) */
@@ -50,9 +38,10 @@ export function VideoContainer({
   onFullscreenOpen,
   onFullscreenClose,
   hideTitleDescription = false,
-}: VideoContainerProps) {
+}: Readonly<VideoContainerProps>) {
   const type = String(videoType).toLowerCase();
   const embedUrl = getEmbedUrl(videoType, pathVideo, language);
+  const captionsTrackProps = resolveCaptionsTrackProps(config?.video?.captions, language);
 
   const title = config?.title?.[language] ?? config?.title?.en;
   const description = config?.description?.[language] ?? config?.description?.en;
@@ -66,6 +55,7 @@ export function VideoContainer({
       return (
         <div className={styles.videoWrapper}>
           <audio controls className={styles.videoNative} src={embedUrl}>
+            <track kind="captions" {...captionsTrackProps} />
             Your browser does not support the audio element.
           </audio>
         </div>
@@ -75,6 +65,7 @@ export function VideoContainer({
       return (
         <div className={styles.videoWrapper}>
           <video controls className={styles.videoNative} src={embedUrl} style={{ width: "100%", maxWidth: "100%" }}>
+            <track kind="captions" {...captionsTrackProps} />
             Your browser does not support the video element.
           </video>
         </div>

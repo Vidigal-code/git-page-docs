@@ -4,7 +4,7 @@ interface QuickNavigationTriggerProps {
   className?: string;
 }
 
-export function QuickNavigationTrigger({ label, onClick, className }: QuickNavigationTriggerProps) {
+export function QuickNavigationTrigger({ label, onClick, className }: Readonly<QuickNavigationTriggerProps>) {
   return (
     <button className={className} onClick={onClick}>
       {label}

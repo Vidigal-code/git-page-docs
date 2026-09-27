@@ -2,6 +2,7 @@ import { legacyProviderToCatalogId, resolveApiKeyFromEnv } from "@gitpagedocs/to
 import type { AiProviderId } from "@gitpagedocs/tools/ports";
 import { PROVIDER_CATALOG } from "@gitpagedocs/tools";
 import { AiConfigFileRepository } from "../infrastructure/ai-config-file";
+import type { AiCliConfig } from "../core/models/ai-cli-config";
 
 export interface ResolvedChatCredentials {
   readonly providerId: AiProviderId;
@@ -35,12 +36,7 @@ export async function resolveChatCredentials(
   const configRepo = input.configRepo ?? new AiConfigFileRepository({ cwd: input.cwd });
   const stored = await configRepo.read().catch(() => null);
 
-  const providerId = input.providerOverride
-    ? legacyProviderToCatalogId(input.providerOverride)
-    : stored
-      ? legacyProviderToCatalogId(stored.ai.provider)
-      : firstProviderFromEnv(env) ?? "openai";
-
+  const providerId = resolveProviderId(input.providerOverride, stored, env);
   const spec = PROVIDER_CATALOG[providerId];
   const model = input.modelOverride?.trim() || stored?.ai.model?.trim() || spec.defaultModel;
   const baseUrl = stored?.ai.baseUrl?.trim() || undefined;
@@ -50,6 +46,17 @@ export async function resolveChatCredentials(
   if (!keyless && !apiKey) return null;
 
   return { providerId, model, apiKey, baseUrl };
+}
+
+/** Explicit override > stored config > first provider with an env key > openai. */
+function resolveProviderId(
+  override: string | undefined,
+  stored: AiCliConfig | null,
+  env: Readonly<Record<string, string | undefined>>,
+): AiProviderId {
+  if (override) return legacyProviderToCatalogId(override);
+  if (stored) return legacyProviderToCatalogId(stored.ai.provider);
+  return firstProviderFromEnv(env) ?? "openai";
 }
 
 function firstProviderFromEnv(

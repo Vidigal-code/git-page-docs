@@ -29,7 +29,7 @@ export function SiteFooter({
   linkUrl,
   dateMode = "browser",
   dateCustom = "",
-}: SiteFooterProps) {
+}: Readonly<SiteFooterProps>) {
   const [dateText, setDateText] = useState("--/--/----");
 
   useEffect(() => {

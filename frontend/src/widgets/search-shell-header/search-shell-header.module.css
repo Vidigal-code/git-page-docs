@@ -279,3 +279,19 @@
     z-index: 50;
   }
 }
+
+/* Pointer-only click-away surface for the mobile drawer: native <button> out
+ * of the tab order, painted beneath the drawer so it needs no click handler. */
+.overlayBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: default;
+}

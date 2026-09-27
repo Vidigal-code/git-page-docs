@@ -16,7 +16,7 @@ interface TocScrollContainerProviderProps {
 export function TocScrollContainerProvider({
   scrollContainerRef,
   children,
-}: TocScrollContainerProviderProps) {
+}: Readonly<TocScrollContainerProviderProps>) {
   return (
     <TocScrollContainerContext.Provider value={scrollContainerRef}>
       {children}

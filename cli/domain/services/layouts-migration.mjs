@@ -56,5 +56,19 @@ function toSortedPaths(paths) {
   const normalized = paths
     .filter((entry) => typeof entry === "string" && entry.trim().length > 0)
     .map((entry) => entry.replace(/[\\/]+/g, "/").replace(/^\/+/, ""));
-  return [...new Set(normalized)].sort();
+  return [...new Set(normalized)].sort(compareCodeUnits);
+}
+
+/**
+ * Plain UTF-16 code-unit order (what `sort()` does by default), spelled out so
+ * a plan never depends on the runtime locale.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
+function compareCodeUnits(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
 }

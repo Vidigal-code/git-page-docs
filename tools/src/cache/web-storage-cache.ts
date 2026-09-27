@@ -68,7 +68,7 @@ export class WebStorageCache<TValue = unknown> implements Cache<TValue> {
     const toRemove: string[] = [];
     for (let i = 0; i < this.storage.length; i += 1) {
       const k = this.storage.key(i);
-      if (k && k.startsWith(this.prefix)) toRemove.push(k);
+      if (k?.startsWith(this.prefix)) toRemove.push(k);
     }
     for (const k of toRemove) this.storage.removeItem(k);
   }

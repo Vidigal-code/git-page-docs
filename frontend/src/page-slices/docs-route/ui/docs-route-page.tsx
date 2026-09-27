@@ -2,7 +2,7 @@ import { DocsShell } from "@/widgets/docs-shell";
 import { loadDocsRouteData } from "@/processes/docs-loading";
 import { RepositorySearchScreen } from "./repository-search-screen";
 
-export async function DocsRoutePage({ repoSlug }: { repoSlug: string[] | undefined }) {
+export async function DocsRoutePage({ repoSlug }: Readonly<{ repoSlug: string[] | undefined }>) {
   const routeData = await loadDocsRouteData(repoSlug);
 
   if (routeData.shouldShowRepositorySearch) {

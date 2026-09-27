@@ -7,22 +7,26 @@ test.describe("docs site", () => {
     page.on("pageerror", (e) => errors.push(String(e)));
     await page.goto("/");
     await expect(page.locator("body")).toBeVisible();
-    // The app mounts a main/article region for documentation content.
-    await page.waitForLoadState("networkidle");
+    // The docs shell mounts a main region for documentation content once the
+    // app has hydrated; waiting for it is the readiness signal.
+    await expect(page.getByRole("main")).toBeVisible();
+    await page.waitForLoadState("load");
     expect(errors, errors.join("\n")).toHaveLength(0);
   });
 
   test("no horizontal overflow", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
-    // Let fonts + hydration settle so we measure the stable layout, not a
-    // transient cold-compile state.
+    await expect(page.getByRole("main")).toBeVisible();
+    // Fonts swap in after hydration and can widen the layout, so wait for
+    // them before measuring.
     await page.evaluate(() => (document as Document & { fonts?: { ready?: Promise<unknown> } }).fonts?.ready);
-    await page.waitForTimeout(800);
-    const overflow = await page.evaluate(() =>
-      Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
-    );
+    const measureOverflow = () =>
+      page.evaluate(() =>
+        Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
+      );
+    // Poll until the layout has settled instead of sleeping for a fixed time:
+    // a transient cold-compile state clears within the assertion timeout.
     // Small tolerance for sub-pixel scrollbar/rounding differences.
-    expect(overflow).toBeLessThanOrEqual(2);
+    await expect.poll(measureOverflow, { timeout: 10_000 }).toBeLessThanOrEqual(2);
   });
 });

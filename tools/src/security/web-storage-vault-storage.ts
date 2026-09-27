@@ -10,7 +10,7 @@ export class WebStorageVaultStorage implements VaultStorage {
 
   async load(): Promise<string | null> {
     const raw = this.storage.getItem(this.key);
-    return raw && raw.trim() ? raw : null;
+    return raw?.trim() ? raw : null;
   }
 
   async save(serialized: string): Promise<void> {

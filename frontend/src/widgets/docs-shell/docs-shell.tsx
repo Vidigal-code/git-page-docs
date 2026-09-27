@@ -34,6 +34,8 @@ import { DocsShellMainContent } from "./ui/docs-shell-main-content";
 import { DocsShellOverlays } from "./ui/docs-shell-overlays";
 import { DocsShellSidebar } from "./ui/docs-shell-sidebar";
 import { DocsShellAudioSurface } from "./ui/docs-shell-audio-surface";
+import { buildAudioRouteControlsConfig } from "./ui/content-type-containers/audio-route-controls-config";
+import type { BrowseNavigationProps } from "./model/content-browse-props";
 import { DocsShellProvider } from "./model/docs-shell-context";
 import { AudioPlayerProvider } from "@/features/audio-player";
 import dynamic from "next/dynamic";
@@ -47,7 +49,7 @@ const AiChatDrawer = dynamic(
 import { resolveAiChatOpenIconConfig, resolveAiChatCloseIconConfig, resolveAiChatSettingsIconConfig, resolveAiChatSendIconConfig, resolveAiChatCancelIconConfig, resolveAiChatTrashIconConfig, resolveAiChatClearChatIconConfig, resolveAiChatClearDataIconConfig, resolveAiChatExpandIconConfig, resolveAiChatCollapseIconConfig, resolveAiChatLockIconConfig } from "@/shared/lib/icons/ai-chat/resolve-ai-chat-icon";
 import styles from "./docs-shell.module.css";
 
-export function DocsShell({ data }: { data: LoadedDocsData }) {
+export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   const { getCurrentSearchParams, replaceUrlWithoutNavigation, pathname, router } = useDocsShellUrl();
   const searchParams = useSearchParams() ?? new URLSearchParams();
 
@@ -83,18 +85,7 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     toggleNode,
     isNodeExpanded,
     expandAncestors,
-    mdBrowseIndex,
-    htmlBrowseIndex,
-    videoBrowseIndex,
-    audioBrowseIndex,
-    setMdBrowseIndex,
-    setHtmlBrowseIndex,
-    setVideoBrowseIndex,
-    setAudioBrowseIndex,
-    mdItems,
-    htmlItems,
-    videoItems,
-    audioItems,
+    browse,
     language,
     onLanguageChange,
     activeThemeId,
@@ -192,29 +183,28 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     routerReplace: router.replace,
   });
 
-  const { headerIconConfig, controlsConfig, navMenuConfig, footerEnabled, footerConfig } = useDocsShellConfig(
+  const { headerIconConfig, controlsConfig, navMenuConfig, footerEnabled, footerConfig } = useDocsShellConfig({
     data,
     activeLayout,
     language,
     selectedVersionValue,
     activeThemeId,
     canToggleMode,
-    nextMode === "dark",
+    nextModeIsDark: nextMode === "dark",
     currentPage,
     pageHasMarkdown,
-  );
+  });
 
-  useDocsShellUrlParams(
+  useDocsShellUrlParams({
     searchParams,
     data,
     language,
     pageIndex,
     setPageIndex,
     expandAncestors,
-    isPathAllowed,
-    undefined,
+    canNavigateToPathClick: isPathAllowed,
     onFullscreenRequest,
-  );
+  });
 
   useDocsShellVersionSync({
     showVersionSelector: controlsConfig.showVersionSelector,
@@ -480,6 +470,17 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
     onToggleMode,
   };
 
+  // Shared by the inline content blocks and the URL fullscreen overlay.
+  const navigation: BrowseNavigationProps = {
+    routeGuideEnabled,
+    breadcrumbTrail,
+    onMenuClick,
+    homePathClick,
+    homeAncestorKeys,
+    routeGuideIconConfig,
+    audioRouteControlsConfig: buildAudioRouteControlsConfig(controlsProps),
+  };
+
   if (docsAccess.state === "loading") {
     return <div className={styles.wrapper} style={cssVars} />;
   }
@@ -552,7 +553,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           iconImgHeight={iconImageMenuHeaderImgHeight}
           menuOpen={menuOpen}
           menuOpenLabel={labels.menuOpenLabel}
-          menuCloseLabel={labels.menuCloseLabel}
           onToggleMenu={() => setMenuOpen((v) => !v)}
           activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
           controlsProps={controlsProps}
@@ -561,29 +561,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           data={data}
           language={language}
           nextMode={nextMode}
-          previousLabel={labels.previousLabel}
-          nextLabel={labels.nextLabel}
-          browsePrevLabel={labels.browsePrevLabel}
-          browseNextLabel={labels.browseNextLabel}
-          fullscreenExpandLabel={labels.fullscreenExpandLabel}
-          mdBrowseIndex={mdBrowseIndex}
-          htmlBrowseIndex={htmlBrowseIndex}
-          videoBrowseIndex={videoBrowseIndex}
-          audioBrowseIndex={audioBrowseIndex}
-          setMdBrowseIndex={setMdBrowseIndex}
-          setHtmlBrowseIndex={setHtmlBrowseIndex}
-          setVideoBrowseIndex={setVideoBrowseIndex}
-          setAudioBrowseIndex={setAudioBrowseIndex}
-          mdItems={mdItems}
-          htmlItems={htmlItems}
-          videoItems={videoItems}
-          audioItems={audioItems}
-          routeGuideEnabled={routeGuideEnabled}
-          breadcrumbTrail={breadcrumbTrail}
-          onMenuClick={onMenuClick}
-          homePathClick={homePathClick}
-          homeAncestorKeys={homeAncestorKeys}
-          routeGuideIconConfig={routeGuideIconConfig}
+          labels={labels}
+          browse={browse}
+          navigation={navigation}
           onFullscreenOpen={handleInlineFullscreenOpen}
           onFullscreenClose={handleInlineFullscreenClose}
           linearNavigationEntries={linearNavigationEntries}
@@ -599,12 +579,12 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           setMenuOpen={setMenuOpen}
           headerName={headerName}
           headerMenuTree={headerMenuTree}
-          menuCloseLabel={labels.menuCloseLabel}
           onMenuClick={onMenuClick}
           toggleNode={toggleNode}
           isNodeExpanded={isNodeExpanded}
           controlsProps={controlsProps}
           navMenuConfig={navMenuConfig}
+          labels={labels}
           controlsConfig={{
             activeNavigation: controlsConfig.activeNavigation,
             focusModeEnabled: controlsConfig.focusModeEnabled,
@@ -635,8 +615,6 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           setQuickNavActiveIndex={setQuickNavActiveIndex}
           focusModeOpen={focusModeOpen}
           focusModeLabel={controlsConfig.focusModeLabel}
-          previousLabel={labels.previousLabel}
-          nextLabel={labels.nextLabel}
           focusModeCurrentHtml={focusModeCurrentHtml}
           canFocusModeGoPrevious={canFocusModeGoPrevious}
           canFocusModeGoNext={canFocusModeGoNext}
@@ -649,27 +627,9 @@ export function DocsShell({ data }: { data: LoadedDocsData }) {
           urlFullscreenParams={urlFullscreenParams}
           data={data}
           language={language}
-          mdBrowseIndex={mdBrowseIndex}
-          htmlBrowseIndex={htmlBrowseIndex}
-          videoBrowseIndex={videoBrowseIndex}
-          audioBrowseIndex={audioBrowseIndex}
-          setMdBrowseIndex={setMdBrowseIndex}
-          setHtmlBrowseIndex={setHtmlBrowseIndex}
-          setVideoBrowseIndex={setVideoBrowseIndex}
-          setAudioBrowseIndex={setAudioBrowseIndex}
-          mdItems={mdItems}
-          htmlItems={htmlItems}
-          videoItems={videoItems}
-          audioItems={audioItems}
-          routeGuideEnabled={routeGuideEnabled}
-          breadcrumbTrail={breadcrumbTrail}
-          homePathClick={homePathClick}
-          homeAncestorKeys={homeAncestorKeys}
-          routeGuideIconConfig={routeGuideIconConfig}
           nextMode={nextMode}
-          browsePrevLabel={labels.browsePrevLabel}
-          browseNextLabel={labels.browseNextLabel}
-          fullscreenExpandLabel={labels.fullscreenExpandLabel}
+          browse={browse}
+          navigation={navigation}
           closeUrlFullscreen={closeUrlFullscreen}
           onOpenAiChat={openAiChat}
           aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}

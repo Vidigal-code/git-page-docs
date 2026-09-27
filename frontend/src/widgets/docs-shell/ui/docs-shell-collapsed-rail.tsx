@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { FiChevronsRight } from "@/shared/ui/fallback-icons";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
+import { ConfiguredIcon } from "./docs-shell-icon";
 import styles from "../docs-shell.module.css";
 
 export interface CollapsedNavRailProps {
@@ -21,7 +20,9 @@ export function CollapsedNavRail({
   blockMenuOnNav,
   setBlockMenuOnNav,
   navMenuConfig,
-}: CollapsedNavRailProps) {
+}: Readonly<CollapsedNavRailProps>) {
+  const expandFallback = <FiChevronsRight aria-hidden />;
+
   return (
     <div className={styles.collapsedNavRail}>
       <NavMenuBlockToggle
@@ -40,19 +41,13 @@ export function CollapsedNavRail({
         title={menuOpenLabel}
         data-testid="sidebar-expand"
       >
-        {navMenuConfig.sidebarExpandIcon.useReactIcon ? (
-          <span style={navMenuConfig.sidebarExpandIcon.reactIconStyle}>
-            <ReactIconByTag
-              tag={navMenuConfig.sidebarExpandIcon.reactIconTag || "FiChevronsRight"}
-              style={navMenuConfig.sidebarExpandIcon.reactIconStyle}
-              fallback={<FiChevronsRight aria-hidden />}
-            />
-          </span>
-        ) : navMenuConfig.sidebarExpandIcon.iconImage ? (
-          <Image src={navMenuConfig.sidebarExpandIcon.iconImage} alt="Expand sidebar" width={navMenuConfig.sidebarExpandIcon.iconImgWidth} height={navMenuConfig.sidebarExpandIcon.iconImgHeight} unoptimized />
-        ) : (
-          <FiChevronsRight aria-hidden />
-        )}
+        <ConfiguredIcon
+          icon={navMenuConfig.sidebarExpandIcon}
+          defaultTag="FiChevronsRight"
+          fallback={expandFallback}
+          reactIconFallback={expandFallback}
+          alt="Expand sidebar"
+        />
       </button>
     </div>
   );

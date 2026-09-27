@@ -24,7 +24,7 @@ export function VersionSelector({
   className,
   ariaLabel,
   themeVarsStyle,
-}: VersionSelectorProps) {
+}: Readonly<VersionSelectorProps>) {
   return (
     <DropdownSelector
       label={ariaLabel ?? "Version"}

@@ -2,9 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { resolveThemeByMode, type LayoutItem } from "@/entities/docs";
 import { THEME_URL_PARAM } from "@/shared/config/constants";
 
+type ThemeMode = "light" | "dark";
+
+/** The value as a theme mode, or null for anything else (missing param, stale storage). */
+function toThemeMode(value: string | null): ThemeMode | null {
+  return value === "dark" || value === "light" ? value : null;
+}
+
 interface UseDocsShellThemeStateArgs {
   layouts: LayoutItem[];
-  configuredDefaultMode: "light" | "dark";
+  configuredDefaultMode: ThemeMode;
   initialThemeBaseId: string | undefined;
   searchParams: URLSearchParams | { get(name: string): string | null };
   themeModeStorageKey: string;
@@ -48,9 +55,9 @@ export function useDocsShellThemeState({
         });
         return;
       }
-      const urlMode = searchParams.get("modetheme");
+      const urlMode = toThemeMode(searchParams.get("modetheme"));
       // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo default.
-      if (urlMode !== "dark" && urlMode !== "light") {
+      if (!urlMode) {
         const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
         const savedLayout = savedThemeId ? layouts.find((layout) => layout.id === savedThemeId) : null;
         if (savedLayout) {
@@ -61,13 +68,8 @@ export function useDocsShellThemeState({
           return;
         }
       }
-      const savedMode = window.localStorage.getItem(themeModeStorageKey);
-      const targetMode =
-        urlMode === "dark" || urlMode === "light"
-          ? urlMode
-          : savedMode === "dark" || savedMode === "light"
-            ? savedMode
-            : configuredDefaultMode;
+      const savedMode = toThemeMode(window.localStorage.getItem(themeModeStorageKey));
+      const targetMode = urlMode ?? savedMode ?? configuredDefaultMode;
       const baseLayout = layouts.find((layout) => layout.id === initialThemeBaseId) ?? layouts[0];
       if (baseLayout) {
         const resolved = resolveThemeByMode(layouts, baseLayout, targetMode);

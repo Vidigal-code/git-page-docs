@@ -35,7 +35,7 @@ export function SelectionDialog({
   onClose,
   themeVarsStyle,
 }: SelectionDialogProps) {
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Land keyboard and screen-reader focus on the current choice so the list
   // scrolls to it even with many options.
@@ -62,15 +62,12 @@ export function SelectionDialog({
 
   return createPortal(
     <div style={themeVarsStyle}>
-      <div className={styles.overlay} onClick={onClose} role="presentation">
-        <div
-          ref={dialogRef}
-          className={styles.dialog}
-          role="dialog"
-          aria-modal="true"
-          aria-label={title}
-          onClick={(event) => event.stopPropagation()}
-        >
+      <div className={styles.overlay}>
+        {/* Pointer-only click-away surface (Escape covers keyboard users); it
+            is out of the tab order and hidden from assistive tech, which reach
+            the dialog itself instead. */}
+        <button type="button" className={styles.backdrop} onClick={onClose} tabIndex={-1} aria-hidden />
+        <dialog ref={dialogRef} open className={styles.dialog} aria-modal="true" aria-label={title}>
           <p className={styles.title}>{title}</p>
           <div className={styles.optionList}>
             {options.map((option) => {
@@ -88,7 +85,7 @@ export function SelectionDialog({
               );
             })}
           </div>
-        </div>
+        </dialog>
       </div>
     </div>,
     document.body,

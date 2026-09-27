@@ -46,7 +46,8 @@ export function registerAiTools(server: McpServer, ctx: ServerContext): void {
     },
     safe(async ({ provider, model }) => {
       await ctx.saveSelection({ provider, model });
-      return text(`Default provider set to ${provider}${model ? ` (${model})` : ""}.`);
+      const modelSuffix = model ? ` (${model})` : "";
+      return text(`Default provider set to ${provider}${modelSuffix}.`);
     }),
   );
 
