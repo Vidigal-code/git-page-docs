@@ -2,8 +2,8 @@ import { describe, it, expect, afterEach } from "vitest";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-// @ts-expect-error .mjs runtime module is type-less in this package.
 import { applyRouteDefaults, expandSiteIcons } from "@gitpagedocs/tools/config-format";
+// @ts-expect-error .mjs runtime module is type-less in this package.
 import * as output from "../../runtime/output.mjs";
 // @ts-expect-error .mjs runtime module is type-less in this package.
 import * as orchestrator from "../../builders/config-orchestrator.mjs";
