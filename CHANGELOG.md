@@ -3,6 +3,19 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## Unreleased
+
+### Introduction guide scroll story
+
+- `/introduction-guide` opens with a scroll-driven tour: the page pins a stage while you scroll and plays
+  one chapter per section, with a large outlined numeral, a balanced headline, the lead, the first
+  paragraph and up to four highlights (list items, table keys or commands) moving at different depths.
+- A progress bar, a `01 / 10` counter and a chapter rail show where you are; the rail jumps to any
+  chapter and a skip link goes straight to the full guide below.
+- Every chapter stays in the document for readers and search. With reduced motion the tour renders as a
+  static list. New `storyLabel`, `storySkip`, `storyScrollHint` and `storyChaptersLabel` strings in
+  en/pt/es.
+
 ## 0.0.5 - 2026-09-27 - markdown copy/download on the published site
 
 ### Fixed

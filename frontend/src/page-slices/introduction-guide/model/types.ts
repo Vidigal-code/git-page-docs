@@ -45,6 +45,10 @@ export interface GuideUi {
   onThisPage: string;
   sectionsLabel: string;
   backToSearch: string;
+  storyLabel: string;
+  storySkip: string;
+  storyScrollHint: string;
+  storyChaptersLabel: string;
 }
 
 /** The whole guide AFTER resolution — what the UI renders. */

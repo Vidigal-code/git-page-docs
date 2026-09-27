@@ -1,0 +1,396 @@
+/* Scroll-driven tour. The section is one viewport tall per chapter; the stage
+   is pinned while the page scrolls through it. Colours come from theme tokens,
+   so every layout (light or dark) gets the same composition. */
+.story {
+  --story-chapter-height: 100svh;
+  --story-header-offset: 72px;
+  --story-rail-width: 220px;
+  --story-accent: color-mix(in srgb, var(--primary) 70%, var(--secondary));
+  --font-display: var(--font-heading, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  --font-mono: ui-monospace, "SF Mono", "Fira Code", Menlo, monospace;
+
+  position: relative;
+  height: calc(var(--story-chapters, 1) * var(--story-chapter-height));
+  margin: 0 0 48px;
+}
+
+/* ---- Skip link: visible only when focused ---- */
+.skip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: var(--primary-foreground, #fff);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 0.15s ease;
+}
+
+.skip:focus-visible {
+  transform: translateY(calc(var(--story-header-offset) + 12px));
+}
+
+/* ---- Pinned stage ---- */
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  padding-top: var(--story-header-offset);
+  box-sizing: border-box;
+}
+
+.progress {
+  position: absolute;
+  top: var(--story-header-offset);
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 0 3px 3px 0;
+}
+
+.counter {
+  position: absolute;
+  top: calc(var(--story-header-offset) + 20px);
+  right: 0;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+}
+
+/* ---- Chapter rail ---- */
+.rail {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 3;
+  width: var(--story-rail-width);
+  transform: translateY(-40%);
+}
+
+.rail ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.railItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.84rem;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.65;
+  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.railItem:hover,
+.railItem:focus-visible {
+  opacity: 1;
+  color: var(--text);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  outline: none;
+}
+
+.railItem[aria-current="step"] {
+  opacity: 1;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.railDot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--card-border);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.railItem[aria-current="step"] .railDot {
+  background: var(--story-accent);
+  transform: scale(1.5);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--story-accent) 22%, transparent);
+}
+
+.railLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Scenes ---- */
+.scenes {
+  position: relative;
+  height: 100%;
+}
+
+.chapter {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  column-gap: clamp(32px, 5vw, 72px);
+  padding-left: calc(var(--story-rail-width) + 24px);
+}
+
+.numeral {
+  position: absolute;
+  right: -1%;
+  top: 2%;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-size: clamp(9rem, 22vw, 19rem);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--story-accent) 38%, transparent);
+  user-select: none;
+  pointer-events: none;
+}
+
+.headline,
+.details {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+.eyebrowIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--secondary) 40%, var(--card-border));
+  background: color-mix(in srgb, var(--secondary) 10%, var(--card-background));
+  font-size: 1rem;
+}
+
+.ordinal {
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5.6vw, 5.25rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--text);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.lead {
+  margin: 22px 0 0;
+  max-width: 34ch;
+  font-size: clamp(1.1rem, 1.45vw, 1.4rem);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+.body {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+  text-wrap: pretty;
+}
+
+.highlights {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.highlight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--card-background) 82%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.highlight::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--story-accent);
+}
+
+/* ---- Scroll hint ---- */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  margin: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  animation: storyHint 2.2s ease-in-out infinite;
+}
+
+@keyframes storyHint {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, 0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, 6px);
+  }
+}
+
+/* ---- Narrow screens: one column, no rail ---- */
+@media (max-width: 900px) {
+  .story {
+    --story-rail-width: 0px;
+  }
+
+  .rail {
+    display: none;
+  }
+
+  .chapter {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    row-gap: 24px;
+    padding-left: 0;
+  }
+
+  .numeral {
+    top: 10%;
+    right: -4%;
+    font-size: clamp(8rem, 44vw, 14rem);
+  }
+
+  .title {
+    font-size: clamp(2.1rem, 9vw, 3.4rem);
+  }
+
+  .lead {
+    margin-top: 14px;
+  }
+
+  .highlights {
+    margin-top: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .body {
+    display: none;
+  }
+
+  .highlights {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-height: 640px) {
+  .body {
+    display: none;
+  }
+
+  .hint {
+    display: none;
+  }
+}
+
+/* ---- Reduced motion: the same markup as a calm, static reading list ---- */
+@media (prefers-reduced-motion: reduce) {
+  .story {
+    height: auto;
+  }
+
+  .stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding-top: 0;
+  }
+
+  .progress,
+  .counter,
+  .rail,
+  .hint {
+    display: none;
+  }
+
+  .scenes {
+    height: auto;
+    display: grid;
+    gap: 56px;
+  }
+
+  .chapter {
+    position: relative;
+    inset: auto;
+    padding-left: 0;
+    opacity: 1 !important;
+  }
+
+  .chapter > * {
+    transform: none !important;
+  }
+
+  .numeral {
+    top: -12%;
+    font-size: clamp(6rem, 16vw, 10rem);
+  }
+}

@@ -24,9 +24,12 @@ import { GuideSection } from "./guide-section";
 import { GuideMotionProvider } from "./motion/guide-motion-provider";
 import { GuideParallaxBackdrop } from "./motion/guide-parallax-backdrop";
 import { GuideReveal } from "./motion/guide-reveal";
+import { GuideStory } from "./story/guide-story";
 import styles from "./introduction-guide-page.module.css";
 
 const GUIDE_LANGUAGES: LanguageCode[] = ["en", "pt", "es"];
+/** Anchor of the full guide: the story's skip link lands here. */
+const GUIDE_BODY_ID = "guide-body";
 const FALLBACK_LANGMENU = {
   en: { en: "English", pt: "Português", es: "Español" },
   pt: { en: "English", pt: "Português", es: "Español" },
@@ -119,7 +122,8 @@ export function IntroductionGuidePage() {
             backToSearchLabel={content.ui.backToSearch}
             onPrimary={() => scrollToSection(sectionIds[1] ?? sectionIds[0])}
           />
-          <div className={styles.body}>
+          <GuideStory sections={content.sections} ui={content.ui} skipTargetId={GUIDE_BODY_ID} />
+          <div id={GUIDE_BODY_ID} className={styles.body} tabIndex={-1}>
             <GuideSidebar
               ui={content.ui}
               sections={results}

@@ -16,7 +16,11 @@
     "searchEmpty": { "en": "No sections match your search.", "pt": "Nenhuma seção corresponde à busca.", "es": "Ninguna sección coincide con la búsqueda." },
     "onThisPage": { "en": "On this page", "pt": "Nesta página", "es": "En esta página" },
     "sectionsLabel": { "en": "Sections", "pt": "Seções", "es": "Secciones" },
-    "backToSearch": { "en": "Back to search", "pt": "Voltar à busca", "es": "Volver a la búsqueda" }
+    "backToSearch": { "en": "Back to search", "pt": "Voltar à busca", "es": "Volver a la búsqueda" },
+    "storyLabel": { "en": "Guided tour", "pt": "Tour guiado", "es": "Recorrido guiado" },
+    "storySkip": { "en": "Skip the tour and read the full guide", "pt": "Pular o tour e ler o guia completo", "es": "Saltar el recorrido y leer la guía completa" },
+    "storyScrollHint": { "en": "Scroll to explore", "pt": "Role para explorar", "es": "Desplázate para explorar" },
+    "storyChaptersLabel": { "en": "Chapters", "pt": "Capítulos", "es": "Capítulos" }
   },
   "sections": [
     {

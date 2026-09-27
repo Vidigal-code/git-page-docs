@@ -63,6 +63,8 @@ When `site.docsAccess.enabled` is set in `gitpagedocs/config.json` (via the `git
 - `GuideParallaxBackdrop` draws three blurred glows tinted with `--primary` / `--secondary` (every theme matches) that drift at different speeds with `useScroll` + `useTransform`; the hero content drifts and fades as it leaves the viewport; `GuideReveal` fades each section in once with `whileInView`.
 - Every distance, duration and easing lives in `model/motion-config.ts`. Reduced motion maps travel to 0 and makes reveals instant without changing the markup, because the static render cannot know the visitor's preference and a different element would keep the server's hidden style after hydration.
 
+- `GuideStory` (`ui/story/`) is a scroll-driven tour placed before the full guide. The section is one viewport tall per chapter and a sticky stage plays one chapter per slice of the page's own scroll (wheel, touch, keyboard and scrollbar keep working). Each chapter's numeral, headline and details move at different depths; the keyframes come from `chapterTimeline` in `model/story.ts` and run through function-form `useTransform` with `interpolate`, because the range form hands opacity to the native scroll timeline, which left the first chapter half visible. A rail jumps to any chapter, a skip link goes straight to the full guide, and with reduced motion the same markup becomes a static list through CSS.
+
 ## Environment
 
 `.env` (frontend-local; copy from `.env.example`):

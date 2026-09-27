@@ -37,3 +37,13 @@ export const REVEAL = {
   viewportAmount: 0.15,
   ease: [0.22, 1, 0.36, 1],
 } as const;
+
+/**
+ * Parallax depth of a story chapter's layers: how far (px) each travels while
+ * the chapter enters or leaves. Bigger = feels closer to the viewer.
+ */
+export const STORY_DEPTH = {
+  numeralPx: 220,
+  titlePx: 90,
+  detailsPx: 50,
+} as const;
