@@ -3,7 +3,11 @@ import { createDefaultFactory } from "@gitpagedocs/tools/ai";
 import { PROVIDER_CATALOG } from "@gitpagedocs/tools";
 import type { AIProvider, ProviderConfig } from "@gitpagedocs/tools/ports";
 import { ChatSession } from "../../ai/core/chat-session";
+import { createStoredKeyUnlocker } from "../../ai/application/ai-credentials";
 import { resolveChatCredentials, type ResolvedChatCredentials } from "../../ai/application/resolve-chat-credentials";
+import { AiConfigFileRepository } from "../../ai/infrastructure/ai-config-file";
+import { AiKeyVault } from "../../ai/infrastructure/ai-key-vault";
+import { clackVaultPasswordPrompt } from "../../ai/presentation/vault-prompts";
 import {
   ElapsedSpinner,
   accent,
@@ -215,10 +219,20 @@ function printSetupHelp(providerHint: string): void {
  */
 export async function runChat(ctx: CommandContext): Promise<void> {
   const flags = parseChatArgs(ctx.args);
+  const configRepo = new AiConfigFileRepository({ cwd: ctx.cwd });
   const creds: ResolvedChatCredentials | null = await resolveChatCredentials({
     cwd: ctx.cwd,
     providerOverride: flags.provider,
     modelOverride: flags.model,
+    configRepo,
+    // The stored key is sealed in the vault: the password is asked on every run
+    // (or read from GITPAGEDOCS_VAULT_PASSWORD when there is no terminal).
+    unlockStoredKey: createStoredKeyUnlocker({
+      configRepo,
+      vault: new AiKeyVault(),
+      prompt: process.stdin.isTTY ? clackVaultPasswordPrompt : undefined,
+      onInfo: (message) => writeChrome(danger(message)),
+    }),
   });
 
   if (!creds) {

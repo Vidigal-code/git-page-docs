@@ -57,6 +57,7 @@ export function parseAiCliConfig(raw: unknown): AiCliConfig | null {
 
   const model = asOptionalString(ai.model)?.trim() || AI_MODEL_DEFAULTS[provider];
   const apiKey = asOptionalString(ai.apiKey);
+  const apiKeyEncrypted = ai.apiKeyEncrypted === true;
   const baseUrl = asOptionalString(ai.baseUrl);
 
   return {
@@ -65,6 +66,7 @@ export function parseAiCliConfig(raw: unknown): AiCliConfig | null {
       provider,
       model,
       ...(apiKey !== undefined ? { apiKey } : {}),
+      ...(apiKeyEncrypted ? { apiKeyEncrypted: true } : {}),
       ...(baseUrl !== undefined ? { baseUrl } : {}),
       paths: asPaths(ai.paths),
       languages: asLanguages(ai.languages),

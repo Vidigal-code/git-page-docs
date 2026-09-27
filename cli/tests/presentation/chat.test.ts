@@ -145,11 +145,14 @@ describe("runChat setup guidance", () => {
 
     await runChat(context("--provider", "anthropic", "hello"));
 
-    expect(credentials.resolveChatCredentials).toHaveBeenCalledWith({
-      cwd: "/work",
-      providerOverride: "anthropic",
-      modelOverride: undefined,
-    });
+    expect(credentials.resolveChatCredentials).toHaveBeenCalledWith(
+      expect.objectContaining({
+        cwd: "/work",
+        providerOverride: "anthropic",
+        modelOverride: undefined,
+        unlockStoredKey: expect.any(Function),
+      }),
+    );
     expect(stderr()).toContain("No AI credentials found.");
     expect(stderr()).toContain("ANTHROPIC_API_KEY");
     expect(process.exitCode).toBe(1);

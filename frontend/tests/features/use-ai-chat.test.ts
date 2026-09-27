@@ -1,7 +1,16 @@
 // @vitest-environment jsdom
-import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { createElement } from "react";
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useAiChat } from "@/features/ask-ai/model/use-ai-chat";
+import {
+  AUTO_LOCK_WARNING_SECONDS,
+  DEFAULT_AUTO_LOCK_SECONDS,
+  normalizeAutoLockSeconds,
+  resolveInactivityPhase,
+  useInactivityLock,
+} from "@/features/ask-ai/model/inactivity-lock";
+import { InactivityLockDialog } from "@/widgets/ai-chat-drawer/ui/inactivity-lock-dialog";
 import { LlmError } from "@/features/ask-ai/api/llm-error";
 import type { LlmCompletionParams } from "@/features/ask-ai/api/llm-factory";
 
@@ -145,7 +154,7 @@ describe("useAiChat", () => {
       await result.current.sendMessage("Hi");
     });
     expect(getLlmService).not.toHaveBeenCalled();
-    expect(result.current.messages[1].content).toBe("[Auth error]");
+    expect(result.current.messages[1].content).toBe("Auth error Try again!");
     expect(result.current.isLoading).toBe(false);
   });
 
@@ -154,13 +163,13 @@ describe("useAiChat", () => {
     await act(async () => {
       await generic.result.current.sendMessage("Hi");
     });
-    expect(generic.result.current.messages[1].content).toBe("[Generic]");
+    expect(generic.result.current.messages[1].content).toBe("Generic Try again!");
 
     const bare = renderHook(() => useAiChat(undefined, undefined, async () => null));
     await act(async () => {
       await bare.result.current.sendMessage("Hi");
     });
-    expect(bare.result.current.messages[1].content).toBe("[Authentication error]");
+    expect(bare.result.current.messages[1].content).toBe("Authentication error Try again!");
   });
 
   describe("error mapping", () => {
@@ -177,7 +186,7 @@ describe("useAiChat", () => {
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
-      expect(result.current.messages[1].content).toBe(`\n\n[${label}]`);
+      expect(result.current.messages[1].content).toBe(`\n\n${label} Try again!`);
       expect(result.current.isLoading).toBe(false);
     });
 
@@ -187,7 +196,7 @@ describe("useAiChat", () => {
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
-      expect(result.current.messages[1].content).toBe("\n\n[Could not reach openai.]");
+      expect(result.current.messages[1].content).toBe("\n\nCould not reach openai. Try again!");
     });
 
     it("keeps the generic label for LlmErrors without a status code", async () => {
@@ -196,7 +205,7 @@ describe("useAiChat", () => {
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
-      expect(result.current.messages[1].content).toBe("\n\n[Generic]");
+      expect(result.current.messages[1].content).toBe("\n\nGeneric Try again!");
     });
 
     it("uses the generic label for non-LlmError failures and a hard-coded default without labels", async () => {
@@ -205,13 +214,13 @@ describe("useAiChat", () => {
       await act(async () => {
         await labelled.result.current.sendMessage("Hi");
       });
-      expect(labelled.result.current.messages[1].content).toBe("\n\n[Generic]");
+      expect(labelled.result.current.messages[1].content).toBe("\n\nGeneric Try again!");
 
       const bare = renderHook(() => useAiChat(undefined, undefined, CLOUD_CREDS));
       await act(async () => {
         await bare.result.current.sendMessage("Hi");
       });
-      expect(bare.result.current.messages[1].content).toBe("\n\n[Generic Error]");
+      expect(bare.result.current.messages[1].content).toBe("\n\nGeneric Error Try again!");
     });
 
     it("leaves the partial reply untouched when the request was aborted", async () => {
@@ -293,5 +302,157 @@ describe("useAiChat", () => {
     act(() => result.current.clearMessages());
     expect(result.current.messages).toEqual([]);
     expect(result.current.isLoading).toBe(false);
+  });
+
+  it("closes provider errors with the localized retry hint and no brackets", async () => {
+    streamCompletion.mockRejectedValue(new LlmError("upstream", 500));
+    const labels = { aiChatError500: "Ocorreu um erro interno no servidor do modelo de IA.", aiChatRetryHint: "Tente novamente!" };
+    const { result } = renderHook(() => useAiChat(undefined, labels, CLOUD_CREDS));
+    await act(async () => {
+      await result.current.sendMessage("Oi");
+    });
+    expect(result.current.messages[1].content).toBe("\n\nOcorreu um erro interno no servidor do modelo de IA. Tente novamente!");
+    expect(result.current.messages[1].content).not.toContain("[");
+  });
+});
+
+describe("inactivity auto-lock", () => {
+  it("normalizes the configured seconds: default 30, 0 disables, rounds, rejects junk", () => {
+    expect(DEFAULT_AUTO_LOCK_SECONDS).toBe(30);
+    expect(AUTO_LOCK_WARNING_SECONDS).toBe(10);
+    expect(normalizeAutoLockSeconds(undefined)).toBe(30);
+    expect(normalizeAutoLockSeconds("abc")).toBe(30);
+    expect(normalizeAutoLockSeconds(-5)).toBe(30);
+    expect(normalizeAutoLockSeconds(Number.NaN)).toBe(30);
+    expect(normalizeAutoLockSeconds(0)).toBe(0);
+    expect(normalizeAutoLockSeconds(60)).toBe(60);
+    expect(normalizeAutoLockSeconds("100")).toBe(100);
+    expect(normalizeAutoLockSeconds(45.6)).toBe(46);
+  });
+
+  it("resolves the phase of an idle session", () => {
+    expect(resolveInactivityPhase(0, 30)).toEqual({ phase: "active" });
+    expect(resolveInactivityPhase(19_999, 30)).toEqual({ phase: "active" });
+    expect(resolveInactivityPhase(20_000, 30)).toEqual({ phase: "warning", remaining: 10 });
+    expect(resolveInactivityPhase(25_500, 30)).toEqual({ phase: "warning", remaining: 5 });
+    expect(resolveInactivityPhase(30_000, 30)).toEqual({ phase: "locked" });
+    expect(resolveInactivityPhase(1_000, 5)).toEqual({ phase: "warning", remaining: 4 });
+    expect(resolveInactivityPhase(1_000_000, 0)).toEqual({ phase: "active" });
+  });
+
+  describe("useInactivityLock", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function setup(seconds = 30, enabled = true) {
+      const onLock = vi.fn();
+      const hook = renderHook(() => useInactivityLock({ enabled, seconds, onLock }));
+      return { ...hook, onLock };
+    }
+
+    it("warns after the quiet period, counts down and locks at the limit", () => {
+      const { result, onLock } = setup();
+      act(() => vi.advanceTimersByTime(19_000));
+      expect(result.current.warningOpen).toBe(false);
+      act(() => vi.advanceTimersByTime(1_000));
+      expect(result.current.warningOpen).toBe(true);
+      expect(result.current.remaining).toBe(10);
+      act(() => vi.advanceTimersByTime(5_000));
+      expect(result.current.remaining).toBe(5);
+      act(() => vi.advanceTimersByTime(5_000));
+      expect(onLock).toHaveBeenCalledTimes(1);
+      expect(result.current.warningOpen).toBe(false);
+    });
+
+    it("activity resets the quiet period but is ignored once the warning is open", () => {
+      const { result, onLock } = setup();
+      act(() => vi.advanceTimersByTime(15_000));
+      act(() => result.current.registerActivity());
+      act(() => vi.advanceTimersByTime(15_000));
+      expect(result.current.warningOpen).toBe(false);
+      act(() => vi.advanceTimersByTime(5_000));
+      expect(result.current.warningOpen).toBe(true);
+      act(() => result.current.registerActivity());
+      act(() => vi.advanceTimersByTime(3_000));
+      expect(result.current.remaining).toBe(7);
+      expect(onLock).not.toHaveBeenCalled();
+    });
+
+    it("cancel keeps the session and restarts the period; confirm locks immediately", () => {
+      const { result, onLock } = setup();
+      act(() => vi.advanceTimersByTime(22_000));
+      act(() => result.current.cancelWarning());
+      expect(result.current.warningOpen).toBe(false);
+      act(() => vi.advanceTimersByTime(20_000));
+      expect(result.current.warningOpen).toBe(true);
+      act(() => result.current.lockNow());
+      expect(onLock).toHaveBeenCalledTimes(1);
+      expect(result.current.warningOpen).toBe(false);
+    });
+
+    it("never warns when disabled or when the limit is 0", () => {
+      const disabled = setup(30, false);
+      const zero = setup(0, true);
+      act(() => vi.advanceTimersByTime(120_000));
+      expect(disabled.result.current.warningOpen).toBe(false);
+      expect(zero.result.current.warningOpen).toBe(false);
+      expect(disabled.onLock).not.toHaveBeenCalled();
+      expect(zero.onLock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("InactivityLockDialog", () => {
+    const DIALOG_LABELS = {
+      title: "Bloqueio por inatividade",
+      description: "Você não usou a IA por um tempo. O chat será bloqueado em {seconds}s.",
+      confirm: "Salvar",
+      cancel: "Cancelar",
+    };
+
+    function renderDialog(remaining = 12, open = true) {
+      const onConfirm = vi.fn();
+      const onCancel = vi.fn();
+      render(createElement(InactivityLockDialog, { open, remaining, labels: DIALOG_LABELS, onConfirm, onCancel }));
+      return { onConfirm, onCancel };
+    }
+
+    it("renders a modal with the localized copy and a live countdown, nothing when closed", () => {
+      renderDialog(12);
+      expect(screen.getByRole("dialog").getAttribute("aria-modal")).toBe("true");
+      expect(screen.getByText("Bloqueio por inatividade")).toBeTruthy();
+      expect(screen.getByText("Você não usou a IA por um tempo. O chat será bloqueado em 12s.")).toBeTruthy();
+      const countdown = screen.getByTestId("ai-lock-countdown");
+      expect(countdown.textContent).toBe("12");
+      expect(countdown.getAttribute("aria-live")).toBe("polite");
+      cleanup();
+      renderDialog(5, false);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("focuses Cancel on open and keeps Tab inside the dialog", () => {
+      renderDialog();
+      const cancel = screen.getByTestId("ai-lock-cancel");
+      const confirm = screen.getByTestId("ai-lock-confirm");
+      expect(document.activeElement).toBe(cancel);
+      fireEvent.keyDown(cancel, { key: "Tab" });
+      expect(document.activeElement).toBe(confirm);
+      fireEvent.keyDown(confirm, { key: "Tab" });
+      expect(document.activeElement).toBe(cancel);
+      fireEvent.keyDown(cancel, { key: "Tab", shiftKey: true });
+      expect(document.activeElement).toBe(confirm);
+    });
+
+    it("confirm locks, cancel keeps the session and Escape counts as cancel", () => {
+      const { onConfirm, onCancel } = renderDialog();
+      fireEvent.click(screen.getByTestId("ai-lock-confirm"));
+      expect(onConfirm).toHaveBeenCalledTimes(1);
+      fireEvent.click(screen.getByTestId("ai-lock-cancel"));
+      fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+      expect(onCancel).toHaveBeenCalledTimes(2);
+    });
   });
 });

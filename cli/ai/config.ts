@@ -11,8 +11,8 @@ export type AiProviderId = 'openai' | 'claude' | 'gemini' | 'ollama';
 
 export const AI_MODEL_DEFAULTS: Readonly<Record<AiProviderId, string>> = {
   openai: 'gpt-4o-mini',
-  claude: 'claude-3-5-sonnet-20240620',
-  gemini: 'gemini-1.5-flash',
+  claude: 'claude-sonnet-4-6',
+  gemini: 'gemini-2.5-flash',
   ollama: 'llama3',
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "gitpagedocs-monorepo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Workspace root for Git Page Docs — frontend (Next.js viewer), cli (published `gitpagedocs`), mcp, and tools (shared core).",
   "packageManager": "pnpm@10.33.2",

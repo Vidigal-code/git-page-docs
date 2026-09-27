@@ -1,11 +1,15 @@
 import { AiCommandService } from "./ai-command";
 import { createAiProvider } from "./ai-provider-factory";
+import { sealApiKey, unlockStoredConfig } from "./ai-credentials";
+import { resolveVaultPassword, type VaultPasswordPrompt } from "./vault-password";
 import { FileSystemAdapter, type FilePayload } from "../infrastructure/file-system-adapter";
 import {
   AiConfigFileRepository,
 } from "../infrastructure/ai-config-file";
-import type { AiCliRunPlan, AiCliRunSummary } from "../core/models/ai-cli-config";
+import { AiKeyVault } from "../infrastructure/ai-key-vault";
+import type { AiCliConfig, AiCliRunPlan, AiCliRunSummary } from "../core/models/ai-cli-config";
 import { promptMissingDirectories, runAiInteractivePrompt } from "../presentation/ai-prompts";
+import { clackVaultPasswordPrompt } from "../presentation/vault-prompts";
 import { GITPAGEDOCS_DOC_SYSTEM_PROMPT } from "../config";
 import { parseAiPages, type AiDocPage } from "./docs-pattern";
 import { writeVersionDocs } from "../infrastructure/version-docs-writer";
@@ -130,26 +134,62 @@ export async function executeAiRunPlan(
   };
 }
 
-export async function runAiCliCommand(options: {
+export interface RunAiCliCommandOptions {
   cwd: string;
   onInfo?: (message: string) => void;
   /** Provided by the composition root to scaffold the base gitpagedocs/ tree
    * (so the version config.json exists before AI pages are wired into it). */
   onScaffold?: () => Promise<void>;
-}): Promise<{ summary: AiCliRunSummary; runConfigScaffold: boolean }> {
+  /** Injectable for tests; defaults to the per-user vault file. */
+  vault?: AiKeyVault;
+  /** Injectable for tests; defaults to the terminal prompts. */
+  passwordPrompt?: VaultPasswordPrompt;
+  /** Injectable for tests; defaults to process.env. */
+  env?: Readonly<Record<string, string | undefined>>;
+}
+
+interface SaveConfigDeps {
+  configRepo: AiConfigFileRepository;
+  vault: AiKeyVault;
+  prompt: VaultPasswordPrompt;
+  env?: Readonly<Record<string, string | undefined>>;
+  logInfo: (message: string) => void;
+}
+
+/** Persists the plan's config; an API key is sealed into the vault first, never written in clear. */
+async function saveConfig(config: AiCliConfig, deps: SaveConfigDeps): Promise<void> {
+  if (!config.ai.apiKey?.trim()) {
+    await deps.configRepo.write(config);
+    deps.logInfo(`[gitpagedocs:ai] Configuration saved to ${deps.configRepo.getConfigPath()}`);
+    return;
+  }
+  const password = await resolveVaultPassword({ vault: deps.vault, env: deps.env, prompt: deps.prompt });
+  await deps.configRepo.write(await sealApiKey({ config, vault: deps.vault, password }));
+  deps.logInfo(
+    `[gitpagedocs:ai] Configuration saved to ${deps.configRepo.getConfigPath()} (API key encrypted in ${deps.vault.getVaultPath()})`,
+  );
+}
+
+export async function runAiCliCommand(options: RunAiCliCommandOptions): Promise<{ summary: AiCliRunSummary; runConfigScaffold: boolean }> {
   const logInfo = options.onInfo ?? (() => undefined);
   const configRepo = new AiConfigFileRepository({
     cwd: options.cwd,
     onMigrate: (fromPath, toPath) =>
       logInfo(`[gitpagedocs:ai] Moved configuration from ${fromPath} to ${toPath} (secure user config directory).`),
   });
+  const vault = options.vault ?? new AiKeyVault();
+  const prompt = options.passwordPrompt ?? clackVaultPasswordPrompt;
 
   const existingConfig = await configRepo.read();
   const plan = await runAiInteractivePrompt(existingConfig);
+  let runConfig = plan.config;
 
   if (plan.saveConfig) {
-    await configRepo.write(plan.config);
-    logInfo(`[gitpagedocs:ai] Configuration saved to ${configRepo.getConfigPath()}`);
+    await saveConfig(runConfig, { configRepo, vault, prompt, env: options.env, logInfo });
+  } else if (existingConfig && runConfig === existingConfig) {
+    // Reusing the stored config: decrypt its key for this run (the password is
+    // asked every time), or seal a legacy plaintext key into the vault.
+    runConfig = await unlockStoredConfig({ config: runConfig, vault, configRepo, env: options.env, prompt, onInfo: logInfo });
   }
 
   // Build the base gitpagedocs structure BEFORE generation so the version
@@ -159,7 +199,7 @@ export async function runAiCliCommand(options: {
     await options.onScaffold();
   }
 
-  const summary = await executeAiRunPlan(plan, options.cwd);
+  const summary = await executeAiRunPlan({ ...plan, config: runConfig }, options.cwd);
   return {
     summary,
     runConfigScaffold: plan.runConfigScaffold,

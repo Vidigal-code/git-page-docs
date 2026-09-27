@@ -1,14 +1,17 @@
 import { AiConfigFileRepository } from "../../ai/infrastructure/ai-config-file";
+import { AiKeyVault } from "../../ai/infrastructure/ai-key-vault";
 import type { CommandContext } from "./run-command";
 
 /**
  * `gitpagedocs config clear` — delete the stored `.gitpagedocsconfig` from the
- * per-user config directory and any legacy repo-root copy, wiping the saved AI
- * credentials (API key, provider, scan paths).
+ * per-user config directory (and any legacy repo-root copy) together with the
+ * encrypted key vault, wiping the saved AI credentials, provider and scan paths.
  */
 export async function runConfigClear(ctx: CommandContext): Promise<void> {
   const repository = new AiConfigFileRepository({ cwd: ctx.cwd });
+  const vault = new AiKeyVault();
   const removed = await repository.clear();
+  if (await vault.clear()) removed.push(vault.getVaultPath());
 
   if (!removed.length) {
     // eslint-disable-next-line no-console

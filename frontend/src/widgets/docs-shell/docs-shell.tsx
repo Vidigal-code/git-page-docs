@@ -641,6 +641,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
             icons={aiChatIconConfig}
             labels={labels}
             systemContext={aiContext}
+            autoLockSeconds={data.config.site.AiChatAutoLockSeconds}
           />
         )}
         <DocsShellAudioSurface {...controlsProps} />

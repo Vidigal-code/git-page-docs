@@ -3,6 +3,47 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.2 - 2026-09-27 - encrypted CLI vault, chat auto-lock, provider hardening
+
+### CLI (`@gitpagedocs/cli`)
+
+- **API key never stored in plaintext.** `gitpagedocs ai` seals the key into the encrypted vault file
+  `.gitpagedocsvault` (AES-256-GCM, key derived with PBKDF2-HMAC-SHA-256, 210k iterations) next to
+  `.gitpagedocsconfig`, which now only records `"apiKeyEncrypted": true`. The vault password is created
+  on first use and asked on every run of `gitpagedocs ai` and `gitpagedocs chat` that uses the stored
+  key; `GITPAGEDOCS_VAULT_PASSWORD` supplies it for non-interactive runs. A legacy plaintext `apiKey`
+  is migrated into the vault and removed from the file. `gitpagedocs config clear` deletes the vault too.
+- Default models refreshed: `claude-sonnet-4-6` and `gemini-2.5-flash` (`gemini-2.5-pro` and
+  `gemini-2.0-flash` stay selectable).
+- `gitpagedocs docs` managed regions now list `chat [question]`, `config clear` and `docs`, and the
+  security note documents both vaults.
+
+### Frontend viewer
+
+- **Inactivity auto-lock for the AI chat drawer.** New `site.AiChatAutoLockSeconds` in
+  `gitpagedocs/config.json` (default `30`; `0` disables; invalid values fall back to `30`). Ten seconds
+  before the limit a centered, focus-trapped, theme-aware and responsive modal shows a countdown in the
+  selected language (pt *Salvar*/*Cancelar*, en *OK*/*Cancel*, es *Guardar*/*Cancelar*). Confirming, or
+  letting the countdown finish, drops the session password: the keys stay encrypted in the vault and the
+  password gate comes back. Activity in the drawer resets the timer; nothing locks while a reply streams.
+- Provider/model select generated from the shared `PROVIDER_CATALOG` (aligned custom chevron,
+  standardized 44px controls, theme tokens). A stored model id retired by its provider self-heals to the
+  provider default (Ollama models are left untouched).
+- Provider calls retry transient failures (HTTP 408/425/429/500/502/503/504) up to 3 attempts with
+  exponential backoff; status-less errors are no longer reported as HTTP 500.
+- Chat error messages lose the `[...]` brackets and end with *Try again!* / *Tente novamente!* /
+  *¡Inténtalo de nuevo!* (`langmenu.aiChatRetryHint`).
+- New `langmenu` keys `aiChatRetryHint`, `aiChatAutoLockTitle`, `aiChatAutoLockDesc`,
+  `aiChatAutoLockConfirmBtn`, `aiChatAutoLockCancelBtn`; provider labels now read
+  "Anthropic Claude (Sonnet 4.6)" and "Google Gemini (2.5 Flash)".
+
+### Documentation
+
+- Every Markdown file re-checked against the code: `.gitpagedocsconfig` + vault contract, auto-lock,
+  the root scripts table, the CLI architecture tree, AUDIT validation commands and the version paths.
+- Example URLs: the HTML-fullscreen sample was removed (this repository configures no `routes-html`)
+  and the heading-anchor sample now points to an existing heading (`#prerequisites`).
+
 ## 0.0.1 - 2026-09-27 - first official stable release
 
 ### Versioning reset

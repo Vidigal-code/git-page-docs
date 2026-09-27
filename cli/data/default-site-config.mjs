@@ -138,6 +138,7 @@ export function getDefaultSiteConfig(projectLink, languageToggles = buildLanguag
         audioSequentialPlayback: false,
         audioPopoverHideSource: false,
         audioPopoverShowMinutes: true,
+        AiChatAutoLockSeconds: 30,
         audioTracks: [
             {
                 url: "https://www.youtube.com/watch?v=xAR6N9N8e6U",

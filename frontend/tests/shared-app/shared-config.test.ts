@@ -45,12 +45,14 @@ describe("ai-config", () => {
     expect(normalizeProviderAndModel("")).toEqual({ provider: "openai", model: AI_MODEL_DEFAULTS.openai });
     expect(normalizeProviderAndModel("gemini")).toEqual({ provider: "gemini", model: AI_MODEL_DEFAULTS.gemini });
     expect(normalizeProviderAndModel("ollama:llama3.1")).toEqual({ provider: "ollama", model: "llama3.1" });
-    expect(normalizeProviderAndModel(" claude : opus ")).toEqual({ provider: "claude", model: "opus" });
-    expect(normalizeProviderAndModel(":gpt-4")).toEqual({ provider: "openai", model: "gpt-4" });
+    expect(normalizeProviderAndModel(" claude : opus ")).toEqual({ provider: "claude", model: AI_MODEL_DEFAULTS.claude });
+    expect(normalizeProviderAndModel(":gpt-4o")).toEqual({ provider: "openai", model: "gpt-4o" });
   });
 
-  it("falls back to OpenAI for an unknown provider but keeps the explicit model", () => {
-    expect(normalizeProviderAndModel("acme:custom-model")).toEqual({ provider: "openai", model: "custom-model" });
+  it("falls back to OpenAI and self-heals unknown or retired models to the provider default", () => {
+    expect(normalizeProviderAndModel("acme:custom-model")).toEqual({ provider: "openai", model: AI_MODEL_DEFAULTS.openai });
+    expect(normalizeProviderAndModel("claude:claude-3-5-sonnet-20240620")).toEqual({ provider: "claude", model: AI_MODEL_DEFAULTS.claude });
+    expect(normalizeProviderAndModel("gemini:gemini-pro")).toEqual({ provider: "gemini", model: AI_MODEL_DEFAULTS.gemini });
   });
 
   it("hints the Ollama base URL instead of an API key placeholder", () => {

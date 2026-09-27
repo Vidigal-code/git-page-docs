@@ -165,6 +165,21 @@ O config da versao pode renderizar um container **Codigo fonte** via \`routes-so
 
 - \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busca de repositorio (local)
 - \`GITHUB_ACTIONS\` – modo build GitHub Pages
+
+## Assistente de IA
+
+Os docs trazem um assistente de IA em duas superficies: um **chat drawer** dentro dos docs (botao de chat de IA na barra lateral, ativado por \`site.AiChatEnabled\`) e uma pagina **console \`/ai\`** dedicada.
+
+- **14 provedores** em um unico core compartilhado: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
+- **Escolha de modelo** — a partir do catalogo de cada provedor (\`gitpagedocs models <provedor>\`); um id de modelo salvo que o provedor aposentou e trocado pelo padrao do provedor automaticamente.
+- **Criptografia em repouso** — sua chave de API e selada com AES-256-GCM atras de uma **senha local** e nunca fica em texto puro nem em logs. Uma chave legada em texto puro e migrada e apagada no primeiro desbloqueio.
+- **Bloqueio por inatividade** — o chat drawer se bloqueia sozinho apos \`site.AiChatAutoLockSeconds\` segundos sem uso (padrao 30, \`0\` desativa): um modal centralizado com contagem regressiva, no seu idioma, permite cancelar ou bloquear agora, e desbloquear pede a senha de novo.
+- **Provedores resilientes** — erros transitorios do provedor sao repetidos (3 tentativas) e uma falha final vira uma mensagem simples terminando em "Tente novamente!".
+- **Geracao de documentacao com IA** — \`gitpagedocs ai\` varre os caminhos escolhidos e escreve markdown multilingue (pt/en/es); reutilizavel via \`.gitpagedocsconfig\`, cuja chave de API fica selada no cofre criptografado \`.gitpagedocsvault\` (a senha do cofre e pedida em toda execucao). \`gitpagedocs chat\` leva o mesmo assistente ao terminal.
+
+## Servidor MCP
+
+\`gitpagedocs mcp start\` sobe um servidor Model Context Protocol (stdio) expondo **20 tools** (sistema de arquivos, IA, geracao/analise de docs) e **7 resources** (\`project://structure|docs|config|repository|readme|ai/providers|ai/models\`) para editores e agentes de IA.
 `,
     configuration: `# Configuracao
 
@@ -311,7 +326,7 @@ O projeto e organizado por fronteiras de feature e responsabilidades do runtime.
 
 ## Seguranca: credenciais de IA criptografadas
 
-O console \`/ai\` e o chat drawer exigem uma senha local que deriva (PBKDF2) uma chave AES-256-GCM; as chaves ficam criptografadas no \`localStorage\` e so sao descriptografadas durante a sessao (\`@gitpagedocs/tools/security\`).
+O console \`/ai\` e o chat drawer exigem uma senha local que deriva (PBKDF2) uma chave AES-256-GCM; as chaves ficam criptografadas no \`localStorage\` e so sao descriptografadas durante a sessao (\`@gitpagedocs/tools/security\`). O drawer se bloqueia sozinho apos \`site.AiChatAutoLockSeconds\` segundos sem uso (padrao 30; \`0\` desativa): um modal centralizado com contagem regressiva, no idioma selecionado, permite cancelar ou bloquear agora, e voltar exige a senha de novo. Na CLI, a chave de \`.gitpagedocsconfig\` fica selada no cofre criptografado \`.gitpagedocsvault\` e a senha do cofre e pedida em toda execucao.
 
 ## Fluxo de dados
 

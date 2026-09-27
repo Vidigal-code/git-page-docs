@@ -187,9 +187,11 @@ The version config can render a **Source code** container through \`routes-sourc
 The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the AI chat button in the sidebar, enabled via \`site.AiChatEnabled\`) and a dedicated **\`/ai\` console** page.
 
 - **14 providers** via one shared core: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
-- **Model selection** — pick from each provider's catalog (\`gitpagedocs models <provider>\`) or type a custom id.
-- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** (one unlock per session) and is never stored in plaintext or logged. A legacy plaintext key is migrated and wiped on first unlock.
-- **AI documentation generation** — \`gitpagedocs ai\` scans chosen paths and writes multilingual markdown (pt/en/es); reusable via \`.gitpagedocsconfig\`.
+- **Model selection** — pick from each provider's catalog (\`gitpagedocs models <provider>\`); a stored model id the provider has retired is replaced by the provider default automatically.
+- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** and is never stored in plaintext or logged. A legacy plaintext key is migrated and wiped on first unlock.
+- **Inactivity auto-lock** — the chat drawer locks itself after \`site.AiChatAutoLockSeconds\` idle seconds (default 30, \`0\` disables): a centered countdown modal in your language lets you cancel or lock now, and unlocking asks for the password again.
+- **Resilient providers** — transient provider errors are retried (3 attempts) and a final failure is a plain message ending with "Try again!".
+- **AI documentation generation** — \`gitpagedocs ai\` scans chosen paths and writes multilingual markdown (pt/en/es); reusable via \`.gitpagedocsconfig\`, whose API key lives sealed in the encrypted \`.gitpagedocsvault\` (the vault password is asked on every run). \`gitpagedocs chat\` brings the same assistant to the terminal.
 
 ## MCP server
 

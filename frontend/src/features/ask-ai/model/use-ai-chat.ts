@@ -22,6 +22,11 @@ function appendToMessage(messages: ChatMessage[], id: string, text: string): Cha
     return messages.map(m => m.id === id ? { ...m, content: m.content + text } : m);
 }
 
+/** Closes every error line: the reader can always simply try again. */
+function retryHint(labels?: any): string {
+    return labels?.aiChatRetryHint || 'Try again!';
+}
+
 /** Maps a failed completion to the label rendered inline in the reply. */
 function describeChatError(error: any, labels?: any): string | undefined {
     const generic = labels?.aiChatErrorGeneric || "Generic Error";
@@ -105,7 +110,7 @@ export function useAiChat(
             const creds = resolveCredentials ? await resolveCredentials() : legacyCredentials();
             if (!creds) {
                 const lockedError = labels?.aiChatError401 || labels?.aiChatErrorGeneric || 'Authentication error';
-                appendReply(`[${lockedError}]`);
+                appendReply(`${lockedError} ${retryHint(labels)}`);
                 return;
             }
 
@@ -118,7 +123,7 @@ export function useAiChat(
             });
         } catch (error: any) {
             if (error?.name !== 'AbortError') {
-                appendReply(`\n\n[${describeChatError(error, labels)}]`);
+                appendReply(`\n\n${describeChatError(error, labels)} ${retryHint(labels)}`);
             }
         } finally {
             setIsLoading(false);

@@ -24,12 +24,13 @@ npx @gitpagedocs/cli
 | `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`: static site + .env + Dockerfile) |
 | `gitpagedocs -i` / `--interactive` | Interactive prompts |
 | `gitpagedocs ai` | Interactive AI documentation generator — writes pages in the gitpagedocs pattern (see below) |
+| `gitpagedocs chat [question]` | Streaming AI chat in the terminal — REPL on a TTY, one-shot with a question or piped stdin; `--provider`, `--model`, `--system` (see below) |
 | `gitpagedocs provider [id]` · `models [provider]` | List AI providers / catalog models |
 | `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI in the gitpagedocs pattern |
 | `gitpagedocs password` | Set a documentation access password (writes the public key to `config.json`, prints the private key) |
 | `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
 | `gitpagedocs docs` | Refresh managed regions of README/CONTRIBUTING/SECURITY |
-| `gitpagedocs config clear` | Delete the stored `.gitpagedocsconfig` (wipes saved AI credentials) |
+| `gitpagedocs config clear` | Delete the stored `.gitpagedocsconfig` **and** the encrypted key vault `.gitpagedocsvault` (wipes saved AI credentials) |
 | `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / registry update check |
 | `gitpagedocs mcp start` | Start the MCP server over stdio |
 
@@ -43,12 +44,17 @@ The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the
 cli/
 |-- index.mjs                          # Node entry (bootstraps TS presentation via tsx)
 |-- package.json                       # the published `gitpagedocs` package
-|-- ai/                                # AI documentation CLI (provider/model/paths → markdown)
+|-- ai/                                # AI CLI: docs generator + terminal chat
+|   |-- application/                   # run-ai-cli-command, resolve-chat-credentials, ai-credentials (seal/unseal), vault-password
+|   |-- infrastructure/                # ai-config-file (.gitpagedocsconfig), ai-key-vault (.gitpagedocsvault), file-system-adapter, version-docs-writer
+|   |-- core/                          # chat-session, config models + parser
+|   `-- presentation/                  # @clack prompts (ai-prompts, vault-prompts)
 |-- contracts/                         # Stable contracts for external tooling
 |   `-- doc-versions.mjs
 |
 |-- presentation/                      # Interface/composition root
 |   |-- index.ts
+|   |-- commands/                      # chat, config-clear, config-info, docs, pages, password, mcp, diagnostics, ai-info
 |   |-- options/
 |   `-- ui/
 |
@@ -139,7 +145,8 @@ npx @gitpagedocs/cli ai
 - asks API key or Ollama URL
 - asks paths to scan (supports one or many paths, including other repositories)
 - generates documentation in `pt`, `en`, `es` **in the gitpagedocs pattern**
-- optionally persists config in `.gitpagedocsconfig`
+- optionally persists config in `.gitpagedocsconfig`, sealing the API key in the encrypted
+  vault `.gitpagedocsvault` (vault password created on first use, asked on every run)
 
 ### gitpagedocs pattern output
 
@@ -161,8 +168,8 @@ permissions on POSIX systems:
 - macOS: `~/Library/Application Support/gitpagedocs/.gitpagedocsconfig`
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
-Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; delete the stored file
-and its credentials with `gitpagedocs config clear`; a legacy
+Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; delete the stored file,
+the vault and their credentials with `gitpagedocs config clear`; a legacy
 `.gitpagedocsconfig` in the repository root is migrated automatically on the next
 run. You can create/edit this file manually and then run `npx @gitpagedocs/cli ai`:
 
@@ -172,7 +179,7 @@ run. You can create/edit this file manually and then run `npx @gitpagedocs/cli a
 	"ai": {
 		"provider": "openai",
 		"model": "gpt-4o-mini",
-		"apiKey": "<YOUR_API_KEY>",
+		"apiKeyEncrypted": true,
 		"paths": ["src", "cli", "../another-repo/src"],
 		"languages": ["pt", "en", "es"],
 		"outputDir": "gitpagedocs/docs",
@@ -182,7 +189,38 @@ run. You can create/edit this file manually and then run `npx @gitpagedocs/cli a
 }
 ```
 
-For Ollama, use `baseUrl` instead of `apiKey`.
+**The API key is not in this file.** Saving a configuration seals the key into the
+encrypted vault `.gitpagedocsvault` in the same directory (`cli/ai/infrastructure/ai-key-vault.ts`
+over `EncryptedCredentialVault` + `FileVaultStorage` from `@gitpagedocs/tools`: AES-256-GCM, key
+derived from your password with PBKDF2-HMAC-SHA-256, 210k iterations) and the config only keeps
+`"apiKeyEncrypted": true`.
+
+- The **vault password is created on first use** (typed twice, at least 4 characters) and
+  **asked on every run** of `gitpagedocs ai` / `gitpagedocs chat` that uses the stored key
+  (3 attempts, then the run aborts with `Vault password rejected`).
+- `GITPAGEDOCS_VAULT_PASSWORD` supplies the password without a prompt (CI, pipes, no TTY);
+  on a first run it initializes the vault, otherwise it must match the existing one.
+- A legacy plaintext `"apiKey"` still present in an old file is sealed into the vault and
+  removed from the file the next time the config is read.
+- If you hand-write the file, leave the key out: enter it in the `gitpagedocs ai` prompt (it is
+  sealed on save). `gitpagedocs chat` can also read the provider's environment variable
+  (`gitpagedocs provider <id>` lists it) when no key is stored.
+
+For Ollama, use `baseUrl` instead of an API key (no vault involved).
+
+### `gitpagedocs chat`
+
+```bash
+gitpagedocs chat                                  # REPL on a TTY: /clear · /help · /exit (or Ctrl+C twice)
+gitpagedocs chat "what does cli/ai do?"           # one-shot answer, then exit
+git diff | gitpagedocs chat "review this diff"    # piped stdin is appended to the question
+gitpagedocs chat --provider gemini --model gemini-2.5-pro --system "Answer in Portuguese" "..."
+```
+
+Credentials are resolved in this order: `--provider`/`--model` flags, the stored
+`.gitpagedocsconfig` (its key is decrypted after the vault password prompt, or from
+`GITPAGEDOCS_VAULT_PASSWORD`), then the provider's environment variable. Output streams to
+stdout while status lines go to stderr, so the answer can be piped.
 
 ### Interactive fallback
 

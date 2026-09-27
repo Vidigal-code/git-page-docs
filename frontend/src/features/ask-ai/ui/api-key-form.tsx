@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { aiStorage } from '@/shared/lib/ai-storage';
 import styles from '../../../widgets/ai-chat-drawer/ui/ai-chat.module.css';
-import { getProviderInputPlaceholder, normalizeProviderAndModel } from '@/shared/config/ai-config';
+import { buildProviderModelOptions, getProviderInputPlaceholder, normalizeProviderAndModel } from '@/shared/config/ai-config';
 
 interface ApiKeyFormProps {
     /** Persistence is owned by the parent drawer (encrypted vault), so the
@@ -10,18 +10,20 @@ interface ApiKeyFormProps {
     labels?: any;
 }
 
+/** "provider:model" with a model the catalog still serves (a retired one becomes the default). */
+function withSupportedModel(providerName: string | null | undefined): string {
+    const { provider, model } = normalizeProviderAndModel(providerName || 'openai');
+    return `${provider}:${model}`;
+}
+
 export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
     const [key, setKey] = useState('');
-    const [provider, setProvider] = useState('openai');
-
-    const withDefaultModel = (providerName: string) => {
-        const { provider: normalizedProvider, model } = normalizeProviderAndModel(providerName);
-        return `${normalizedProvider}:${model}`;
-    };
+    const [provider, setProvider] = useState(() => withSupportedModel('openai'));
+    // The select lists exactly what the shared provider catalog serves today.
+    const options = useMemo(() => buildProviderModelOptions(labels ?? {}), [labels]);
 
     useEffect(() => {
-        const savedProvider = aiStorage.getProvider();
-        setProvider(withDefaultModel(savedProvider || 'openai'));
+        setProvider(withSupportedModel(aiStorage.getProvider()));
     }, []);
 
     const handleSave = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -29,6 +31,8 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
         onSave(provider, key);
         setKey('');
     };
+
+    const isOllama = provider.startsWith('ollama');
 
     return (
         <form onSubmit={handleSave} className={styles.formContainer}>
@@ -45,32 +49,24 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
                     onChange={e => setProvider(e.target.value)}
                     className={styles.formSelect}
                 >
-                    <option value="openai:gpt-4o-mini">{labels?.aiChatProviderOpenAI || "OpenAI (GPT-4o-mini)"}</option>
-                    <option value="openai:gpt-4o">OpenAI (GPT-4o)</option>
-                    <option value="claude:claude-3-5-sonnet-20240620">{labels?.aiChatProviderClaude || "Anthropic Claude (3.5 Sonnet)"}</option>
-                    <option value="gemini:gemini-flash-latest">Google Gemini (Flash Latest)</option>
-                    <option value="gemini:gemini-2.5-flash">Google Gemini (2.5 Flash)</option>
-                    <option value="gemini:gemini-2.5-pro">Google Gemini (2.5 Pro)</option>
-                    <option value="gemini:gemini-2.0-flash">Google Gemini (2.0 Flash)</option>
-                    <option value="gemini:gemini-1.5-flash">{labels?.aiChatProviderGemini || "Google Gemini (1.5 Flash)"}</option>
-                    <option value="gemini:gemini-1.5-pro">Google Gemini (1.5 Pro)</option>
-                    <option value="gemini:gemini-1.0-pro">Google Gemini (1.0 Pro)</option>
-                    <option value="gemini:gemini-pro">Google Gemini (Legacy Pro)</option>
-                    <option value="ollama:llama3">{labels?.aiChatProviderOllama || "Ollama Network (Local LLMs)"}</option>
+                    {options.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
                 </select>
             </label>
 
             <label className={styles.formGroup}>
-                {provider.startsWith('ollama')
+                {isOllama
                     ? labels?.aiChatOllamaUrlLabel || "Ollama API URL (leave blank for local):"
                     : labels?.aiChatApiKeyLabel || "API Key (leave blank for local AI):"}
                 <input
                     data-testid="drawer-apikey-input"
-                    type={provider.startsWith('ollama') ? "url" : "password"}
+                    type={isOllama ? "url" : "password"}
                     value={key}
                     onChange={e => setKey(e.target.value)}
                     className={styles.formInput}
                     placeholder={getProviderInputPlaceholder(provider)}
+                    autoComplete="off"
                 />
             </label>
 

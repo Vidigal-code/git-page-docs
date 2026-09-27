@@ -7,7 +7,10 @@ export interface AiCliConfig {
   ai: {
     provider: AiProviderId;
     model: string;
+    /** Only in memory during a run: the file never stores the key in clear. */
     apiKey?: string;
+    /** The key lives sealed in the `.gitpagedocsvault` next to this file. */
+    apiKeyEncrypted?: boolean;
     baseUrl?: string;
     paths: string[];
     languages: Array<"pt" | "en" | "es">;

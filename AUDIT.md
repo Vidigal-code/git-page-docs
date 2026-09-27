@@ -39,9 +39,9 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 - `gitpagedocs/config.json` (has `site` + `VersionControl`; no inline UI strings since 1.1.68).
 - `site.languages` in `gitpagedocs/config.json` (`{ "en": true, "pt": true, "es": true }`; the 1.1.68 `langs.json` manifest is gone) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
 - `gitpagedocs/icon.svg`.
-- Per version in `DOC_VERSIONS = ["1.0.0","1.1.0","1.1.1"]` (`cli/contracts/doc-versions.mjs`):
-  `gitpagedocs/docs/versions/<v>/config.json` with array `routes-md` + `routes-html`.
-- `gitpagedocs/docs/versions/1.0.0/en/source-viewer` (HTML snapshot of the repo source — **drifts on every source change; not a regression signal**, see memory).
+- Per version in `DOC_VERSIONS = [PACKAGE_VERSION]` (`cli/contracts/doc-versions.mjs`; currently `["0.0.2"]`):
+  `gitpagedocs/docs/versions/<v>/config.json` with arrays `routes-md`, `routes-html`, `routes-source-viewer`, `routes-video`, `routes-audio` and their `menus-header-*`, plus `<v>/{pt,en,es}/*.md` from `cli/content/docs-{pt,en,es}.mjs`.
+- The source-viewer route points at the GitHub tree URL (`source-viewer-path`), so no HTML snapshot is generated any more; the byte-stable contract covers `config.json` + `langs/*.json` only.
 - **Contract invariant** for the refactor = the `config.json` and `langs/*.json` files stay byte-stable (baseline.snapshot.json). `source-viewer` drift is expected.
 
 ## 4. Human-facing report lines (`cli/application/report/config-only-reporter.mjs`)
@@ -77,7 +77,13 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 
 ```
 pnpm run smoke:cli       # config-only artifacts + schemas
+pnpm run smoke:commands  # CLI command verbs (config, provider, models, chat, ...)
 pnpm run smoke:flags     # parser + reporter flag contract (Phase 3)
+pnpm run smoke:core      # tools core self-test (config loader, caches, logger, filesystem)
+pnpm run smoke:ai        # AI provider catalog / factory / streaming self-test
+pnpm run smoke:secweb    # web crypto + encrypted vault self-test
+pnpm run smoke:mcp       # MCP server self-test (20 tools, 7 resources)
+pnpm run smoke:docs      # documentation automation self-test (managed regions)
 pnpm run baseline:check  # byte-level config.json + langs contract
 pnpm run smoke:all       # all of the above
 ```

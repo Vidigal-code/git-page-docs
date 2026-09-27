@@ -71,7 +71,7 @@ describe("parseAiCliConfig", () => {
     });
     expect(parsed?.ai).toEqual({
       provider: "gemini",
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
       paths: [],
       languages: ["pt"],
       outputDir: "gitpagedocs/docs",

@@ -89,6 +89,8 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
 
   /** AI Chat toggle: enable/disable entirely */
   AiChatEnabled?: boolean;
+  /** Seconds of inactivity before the AI chat locks again (keys stay encrypted); 0 disables. Default 30. */
+  AiChatAutoLockSeconds?: number;
 
   /** Documentation-wide password gate. When enabled with a publicKey, the
    * frontend blocks all docs until the visitor enters the password or private key. */

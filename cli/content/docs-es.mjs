@@ -165,6 +165,21 @@ El config de version puede renderizar un contenedor **Codigo fuente** via \`rout
 
 - \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busqueda de repositorio (local)
 - \`GITHUB_ACTIONS\` – modo build GitHub Pages
+
+## Asistente de IA
+
+Los docs traen un asistente de IA en dos superficies: un **panel de chat** dentro de los docs (boton de chat de IA en la barra lateral, activado por \`site.AiChatEnabled\`) y una pagina **consola \`/ai\`** dedicada.
+
+- **14 proveedores** en un unico core compartido: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
+- **Eleccion de modelo** — desde el catalogo de cada proveedor (\`gitpagedocs models <proveedor>\`); un id de modelo guardado que el proveedor retiro se reemplaza por el predeterminado del proveedor automaticamente.
+- **Cifrado en reposo** — tu clave de API se sella con AES-256-GCM detras de una **contrasena local** y nunca queda en texto plano ni en logs. Una clave heredada en texto plano se migra y se borra en el primer desbloqueo.
+- **Bloqueo por inactividad** — el panel de chat se bloquea solo tras \`site.AiChatAutoLockSeconds\` segundos sin uso (por defecto 30, \`0\` lo desactiva): un modal centrado con cuenta regresiva, en tu idioma, permite cancelar o bloquear ahora, y desbloquear pide la contrasena de nuevo.
+- **Proveedores resilientes** — los errores transitorios del proveedor se reintentan (3 intentos) y un fallo final es un mensaje simple que termina en "¡Inténtalo de nuevo!".
+- **Generacion de documentacion con IA** — \`gitpagedocs ai\` recorre las rutas elegidas y escribe markdown multilingue (pt/en/es); reutilizable via \`.gitpagedocsconfig\`, cuya clave de API queda sellada en la boveda cifrada \`.gitpagedocsvault\` (la contrasena de la boveda se pide en cada ejecucion). \`gitpagedocs chat\` lleva el mismo asistente a la terminal.
+
+## Servidor MCP
+
+\`gitpagedocs mcp start\` levanta un servidor Model Context Protocol (stdio) que expone **20 tools** (sistema de archivos, IA, generacion/analisis de docs) y **7 resources** (\`project://structure|docs|config|repository|readme|ai/providers|ai/models\`) para editores y agentes de IA.
 `,
     configuration: `# Configuracion
 
@@ -311,7 +326,7 @@ El proyecto esta organizado por fronteras de feature y responsabilidades de runt
 
 ## Seguridad: credenciales de IA cifradas
 
-La consola \`/ai\` y el panel de chat exigen una contrasena local que deriva (PBKDF2) una clave AES-256-GCM; las claves quedan cifradas en \`localStorage\` y solo se descifran durante la sesion (\`@gitpagedocs/tools/security\`).
+La consola \`/ai\` y el panel de chat exigen una contrasena local que deriva (PBKDF2) una clave AES-256-GCM; las claves quedan cifradas en \`localStorage\` y solo se descifran durante la sesion (\`@gitpagedocs/tools/security\`). El panel se bloquea solo tras \`site.AiChatAutoLockSeconds\` segundos sin uso (por defecto 30; \`0\` lo desactiva): un modal centrado con cuenta regresiva, en el idioma seleccionado, permite cancelar o bloquear ahora, y volver exige la contrasena de nuevo. En la CLI, la clave de \`.gitpagedocsconfig\` queda sellada en la boveda cifrada \`.gitpagedocsvault\` y la contrasena de la boveda se pide en cada ejecucion.
 
 ## Flujo de datos
 

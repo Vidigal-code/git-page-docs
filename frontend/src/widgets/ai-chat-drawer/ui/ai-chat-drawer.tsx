@@ -10,8 +10,10 @@ import { ApiKeyForm } from '../../../features/ask-ai/ui/api-key-form';
 import { aiStorage } from '../../../shared/lib/ai-storage';
 import { aiSecureStorage } from '../../../shared/lib/ai-secure-storage';
 import { useAiChat } from '../../../features/ask-ai/model/use-ai-chat';
+import { normalizeAutoLockSeconds, useInactivityLock } from '../../../features/ask-ai/model/inactivity-lock';
 import type { MultimodalAttachment } from '../../../features/ask-ai/api/providers/llm-types';
 import { ConfirmPopup } from '../../../shared/ui/confirm-popup/confirm-popup';
+import { InactivityLockDialog } from './inactivity-lock-dialog';
 import { marked } from 'marked';
 import styles from './ai-chat.module.css';
 
@@ -28,6 +30,8 @@ interface AiChatDrawerProps {
     icons: any;
     labels: any;
     systemContext?: string;
+    /** `site.AiChatAutoLockSeconds`: idle seconds before the vault locks again (0 disables, default 30). */
+    autoLockSeconds?: number;
 }
 
 function renderIcon(config: any, defaultTag: string) {
@@ -87,47 +91,53 @@ function VaultGateForm({
         ? (labels.aiChatCreatePasswordBtn || 'Create password')
         : (labels.aiChatUnlockBtn || 'Unlock');
     return (
-        <>
-            <p style={{ color: 'var(--text-secondary)' }}>{description}</p>
-            <input
-                data-testid="drawer-password-input"
-                type="password"
-                value={passwordInput}
-                onChange={e => onPasswordChange(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); onUnlock(); } }}
-                placeholder={labels.aiChatPasswordPlaceholder || 'Local password'}
-                className={styles.formInput}
-                style={{ maxWidth: 280 }}
-            />
-            <button
-                data-testid="drawer-unlock-button"
-                onClick={onUnlock}
-                className={styles.btnPrimary}
-            >
-                {unlockLabel}
-            </button>
-            {gateError && <p data-testid="drawer-gate-error" style={{ color: '#f85149' }}>{gateError}</p>}
-            {vaultState === 'locked' && (
+        <form
+            className={styles.formContainer}
+            onSubmit={e => { e.preventDefault(); onUnlock(); }}
+        >
+            <div className={styles.formHeader}>
+                <p>{description}</p>
+            </div>
+            <label className={styles.formGroup}>
+                {labels.aiChatPasswordPlaceholder || 'Local password'}
+                <input
+                    data-testid="drawer-password-input"
+                    type="password"
+                    value={passwordInput}
+                    onChange={e => onPasswordChange(e.target.value)}
+                    placeholder={labels.aiChatPasswordPlaceholder || 'Local password'}
+                    className={styles.formInput}
+                    autoComplete={isCreate ? 'new-password' : 'current-password'}
+                />
+            </label>
+            {gateError && <p data-testid="drawer-gate-error" className={styles.formError} role="alert">{gateError}</p>}
+            <div className={styles.formActions}>
                 <button
-                    type="button"
-                    data-testid="drawer-reset-password"
-                    onClick={onRequestReset}
-                    style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}
+                    type="submit"
+                    data-testid="drawer-unlock-button"
+                    className={styles.btnPrimary}
                 >
-                    {labels.aiChatResetBtn || 'Forgot password? Reset (erases saved keys)'}
+                    {unlockLabel}
                 </button>
-            )}
-        </>
+                {vaultState === 'locked' && (
+                    <button
+                        type="button"
+                        data-testid="drawer-reset-password"
+                        onClick={onRequestReset}
+                        className={styles.linkButton}
+                    >
+                        {labels.aiChatResetBtn || 'Forgot password? Reset (erases saved keys)'}
+                    </button>
+                )}
+            </div>
+        </form>
     );
 }
 
 /** Encrypted-vault gate shown until the session password is known. */
 function VaultGate({ vaultState, ...formProps }: Readonly<VaultGateProps>) {
     return (
-        <div
-            data-testid="ai-chat-gate"
-            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24, textAlign: 'center' }}
-        >
+        <div data-testid="ai-chat-gate" className={styles.formArea}>
             {vaultState === 'loading' ? (
                 <p style={{ color: 'var(--text-secondary)' }}>…</p>
             ) : (
@@ -283,7 +293,7 @@ function ChatComposer({
     );
 }
 
-export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, icons, labels, systemContext }) => {
+export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, icons, labels, systemContext, autoLockSeconds }) => {
     const [hasKey, setHasKey] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState('');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -324,9 +334,38 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     }, [sessionPassword]);
 
     const { messages, isLoading, sendMessage, cancelMessage, clearMessages } = useAiChat(systemContext, labels, resolveCredentials);
+
+    // Re-lock the vault: drop the in-memory session password so the password gate
+    // is shown again before the AI can be used. Stored keys and chat are preserved.
+    const lockVault = useCallback(() => {
+        setSessionPassword(null);
+        setPasswordInput('');
+        setGateError('');
+        setVaultState('locked');
+        setIsSettingsOpen(false);
+    }, []);
+
+    // Inactivity auto-lock: a reply being streamed counts as activity.
+    const autoLock = useInactivityLock({
+        enabled: isOpen && vaultState === 'unlocked' && !isLoading,
+        seconds: normalizeAutoLockSeconds(autoLockSeconds),
+        onLock: lockVault,
+    });
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const drawerContentRef = useRef<HTMLDivElement>(null);
     const titleId = useId();
+
+    // Any interaction inside the drawer counts as activity for the auto-lock.
+    // Native listeners (not JSX handlers) keep the wrapper a plain container.
+    const { registerActivity } = autoLock;
+    useEffect(() => {
+        const node = drawerContentRef.current;
+        if (!node || !isOpen) return undefined;
+        const events = ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const;
+        events.forEach((name) => node.addEventListener(name, registerActivity, { passive: true }));
+        return () => events.forEach((name) => node.removeEventListener(name, registerActivity));
+    }, [isOpen, registerActivity]);
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
         if (isExpanded) return;
@@ -405,15 +444,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         }
     };
 
-    // Re-lock the vault: drop the in-memory session password so the password gate
-    // is shown again before the AI can be used. Stored keys and chat are preserved.
-    const handleLockVault = () => {
-        setSessionPassword(null);
-        setPasswordInput('');
-        setGateError('');
-        setVaultState('locked');
-        setIsSettingsOpen(false);
-    };
+    const handleLockVault = lockVault;
 
     const handleResetPassword = async () => {
         // Forgot password: wipe the vault (all stored keys) and start over with
@@ -488,6 +519,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     };
 
     const handleSend = () => {
+        autoLock.registerActivity();
         if (isLoading) {
             cancelMessage();
         } else {
@@ -523,7 +555,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         );
     } else if (!hasKey || isSettingsOpen) {
         messagesArea = (
-            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className={styles.formArea}>
                 <ApiKeyForm onSave={handleSaveKey} labels={labels} />
             </div>
         );
@@ -543,6 +575,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         <div className={`${styles.drawerOverlay} ${isExpanded ? styles.drawerOverlayExpanded : ''}`}>
             <button type="button" className={styles.drawerBackdrop} onClick={onClose} aria-label={labels.aiChatCloseBtnAriaLabel} tabIndex={-1} />
             <div
+                ref={drawerContentRef}
                 className={`${styles.drawerContent} ${isExpanded ? styles.drawerExpanded : ''}`}
                 style={{
                     width: isExpanded ? undefined : `${drawerWidth}px`,
@@ -689,6 +722,19 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     />
                 )}
             </div>
+
+            <InactivityLockDialog
+                open={autoLock.warningOpen}
+                remaining={autoLock.remaining}
+                labels={{
+                    title: labels.aiChatAutoLockTitle || 'Inactivity lock',
+                    description: labels.aiChatAutoLockDesc || 'You have not used the AI for a while. The chat locks and your keys stay encrypted in {seconds}s.',
+                    confirm: labels.aiChatAutoLockConfirmBtn || 'OK',
+                    cancel: labels.aiChatAutoLockCancelBtn || 'Cancel',
+                }}
+                onConfirm={autoLock.lockNow}
+                onCancel={autoLock.cancelWarning}
+            />
         </div>
     );
 };

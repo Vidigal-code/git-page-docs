@@ -19,8 +19,11 @@ This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the publi
 - `gitpagedocs provider [id]` — list AI providers or show one
 - `gitpagedocs models [provider]` — list catalog models
 - `gitpagedocs ai` — interactive AI docs generator (writes pages in the gitpagedocs pattern)
+- `gitpagedocs chat [question]` — streaming AI chat in the terminal (REPL on a TTY; one-shot with a question or piped stdin)
 - `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI in the gitpagedocs pattern
 - `gitpagedocs password` — set a documentation access password (writes the public key to config.json)
+- `gitpagedocs config clear` — delete the stored .gitpagedocsconfig and the encrypted key vault
+- `gitpagedocs docs` — refresh the managed regions of README, CONTRIBUTING and SECURITY
 - `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio

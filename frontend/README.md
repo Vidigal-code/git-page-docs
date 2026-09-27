@@ -28,8 +28,8 @@ frontend/
 |-- .env / .env.example       # GITPAGEDOCS_REPOSITORY_SEARCH, GITPAGEDOCS_PATH
 `-- src/
     |-- app/                  # App Router: [[...repo]] catch-all, /ai, layout, not-found
-    |-- widgets/              # docs-shell, ai-chat-drawer
-    |-- features/             # ask-ai (chat), ai-console, route-authorization
+    |-- widgets/              # docs-shell, ai-chat-drawer (+ inactivity-lock-dialog)
+    |-- features/             # ask-ai (chat, retry-policy, inactivity-lock), ai-console, route-authorization
     |-- entities/            # docs (config/content/io/layouts), ai-config
     `-- shared/               # ui, lib (ai-storage, ai-secure-storage, base-path), config, icons
 ```
@@ -44,6 +44,10 @@ Two independent surfaces share the same encrypted vault from `@gitpagedocs/tools
 - **Chat drawer** (`src/widgets/ai-chat-drawer`, `src/features/ask-ai`) — opens over the docs.
 
 Both are gated by a **local password**: it creates/unlocks an AES-256-GCM vault (`src/shared/lib/ai-secure-storage.ts` → `EncryptedCredentialVault`), keys are stored encrypted in `localStorage` (`gitpagedocs:vault`) and decrypted only in-session. The legacy plaintext key (`gitpagedocs_ai_key`) is migrated and wiped on first unlock. The chat itself runs through the shared 14-provider AI core, so the service layer never reads keys from storage — credentials are injected per request.
+
+**Inactivity auto-lock (drawer).** `useInactivityLock` (`src/features/ask-ai/model/inactivity-lock.ts`) watches pointer/key/wheel/touch activity while the drawer is open and unlocked. `site.AiChatAutoLockSeconds` from `gitpagedocs/config.json` (default `30`, `0` disables, invalid → `30`) sets the idle limit; 10 seconds before it, `InactivityLockDialog` (`src/widgets/ai-chat-drawer/ui/inactivity-lock-dialog.tsx`) opens centered over the drawer with a live countdown, focus trap (Tab/Shift+Tab/Escape), `aria-modal`, theme tokens and phone-width layout. Cancel keeps the session; confirm or the countdown reaching zero drops the in-memory password (`lockVault`), so the vault stays encrypted and the password gate returns. Labels come from `langmenu` (`aiChatAutoLockTitle`, `aiChatAutoLockDesc` with `{seconds}`, `aiChatAutoLockConfirmBtn`, `aiChatAutoLockCancelBtn`).
+
+**Providers.** `src/shared/config/ai-config.ts` derives the drawer's provider/model options from `PROVIDER_CATALOG` (`@gitpagedocs/tools/ai`), so the select never offers a retired model id and a stored one is self-healed to the provider default (`normalizeProviderAndModel`; Ollama models pass through). `SharedLlmService` retries a whole failed attempt on transient statuses (408/425/429/500/502/503/504, `api/retry-policy.ts`, 3 attempts, exponential backoff) and keeps status-less errors status-less (no fake 500). Error messages rendered in the chat have no brackets and end with the `aiChatRetryHint` label ("Try again!").
 
 ## Documentation access gate
 

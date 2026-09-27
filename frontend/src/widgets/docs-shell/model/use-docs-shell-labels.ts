@@ -66,6 +66,11 @@ export interface DocsShellLabels {
   aiChatResetPopupDesc: string;
   aiChatResetConfirmBtn: string;
   aiChatResetCancelBtn: string;
+  aiChatRetryHint: string;
+  aiChatAutoLockTitle: string;
+  aiChatAutoLockDesc: string;
+  aiChatAutoLockConfirmBtn: string;
+  aiChatAutoLockCancelBtn: string;
   docsAccessGateTitle: string;
   docsAccessGateDescription: string;
   docsAccessInputPlaceholder: string;
@@ -174,8 +179,8 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
     const aiChatProviderLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderLabel", "Provider:");
     const aiChatApiKeyLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatApiKeyLabel", "API Key (leave blank for Local AI):");
     const aiChatProviderOpenAI = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderOpenAI", "OpenAI (GPT-4o-mini)");
-    const aiChatProviderClaude = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderClaude", "Anthropic Claude (3.5 Sonnet)");
-    const aiChatProviderGemini = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderGemini", "Google Gemini (1.5 Flash)");
+    const aiChatProviderClaude = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderClaude", "Anthropic Claude (Sonnet 4.6)");
+    const aiChatProviderGemini = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderGemini", "Google Gemini (2.5 Flash)");
     const aiChatProviderOllama = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderOllama", "Ollama Network (Local LLMs)");
 
     // Content states
@@ -209,6 +214,16 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
     const aiChatResetPopupDesc = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetPopupDesc", "This erases all saved API keys and the local password. You'll create a new password next time.");
     const aiChatResetConfirmBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetConfirmBtn", "Yes, reset");
     const aiChatResetCancelBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatResetCancelBtn", "Cancel");
+    const aiChatRetryHint = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatRetryHint", "Try again!");
+    const aiChatAutoLockTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatAutoLockTitle", "Inactivity lock");
+    const aiChatAutoLockDesc = getLangMenuLabelFromMenu(
+      data.config.site.langmenu,
+      language,
+      "aiChatAutoLockDesc",
+      "You have not used the AI for a while. The chat locks and your keys stay encrypted in {seconds}s.",
+    );
+    const aiChatAutoLockConfirmBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatAutoLockConfirmBtn", "OK");
+    const aiChatAutoLockCancelBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatAutoLockCancelBtn", "Cancel");
 
     // Documentation access gate
     const docsAccessGateTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessGateTitle", "Protected documentation");
@@ -287,6 +302,11 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       aiChatResetPopupDesc,
       aiChatResetConfirmBtn,
       aiChatResetCancelBtn,
+      aiChatRetryHint,
+      aiChatAutoLockTitle,
+      aiChatAutoLockDesc,
+      aiChatAutoLockConfirmBtn,
+      aiChatAutoLockCancelBtn,
       docsAccessGateTitle,
       docsAccessGateDescription,
       docsAccessInputPlaceholder,

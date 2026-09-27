@@ -71,11 +71,11 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
     envVars: ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
     label: "Google Gemini",
     family: "gemini",
-    defaultModel: "gemini-2.0-flash",
+    defaultModel: "gemini-2.5-flash",
     baseUrl: "https://generativelanguage.googleapis.com/v1beta/models",
     auth: "query-key",
     capabilities: VISION_AUDIO,
-    models: models("gemini-2.0-flash", "gemini-1.5-pro", "gemini-1.5-flash"),
+    models: models("gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"),
   },
   openrouter: {
     id: "openrouter",

@@ -3,6 +3,7 @@ import type { AiProviderId } from "@gitpagedocs/tools/ports";
 import { PROVIDER_CATALOG } from "@gitpagedocs/tools";
 import { AiConfigFileRepository } from "../infrastructure/ai-config-file";
 import type { AiCliConfig } from "../core/models/ai-cli-config";
+import { needsVaultPassword, type StoredKeyUnlocker } from "./ai-credentials";
 
 export interface ResolvedChatCredentials {
   readonly providerId: AiProviderId;
@@ -21,6 +22,12 @@ export interface ResolveChatCredentialsInput {
   readonly configRepo?: Pick<AiConfigFileRepository, "read">;
   /** Injectable for tests; defaults to process.env. */
   readonly env?: Readonly<Record<string, string | undefined>>;
+  /**
+   * Decrypts the key of a stored config (asking the vault password) and
+   * migrates a legacy plaintext key into the vault. Without it a plaintext
+   * key is used as is and an encrypted one is unreachable.
+   */
+  readonly unlockStoredKey?: StoredKeyUnlocker;
 }
 
 /**
@@ -40,7 +47,11 @@ export async function resolveChatCredentials(
   const spec = PROVIDER_CATALOG[providerId];
   const model = input.modelOverride?.trim() || stored?.ai.model?.trim() || spec.defaultModel;
   const baseUrl = stored?.ai.baseUrl?.trim() || undefined;
-  const apiKey = stored?.ai.apiKey?.trim() || resolveApiKeyFromEnv(providerId, env);
+  const storedKey =
+    stored && input.unlockStoredKey && needsVaultPassword(stored)
+      ? await input.unlockStoredKey(stored)
+      : stored?.ai.apiKey?.trim();
+  const apiKey = storedKey?.trim() || resolveApiKeyFromEnv(providerId, env);
 
   const keyless = spec.auth === "none";
   if (!keyless && !apiKey) return null;

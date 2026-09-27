@@ -1,0 +1,150 @@
+/* Sits above the drawer (1000) and the confirm popups (2000). The backdrop
+   takes the theme background so everything behind the dialog is hidden. */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: color-mix(in srgb, var(--background, #020617) 84%, transparent);
+    backdrop-filter: blur(10px);
+    animation: lockFadeIn 0.15s ease-out;
+}
+
+/* Native <dialog> reset (opened with the `open` attribute): the flex overlay
+   centers it, the UA box model must not fight that. */
+.dialog {
+    position: static;
+    inset: auto;
+    margin: 0;
+    width: min(100%, 440px);
+    max-height: none;
+    box-sizing: border-box;
+    padding: clamp(20px, 4vw, 32px);
+    border: 1px solid var(--card-border, #334155);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--card-background, #0f172a) 96%, var(--background, #020617));
+    color: var(--text, #e2e8f0);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    animation: lockSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--primary, #3b82f6);
+    background: color-mix(in srgb, var(--primary, #3b82f6) 18%, transparent);
+}
+
+.title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text, #e2e8f0);
+}
+
+.description {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary, #94a3b8);
+}
+
+.countdown {
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(2.4rem, 8vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--primary, #3b82f6);
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.button {
+    flex: 1;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #3b82f6) 35%, transparent);
+}
+
+.buttonSecondary {
+    background: transparent;
+    color: var(--text, #e2e8f0);
+    border-color: var(--card-border, #334155);
+}
+
+.buttonSecondary:hover {
+    background: color-mix(in srgb, var(--text, #e2e8f0) 8%, transparent);
+}
+
+.buttonPrimary {
+    background: var(--primary, #2563eb);
+    color: var(--button-text, #fff);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--primary, #2563eb) 35%, transparent);
+}
+
+.buttonPrimary:hover {
+    filter: brightness(1.08);
+}
+
+@media (max-width: 480px) {
+    .actions {
+        flex-direction: column-reverse;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .overlay,
+    .dialog {
+        animation: none;
+    }
+}
+
+@keyframes lockFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes lockSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

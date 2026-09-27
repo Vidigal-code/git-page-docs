@@ -23,7 +23,11 @@ It does **not** generate `index.html` or `index.js`.
 - [Authorized Routes](#authorized-routes)
 - [CLI Options](#cli-options)
 - [AI CLI (interactive docs generator)](#ai-cli-interactive-docs-generator)
+- [Documentation password gate](#documentation-password-gate)
+- [AI chat drawer (auto-lock)](#ai-chat-drawer-auto-lock)
 - [Configuration File Format](#configuration-file-format)
+- [Languages and UI Strings](#languages-and-ui-strings)
+- [Versioning and changelog](#versioning-and-changelog)
 - [License](#license)
 
 ## Project Architecture (Monorepo)
@@ -52,7 +56,10 @@ git-page-docs/
 
 ### Security: encrypted AI credentials
 
-API keys are never stored in plaintext. Both the `/ai` console and the in-docs chat drawer gate access behind a **local password** that derives (PBKDF2) an AES-256-GCM key; keys are encrypted at rest in `localStorage` and decrypted only for the session. Any legacy plaintext key is migrated into the vault and wiped on first unlock.
+API keys are never stored in plaintext, neither on the site nor by the CLI:
+
+- **Site (`/ai` console and chat drawer)** — a **local password** derives (PBKDF2-HMAC-SHA-256) an AES-256-GCM key; keys are encrypted at rest in `localStorage` and decrypted only for the session. Any legacy plaintext key is migrated into the vault and wiped on first unlock. The chat drawer also **locks itself after `site.AiChatAutoLockSeconds`** idle seconds (default 30) and asks for the password again — see [AI chat drawer (auto-lock)](#ai-chat-drawer-auto-lock).
+- **CLI (`gitpagedocs ai` / `gitpagedocs chat`)** — the key never sits in `.gitpagedocsconfig`: it is sealed in the encrypted vault file `.gitpagedocsvault` next to it, with a **vault password created on first use and asked on every run** (`GITPAGEDOCS_VAULT_PASSWORD` for non-interactive runs). The config only records `"apiKeyEncrypted": true` — see [Manual config](#manual-config-gitpagedocsconfig).
 
 ### Tooling
 
@@ -114,7 +121,7 @@ Generate docs, configure GitHub Pages URL, create workflow, and push:
 npx @gitpagedocs/cli --push --owner your-user --repo your-repository
 ```
 
-Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/0.0.1/?lang=en`.
+Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/0.0.2/?lang=en`.
 
 Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 
@@ -122,7 +129,7 @@ Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 npx @gitpagedocs/cli --push --owner your-user --repo your-repository --path docs
 ```
 
-Then docs are at `https://your-user.github.io/your-repository/docs/v/0.0.1/?lang=en`.
+Then docs are at `https://your-user.github.io/your-repository/docs/v/0.0.2/?lang=en`.
 
 Shortcut syntax also supported:
 
@@ -258,8 +265,8 @@ gitpagedocs/
   icon.svg
   docs/
     versions/
-      0.0.1/config.json
-      0.0.1/{en,pt,es}/*.md
+      0.0.2/config.json
+      0.0.2/{en,pt,es}/*.md
 ```
 
 Local layout mode adds (at the repository root, next to `gitpagedocs/`):
@@ -311,15 +318,28 @@ Version configs can render a GitHub-style source browser inside the docs through
 
 ## Scripts
 
-- `npm run gitpagedocs` — runs `node cli/index.mjs` (generate config and docs)
-- `npm run gitpagedocs:full` — compatibility alias for the same CLI
-- `npm run gitpagedocs:home` — generates `gitpagedocshome/` (static site + .env + Dockerfile + README)
-- `npm run build` — generate `gitpagedocs/` + copy icon to `public/` + `next build`
-- `npm run build:prebuilt` — generate + build + copy `out/` to `prebuilt/`
-- `npm run dev` — `next dev`
-- `npm run start` — `node cli/start.mjs` (spawns `next start`; runs after `prestart` build)
-- `npm run lint` — `eslint .`
-- `npm run clean` — remove `.next/`
+Run from the repository root with `pnpm run <script>` (`npm run` works too). They mirror the root `package.json`:
+
+| Script | What it does |
+| --- | --- |
+| `gitpagedocs` | `node cli/index.mjs` — generate `gitpagedocs/` (`config.json`, `langs/<lang>.json`, versioned docs, `icon.svg`) |
+| `gitpagedocs:home` | `node cli/index.mjs --home` — standalone `gitpagedocshome/` distribution (static site + .env + Dockerfile) |
+| `dev` | `next dev frontend` with the repository-search home (`GITPAGEDOCS_REPOSITORY_SEARCH=true`; `predev` copies `icon.svg`) |
+| `dev:e2e` | `next dev frontend` opening the local docs directly — what Playwright runs against |
+| `build` | generate `gitpagedocs/` + copy `icon.svg` to `frontend/public/` + `next build frontend` (static export in `frontend/out/`) |
+| `build:prebuilt` | `build`, then copy the export to `cli/prebuilt/` |
+| `start` | `node cli/start.mjs` serves the build (`prestart` runs `build` first) |
+| `lint` / `lint:src` | `eslint .` / frontend sources only |
+| `typecheck` / `typecheck:strict-unused` | `tsc --noEmit` for root, frontend, tools and mcp / plus unused-symbol checks |
+| `test:unit` / `test:cov` | Vitest suite / with coverage |
+| `test:e2e` | Playwright E2E (`PORT=3100 pnpm run test:e2e` when 3000 is busy) |
+| `smoke:cli` · `smoke:commands` · `smoke:flags` · `smoke:core` · `smoke:ai` · `smoke:secweb` · `smoke:mcp` · `smoke:docs` | self-tests of the CLI artifacts, command verbs, flag contract, tools core, AI providers, web security, MCP server and docs automation |
+| `smoke:all` / `test` / `test:ci` | every smoke suite (`smoke:all` and `test` also run `baseline:check`) |
+| `baseline:create` / `baseline:check` | recreate / verify the byte-stable snapshot of the generated `config.json` + `langs/*.json` (and `site-baseline.json`) |
+| `layouts:sync` | regenerate `gitpagelayouts/` (layout JSON + per-layout docs) |
+| `turbo:build` · `turbo:lint` · `turbo:typecheck` · `turbo:test` | the same tasks through turborepo |
+| `publish:all` | `pnpm -r publish --access public --no-git-checks` |
+| `clean` | remove `frontend/.next/` |
 
 ## URL Routes and Query Parameters
 
@@ -343,12 +363,12 @@ All routes for accessing documentation files on the official site or self-hosted
 | `lang` | `en`, `pt`, `es` | UI and content language |
 | `theme` | layout id (e.g. `aurora-dark`, `aurora-light`) | Active theme; always reflected in URL |
 | `modetheme` | `dark`, `light` | Theme mode (legacy; `theme` takes precedence) |
-| `version` | e.g. `0.0.1` | Version (alternative to path) |
+| `version` | e.g. `0.0.2` | Version (alternative to path) |
 | `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `name`) |
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
 | `name` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
 | `mdfull` | `en`, `pt`, `es` | Markdown fullscreen mode |
-| `htmlfull` | `en`, `pt`, `es` | HTML fullscreen mode |
+| `htmlfull` | `en`, `pt`, `es` | HTML fullscreen mode (needs a `routes-html` entry in the version config; this repository defines none) |
 | `file` | path (with `mdfull` or `htmlfull`) | File to show in fullscreen |
 | `videofull` | `en`, `pt`, `es` | Video fullscreen mode |
 | `audiofull` | `en`, `pt`, `es` | Audio fullscreen mode |
@@ -370,46 +390,46 @@ https://vidigal-code.github.io/git-page-docs
 - Repository default version:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en
 - Repository pinned version:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en
 - Project version path without owner/repo:
-  https://vidigal-code.github.io/git-page-docs/v/0.0.1/?lang=en
+  https://vidigal-code.github.io/git-page-docs/v/0.0.2/?lang=en
 - Version through query parameter:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=0.0.1
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=0.0.2
 
 **Markdown pages by route id**
 
 - Getting Started (`id=1`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=1
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=1
 - Project overview (`id=2`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=2
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=2
 - Functionalities (`id=3`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=3
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=3
 - GitHub issues and projects (`id=4`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=4
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=4
 - Introduction to Git (`id=5`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=5
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=5
 - Authorized routes (`id=6`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=6
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=6
 
 **Markdown pages by slug (`name`)**
 
 - Getting Started:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&name=getting-started
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&name=getting-started
 - Project overview:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&name=project-overview
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&name=project-overview
 - Functionalities:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&name=functionalities
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&name=functionalities
 - GitHub issues and projects:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&name=github-issues-projects
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&name=github-issues-projects
 - Introduction to Git:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&name=git-introduction
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&name=git-introduction
 - Authorized routes:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&name=authorized-routes
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&name=authorized-routes
 
 **Source viewer**
 
 - Source viewer page inside the docs shell (`id=7`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=7
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=7
 - Standalone source viewer root:
   https://vidigal-code.github.io/git-page-docs/source-viewer
 - Standalone source viewer for this repository:
@@ -421,44 +441,42 @@ https://vidigal-code.github.io/git-page-docs
 **Video pages**
 
 - Interactive vs non-interactive modes (`id=8`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=8
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=8
 - GitHub issues and projects video (`id=9`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=9
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=9
 - Python tutor video (`id=10`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=10
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=10
 - Git introduction video (`id=11`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=11
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=11
 
 **Audio pages**
 
 - Audio track (`id=12`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=12
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=12
 
 **Fullscreen modes**
 
 - Markdown fullscreen:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?mdfull=en&file=gitpagedocs/docs/versions/0.0.1/en/getting-started.md
-- HTML fullscreen pattern (requires a configured HTML route):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?htmlfull=en&file=gitpagedocs/docs/versions/0.0.1/en/example.html
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?mdfull=en&file=gitpagedocs/docs/versions/0.0.2/en/getting-started.md
 - Video fullscreen by route id:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?videofull=en&id=8
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?videofull=en&id=8
 - Video fullscreen by slug:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?videofull=en&slug=bdIJkGr2NV0
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?videofull=en&slug=bdIJkGr2NV0
 - Audio fullscreen by route id:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?audiofull=en&id=12
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?audiofull=en&id=12
 - Audio fullscreen by slug:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?audiofull=en&slug=0w80F8FffQ4
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?audiofull=en&slug=0w80F8FffQ4
 
 **Theme and heading selection**
 
 - aurora-dark theme:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&theme=aurora-dark
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&theme=aurora-dark
 - aurora-light theme:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&theme=aurora-light
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&theme=aurora-light
 - Legacy mode parameter:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&modetheme=dark
-- Scroll to a Markdown heading:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.1/?lang=en&menu=en&id=1#quick-start
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&modetheme=dark
+- Scroll to a Markdown heading (`## Prerequisites` of Getting Started; the anchor is the lower-cased heading with spaces as `-`):
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.2/?lang=en&menu=en&id=1#prerequisites
 
 **Standalone app routes**
 
@@ -500,9 +518,9 @@ Example:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/0.0.1/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/0.0.1/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/0.0.1/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/0.0.2/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/0.0.2/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/0.0.2/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",
@@ -553,8 +571,13 @@ This mode provides:
 - API key / base URL input
 - path input (supports multiple paths and cross-repo paths)
 - multilingual markdown generation (`pt`, `en`, `es`)
-- optional `.gitpagedocsconfig` persistence for manual reuse
+- optional `.gitpagedocsconfig` persistence for manual reuse — the API key is sealed in the
+  encrypted vault `.gitpagedocsvault` (vault password created on first use, asked on every run)
 - interactive fallback when directories are missing (fix/skip/abort)
+
+The same credentials power `gitpagedocs chat [question]`, a streaming AI chat in the terminal
+(REPL on a TTY; one-shot with a question or piped stdin; `--provider`, `--model`, `--system`).
+See [`cli/README.md`](cli/README.md#gitpagedocs-chat).
 
 **Generates in the gitpagedocs pattern.** The model is told what gitpagedocs is and
 returns documentation split into multiple pages. `gitpagedocs ai` first scaffolds the base
@@ -569,16 +592,16 @@ idempotent — re-running `gitpagedocs ai` replaces them instead of duplicating.
 
 ### Manual config (`.gitpagedocsconfig`)
 
-The config is stored securely in the per-user OS config directory (never inside the
-repository, so the API key cannot be committed by accident), with owner-only file
+The config is stored in the per-user OS config directory (never inside the
+repository, so nothing secret can be committed by accident), with owner-only file
 permissions on POSIX systems:
 
 - Windows: `%APPDATA%\gitpagedocs\.gitpagedocsconfig`
 - macOS: `~/Library/Application Support/gitpagedocs/.gitpagedocsconfig`
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
-Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. Delete the stored file
-and its credentials at any time with `npx @gitpagedocs/cli config clear`. A legacy
+Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. Delete the stored file, the
+vault and their credentials at any time with `npx @gitpagedocs/cli config clear`. A legacy
 `.gitpagedocsconfig` in the repository root is migrated there automatically on the
 next `gitpagedocs ai` run. File contents:
 
@@ -588,7 +611,7 @@ next `gitpagedocs ai` run. File contents:
   "ai": {
     "provider": "openai",
     "model": "gpt-4o-mini",
-    "apiKey": "<YOUR_API_KEY>",
+    "apiKeyEncrypted": true,
     "paths": ["src", "cli", "../another-repo/src"],
     "languages": ["pt", "en", "es"],
     "outputDir": "gitpagedocs/docs",
@@ -598,7 +621,19 @@ next `gitpagedocs ai` run. File contents:
 }
 ```
 
-For Ollama, use `baseUrl` instead of `apiKey`.
+**The API key is not in this file.** When a configuration is saved, the key is sealed into the
+encrypted vault `.gitpagedocsvault` in the same directory (AES-256-GCM; key derived from your
+password with PBKDF2-HMAC-SHA-256, 210k iterations) and the config only keeps
+`"apiKeyEncrypted": true`:
+
+- the **vault password is created on first use** (typed twice) and **asked on every run** of
+  `gitpagedocs ai` / `gitpagedocs chat` that uses the stored key (3 attempts, then the run aborts);
+- `GITPAGEDOCS_VAULT_PASSWORD` supplies it without a prompt (CI, pipes, no TTY);
+- a legacy plaintext `"apiKey"` in an old file is sealed into the vault and removed from the file
+  the next time it is read;
+- `gitpagedocs config clear` deletes the config **and** the vault.
+
+For Ollama, use `baseUrl` instead of an API key (no vault involved).
 
 ## Documentation password gate
 
@@ -616,6 +651,34 @@ documentation behind a full-page gate; visitors unlock with the **password OR th
 (verified against the public key). The unlock is cached in `localStorage`, and a lock icon in
 the menu clears the cache to re-block. Leave `docsAccess.enabled` false (the default) to keep
 the docs open.
+
+## AI chat drawer (auto-lock)
+
+The in-docs chat drawer keeps the provider key in the encrypted `localStorage` vault and unlocks
+it with the local password. Two `site` keys in `gitpagedocs/config.json` control it:
+
+| Key | Default | Description |
+| --- | --- | --- |
+| `AiChatEnabled` | `true` (anything but `false`) | Shows the AI chat button in the sidebar and mounts the drawer |
+| `AiChatAutoLockSeconds` | `30` | Idle seconds before the drawer locks itself (`60`, `100`, …; `0` disables; a non-numeric or negative value falls back to `30`) |
+
+Behavior:
+
+- Any pointer, key, wheel or touch event inside the drawer counts as activity. Ten seconds before
+  the limit (at 20 s idle with the default) a **centered modal** shows a countdown in the selected
+  language — pt *Salvar* / *Cancelar*, en *OK* / *Cancel*, es *Guardar* / *Cancelar*. *Cancel*
+  keeps the session; the confirm button or the countdown reaching zero **locks the drawer**.
+- Locking drops the in-memory password: the keys stay encrypted in the vault and the password
+  gate is shown again. The timer pauses while a reply is streaming.
+- The modal traps focus (Tab / Shift+Tab / Escape = cancel), hides everything behind it, follows
+  the active theme (light or dark) and is responsive down to phone widths. Its strings come from
+  `langmenu`: `aiChatAutoLockTitle`, `aiChatAutoLockDesc` (with `{seconds}`),
+  `aiChatAutoLockConfirmBtn`, `aiChatAutoLockCancelBtn`.
+- The provider/model select is generated from the shared catalog (`gitpagedocs models <id>`), so a
+  model id retired by its provider is replaced by the provider default instead of failing.
+  Transient provider errors (HTTP 408/425/429/500/502/503/504) are retried up to 3 times with
+  backoff; a final failure is shown as a plain sentence ending with *Try again!*
+  (`langmenu.aiChatRetryHint`), never as a bracketed status code.
 
 ## Configuration File Format
 
@@ -651,7 +714,7 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 | --- | --- | --- | --- |
 | OpenAI | `openai` | `gpt-4o-mini` | stream, vision |
 | Anthropic | `anthropic` | `claude-sonnet-4-6` | stream, vision |
-| Google Gemini | `gemini` | `gemini-2.0-flash` | stream, vision, audio |
+| Google Gemini | `gemini` | `gemini-2.5-flash` | stream, vision, audio |
 | OpenRouter | `openrouter` | `openai/gpt-4o-mini` | stream, vision |
 | Ollama (local) | `ollama` | `llama3` | stream, vision |
 | Azure OpenAI | `azure-openai` | `gpt-4o-mini` | stream, vision |
@@ -671,8 +734,11 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 - `gitpagedocs provider [id]` — list AI providers or show one
 - `gitpagedocs models [provider]` — list catalog models
 - `gitpagedocs ai` — interactive AI docs generator (writes pages in the gitpagedocs pattern)
+- `gitpagedocs chat [question]` — streaming AI chat in the terminal (REPL on a TTY; one-shot with a question or piped stdin)
 - `gitpagedocs document[:repo|:file|:folder]` — generate documentation with AI in the gitpagedocs pattern
 - `gitpagedocs password` — set a documentation access password (writes the public key to config.json)
+- `gitpagedocs config clear` — delete the stored .gitpagedocsconfig and the encrypted key vault
+- `gitpagedocs docs` — refresh the managed regions of README, CONTRIBUTING and SECURITY
 - `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio

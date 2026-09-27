@@ -135,6 +135,7 @@
     "audioSequentialPlayback": false,
     "audioPopoverHideSource": false,
     "audioPopoverShowMinutes": true,
+    "AiChatAutoLockSeconds": 30,
     "audioTracks": [
       {
         "url": "https://www.youtube.com/watch?v=xAR6N9N8e6U",
@@ -345,10 +346,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.1",
-        "path": "gitpagedocs/docs/versions/0.0.1/config.json",
+        "id": "0.0.2",
+        "path": "gitpagedocs/docs/versions/0.0.2/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/0.0.1/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.2/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

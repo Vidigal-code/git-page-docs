@@ -30,6 +30,7 @@ import { ToolsLlmProvider } from "../../ai/infrastructure/llm/tools-llm-provider
 import { FileSystemAdapter } from "../../ai/infrastructure/file-system-adapter";
 import { writeVersionDocs } from "../../ai/infrastructure/version-docs-writer";
 import { AiConfigFileRepository } from "../../ai/infrastructure/ai-config-file";
+import { AI_KEY_VAULT_FILENAME, AiKeyVault } from "../../ai/infrastructure/ai-key-vault";
 import { resolveChatCredentials } from "../../ai/application/resolve-chat-credentials";
 import { AI_CLI_CONFIG_FILENAME } from "../../ai/core/models/ai-cli-config";
 import { DEFAULT_AI_DOC_PROMPT } from "../../ai/config";
@@ -96,16 +97,27 @@ describe("runAiCliCommand", () => {
       messages.push("scaffold");
     });
 
-    const result = await runAiCliCommand({ cwd, onInfo: (message) => messages.push(message), onScaffold });
+    const passwordPrompt = { create: vi.fn(async () => "vault-pw"), unlock: vi.fn(async () => "vault-pw") };
+    const result = await runAiCliCommand({ cwd, onInfo: (message) => messages.push(message), onScaffold, passwordPrompt, env: {} });
 
     expect(aiPrompts.runAiInteractivePrompt).toHaveBeenCalledWith(CONFIG);
     expect(messages[0]).toContain("[gitpagedocs:ai] Moved configuration from");
-    expect(messages).toContain(`[gitpagedocs:ai] Configuration saved to ${path.join(configDir, AI_CLI_CONFIG_FILENAME)}`);
+    const vaultPath = path.join(configDir, AI_KEY_VAULT_FILENAME);
+    expect(messages).toContain(
+      `[gitpagedocs:ai] Configuration saved to ${path.join(configDir, AI_CLI_CONFIG_FILENAME)} (API key encrypted in ${vaultPath})`,
+    );
     expect(messages).toContain("[gitpagedocs] Generating base gitpagedocs structure...");
     expect(messages.indexOf("[gitpagedocs] Generating base gitpagedocs structure...")).toBeLessThan(messages.indexOf("scaffold"));
     expect(onScaffold).toHaveBeenCalledTimes(1);
+    // First run: the password is created once, and the file never holds the key in clear.
+    expect(passwordPrompt.create).toHaveBeenCalledTimes(1);
+    expect(passwordPrompt.unlock).not.toHaveBeenCalled();
     const saved = JSON.parse(readFileSync(path.join(configDir, AI_CLI_CONFIG_FILENAME), "utf-8")) as AiCliConfig;
     expect(saved.ai.model).toBe("gpt-4o");
+    expect(saved.ai.apiKey).toBeUndefined();
+    expect(saved.ai.apiKeyEncrypted).toBe(true);
+    expect(readFileSync(vaultPath, "utf-8")).not.toContain("sk-test");
+    expect(await new AiKeyVault({ configDir }).getKey("vault-pw", "openai")).toBe("sk-test");
     expect(existsSync(path.join(cwd, AI_CLI_CONFIG_FILENAME))).toBe(false);
     expect(result).toEqual({
       summary: { scannedDirectories: [], skippedDirectories: ["missing-dir"], scannedFilesCount: 0, outputs: [] },
@@ -127,6 +139,34 @@ describe("runAiCliCommand", () => {
     expect(existsSync(path.join(configDir, AI_CLI_CONFIG_FILENAME))).toBe(false);
     expect(result.runConfigScaffold).toBe(false);
     expect(result.summary.skippedDirectories).toEqual(["missing-dir"]);
+  });
+
+  it("asks the vault password when reusing a stored config whose key is encrypted", async () => {
+    const cwd = makeRoot("gpd-ai-cmd-");
+    const configDir = path.join(makeRoot("gpd-ai-cmd-cfg-"), "gitpagedocs");
+    vi.stubEnv("GITPAGEDOCS_CONFIG_DIR", configDir);
+    const vault = new AiKeyVault({ configDir });
+    await vault.initialize("vault-pw");
+    await vault.setKey("vault-pw", "openai", "sk-test");
+    const { apiKey: _plain, ...aiWithoutKey } = CONFIG.ai;
+    await new AiConfigFileRepository({ cwd, configDir }).write({ ...CONFIG, ai: { ...aiWithoutKey, apiKeyEncrypted: true } });
+    aiPrompts.runAiInteractivePrompt.mockImplementation(async (existing) => ({
+      config: existing as AiCliConfig,
+      saveConfig: false,
+      runConfigScaffold: false,
+    }));
+    aiPrompts.promptMissingDirectories.mockResolvedValue({ replacementPaths: [], abort: false });
+    const passwordPrompt = { create: vi.fn(async () => "never"), unlock: vi.fn(async () => "vault-pw") };
+
+    const result = await runAiCliCommand({ cwd, passwordPrompt, env: {} });
+
+    expect(aiPrompts.runAiInteractivePrompt).toHaveBeenCalledWith(expect.objectContaining({ ai: expect.objectContaining({ apiKeyEncrypted: true }) }));
+    expect(passwordPrompt.unlock).toHaveBeenCalledTimes(1);
+    expect(passwordPrompt.create).not.toHaveBeenCalled();
+    expect(result.summary.skippedDirectories).toEqual(["missing-dir"]);
+    // The file still carries no key after the run.
+    const stored = JSON.parse(readFileSync(path.join(configDir, AI_CLI_CONFIG_FILENAME), "utf-8")) as AiCliConfig;
+    expect(stored.ai.apiKey).toBeUndefined();
   });
 });
 
