@@ -49,6 +49,9 @@ describe("loadPages", () => {
       expect(pages[0].md?.markdownByLanguage.en).toContain('<h1 id="hello-world">Hello World</h1>');
       expect(pages[0].md?.markdownByLanguage.en).not.toContain("title: x");
       expect(pages[0].md?.markdownByLanguage.pt).toContain('<h1 id="ola">Ola</h1>');
+      // The original file text is kept as is (front matter included) for copy/download.
+      expect(pages[0].md?.sourceByLanguage?.en).toContain("title: x");
+      expect(pages[0].md?.sourceByLanguage?.en).toContain("# Hello World");
       expect(pathToPageMap).toEqual({
         "docs/en/a.md": { pageIndex: 0, contentType: "md" },
         "docs/pt/a.md": { pageIndex: 0, contentType: "md" },
@@ -65,6 +68,8 @@ describe("loadPages", () => {
         en: "<p>Unable to load local markdown file.</p>",
         pt: "<p>Missing language file path in config.</p>",
       });
+      // Nothing readable, nothing to copy.
+      expect(pages[0].md?.sourceByLanguage).toEqual({});
       expect(pages[0].md?.fullscreenEnabled).toBe(false);
       expect(pathToPageMap).toEqual({ "docs/en/missing.md": { pageIndex: 0, contentType: "md" } });
     });

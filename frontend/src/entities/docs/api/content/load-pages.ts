@@ -60,16 +60,25 @@ function registerPaths(index: PageIndex, contentType: ContentType, keys: (string
   }
 }
 
-/** Reads one localized file, rendering the "unavailable" message when it cannot be read. */
-async function readLocalizedText(context: PageLoadContext, languagePath: string, render: TextRenderer): Promise<string> {
+/** Reads one localized file as is: its text (null when unreadable) and where it came from. */
+async function readLocalizedRaw(
+  context: PageLoadContext,
+  languagePath: string,
+): Promise<{ text: string | null; kind: SourceKind }> {
   if (context.source === "remote" && context.owner && context.repo) {
-    return render(await readRemoteText(context.owner, context.repo, languagePath), "remote");
+    return { text: await readRemoteText(context.owner, context.repo, languagePath), kind: "remote" };
   }
   try {
-    return render(await readLocalText(languagePath), "local");
+    return { text: await readLocalText(languagePath), kind: "local" };
   } catch {
-    return render(null, "local");
+    return { text: null, kind: "local" };
   }
+}
+
+/** Reads one localized file, rendering the "unavailable" message when it cannot be read. */
+async function readLocalizedText(context: PageLoadContext, languagePath: string, render: TextRenderer): Promise<string> {
+  const { text, kind } = await readLocalizedRaw(context, languagePath);
+  return render(text, kind);
 }
 
 async function loadTextByLanguage(
@@ -119,10 +128,25 @@ function findAudioRoute(routes: ContentTypeRouteConfig[], id: number): AudioRout
 }
 
 async function loadMdContent(route: MdRoute, context: PageLoadContext, index: PageIndex): Promise<LoadedMdContent> {
-  const markdownByLanguage = await loadTextByLanguage(context, route.path, renderMarkdown, MD_MISSING_PATH);
+  // Each file is read once: the HTML is rendered for display and the original
+  // text is kept for the "copy" / "download .md" actions.
+  const markdownByLanguage: Record<LanguageCode, string> = {};
+  const sourceByLanguage: Record<LanguageCode, string> = {};
+  await Promise.all(
+    context.languages.map(async (language) => {
+      const languagePath = route.path[language];
+      if (!languagePath) {
+        markdownByLanguage[language] = MD_MISSING_PATH;
+        return;
+      }
+      const { text, kind } = await readLocalizedRaw(context, languagePath);
+      markdownByLanguage[language] = renderMarkdown(text, kind);
+      if (text) sourceByLanguage[language] = text;
+    }),
+  );
   const fullscreenEnabled = "fullscreenEnabled" in route ? route.fullscreenEnabled : true;
   registerPaths(index, "md", context.languages.map((language) => route.path[language]));
-  return { routeId: route.id, config: route, markdownByLanguage, fullscreenEnabled };
+  return { routeId: route.id, config: route, markdownByLanguage, sourceByLanguage, fullscreenEnabled };
 }
 
 function resolveSourceViewerPath(rawPath: ContentTypeRouteConfig["source-viewer-path"], preferredLanguage: LanguageCode): string {

@@ -21,6 +21,14 @@ test.describe("AI chat drawer", () => {
 
     await openAiChat(page);
 
+    // The exclamation button opens the usage and risks guide even before a
+    // password exists; closing it returns to the gate.
+    await page.getByTestId("ai-chat-info").click();
+    await expect(page.getByTestId("ai-chat-info-panel")).toBeVisible();
+    await expect(page.getByTestId("ai-chat-info-risks").locator("li").first()).toBeVisible();
+    await page.getByTestId("ai-chat-info").click();
+    await expect(page.getByTestId("ai-chat-info-panel")).toHaveCount(0);
+
     // First run → create-password gate inside the drawer.
     await expect(page.getByTestId("ai-chat-gate")).toBeVisible();
     await page.getByTestId("drawer-password-input").fill("hunter2");

@@ -15,6 +15,10 @@ export interface DocsShellLabels {
   escHintLabel: string;
   closeHintLabel: string;
   fullscreenExpandLabel: string;
+  mdCopyLabel: string;
+  mdCopiedLabel: string;
+  mdCopyErrorLabel: string;
+  mdDownloadLabel: string;
   aiChatTitle: string;
   aiChatPlaceholder: string;
   aiChatConfigTitle: string;
@@ -71,6 +75,18 @@ export interface DocsShellLabels {
   aiChatAutoLockDesc: string;
   aiChatAutoLockConfirmBtn: string;
   aiChatAutoLockCancelBtn: string;
+  aiChatInfoBtn: string;
+  aiChatInfoTitle: string;
+  aiChatInfoIntro: string;
+  aiChatInfoWorksTitle: string;
+  aiChatInfoWorksItems: string;
+  aiChatInfoHowTitle: string;
+  aiChatInfoHowItems: string;
+  aiChatInfoFlowTitle: string;
+  aiChatInfoFlowItems: string;
+  aiChatInfoRisksTitle: string;
+  aiChatInfoRisksItems: string;
+  aiChatInfoBackBtn: string;
   docsAccessGateTitle: string;
   docsAccessGateDescription: string;
   docsAccessInputPlaceholder: string;
@@ -155,6 +171,10 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       "showMenu",
       "Fullscreen",
     );
+    const mdCopyLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "mdCopyLabel", "Copy markdown");
+    const mdCopiedLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "mdCopiedLabel", "Copied!");
+    const mdCopyErrorLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "mdCopyErrorLabel", "Could not copy");
+    const mdDownloadLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "mdDownloadLabel", "Download .md");
     const aiChatTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatTitle", "AI Assistant");
     const aiChatPlaceholder = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatPlaceholder", "Ask about the documentation...");
     const aiChatConfigTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatConfigTitle", "Configure AI");
@@ -224,6 +244,19 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
     );
     const aiChatAutoLockConfirmBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatAutoLockConfirmBtn", "OK");
     const aiChatAutoLockCancelBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatAutoLockCancelBtn", "Cancel");
+    // Long guide copy: an empty fallback lets the panel use its built-in English text.
+    const aiChatInfoBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoBtn", "How to use and risks");
+    const aiChatInfoTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoTitle", "");
+    const aiChatInfoIntro = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoIntro", "");
+    const aiChatInfoWorksTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoWorksTitle", "");
+    const aiChatInfoWorksItems = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoWorksItems", "");
+    const aiChatInfoHowTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoHowTitle", "");
+    const aiChatInfoHowItems = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoHowItems", "");
+    const aiChatInfoFlowTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoFlowTitle", "");
+    const aiChatInfoFlowItems = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoFlowItems", "");
+    const aiChatInfoRisksTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoRisksTitle", "");
+    const aiChatInfoRisksItems = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoRisksItems", "");
+    const aiChatInfoBackBtn = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatInfoBackBtn", "");
 
     // Documentation access gate
     const docsAccessGateTitle = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "docsAccessGateTitle", "Protected documentation");
@@ -251,6 +284,10 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       escHintLabel,
       closeHintLabel,
       fullscreenExpandLabel,
+      mdCopyLabel,
+      mdCopiedLabel,
+      mdCopyErrorLabel,
+      mdDownloadLabel,
       aiChatTitle,
       aiChatPlaceholder,
       aiChatConfigTitle,
@@ -307,6 +344,18 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       aiChatAutoLockDesc,
       aiChatAutoLockConfirmBtn,
       aiChatAutoLockCancelBtn,
+      aiChatInfoBtn,
+      aiChatInfoTitle,
+      aiChatInfoIntro,
+      aiChatInfoWorksTitle,
+      aiChatInfoWorksItems,
+      aiChatInfoHowTitle,
+      aiChatInfoHowItems,
+      aiChatInfoFlowTitle,
+      aiChatInfoFlowItems,
+      aiChatInfoRisksTitle,
+      aiChatInfoRisksItems,
+      aiChatInfoBackBtn,
       docsAccessGateTitle,
       docsAccessGateDescription,
       docsAccessInputPlaceholder,

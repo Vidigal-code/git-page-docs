@@ -24,6 +24,8 @@ export interface LoadedMdContent {
   routeId: number;
   config: ContentTypeRouteConfig | RouteConfig;
   markdownByLanguage: Record<LanguageCode, string>;
+  /** Original markdown text per language (only languages whose file was read), for copy/download. */
+  sourceByLanguage?: Record<LanguageCode, string>;
   fullscreenEnabled?: boolean;
 }
 

@@ -4,7 +4,7 @@
  */
 import React, { useState, useEffect, useRef, useCallback, useId } from 'react';
 import Image from 'next/image';
-import { BsRobot } from '@/shared/ui/fallback-icons';
+import { BsRobot, FiAlertCircle } from '@/shared/ui/fallback-icons';
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { ApiKeyForm } from '../../../features/ask-ai/ui/api-key-form';
 import { aiStorage } from '../../../shared/lib/ai-storage';
@@ -14,6 +14,7 @@ import { normalizeAutoLockSeconds, useInactivityLock } from '../../../features/a
 import type { MultimodalAttachment } from '../../../features/ask-ai/api/providers/llm-types';
 import { ConfirmPopup } from '../../../shared/ui/confirm-popup/confirm-popup';
 import { InactivityLockDialog } from './inactivity-lock-dialog';
+import { AiChatInfoPanel } from './ai-chat-info-panel';
 import { marked } from 'marked';
 import styles from './ai-chat.module.css';
 
@@ -297,6 +298,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
     const [hasKey, setHasKey] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState('');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
     const [isClearChatPopupOpen, setIsClearChatPopupOpen] = useState(false);
     const [isClearDataPopupOpen, setIsClearDataPopupOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -538,10 +540,15 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
 
     const resetLabels = resolveResetPopupLabels(labels);
     const expandIcon = isExpanded ? renderIcon(icons.collapse, "FiMinimize2") : renderIcon(icons.expand, "FiMaximize2");
-    const showComposer = vaultState === 'unlocked' && hasKey && !isSettingsOpen;
+    const showComposer = vaultState === 'unlocked' && hasKey && !isSettingsOpen && !isInfoOpen;
 
     let messagesArea: React.ReactNode;
-    if (vaultState !== 'unlocked') {
+    if (isInfoOpen) {
+        // The guide is readable before a password exists, so it wins over the gate.
+        messagesArea = (
+            <AiChatInfoPanel labels={labels} autoLockSeconds={autoLockSeconds} onClose={() => setIsInfoOpen(false)} />
+        );
+    } else if (vaultState !== 'unlocked') {
         messagesArea = (
             <VaultGate
                 vaultState={vaultState}
@@ -617,6 +624,19 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                     </div>
 
                     <div className={styles.headerActions}>
+                        <button
+                            type="button"
+                            data-testid="ai-chat-info"
+                            onClick={() => setIsInfoOpen(!isInfoOpen)}
+                            aria-label={labels.aiChatInfoBtn || 'How to use and risks'}
+                            aria-pressed={isInfoOpen}
+                            title={labels.aiChatInfoBtn || 'How to use and risks'}
+                            className={styles.closeButton}
+                        >
+                            <span style={icons.settings?.useReactIcon ? icons.settings.reactIconStyle : undefined}>
+                                <ReactIconByTag tag="FiAlertCircle" fallback={<FiAlertCircle />} />
+                            </span>
+                        </button>
                         <button
                             onClick={() => setIsClearChatPopupOpen(true)}
                             aria-label={"Clear Chat"}

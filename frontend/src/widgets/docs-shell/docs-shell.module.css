@@ -1768,3 +1768,36 @@ dialog.versionLinksCard {
   -webkit-appearance: none;
   cursor: default;
 }
+
+/* Markdown page actions (copy / download .md) beside the fullscreen button:
+   same size and look, placed to its left. */
+.mdSourceActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.mdSourceActionsBesideFullscreen {
+  right: 50px;
+}
+
+.mdSourceActionDone,
+.mdSourceActionDone:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

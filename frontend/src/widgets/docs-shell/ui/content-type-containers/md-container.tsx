@@ -6,6 +6,7 @@ import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-ass
 import type { BrowseNavConfig } from "../page-content-browse-nav";
 import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
+import { MdSourceActions, type MdSourceActionLabels } from "./md-source-actions";
 import { RouteGuideBreadcrumb, TocContainer } from "@/features/route-guide";
 import type { TocPosition } from "@/features/route-guide";
 import styles from "../../docs-shell.module.css";
@@ -49,6 +50,11 @@ interface MdContainerProps {
   onFullscreenOpen?: () => void;
   /** Called when fullscreen is about to close (for URL sync) */
   onFullscreenClose?: () => void;
+  /** Original markdown of the page (current language); enables copy / download. */
+  markdownSource?: string;
+  /** File name offered by "download .md". */
+  markdownFileName?: string;
+  sourceActionLabels?: MdSourceActionLabels;
 }
 
 export function MdContainer({
@@ -72,6 +78,9 @@ export function MdContainer({
   contentOnly = false,
   onFullscreenOpen,
   onFullscreenClose,
+  markdownSource,
+  markdownFileName = "document.md",
+  sourceActionLabels,
 }: Readonly<MdContainerProps>) {
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
@@ -107,6 +116,22 @@ export function MdContainer({
     </article>
   );
 
+  // Copy / download sit beside the fullscreen button (to its left when it is shown).
+  const withSourceActions = (fullscreenButton: React.ReactNode) => {
+    if (!markdownSource || !sourceActionLabels) return fullscreenButton;
+    return (
+      <>
+        <MdSourceActions
+          source={markdownSource}
+          fileName={markdownFileName}
+          labels={sourceActionLabels}
+          besideFullscreen={Boolean(fullscreenButton)}
+        />
+        {fullscreenButton}
+      </>
+    );
+  };
+
   const header = (
     <>
       {breadcrumb}
@@ -125,13 +150,13 @@ export function MdContainer({
               position={tocPosition}
               markdownContent={markdownContent}
               useDefaultScrollBehavior={useDefaultScrollBehavior}
-              contentActions={fullscreenButton}
+              contentActions={withSourceActions(fullscreenButton)}
               containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
             />
           ) : (
             <div style={{ position: "relative" }}>
               {markdownContent}
-              {fullscreenButton}
+              {withSourceActions(fullscreenButton)}
             </div>
           );
         }
@@ -144,10 +169,14 @@ export function MdContainer({
             position={tocPosition}
             markdownContent={markdownContent}
             useDefaultScrollBehavior={useDefaultScrollBehavior}
+            contentActions={withSourceActions(null)}
             containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
           />
         ) : (
-          markdownContent
+          <div style={{ position: "relative" }}>
+            {markdownContent}
+            {withSourceActions(null)}
+          </div>
         );
         };
 

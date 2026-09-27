@@ -29,4 +29,21 @@ test.describe("docs site", () => {
     // Small tolerance for sub-pixel scrollbar/rounding differences.
     await expect.poll(measureOverflow, { timeout: 10_000 }).toBeLessThanOrEqual(2);
   });
+
+  test("markdown pages offer copy and download of the original .md", async ({ page, context, browserName }) => {
+    if (browserName === "chromium") await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/?lang=en");
+    await expect(page.getByRole("main")).toBeVisible();
+
+    const copy = page.getByTestId("md-copy").first();
+    await expect(copy).toBeVisible();
+    await copy.click();
+    await expect(copy).toHaveAttribute("aria-label", /Copied!|Could not copy/);
+
+    const [download] = await Promise.all([
+      page.waitForEvent("download"),
+      page.getByTestId("md-download").first().click(),
+    ]);
+    expect(download.suggestedFilename()).toMatch(/.md$/);
+  });
 });

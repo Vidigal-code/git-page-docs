@@ -17,7 +17,16 @@ import type { BrowseIndexSetter, BrowseNavigationProps, BrowseState, ContentLabe
 import { SourceBrowserSkeleton } from "@/widgets/repository-source-browser/ui/source-browser-skeleton";
 import { isBrowseAllEnabled, buildBrowseNavConfig } from "./page-content-browse-nav";
 import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
+import { markdownFileName } from "./content-type-containers/md-source-actions";
 import styles from "../docs-shell.module.css";
+
+/** Localized file path of a markdown route (`path` is a per-language record), if any. */
+function mdPathFor(config: unknown, language: LanguageCode): string | undefined {
+  const path = (config as { path?: unknown } | undefined)?.path;
+  if (!path || typeof path !== "object") return undefined;
+  const byLanguage = path as Record<string, string | undefined>;
+  return byLanguage[language] ?? byLanguage.en;
+}
 
 // The source browser (tree building + markdown preview) is only needed on
 // source-viewer routes, so it is loaded lazily. Its skeleton reserves the
@@ -242,6 +251,14 @@ export function PageContentArea({
         tocContainerTopDefault={data.config.site?.RouteguideBrandContainerTopDefault ?? false}
         onFullscreenOpen={mdFullscreenOpen}
         onFullscreenClose={onFullscreenClose}
+        markdownSource={currentMd.sourceByLanguage?.[language]}
+        markdownFileName={markdownFileName(mdPathFor(currentMd.config, language))}
+        sourceActionLabels={{
+          copy: labels.mdCopyLabel,
+          copied: labels.mdCopiedLabel,
+          copyError: labels.mdCopyErrorLabel,
+          download: labels.mdDownloadLabel,
+        }}
       />
     ) : null,
     "source-viewer": currentSourceViewer ? (

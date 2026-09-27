@@ -53,5 +53,14 @@ export interface BrowseNavigationProps {
 /** The shell labels the content blocks, their browse nav and the fullscreen controls render. */
 export type ContentLabels = Pick<
   DocsShellLabels,
-  "menuCloseLabel" | "fullscreenExpandLabel" | "previousLabel" | "nextLabel" | "browsePrevLabel" | "browseNextLabel"
+  | "menuCloseLabel"
+  | "fullscreenExpandLabel"
+  | "previousLabel"
+  | "nextLabel"
+  | "browsePrevLabel"
+  | "browseNextLabel"
+  | "mdCopyLabel"
+  | "mdCopiedLabel"
+  | "mdCopyErrorLabel"
+  | "mdDownloadLabel"
 >;

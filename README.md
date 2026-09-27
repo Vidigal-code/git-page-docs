@@ -685,9 +685,20 @@ Behavior:
   light primary such as `carbon-dark`'s white, white text on deep tones), and native controls follow
   the theme's derived `--color-scheme`; both are computed from the layout palette, so themes declare
   nothing new.
+- The exclamation-mark button in the drawer header opens a **"How to use and risks"** tab, readable
+  before any password exists: how the vault and the per-request decryption work, a step-by-step guide,
+  every event of the flow and the risks that remain. Its text comes from the `langmenu` keys
+  `aiChatInfo*` (one list item per line; `{seconds}` shows `AiChatAutoLockSeconds`).
 - Transient provider errors (HTTP 408/425/429/500/502/503/504) are retried up to 3 times with
   backoff; a final failure is shown as a plain sentence ending with *Try again!*
   (`langmenu.aiChatRetryHint`), never as a bracketed status code.
+
+## Markdown page actions
+
+Every markdown page shows, beside the fullscreen button, a **copy** button (puts the page's original
+`.md` text on the clipboard) and a **download** button (saves it as `<file>.md`), for the language
+being read. Labels come from `gitpagedocs/langs/<lang>.json`: `mdCopyLabel`, `mdCopiedLabel`,
+`mdCopyErrorLabel`, `mdDownloadLabel`.
 
 ## Configuration File Format
 

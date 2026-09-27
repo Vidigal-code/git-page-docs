@@ -75,6 +75,11 @@ export const FiArrowLeft = createFallbackIcon({
   html: "<line x1=\"19\" y1=\"12\" x2=\"5\" y2=\"12\"></line><polyline points=\"12 19 5 12 12 5\"></polyline>",
 });
 
+export const FiCheck = createFallbackIcon({
+  attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
+  html: "<polyline points=\"20 6 9 17 4 12\"></polyline>",
+});
+
 export const FiChevronDown = createFallbackIcon({
   attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
   html: "<polyline points=\"6 9 12 15 18 9\"></polyline>",
@@ -98,6 +103,16 @@ export const FiChevronsRight = createFallbackIcon({
 export const FiCode = createFallbackIcon({
   attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
   html: "<polyline points=\"16 18 22 12 16 6\"></polyline><polyline points=\"8 6 2 12 8 18\"></polyline>",
+});
+
+export const FiCopy = createFallbackIcon({
+  attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
+  html: "<rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path>",
+});
+
+export const FiDownload = createFallbackIcon({
+  attrs: {"stroke":"currentColor","fill":"none","strokeWidth":"2","viewBox":"0 0 24 24","strokeLinecap":"round","strokeLinejoin":"round"},
+  html: "<path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"></path><polyline points=\"7 10 12 15 17 10\"></polyline><line x1=\"12\" y1=\"15\" x2=\"12\" y2=\"3\"></line>",
 });
 
 export const FiExternalLink = createFallbackIcon({
