@@ -1,0 +1,65 @@
+name: Deprecate npm versions
+
+# Manual maintenance: marks published versions of @gitpagedocs/{tools,mcp,cli}
+# as deprecated on the registry. Deprecation is reversible (run again with an
+# empty message to undo) and keeps the versions installable, unlike unpublish.
+# Requires the same NPM_TOKEN secret the publish workflow uses.
+
+on:
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: "Comma-separated versions to deprecate (e.g. 1.1.70,1.1.71)"
+        required: true
+        type: string
+      message:
+        description: "Deprecation message (empty string undeprecates)"
+        required: false
+        default: "Superseded by the 0.0.1 stable line. Install the latest @gitpagedocs/cli."
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-deprecate
+  cancel-in-progress: false
+
+jobs:
+  deprecate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Require NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::The NPM_TOKEN repository secret is not configured."
+            exit 1
+          fi
+
+      - name: Deprecate the requested versions
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSIONS: ${{ inputs.versions }}
+          MESSAGE: ${{ inputs.message }}
+        run: |
+          IFS=',' read -ra LIST <<< "$VERSIONS"
+          for pkg in tools mcp cli; do
+            for raw in "${LIST[@]}"; do
+              version="$(echo "$raw" | xargs)"
+              [ -z "$version" ] && continue
+              if npm view "@gitpagedocs/${pkg}@${version}" version > /dev/null 2>&1; then
+                echo "deprecating @gitpagedocs/${pkg}@${version}"
+                npm deprecate "@gitpagedocs/${pkg}@${version}" "$MESSAGE"
+              else
+                echo "skip @gitpagedocs/${pkg}@${version} (not on the registry)"
+              fi
+            done
+          done
