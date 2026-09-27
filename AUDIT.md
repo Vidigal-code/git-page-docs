@@ -39,7 +39,7 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 - `gitpagedocs/config.json` (has `site` + `VersionControl`; no inline UI strings since 1.1.68).
 - `site.languages` in `gitpagedocs/config.json` (`{ "en": true, "pt": true, "es": true }`) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
 - `gitpagedocs/icon.svg`.
-- Per version in `DOC_VERSIONS = [PACKAGE_VERSION]` (`cli/contracts/doc-versions.mjs`; currently `["0.0.4"]`):
+- Per version in `DOC_VERSIONS = [PACKAGE_VERSION]` (`cli/contracts/doc-versions.mjs`; currently `["0.0.5"]`):
   `gitpagedocs/docs/versions/<v>/config.json` with arrays `routes-md`, `routes-html`, `routes-source-viewer`, `routes-video`, `routes-audio` and their `menus-header-*`, plus `<v>/{pt,en,es}/*.md` from `cli/content/docs-{pt,en,es}.mjs`.
 - The source-viewer route points at the GitHub tree URL (`source-viewer-path`), so no HTML snapshot is generated any more; the byte-stable contract covers `config.json` + `langs/*.json` only.
 - **Contract invariant** for the refactor = the `config.json` and `langs/*.json` files stay byte-stable (baseline.snapshot.json). `source-viewer` drift is expected.

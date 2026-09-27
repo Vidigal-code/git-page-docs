@@ -3,6 +3,15 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.5 - 2026-09-27 - markdown copy/download on the published site
+
+### Fixed
+
+- The copy and download buttons beside the fullscreen button did not appear on the published site: the
+  remote docs loader (used on GitHub Pages and by the prebuilt viewer shipped in `@gitpagedocs/cli`)
+  rendered the markdown to HTML and dropped the original text the buttons need. It now reads each file
+  once and keeps the original text (`sourceByLanguage`) next to the HTML, like the local loader.
+
 ## 0.0.4 - 2026-09-27 - AI chat guide, markdown actions, compact config, layouts v2, guide motion
 
 ### Compact gitpagedocs config (no repeated values)

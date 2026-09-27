@@ -431,3 +431,36 @@ describe("loadRemoteDocsData", () => {
     expect((await loadRemoteDocsData("o", "r"))?.pages[1].sourceViewer?.sourceViewerPath).toBe("plain");
   });
 });
+
+describe("remote markdown pages keep the original file text", () => {
+  it("exposes sourceByLanguage next to the rendered HTML (copy/download need it)", async () => {
+    stubRepoFetch({
+      "o/r/gitpagedocs/config.json": minimalConfig(
+        {
+          "routes-md": [{ id: 1, path: { en: "docs/en/a.md", pt: "docs/pt/a.md" } }],
+          "menus-header-md": [{ id: 1 }],
+        },
+        { supportedLanguages: ["en", "pt"] },
+      ),
+      "o/r/docs/en/a.md": "---\ntitle: x\n---\n# Hello",
+      "o/r/docs/pt/a.md": "# Ola",
+    });
+
+    const data = await loadRemoteDocsData("o", "r", undefined, "en");
+
+    const md = data?.pages[0]?.md;
+    expect(md?.markdownByLanguage.en).toContain("Hello");
+    expect(md?.sourceByLanguage).toEqual({ en: "---\ntitle: x\n---\n# Hello", pt: "# Ola" });
+  });
+
+  it("leaves unreadable files out of sourceByLanguage", async () => {
+    stubRepoFetch({
+      "o/r/gitpagedocs/config.json": minimalConfig({ "routes-md": [{ id: 1, path: { en: "docs/en/missing.md" } }], "menus-header-md": [{ id: 1 }] }),
+    });
+
+    const data = await loadRemoteDocsData("o", "r", undefined, "en");
+
+    expect(data?.pages[0]?.md?.markdownByLanguage.en).toBe("<p>Unable to load remote markdown file.</p>");
+    expect(data?.pages[0]?.md?.sourceByLanguage).toEqual({});
+  });
+});

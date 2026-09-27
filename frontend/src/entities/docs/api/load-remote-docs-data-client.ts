@@ -585,6 +585,34 @@ async function fetchTextByLanguage(
   return contentByLanguage;
 }
 
+const MD_MISSING_PATH_HTML = "<p>Missing language file path in config.</p>";
+const MD_UNAVAILABLE_HTML = "<p>Unable to load remote markdown file.</p>";
+
+/**
+ * Fetches each language's markdown once: the HTML is rendered for display and
+ * the original text is kept (readable files only) for the copy / download actions.
+ */
+async function fetchMarkdownByLanguage(
+  ctx: PageBuildContext,
+  pathsByLanguage: Record<LanguageCode, string>,
+): Promise<{ markdownByLanguage: Record<LanguageCode, string>; sourceByLanguage: Record<LanguageCode, string> }> {
+  const markdownByLanguage: Record<LanguageCode, string> = {};
+  const sourceByLanguage: Record<LanguageCode, string> = {};
+  await Promise.all(
+    ctx.availableLanguages.map(async (langCode) => {
+      const relativePath = pathsByLanguage[langCode];
+      if (!relativePath) {
+        markdownByLanguage[langCode] = MD_MISSING_PATH_HTML;
+        return;
+      }
+      const markdown = await fetchRepoText(ctx.owner, ctx.repo, relativePath);
+      markdownByLanguage[langCode] = markdown ? markdownToHtml(markdown) : MD_UNAVAILABLE_HTML;
+      if (markdown) sourceByLanguage[langCode] = markdown;
+    }),
+  );
+  return { markdownByLanguage, sourceByLanguage };
+}
+
 /** Every available language's value, falling back to `en`, then to `fallback`. */
 function localizeByLanguage(valuesByLanguage: Record<LanguageCode, string>, languages: LanguageCode[], fallback: string): Record<LanguageCode, string> {
   const localized: Record<LanguageCode, string> = {};
@@ -604,12 +632,10 @@ async function loadMarkdownSection(
   if (!mdRoute || !routeHasPath(mdRoute)) {
     return undefined;
   }
-  const markdownByLanguage = await fetchTextByLanguage(ctx, mdRoute.path, "<p>Missing language file path in config.</p>", (markdown) =>
-    markdown ? markdownToHtml(markdown) : "<p>Unable to load remote markdown file.</p>",
-  );
+  const { markdownByLanguage, sourceByLanguage } = await fetchMarkdownByLanguage(ctx, mdRoute.path);
   const fullscreenEnabled = "fullscreenEnabled" in mdRoute ? mdRoute.fullscreenEnabled : true;
   registerLanguagePaths(ctx, mdRoute.path, pageIndex, "md");
-  return { routeId: id, config: mdRoute, markdownByLanguage, fullscreenEnabled };
+  return { routeId: id, config: mdRoute, markdownByLanguage, sourceByLanguage, fullscreenEnabled };
 }
 
 function resolveSourceViewerPath(rawPath: ContentTypeRouteConfig["source-viewer-path"], preferredLanguage: LanguageCode): string {
