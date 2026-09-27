@@ -1,0 +1,17 @@
+{
+  "id": "cyberpunk-dark",
+  "name": "Cyberpunk Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#090014",
+    "primary": "#F472B6",
+    "secondary": "#22D3EE",
+    "text": "#F5D0FE",
+    "textSecondary": "#C4B5FD",
+    "cardBackground": "#160024",
+    "cardBorder": "#7E22CE",
+    "error": "#FB7185",
+    "success": "#2DD4BF"
+  }
+}

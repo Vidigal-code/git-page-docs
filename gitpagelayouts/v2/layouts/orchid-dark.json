@@ -1,0 +1,17 @@
+{
+  "id": "orchid-dark",
+  "name": "Orchid",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#1A0B1E",
+    "primary": "#D946EF",
+    "secondary": "#F0ABFC",
+    "text": "#F7E6FA",
+    "textSecondary": "#C792D0",
+    "cardBackground": "#2A1230",
+    "cardBorder": "#4C2256",
+    "error": "#FB7185",
+    "success": "#4ADE80"
+  }
+}

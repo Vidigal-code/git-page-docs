@@ -1,0 +1,17 @@
+{
+  "id": "matrix-dark",
+  "name": "Matrix Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#030606",
+    "primary": "#22C55E",
+    "secondary": "#4ADE80",
+    "text": "#DCFCE7",
+    "textSecondary": "#86EFAC",
+    "cardBackground": "#04120A",
+    "cardBorder": "#14532D",
+    "error": "#F87171",
+    "success": "#22C55E"
+  }
+}

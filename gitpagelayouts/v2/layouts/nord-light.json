@@ -1,0 +1,17 @@
+{
+  "id": "nord-light",
+  "name": "Nord Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#ECEFF4",
+    "primary": "#5E81AC",
+    "secondary": "#81A1C1",
+    "text": "#2E3440",
+    "textSecondary": "#4C566A",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D8DEE9",
+    "error": "#BF616A",
+    "success": "#5E81AC"
+  }
+}

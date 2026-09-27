@@ -1,0 +1,17 @@
+{
+  "id": "violet-dark",
+  "name": "Violet Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#12081F",
+    "primary": "#8B5CF6",
+    "secondary": "#A78BFA",
+    "text": "#EDE9FE",
+    "textSecondary": "#C4B5FD",
+    "cardBackground": "#1E1033",
+    "cardBorder": "#4C1D95",
+    "error": "#FB7185",
+    "success": "#34D399"
+  }
+}

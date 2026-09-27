@@ -1,0 +1,17 @@
+{
+  "id": "coral-light",
+  "name": "Coral",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFF6F2",
+    "primary": "#F97316",
+    "secondary": "#FB923C",
+    "text": "#3D2317",
+    "textSecondary": "#8A6553",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FBD9C8",
+    "error": "#E11D48",
+    "success": "#059669"
+  }
+}

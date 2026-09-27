@@ -1,0 +1,17 @@
+{
+  "id": "sage-light",
+  "name": "Sage",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#F6F8F2",
+    "primary": "#4D7C4F",
+    "secondary": "#84A98C",
+    "text": "#24331F",
+    "textSecondary": "#5C6B54",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#DCE5D0",
+    "error": "#DC2626",
+    "success": "#4D7C4F"
+  }
+}

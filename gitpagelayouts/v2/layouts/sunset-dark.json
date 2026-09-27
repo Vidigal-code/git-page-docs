@@ -1,0 +1,17 @@
+{
+  "id": "sunset-dark",
+  "name": "Sunset Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#1A0F0C",
+    "primary": "#FB923C",
+    "secondary": "#F472B6",
+    "text": "#FFE4D6",
+    "textSecondary": "#FDBA74",
+    "cardBackground": "#2A1611",
+    "cardBorder": "#7C2D12",
+    "error": "#FB7185",
+    "success": "#4ADE80"
+  }
+}

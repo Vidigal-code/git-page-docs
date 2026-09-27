@@ -46,7 +46,7 @@
       "borderRadius": "12px",
       "padding": "10px 18px",
       "border": "1px solid #D6E8F5",
-      "hoverGlow": "0 0 0 4px rgba(109, 40, 217, 0.15)"
+      "hoverGlow": "0 0 0 3px rgba(2, 132, 199, 0.18)"
     },
     "select": {
       "borderRadius": "12px",

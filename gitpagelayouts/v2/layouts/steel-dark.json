@@ -1,0 +1,17 @@
+{
+  "id": "steel-dark",
+  "name": "Steel",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#0E1116",
+    "primary": "#60A5FA",
+    "secondary": "#93C5FD",
+    "text": "#E5EAF0",
+    "textSecondary": "#98A4B5",
+    "cardBackground": "#181D26",
+    "cardBorder": "#2C3440",
+    "error": "#F87171",
+    "success": "#34D399"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "moss-dark",
+  "name": "Moss",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#0D1410",
+    "primary": "#84CC16",
+    "secondary": "#A3E635",
+    "text": "#E6F0D9",
+    "textSecondary": "#9CB088",
+    "cardBackground": "#161F18",
+    "cardBorder": "#2A3A26",
+    "error": "#F87171",
+    "success": "#84CC16"
+  }
+}

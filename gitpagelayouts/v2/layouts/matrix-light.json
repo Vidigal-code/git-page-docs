@@ -1,0 +1,17 @@
+{
+  "id": "matrix-light",
+  "name": "Matrix Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F0FDF4",
+    "primary": "#15803D",
+    "secondary": "#16A34A",
+    "text": "#052E16",
+    "textSecondary": "#166534",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#BBF7D0",
+    "error": "#DC2626",
+    "success": "#16A34A"
+  }
+}

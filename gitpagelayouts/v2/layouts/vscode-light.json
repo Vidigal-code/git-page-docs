@@ -1,0 +1,17 @@
+{
+  "id": "vscode-light",
+  "name": "VSCode Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFFFFF",
+    "primary": "#005FB8",
+    "secondary": "#267F99",
+    "text": "#1E1E1E",
+    "textSecondary": "#6E6E6E",
+    "cardBackground": "#F3F3F3",
+    "cardBorder": "#E5E5E5",
+    "error": "#CD3131",
+    "success": "#098658"
+  }
+}

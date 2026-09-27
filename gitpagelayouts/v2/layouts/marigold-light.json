@@ -1,0 +1,17 @@
+{
+  "id": "marigold-light",
+  "name": "Marigold",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFFBF0",
+    "primary": "#D97706",
+    "secondary": "#F59E0B",
+    "text": "#3D2E0F",
+    "textSecondary": "#8A7444",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FBEBC0",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

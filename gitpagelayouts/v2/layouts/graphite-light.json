@@ -1,0 +1,17 @@
+{
+  "id": "graphite-light",
+  "name": "Graphite Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F8FAFC",
+    "primary": "#2563EB",
+    "secondary": "#3B82F6",
+    "text": "#0F172A",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#CBD5E1",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

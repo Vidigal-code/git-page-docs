@@ -1,0 +1,17 @@
+{
+  "id": "emerald-light",
+  "name": "Emerald Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#ECFDF5",
+    "primary": "#059669",
+    "secondary": "#10B981",
+    "text": "#064E3B",
+    "textSecondary": "#065F46",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#A7F3D0",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

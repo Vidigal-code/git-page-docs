@@ -1,0 +1,17 @@
+{
+  "id": "midnight-dark",
+  "name": "Midnight",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#0A0E27",
+    "primary": "#4F7CFF",
+    "secondary": "#38BDF8",
+    "text": "#E2E8F5",
+    "textSecondary": "#94A3C8",
+    "cardBackground": "#111634",
+    "cardBorder": "#25305C",
+    "error": "#FB7185",
+    "success": "#34D399"
+  }
+}

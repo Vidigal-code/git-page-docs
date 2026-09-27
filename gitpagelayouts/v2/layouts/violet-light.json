@@ -1,0 +1,17 @@
+{
+  "id": "violet-light",
+  "name": "Violet Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F5F3FF",
+    "primary": "#7C3AED",
+    "secondary": "#8B5CF6",
+    "text": "#4C1D95",
+    "textSecondary": "#5B21B6",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#DDD6FE",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

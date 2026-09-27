@@ -1,0 +1,17 @@
+{
+  "id": "forest-light",
+  "name": "Forest Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F3FFF5",
+    "primary": "#15803D",
+    "secondary": "#16A34A",
+    "text": "#14532D",
+    "textSecondary": "#166534",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#BBF7D0",
+    "error": "#DC2626",
+    "success": "#15803D"
+  }
+}

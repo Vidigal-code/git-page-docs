@@ -1,0 +1,17 @@
+{
+  "id": "crimson-dark",
+  "name": "Crimson",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#1A0508",
+    "primary": "#EF4444",
+    "secondary": "#FB7185",
+    "text": "#FBE2E5",
+    "textSecondary": "#C98F95",
+    "cardBackground": "#260A0E",
+    "cardBorder": "#4A161C",
+    "error": "#EF4444",
+    "success": "#34D399"
+  }
+}

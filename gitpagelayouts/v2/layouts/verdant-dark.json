@@ -1,0 +1,17 @@
+{
+  "id": "verdant-dark",
+  "name": "Verdant",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#04140D",
+    "primary": "#10B981",
+    "secondary": "#34D399",
+    "text": "#DCF5E8",
+    "textSecondary": "#84B89E",
+    "cardBackground": "#07241A",
+    "cardBorder": "#0F3D2C",
+    "error": "#FB7185",
+    "success": "#10B981"
+  }
+}

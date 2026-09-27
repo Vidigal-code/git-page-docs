@@ -1,0 +1,17 @@
+{
+  "id": "rose-light",
+  "name": "Rose Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFF1F5",
+    "primary": "#E11D48",
+    "secondary": "#DB2777",
+    "text": "#7A1733",
+    "textSecondary": "#9D174D",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FBCFE8",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

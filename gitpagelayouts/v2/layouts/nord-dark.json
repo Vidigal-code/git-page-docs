@@ -1,0 +1,17 @@
+{
+  "id": "nord-dark",
+  "name": "Nord Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#2E3440",
+    "primary": "#88C0D0",
+    "secondary": "#81A1C1",
+    "text": "#ECEFF4",
+    "textSecondary": "#D8DEE9",
+    "cardBackground": "#3B4252",
+    "cardBorder": "#4C566A",
+    "error": "#BF616A",
+    "success": "#A3BE8C"
+  }
+}

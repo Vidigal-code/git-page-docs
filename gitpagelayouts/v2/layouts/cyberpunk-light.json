@@ -1,0 +1,17 @@
+{
+  "id": "cyberpunk-light",
+  "name": "Cyberpunk Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFF1F8",
+    "primary": "#DB2777",
+    "secondary": "#0891B2",
+    "text": "#4A044E",
+    "textSecondary": "#6D28D9",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#F5D0FE",
+    "error": "#E11D48",
+    "success": "#0D9488"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "ember-dark",
+  "name": "Ember",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#1A0F0A",
+    "primary": "#FF7A18",
+    "secondary": "#FFB347",
+    "text": "#FBE8DC",
+    "textSecondary": "#C99A82",
+    "cardBackground": "#261610",
+    "cardBorder": "#4A2A1A",
+    "error": "#FF5252",
+    "success": "#74D680"
+  }
+}

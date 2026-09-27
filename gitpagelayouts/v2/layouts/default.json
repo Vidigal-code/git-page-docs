@@ -1,0 +1,17 @@
+{
+  "id": "default",
+  "name": "Default Theme",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFFFFF",
+    "primary": "#0EA5E9",
+    "secondary": "#2563EB",
+    "text": "#0F172A",
+    "textSecondary": "#334155",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E2E8F0",
+    "error": "#DC2626",
+    "success": "#16A34A"
+  }
+}

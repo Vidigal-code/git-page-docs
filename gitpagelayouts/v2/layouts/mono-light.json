@@ -1,0 +1,17 @@
+{
+  "id": "mono-light",
+  "name": "Mono Pro Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F7FEE7",
+    "primary": "#4D7C0F",
+    "secondary": "#65A30D",
+    "text": "#1A2E05",
+    "textSecondary": "#3F6212",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D9F99D",
+    "error": "#DC2626",
+    "success": "#4D7C0F"
+  }
+}

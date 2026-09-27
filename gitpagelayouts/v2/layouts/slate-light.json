@@ -1,0 +1,17 @@
+{
+  "id": "slate-light",
+  "name": "Slate Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F8FAFC",
+    "primary": "#475569",
+    "secondary": "#64748B",
+    "text": "#1E293B",
+    "textSecondary": "#334155",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#CBD5E1",
+    "error": "#DC2626",
+    "success": "#16A34A"
+  }
+}

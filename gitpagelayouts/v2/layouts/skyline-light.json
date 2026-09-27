@@ -1,0 +1,17 @@
+{
+  "id": "skyline-light",
+  "name": "Skyline Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#EFF6FF",
+    "primary": "#2563EB",
+    "secondary": "#0EA5E9",
+    "text": "#1E3A8A",
+    "textSecondary": "#1D4ED8",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#BFDBFE",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

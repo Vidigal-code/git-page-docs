@@ -1,0 +1,17 @@
+{
+  "id": "graphite-dark",
+  "name": "Graphite Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0B0F14",
+    "primary": "#60A5FA",
+    "secondary": "#93C5FD",
+    "text": "#E5E7EB",
+    "textSecondary": "#9CA3AF",
+    "cardBackground": "#141A22",
+    "cardBorder": "#2A3442",
+    "error": "#F87171",
+    "success": "#34D399"
+  }
+}

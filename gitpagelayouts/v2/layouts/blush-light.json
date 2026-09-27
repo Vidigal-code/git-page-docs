@@ -1,0 +1,17 @@
+{
+  "id": "blush-light",
+  "name": "Blush",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFF5F8",
+    "primary": "#DB2777",
+    "secondary": "#F472B6",
+    "text": "#3D1A29",
+    "textSecondary": "#8A5A6E",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FBD4E2",
+    "error": "#E11D48",
+    "success": "#10B981"
+  }
+}

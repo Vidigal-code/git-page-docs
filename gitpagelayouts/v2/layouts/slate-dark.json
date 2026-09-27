@@ -1,0 +1,17 @@
+{
+  "id": "slate-dark",
+  "name": "Slate Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0B1120",
+    "primary": "#64748B",
+    "secondary": "#94A3B8",
+    "text": "#E2E8F0",
+    "textSecondary": "#CBD5E1",
+    "cardBackground": "#111827",
+    "cardBorder": "#334155",
+    "error": "#F87171",
+    "success": "#34D399"
+  }
+}

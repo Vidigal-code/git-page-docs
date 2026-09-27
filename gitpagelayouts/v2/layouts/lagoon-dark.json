@@ -1,0 +1,17 @@
+{
+  "id": "lagoon-dark",
+  "name": "Lagoon",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#041E26",
+    "primary": "#06B6D4",
+    "secondary": "#22D3EE",
+    "text": "#D8F3F8",
+    "textSecondary": "#84B6C0",
+    "cardBackground": "#07303A",
+    "cardBorder": "#0F4D5C",
+    "error": "#FB7185",
+    "success": "#2DD4BF"
+  }
+}

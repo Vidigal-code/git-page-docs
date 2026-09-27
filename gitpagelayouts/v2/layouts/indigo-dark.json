@@ -1,0 +1,17 @@
+{
+  "id": "indigo-dark",
+  "name": "Indigo",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#0B0B2B",
+    "primary": "#6366F1",
+    "secondary": "#818CF8",
+    "text": "#E4E4FB",
+    "textSecondary": "#9999CC",
+    "cardBackground": "#14143F",
+    "cardBorder": "#262668",
+    "error": "#FB7185",
+    "success": "#34D399"
+  }
+}

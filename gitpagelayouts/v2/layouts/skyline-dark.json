@@ -1,0 +1,17 @@
+{
+  "id": "skyline-dark",
+  "name": "Skyline Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#080E1E",
+    "primary": "#3B82F6",
+    "secondary": "#22D3EE",
+    "text": "#E0E7FF",
+    "textSecondary": "#93C5FD",
+    "cardBackground": "#101A2F",
+    "cardBorder": "#2B3A67",
+    "error": "#F87171",
+    "success": "#34D399"
+  }
+}

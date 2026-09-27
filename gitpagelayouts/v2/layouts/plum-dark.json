@@ -1,0 +1,17 @@
+{
+  "id": "plum-dark",
+  "name": "Plum",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#15091F",
+    "primary": "#A855F7",
+    "secondary": "#F472B6",
+    "text": "#F0E4FA",
+    "textSecondary": "#B294C9",
+    "cardBackground": "#221033",
+    "cardBorder": "#3F1D5C",
+    "error": "#FB7185",
+    "success": "#4ADE80"
+  }
+}

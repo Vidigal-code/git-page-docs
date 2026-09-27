@@ -1,0 +1,17 @@
+{
+  "id": "amber-dark",
+  "name": "Amber Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#1A1306",
+    "primary": "#F59E0B",
+    "secondary": "#FBBF24",
+    "text": "#FEF3C7",
+    "textSecondary": "#FCD34D",
+    "cardBackground": "#2A1E0D",
+    "cardBorder": "#7C5B13",
+    "error": "#FB7185",
+    "success": "#4ADE80"
+  }
+}

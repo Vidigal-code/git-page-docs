@@ -5,7 +5,34 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
 
 ## Unreleased
 
+### Frontend viewer
+
+- **"How to use and risks" guide in the AI chat.** A new exclamation-mark button in the drawer header
+  opens a tab (available even before a password exists) that explains in pt, en and es how the
+  assistant works (local password, encrypted vault, per-request decryption, locking), how to use it,
+  everything that can happen in the flow (wrong or forgotten password, inactivity lock with the
+  configured seconds, retries, invalid key, retired model, Ollama/CORS, offline, cleared browser data)
+  and the risks the user takes (key visible in DevTools during use, Gemini key in the URL, weak
+  passwords, shared computers, extensions, data sent to the provider, billing, wrong answers). Copy lives
+  in the new `langmenu` keys `aiChatInfo*` (items one per line).
+- **Copy and download on markdown pages.** Two buttons beside the fullscreen button copy the page's
+  original `.md` text to the clipboard (with a "Copied!" confirmation) or download it as a `.md` file,
+  in the language being read. The loader now keeps the original file text next to the rendered HTML
+  (`sourceByLanguage`), reading each file once. New icons `FiCopy`, `FiDownload`, `FiCheck` and
+  `langmenu` keys `mdCopyLabel`, `mdCopiedLabel`, `mdCopyErrorLabel`, `mdDownloadLabel` in
+  `gitpagedocs/langs/{pt,en,es}.json`.
+
 ### Layouts
+
+- **De-duplicated layout source (`gitpagelayouts/v2/`).** Each of the 64 layouts used to repeat the
+  same typography, component sizes, dark/light defaults and palette-derived control colours in its
+  template (3,392 values, 132 KB). The source of truth is now `v2/base.json` (shared values, per-mode
+  defaults and palette rules such as `"1px solid {cardBorder}"` / `"{primary|0.7}"`) plus one small
+  `v2/layouts/<id>.json` per layout with only identity, colours and overrides (30 KB; only the two
+  `duet` layouts need overrides). `pnpm run layouts:sync` expands them into the unchanged
+  `templates/<id>.json` format, so viewers and remote consumers are not affected; a test fails if the
+  committed templates drift from `v2/`. The expansion also fixes the 29 light layouts whose button
+  hover glow was still the generic violet: it now follows each palette's primary colour.
 
 - **Select and button controls follow each layout's palette.** The 62 layout templates that carried
   the generic slate values (`#0F172A` / `#FFFFFF` background, `#334155` / `#E2E8F0` border, cyan and

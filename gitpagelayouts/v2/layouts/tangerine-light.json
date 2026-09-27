@@ -1,0 +1,17 @@
+{
+  "id": "tangerine-light",
+  "name": "Tangerine",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFF7F0",
+    "primary": "#EA580C",
+    "secondary": "#FB923C",
+    "text": "#3D2410",
+    "textSecondary": "#8A6240",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FBDCC0",
+    "error": "#DC2626",
+    "success": "#059669"
+  }
+}

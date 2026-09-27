@@ -1,0 +1,17 @@
+{
+  "id": "mono-dark",
+  "name": "Mono Pro Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0B0F0C",
+    "primary": "#A3E635",
+    "secondary": "#65A30D",
+    "text": "#ECFCCB",
+    "textSecondary": "#BEF264",
+    "cardBackground": "#141A16",
+    "cardBorder": "#365314",
+    "error": "#F87171",
+    "success": "#84CC16"
+  }
+}

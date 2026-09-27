@@ -1,0 +1,17 @@
+{
+  "id": "neon-noir-dark",
+  "name": "Neon Noir",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#0B0014",
+    "primary": "#FF2E97",
+    "secondary": "#00E5FF",
+    "text": "#F5E9FF",
+    "textSecondary": "#B388D9",
+    "cardBackground": "#160022",
+    "cardBorder": "#3A0F52",
+    "error": "#FF3D71",
+    "success": "#2BFFC6"
+  }
+}

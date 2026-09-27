@@ -1,0 +1,17 @@
+{
+  "id": "obsidian-dark",
+  "name": "Obsidian",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#060A0A",
+    "primary": "#14B8A6",
+    "secondary": "#2DD4BF",
+    "text": "#E0F2F1",
+    "textSecondary": "#8FB5B2",
+    "cardBackground": "#0E1817",
+    "cardBorder": "#1E3331",
+    "error": "#F87171",
+    "success": "#2DD4BF"
+  }
+}

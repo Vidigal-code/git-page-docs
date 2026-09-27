@@ -1,0 +1,17 @@
+{
+  "id": "amber-light",
+  "name": "Amber Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFFBEB",
+    "primary": "#D97706",
+    "secondary": "#F59E0B",
+    "text": "#78350F",
+    "textSecondary": "#92400E",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FDE68A",
+    "error": "#DC2626",
+    "success": "#16A34A"
+  }
+}

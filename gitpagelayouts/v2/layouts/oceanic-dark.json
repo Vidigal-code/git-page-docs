@@ -1,0 +1,17 @@
+{
+  "id": "oceanic-dark",
+  "name": "Oceanic Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#06121A",
+    "primary": "#0EA5E9",
+    "secondary": "#22D3EE",
+    "text": "#DDF6FF",
+    "textSecondary": "#9CC5D8",
+    "cardBackground": "#0C1C27",
+    "cardBorder": "#1E3A4B",
+    "error": "#F87171",
+    "success": "#34D399"
+  }
+}

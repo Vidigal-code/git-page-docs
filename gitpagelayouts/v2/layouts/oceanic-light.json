@@ -1,0 +1,17 @@
+{
+  "id": "oceanic-light",
+  "name": "Oceanic Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F0F9FF",
+    "primary": "#0284C7",
+    "secondary": "#0891B2",
+    "text": "#0C4A6E",
+    "textSecondary": "#1D4E89",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#BAE6FD",
+    "error": "#DC2626",
+    "success": "#0F766E"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "mint-light",
+  "name": "Mint",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#F0FBF6",
+    "primary": "#10B981",
+    "secondary": "#34D399",
+    "text": "#0F3326",
+    "textSecondary": "#4D7A66",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#C8EDDB",
+    "error": "#DC2626",
+    "success": "#10B981"
+  }
+}

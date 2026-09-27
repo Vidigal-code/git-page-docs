@@ -1,0 +1,17 @@
+{
+  "id": "emerald-dark",
+  "name": "Emerald Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#07150F",
+    "primary": "#10B981",
+    "secondary": "#34D399",
+    "text": "#D1FAE5",
+    "textSecondary": "#6EE7B7",
+    "cardBackground": "#10231A",
+    "cardBorder": "#1F6A4C",
+    "error": "#F87171",
+    "success": "#10B981"
+  }
+}

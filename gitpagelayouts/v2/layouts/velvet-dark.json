@@ -1,0 +1,17 @@
+{
+  "id": "velvet-dark",
+  "name": "Velvet",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#15071A",
+    "primary": "#7C3AED",
+    "secondary": "#FBBF24",
+    "text": "#EFE6F5",
+    "textSecondary": "#B499C4",
+    "cardBackground": "#220F2B",
+    "cardBorder": "#3E1D4C",
+    "error": "#FB7185",
+    "success": "#FBBF24"
+  }
+}

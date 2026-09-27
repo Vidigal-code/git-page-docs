@@ -1,0 +1,17 @@
+{
+  "id": "lava-light",
+  "name": "Lava Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFF7ED",
+    "primary": "#EA580C",
+    "secondary": "#F97316",
+    "text": "#7C2D12",
+    "textSecondary": "#9A3412",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FED7AA",
+    "error": "#DC2626",
+    "success": "#16A34A"
+  }
+}

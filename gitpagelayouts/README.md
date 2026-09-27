@@ -9,14 +9,20 @@ consume these layouts:
   `gitpagelayouts/` (or generate a local `gitpagedocs/layouts/` with
   `npx @gitpagedocs/cli --layoutconfig`) and the viewer resolves it automatically.
 
-The JSON files here are the source of truth. After changing any of them,
-regenerate this catalog with `npm run layouts:sync`.
+The source of truth is `v2/`. `v2/base.json` holds every value the layouts share
+(typography, component sizes, dark/light defaults and the rules that derive control
+colors from each palette), and `v2/layouts/<id>.json` holds only the layout's
+identity, colors and the few values that differ. `npm run layouts:sync` expands
+them into the full `templates/<id>.json` files (the format viewers read, unchanged)
+and regenerates this catalog. Edit `v2/`, never `templates/`.
 
 ## Files
 
 - [`layoutsConfig.json`](layoutsConfig.json) — index of every layout.
 - [`layoutsFallbackConfig.json`](layoutsFallbackConfig.json) — minimal fallback set.
-- [`templates/`](templates) — one JSON theme template per layout.
+- [`v2/base.json`](v2/base.json) — shared values and palette rules (source).
+- [`v2/layouts/`](v2/layouts) — one small file per layout (source).
+- [`templates/`](templates) — one full JSON theme template per layout (generated from `v2/`).
 - [`docs/`](docs) — one markdown page per layout (generated).
 
 ## Layouts (64)

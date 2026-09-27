@@ -1,0 +1,17 @@
+{
+  "id": "cobalt-dark",
+  "name": "Cobalt",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#021024",
+    "primary": "#2563EB",
+    "secondary": "#38BDF8",
+    "text": "#DCE7FF",
+    "textSecondary": "#8FA8D6",
+    "cardBackground": "#061A3A",
+    "cardBorder": "#14315E",
+    "error": "#FB7185",
+    "success": "#34D399"
+  }
+}

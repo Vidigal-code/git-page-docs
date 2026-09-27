@@ -1,0 +1,17 @@
+{
+  "id": "github-dark",
+  "name": "GitHub Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0D1117",
+    "primary": "#58A6FF",
+    "secondary": "#2EA043",
+    "text": "#E6EDF3",
+    "textSecondary": "#8B949E",
+    "cardBackground": "#161B22",
+    "cardBorder": "#30363D",
+    "error": "#F85149",
+    "success": "#3FB950"
+  }
+}

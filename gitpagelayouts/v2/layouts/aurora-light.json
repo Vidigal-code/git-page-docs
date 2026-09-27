@@ -1,0 +1,17 @@
+{
+  "id": "aurora-light",
+  "name": "Aurora Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F8FAFC",
+    "primary": "#6D28D9",
+    "secondary": "#0891B2",
+    "text": "#0F172A",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E2E8F0",
+    "error": "#E11D48",
+    "success": "#059669"
+  }
+}

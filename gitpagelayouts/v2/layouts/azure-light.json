@@ -1,0 +1,17 @@
+{
+  "id": "azure-light",
+  "name": "Azure",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#F2F8FF",
+    "primary": "#2563EB",
+    "secondary": "#60A5FA",
+    "text": "#11243D",
+    "textSecondary": "#4D6488",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D0E2FB",
+    "error": "#E11D48",
+    "success": "#059669"
+  }
+}

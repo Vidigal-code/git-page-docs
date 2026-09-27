@@ -1,0 +1,17 @@
+{
+  "id": "sand-light",
+  "name": "Sand",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FBF7F0",
+    "primary": "#B45309",
+    "secondary": "#D97706",
+    "text": "#332814",
+    "textSecondary": "#786A4D",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#ECE0C8",
+    "error": "#DC2626",
+    "success": "#4D7C4F"
+  }
+}

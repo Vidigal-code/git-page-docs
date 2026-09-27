@@ -1,0 +1,17 @@
+{
+  "id": "arctic-light",
+  "name": "Arctic",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#F4F9FF",
+    "primary": "#0284C7",
+    "secondary": "#38BDF8",
+    "text": "#0F2A3D",
+    "textSecondary": "#4D6B80",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D6E8F5",
+    "error": "#E11D48",
+    "success": "#059669"
+  }
+}

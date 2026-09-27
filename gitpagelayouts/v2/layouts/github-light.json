@@ -1,0 +1,17 @@
+{
+  "id": "github-light",
+  "name": "GitHub Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFFFFF",
+    "primary": "#0969DA",
+    "secondary": "#1A7F37",
+    "text": "#1F2328",
+    "textSecondary": "#57606A",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D0D7DE",
+    "error": "#D1242F",
+    "success": "#1A7F37"
+  }
+}

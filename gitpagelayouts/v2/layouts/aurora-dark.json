@@ -1,0 +1,17 @@
+{
+  "id": "aurora-dark",
+  "name": "Aurora Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#070A14",
+    "primary": "#7C3AED",
+    "secondary": "#22D3EE",
+    "text": "#E5E7EB",
+    "textSecondary": "#B8C3D6",
+    "cardBackground": "#101726",
+    "cardBorder": "#334155",
+    "error": "#FB7185",
+    "success": "#34D399"
+  }
+}

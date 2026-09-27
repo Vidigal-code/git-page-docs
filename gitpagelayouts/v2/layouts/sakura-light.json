@@ -1,0 +1,17 @@
+{
+  "id": "sakura-light",
+  "name": "Sakura",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFF5F7",
+    "primary": "#EC4899",
+    "secondary": "#F472B6",
+    "text": "#3D1A2B",
+    "textSecondary": "#8A5C70",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FBD0E0",
+    "error": "#E11D48",
+    "success": "#10B981"
+  }
+}
