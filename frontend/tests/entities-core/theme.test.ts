@@ -136,12 +136,12 @@ describe("toDocsShellCssVars", () => {
       "--card-shadow": "0 18px 60px rgba(0, 0, 0, 0.35)",
       "--card-radius": "16px",
       "--control-radius": "10px",
-      "--control-border": "1px solid #334155",
-      "--control-background": "#0f172a",
+      "--control-border": "1px solid var(--card-border)",
+      "--control-background": "var(--card-background)",
       "--select-radius": "10px",
-      "--select-border": "1px solid #334155",
+      "--select-border": "1px solid var(--card-border)",
       "--button-radius": "10px",
-      "--button-border": "1px solid #334155",
+      "--button-border": "1px solid var(--card-border)",
       "--button-glow": "0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent)",
       "--toc-scroll-max-height-desktop": "min(65vh, 400px)",
       "--toc-scroll-max-height-mobile": "min(45vh, 280px)",
@@ -180,14 +180,14 @@ describe("toDocsShellCssVars", () => {
     });
   });
 
-  it("falls back per field when a component is declared but partial", () => {
+  it("falls back per field to the palette when a component is declared but partial", () => {
     const theme = { colors: {}, components: { button: {}, select: {}, card: {} } } as unknown as ThemeTemplate;
     const vars = toDocsShellCssVars(theme) as Record<string, string | undefined>;
     expect(vars["--control-radius"]).toBe("10px");
-    expect(vars["--control-border"]).toBe("1px solid #334155");
-    expect(vars["--control-background"]).toBe("#0f172a");
+    expect(vars["--control-border"]).toBe("1px solid var(--card-border)");
+    expect(vars["--control-background"]).toBe("var(--card-background)");
     expect(vars["--select-radius"]).toBe("10px");
-    expect(vars["--select-border"]).toBe("1px solid #334155");
+    expect(vars["--select-border"]).toBe("1px solid var(--card-border)");
     expect(vars["--button-radius"]).toBe("10px");
     expect(vars["--button-glow"]).toContain("var(--primary)");
     expect(vars["--card-radius"]).toBeUndefined();

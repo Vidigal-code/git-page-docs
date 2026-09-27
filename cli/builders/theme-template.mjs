@@ -3,6 +3,14 @@
 import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 import { THEME_COLORS } from "../data/theme-colors.mjs";
 
+/** `#RRGGBB` (or `#RGB`) to `rgba(r, g, b, alpha)` for palette-derived glows and borders. */
+function rgba(hex, alpha) {
+  const digits = String(hex).replace("#", "");
+  const full = digits.length === 3 ? digits.replace(/./g, (c) => c + c) : digits.slice(0, 6);
+  const value = Number.parseInt(full, 16);
+  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+}
+
 export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
   const colors = themeColors[layout.id] ?? themeColors.default;
   const dark = layout.mode === "dark";
@@ -40,22 +48,24 @@ export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
         padding: "24px",
         boxShadow: dark ? "0 18px 60px rgba(0, 0, 0, 0.45)" : "0 18px 50px rgba(15, 23, 42, 0.08)",
       },
+      // Controls follow the layout's own palette (card surface, card border,
+      // primary accent) so a green or amber theme never gets a slate select.
       button: {
         borderRadius: "12px",
         padding: "10px 18px",
-        border: dark ? "1px solid #334155" : "1px solid #E2E8F0",
-        hoverGlow: dark ? "0 0 0 3px rgba(124, 58, 237, 0.18)" : "0 0 0 4px rgba(109, 40, 217, 0.15)",
+        border: `1px solid ${colors.cardBorder}`,
+        hoverGlow: `0 0 0 3px ${rgba(colors.primary, 0.18)}`,
       },
       select: {
         borderRadius: "12px",
         padding: "10px 40px 10px 16px",
-        border: dark ? "1px solid #334155" : "1px solid #E2E8F0",
-        backgroundColor: dark ? "#0F172A" : "#FFFFFF",
+        border: `1px solid ${colors.cardBorder}`,
+        backgroundColor: colors.cardBackground,
         textAlign: "center",
         iconColor: colors.secondary,
-        hoverBorderColor: dark ? "rgba(34, 211, 238, 0.7)" : "rgba(8, 145, 178, 0.7)",
-        focusBorderColor: dark ? "rgba(124, 58, 237, 0.8)" : "rgba(109, 40, 217, 0.8)",
-        focusGlow: dark ? "0 0 0 4px rgba(124, 58, 237, 0.18)" : "0 0 0 4px rgba(109, 40, 217, 0.15)",
+        hoverBorderColor: rgba(colors.primary, 0.7),
+        focusBorderColor: rgba(colors.primary, 0.85),
+        focusGlow: `0 0 0 4px ${rgba(colors.primary, 0.18)}`,
       },
       checkbox: {
         width: "20px",

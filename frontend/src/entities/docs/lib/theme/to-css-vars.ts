@@ -43,11 +43,17 @@ const DEFAULT_HEADER: Required<Pick<ThemeHeaderComponent, "backgroundColor" | "b
   borderBottom: "1px solid #334155",
 };
 
-const DEFAULT_BUTTON: ThemeButtonComponent = { borderRadius: "10px", border: "1px solid #334155" };
+// Controls without a theme definition follow the palette (card surface and
+// border) instead of a fixed navy, so a green or amber theme never shows a
+// slate dropdown.
+const PALETTE_CONTROL_BORDER = "1px solid var(--card-border)";
+const PALETTE_CONTROL_BACKGROUND = "var(--card-background)";
+
+const DEFAULT_BUTTON: ThemeButtonComponent = { borderRadius: "10px", border: PALETTE_CONTROL_BORDER };
 const DEFAULT_SELECT: ThemeSelectComponent = {
   borderRadius: "10px",
-  border: "1px solid #334155",
-  backgroundColor: "#0f172a",
+  border: PALETTE_CONTROL_BORDER,
+  backgroundColor: PALETTE_CONTROL_BACKGROUND,
 };
 const DEFAULT_CARD: ThemeCardComponent = {
   borderRadius: "16px",
@@ -152,12 +158,13 @@ export function toDocsShellCssVars(
     ["--card-shadow" as string]: card.boxShadow,
     ["--card-radius" as string]: card.borderRadius,
     ["--control-radius" as string]: headerControls?.borderRadius ?? button.borderRadius ?? "10px",
-    ["--control-border" as string]: headerControls?.border ?? button.border ?? "1px solid #334155",
-    ["--control-background" as string]: headerControls?.backgroundColor ?? select.backgroundColor ?? "#0f172a",
+    ["--control-border" as string]: headerControls?.border ?? button.border ?? PALETTE_CONTROL_BORDER,
+    ["--control-background" as string]:
+      headerControls?.backgroundColor ?? select.backgroundColor ?? PALETTE_CONTROL_BACKGROUND,
     ["--select-radius" as string]: select.borderRadius ?? "10px",
-    ["--select-border" as string]: select.border ?? "1px solid #334155",
+    ["--select-border" as string]: select.border ?? PALETTE_CONTROL_BORDER,
     ["--button-radius" as string]: button.borderRadius ?? "10px",
-    ["--button-border" as string]: button.border ?? "1px solid #334155",
+    ["--button-border" as string]: button.border ?? PALETTE_CONTROL_BORDER,
     ["--button-glow" as string]: button.hoverGlow ?? "0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent)",
     ["--toc-scroll-max-height-desktop" as string]:
       site?.TocScrollMaxHeightDesktop ?? TOC_SCROLL_MAX_HEIGHT_DESKTOP_DEFAULT,

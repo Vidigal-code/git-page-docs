@@ -45,18 +45,18 @@
     "button": {
       "borderRadius": "12px",
       "padding": "10px 18px",
-      "border": "1px solid #334155",
+      "border": "1px solid #3E1D4C",
       "hoverGlow": "0 0 0 3px rgba(124, 58, 237, 0.18)"
     },
     "select": {
       "borderRadius": "12px",
       "padding": "10px 40px 10px 16px",
-      "border": "1px solid #334155",
-      "backgroundColor": "#0F172A",
+      "border": "1px solid #3E1D4C",
+      "backgroundColor": "#220F2B",
       "textAlign": "center",
       "iconColor": "#FBBF24",
-      "hoverBorderColor": "rgba(34, 211, 238, 0.7)",
-      "focusBorderColor": "rgba(124, 58, 237, 0.8)",
+      "hoverBorderColor": "rgba(124, 58, 237, 0.7)",
+      "focusBorderColor": "rgba(124, 58, 237, 0.85)",
       "focusGlow": "0 0 0 4px rgba(124, 58, 237, 0.18)"
     },
     "checkbox": {

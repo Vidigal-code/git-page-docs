@@ -52,11 +52,11 @@
       "borderRadius": "12px",
       "padding": "10px 40px 10px 16px",
       "border": "1px solid #334155",
-      "backgroundColor": "#0F172A",
+      "backgroundColor": "#101726",
       "textAlign": "center",
       "iconColor": "#22D3EE",
-      "hoverBorderColor": "rgba(34, 211, 238, 0.7)",
-      "focusBorderColor": "rgba(124, 58, 237, 0.8)",
+      "hoverBorderColor": "rgba(124, 58, 237, 0.7)",
+      "focusBorderColor": "rgba(124, 58, 237, 0.85)",
       "focusGlow": "0 0 0 4px rgba(124, 58, 237, 0.18)"
     },
     "checkbox": {

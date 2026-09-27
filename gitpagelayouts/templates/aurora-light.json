@@ -55,9 +55,9 @@
       "backgroundColor": "#FFFFFF",
       "textAlign": "center",
       "iconColor": "#0891B2",
-      "hoverBorderColor": "rgba(8, 145, 178, 0.7)",
-      "focusBorderColor": "rgba(109, 40, 217, 0.8)",
-      "focusGlow": "0 0 0 4px rgba(109, 40, 217, 0.15)"
+      "hoverBorderColor": "rgba(109, 40, 217, 0.7)",
+      "focusBorderColor": "rgba(109, 40, 217, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(109, 40, 217, 0.18)"
     },
     "checkbox": {
       "width": "20px",

@@ -46,18 +46,18 @@
       "borderRadius": "12px",
       "padding": "10px 18px",
       "border": "1px solid #334155",
-      "hoverGlow": "0 0 0 3px rgba(124, 58, 237, 0.18)"
+      "hoverGlow": "0 0 0 3px rgba(100, 116, 139, 0.18)"
     },
     "select": {
       "borderRadius": "12px",
       "padding": "10px 40px 10px 16px",
       "border": "1px solid #334155",
-      "backgroundColor": "#0F172A",
+      "backgroundColor": "#111827",
       "textAlign": "center",
       "iconColor": "#94A3B8",
-      "hoverBorderColor": "rgba(34, 211, 238, 0.7)",
-      "focusBorderColor": "rgba(124, 58, 237, 0.8)",
-      "focusGlow": "0 0 0 4px rgba(124, 58, 237, 0.18)"
+      "hoverBorderColor": "rgba(100, 116, 139, 0.7)",
+      "focusBorderColor": "rgba(100, 116, 139, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(100, 116, 139, 0.18)"
     },
     "checkbox": {
       "width": "20px",

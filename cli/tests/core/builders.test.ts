@@ -99,7 +99,8 @@ interface ThemeTemplate {
   components: {
     header: { backgroundColor: string };
     footer: { backgroundColor: string };
-    select: { iconColor: string; backgroundColor: string };
+    select: { iconColor: string; backgroundColor: string; border: string };
+    button: { border: string };
     checkbox: { accentColor: string; checkMarkColor: string };
   };
   animations: { enableGlow: boolean };
@@ -447,7 +448,9 @@ describe("createThemeTemplate", () => {
       expect(template.supportsLightAndDarkModes).toBe(layout.supportsLightAndDarkModes);
       expect(template.colors).toBe(expectedColors);
       expect(template.components.header.backgroundColor).toBe(dark ? "#0B1220" : "#FFFFFF");
-      expect(template.components.select.backgroundColor).toBe(dark ? "#0F172A" : "#FFFFFF");
+      expect(template.components.select.backgroundColor).toBe(expectedColors.cardBackground);
+      expect(template.components.select.border).toBe(`1px solid ${expectedColors.cardBorder}`);
+      expect(template.components.button.border).toBe(`1px solid ${expectedColors.cardBorder}`);
       expect(template.components.select.iconColor).toBe(expectedColors.secondary);
       expect(template.components.checkbox.accentColor).toBe(expectedColors.primary);
       expect(template.components.checkbox.checkMarkColor).toBe(expectedColors.background);

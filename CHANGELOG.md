@@ -3,6 +3,19 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## Unreleased
+
+### Layouts
+
+- **Select and button controls follow each layout's palette.** The 62 layout templates that carried
+  the generic slate values (`#0F172A` / `#FFFFFF` background, `#334155` / `#E2E8F0` border, cyan and
+  violet hover/focus colours) now derive `components.select` and `components.button` from their own
+  `cardBackground`, `cardBorder` and `primary`, so the dropdown panel (language, theme and AI provider
+  pickers) matches the theme instead of showing a navy box on a green or amber layout. `duet-dark` and
+  `duet-light`, which define their own controls, are untouched. `gitpagedocs --layoutconfig` generates
+  the same palette-derived controls, and the viewer's built-in fallbacks now point at
+  `var(--card-background)` / `var(--card-border)` instead of fixed colours.
+
 ## 0.0.3 - 2026-09-27 - themed provider picker and palette-derived contrast
 
 ### Frontend viewer
