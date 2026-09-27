@@ -5,6 +5,48 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
 
 ## Unreleased
 
+### Introduction guide motion
+
+- `/introduction-guide` gains scroll motion built with Motion for React (`motion` 13, `LazyMotion` +
+  `domAnimation` + `m.*` components to keep the bundle small): a parallax backdrop of three glows
+  tinted with the active theme's primary/secondary colours (so every layout, light or dark, matches),
+  hero content that drifts up and fades as it scrolls away, and sections that fade in the first time
+  they enter the viewport. All tuning lives in `model/motion-config.ts`.
+- Reduced motion is honoured end to end (`MotionConfig reducedMotion="user"`, zero parallax travel,
+  instant reveals) while keeping the same markup as the static render, so hydration never leaves
+  content hidden. New E2E spec `e2e/introduction-guide.spec.ts` covers three themes, desktop and
+  mobile, horizontal overflow and reduced motion (it skips where the route is disabled, i.e. without
+  `GITPAGEDOCS_REPOSITORY_SEARCH=true`).
+
+### Removed: pre-0.0.1 compatibility
+
+0.0.1 is the first official release; data and configs from 0.0.1 on keep working, and the shims for
+the earlier 1.1.x formats are gone:
+
+- The `gitpagedocs/langs.json` language manifest (1.1.68): languages come only from `site.languages`.
+  `loadLanguageBundles` loads exactly the languages it is given; `LANGS_MANIFEST_FILENAME`,
+  `DEFAULT_LANGS_MANIFEST_PATH`, `parseLanguageManifest` and `LanguageManifest` are no longer exported
+  by `@gitpagedocs/tools/i18n`, and `languageArtifactPaths()` has no `legacyManifest`.
+- The `<outputDir>/layouts/` layouts folder: the viewer reads only `gitpagelayouts/` (or a configured
+  path), the old official URL is gone, and the CLI's interactive layouts migration was removed.
+- The plaintext browser key `gitpagedocs_ai_key` and its migration into the vault (`aiStorage` keeps only
+  the provider choice; `migratePlaintextKey` left `@gitpagedocs/tools/security`). `useAiChat` takes an
+  options object with a required `resolveCredentials`.
+- The repo-root `.gitpagedocsconfig` migration: the CLI reads the config only from the per-user config
+  directory (`AiConfigFileRepository` has no `cwd` / `onMigrate` options any more). The 0.0.1 plaintext
+  `apiKey` is still sealed into the vault on first read.
+- Generator clean-ups for `docs/<lang>/` root folders and `source-viewer` HTML snapshots.
+
+### Quality
+
+- SonarQube fixes: warning badge contrast (new `--warning` / `--warning-foreground` theme tokens), a
+  backtracking regex in the markdown file-name slug (now `\p{M}` plus split/join), the deprecated
+  `document.execCommand` copy fallback (Clipboard API only) and the copy status announced through
+  `<output>`. The chat guide sections are data-driven (`INFO_SECTIONS`) instead of a five-argument
+  helper with flag parameters.
+- `AGENTS.md` (Codex) and `CLAUDE.md` (Claude Code) describe this repository's workflow: TDD, the
+  validation commands, SonarQube per changed file and how generated artifacts are refreshed.
+
 ### Frontend viewer
 
 - **"How to use and risks" guide in the AI chat.** A new exclamation-mark button in the drawer header

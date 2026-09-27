@@ -21,6 +21,9 @@ import { useActiveSection, scrollToSection } from "../model/use-active-section";
 import { GuideHero } from "./guide-hero";
 import { GuideSidebar } from "./guide-sidebar";
 import { GuideSection } from "./guide-section";
+import { GuideMotionProvider } from "./motion/guide-motion-provider";
+import { GuideParallaxBackdrop } from "./motion/guide-parallax-backdrop";
+import { GuideReveal } from "./motion/guide-reveal";
 import styles from "./introduction-guide-page.module.css";
 
 const GUIDE_LANGUAGES: LanguageCode[] = ["en", "pt", "es"];
@@ -106,30 +109,35 @@ export function IntroductionGuidePage() {
 
   return (
     <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars}>
-      <div className={styles.page}>
-        <GuideHero
-          hero={content.hero}
-          projectUrl={projectUrl}
-          backToSearchHref={backToSearchHref}
-          backToSearchLabel={content.ui.backToSearch}
-          onPrimary={() => scrollToSection(sectionIds[1] ?? sectionIds[0])}
-        />
-        <div className={styles.body}>
-          <GuideSidebar
-            ui={content.ui}
-            sections={results}
-            query={query}
-            onQueryChange={setQuery}
-            activeId={activeId}
-            onSelect={onSelectSection}
+      <GuideMotionProvider>
+        <div className={styles.page}>
+          <GuideParallaxBackdrop />
+          <GuideHero
+            hero={content.hero}
+            projectUrl={projectUrl}
+            backToSearchHref={backToSearchHref}
+            backToSearchLabel={content.ui.backToSearch}
+            onPrimary={() => scrollToSection(sectionIds[1] ?? sectionIds[0])}
           />
-          <div className={styles.content}>
-            {content.sections.map((section) => (
-              <GuideSection key={section.id} section={section} />
-            ))}
+          <div className={styles.body}>
+            <GuideSidebar
+              ui={content.ui}
+              sections={results}
+              query={query}
+              onQueryChange={setQuery}
+              activeId={activeId}
+              onSelect={onSelectSection}
+            />
+            <div className={styles.content}>
+              {content.sections.map((section) => (
+                <GuideReveal key={section.id}>
+                  <GuideSection section={section} />
+                </GuideReveal>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </GuideMotionProvider>
     </SearchShellLayout>
   );
 }

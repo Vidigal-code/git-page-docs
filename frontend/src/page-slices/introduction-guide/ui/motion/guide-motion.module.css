@@ -1,0 +1,64 @@
+/* Decorative parallax backdrop of the introduction guide. Colours come from
+   the active theme tokens, so every layout (light or dark) gets matching glows. */
+.backdrop {
+  --backdrop-edge-fade: 12%;
+  --glow-primary-strength: 38%;
+  --glow-secondary-strength: 32%;
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Fade every edge so the clipped glows never show a straight border. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 var(--backdrop-edge-fade), #000 calc(100% - var(--backdrop-edge-fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--backdrop-edge-fade), #000 calc(100% - var(--backdrop-edge-fade)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 var(--backdrop-edge-fade), #000 calc(100% - var(--backdrop-edge-fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--backdrop-edge-fade), #000 calc(100% - var(--backdrop-edge-fade)), transparent);
+  mask-composite: intersect;
+}
+
+.layer {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  will-change: transform;
+}
+
+.tint-primary {
+  background: radial-gradient(circle, color-mix(in srgb, var(--primary) var(--glow-primary-strength), transparent) 0%, transparent 70%);
+}
+
+.tint-secondary {
+  background: radial-gradient(circle, color-mix(in srgb, var(--secondary) var(--glow-secondary-strength), transparent) 0%, transparent 70%);
+}
+
+.layer-far {
+  top: -8%;
+  right: -12%;
+  width: min(70vw, 720px);
+  aspect-ratio: 1;
+}
+
+.layer-mid {
+  top: 28%;
+  left: -18%;
+  width: min(60vw, 600px);
+  aspect-ratio: 1;
+}
+
+.layer-near {
+  top: 62%;
+  right: -10%;
+  width: min(48vw, 460px);
+  aspect-ratio: 1;
+}
+
+@media (max-width: 640px) {
+  .layer {
+    filter: blur(56px);
+  }
+}
