@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   DEFAULT_LAYOUTS_DIR,
   normalizeLayoutsDir,
-  legacyLayoutsDir,
   layoutsArtifactPaths,
 } from "../contracts/layouts-paths.mjs";
 
@@ -28,16 +27,6 @@ describe("normalizeLayoutsDir", () => {
     expect(normalizeLayoutsDir("///a/b///")).toBe("a/b");
     expect(normalizeLayoutsDir("\\\\themes\\")).toBe("themes");
     expect(normalizeLayoutsDir("////")).toBe(DEFAULT_LAYOUTS_DIR);
-  });
-});
-
-describe("legacyLayoutsDir", () => {
-  it("nests the legacy folder under the docs output dir", () => {
-    expect(legacyLayoutsDir("gitpagedocs")).toBe("gitpagedocs/layouts");
-  });
-
-  it("normalizes the output dir it is given", () => {
-    expect(legacyLayoutsDir("/docs/")).toBe("docs/layouts");
   });
 });
 

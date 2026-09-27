@@ -6,7 +6,6 @@ import { NodeCryptoService } from "../src/crypto/node-crypto-service";
 import { EncryptedCredentialVault, type VaultStorage } from "../src/security/credential-vault";
 import { SessionPasswordGate } from "../src/security/password-gate";
 import { FileVaultStorage } from "../src/security/file-vault-storage";
-import { migratePlaintextKey } from "../src/security/migrate-plaintext-key";
 import { SecurityError } from "../src/errors/app-error";
 
 const crypto = new NodeCryptoService(20_000);
@@ -82,38 +81,6 @@ describe("SessionPasswordGate", () => {
     await vault.initialize("correct");
     const gate = new SessionPasswordGate({ vault, prompt: async () => "wrong", maxAttempts: 2 });
     await expect(gate.authorize("run-ai")).rejects.toBeInstanceOf(SecurityError);
-  });
-});
-
-describe("migratePlaintextKey", () => {
-  it("is a no-op for a blank key", async () => {
-    const vault = new EncryptedCredentialVault(new MemoryVaultStorage(), crypto);
-    const r = await migratePlaintextKey({
-      vault,
-      password: "pw",
-      providerId: "openai",
-      plaintextKey: "",
-      clearPlaintext: () => {},
-    });
-    expect(r).toEqual({ migrated: false, initializedVault: false });
-  });
-
-  it("initializes, stores, and clears the plaintext", async () => {
-    const vault = new EncryptedCredentialVault(new MemoryVaultStorage(), crypto);
-    let plaintext: string | null = "sk-old";
-    const r = await migratePlaintextKey({
-      vault,
-      password: "pw",
-      providerId: "anthropic",
-      plaintextKey: "sk-old",
-      clearPlaintext: () => {
-        plaintext = null;
-      },
-    });
-    expect(r.migrated).toBe(true);
-    expect(r.initializedVault).toBe(true);
-    expect(plaintext).toBeNull();
-    expect(await vault.getCredential("pw", "anthropic")).toBe("sk-old");
   });
 });
 

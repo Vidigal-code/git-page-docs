@@ -147,7 +147,6 @@ describe("runChat setup guidance", () => {
 
     expect(credentials.resolveChatCredentials).toHaveBeenCalledWith(
       expect.objectContaining({
-        cwd: "/work",
         providerOverride: "anthropic",
         modelOverride: undefined,
         unlockStoredKey: expect.any(Function),

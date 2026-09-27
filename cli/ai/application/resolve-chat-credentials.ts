@@ -13,7 +13,6 @@ export interface ResolvedChatCredentials {
 }
 
 export interface ResolveChatCredentialsInput {
-  readonly cwd: string;
   /** Overrides the stored/detected provider (e.g. a `--provider` flag). */
   readonly providerOverride?: string;
   /** Overrides the stored/detected model (e.g. a `--model` flag). */
@@ -40,7 +39,7 @@ export async function resolveChatCredentials(
   input: ResolveChatCredentialsInput,
 ): Promise<ResolvedChatCredentials | null> {
   const env = input.env ?? process.env;
-  const configRepo = input.configRepo ?? new AiConfigFileRepository({ cwd: input.cwd });
+  const configRepo = input.configRepo ?? new AiConfigFileRepository();
   const stored = await configRepo.read().catch(() => null);
 
   const providerId = resolveProviderId(input.providerOverride, stored, env);

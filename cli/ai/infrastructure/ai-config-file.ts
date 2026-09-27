@@ -12,12 +12,8 @@ const CONFIG_DIR_MODE = 0o700;
 const CONFIG_FILE_MODE = 0o600;
 
 export interface AiConfigFileRepositoryOptions {
-  /** Working directory searched for a legacy `<cwd>/.gitpagedocsconfig`. */
-  cwd?: string;
   /** Destination directory; defaults to the per-user OS config directory. */
   configDir?: string;
-  /** Notified after a legacy config is moved into the user config directory. */
-  onMigrate?: (fromPath: string, toPath: string) => void;
 }
 
 /**
@@ -25,47 +21,32 @@ export interface AiConfigFileRepositoryOptions {
  * (`%APPDATA%\gitpagedocs` on Windows, `~/Library/Application Support/gitpagedocs`
  * on macOS, `$XDG_CONFIG_HOME/gitpagedocs` elsewhere) with owner-only
  * permissions, so the API key never lives inside a repository checkout.
- * A legacy `<cwd>/.gitpagedocsconfig` is migrated automatically on first read.
  */
 export class AiConfigFileRepository {
-  private readonly cwd: string;
   private readonly configDir: string;
-  private readonly onMigrate?: (fromPath: string, toPath: string) => void;
 
   constructor(options: AiConfigFileRepositoryOptions = {}) {
-    this.cwd = options.cwd ?? process.cwd();
     this.configDir = options.configDir ?? resolveUserConfigDir();
-    this.onMigrate = options.onMigrate;
   }
 
   getConfigPath(): string {
     return path.join(this.configDir, AI_CLI_CONFIG_FILENAME);
   }
 
-  getLegacyConfigPath(): string {
-    return path.join(this.cwd, AI_CLI_CONFIG_FILENAME);
-  }
-
   async read(): Promise<AiCliConfig | null> {
-    const current = await this.readFrom(this.getConfigPath());
-    if (current) return current;
-    return this.migrateLegacyConfig();
+    return this.readFrom(this.getConfigPath());
   }
 
-  /** Delete the stored configuration (secure and legacy locations), wiping
-   * any saved credentials. Returns the paths that were actually removed. */
+  /** Delete the stored configuration, wiping any saved settings. Returns the removed path, if any. */
   async clear(): Promise<string[]> {
-    const removed: string[] = [];
-    const candidates = new Set([this.getConfigPath(), this.getLegacyConfigPath()].map((p) => path.resolve(p)));
-    for (const configPath of candidates) {
-      try {
-        await fs.rm(configPath);
-        removed.push(configPath);
-      } catch {
-        // Missing file: nothing to remove at this location.
-      }
+    const configPath = path.resolve(this.getConfigPath());
+    try {
+      await fs.rm(configPath);
+      return [configPath];
+    } catch {
+      // Missing file: nothing to remove.
+      return [];
     }
-    return removed;
   }
 
   async write(config: AiCliConfig): Promise<void> {
@@ -84,18 +65,4 @@ export class AiConfigFileRepository {
     }
   }
 
-  private async migrateLegacyConfig(): Promise<AiCliConfig | null> {
-    const legacyPath = this.getLegacyConfigPath();
-    if (path.resolve(legacyPath) === path.resolve(this.getConfigPath())) return null;
-    const legacy = await this.readFrom(legacyPath);
-    if (!legacy) return null;
-    try {
-      await this.write(legacy);
-      await fs.rm(legacyPath, { force: true });
-      this.onMigrate?.(legacyPath, this.getConfigPath());
-    } catch {
-      // Migration is best-effort: keep serving the legacy config on failure.
-    }
-    return legacy;
-  }
 }

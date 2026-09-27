@@ -10,7 +10,6 @@ import { EncryptedCredentialVault, type VaultStorage } from "../src/security/cre
 import { FileVaultStorage } from "../src/security/file-vault-storage";
 import { WebStorageVaultStorage } from "../src/security/web-storage-vault-storage";
 import { SessionPasswordGate } from "../src/security/password-gate";
-import { migratePlaintextKey } from "../src/security/migrate-plaintext-key";
 import { CacheError, RepositoryError } from "../src/errors/app-error";
 
 /** Branches the main suites leave out: search filtering/limits, cache and vault edge paths. */
@@ -217,21 +216,4 @@ describe("vault edge paths", () => {
     expect(prompts).toBe(2);
   });
 
-  it("migratePlaintextKey reuses an already initialized vault", async () => {
-    const vault = new EncryptedCredentialVault(new MemoryVaultStorage(), crypto);
-    await vault.initialize("pw");
-    let cleared = false;
-    const result = await migratePlaintextKey({
-      vault,
-      password: "pw",
-      providerId: "openai",
-      plaintextKey: "sk-legacy",
-      clearPlaintext: async () => {
-        cleared = true;
-      },
-    });
-    expect(result).toEqual({ migrated: true, initializedVault: false });
-    expect(cleared).toBe(true);
-    expect(await vault.getCredential("pw", "openai")).toBe("sk-legacy");
-  });
 });

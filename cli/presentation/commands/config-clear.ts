@@ -4,11 +4,11 @@ import type { CommandContext } from "./run-command";
 
 /**
  * `gitpagedocs config clear` — delete the stored `.gitpagedocsconfig` from the
- * per-user config directory (and any legacy repo-root copy) together with the
- * encrypted key vault, wiping the saved AI credentials, provider and scan paths.
+ * per-user config directory together with the encrypted key vault, wiping the
+ * saved AI credentials, provider and scan paths.
  */
-export async function runConfigClear(ctx: CommandContext): Promise<void> {
-  const repository = new AiConfigFileRepository({ cwd: ctx.cwd });
+export async function runConfigClear(_ctx: CommandContext): Promise<void> {
+  const repository = new AiConfigFileRepository();
   const vault = new AiKeyVault();
   const removed = await repository.clear();
   if (await vault.clear()) removed.push(vault.getVaultPath());

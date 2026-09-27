@@ -58,7 +58,7 @@ git-page-docs/
 
 API keys are never stored in plaintext, neither on the site nor by the CLI:
 
-- **Site (`/ai` console and chat drawer)** — a **local password** derives (PBKDF2-HMAC-SHA-256) an AES-256-GCM key; keys are encrypted at rest in `localStorage` and decrypted only for the session. Any legacy plaintext key is migrated into the vault and wiped on first unlock. The chat drawer also **locks itself after `site.AiChatAutoLockSeconds`** idle seconds (default 30) and asks for the password again — see [AI chat drawer (auto-lock)](#ai-chat-drawer-auto-lock).
+- **Site (`/ai` console and chat drawer)** — a **local password** derives (PBKDF2-HMAC-SHA-256) an AES-256-GCM key; keys are encrypted at rest in `localStorage` and decrypted only for the session. The chat drawer also **locks itself after `site.AiChatAutoLockSeconds`** idle seconds (default 30) and asks for the password again — see [AI chat drawer (auto-lock)](#ai-chat-drawer-auto-lock).
 - **CLI (`gitpagedocs ai` / `gitpagedocs chat`)** — the key never sits in `.gitpagedocsconfig`: it is sealed in the encrypted vault file `.gitpagedocsvault` next to it, with a **vault password created on first use and asked on every run** (`GITPAGEDOCS_VAULT_PASSWORD` for non-interactive runs). The config only records `"apiKeyEncrypted": true` — see [Manual config](#manual-config-gitpagedocsconfig).
 
 ### Tooling
@@ -182,10 +182,6 @@ docker run -p 3000:80 gitpagedocshome
 - The generated `gitpagedocs/config.json` references that folder through `layoutsConfigPath` and `layoutsConfigPathTemplates`, so the viewer resolves it directly instead of probing.
 - Official layout URLs are disabled in generated config.
 - Best option if you want to create and maintain your own templates in your own repository.
-- The legacy `gitpagedocs/layouts/` location is no longer generated. The viewer still
-  resolves it first, so existing sites keep working untouched, and the CLI offers to
-  move it into the layouts home — only after you confirm. Nothing is deleted on your
-  behalf.
 
 ### Fallback behavior
 
@@ -291,7 +287,7 @@ Main layout source keys in `gitpagedocs/config.json` (or `config.js` / `config.t
 Behavior:
 
 - If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
-- If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagelayouts/**`, the legacy `gitpagedocs/layouts/**`, or your custom paths).
+- If `layoutsConfigPathOficial=false`, runtime prefers your repository layout/template sources (`gitpagelayouts/**` or your custom paths).
 
 ## Version selector visibility
 
@@ -601,9 +597,7 @@ permissions on POSIX systems:
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
 Set `GITPAGEDOCS_CONFIG_DIR` to override the directory. Delete the stored file, the
-vault and their credentials at any time with `npx @gitpagedocs/cli config clear`. A legacy
-`.gitpagedocsconfig` in the repository root is migrated there automatically on the
-next `gitpagedocs ai` run. File contents:
+vault and their credentials at any time with `npx @gitpagedocs/cli config clear`. File contents:
 
 ```json
 {
@@ -629,7 +623,7 @@ password with PBKDF2-HMAC-SHA-256, 210k iterations) and the config only keeps
 - the **vault password is created on first use** (typed twice) and **asked on every run** of
   `gitpagedocs ai` / `gitpagedocs chat` that uses the stored key (3 attempts, then the run aborts);
 - `GITPAGEDOCS_VAULT_PASSWORD` supplies it without a prompt (CI, pipes, no TTY);
-- a legacy plaintext `"apiKey"` in an old file is sealed into the vault and removed from the file
+- a plaintext `"apiKey"` written by 0.0.1 is sealed into the vault and removed from the file
   the next time it is read;
 - `gitpagedocs config clear` deletes the config **and** the vault.
 
@@ -715,7 +709,7 @@ The UI text is not part of `config.json`; it lives in one JSON file per language
 - `site.languages` in `gitpagedocs/config.json` — switches each language on (`true`) or off (`false`), in menu order: `{ "languages": { "en": true, "pt": true, "es": false } }`. A language set to `false` disappears from the language selector and its strings are not loaded, even when its docs exist.
 - `gitpagedocs/langs/<lang>.json` — that language's `langmenu` (header, search, source viewer, audio player, AI chat, docs-access labels) and `translations` (`notFound`, `navigation`, `footer`).
 
-To add a language, create `gitpagedocs/langs/<lang>.json` and add `"<lang>": true` to `site.languages`. There is no `langs.json` any more: a manifest left by release 1.1.68 is still read by configs without `site.languages`, and the generator removes it. Configs that still inline `site.langmenu` / `translations` keep working: the `langs/` files win when both exist, and any missing key is backfilled from the current release baseline.
+To add a language, create `gitpagedocs/langs/<lang>.json` and add `"<lang>": true` to `site.languages`. Strings inlined in `site.langmenu` / `translations` still work: the `langs/` files win when both exist, and any missing key is backfilled from the current release baseline.
 
 ## Versioning and changelog
 

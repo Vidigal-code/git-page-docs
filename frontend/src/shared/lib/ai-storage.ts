@@ -1,22 +1,11 @@
 /**
  * @file ai-storage.ts
- * @description Secure LocalStorage wrapper for AI API Keys ensuring they never hit a backend.
+ * @description Remembers the chosen "provider:model" in localStorage. API keys
+ * never live here: they are sealed in the encrypted vault (ai-secure-storage).
  */
-const AI_KEY_STORAGE = 'gitpagedocs_ai_key';
 const AI_PROVIDER_STORAGE = 'gitpagedocs_ai_provider';
 
 export const aiStorage = {
-    saveKey: (key: string) => {
-        if (typeof window !== 'undefined') localStorage.setItem(AI_KEY_STORAGE, key);
-    },
-    getKey: () => {
-        if (typeof window !== 'undefined') return localStorage.getItem(AI_KEY_STORAGE);
-        return null;
-    },
-    clearKey: () => {
-        if (typeof window !== 'undefined') localStorage.removeItem(AI_KEY_STORAGE);
-    },
-
     saveProvider: (provider: string) => {
         if (typeof window !== 'undefined') localStorage.setItem(AI_PROVIDER_STORAGE, provider);
     },

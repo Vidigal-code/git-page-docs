@@ -49,7 +49,6 @@ describe("resolveChatCredentials", () => {
       },
     };
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       configRepo: { read: async () => stored },
       env: {},
     });
@@ -63,7 +62,6 @@ describe("resolveChatCredentials", () => {
 
   it("falls back to a catalog-declared env var", async () => {
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       providerOverride: "openai",
       configRepo: emptyConfigRepo,
       env: { OPENAI_API_KEY: "env-key" },
@@ -74,7 +72,6 @@ describe("resolveChatCredentials", () => {
 
   it("auto-detects the provider from whichever env key is set", async () => {
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       configRepo: emptyConfigRepo,
       env: { GROQ_API_KEY: "gk" },
     });
@@ -84,7 +81,6 @@ describe("resolveChatCredentials", () => {
 
   it("returns null when a keyed provider has no key", async () => {
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       providerOverride: "openai",
       configRepo: emptyConfigRepo,
       env: {},
@@ -94,7 +90,6 @@ describe("resolveChatCredentials", () => {
 
   it("allows keyless providers (ollama) without a key", async () => {
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       providerOverride: "ollama",
       configRepo: emptyConfigRepo,
       env: {},
@@ -105,7 +100,6 @@ describe("resolveChatCredentials", () => {
 
   it("honors model override over the provider default", async () => {
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       providerOverride: "openai",
       modelOverride: "gpt-4o",
       configRepo: emptyConfigRepo,

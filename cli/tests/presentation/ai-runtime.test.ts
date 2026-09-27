@@ -83,11 +83,11 @@ afterEach(() => {
 });
 
 describe("runAiCliCommand", () => {
-  it("migrates a legacy config, saves the plan, scaffolds first and runs the plan", async () => {
+  it("reuses the stored config, saves the plan, scaffolds first and runs the plan", async () => {
     const cwd = makeRoot("gpd-ai-cmd-");
     const configDir = path.join(makeRoot("gpd-ai-cmd-cfg-"), "gitpagedocs");
     vi.stubEnv("GITPAGEDOCS_CONFIG_DIR", configDir);
-    writeFileSync(path.join(cwd, AI_CLI_CONFIG_FILENAME), JSON.stringify(CONFIG), "utf-8");
+    await new AiConfigFileRepository({ configDir }).write(CONFIG);
 
     const plan: AiCliRunPlan = { config: { ...CONFIG, ai: { ...CONFIG.ai, model: "gpt-4o" } }, saveConfig: true, runConfigScaffold: true };
     aiPrompts.runAiInteractivePrompt.mockResolvedValue(plan);
@@ -101,7 +101,6 @@ describe("runAiCliCommand", () => {
     const result = await runAiCliCommand({ cwd, onInfo: (message) => messages.push(message), onScaffold, passwordPrompt, env: {} });
 
     expect(aiPrompts.runAiInteractivePrompt).toHaveBeenCalledWith(CONFIG);
-    expect(messages[0]).toContain("[gitpagedocs:ai] Moved configuration from");
     const vaultPath = path.join(configDir, AI_KEY_VAULT_FILENAME);
     expect(messages).toContain(
       `[gitpagedocs:ai] Configuration saved to ${path.join(configDir, AI_CLI_CONFIG_FILENAME)} (API key encrypted in ${vaultPath})`,
@@ -149,7 +148,7 @@ describe("runAiCliCommand", () => {
     await vault.initialize("vault-pw");
     await vault.setKey("vault-pw", "openai", "sk-test");
     const { apiKey: _plain, ...aiWithoutKey } = CONFIG.ai;
-    await new AiConfigFileRepository({ cwd, configDir }).write({ ...CONFIG, ai: { ...aiWithoutKey, apiKeyEncrypted: true } });
+    await new AiConfigFileRepository({ configDir }).write({ ...CONFIG, ai: { ...aiWithoutKey, apiKeyEncrypted: true } });
     aiPrompts.runAiInteractivePrompt.mockImplementation(async (existing) => ({
       config: existing as AiCliConfig,
       saveConfig: false,
@@ -310,30 +309,23 @@ describe("writeVersionDocs guards", () => {
 });
 
 describe("AiConfigFileRepository defaults", () => {
-  it("resolves the user config directory and cwd when no options are given", () => {
+  it("resolves the user config directory when no options are given", () => {
     const configDir = path.join(makeRoot("gpd-cfg-default-"), "gitpagedocs");
     vi.stubEnv("GITPAGEDOCS_CONFIG_DIR", configDir);
     const repo = new AiConfigFileRepository();
     expect(repo.getConfigPath()).toBe(path.join(configDir, AI_CLI_CONFIG_FILENAME));
-    expect(repo.getLegacyConfigPath()).toBe(path.join(process.cwd(), AI_CLI_CONFIG_FILENAME));
   });
 
-  it("never migrates when the legacy and secure paths coincide", async () => {
-    const cwd = makeRoot("gpd-cfg-same-");
-    const repo = new AiConfigFileRepository({ cwd, configDir: cwd });
-    await expect(repo.read()).resolves.toBeNull();
-  });
 });
 
 describe("resolveChatCredentials default provider", () => {
   it("assumes openai when nothing is configured, and therefore needs a key", async () => {
-    const creds = await resolveChatCredentials({ cwd: "/tmp", configRepo: { read: async () => null }, env: {} });
+    const creds = await resolveChatCredentials({ configRepo: { read: async () => null }, env: {} });
     expect(creds).toBeNull();
   });
 
   it("survives a config repository failure", async () => {
     const creds = await resolveChatCredentials({
-      cwd: "/tmp",
       configRepo: { read: async () => Promise.reject(new Error("disk")) },
       env: { OPENAI_API_KEY: "k" },
     });

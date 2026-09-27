@@ -10,20 +10,13 @@
  * language selector, even when its docs exist. A language the map does not
  * mention stays enabled, so old configs keep every content language they ship.
  *
- * Historically the strings lived inline in `config.json` (`site.langmenu` keyed
- * by language and `translations.<section>.<key>` keyed by language), and
- * release 1.1.68 listed the languages in a separate `gitpagedocs/langs.json`
- * manifest. Both still load: `applyLanguageBundles` folds the bundles back into
- * the inline shape, so every consumer keeps reading `site.langmenu` /
- * `translations` unchanged, and the manifest is read only when `config.json`
- * carries no `site.languages`. Bundles win over inline strings.
+ * `applyLanguageBundles` folds the loaded bundles into `site.langmenu` (keyed
+ * by language) and `translations.<section>.<key>` (keyed by language), the
+ * shape every consumer reads.
  */
 
 export const LANGS_DIRNAME = "langs";
 export const DEFAULT_LANGS_DIR = `gitpagedocs/${LANGS_DIRNAME}`;
-/** Legacy (1.1.68) manifest; superseded by `site.languages` in config.json. */
-export const LANGS_MANIFEST_FILENAME = "langs.json";
-export const DEFAULT_LANGS_MANIFEST_PATH = `gitpagedocs/${LANGS_MANIFEST_FILENAME}`;
 
 /** Language codes become file names, so they are kept to a safe alphabet. */
 const LANGUAGE_CODE_PATTERN = /^[A-Za-z0-9]{2,8}(?:[-_][A-Za-z0-9]{1,8})?$/;
@@ -34,11 +27,6 @@ export type TranslationSections = Record<string, LanguageStrings>;
 /** `site.languages`: language code → enabled flag, in menu order. */
 export type LanguageToggles = Record<string, boolean>;
 
-/** Legacy `gitpagedocs/langs.json` shape. */
-export interface LanguageManifest {
-  languages: string[];
-}
-
 export interface LanguageBundle {
   langmenu?: LanguageStrings;
   translations?: TranslationSections;
@@ -47,7 +35,7 @@ export interface LanguageBundle {
 export type LanguageBundleMap = Record<string, LanguageBundle>;
 
 /**
- * Legacy inline shapes: `langmenu[lang][key]` and `translations[section][key][lang]`.
+ * Folded shapes: `langmenu[lang][key]` and `translations[section][key][lang]`.
  * Sections and keys may be absent, matching the optional fields of typed configs.
  */
 export type InlineLangMenu = Record<string, LanguageStrings>;
@@ -136,16 +124,10 @@ export function getSiteLanguageToggles(config: LocalizableConfig): LanguageToggl
   return parseLanguageToggles(config.site?.languages);
 }
 
-/** The bundles a config asks for: its enabled toggles, or null when it has none (legacy). */
+/** The bundles a config asks for: its enabled toggles, or null when it has none. */
 export function resolveBundleLanguages(config: LocalizableConfig): string[] | null {
   const toggles = getSiteLanguageToggles(config);
   return toggles ? getEnabledLanguages(toggles) : null;
-}
-
-export function parseLanguageManifest(raw: unknown): LanguageManifest | null {
-  if (!isPlainObject(raw) || !Array.isArray(raw.languages)) return null;
-  const languages = Array.from(new Set(raw.languages.filter(isLanguageCode)));
-  return languages.length > 0 ? { languages } : null;
 }
 
 function parseTranslationSections(raw: unknown): TranslationSections | undefined {
@@ -167,29 +149,21 @@ export function parseLanguageBundle(raw: unknown): LanguageBundle | null {
 }
 
 export interface LoadLanguageBundlesOptions {
-  /** Languages to load (the enabled `site.languages`). Without it the legacy manifest is consulted. */
+  /** Languages to load (the enabled `site.languages`). */
   languages?: readonly string[];
-  manifestPath?: string;
   langsDir?: string;
-}
-
-async function readLegacyManifestLanguages(readJson: JsonReader, manifestPath: string): Promise<string[] | null> {
-  const manifest = parseLanguageManifest(await readJson(manifestPath));
-  return manifest ? manifest.languages : null;
 }
 
 /**
  * Loads one bundle per requested language. Resolves null when nothing is
- * requested (legacy inline config without a manifest); bundles that are
- * missing or malformed are skipped so one broken file never takes the other
- * languages down.
+ * requested; bundles that are missing or malformed are skipped so one broken
+ * file never takes the other languages down.
  */
 export async function loadLanguageBundles(
   readJson: JsonReader,
   options: LoadLanguageBundlesOptions = {},
 ): Promise<LanguageBundleMap | null> {
-  const languages =
-    options.languages ?? (await readLegacyManifestLanguages(readJson, options.manifestPath ?? DEFAULT_LANGS_MANIFEST_PATH));
+  const { languages } = options;
   if (!languages || languages.length === 0) return null;
 
   const entries = await Promise.all(
@@ -206,7 +180,7 @@ export async function loadLanguageBundles(
   return Object.keys(bundles).length > 0 ? bundles : null;
 }
 
-/** Loads the bundles `config.json` enables through `site.languages` (legacy manifest as fallback). */
+/** Loads the bundles `config.json` enables through `site.languages`. */
 export function loadConfigLanguageBundles(
   config: LocalizableConfig,
   readJson: JsonReader,

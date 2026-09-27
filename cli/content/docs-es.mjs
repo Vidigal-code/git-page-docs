@@ -172,7 +172,7 @@ Los docs traen un asistente de IA en dos superficies: un **panel de chat** dentr
 
 - **14 proveedores** en un unico core compartido: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
 - **Eleccion de modelo** — desde el catalogo de cada proveedor (\`gitpagedocs models <proveedor>\`); un id de modelo guardado que el proveedor retiro se reemplaza por el predeterminado del proveedor automaticamente.
-- **Cifrado en reposo** — tu clave de API se sella con AES-256-GCM detras de una **contrasena local** y nunca queda en texto plano ni en logs. Una clave heredada en texto plano se migra y se borra en el primer desbloqueo.
+- **Cifrado en reposo** — tu clave de API se sella con AES-256-GCM detras de una **contrasena local** y nunca queda en texto plano ni en logs.
 - **Bloqueo por inactividad** — el panel de chat se bloquea solo tras \`site.AiChatAutoLockSeconds\` segundos sin uso (por defecto 30, \`0\` lo desactiva): un modal centrado con cuenta regresiva, en tu idioma, permite cancelar o bloquear ahora, y desbloquear pide la contrasena de nuevo.
 - **Proveedores resilientes** — los errores transitorios del proveedor se reintentan (3 intentos) y un fallo final es un mensaje simple que termina en "¡Inténtalo de nuevo!".
 - **Generacion de documentacion con IA** — \`gitpagedocs ai\` recorre las rutas elegidas y escribe markdown multilingue (pt/en/es); reutilizable via \`.gitpagedocsconfig\`, cuya clave de API queda sellada en la boveda cifrada \`.gitpagedocsvault\` (la contrasena de la boveda se pide en cada ejecucion). \`gitpagedocs chat\` lleva el mismo asistente a la terminal.
@@ -189,7 +189,7 @@ La configuracion de runtime esta en \`gitpagedocs/config.json\`. Los textos de l
 
 - \`site.languages\` en \`gitpagedocs/config.json\` activa (\`true\`) o desactiva (\`false\`) cada idioma, en el orden del menu: \`{ "languages": { "en": true, "pt": true, "es": false } }\`. Un idioma en \`false\` desaparece del selector de idiomas y sus textos no se cargan, aunque existan sus docs.
 - \`gitpagedocs/langs/<lang>.json\` guarda los textos de ese idioma: \`langmenu\` (cabecera, busqueda, visor de codigo, reproductor de audio, chat de IA y acceso a los docs) y \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
-- Para agregar un idioma, crea \`langs/<lang>.json\` y agrega \`"<lang>": true\` en \`site.languages\`. Ya no existe \`langs.json\`: un manifiesto dejado por la version 1.1.68 aun se lee en configs antiguos sin \`site.languages\`, y el generador lo elimina.
+- Para agregar un idioma, crea \`langs/<lang>.json\` y agrega \`"<lang>": true\` en \`site.languages\`.
 - Los \`config.json\` antiguos que aun traen \`site.langmenu\` / \`translations\` inline siguen funcionando; cuando existen ambos, los archivos de \`langs/\` prevalecen y cualquier clave ausente se completa desde la version actual.
 
 ## Seccion \`site\`

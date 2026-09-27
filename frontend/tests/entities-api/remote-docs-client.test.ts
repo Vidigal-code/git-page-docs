@@ -110,16 +110,6 @@ describe("loadStandaloneLayoutsAndThemes", () => {
     expect(themes.alpha.colors.background).toBe("#official");
   });
 
-  it("falls back to the legacy official folder", async () => {
-    stubRepoFetch({
-      [`${OFFICIAL}/gitpagedocs/layouts/layoutsConfig.json`]: INDEX,
-      [`${OFFICIAL}/gitpagedocs/layouts/templates/alpha.json`]: template("alpha", "#legacy"),
-    });
-
-    const { themes } = await loadStandaloneLayoutsAndThemes();
-    expect(themes.alpha.colors.background).toBe("#legacy");
-  });
-
   it("ships the built-in fallback when there is no index or no template at all", async () => {
     stubRepoFetch({});
     expect((await loadStandaloneLayoutsAndThemes()).layoutsConfig.layouts[0].id).toBe(FALLBACK_ID);
@@ -136,7 +126,7 @@ describe("loadLayoutsAndThemes for a remote repository", () => {
 
   it("reads the configured index and looks templates up next to it, then in the repository", async () => {
     stubRepoFetch(
-      { "o/r/gitpagedocs/layouts/templates/beta.json": template("beta", "#repo") },
+      { "o/r/gitpagelayouts/templates/beta.json": template("beta", "#repo") },
       [
         ["cfg.example/layouts/layoutsConfig.json", { layouts: [layoutItem("alpha"), layoutItem("beta")] }],
         ["cfg.example/layouts/templates/alpha.json", template("alpha", "#cfg")],

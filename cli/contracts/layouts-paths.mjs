@@ -4,9 +4,7 @@ import { trimSlashes } from "./path-segments.mjs";
  * Canonical locations for layout artifacts.
  *
  * Local layouts are generated into the standalone `gitpagelayouts/` home at the
- * project root. `<outputDir>/layouts/` is the legacy location that earlier
- * versions wrote: the viewer still reads it, and the CLI offers to migrate it,
- * but nothing is generated there any more.
+ * project root.
  *
  * Every consumer derives its paths from here so the folder name exists in one
  * place only.
@@ -24,9 +22,6 @@ export const LAYOUTS_FALLBACK_CONFIG_FILENAME = "layoutsFallbackConfig.json";
 /** Folder holding one JSON template per layout, inside a layouts folder. */
 export const LAYOUTS_TEMPLATES_DIRNAME = "templates";
 
-/** Sub-folder of the docs output dir that older versions generated into. */
-export const LEGACY_LAYOUTS_SUBDIR = "layouts";
-
 /**
  * Normalize a user-supplied folder name to a repo-relative POSIX path with no
  * leading/trailing separators, so it can be joined and stored in config.json
@@ -39,16 +34,6 @@ export function normalizeLayoutsDir(dir) {
   const collapsed = String(dir ?? "").replace(/[\\/]+/g, "/");
   const normalized = trimSlashes(collapsed).trim();
   return normalized || DEFAULT_LAYOUTS_DIR;
-}
-
-/**
- * Legacy layouts folder for a given docs output dir.
- *
- * @param {string} outputDir Docs output dir (e.g. `gitpagedocs`).
- * @returns {string} Repo-relative POSIX path (e.g. `gitpagedocs/layouts`).
- */
-export function legacyLayoutsDir(outputDir) {
-  return `${normalizeLayoutsDir(outputDir)}/${LEGACY_LAYOUTS_SUBDIR}`;
 }
 
 /**

@@ -8,7 +8,6 @@
 import { WebCryptoService } from "../src/crypto/web-crypto-service";
 import { EncryptedCredentialVault } from "../src/security/credential-vault";
 import { WebStorageVaultStorage } from "../src/security/web-storage-vault-storage";
-import { migratePlaintextKey } from "../src/security/migrate-plaintext-key";
 import type { WebStorageLike } from "../src/cache/web-storage-cache";
 import { legacyProviderToCatalogId, parseLegacyProviderAndModel } from "../src/ai/legacy-adapter";
 import { SecurityError } from "../src/errors/app-error";
@@ -72,23 +71,6 @@ async function main(): Promise<void> {
   await vault.setCredential("master", "anthropic", "sk-ant-browser-123");
   check("credential round trip", (await vault.getCredential("master", "anthropic")) === "sk-ant-browser-123");
   check("stored web vault has no plaintext", !storage.raw().includes("sk-ant-browser-123"));
-
-  console.log("[smoke:secweb] plaintext migration");
-  let plaintext: string | null = "sk-old-plaintext-999";
-  const storage2 = new FakeStorage();
-  const vault2 = new EncryptedCredentialVault(new WebStorageVaultStorage(storage2), crypto);
-  const result = await migratePlaintextKey({
-    vault: vault2,
-    password: "newpass",
-    providerId: "openai",
-    plaintextKey: plaintext,
-    clearPlaintext: () => {
-      plaintext = null;
-    },
-  });
-  check("migration reports migrated", result.migrated && result.initializedVault);
-  check("plaintext cleared after migration", plaintext === null);
-  check("migrated key retrievable", (await vault2.getCredential("newpass", "openai")) === "sk-old-plaintext-999");
 
   console.log("[smoke:secweb] legacy provider mapping");
   check("legacy 'claude' -> 'anthropic'", legacyProviderToCatalogId("claude") === "anthropic");

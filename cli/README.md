@@ -169,9 +169,8 @@ permissions on POSIX systems:
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
 Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; delete the stored file,
-the vault and their credentials with `gitpagedocs config clear`; a legacy
-`.gitpagedocsconfig` in the repository root is migrated automatically on the next
-run. You can create/edit this file manually and then run `npx @gitpagedocs/cli ai`:
+the vault and their credentials with `gitpagedocs config clear`. You can create/edit
+this file manually and then run `npx @gitpagedocs/cli ai`:
 
 ```json
 {
@@ -200,8 +199,8 @@ derived from your password with PBKDF2-HMAC-SHA-256, 210k iterations) and the co
   (3 attempts, then the run aborts with `Vault password rejected`).
 - `GITPAGEDOCS_VAULT_PASSWORD` supplies the password without a prompt (CI, pipes, no TTY);
   on a first run it initializes the vault, otherwise it must match the existing one.
-- A legacy plaintext `"apiKey"` still present in an old file is sealed into the vault and
-  removed from the file the next time the config is read.
+- A plaintext `"apiKey"` written by 0.0.1 is sealed into the vault and removed from the file
+  the next time the config is read.
 - If you hand-write the file, leave the key out: enter it in the `gitpagedocs ai` prompt (it is
   sealed on save). `gitpagedocs chat` can also read the provider's environment variable
   (`gitpagedocs provider <id>` lists it) when no key is stored.

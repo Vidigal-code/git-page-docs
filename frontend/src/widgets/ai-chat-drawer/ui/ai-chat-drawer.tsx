@@ -335,7 +335,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
         return { providerAndModel, apiKey };
     }, [sessionPassword]);
 
-    const { messages, isLoading, sendMessage, cancelMessage, clearMessages } = useAiChat(systemContext, labels, resolveCredentials);
+    const { messages, isLoading, sendMessage, cancelMessage, clearMessages } = useAiChat({ resolveCredentials, systemContext, labels });
 
     // Re-lock the vault: drop the in-memory session password so the password gate
     // is shown again before the AI can be used. Stored keys and chat are preserved.
@@ -431,12 +431,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
                 return;
             }
             const providerAndModel = aiStorage.getProvider() || DEFAULT_PROVIDER_AND_MODEL;
-            const legacyKey = aiStorage.getKey();
-            if (legacyKey) {
-                await aiSecureStorage.migrateFromPlaintext(
-                    pw, providerAndModel.split(':')[0], legacyKey, () => aiStorage.clearKey(),
-                );
-            }
             setSessionPassword(pw);
             setPasswordInput('');
             setVaultState('unlocked');
@@ -450,9 +444,8 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
 
     const handleResetPassword = async () => {
         // Forgot password: wipe the vault (all stored keys) and start over with
-        // a fresh password. Also clear any legacy plaintext key.
+        // a fresh password.
         await aiSecureStorage.reset();
-        aiStorage.clearKey();
         setSessionPassword(null);
         setPasswordInput('');
         setGateError('');
@@ -466,7 +459,6 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose, ico
             const bare = (aiStorage.getProvider() || DEFAULT_PROVIDER_AND_MODEL).split(':')[0];
             try { await aiSecureStorage.removeKey(sessionPassword, bare); } catch { /* ignore */ }
         }
-        aiStorage.clearKey();
         setHasKey(false);
         setSessionPassword(null);
         setVaultState('locked');

@@ -188,7 +188,7 @@ The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the A
 
 - **14 providers** via one shared core: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
 - **Model selection** — pick from each provider's catalog (\`gitpagedocs models <provider>\`); a stored model id the provider has retired is replaced by the provider default automatically.
-- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** and is never stored in plaintext or logged. A legacy plaintext key is migrated and wiped on first unlock.
+- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** and is never stored in plaintext or logged.
 - **Inactivity auto-lock** — the chat drawer locks itself after \`site.AiChatAutoLockSeconds\` idle seconds (default 30, \`0\` disables): a centered countdown modal in your language lets you cancel or lock now, and unlocking asks for the password again.
 - **Resilient providers** — transient provider errors are retried (3 attempts) and a final failure is a plain message ending with "Try again!".
 - **AI documentation generation** — \`gitpagedocs ai\` scans chosen paths and writes multilingual markdown (pt/en/es); reusable via \`.gitpagedocsconfig\`, whose API key lives sealed in the encrypted \`.gitpagedocsvault\` (the vault password is asked on every run). \`gitpagedocs chat\` brings the same assistant to the terminal.
@@ -325,7 +325,7 @@ Runtime configuration lives in \`gitpagedocs/config.json\`. UI text lives next t
 
 - \`site.languages\` in \`gitpagedocs/config.json\` switches each language on (\`true\`) or off (\`false\`), in menu order: \`{ "languages": { "en": true, "pt": true, "es": false } }\`. A language set to \`false\` disappears from the language selector and its strings are not loaded, even when its docs exist.
 - \`gitpagedocs/langs/<lang>.json\` holds that language's strings: \`langmenu\` (header, search, source viewer, audio player, AI chat and docs-access labels) and \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
-- To add a language, create \`langs/<lang>.json\` and add \`"<lang>": true\` to \`site.languages\`. There is no \`langs.json\` any more: a manifest left by release 1.1.68 is still read by configs without \`site.languages\`, and the generator removes it.
+- To add a language, create \`langs/<lang>.json\` and add \`"<lang>": true\` to \`site.languages\`.
 - Older \`config.json\` files that still inline \`site.langmenu\` / \`translations\` keep working; when both exist, the \`langs/\` files win and any missing key is backfilled from the current release.
 
 ## \`site\` section
@@ -504,8 +504,6 @@ Themes are JSON templates mapped by \`layoutsConfig.json\`.
 - \`gitpagelayouts/layoutsConfig.json\`
 - \`gitpagelayouts/layoutsFallbackConfig.json\`
 - \`gitpagelayouts/templates/*.json\`
-
-The legacy \`gitpagedocs/layouts/\` location is no longer generated. It is still read by the viewer, and the CLI offers to move it into the layouts home - only after you confirm.
 
 ## Template model
 

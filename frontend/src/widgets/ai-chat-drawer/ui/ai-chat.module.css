@@ -657,8 +657,8 @@
     height: 36px;
     border-radius: 50%;
     font-size: 20px;
-    color: #f59e0b;
-    background: color-mix(in srgb, #f59e0b 16%, transparent);
+    color: var(--warning-foreground);
+    background: var(--warning);
 }
 
 .infoIntro {
@@ -676,8 +676,9 @@
 }
 
 .infoSectionWarning {
-    border-color: color-mix(in srgb, #f59e0b 55%, var(--card-border));
-    background: color-mix(in srgb, #f59e0b 7%, var(--card-background));
+    border-color: color-mix(in srgb, var(--warning) 55%, var(--card-border));
+    border-left: 4px solid var(--warning);
+    background: color-mix(in srgb, var(--warning) 7%, var(--card-background));
 }
 
 .infoSectionTitle {
@@ -688,7 +689,7 @@
 }
 
 .infoSectionWarning .infoSectionTitle {
-    color: #f59e0b;
+    color: var(--text);
 }
 
 .infoList {

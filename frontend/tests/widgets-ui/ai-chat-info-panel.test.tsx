@@ -18,9 +18,8 @@ const labels = {
 };
 
 describe("AiChatInfoPanel", () => {
-  it("renders the three sections, one list item per line, with the lock time filled in", () => {
+  it("renders the sections, one list item per line, with the lock time filled in", () => {
     render(<AiChatInfoPanel labels={labels} autoLockSeconds={45} onClose={vi.fn()} />);
-    const panel = screen.getByTestId("ai-chat-info-panel");
     expect(screen.getByRole("heading", { name: "Como funciona" })).toBeTruthy();
     expect(screen.getByTestId("ai-chat-info-how").querySelectorAll("ol li")).toHaveLength(2);
     expect(screen.getByText("Bloqueia após 45s")).toBeTruthy();

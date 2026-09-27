@@ -9,7 +9,6 @@ const mocks = vi.hoisted(() => ({
   printCredits: vi.fn(),
   runNewCommand: vi.fn<(argv: string[], pkgRoot: string) => Promise<boolean>>(),
   resolveOptions: vi.fn<(argv: string[], env: NodeJS.ProcessEnv) => Promise<CliOptions>>(),
-  migrateLegacyLayoutsInteractive: vi.fn(),
   dispatchMode: vi.fn<(options: CliOptions, params: CliRuntimeParams, runner: CliCommandRunner) => Promise<void>>(),
   executeConfigOnly: vi.fn(),
   executeHome: vi.fn(),
@@ -20,9 +19,6 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("../../presentation/ui/banner", () => ({ printBanner: mocks.printBanner, printCredits: mocks.printCredits }));
 vi.mock("../../presentation/options/resolver", () => ({ resolveOptions: mocks.resolveOptions }));
-vi.mock("../../presentation/ui/layouts-prompts", () => ({
-  migrateLegacyLayoutsInteractive: mocks.migrateLegacyLayoutsInteractive,
-}));
 vi.mock("../../presentation/commands/run-command", () => ({ runNewCommand: mocks.runNewCommand }));
 vi.mock("../../application/use-cases/dispatch-mode", () => ({ dispatchMode: mocks.dispatchMode }));
 vi.mock("../../builders/config-orchestrator.mjs", () => ({ buildConfigArtifacts: mocks.buildConfigArtifacts }));
@@ -101,7 +97,6 @@ beforeEach(() => {
   for (const mock of Object.values(mocks)) mock.mockReset();
   mocks.runNewCommand.mockResolvedValue(false);
   mocks.resolveOptions.mockResolvedValue(options());
-  mocks.migrateLegacyLayoutsInteractive.mockResolvedValue(null);
   mocks.dispatchMode.mockResolvedValue(undefined);
   process.exitCode = undefined;
 });
@@ -134,13 +129,12 @@ describe("cli entry point", () => {
     expect(mocks.runNewCommand).toHaveBeenCalledTimes(1);
   });
 
-  it("runs the config-only flow with the packaged prebuilt dir after offering the layouts migration", async () => {
+  it("runs the config-only flow with the packaged prebuilt dir", async () => {
     dispatchToRunner();
 
     await runEntry("--build");
 
     expect(mocks.resolveOptions).toHaveBeenCalledWith(process.argv, process.env);
-    expect(mocks.migrateLegacyLayoutsInteractive).toHaveBeenCalledWith(process.cwd(), options());
     const [opts, params] = mocks.dispatchMode.mock.calls[0];
     expect(opts).toEqual(options());
     expect(params).toMatchObject({
@@ -164,13 +158,12 @@ describe("cli entry point", () => {
     expect(mocks.executeConfigOnly.mock.calls[0][0].prebuiltDir).toBe(path.join(CLI_ROOT, "prebuilt"));
   });
 
-  it("runs the home flow without the layouts migration", async () => {
+  it("runs the home flow", async () => {
     mocks.resolveOptions.mockResolvedValue(options({ mode: "home" }));
     dispatchToRunner();
 
     await runEntry("--home");
 
-    expect(mocks.migrateLegacyLayoutsInteractive).not.toHaveBeenCalled();
     expect(mocks.executeHome).toHaveBeenCalledWith(expect.objectContaining({ options: options({ mode: "home" }) }), {
       kind: "home",
     });

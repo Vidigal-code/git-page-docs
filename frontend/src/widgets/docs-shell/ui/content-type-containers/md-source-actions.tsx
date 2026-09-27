@@ -18,6 +18,8 @@ export interface MdSourceActionLabels {
 }
 
 const COPY_FEEDBACK_MS = 2000;
+const DEFAULT_FILE_BASENAME = "document";
+const MARKDOWN_MIME_TYPE = "text/markdown;charset=utf-8";
 
 /** `…/pt/getting-started.md` -> `getting-started.md`; without a path, a slug of the title. */
 export function markdownFileName(path: string | undefined, title?: string): string {
@@ -25,41 +27,28 @@ export function markdownFileName(path: string | undefined, title?: string): stri
   if (base) return /\.md$/i.test(base) ? base : `${base}.md`;
   const slug = (title ?? "")
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/\p{M}/gu, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return `${slug || "document"}.md`;
+    .split("-")
+    .filter(Boolean)
+    .join("-");
+  return `${slug || DEFAULT_FILE_BASENAME}.md`;
 }
 
-/** Clipboard API first; the hidden-textarea fallback covers non-secure contexts. */
+/** Clipboard API (secure contexts: HTTPS and localhost); false when it is unavailable or denied. */
 async function copyText(text: string): Promise<boolean> {
+  if (!navigator.clipboard?.writeText) return false;
   try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-  } catch {
-    // fall through to the legacy path
-  }
-  const area = document.createElement("textarea");
-  area.value = text;
-  area.setAttribute("readonly", "");
-  area.style.position = "fixed";
-  area.style.opacity = "0";
-  document.body.appendChild(area);
-  area.select();
-  try {
-    return document.execCommand("copy");
+    await navigator.clipboard.writeText(text);
+    return true;
   } catch {
     return false;
-  } finally {
-    area.remove();
   }
 }
 
 function downloadText(text: string, fileName: string): void {
-  const url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
+  const url = URL.createObjectURL(new Blob([text], { type: MARKDOWN_MIME_TYPE }));
   const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
@@ -116,9 +105,9 @@ export function MdSourceActions({ source, fileName, labels, besideFullscreen = f
       >
         <FiDownload aria-hidden />
       </button>
-      <span role="status" className={styles.visuallyHidden}>
+      <output className={styles.visuallyHidden} aria-live="polite">
         {copyState === "idle" ? "" : copyLabel}
-      </span>
+      </output>
     </div>
   );
 }

@@ -48,9 +48,12 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
+/** A resolver for tests that never reach the provider. */
+const NO_CREDENTIALS = async () => null;
+
 describe("useAiChat", () => {
   it("ignores blank messages without attachments", async () => {
-    const { result } = renderHook(() => useAiChat());
+    const { result } = renderHook(() => useAiChat({ resolveCredentials: NO_CREDENTIALS }));
     await act(async () => {
       await result.current.sendMessage("   ");
     });
@@ -61,7 +64,7 @@ describe("useAiChat", () => {
   it("streams the reply into the assistant placeholder using resolved credentials", async () => {
     echoStream("Hel", "lo");
     const resolveCredentials = vi.fn(async () => ({ providerAndModel: "gemini:flash", apiKey: "k-1" }));
-    const { result } = renderHook(() => useAiChat("You are docs.", LABELS, resolveCredentials));
+    const { result } = renderHook(() => useAiChat({ systemContext: "You are docs.", labels: LABELS, resolveCredentials }));
 
     await act(async () => {
       await result.current.sendMessage("Hi");
@@ -84,7 +87,7 @@ describe("useAiChat", () => {
 
   it("carries the conversation history into the next request", async () => {
     echoStream("A");
-    const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+    const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
 
     await act(async () => {
       await result.current.sendMessage("first");
@@ -104,7 +107,7 @@ describe("useAiChat", () => {
 
   it("accepts attachment-only messages", async () => {
     echoStream("seen");
-    const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+    const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
     const attachments = [{ type: "image" as const, mimeType: "image/png", base64: "abc" }];
 
     await act(async () => {
@@ -115,41 +118,9 @@ describe("useAiChat", () => {
     expect(streamCompletion.mock.calls[0][0].messages[0]).toEqual({ role: "user", content: "", attachments });
   });
 
-  describe("legacy credential fallback (no resolver injected)", () => {
-    it("uses the stored key as an API key for cloud providers", async () => {
-      echoStream("ok");
-      window.localStorage.setItem("gitpagedocs_ai_provider", "claude:sonnet");
-      window.localStorage.setItem("gitpagedocs_ai_key", "sk-legacy");
-      const { result } = renderHook(() => useAiChat());
-      await act(async () => {
-        await result.current.sendMessage("Hi");
-      });
-      expect(getLlmService).toHaveBeenCalledWith("claude:sonnet", { apiKey: "sk-legacy", baseUrl: undefined });
-    });
-
-    it("uses the stored value as a base URL for ollama", async () => {
-      echoStream("ok");
-      window.localStorage.setItem("gitpagedocs_ai_provider", "ollama:llama3");
-      window.localStorage.setItem("gitpagedocs_ai_key", "http://localhost:11434");
-      const { result } = renderHook(() => useAiChat());
-      await act(async () => {
-        await result.current.sendMessage("Hi");
-      });
-      expect(getLlmService).toHaveBeenCalledWith("ollama:llama3", { apiKey: undefined, baseUrl: "http://localhost:11434" });
-    });
-
-    it("defaults to openai with no key when nothing is stored", async () => {
-      echoStream("ok");
-      const { result } = renderHook(() => useAiChat());
-      await act(async () => {
-        await result.current.sendMessage("Hi");
-      });
-      expect(getLlmService).toHaveBeenCalledWith("openai", { apiKey: undefined, baseUrl: undefined });
-    });
-  });
 
   it("surfaces a locked vault as the 401 label without calling the provider", async () => {
-    const { result } = renderHook(() => useAiChat(undefined, LABELS, async () => null));
+    const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: async () => null }));
     await act(async () => {
       await result.current.sendMessage("Hi");
     });
@@ -159,13 +130,13 @@ describe("useAiChat", () => {
   });
 
   it("falls back to the generic then hard-coded label when the vault is locked", async () => {
-    const generic = renderHook(() => useAiChat(undefined, { aiChatErrorGeneric: "Generic" }, async () => null));
+    const generic = renderHook(() => useAiChat({ labels: { aiChatErrorGeneric: "Generic" }, resolveCredentials: async () => null }));
     await act(async () => {
       await generic.result.current.sendMessage("Hi");
     });
     expect(generic.result.current.messages[1].content).toBe("Generic Try again!");
 
-    const bare = renderHook(() => useAiChat(undefined, undefined, async () => null));
+    const bare = renderHook(() => useAiChat({ resolveCredentials: async () => null }));
     await act(async () => {
       await bare.result.current.sendMessage("Hi");
     });
@@ -182,7 +153,7 @@ describe("useAiChat", () => {
       [404, "Generic"],
     ])("maps LlmError %s to its label", async (status, label) => {
       streamCompletion.mockRejectedValue(new LlmError("provider said no", status));
-      const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+      const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
@@ -192,7 +163,7 @@ describe("useAiChat", () => {
 
     it("shows the raw message for status-less (network/CORS) LlmErrors", async () => {
       streamCompletion.mockRejectedValue(new LlmError("Could not reach openai.", 0));
-      const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+      const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
@@ -201,7 +172,7 @@ describe("useAiChat", () => {
 
     it("keeps the generic label for LlmErrors without a status code", async () => {
       streamCompletion.mockRejectedValue(new LlmError("unknown"));
-      const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+      const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
@@ -210,13 +181,13 @@ describe("useAiChat", () => {
 
     it("uses the generic label for non-LlmError failures and a hard-coded default without labels", async () => {
       streamCompletion.mockRejectedValue(new Error("boom"));
-      const labelled = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+      const labelled = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
       await act(async () => {
         await labelled.result.current.sendMessage("Hi");
       });
       expect(labelled.result.current.messages[1].content).toBe("\n\nGeneric Try again!");
 
-      const bare = renderHook(() => useAiChat(undefined, undefined, CLOUD_CREDS));
+      const bare = renderHook(() => useAiChat({ resolveCredentials: CLOUD_CREDS }));
       await act(async () => {
         await bare.result.current.sendMessage("Hi");
       });
@@ -228,7 +199,7 @@ describe("useAiChat", () => {
         onChunk("partial");
         throw abortError();
       });
-      const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+      const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
       await act(async () => {
         await result.current.sendMessage("Hi");
       });
@@ -244,7 +215,7 @@ describe("useAiChat", () => {
           signal?.addEventListener("abort", () => reject(abortError()));
         }),
     );
-    const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+    const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
 
     let pending: Promise<void> = Promise.resolve();
     act(() => {
@@ -275,7 +246,7 @@ describe("useAiChat", () => {
         }
       });
     });
-    const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+    const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
 
     let first: Promise<void> = Promise.resolve();
     act(() => {
@@ -294,7 +265,7 @@ describe("useAiChat", () => {
 
   it("clearMessages empties the log and cancels any pending request", async () => {
     echoStream("x");
-    const { result } = renderHook(() => useAiChat(undefined, LABELS, CLOUD_CREDS));
+    const { result } = renderHook(() => useAiChat({ labels: LABELS, resolveCredentials: CLOUD_CREDS }));
     await act(async () => {
       await result.current.sendMessage("Hi");
     });
@@ -307,7 +278,7 @@ describe("useAiChat", () => {
   it("closes provider errors with the localized retry hint and no brackets", async () => {
     streamCompletion.mockRejectedValue(new LlmError("upstream", 500));
     const labels = { aiChatError500: "Ocorreu um erro interno no servidor do modelo de IA.", aiChatRetryHint: "Tente novamente!" };
-    const { result } = renderHook(() => useAiChat(undefined, labels, CLOUD_CREDS));
+    const { result } = renderHook(() => useAiChat({ labels, resolveCredentials: CLOUD_CREDS }));
     await act(async () => {
       await result.current.sendMessage("Oi");
     });

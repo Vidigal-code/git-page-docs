@@ -2,6 +2,10 @@
   color-scheme: var(--color-scheme, dark);
   --color-scheme: dark;
   --primary-foreground: #ffffff;
+  /* Attention accent (risk notes, warnings); same in every theme so it always reads as a warning. */
+  --warning: #f59e0b;
+  /* Text drawn on a --warning surface. */
+  --warning-foreground: #1c1300;
 
   /* Canonical default palette. Shells emit a theme's own values as inline
    * custom properties and omit them entirely until a theme resolves, so these

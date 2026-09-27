@@ -1,13 +1,5 @@
 import path from "node:path";
-import { readFile } from "node:fs/promises";
-import {
-  DEFAULT_LANGS_MANIFEST_PATH,
-  defaultConfigLoader,
-  getEnabledLanguages,
-  isAppError,
-  parseLanguageManifest,
-  parseLanguageToggles,
-} from "@gitpagedocs/tools";
+import { defaultConfigLoader, getEnabledLanguages, isAppError, parseLanguageToggles } from "@gitpagedocs/tools";
 import type { CommandContext } from "./run-command";
 
 const UNKNOWN = "—";
@@ -17,19 +9,8 @@ interface LanguageSummary {
   disabled: string[];
 }
 
-/** The 1.1.68 manifest, read only for sites whose config.json predates `site.languages`. */
-async function readLegacyManifestLanguages(cwd: string): Promise<string[]> {
-  try {
-    const manifest = parseLanguageManifest(JSON.parse(await readFile(path.join(cwd, DEFAULT_LANGS_MANIFEST_PATH), "utf-8")));
-    if (manifest) return manifest.languages;
-  } catch {
-    // No manifest: nothing to report.
-  }
-  return [];
-}
-
-/** `site.languages` toggles from config.json, else the legacy inline list, else the legacy manifest. */
-async function summarizeLanguages(cwd: string, site: Record<string, unknown>): Promise<LanguageSummary> {
+/** `site.languages` toggles from config.json, else the resolved `supportedLanguages` list. */
+function summarizeLanguages(site: Record<string, unknown>): LanguageSummary {
   const toggles = parseLanguageToggles(site.languages);
   if (toggles) {
     const enabled = getEnabledLanguages(toggles);
@@ -38,7 +19,7 @@ async function summarizeLanguages(cwd: string, site: Record<string, unknown>): P
   if (Array.isArray(site.supportedLanguages)) {
     return { enabled: site.supportedLanguages as string[], disabled: [] };
   }
-  return { enabled: await readLegacyManifestLanguages(cwd), disabled: [] };
+  return { enabled: [], disabled: [] };
 }
 
 function formatList(languages: string[]): string {
@@ -55,7 +36,7 @@ export async function runConfig(ctx: CommandContext): Promise<void> {
   try {
     const { config, sourcePath, extension } = await defaultConfigLoader.loadGitPageDocsConfig(ctx.cwd);
     const site = (config as { site?: Record<string, unknown> }).site ?? {};
-    const languages = await summarizeLanguages(ctx.cwd, site);
+    const languages = summarizeLanguages(site);
     // eslint-disable-next-line no-console
     console.log(
       `\n  Config: ${path.relative(ctx.cwd, sourcePath)} (${extension})\n` +

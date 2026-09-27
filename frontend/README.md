@@ -43,7 +43,7 @@ Two independent surfaces share the same encrypted vault from `@gitpagedocs/tools
 - **`/ai` console** (`src/app/ai`, `src/features/ai-console`) — full-page provider/model selection + chat.
 - **Chat drawer** (`src/widgets/ai-chat-drawer`, `src/features/ask-ai`) — opens over the docs.
 
-Both are gated by a **local password**: it creates/unlocks an AES-256-GCM vault (`src/shared/lib/ai-secure-storage.ts` → `EncryptedCredentialVault`), keys are stored encrypted in `localStorage` (`gitpagedocs:vault`) and decrypted only in-session. The legacy plaintext key (`gitpagedocs_ai_key`) is migrated and wiped on first unlock. The chat itself runs through the shared 14-provider AI core, so the service layer never reads keys from storage — credentials are injected per request.
+Both are gated by a **local password**: it creates/unlocks an AES-256-GCM vault (`src/shared/lib/ai-secure-storage.ts` → `EncryptedCredentialVault`), keys are stored encrypted in `localStorage` (`gitpagedocs:vault`) and decrypted only in-session. The chat itself runs through the shared 14-provider AI core, so the service layer never reads keys from storage — credentials are injected per request.
 
 **Inactivity auto-lock (drawer).** `useInactivityLock` (`src/features/ask-ai/model/inactivity-lock.ts`) watches pointer/key/wheel/touch activity while the drawer is open and unlocked. `site.AiChatAutoLockSeconds` from `gitpagedocs/config.json` (default `30`, `0` disables, invalid → `30`) sets the idle limit; 10 seconds before it, `InactivityLockDialog` (`src/widgets/ai-chat-drawer/ui/inactivity-lock-dialog.tsx`) opens centered over the drawer with a live countdown, focus trap (Tab/Shift+Tab/Escape), `aria-modal`, theme tokens and phone-width layout. Cancel keeps the session; confirm or the countdown reaching zero drops the in-memory password (`lockVault`), so the vault stays encrypted and the password gate returns. Labels come from `langmenu` (`aiChatAutoLockTitle`, `aiChatAutoLockDesc` with `{seconds}`, `aiChatAutoLockConfirmBtn`, `aiChatAutoLockCancelBtn`).
 
@@ -54,6 +54,14 @@ Both are gated by a **local password**: it creates/unlocks an AES-256-GCM vault 
 ## Documentation access gate
 
 When `site.docsAccess.enabled` is set in `gitpagedocs/config.json` (via the `gitpagedocs password` CLI command), the whole documentation is blocked behind a full-page gate (`src/features/docs-access`). Visitors unlock with the **password or the private key**, verified against the stored public key with `verifyDocAccess` from `@gitpagedocs/tools/crypto/web` (double-hash SHA-256). The unlock is cached in `localStorage` (only the public hash), and a lock button in the sidebar re-blocks by clearing it. All gate/chat strings come from the language bundles (the `gitpagedocs/langs/<lang>.json` files that `site.languages` in `config.json` enables, folded into `site.langmenu` by `localizeConfig`; legacy inline `langmenu` still works).
+
+## Introduction guide motion
+
+`/introduction-guide` (repository-search builds only) uses Motion for React (`motion`) through `src/page-slices/introduction-guide/ui/motion/`:
+
+- `GuideMotionProvider` wraps the page in `MotionConfig reducedMotion="user"` and `LazyMotion features={domAnimation} strict`, so only the lightweight `m.*` components ship.
+- `GuideParallaxBackdrop` draws three blurred glows tinted with `--primary` / `--secondary` (every theme matches) that drift at different speeds with `useScroll` + `useTransform`; the hero content drifts and fades as it leaves the viewport; `GuideReveal` fades each section in once with `whileInView`.
+- Every distance, duration and easing lives in `model/motion-config.ts`. Reduced motion maps travel to 0 and makes reveals instant without changing the markup, because the static render cannot know the visitor's preference and a different element would keep the server's hidden style after hydration.
 
 ## Environment
 

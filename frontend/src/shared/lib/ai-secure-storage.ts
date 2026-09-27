@@ -5,15 +5,10 @@
  * replacement for the plaintext ai-storage.ts: keys live encrypted in
  * localStorage and are only decryptable with the local password.
  *
- * The chat UI wires this behind a password prompt (one unlock per session). It
- * coexists with the legacy plaintext store via migrateFromPlaintext().
+ * The chat UI wires this behind a password prompt (one unlock per session).
  */
 import { WebCryptoService } from '@gitpagedocs/tools/crypto/web';
-import {
-    EncryptedCredentialVault,
-    WebStorageVaultStorage,
-    migratePlaintextKey,
-} from '@gitpagedocs/tools/security/web';
+import { EncryptedCredentialVault, WebStorageVaultStorage } from '@gitpagedocs/tools/security/web';
 import type { WebStorageLike } from '@gitpagedocs/tools/cache/web';
 
 function resolveStorage(injected?: WebStorageLike): WebStorageLike | null {
@@ -70,23 +65,6 @@ export class AiSecureStorage {
         if (this.vault) await this.vault.reset();
     }
 
-    /** Move a legacy plaintext key into the encrypted vault, then clear it. */
-    async migrateFromPlaintext(
-        password: string,
-        provider: string,
-        plaintextKey: string,
-        clearPlaintext: () => void,
-    ): Promise<boolean> {
-        if (!this.vault) return false;
-        const result = await migratePlaintextKey({
-            vault: this.vault,
-            password,
-            providerId: provider,
-            plaintextKey,
-            clearPlaintext,
-        });
-        return result.migrated;
-    }
 }
 
 export const aiSecureStorage = new AiSecureStorage();

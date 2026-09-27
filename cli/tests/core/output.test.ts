@@ -96,16 +96,10 @@ afterEach(() => {
 
 // Writes every shipped layout template plus all docs; give it room under CI load.
 describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, () => {
-  it("writes the complete docs output and local layouts home, replacing legacy files", async () => {
+  it("writes the complete docs output and local layouts home", async () => {
     const root = makeRoot();
     const artifacts = buildConfigArtifacts({ useLocalLayoutConfig: true, layoutsDir: "gitpagelayouts" });
     const [versionId] = DOC_VERSIONS;
-
-    // Legacy leftovers the generator must clean up.
-    seed(root, "gitpagedocs/docs/en/old.md", "stale");
-    seed(root, "gitpagedocs/langs.json", "{}");
-    seed(root, `gitpagedocs/docs/versions/${versionId}/en/source-viewer`, "stale");
-    seed(root, `gitpagedocs/docs/versions/${versionId}/pt/source-viewer.html`, "stale");
 
     await writeConfigOnlyOutput({
       root,
@@ -117,11 +111,6 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
       layouts: LAYOUTS,
       createThemeTemplate,
     });
-
-    expect(existsSync(at(root, "gitpagedocs/docs/en"))).toBe(false);
-    expect(existsSync(at(root, "gitpagedocs/langs.json"))).toBe(false);
-    expect(existsSync(at(root, `gitpagedocs/docs/versions/${versionId}/en/source-viewer`))).toBe(false);
-    expect(existsSync(at(root, `gitpagedocs/docs/versions/${versionId}/pt/source-viewer.html`))).toBe(false);
 
     const rootConfigText = readFileSync(at(root, "gitpagedocs/config.json"), "utf8");
     expect(rootConfigText.endsWith("\n")).toBe(true);

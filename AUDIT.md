@@ -37,7 +37,7 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 ## 3. Generated artifacts (config-only — `node cli/index.mjs`)
 
 - `gitpagedocs/config.json` (has `site` + `VersionControl`; no inline UI strings since 1.1.68).
-- `site.languages` in `gitpagedocs/config.json` (`{ "en": true, "pt": true, "es": true }`; the 1.1.68 `langs.json` manifest is gone) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
+- `site.languages` in `gitpagedocs/config.json` (`{ "en": true, "pt": true, "es": true }`) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
 - `gitpagedocs/icon.svg`.
 - Per version in `DOC_VERSIONS = [PACKAGE_VERSION]` (`cli/contracts/doc-versions.mjs`; currently `["0.0.3"]`):
   `gitpagedocs/docs/versions/<v>/config.json` with arrays `routes-md`, `routes-html`, `routes-source-viewer`, `routes-video`, `routes-audio` and their `menus-header-*`, plus `<v>/{pt,en,es}/*.md` from `cli/content/docs-{pt,en,es}.mjs`.
@@ -47,7 +47,7 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 ## 4. Human-facing report lines (`cli/application/report/config-only-reporter.mjs`)
 
 - Always: `Generated: <outputDir>/ (config-only)`, `No index.html/index.js generated.`
-- Layouts: local → `Local layouts generated in gitpagedocs/layouts/ (--layoutconfig).`; else `Using official remote layouts config by default (...).`
+- Layouts: local → `Local layouts generated in <layoutsDir>/ (--layoutconfig).` (default `gitpagelayouts`); else `Using official remote layouts config by default (...).`
 - With owner+repo: `Configured rendering URL: https://<owner>.github.io/<repo>/` + official viewer URL.
 - `--push`: `Generated: .github/workflows/gitpagedocs-pages.yml` + push confirmation.
 - `--build`: compatibility-flag line. `--full`/`--serve`: external-commands-skipped line. `prebuilt/` present: ignored-by-config-only line.

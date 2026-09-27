@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
 import { getLlmService, BaseChatMessage, MultimodalAttachment } from '../api/llm-factory';
-import { aiStorage } from '@/shared/lib/ai-storage';
 
 export interface ChatMessage extends BaseChatMessage {
     id: string;
@@ -58,30 +57,17 @@ function buildContextMessages(
     return contextMsg;
 }
 
-export function useAiChat(
-    systemContext?: string,
-    labels?: any,
-    resolveCredentials?: ResolveChatCredentials,
-) {
+export interface UseAiChatOptions {
+    /** Decrypts the credentials at send time (the drawer reads them from the vault). */
+    resolveCredentials: ResolveChatCredentials;
+    systemContext?: string;
+    labels?: any;
+}
+
+export function useAiChat({ resolveCredentials, systemContext, labels }: UseAiChatOptions) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null);
-
-    const checkProvider = useCallback(() => {
-        const p = aiStorage.getProvider();
-        return p || 'openai';
-    }, []);
-
-    const legacyCredentials = useCallback((): ResolvedChatCredentials => {
-        const providerAndModel = checkProvider();
-        const stored = aiStorage.getKey() ?? undefined;
-        const isOllama = providerAndModel.split(':')[0] === 'ollama';
-        return {
-            providerAndModel,
-            apiKey: isOllama ? undefined : stored,
-            baseUrl: isOllama ? stored : undefined,
-        };
-    }, [checkProvider]);
 
     const sendMessage = useCallback(async (content: string, attachments?: MultimodalAttachment[]) => {
         if (!content.trim() && (!attachments || attachments.length === 0)) return;
@@ -104,10 +90,8 @@ export function useAiChat(
         const appendReply = (text: string) => setMessages(prev => appendToMessage(prev, aiMsgId, text));
 
         try {
-            // Resolve credentials at send time. The caller (the chat drawer)
-            // decrypts the key from the vault; the legacy fallback preserves the
-            // pre-vault behavior for any caller that doesn't inject a resolver.
-            const creds = resolveCredentials ? await resolveCredentials() : legacyCredentials();
+            // Credentials are resolved (decrypted) at send time, never kept in state.
+            const creds = await resolveCredentials();
             if (!creds) {
                 const lockedError = labels?.aiChatError401 || labels?.aiChatErrorGeneric || 'Authentication error';
                 appendReply(`${lockedError} ${retryHint(labels)}`);
@@ -129,7 +113,7 @@ export function useAiChat(
             setIsLoading(false);
             abortControllerRef.current = null;
         }
-    }, [messages, systemContext, labels, resolveCredentials, legacyCredentials]);
+    }, [messages, systemContext, labels, resolveCredentials]);
 
     const cancelMessage = useCallback(() => {
         if (abortControllerRef.current) {

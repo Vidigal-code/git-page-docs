@@ -40,38 +40,23 @@ describe("loadLayoutsAndThemes", () => {
   });
 
   describe("local runtime", () => {
-    it("reads the legacy gitpagedocs/layouts folder first and its templates from the same folder", async () => {
-      workspace = createTempWorkspace();
-      workspace.write("gitpagedocs/layouts/layoutsConfig.json", INDEX);
-      workspace.write("gitpagedocs/layouts/templates/alpha.json", template("alpha", "#legacy"));
-      workspace.write("gitpagelayouts/layoutsConfig.json", { layouts: [layoutItem("other")] });
-      workspace.write("gitpagelayouts/templates/beta.json", template("beta", "#canonical"));
-      const fetchSpy = stubFetch([]);
-
-      const { layoutsConfig, themes } = await loadLayoutsAndThemes({ isLocal: true });
-
-      expect(layoutsConfig).toEqual(INDEX);
-      expect(themes.alpha.colors.background).toBe("#legacy");
-      // A template missing from the preferred folder is found in the other candidate folder.
-      expect(themes.beta.colors.background).toBe("#canonical");
-      expect(fetchSpy).not.toHaveBeenCalled();
-    });
-
-    it("falls back to the canonical gitpagelayouts folder when the legacy one is absent", async () => {
+    it("reads the gitpagelayouts folder and its templates without fetching", async () => {
       workspace = createTempWorkspace();
       workspace.write("gitpagelayouts/layoutsConfig.json", { layouts: [layoutItem("alpha")] });
       workspace.write("gitpagelayouts/templates/alpha.json", template("alpha", "#canonical"));
+      const fetchSpy = stubFetch([]);
 
       const { layoutsConfig, themes } = await loadLayoutsAndThemes({ isLocal: true });
 
       expect(layoutsConfig.layouts.map((l) => l.id)).toEqual(["alpha"]);
       expect(themes.alpha.colors.background).toBe("#canonical");
+      expect(fetchSpy).not.toHaveBeenCalled();
     });
 
     it("omits templates that cannot be read instead of failing", async () => {
       workspace = createTempWorkspace();
-      workspace.write("gitpagedocs/layouts/layoutsConfig.json", INDEX);
-      workspace.write("gitpagedocs/layouts/templates/alpha.json", template("alpha", "#a"));
+      workspace.write("gitpagelayouts/layoutsConfig.json", INDEX);
+      workspace.write("gitpagelayouts/templates/alpha.json", template("alpha", "#a"));
 
       const { themes } = await loadLayoutsAndThemes({ isLocal: true });
 
@@ -80,7 +65,7 @@ describe("loadLayoutsAndThemes", () => {
 
     it("ships the built-in fallback when no local layouts exist", async () => {
       workspace = createTempWorkspace();
-      workspace.write("gitpagedocs/layouts/layoutsConfig.json", { layouts: [] });
+      workspace.write("gitpagelayouts/layoutsConfig.json", { layouts: [] });
 
       const { layoutsConfig, themes } = await loadLayoutsAndThemes({ isLocal: true });
 
@@ -167,7 +152,6 @@ describe("loadLayoutsAndThemes", () => {
       const urls = requestedUrls(fetchSpy);
       expect(urls).toHaveLength(OFFICIAL_LAYOUTS_CONFIG_URLS.length);
       expect(urls[0]).toContain("gitpagelayouts/layoutsConfig.json");
-      expect(urls[1]).toContain("gitpagedocs/layouts/layoutsConfig.json");
     });
   });
 
@@ -217,14 +201,13 @@ describe("loadLayoutsAndThemes", () => {
       expect(themes.alpha.colors.background).toBe("#repo");
       const urls = requestedUrls(fetchSpy);
       expect(urls[0]).toBe("https://down.example/x.json");
-      expect(urls.some((url) => url.endsWith("/o/r/HEAD/gitpagedocs/layouts/layoutsConfig.json"))).toBe(true);
       expect(urls).toContain("https://raw.githubusercontent.com/o/r/HEAD/gitpagelayouts/templates/alpha.json");
     });
 
     it("applies the templates override to repository layouts unless official layouts are on", async () => {
       workspace = createTempWorkspace();
       stubFetch([
-        ["/o/r/HEAD/gitpagedocs/layouts/layoutsConfig.json", { layouts: [layoutItem("alpha")] }],
+        ["/o/r/HEAD/gitpagelayouts/layoutsConfig.json", { layouts: [layoutItem("alpha")] }],
         ["tpl.example/templates/alpha.json", template("alpha", "#tpl")],
       ]);
 
@@ -243,7 +226,7 @@ describe("loadLayoutsAndThemes", () => {
 
     it("falls back to a local template when the remote one is missing, retrying remote once more", async () => {
       workspace = createTempWorkspace();
-      workspace.write("gitpagedocs/layouts/templates/alpha.json", template("alpha", "#local"));
+      workspace.write("gitpagelayouts/templates/alpha.json", template("alpha", "#local"));
       const fetchSpy = stubFetch([["cfg.example/layoutsConfig.json", { layouts: [layoutItem("alpha"), layoutItem("beta")] }]]);
 
       const { themes } = await loadLayoutsAndThemes({ isLocal: false, layoutsConfigPath: "https://cfg.example/layoutsConfig.json" });

@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  DEFAULT_LANGS_MANIFEST_PATH,
   applyLanguageBundles,
   buildLanguageToggles,
   filterEnabledLanguages,
@@ -12,7 +11,6 @@ import {
   loadConfigLanguageBundles,
   loadLanguageBundles,
   parseLanguageBundle,
-  parseLanguageManifest,
   parseLanguageToggles,
   resolveBundleLanguages,
   splitLanguageBundles,
@@ -108,20 +106,6 @@ describe("site.languages toggles (config.json)", () => {
   });
 });
 
-describe("parseLanguageManifest (legacy langs.json)", () => {
-  it("keeps valid, unique codes in order", () => {
-    expect(parseLanguageManifest({ languages: ["en", "pt", "en", "bad/code", 3, "es"] })).toEqual({
-      languages: ["en", "pt", "es"],
-    });
-  });
-
-  it("rejects manifests without usable languages", () => {
-    expect(parseLanguageManifest(null)).toBeNull();
-    expect(parseLanguageManifest({ languages: "en" })).toBeNull();
-    expect(parseLanguageManifest({ languages: ["!"] })).toBeNull();
-  });
-});
-
 describe("parseLanguageBundle", () => {
   it("keeps only string-valued sections", () => {
     expect(
@@ -140,16 +124,14 @@ describe("parseLanguageBundle", () => {
 });
 
 describe("loadLanguageBundles", () => {
-  it("loads exactly the given languages and never touches langs.json", async () => {
+  it("loads exactly the given languages", async () => {
     const readJson = readerFor({
-      "gitpagedocs/langs.json": { languages: ["en", "pt", "es"] },
       "gitpagedocs/langs/en.json": enBundle,
       "gitpagedocs/langs/pt.json": ptBundle,
       "gitpagedocs/langs/es.json": esBundle,
     });
     const bundles = await loadLanguageBundles(readJson, { languages: ["en", "pt"] });
     expect(Object.keys(bundles ?? {})).toEqual(["en", "pt"]);
-    expect(readJson).not.toHaveBeenCalledWith("gitpagedocs/langs.json");
     expect(readJson).not.toHaveBeenCalledWith("gitpagedocs/langs/es.json");
   });
 
@@ -165,20 +147,20 @@ describe("loadLanguageBundles", () => {
     expect(readJson).toHaveBeenCalledTimes(1);
   });
 
-  it("returns null without a list and without a legacy manifest (inline config)", async () => {
+  it("returns null without a language list and reads nothing", async () => {
     const readJson = readerFor({});
     expect(await loadLanguageBundles(readJson)).toBeNull();
-    expect(readJson).toHaveBeenCalledWith(DEFAULT_LANGS_MANIFEST_PATH);
+    expect(await loadLanguageBundles(readJson, { languages: [] })).toBeNull();
+    expect(readJson).not.toHaveBeenCalled();
   });
 
-  it("falls back to the legacy manifest and skips bundles it cannot read", async () => {
+  it("skips bundles it cannot read", async () => {
     const readJson = readerFor({
-      "gitpagedocs/langs.json": { languages: ["en", "pt", "fr"] },
       "gitpagedocs/langs/en.json": enBundle,
       "gitpagedocs/langs/pt.json": ptBundle,
     });
 
-    const bundles = await loadLanguageBundles(readJson);
+    const bundles = await loadLanguageBundles(readJson, { languages: ["en", "pt", "fr"] });
 
     expect(Object.keys(bundles ?? {})).toEqual(["en", "pt"]);
     expect(bundles?.en).toEqual(enBundle);
@@ -186,16 +168,12 @@ describe("loadLanguageBundles", () => {
   });
 
   it("returns null when no requested bundle can be read", async () => {
-    const readJson = readerFor({ "gitpagedocs/langs.json": { languages: ["en"] } });
-    expect(await loadLanguageBundles(readJson)).toBeNull();
+    expect(await loadLanguageBundles(readerFor({}), { languages: ["en"] })).toBeNull();
   });
 
-  it("honours custom manifest and directory locations", async () => {
-    const readJson = readerFor({
-      "docs/i18n.json": { languages: ["en"] },
-      "docs/i18n/en.json": enBundle,
-    });
-    const bundles = await loadLanguageBundles(readJson, { manifestPath: "docs/i18n.json", langsDir: "docs/i18n" });
+  it("honours a custom bundle directory", async () => {
+    const readJson = readerFor({ "docs/i18n/en.json": enBundle });
+    const bundles = await loadLanguageBundles(readJson, { languages: ["en"], langsDir: "docs/i18n" });
     expect(bundles).toEqual({ en: enBundle });
   });
 });
@@ -203,7 +181,6 @@ describe("loadLanguageBundles", () => {
 describe("loadConfigLanguageBundles", () => {
   it("loads the enabled site.languages and skips the disabled ones", async () => {
     const readJson = readerFor({
-      "gitpagedocs/langs.json": { languages: ["en", "pt", "es"] },
       "gitpagedocs/langs/en.json": enBundle,
       "gitpagedocs/langs/pt.json": ptBundle,
       "gitpagedocs/langs/es.json": esBundle,
@@ -211,15 +188,12 @@ describe("loadConfigLanguageBundles", () => {
     const bundles = await loadConfigLanguageBundles({ site: { languages: { en: true, es: false, pt: true } } }, readJson);
     expect(Object.keys(bundles ?? {})).toEqual(["en", "pt"]);
     expect(readJson).not.toHaveBeenCalledWith("gitpagedocs/langs/es.json");
-    expect(readJson).not.toHaveBeenCalledWith("gitpagedocs/langs.json");
   });
 
-  it("falls back to the legacy manifest for configs without toggles", async () => {
-    const readJson = readerFor({
-      "gitpagedocs/langs.json": { languages: ["es"] },
-      "gitpagedocs/langs/es.json": esBundle,
-    });
-    expect(await loadConfigLanguageBundles({ site: {} }, readJson)).toEqual({ es: esBundle });
+  it("loads nothing for a config without toggles", async () => {
+    const readJson = readerFor({ "gitpagedocs/langs/es.json": esBundle });
+    expect(await loadConfigLanguageBundles({ site: {} }, readJson)).toBeNull();
+    expect(readJson).not.toHaveBeenCalled();
   });
 
   it("passes the directory options through", async () => {

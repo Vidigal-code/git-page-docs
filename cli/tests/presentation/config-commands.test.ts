@@ -69,17 +69,7 @@ describe("runConfig", () => {
     expect(output()).toContain("disabled         : —");
   });
 
-  it("falls back to the legacy langs.json manifest when config.json has no languages", async () => {
-    const cwd = makeRoot("gpd-cfg-");
-    writeSiteConfig(cwd, { name: "Docs" });
-    writeFileSync(path.join(cwd, "gitpagedocs", "langs.json"), JSON.stringify({ languages: ["pt", "en"] }), "utf-8");
-
-    await runConfig(context(cwd));
-
-    expect(output()).toContain("languages        : pt, en");
-  });
-
-  it("prints unknown markers for missing or non-scalar values and no manifest", async () => {
+  it("prints unknown markers for missing or non-scalar values and no languages", async () => {
     const cwd = makeRoot("gpd-cfg-");
     writeSiteConfig(cwd, { name: { nested: true }, defaultLanguage: 42 });
 
@@ -131,23 +121,19 @@ describe("runConfigClear", () => {
     expect(output()).toContain("No stored .gitpagedocsconfig found - nothing to clear.");
   });
 
-  it("removes the stored and legacy config files and lists them", async () => {
+  it("removes the stored config file and lists it", async () => {
     const cwd = makeRoot("gpd-clear-cwd-");
     const configDir = path.join(makeRoot("gpd-clear-cfg-"), "gitpagedocs");
     vi.stubEnv("GITPAGEDOCS_CONFIG_DIR", configDir);
     mkdirSync(configDir, { recursive: true });
     const stored = path.join(configDir, AI_CLI_CONFIG_FILENAME);
-    const legacy = path.join(cwd, AI_CLI_CONFIG_FILENAME);
     writeFileSync(stored, "{}", "utf-8");
-    writeFileSync(legacy, "{}", "utf-8");
 
     await runConfigClear(context(cwd, ["config", "clear"]));
 
     const text = output();
     expect(text).toContain("Stored AI configuration removed (credentials wiped):");
     expect(text).toContain(`    - ${path.resolve(stored)}`);
-    expect(text).toContain(`    - ${path.resolve(legacy)}`);
     expect(existsSync(stored)).toBe(false);
-    expect(existsSync(legacy)).toBe(false);
   });
 });

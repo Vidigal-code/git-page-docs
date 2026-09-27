@@ -21,7 +21,6 @@ import {
 import {
   LAYOUTS_CONFIG_FILENAME,
   LAYOUTS_DIR_CANDIDATES,
-  LEGACY_OFFICIAL_LAYOUTS_CONFIG_URL,
   OFFICIAL_LAYOUTS_CONFIG_URL,
   OFFICIAL_LAYOUTS_CONFIG_URLS,
   OFFICIAL_LAYOUTS_TEMPLATES_URL,
@@ -76,14 +75,13 @@ describe("constants", () => {
 
 describe("remote-urls", () => {
   it("tries the canonical layouts home before the legacy one", () => {
-    expect(OFFICIAL_LAYOUTS_CONFIG_URLS).toEqual([OFFICIAL_LAYOUTS_CONFIG_URL, LEGACY_OFFICIAL_LAYOUTS_CONFIG_URL]);
+    expect(OFFICIAL_LAYOUTS_CONFIG_URLS).toEqual([OFFICIAL_LAYOUTS_CONFIG_URL]);
     expect(OFFICIAL_LAYOUTS_CONFIG_URL).toContain("gitpagelayouts/layoutsConfig.json");
-    expect(LEGACY_OFFICIAL_LAYOUTS_CONFIG_URL).toContain("gitpagedocs/layouts/layoutsConfig.json");
     expect(OFFICIAL_LAYOUTS_TEMPLATES_URL).toContain("gitpagelayouts/templates");
   });
 
   it("checks the legacy repo folder before the standalone layouts folder", () => {
-    expect(LAYOUTS_DIR_CANDIDATES).toEqual(["gitpagedocs/layouts/", "gitpagelayouts/"]);
+    expect(LAYOUTS_DIR_CANDIDATES).toEqual(["gitpagelayouts/"]);
     expect(LAYOUTS_CONFIG_FILENAME).toBe("layoutsConfig.json");
     expect(REMOTE_FETCH_TIMEOUT_MS).toBeGreaterThan(0);
   });

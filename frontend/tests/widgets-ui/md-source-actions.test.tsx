@@ -21,6 +21,7 @@ describe("markdownFileName", () => {
     expect(markdownFileName("gitpagedocs/docs/versions/0.0.3/pt/getting-started.md")).toBe("getting-started.md");
     expect(markdownFileName("docs/readme")).toBe("readme.md");
     expect(markdownFileName(undefined, "Primeiros passos!")).toBe("primeiros-passos.md");
+    expect(markdownFileName(undefined, "--Olá, mundo--")).toBe("ola-mundo.md");
     expect(markdownFileName(undefined, undefined)).toBe("document.md");
   });
 });
@@ -48,7 +49,15 @@ describe("MdSourceActions", () => {
 
   it("reports a failed copy", async () => {
     vi.stubGlobal("navigator", { clipboard: { writeText: vi.fn().mockRejectedValue(new Error("denied")) } });
-    document.execCommand = vi.fn().mockReturnValue(false);
+    render(<MdSourceActions source="x" fileName="a.md" labels={labels} />);
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("md-copy"));
+    });
+    expect(screen.getByTestId("md-copy").getAttribute("aria-label")).toBe("Não foi possível copiar");
+  });
+
+  it("reports a failed copy when the Clipboard API is unavailable", async () => {
+    vi.stubGlobal("navigator", {});
     render(<MdSourceActions source="x" fileName="a.md" labels={labels} />);
     await act(async () => {
       fireEvent.click(screen.getByTestId("md-copy"));

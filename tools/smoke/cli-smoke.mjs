@@ -50,7 +50,6 @@ if (rootConfig.site.supportedLanguages) {
 }
 
 const langs = languageArtifactPaths("gitpagedocs");
-ensureMissing(langs.legacyManifest);
 const toggles = parseLanguageToggles(rootConfig.site.languages);
 const enabledLanguages = getEnabledLanguages(toggles);
 if (!toggles || Object.keys(toggles).join(",") !== SUPPORTED_LANGUAGES.join(",") || enabledLanguages.length !== SUPPORTED_LANGUAGES.length) {

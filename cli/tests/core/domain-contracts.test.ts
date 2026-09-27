@@ -23,7 +23,7 @@ type LangMap = Record<"pt" | "en" | "es", string>;
 
 const { sanitizeSegment } = sanitize as { sanitizeSegment(value: unknown): string };
 const { languageArtifactPaths } = langsPaths as {
-  languageArtifactPaths(outputDir: string): { config: string; legacyManifest: string; dir: string; bundle: (language: string) => string };
+  languageArtifactPaths(outputDir: string): { config: string; dir: string; bundle: (language: string) => string };
 };
 const { DOC_VERSIONS, PACKAGE_VERSION } = docVersions as { DOC_VERSIONS: string[]; PACKAGE_VERSION: string };
 const { SUPPORTED_LANGUAGES } = languages as { SUPPORTED_LANGUAGES: readonly string[] };
@@ -36,7 +36,7 @@ const { ROUTE_PATHS, VIDEO_IDS, AUDIO_IDS, PAGE2_AUDIO } = pathMappings as {
 const metas = routeMetas as Record<string, { titles?: LangMap; descriptions?: LangMap; title?: LangMap; description?: LangMap; id?: number }> & {
   DEFAULT_HIERARCHY: Record<string, number>;
 };
-const { OFFICIAL_LAYOUTS_CONFIG_URL, OFFICIAL_LAYOUTS_TEMPLATES_URL, LEGACY_OFFICIAL_LAYOUTS_CONFIG_URL } = urls as Record<string, string>;
+const { OFFICIAL_LAYOUTS_CONFIG_URL, OFFICIAL_LAYOUTS_TEMPLATES_URL } = urls as Record<string, string>;
 
 describe("sanitizeSegment", () => {
   it.each([
@@ -58,7 +58,6 @@ describe("languageArtifactPaths", () => {
   it("derives every language artifact path from the output dir", () => {
     const paths = languageArtifactPaths("gitpagedocs");
     expect(paths.config).toBe("gitpagedocs/config.json");
-    expect(paths.legacyManifest).toBe("gitpagedocs/langs.json");
     expect(paths.dir).toBe("gitpagedocs/langs");
     expect(paths.bundle("pt")).toBe("gitpagedocs/langs/pt.json");
     expect(languageArtifactPaths("out").bundle("en")).toBe("out/langs/en.json");
@@ -73,8 +72,6 @@ describe("contracts index", () => {
     expect(contracts.LAYOUTS_CONFIG_FILENAME).toBe("layoutsConfig.json");
     expect(contracts.LAYOUTS_FALLBACK_CONFIG_FILENAME).toBe("layoutsFallbackConfig.json");
     expect(contracts.LAYOUTS_TEMPLATES_DIRNAME).toBe("templates");
-    expect(contracts.LEGACY_LAYOUTS_SUBDIR).toBe("layouts");
-    expect(contracts.legacyLayoutsDir("gitpagedocs")).toBe("gitpagedocs/layouts");
     expect(contracts.layoutsArtifactPaths("themes").config).toBe("themes/layoutsConfig.json");
   });
 
@@ -123,6 +120,5 @@ describe("route data", () => {
   it("points the official layout URLs at the standalone layouts home", () => {
     expect(OFFICIAL_LAYOUTS_CONFIG_URL).toBe("https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/layoutsConfig.json");
     expect(OFFICIAL_LAYOUTS_TEMPLATES_URL).toBe("https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/templates");
-    expect(LEGACY_OFFICIAL_LAYOUTS_CONFIG_URL).toContain("gitpagedocs/layouts/layoutsConfig.json");
   });
 });

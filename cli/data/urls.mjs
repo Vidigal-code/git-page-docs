@@ -1,12 +1,7 @@
-/** Official layout URLs for git-page-docs repository.
- * The canonical home is the root `gitpagelayouts/` folder; the legacy
- * `gitpagedocs/layouts/` folder stays online for older deployments. */
+/** Official layout URLs: the root `gitpagelayouts/` folder of git-page-docs. */
 
 export const OFFICIAL_LAYOUTS_CONFIG_URL =
   "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/layoutsConfig.json";
 
 export const OFFICIAL_LAYOUTS_TEMPLATES_URL =
   "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagelayouts/templates";
-
-export const LEGACY_OFFICIAL_LAYOUTS_CONFIG_URL =
-  "https://github.com/Vidigal-code/git-page-docs/blob/main/gitpagedocs/layouts/layoutsConfig.json";

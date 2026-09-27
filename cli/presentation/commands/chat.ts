@@ -219,9 +219,8 @@ function printSetupHelp(providerHint: string): void {
  */
 export async function runChat(ctx: CommandContext): Promise<void> {
   const flags = parseChatArgs(ctx.args);
-  const configRepo = new AiConfigFileRepository({ cwd: ctx.cwd });
+  const configRepo = new AiConfigFileRepository();
   const creds: ResolvedChatCredentials | null = await resolveChatCredentials({
-    cwd: ctx.cwd,
     providerOverride: flags.provider,
     modelOverride: flags.model,
     configRepo,

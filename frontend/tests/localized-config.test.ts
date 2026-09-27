@@ -61,12 +61,11 @@ describe("localizeConfig + withConfigDefaults", () => {
     expect(typeof config.site.langmenu.es.menuOpen).toBe("string");
   });
 
-  it("lets a legacy langs.json site override the baseline and inline strings", async () => {
+  it("lets enabled bundles override the baseline and inline strings", async () => {
     const config = withConfigDefaults(
       await localizeConfig(
-        withSite({ langmenu: { en: { menuOpen: "Inline menu" } } }),
+        withSite({ languages: { en: true, fr: true }, langmenu: { en: { menuOpen: "Inline menu" } } }),
         repoReader({
-          "gitpagedocs/langs.json": { languages: ["en", "fr"] },
           "gitpagedocs/langs/en.json": { langmenu: { menuOpen: "Bundle menu" } },
           "gitpagedocs/langs/fr.json": {
             langmenu: { menuOpen: "Menu FR" },
@@ -83,11 +82,11 @@ describe("localizeConfig + withConfigDefaults", () => {
     expect(config.translations?.navigation?.next).toMatchObject({ en: "Next", fr: "Suivant" });
   });
 
-  it("keeps inline strings when the manifest exists but no bundle can be read", async () => {
+  it("keeps inline strings when an enabled bundle cannot be read", async () => {
     const config = withConfigDefaults(
       await localizeConfig(
-        withSite({ langmenu: { en: { menuOpen: "Inline menu" } } }),
-        repoReader({ "gitpagedocs/langs.json": { languages: ["en"] } }),
+        withSite({ languages: { en: true }, langmenu: { en: { menuOpen: "Inline menu" } } }),
+        repoReader({}),
       ),
     );
 

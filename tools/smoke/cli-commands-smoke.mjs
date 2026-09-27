@@ -50,17 +50,16 @@ try {
   const storedConfig = JSON.stringify({ version: 1, ai: { provider: "openai", model: "m", apiKey: "secret" } });
   mkdirSync(configDir, { recursive: true });
   writeFileSync(path.join(configDir, CONFIG_FILENAME), storedConfig, "utf-8");
-  writeFileSync(path.join(workDir, CONFIG_FILENAME), storedConfig, "utf-8");
 
   expectContains(
     "config clear wipes stored credentials",
     run("config clear", { cwd: workDir, env }),
     "credentials wiped",
   );
-  if (existsSync(path.join(configDir, CONFIG_FILENAME)) || existsSync(path.join(workDir, CONFIG_FILENAME))) {
+  if (existsSync(path.join(configDir, CONFIG_FILENAME))) {
     throw new Error("[smoke:commands] config clear left a .gitpagedocsconfig behind.");
   }
-  console.log("  ok   both storage locations are empty after clear");
+  console.log("  ok   the user config directory is empty after clear");
 } finally {
   rmSync(workDir, { recursive: true, force: true });
   rmSync(path.dirname(configDir), { recursive: true, force: true });

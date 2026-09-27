@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, rmSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -19,28 +19,6 @@ const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
 <path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="#323232" stroke-width="2"/>
 </svg>
 `;
-
-function listExistingVersionIds(root, outputDir) {
-  const versionsRoot = path.join(root, outputDir, "docs", "versions");
-  if (!existsSync(versionsRoot)) return [];
-  return readdirSync(versionsRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name);
-}
-
-function removeLegacySourceViewerFiles(root, outputDir) {
-  const versionIds = listExistingVersionIds(root, outputDir);
-  for (const versionId of versionIds) {
-    for (const language of SUPPORTED_LANGUAGES) {
-      for (const fileName of ["source-viewer", "source-viewer.html"]) {
-        const legacyPath = path.join(root, outputDir, "docs", "versions", versionId, language, fileName);
-        if (existsSync(legacyPath)) {
-          rmSync(legacyPath, { force: true });
-        }
-      }
-    }
-  }
-}
 
 async function writeJson(root, relativePath, data) {
   const absolutePath = path.join(root, relativePath);
@@ -77,26 +55,11 @@ async function writeLayoutArtifacts(options) {
   }
 }
 
-/**
- * Write one UI-strings bundle per shipped language. Which ones are on is
- * `site.languages` in config.json, so the 1.1.68 `langs.json` manifest is
- * removed: a stale copy would only mislead.
- */
+/** Write one UI-strings bundle per shipped language; `site.languages` in config.json switches them. */
 async function writeLanguageArtifacts(root, outputDir, artifacts) {
   const paths = languageArtifactPaths(outputDir);
-  rmSync(path.join(root, paths.legacyManifest), { force: true });
   for (const [language, bundle] of Object.entries(artifacts.languageBundles)) {
     await writeJson(root, paths.bundle(language), bundle);
-  }
-}
-
-/** Keep only versioned docs output in docs/, removing legacy root language folders. */
-function removeLegacyLanguageDirs(root, outputDir) {
-  for (const legacyLanguageDir of SUPPORTED_LANGUAGES) {
-    const legacyPath = path.join(root, outputDir, "docs", legacyLanguageDir);
-    if (existsSync(legacyPath)) {
-      rmSync(legacyPath, { recursive: true, force: true });
-    }
   }
 }
 
@@ -180,8 +143,6 @@ export async function writeConfigOnlyOutput(options) {
     createThemeTemplate,
   } = options;
 
-  removeLegacyLanguageDirs(root, outputDir);
-
   await writeJson(root, `${outputDir}/config.json`, artifacts.rootConfig);
   await writeLanguageArtifacts(root, outputDir, artifacts);
   await writeText(root, `${outputDir}/icon.svg`, DEFAULT_ICON_SVG);
@@ -195,7 +156,6 @@ export async function writeConfigOnlyOutput(options) {
   });
   await writeVersionConfigs(root, outputDir, artifacts.versionConfigs);
 
-  removeLegacySourceViewerFiles(root, outputDir);
 
   await writeVersionedDocs(root, outputDir, artifacts);
 }

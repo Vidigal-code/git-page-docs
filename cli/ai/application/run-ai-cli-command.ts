@@ -172,11 +172,7 @@ async function saveConfig(config: AiCliConfig, deps: SaveConfigDeps): Promise<vo
 
 export async function runAiCliCommand(options: RunAiCliCommandOptions): Promise<{ summary: AiCliRunSummary; runConfigScaffold: boolean }> {
   const logInfo = options.onInfo ?? (() => undefined);
-  const configRepo = new AiConfigFileRepository({
-    cwd: options.cwd,
-    onMigrate: (fromPath, toPath) =>
-      logInfo(`[gitpagedocs:ai] Moved configuration from ${fromPath} to ${toPath} (secure user config directory).`),
-  });
+  const configRepo = new AiConfigFileRepository();
   const vault = options.vault ?? new AiKeyVault();
   const prompt = options.passwordPrompt ?? clackVaultPasswordPrompt;
 
