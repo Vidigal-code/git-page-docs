@@ -32,7 +32,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: pnpm
+          # No dependency cache: most runs only check the registry and skip the
+          # install, and saving a cache for a store that was never created fails
+          # the job whenever pnpm-lock.yaml changes.
           registry-url: "https://registry.npmjs.org"
 
       - name: Decide whether this version needs publishing
