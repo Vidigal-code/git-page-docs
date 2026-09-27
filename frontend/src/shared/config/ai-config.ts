@@ -96,22 +96,38 @@ const DEFAULT_LABEL_KEY: Readonly<Record<AiProviderId, keyof ProviderOptionLabel
   ollama: 'aiChatProviderOllama',
 };
 
+/** "OpenAI (GPT-4o-mini)" -> "OpenAI": langmenu values before 0.0.3 carried the default model in parentheses. */
+function stripLegacyModelSuffix(label: string): string {
+  const trimmed = label.trim();
+  const open = trimmed.lastIndexOf('(');
+  return open > 0 && trimmed.endsWith(')') ? trimmed.slice(0, open).trim() : trimmed;
+}
+
+/** Provider name for menus: the langmenu value (legacy suffix removed), else the built-in label. */
+function providerDisplayName(provider: AiProviderId, labels: ProviderOptionLabels): string {
+  const fromLangmenu = labels[DEFAULT_LABEL_KEY[provider]];
+  return (fromLangmenu ? stripLegacyModelSuffix(fromLangmenu) : '') || PROVIDER_LABELS[provider];
+}
+
+/** Human-readable model name from the catalog, else the raw id. */
+export function modelDisplayName(provider: AiProviderId, model: string): string {
+  return catalogFor(provider).models.find((m) => m.id === model)?.label || model;
+}
+
 /**
- * Options of the provider select: every catalog model of the four providers,
- * default model first per provider. The default model's label can be localized
- * through the langmenu; the other models show "<Provider> (<model>)".
+ * Options of the provider picker: every catalog model of the four providers,
+ * default model first per provider, all labelled "<Provider> · <Model>" so the
+ * list reads the same for defaults and alternatives.
  */
 export function buildProviderModelOptions(labels: ProviderOptionLabels = {}): ProviderModelOption[] {
-  return PROVIDER_IDS.flatMap((provider) =>
-    listProviderModels(provider).map((model, index) => {
-      const localized = index === 0 ? labels[DEFAULT_LABEL_KEY[provider]] : undefined;
-      return {
-        provider,
-        value: `${provider}:${model}`,
-        label: localized || `${PROVIDER_LABELS[provider]} (${model})`,
-      };
-    }),
-  );
+  return PROVIDER_IDS.flatMap((provider) => {
+    const providerName = providerDisplayName(provider, labels);
+    return listProviderModels(provider).map((model) => ({
+      provider,
+      value: `${provider}:${model}`,
+      label: `${providerName} · ${modelDisplayName(provider, model)}`,
+    }));
+  });
 }
 
 export function getProviderInputPlaceholder(providerAndModel: string): string {

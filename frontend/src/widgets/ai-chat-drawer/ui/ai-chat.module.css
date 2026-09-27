@@ -456,7 +456,7 @@
     margin: 0 0 4px 0;
     font-size: 1.25rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #60a5fa, #818cf8);
+    background: linear-gradient(135deg, var(--primary, #60a5fa), var(--secondary, #818cf8));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -493,22 +493,48 @@
     font-family: inherit;
 }
 
-/* Native arrow replaced by one chevron, vertically centered and kept clear of
-   the label text, so every theme gets the same select. */
-.formSelect {
-    appearance: none;
-    -webkit-appearance: none;
+/* Provider picker: the shared DropdownSelector trigger dressed as a field. One
+   CSS chevron in the theme's secondary text colour, vertically centered and
+   kept clear of the label, so every theme gets the same control and the option
+   list is painted by the theme instead of the browser's native popup. */
+.providerSelect > div {
+    display: block;
+    width: 100%;
+}
+
+.providerSelect button.formSelect {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
     padding-right: 40px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 12px 12px;
+    font-weight: 400;
     cursor: pointer;
 }
 
-.formSelect option {
-    background: var(--card-background);
-    color: var(--text);
+.providerSelect button.formSelect > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.providerSelect button.formSelect::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--text-secondary, #94a3b8);
+    border-bottom: 1.5px solid var(--text-secondary, #94a3b8);
+    transform: translateY(-70%) rotate(45deg);
+    transition: transform 0.15s ease;
+    pointer-events: none;
+}
+
+.providerSelect button.formSelect[aria-expanded="true"]::after {
+    transform: translateY(-30%) rotate(225deg);
 }
 
 .formInput {
@@ -532,7 +558,7 @@
     min-height: 44px;
     padding: 12px 16px;
     background: var(--primary, #2563eb);
-    color: var(--button-text, #fff);
+    color: var(--primary-foreground, #fff);
     border: none;
     border-radius: 8px;
     font-weight: 700;

@@ -38,8 +38,11 @@ const TEXT: ProviderCapabilities = { streaming: true, vision: false, audio: fals
 const VISION: ProviderCapabilities = { streaming: true, vision: true, audio: false };
 const VISION_AUDIO: ProviderCapabilities = { streaming: true, vision: true, audio: true };
 
-function models(...ids: string[]): ModelDescriptor[] {
-  return ids.map((id) => ({ id }));
+type ModelEntry = string | readonly [id: string, label: string];
+
+/** Catalog rows: a bare id, or `[id, label]` when a human-readable name exists for menus. */
+function models(...entries: ModelEntry[]): ModelDescriptor[] {
+  return entries.map((entry) => (typeof entry === "string" ? { id: entry } : { id: entry[0], label: entry[1] }));
 }
 
 export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
@@ -52,7 +55,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
     baseUrl: "https://api.openai.com/v1",
     auth: "bearer",
     capabilities: VISION,
-    models: models("gpt-4o", "gpt-4o-mini", "o3-mini", "o1"),
+    models: models(["gpt-4o", "GPT-4o"], ["gpt-4o-mini", "GPT-4o mini"], ["o3-mini", "o3-mini"], ["o1", "o1"]),
   },
   anthropic: {
     id: "anthropic",
@@ -64,7 +67,11 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
     baseUrl: "https://api.anthropic.com/v1",
     auth: "x-api-key",
     capabilities: VISION,
-    models: models("claude-opus-4-8", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"),
+    models: models(
+      ["claude-opus-4-8", "Opus 4.8"],
+      ["claude-sonnet-4-6", "Sonnet 4.6"],
+      ["claude-haiku-4-5-20251001", "Haiku 4.5"],
+    ),
   },
   gemini: {
     id: "gemini",
@@ -75,7 +82,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
     baseUrl: "https://generativelanguage.googleapis.com/v1beta/models",
     auth: "query-key",
     capabilities: VISION_AUDIO,
-    models: models("gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"),
+    models: models(["gemini-2.5-flash", "2.5 Flash"], ["gemini-2.5-pro", "2.5 Pro"], ["gemini-2.0-flash", "2.0 Flash"]),
   },
   openrouter: {
     id: "openrouter",
@@ -98,7 +105,7 @@ export const PROVIDER_CATALOG: Readonly<Record<AiProviderId, ProviderSpec>> = {
     requiresBaseUrl: false,
     auth: "none",
     capabilities: VISION,
-    models: models("llama3", "llama3.1", "mistral", "qwen2.5"),
+    models: models(["llama3", "Llama 3"], ["llama3.1", "Llama 3.1"], ["mistral", "Mistral"], ["qwen2.5", "Qwen 2.5"]),
   },
   "azure-openai": {
     id: "azure-openai",

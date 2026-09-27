@@ -302,18 +302,29 @@ describe("ai-config is driven by the shared provider catalog", () => {
     expect(normalizeProviderAndModel("nope:x")).toEqual({ provider: "openai", model: PROVIDER_CATALOG.openai.defaultModel });
   });
 
-  it("builds the provider select options from the catalog", () => {
-    const options = buildProviderModelOptions({ aiChatProviderOpenAI: "OpenAI (GPT-4o-mini)" });
+  it("builds the provider select options from the catalog as 'Provider · Model'", () => {
+    const options = buildProviderModelOptions({});
     expect(options[0]).toEqual({
       provider: "openai",
       value: `openai:${PROVIDER_CATALOG.openai.defaultModel}`,
-      label: "OpenAI (GPT-4o-mini)",
+      label: "OpenAI · GPT-4o mini",
     });
     for (const option of options) {
       const [provider, model] = option.value.split(":");
       expect(isKnownModel(provider as "openai", model)).toBe(true);
+      expect(option.label).toMatch(/^.+ · .+$/);
     }
-    expect(options.some((o) => o.value === "gemini:gemini-2.5-flash")).toBe(true);
-    expect(options.some((o) => o.provider === "ollama")).toBe(true);
+    expect(options.find((o) => o.value === "claude:claude-opus-4-8")?.label).toBe("Anthropic Claude · Opus 4.8");
+    expect(options.find((o) => o.value === "gemini:gemini-2.5-pro")?.label).toBe("Google Gemini · 2.5 Pro");
+    expect(options.find((o) => o.value === "ollama:mistral")?.label).toBe("Ollama · Mistral");
+  });
+
+  it("takes the provider name from the langmenu and strips a legacy '(model)' suffix", () => {
+    const options = buildProviderModelOptions({
+      aiChatProviderOpenAI: "OpenAI (GPT-4o-mini)",
+      aiChatProviderOllama: "Ollama local",
+    });
+    expect(options[0].label).toBe("OpenAI · GPT-4o mini");
+    expect(options.find((o) => o.value === "ollama:llama3")?.label).toBe("Ollama local · Llama 3");
   });
 });

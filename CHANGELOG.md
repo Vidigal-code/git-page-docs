@@ -3,6 +3,29 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.3 - 2026-09-27 - themed provider picker and palette-derived contrast
+
+### Frontend viewer
+
+- **Provider picker standardized.** The AI chat drawer's provider/model control is now the shared
+  theme-aware `DropdownSelector` (the same control as the language and theme selectors) instead of a
+  native `<select>`, whose open list ignored dark themes. Every option reads `Provider · Model`
+  (`OpenAI · GPT-4o mini`, `Anthropic Claude · Sonnet 4.6`, `Google Gemini · 2.5 Flash`,
+  `Ollama · Llama 3`); model names come from the catalog and provider names from the `langmenu`
+  keys `aiChatProviderOpenAI` / `Claude` / `Gemini` / `Ollama`, which now hold plain provider names
+  (a legacy `"OpenAI (GPT-4o-mini)"` value keeps only the name).
+- **Readable primary buttons on every theme.** New palette-derived tokens `--primary-foreground`
+  (near-black on light primaries such as `carbon-dark` and `duet-dark`, white on deep tones) and
+  `--color-scheme` (layout `mode`, else background luminance) are emitted by the theme CSS-variable
+  builder and mirrored onto `<html>`; the drawer buttons, the inactivity-lock dialog and the shell's
+  external-link button use `--primary-foreground`, and native controls follow `color-scheme`.
+- The "Configure AI" title gradient now uses the theme's primary/secondary colours.
+
+### Shared core (`@gitpagedocs/tools`)
+
+- `PROVIDER_CATALOG` models of OpenAI, Anthropic, Gemini and Ollama carry a human-readable
+  `label` (`ModelDescriptor.label`); ids are unchanged.
+
 ## 0.0.2 - 2026-09-27 - encrypted CLI vault, chat auto-lock, provider hardening
 
 ### CLI (`@gitpagedocs/cli`)

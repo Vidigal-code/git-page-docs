@@ -106,7 +106,7 @@
 
 .buttonPrimary {
     background: var(--primary, #2563eb);
-    color: var(--button-text, #fff);
+    color: var(--primary-foreground, #fff);
     box-shadow: 0 6px 18px color-mix(in srgb, var(--primary, #2563eb) 35%, transparent);
 }
 

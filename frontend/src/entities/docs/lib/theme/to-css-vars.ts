@@ -54,6 +54,44 @@ const DEFAULT_CARD: ThemeCardComponent = {
   boxShadow: "0 18px 60px rgba(0, 0, 0, 0.35)",
 };
 
+const DARK_FOREGROUND = "#0b0f15";
+const LIGHT_FOREGROUND = "#ffffff";
+/** Above this relative luminance a colour is light enough for dark text to read better than white. */
+const DARK_TEXT_LUMINANCE = 0.3;
+/** Backgrounds brighter than this belong to a light scheme. */
+const LIGHT_SCHEME_LUMINANCE = 0.4;
+
+function parseHexColor(value: string | undefined): [number, number, number] | undefined {
+  const hex = value?.trim().replace(/^#/, "");
+  if (!hex || !/^[0-9a-f]{3,8}$/i.test(hex)) return undefined;
+  const rgb = hex.length <= 4 ? hex.slice(0, 3).replace(/./g, (c) => c + c) : hex.slice(0, 6);
+  if (rgb.length !== 6) return undefined;
+  const channel = (offset: number) => Number.parseInt(rgb.slice(offset, offset + 2), 16) / 255;
+  return [channel(0), channel(2), channel(4)];
+}
+
+/** WCAG relative luminance of a hex colour (0 = black, 1 = white); undefined when it is not hex. */
+export function relativeLuminance(value: string | undefined): number | undefined {
+  const rgb = parseHexColor(value);
+  if (!rgb) return undefined;
+  const linear = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const [r, g, b] = rgb;
+  return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+}
+
+/** Text colour that stays readable on the theme's primary: white on deep tones, near-black on light ones. */
+export function contrastForeground(color: string | undefined): string {
+  const luminance = relativeLuminance(color);
+  return luminance !== undefined && luminance > DARK_TEXT_LUMINANCE ? DARK_FOREGROUND : LIGHT_FOREGROUND;
+}
+
+/** `color-scheme` for native controls (select popups, scrollbars): the declared mode, else read off the background. */
+export function resolveColorScheme(theme: Pick<ThemeTemplate, "mode" | "colors">): "dark" | "light" {
+  if (theme.mode === "light" || theme.mode === "dark") return theme.mode;
+  const luminance = relativeLuminance(theme.colors?.background);
+  return luminance !== undefined && luminance > LIGHT_SCHEME_LUMINANCE ? "light" : "dark";
+}
+
 export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSProperties {
   // No theme yet: emit nothing so the page inherits the :root defaults instead
   // of freezing them into prerendered markup. That keeps the pre-paint theme
@@ -71,6 +109,13 @@ export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSPropert
     if (value) {
       vars[cssVar] = value;
     }
+  }
+  // Themes declare neither the text colour for primary surfaces nor a colour
+  // scheme, so both are derived from the palette: buttons stay readable on a
+  // white or lime primary, and native popups follow light/dark themes.
+  vars["--color-scheme"] = resolveColorScheme(theme);
+  if (colors.primary) {
+    vars["--primary-foreground"] = contrastForeground(colors.primary);
   }
   // Scrollbars must follow the active palette. Themes rarely declare explicit
   // scrollbar colours, and the :root fallbacks bake in the default palette

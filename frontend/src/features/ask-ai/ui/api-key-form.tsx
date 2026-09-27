@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { aiStorage } from '@/shared/lib/ai-storage';
+import { DropdownSelector } from '@/shared/ui/dropdown-selector';
 import styles from '../../../widgets/ai-chat-drawer/ui/ai-chat.module.css';
 import { buildProviderModelOptions, getProviderInputPlaceholder, normalizeProviderAndModel } from '@/shared/config/ai-config';
 
@@ -19,8 +20,15 @@ function withSupportedModel(providerName: string | null | undefined): string {
 export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
     const [key, setKey] = useState('');
     const [provider, setProvider] = useState(() => withSupportedModel('openai'));
-    // The select lists exactly what the shared provider catalog serves today.
-    const options = useMemo(() => buildProviderModelOptions(labels ?? {}), [labels]);
+    // The picker lists exactly what the shared provider catalog serves today,
+    // through the same theme-aware dropdown as the language and theme selectors
+    // (a native <select> popup ignores the theme).
+    const options = useMemo(
+        () => buildProviderModelOptions(labels ?? {}).map((option) => ({ id: option.value, label: option.label })),
+        [labels],
+    );
+    const providerLabel: string = labels?.aiChatProviderLabel || "Provider:";
+    const providerPickerName = providerLabel.replace(/:\s*$/, '');
 
     useEffect(() => {
         setProvider(withSupportedModel(aiStorage.getProvider()));
@@ -41,19 +49,18 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onSave, labels }) => {
                 <p>{labels?.aiChatConfigDesc || "Your key will be securely saved only in your browser, NEVER on the server."}</p>
             </div>
 
-            <label className={styles.formGroup}>
-                {labels?.aiChatProviderLabel || "Provider:"}
-                <select
-                    data-testid="drawer-provider-select"
-                    value={provider}
-                    onChange={e => setProvider(e.target.value)}
-                    className={styles.formSelect}
-                >
-                    {options.map((option) => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                </select>
-            </label>
+            <div className={styles.formGroup}>
+                <span>{providerLabel}</span>
+                <div className={styles.providerSelect} data-testid="drawer-provider-select">
+                    <DropdownSelector
+                        label={providerPickerName}
+                        options={options}
+                        selectedId={provider}
+                        onSelect={setProvider}
+                        className={styles.formSelect}
+                    />
+                </div>
+            </div>
 
             <label className={styles.formGroup}>
                 {isOllama

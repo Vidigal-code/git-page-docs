@@ -178,10 +178,10 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
     // Auth and API Key texts
     const aiChatProviderLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderLabel", "Provider:");
     const aiChatApiKeyLabel = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatApiKeyLabel", "API Key (leave blank for Local AI):");
-    const aiChatProviderOpenAI = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderOpenAI", "OpenAI (GPT-4o-mini)");
-    const aiChatProviderClaude = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderClaude", "Anthropic Claude (Sonnet 4.6)");
-    const aiChatProviderGemini = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderGemini", "Google Gemini (2.5 Flash)");
-    const aiChatProviderOllama = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderOllama", "Ollama Network (Local LLMs)");
+    const aiChatProviderOpenAI = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderOpenAI", "OpenAI");
+    const aiChatProviderClaude = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderClaude", "Anthropic Claude");
+    const aiChatProviderGemini = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderGemini", "Google Gemini");
+    const aiChatProviderOllama = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatProviderOllama", "Ollama");
 
     // Content states
     const aiChatEmptyPageContent = getLangMenuLabelFromMenu(data.config.site.langmenu, language, "aiChatEmptyPageContent", "No compatible active page.");

@@ -21,7 +21,7 @@ describe("useDocsShellLabels", () => {
       quickNavPlaceholder: "Type to navigate...",
       fullscreenExpandLabel: "Fullscreen",
       aiChatTitle: "AI Assistant",
-      aiChatProviderOllama: "Ollama Network (Local LLMs)",
+      aiChatProviderOllama: "Ollama",
       docsAccessGateTitle: "Protected documentation",
       docsAccessBlockCancelBtn: "Cancel",
     });

@@ -1,5 +1,7 @@
 :root {
-  color-scheme: dark;
+  color-scheme: var(--color-scheme, dark);
+  --color-scheme: dark;
+  --primary-foreground: #ffffff;
 
   /* Canonical default palette. Shells emit a theme's own values as inline
    * custom properties and omit them entirely until a theme resolves, so these
