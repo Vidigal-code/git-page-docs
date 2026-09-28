@@ -3,7 +3,7 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
-## Unreleased
+## 0.0.7 - 2026-09-28 - back-to-top arrow beside the guide, site name "Git Page Docs"
 
 ### Introduction guide
 
