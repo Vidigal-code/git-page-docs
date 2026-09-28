@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { resolveIconPath } from "../resolve-icon-path";
 import type { IconConfigFields } from "../icon-config-fields";
 
-export const FALLBACK_HEADER_NAME = "Git Pages Docs";
+export const FALLBACK_HEADER_NAME = "Git Page Docs";
 
 /** Minimal config shape for header icon resolution (SiteConfig satisfies this) */
 export interface HeaderIconConfigInput extends IconConfigFields<"ImageMenuHeader"> {

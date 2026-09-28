@@ -143,8 +143,8 @@ export function IntroductionGuidePage() {
                 </GuideReveal>
               ))}
             </div>
+            <GuideBackToTop label={content.ui.backToTop} targetId={GUIDE_TOP_ID} />
           </div>
-          <GuideBackToTop label={content.ui.backToTop} targetId={GUIDE_TOP_ID} />
         </div>
       </GuideMotionProvider>
     </SearchShellLayout>

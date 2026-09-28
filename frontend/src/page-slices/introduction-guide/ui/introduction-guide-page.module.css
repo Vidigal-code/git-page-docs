@@ -2,6 +2,12 @@
   /* Room for the sticky site header (its tallest layout); the hero and the
      pinned story both measure the visible viewport below it. */
   --guide-header-offset: 72px;
+  /* Height of every call to action. */
+  --guide-action-size: 46px;
+  /* Side of the square icon badges (section icons, the "back to top" arrow). */
+  --guide-icon-size: 40px;
+  /* Vertical space above and below each guide section. */
+  --guide-section-space: 40px;
 
   position: relative;
   isolation: isolate;
@@ -40,13 +46,47 @@
   outline: none;
 }
 
-/* Closing row: the "back to top" arrow, aligned with the guide's left edge. */
+/* "Back to top" sits beside the guide, never in a row of its own. By default
+   (narrow screens) it is a zero-height sticky strip spanning the guide, so the
+   arrow floats at the bottom-right corner while the guide is on screen and
+   rests beside its last lines. */
 .backToTop {
+  grid-column: 1 / -1;
+  position: sticky;
+  bottom: 16px;
+  z-index: 5;
   display: flex;
-  justify-content: flex-start;
-  margin-top: 64px;
-  padding-top: 32px;
-  border-top: 1px solid var(--card-border);
+  justify-content: flex-end;
+  align-items: flex-end;
+  height: 0;
+  pointer-events: none;
+}
+
+.backToTop > button {
+  pointer-events: auto;
+  box-shadow: 0 10px 28px -10px color-mix(in srgb, var(--background) 80%, transparent);
+}
+
+/* Wide screens: the arrow moves into the right margin, beside the text. The
+   strip spans the guide's height and the arrow is sticky inside it, so it
+   travels with the reader and stops next to the last section. */
+@media (min-width: 1320px) {
+  .backToTop {
+    position: absolute;
+    top: 0;
+    /* Stop where the last section's content ends, so the arrow lines up with it. */
+    bottom: var(--guide-section-space);
+    left: calc(100% + 24px);
+    width: var(--guide-icon-size);
+    height: auto;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .backToTop > button {
+    position: sticky;
+    bottom: 24px;
+  }
 }
 
 /* Short viewports (landscape phones): content height, no forced fill. */
@@ -145,14 +185,12 @@
 /* Both calls to action share one box: same font, height, padding and focus ring.
    Motion drives the hover lift and press scale, so CSS never sets transform here. */
 .heroAction {
-  --hero-action-height: 46px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   box-sizing: border-box;
-  min-height: var(--hero-action-height);
+  min-height: var(--guide-action-size);
   margin: 0;
   padding: 0 22px;
   border: 1px solid transparent;
@@ -198,11 +236,18 @@
   font-size: 1.05rem;
 }
 
-/* Icon-only action: a square as tall as the other calls to action, on every
-   screen (the extra class outranks the full-width rule for phones). */
+/* Icon-only action: the same square badge as the section icons (size, border,
+   radius, accent colour), on every screen (the extra class outranks the
+   full-width rule for phones). */
 .heroAction.iconAction {
-  width: var(--hero-action-height);
+  width: var(--guide-icon-size);
+  min-height: var(--guide-icon-size);
   padding: 0;
+  color: var(--secondary);
+}
+
+.heroAction.iconAction .buttonIcon {
+  font-size: 1.2rem;
 }
 
 /* Animated title: words never break apart; each glyph moves on its own. */

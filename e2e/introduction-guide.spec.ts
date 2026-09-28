@@ -11,6 +11,8 @@ const ENTRANCE_SETTLE_TIMEOUT_MS = 15_000;
 const MIN_CHAPTER_HEIGHT_SHARE = 0.55;
 /** A landscape phone: short enough for the tour's stacked-list fallback. */
 const LANDSCAPE_PHONE = { width: 844, height: 390 };
+/** Wide enough for the back-to-top arrow to sit in the right margin. */
+const WIDE_DESKTOP = { width: 1920, height: 960 };
 
 /** WCAG contrast ratio between an element's text colour and its own background. */
 async function textContrast(locator: Locator): Promise<number> {
@@ -293,6 +295,34 @@ test.describe("introduction guide layout", () => {
     await backToTop.click();
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
     await expect(page.locator("#guide-top")).toBeFocused();
+  });
+
+  test("puts the back-to-top arrow beside the guide, level with its last content and sized like the section icons", async ({ page }) => {
+    await page.setViewportSize(WIDE_DESKTOP);
+    await openGuide(page, THEMES[0]);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    const button = page.getByRole("button", { name: /top|topo|arriba/i });
+    await expect(button).toBeInViewport();
+    // The last section rises into place when it is revealed; measure once it has settled.
+    const lastSection = page.locator("#guide-body section[id]").last();
+    await expect.poll(() => lastSection.evaluate((el) => getComputedStyle(el.parentElement as Element).transform)).toBe("none");
+
+    const layout = await page.evaluate(() => {
+      const body = document.querySelector("#guide-body") as HTMLElement;
+      const section = [...body.querySelectorAll("section[id]")].at(-1) as HTMLElement;
+      const lastBlock = (section.lastElementChild as HTMLElement).getBoundingClientRect();
+      const icon = (section.querySelector("[class*=sectionIcon]") as HTMLElement).getBoundingClientRect();
+      const arrow = (document.querySelector("[data-testid=guide-back-to-top] button") as HTMLElement).getBoundingClientRect();
+      return {
+        besideGuide: arrow.left >= body.getBoundingClientRect().right,
+        bottomGap: Math.abs(arrow.bottom - lastBlock.bottom),
+        sameSize: Math.round(arrow.width) === Math.round(icon.width) && Math.round(arrow.height) === Math.round(icon.height),
+      };
+    });
+    expect(layout.besideGuide).toBe(true);
+    expect(layout.bottomGap).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
+    expect(layout.sameSize).toBe(true);
+    await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
   });
 
   test("stacks the tour as a list on short landscape screens, with nothing clipped", async ({ page }) => {

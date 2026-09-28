@@ -1,5 +1,5 @@
 .section {
-  padding: 40px 0;
+  padding: var(--guide-section-space) 0;
   border-bottom: 1px solid var(--card-border);
   scroll-margin-top: 24px;
 }
@@ -20,8 +20,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: var(--guide-icon-size);
+  height: var(--guide-icon-size);
   border: 1px solid var(--card-border);
   border-radius: 10px;
   background: var(--card-background);
@@ -147,7 +147,7 @@
 /* ---- Responsive: stack + center section headers on mobile ---- */
 @media (max-width: 640px) {
   .section {
-    padding: 28px 0;
+    --guide-section-space: 28px;
   }
 
   .sectionHeader {

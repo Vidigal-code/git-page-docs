@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Git Pages Docs",
+    "name": "Git Page Docs",
     "defaultLanguage": "en",
     "languages": {
       "en": true,
@@ -19,7 +19,7 @@
     "FooterDateCustom": "",
     "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
     "SiteIconPath": "/icon.svg",
-    "SiteHeaderName": "Git Pages Docs",
+    "SiteHeaderName": "Git Page Docs",
     "icons": {
       "defaults": {
         "reactIcon": true,

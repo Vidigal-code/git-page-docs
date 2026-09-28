@@ -1,5 +1,5 @@
 {
-  "name": "Git Pages Docs",
+  "name": "Git Page Docs",
   "defaultLanguage": "en",
   "HideThemeSelector": false,
   "ThemeDefault": "aurora-dark",
@@ -13,7 +13,7 @@
   "FooterDateCustom": "",
   "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
   "SiteIconPath": "/icon.svg",
-  "SiteHeaderName": "Git Pages Docs",
+  "SiteHeaderName": "Git Page Docs",
   "IconImageMenuHeaderReactIcones": true,
   "IconImageMenuHeaderReactIconesTag": "FaGithubAlt",
   "IconImageMenuHeaderReactIconesTagColorDark": "White",

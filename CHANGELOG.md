@@ -7,9 +7,19 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
 
 ### Introduction guide
 
-- A "back to top" arrow closes the guide: a square icon-only button on the left, named "Back to top"
-  (en/pt/es, `backToTop`) for screen readers and as its tooltip. It scrolls smoothly to the hero
-  (instantly with reduced motion) and moves keyboard focus there, so the next Tab starts from the top.
+- A "back to top" arrow sits beside the guide, never in a row of its own. On wide screens it lives in
+  the right margin, travels with the reader and stops level with the last section's content; on
+  narrower screens it floats at the bottom-right corner while the guide is on screen. It is the same
+  40px badge as the section icons, named "Back to top" (en/pt/es, `backToTop`) for screen readers
+  and as its tooltip, scrolls smoothly to the hero (instantly with reduced motion) and moves keyboard
+  focus there.
+- Section spacing, icon size and action height are single tokens on the guide page
+  (`--guide-section-space`, `--guide-icon-size`, `--guide-action-size`).
+
+### Site name
+
+- The default site name is now "Git Page Docs" (was "Git Pages Docs") in the generator defaults, the
+  site baseline and the header fallback.
 
 ## 0.0.6 - 2026-09-28 - introduction guide scroll story, hero motion, contrast and hydration fixes
 

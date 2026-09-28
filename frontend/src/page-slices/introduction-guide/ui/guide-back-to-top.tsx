@@ -25,7 +25,7 @@ export function GuideBackToTop({ label, targetId }: Readonly<GuideBackToTopProps
   };
 
   return (
-    <div className={styles.backToTop}>
+    <div className={styles.backToTop} data-testid="guide-back-to-top">
       <button
         type="button"
         className={`${styles.heroAction} ${styles.secondaryButton} ${styles.iconAction}`}

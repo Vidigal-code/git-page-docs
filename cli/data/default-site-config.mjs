@@ -7,7 +7,7 @@ import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
 
 export function getDefaultSiteConfig(projectLink, languageToggles = buildLanguageToggles(SUPPORTED_LANGUAGES)) {
     return {
-        name: "Git Pages Docs",
+        name: "Git Page Docs",
         defaultLanguage: "en",
         languages: { ...languageToggles },
         HideThemeSelector: false,
@@ -22,7 +22,7 @@ export function getDefaultSiteConfig(projectLink, languageToggles = buildLanguag
         FooterDateCustom: "",
         ProjectLink: projectLink,
         SiteIconPath: "/icon.svg",
-        SiteHeaderName: "Git Pages Docs",
+        SiteHeaderName: "Git Page Docs",
         IconImageMenuHeaderImgWidth: 20,
         IconImageMenuHeaderImgHeight: 20,
         IconImageMenuHeaderLightImg: "",
