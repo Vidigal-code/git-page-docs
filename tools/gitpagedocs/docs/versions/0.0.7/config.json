@@ -181,7 +181,14 @@
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
-      "RouteguideBrandContainerTop": false
+      "RouteguideBrandContainerTop": false,
+      "hierarchyPage": {
+        "video": 0,
+        "md": 1,
+        "source-viewer": 2,
+        "html": 3,
+        "audio": 4
+      }
     },
     {
       "id": 6,
@@ -244,6 +251,32 @@
   ],
   "routes-html": [],
   "routes-video": [
+    {
+      "id": 5,
+      "title": {
+        "pt": "A brief introduction to Git for beginners | GitHub",
+        "en": "A brief introduction to Git for beginners | GitHub",
+        "es": "A brief introduction to Git for beginners | GitHub"
+      },
+      "description": {
+        "pt": "Introdução ao Git para iniciantes.",
+        "en": "A brief introduction to Git for beginners.",
+        "es": "Una breve introducción a Git para principiantes."
+      },
+      "fullscreenEnabled": true,
+      "video": {
+        "videoType": {
+          "pt": "youtube",
+          "en": "youtube",
+          "es": "youtube"
+        },
+        "pathVideo": {
+          "pt": "r8jQ9hVA2qs",
+          "en": "r8jQ9hVA2qs",
+          "es": "r8jQ9hVA2qs"
+        }
+      }
+    },
     {
       "id": 8,
       "title": {

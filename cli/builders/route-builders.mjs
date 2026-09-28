@@ -24,6 +24,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrandContainerTop = false,
     audio,
     authorization,
+    hierarchyPage,
   } = options;
   const out = {
     id: routeId,
@@ -54,6 +55,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
   if (container !== undefined) out.container = container;
   if (audio !== undefined) out.audio = audio;
   if (authorization !== undefined) out.authorization = authorization;
+  if (hierarchyPage !== undefined) out.hierarchyPage = hierarchyPage;
   return out;
 }
 

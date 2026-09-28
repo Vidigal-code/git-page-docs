@@ -1,6 +1,8 @@
 /** Route and video metadata for doc versions */
 
 export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 };
+/** Page order that puts the video container above the markdown. */
+export const VIDEO_FIRST_HIERARCHY = { video: 0, md: 1, "source-viewer": 2, html: 3, audio: 4 };
 
 export const ROUTE_META_ID1 = {
   titles: { pt: "Primeiros passos", en: "Getting Started", es: "Primeros pasos" },

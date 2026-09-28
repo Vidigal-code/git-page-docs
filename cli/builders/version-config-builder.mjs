@@ -20,6 +20,7 @@ import {
   AUDIO_META_ID12,
   SOURCE_VIEWER_META,
   DEFAULT_HIERARCHY,
+  VIDEO_FIRST_HIERARCHY,
 } from "../data/route-metas.mjs";
 import { buildAudioRoute, buildMdRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
 import { resolveSourceViewerPath } from "./project-links.mjs";
@@ -39,6 +40,10 @@ const VIDEO_ROUTE_AUTHORIZATION = {
 const PUBLIC_VIDEO_ROUTE_ID = 11;
 /** Video routes follow the six markdown pages and the source viewer (ids 8-11). */
 const VIDEO_ROUTE_ID_OFFSET = 7;
+/** Markdown page that also shows the public video, in a video container above its text. */
+const VIDEO_PAGE_ROUTE_ID = 5;
+/** VIDEO_IDS / VIDEO_METAS entry of the public video (GitHub's introduction to Git). */
+const PUBLIC_VIDEO_INDEX = PUBLIC_VIDEO_ROUTE_ID - VIDEO_ROUTE_ID_OFFSET;
 
 const ROUTE_METAS = {
   1: ROUTE_META_ID1,
@@ -62,6 +67,7 @@ function buildVersionMdRoutes(versionId, includeDemoAuthorization) {
     };
     const routeOptions = {
       ...(id === 2 ? { audio: PAGE2_AUDIO } : {}),
+      ...(id === VIDEO_PAGE_ROUTE_ID ? { hierarchyPage: VIDEO_FIRST_HIERARCHY } : {}),
       ...(includeDemoAuthorization && id === 3
         ? { authorization: { requiredRoles: [MAINTAINER_ROLE] } }
         : {}),
@@ -80,8 +86,20 @@ function buildVersionMdRoutes(versionId, includeDemoAuthorization) {
   });
 }
 
+/** Video container shown on the markdown page VIDEO_PAGE_ROUTE_ID (no menu entry of its own). */
+function buildPageVideoRoute(versionId) {
+  return buildVideoRoute(
+    versionId,
+    VIDEO_PAGE_ROUTE_ID,
+    "youtube",
+    VIDEO_IDS[PUBLIC_VIDEO_INDEX - 1],
+    VIDEO_METAS[PUBLIC_VIDEO_INDEX].title,
+    VIDEO_METAS[PUBLIC_VIDEO_INDEX].description,
+  );
+}
+
 function buildVersionVideoRoutes(versionId, includeDemoAuthorization) {
-  return [1, 2, 3, 4].map((id) => {
+  const menuVideoRoutes = [1, 2, 3, 4].map((id) => {
     const routeId = id + VIDEO_ROUTE_ID_OFFSET;
     const isGuarded = includeDemoAuthorization && routeId !== PUBLIC_VIDEO_ROUTE_ID;
     return buildVideoRoute(
@@ -94,6 +112,7 @@ function buildVersionVideoRoutes(versionId, includeDemoAuthorization) {
       isGuarded ? { authorization: VIDEO_ROUTE_AUTHORIZATION } : {},
     );
   });
+  return [buildPageVideoRoute(versionId), ...menuVideoRoutes];
 }
 
 function buildVersionAudioRoutes(versionId) {

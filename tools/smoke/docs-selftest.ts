@@ -29,13 +29,19 @@ function asArray(value: unknown): Array<Record<string, unknown>> {
   return Array.isArray(value) ? value as Array<Record<string, unknown>> : [];
 }
 
+/**
+ * Route ids across every route type. An id is unique within its type; routes of
+ * different types may share one, and the viewer composes them into one page.
+ */
 function routeIds(config: Record<string, unknown>, routeKeys: string[]): Set<number> {
   const ids = new Set<number>();
   for (const key of routeKeys) {
+    const idsOfType = new Set<number>();
     for (const route of asArray(config[key])) {
       const id = Number(route.id);
       check(`generated config route id is valid for ${key}`, Number.isFinite(id), String(route.id));
-      check(`generated config route id ${id} is unique`, !ids.has(id), key);
+      check(`generated config route id ${id} is unique`, !idsOfType.has(id), key);
+      idsOfType.add(id);
       ids.add(id);
     }
   }

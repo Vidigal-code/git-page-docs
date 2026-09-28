@@ -520,12 +520,22 @@ in with a configured provider. Route `id=11` has no `authorization`, so the **Vi
 its video container are always visible. Videos are played only by the video container; markdown pages
 do not embed them.
 
+A video route that shares its `id` with a markdown route is shown on the same page. The *Introduction
+to Git* page (`id=5`) uses this to show the test video in a video container **above** its markdown:
+the version config has a `routes-video` entry with `"id": 5` (no menu entry of its own) and the
+markdown route sets a page order that puts the video first:
+
+```json
+{ "id": 5, "hierarchyPage": { "video": 0, "md": 1, "source-viewer": 2, "html": 3, "audio": 4 } }
+```
+
 Test video (GitHub channel, *A brief introduction to Git for beginners*):
 
 [![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
 
 - Watch on YouTube: https://www.youtube.com/watch?v=r8jQ9hVA2qs
 - Video route: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=11
+- Introduction to Git page (video above the markdown): https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=5
 - Fullscreen: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?videofull=en&slug=r8jQ9hVA2qs
 
 Route definition in `gitpagedocs/docs/versions/0.0.7/config.json`:
