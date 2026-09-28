@@ -150,3 +150,21 @@ test.describe("introduction guide scroll story", () => {
     expect(errors, errors.join("\n")).toHaveLength(0);
   });
 });
+
+test.describe("introduction guide theme preload", () => {
+  test("paints a cached theme before hydration without a hydration mismatch", async ({ page }) => {
+    const hydrationErrors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error" && /hydrat/i.test(message.text())) hydrationErrors.push(message.text());
+    });
+    // The first visit caches the theme catalogue; the reload runs the preload script with it.
+    await openGuide(page, THEMES[0]);
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage).length)).toBeGreaterThan(0);
+    hydrationErrors.length = 0;
+    await page.reload();
+    await expect(page.getByTestId("guide-story")).toBeAttached();
+
+    await expect.poll(() => page.evaluate(() => document.documentElement.style.getPropertyValue("--primary"))).not.toBe("");
+    expect(hydrationErrors, hydrationErrors.join("\n")).toHaveLength(0);
+  });
+});

@@ -16,6 +16,14 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
   static list. New `storyLabel`, `storySkip`, `storyScrollHint` and `storyChaptersLabel` strings in
   en/pt/es.
 
+### Fixed
+
+- Opening a page with `?theme=` after the theme catalogue was cached logged a React hydration error: the
+  theme preload script paints the cached palette on `<html>` before hydration, so its inline style
+  differs from the server HTML by design. The root `<html>` now sets `suppressHydrationWarning`, which
+  covers only that element's own attributes. An E2E test reloads with a cached theme and asserts no
+  hydration error.
+
 ## 0.0.5 - 2026-09-27 - markdown copy/download on the published site
 
 ### Fixed

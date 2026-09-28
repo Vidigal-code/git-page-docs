@@ -51,7 +51,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    // The theme preload script writes the cached palette onto <html> before
+    // hydration, so its inline style legitimately differs from the server HTML.
+    // Suppression covers only this element's own attributes, not its children.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <ThemePreloadScript />
       </head>
