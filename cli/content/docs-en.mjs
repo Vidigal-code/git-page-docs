@@ -234,12 +234,6 @@ Basic Git concepts for beginners.
 - \`git add\` - Stage changes
 - \`git commit\` - Create a snapshot
 - \`git push\` - Send to remote
-
-## Video
-
-*A brief introduction to Git for beginners*, from the GitHub YouTube channel:
-
-[![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
 `,
     authorizedRoutes: `# Authorized Routes
 

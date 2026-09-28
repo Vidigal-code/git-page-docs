@@ -517,9 +517,8 @@ video id. The viewer renders the route inside the docs shell, and `?videofull=<l
 The video routes of this repository are GitHub channel videos. Routes `id=8` to `id=10` carry the
 demo `authorization` (`requireExternalAuth`) and stay hidden from the sidebar until the visitor signs
 in with a configured provider. Route `id=11` has no `authorization`, so the **Video** menu section and
-its player are always visible. The same test video is also embedded in the *Introduction to Git* page
-(`id=5`); markdown pages embed a video as a linked YouTube thumbnail, which renders both on GitHub and
-in the viewer.
+its video container are always visible. Videos are played only by the video container; markdown pages
+do not embed them.
 
 Test video (GitHub channel, *A brief introduction to Git for beginners*):
 
@@ -527,7 +526,6 @@ Test video (GitHub channel, *A brief introduction to Git for beginners*):
 
 - Watch on YouTube: https://www.youtube.com/watch?v=r8jQ9hVA2qs
 - Video route: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=11
-- Open markdown page: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=5#video
 - Fullscreen: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?videofull=en&slug=r8jQ9hVA2qs
 
 Route definition in `gitpagedocs/docs/versions/0.0.7/config.json`:
