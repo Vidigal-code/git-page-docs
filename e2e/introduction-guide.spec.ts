@@ -1,10 +1,29 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 
 /** Themes with light, dark and a white-primary palette: the backdrop and reveal must work in all. */
 const THEMES = ["aurora-dark", "emerald-light", "carbon-dark"] as const;
 const MAX_OVERFLOW_PX = 2;
 /** WCAG AA contrast for normal-size text (button labels are 0.95rem, below the "large text" size). */
 const MIN_TEXT_CONTRAST = 4.5;
+/** Hydration plus the hero entrance; generous because the dev server compiles on demand. */
+const ENTRANCE_SETTLE_TIMEOUT_MS = 15_000;
+
+/** WCAG contrast ratio between an element's text colour and its own background. */
+async function textContrast(locator: Locator): Promise<number> {
+  return locator.evaluate((el) => {
+    const channels = (rgb: string) => (rgb.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    const luminance = (rgb: string) => {
+      const [r, g, b] = channels(rgb).map((value) => {
+        const c = value / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const style = getComputedStyle(el);
+    const [light, dark] = [luminance(style.color), luminance(style.backgroundColor)].sort((a, b) => b - a);
+    return (light + 0.05) / (dark + 0.05);
+  });
+}
 
 async function horizontalOverflow(page: Page): Promise<number> {
   return page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
@@ -18,9 +37,20 @@ async function horizontalOverflow(page: Page): Promise<number> {
 async function openGuide(page: Page, theme: string): Promise<string[]> {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(String(error)));
+  // React reports server/client markup mismatches on the console, not as page errors.
+  page.on("console", (message) => {
+    if (message.type() === "error" && /hydrat/i.test(message.text())) errors.push(message.text());
+  });
   const response = await page.goto(`/introduction-guide?theme=${theme}`);
   test.skip(response?.status() === 404, "The introduction guide requires GITPAGEDOCS_REPOSITORY_SEARCH=true.");
   await expect(page.getByTestId("guide-parallax-backdrop")).toBeAttached();
+  // The static HTML ships the hero hidden until the client runs its entrance: once
+  // the last row is fully shown the page is hydrated and settled.
+  await expect
+    .poll(() => page.locator("[data-hero-row]").last().evaluate((row) => getComputedStyle(row).opacity), {
+      timeout: ENTRANCE_SETTLE_TIMEOUT_MS,
+    })
+    .toBe("1");
   return errors;
 }
 
@@ -67,7 +97,7 @@ test.describe("introduction guide motion", () => {
       .evaluateAll((layers) => layers.map((layer) => getComputedStyle(layer).transform));
     expect(new Set(layerTransforms)).toEqual(new Set(["none"]));
 
-    // The hero content neither drifts nor fades after scrolling past it.
+    // The hero rows never drift (only the whole block fades, which is not motion).
     const heroContent = page.getByRole("heading", { level: 1 }).locator("..");
     const heroStyle = await heroContent.evaluate((el) => {
       const style = getComputedStyle(el);
@@ -141,14 +171,24 @@ test.describe("introduction guide scroll story", () => {
     await expect(page).toHaveURL(/#guide-body$/);
   });
 
-  test("renders the chapters as a static list when the visitor prefers reduced motion", async ({ page }) => {
+  test("crossfades chapters without moving anything when the visitor prefers reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = await openGuide(page, THEMES[0]);
-    const styles = await page.locator("[data-story-chapter]").evaluateAll((chapters) =>
-      chapters.map((chapter) => `${getComputedStyle(chapter).position}|${getComputedStyle(chapter).opacity}`),
-    );
-    expect(new Set(styles)).toEqual(new Set(["relative|1"]));
-    await expect(page.getByTestId("guide-story-counter")).toBeHidden();
+    const chapters = page.locator("[data-story-chapter]");
+    const total = await chapters.count();
+
+    // Still one chapter on stage at a time, driven by the scroll...
+    await scrollStoryTo(page, 1.5 / total);
+    const second = await chapters.nth(1).getAttribute("data-story-chapter");
+    await expect.poll(() => visibleChapters(page)).toEqual([second]);
+    await expect(page.getByTestId("guide-story-counter")).toHaveText(/^02 \/ /);
+
+    // ...but no layer travels or zooms.
+    const transforms = await chapters
+      .nth(1)
+      .locator(":scope > *, li, p")
+      .evaluateAll((layers) => layers.map((layer) => getComputedStyle(layer).transform));
+    expect(new Set(transforms)).toEqual(new Set(["none"]));
     expect(errors, errors.join("\n")).toHaveLength(0);
   });
 });
@@ -177,8 +217,6 @@ test.describe("introduction guide hero", () => {
       await openGuide(page, theme);
       const actions = page.locator("[data-hero-action]");
       await expect(actions).toHaveCount(2);
-      // Wait for the entrance to settle before measuring.
-      await expect.poll(() => actions.last().evaluate((el) => getComputedStyle(el.closest("[data-hero-row]") as Element).opacity)).toBe("1");
 
       const boxes = await actions.evaluateAll((elements) =>
         elements.map((el) => {
@@ -192,20 +230,8 @@ test.describe("introduction guide hero", () => {
 
       // The primary action takes its text colour from the theme's contrast token, so it stays legible
       // on any primary (including white ones).
-      const contrast = await actions.first().evaluate((el) => {
-        const channels = (rgb: string) => (rgb.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
-        const luminance = (rgb: string) => {
-          const [r, g, b] = channels(rgb).map((value) => {
-            const c = value / 255;
-            return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-          });
-          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        };
-        const style = getComputedStyle(el);
-        const [light, dark] = [luminance(style.color), luminance(style.backgroundColor)].sort((a, b) => b - a);
-        return (light + 0.05) / (dark + 0.05);
-      });
-      expect(contrast).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+      // Poll: the button's background eases between themes, so a single read can land mid-transition.
+      await expect.poll(() => textContrast(actions.first())).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
     });
   }
 

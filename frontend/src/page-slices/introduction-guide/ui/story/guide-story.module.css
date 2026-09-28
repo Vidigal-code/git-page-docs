@@ -386,43 +386,27 @@
   }
 }
 
-/* ---- Reduced motion: the same markup as a calm, static reading list ---- */
+/* ---- Reduced motion: the tour still crossfades chapter to chapter (a fade is
+   not motion), but nothing travels, zooms or bounces. ---- */
 @media (prefers-reduced-motion: reduce) {
-  .story {
-    height: auto;
-  }
-
-  .stage {
-    position: static;
-    height: auto;
-    overflow: visible;
-    padding-top: 0;
-  }
-
-  .progress,
-  .counter,
-  .rail,
-  .hint {
-    display: none;
-  }
-
-  .scenes {
-    height: auto;
-    display: grid;
-    gap: 56px;
-  }
-
-  .chapter {
-    position: relative;
-    inset: auto;
-    padding-left: 0;
-    opacity: 1 !important;
-  }
-
   .numeral,
   .headline,
   .body,
   .highlight {
     transform: none !important;
+  }
+
+  .hint {
+    animation-name: storyHintFade;
+  }
+}
+
+@keyframes storyHintFade {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
   }
 }

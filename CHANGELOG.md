@@ -12,8 +12,8 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
   paragraph and up to four highlights (list items, table keys or commands) moving at different depths.
 - A progress bar, a `01 / 10` counter and a chapter rail show where you are; the rail jumps to any
   chapter and a skip link goes straight to the full guide below.
-- Every chapter stays in the document for readers and search. With reduced motion the tour renders as a
-  static list. New `storyLabel`, `storySkip`, `storyScrollHint` and `storyChaptersLabel` strings in
+- Every chapter stays in the document for readers and search. With reduced motion the tour still
+  crossfades but nothing moves. New `storyLabel`, `storySkip`, `storyScrollHint` and `storyChaptersLabel` strings in
   en/pt/es.
 
 ### Introduction guide hero motion
@@ -36,6 +36,11 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
 - The hero's two calls to action did not match: the primary button did not inherit the page font and
   used the page background as its text colour. Both now share one style (font, 46px height, padding,
   focus ring) with spring hover and press feedback.
+- With the system "reduce motion" setting on, the hero logged a hydration error: its buttons dropped
+  the hover and tap gestures for those visitors, and the tap gesture adds `tabindex`, so the browser
+  markup differed from the static HTML. The hero, reveal and tour now render the same markup for
+  everyone. Reduced motion keeps the fades and crossfades (the hero focuses in, the tour stays pinned
+  and crossfades chapters) and drops only movement: parallax travel, lifts and zooms.
 - The tour's "skip the tour" link showed on top of the hero buttons; it is now hidden until it gets
   keyboard focus.
 - `--primary-foreground` now picks whichever of white or near-black has the higher WCAG contrast on

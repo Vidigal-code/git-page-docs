@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, type ReactNode } from "react";
-import { m, useReducedMotion, useScroll, useTransform, type MotionValue, type Variants } from "motion/react";
+import { interpolate, m, useReducedMotion, useScroll, useTransform, type MotionValue, type Variants } from "motion/react";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { splitWords } from "../model/hero-motion";
 import { HERO_ACTION_FEEDBACK, HERO_ENTRANCE, HERO_PARALLAX, type HeroRow as HeroRowName } from "../model/motion-config";
@@ -23,37 +23,48 @@ interface HeroVariants {
   readonly glyph: Variants;
 }
 
-const INSTANT = { duration: 0 } as const;
+/** Hero opacity for a scroll progress (0..1): fully shown at the top, `fadeTo` once it has left. */
+const fadeOut = interpolate([0, 1], [1, HERO_PARALLAX.fadeTo], { clamp: true });
+
+const EASED = { duration: HERO_ENTRANCE.durationS, ease: HERO_ENTRANCE.ease } as const;
+const BLURRED = `blur(${HERO_ENTRANCE.blurPx}px)`;
+const SHARP = "blur(0px)";
 
 /**
- * Entrance choreography. Reduced motion keeps the same variants (the server
- * cannot know the preference, so the markup never changes) and only makes every
- * transition instant.
+ * Entrance choreography, identical for every visitor so the server and the
+ * browser always render the same markup. Under reduced motion the provider's
+ * `MotionConfig reducedMotion="user"` skips the movement (scale, rise) while the
+ * fade and focus-in still play, since neither moves anything on screen.
  */
-function buildHeroVariants(reduceMotion: boolean): HeroVariants {
-  const eased = reduceMotion ? INSTANT : { duration: HERO_ENTRANCE.durationS, ease: HERO_ENTRANCE.ease };
-  const blurred = `blur(${HERO_ENTRANCE.blurPx}px)`;
-  return {
-    stage: {
-      hidden: {},
-      shown: {
-        transition: reduceMotion ? INSTANT : { delayChildren: HERO_ENTRANCE.delayS, staggerChildren: HERO_ENTRANCE.rowStaggerS },
-      },
-    },
-    row: {
-      hidden: { opacity: 0, scale: HERO_ENTRANCE.scaleFrom, filter: blurred },
-      shown: { opacity: 1, scale: 1, filter: "blur(0px)", transition: eased },
-    },
-    title: {
-      hidden: {},
-      shown: { transition: reduceMotion ? INSTANT : { staggerChildren: HERO_ENTRANCE.glyphStaggerS } },
-    },
-    glyph: {
-      hidden: { opacity: 0, y: `${HERO_ENTRANCE.glyphRiseEm}em`, filter: blurred },
-      shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: eased },
-    },
-  };
-}
+const HERO_VARIANTS: HeroVariants = {
+  stage: {
+    hidden: {},
+    shown: { transition: { delayChildren: HERO_ENTRANCE.delayS, staggerChildren: HERO_ENTRANCE.rowStaggerS } },
+  },
+  row: {
+    hidden: { opacity: 0, scale: HERO_ENTRANCE.scaleFrom, filter: BLURRED },
+    shown: { opacity: 1, scale: 1, filter: SHARP, transition: EASED },
+  },
+  title: {
+    hidden: {},
+    shown: { transition: { staggerChildren: HERO_ENTRANCE.glyphStaggerS } },
+  },
+  glyph: {
+    hidden: { opacity: 0, y: `${HERO_ENTRANCE.glyphRiseEm}em`, filter: BLURRED },
+    shown: { opacity: 1, y: 0, filter: SHARP, transition: EASED },
+  },
+};
+
+/**
+ * Hover lift and press scale for the calls to action. Always passed (a tap
+ * gesture adds `tabindex`, so dropping it for some visitors would make the
+ * browser markup differ from the server's); reduced motion skips the movement.
+ */
+const ACTION_FEEDBACK = {
+  whileHover: { y: HERO_ACTION_FEEDBACK.hoverLiftPx },
+  whileTap: { scale: HERO_ACTION_FEEDBACK.pressScale },
+  transition: HERO_ACTION_FEEDBACK.spring,
+} as const;
 
 interface HeroRowProps {
   readonly row: HeroRowName;
@@ -63,7 +74,11 @@ interface HeroRowProps {
   readonly children: ReactNode;
 }
 
-/** One hero row: it focuses in on first paint and drifts at its own depth while the hero scrolls away. */
+/**
+ * One hero row: it focuses in on first paint and drifts at its own depth while
+ * the hero scrolls away. Reduced motion only zeroes the drift; the element and
+ * its attributes stay the same.
+ */
 function HeroRow({ row, progress, variants, reduceMotion, children }: Readonly<HeroRowProps>) {
   const travelPx = reduceMotion ? 0 : HERO_PARALLAX.depthPx[row];
   const y = useTransform(progress, [0, 1], [0, travelPx]);
@@ -100,22 +115,18 @@ function HeroTitle({ text, glyphVariants }: Readonly<{ text: string; glyphVarian
  * Landing hero: eyebrow, title, subtitle, an install command and two calls to
  * action. On first paint the rows focus in one after another and the title's
  * letters rise into place; while the hero scrolls away each row drifts at its
- * own depth and the whole block fades. Reduced motion keeps everything still.
+ * own depth and the whole block fades. Reduced motion keeps the fades but drops
+ * every movement.
  */
 export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabel, onPrimary }: Readonly<GuideHeroProps>) {
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: [...HERO_PARALLAX.offset] });
   const reduceMotion = useReducedMotion() ?? false;
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, reduceMotion ? 1 : HERO_PARALLAX.fadeTo]);
-  const variants = useMemo(() => buildHeroVariants(reduceMotion), [reduceMotion]);
-  const actionFeedback = reduceMotion
-    ? {}
-    : {
-        whileHover: { y: HERO_ACTION_FEEDBACK.hoverLiftPx },
-        whileTap: { scale: HERO_ACTION_FEEDBACK.pressScale },
-        transition: HERO_ACTION_FEEDBACK.spring,
-      };
-  const rowProps = { progress: scrollYProgress, variants: variants.row, reduceMotion };
+  // A fade is not motion, so the hero fades out on scroll for every visitor. The
+  // function form keeps this scroll-linked opacity on the main thread instead of
+  // the browser's native scroll timeline (see the story chapters for why).
+  const opacity = useTransform(() => fadeOut(scrollYProgress.get()));
+  const rowProps = { progress: scrollYProgress, variants: HERO_VARIANTS.row, reduceMotion };
 
   return (
     <header ref={heroRef} className={styles.hero}>
@@ -125,12 +136,12 @@ export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabe
         </span>
         {backToSearchLabel}
       </a>
-      <m.div style={{ opacity }} variants={variants.stage} initial="hidden" animate="shown">
+      <m.div style={{ opacity }} variants={HERO_VARIANTS.stage} initial="hidden" animate="shown">
         <HeroRow row="eyebrow" {...rowProps}>
           <p className={styles.heroEyebrow}>{hero.eyebrow}</p>
         </HeroRow>
-        <HeroRow row="title" {...rowProps} variants={variants.title}>
-          <HeroTitle text={hero.title} glyphVariants={variants.glyph} />
+        <HeroRow row="title" {...rowProps} variants={HERO_VARIANTS.title}>
+          <HeroTitle text={hero.title} glyphVariants={HERO_VARIANTS.glyph} />
         </HeroRow>
         <HeroRow row="subtitle" {...rowProps}>
           <p className={styles.heroSubtitle}>{hero.subtitle}</p>
@@ -148,7 +159,7 @@ export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabe
               className={`${styles.heroAction} ${styles.primaryButton}`}
               data-hero-action="primary"
               onClick={onPrimary}
-              {...actionFeedback}
+              {...ACTION_FEEDBACK}
             >
               {hero.ctaPrimary}
             </m.button>
@@ -158,7 +169,7 @@ export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabe
               href={projectUrl}
               target="_blank"
               rel="noreferrer"
-              {...actionFeedback}
+              {...ACTION_FEEDBACK}
             >
               <span className={styles.buttonIcon} aria-hidden>
                 <ReactIconByTag tag="FaGithubAlt" />
