@@ -18,13 +18,16 @@ It does **not** generate `index.html` or `index.js`.
 - [Configuration Keys](#configuration-keys-layout-source)
 - [Version selector visibility](#version-selector-visibility)
 - [Repository Search Behavior](#repository-search-behavior)
+- [Compact config format](#compact-config-format)
 - [Scripts](#scripts)
 - [URL Routes and Query Parameters](#url-routes-and-query-parameters)
+- [Video routes](#video-routes)
 - [Authorized Routes](#authorized-routes)
 - [CLI Options](#cli-options)
 - [AI CLI (interactive docs generator)](#ai-cli-interactive-docs-generator)
 - [Documentation password gate](#documentation-password-gate)
 - [AI chat drawer (auto-lock)](#ai-chat-drawer-auto-lock)
+- [Markdown page actions](#markdown-page-actions)
 - [Configuration File Format](#configuration-file-format)
 - [Languages and UI Strings](#languages-and-ui-strings)
 - [Versioning and changelog](#versioning-and-changelog)
@@ -48,7 +51,7 @@ git-page-docs/
 
 | Area | Package | Responsibility |
 | --- | --- | --- |
-| **frontend/** | root pkg | Next.js App Router docs viewer: multi-version / multi-language docs, 36-theme layouts, the in-docs AI chat drawer, and the `/ai` console. Built via `next build frontend` and static-exported to `out/` for GitHub Pages. |
+| **frontend/** | root pkg | Next.js App Router docs viewer: multi-version / multi-language docs, 64 layout themes (dark and light variants), the in-docs AI chat drawer, and the `/ai` console. Built via `next build frontend` and static-exported to `out/` for GitHub Pages. |
 | **cli/** | `gitpagedocs` (`bin`) | Hexagonal CLI (`@clack/prompts`) that scaffolds `gitpagedocs/`, generates docs with AI, configures GitHub Pages, and launches the MCP server. |
 | **mcp/** | `@gitpagedocs/mcp` | MCP server (SDK 1.29): 20 tools + 7 resources for repository analysis and AI doc generation, all delegating to `tools/`. |
 | **tools/** | `@gitpagedocs/tools` | Shared core: 14-provider AI system (registry/factory, no switch chains), encrypted credential vault (AES-256-GCM) + password gate, logger with secret redaction, caches, config loader, filesystem + documentation services. Browser-safe subpath exports (`./ai`, `./crypto/web`, `./security/web`, …). |
@@ -64,10 +67,10 @@ API keys are never stored in plaintext, neither on the site nor by the CLI:
 ### Tooling
 
 - **pnpm workspaces** + **turborepo** for builds/tests across packages
-- Shared **`tsconfig.base.json`**; `npm run typecheck` covers cli / frontend / tools / mcp
+- Shared **`tsconfig.base.json`**; `pnpm run typecheck` covers cli / frontend / tools / mcp
 - **Vitest** unit + integration (coverage on `tools/src`) and **Playwright** E2E (`e2e/`)
-- A **smoke + byte-baseline** harness (`npm run smoke:all`) guards every legacy CLI contract
-- **GitHub Actions**: CI (`ci.yml`) + GitHub Pages deploy (`gitpagedocs-pages.yml`)
+- A **smoke + byte-baseline** harness (`pnpm run smoke:all`) guards every legacy CLI contract
+- **GitHub Actions**: CI (`ci.yml`), GitHub Pages deploy (`gitpagedocs-pages.yml`), npm publish on version bump (`npm-publish.yml`) and deprecation of the retired 1.1.x line (`npm-deprecate.yml`)
 
 > The sections below document the published `gitpagedocs` CLI and its runtime contract. For frontend-specific development (the Next.js viewer), see [`frontend/README.md`](frontend/README.md).
 
@@ -86,8 +89,9 @@ When an icon-only button already exposes its accessible name through `aria-label
 
 ## Prerequisites
 
-- **Node.js** 18+ (recommended 20+)
-- **npm** 9+
+- **Node.js** 20+ (`engines.node` is `>=20` in every package)
+- **npm** / **npx** to install or run the published CLI
+- **pnpm** 10 (`packageManager: pnpm@10.33.2`) to develop this monorepo
 
 ## Quick Start
 
@@ -230,9 +234,9 @@ https://octocat.github.io/my-docs/
 ### 3) Build and validate locally
 
 ```bash
-npm run lint
-npm run build
-npm start
+pnpm run lint
+pnpm run build
+pnpm start
 ```
 
 ### 4) Publish with GitHub Pages
@@ -456,7 +460,7 @@ https://vidigal-code.github.io/git-page-docs
   https://vidigal-code.github.io/git-page-docs/source-viewer/Vidigal-code/git-page-docs/tree/main/frontend/src
 - The standalone viewer shows a back button beside the GitHub link (langmenu key `sourceViewerBackLabel`) that returns to the site root keeping the current look, e.g. `/?theme=skyline-dark&modetheme=dark`.
 
-**Video pages**
+**Video pages** (sign-in required; see [Video routes](#video-routes) for the embedded test video)
 
 - Interactive vs non-interactive modes (`id=8`):
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=8
@@ -502,6 +506,53 @@ https://vidigal-code.github.io/git-page-docs
   https://vidigal-code.github.io/git-page-docs/ai
 - Introduction guide:
   https://vidigal-code.github.io/git-page-docs/introduction-guide
+
+## Video routes
+
+Video pages come from `routes-video` in the version config. Each route sets `video.videoType`
+(`youtube`, `vimeo`, `mp4`, …) and `video.pathVideo` per language; for YouTube, `pathVideo` is the
+video id. The viewer renders the route inside the docs shell, and `?videofull=<lang>&id=<route id>`
+(or `&slug=<video id>`) opens it fullscreen.
+
+The four video routes of this repository (`id=8` to `id=11`) are GitHub channel videos and carry the
+demo `authorization` (`requireExternalAuth`), so they unlock only after signing in with a configured
+provider. The same test video is also embedded in the open *Introduction to Git* page (`id=5`), which
+any visitor can watch. Markdown pages embed a video as a linked YouTube thumbnail, which renders both
+on GitHub and in the viewer.
+
+Test video (GitHub channel, *A brief introduction to Git for beginners*):
+
+[![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
+
+- Watch on YouTube: https://www.youtube.com/watch?v=r8jQ9hVA2qs
+- Video route (sign-in required): https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=11
+- Open markdown page: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=5#video
+- Fullscreen: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?videofull=en&slug=r8jQ9hVA2qs
+
+Route definition in `gitpagedocs/docs/versions/0.0.7/config.json`:
+
+```json
+{
+  "routes-video": [
+    {
+      "id": 11,
+      "title": { "en": "A brief introduction to Git for beginners | GitHub" },
+      "fullscreenEnabled": true,
+      "video": {
+        "videoType": { "en": "youtube", "pt": "youtube", "es": "youtube" },
+        "pathVideo": { "en": "r8jQ9hVA2qs", "pt": "r8jQ9hVA2qs", "es": "r8jQ9hVA2qs" }
+      },
+      "authorization": {
+        "requireExternalAuth": true,
+        "allowedProviders": ["authjs", "clerk", "firebase", "jwt"]
+      }
+    }
+  ],
+  "menus-header-video": [
+    { "id": 11, "en": { "title": "A brief introduction to Git for beginner...", "path-click": "page:11" } }
+  ]
+}
+```
 
 ## Authorized Routes
 
@@ -563,10 +614,13 @@ Example:
 | `--layoutconfig` | Generate local layout templates in `gitpagelayouts/` |
 | `--layouts-dir <dir>` | Folder that holds local layouts (default: `gitpagelayouts`) |
 | `--push` | Create workflow, commit artifacts, push to origin |
+| `--pages-actions` | Only switch the repository's GitHub Pages source to GitHub Actions (same as `pages actions`; no docs generation or push) |
 | `--home` | Standalone distribution in `gitpagedocshome/` (static site + .env + Dockerfile + README) |
 | `--interactive` / `-i` | Run in interactive mode (already the default in a terminal) |
 | `--no-interactive` / `--yes` / `-y` | Never prompt; use flags and defaults (implied in CI and when stdin is piped) |
 | `ai` or `--ai` | Interactive AI documentation mode (paths, provider, API key/base URL, multilingual output) |
+| `pages actions` | Detect owner/repo/branch from the git remote and, after confirmation, switch Pages to GitHub Actions |
+| `pages deploy` | Resolve owner/repo (flags or git remote), confirm, then run the full `--push` flow and print the site URL |
 | `--build` | Compatibility flag (no change to output) |
 | `--serve` | Compatibility flag |
 | `--full` | Compatibility flag |
@@ -776,6 +830,8 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 - `gitpagedocs config clear` — delete the stored .gitpagedocsconfig and the encrypted key vault
 - `gitpagedocs docs` — refresh the managed regions of README, CONTRIBUTING and SECURITY
 - `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
+- `gitpagedocs pages actions` — switch the repository's GitHub Pages source to GitHub Actions (no docs generation or push)
+- `gitpagedocs pages deploy` — detect owner/repo, confirm, then generate, commit, push and print the site URL
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio
 - `gitpagedocs version` — print the CLI version

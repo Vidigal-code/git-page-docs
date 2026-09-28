@@ -22,6 +22,6 @@ Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's `gitp
 - 14-provider AI system (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI, and more) with streaming
 - AI API keys stored **encrypted at rest** (AES-256-GCM) behind a local password gate — never plaintext
 - In-docs **AI chat drawer** plus a dedicated **`/ai` console**
-- 36-theme layout system; local and GitHub Pages execution modes
+- 64-theme layout system (dark and light variants); local and GitHub Pages execution modes
 
 > Version: 0.0.7

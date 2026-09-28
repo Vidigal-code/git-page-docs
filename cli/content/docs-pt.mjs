@@ -95,7 +95,7 @@ Git Page Docs e um monorepo pnpm + turborepo que transforma a pasta \`gitpagedoc
 - Sistema de IA com 14 provedores (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI e mais) com streaming
 - Chaves de IA **criptografadas em repouso** (AES-256-GCM) atras de uma senha local — nunca em texto puro
 - **Drawer de chat de IA** nos docs + um **console \`/ai\`** dedicado
-- Sistema de 36 temas; execucao local e no GitHub Pages
+- Sistema de 64 temas (variantes escuras e claras); execucao local e no GitHub Pages
 `,
     functionalities: `# Funcionalidades
 
@@ -110,7 +110,19 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 | \`npx @gitpagedocs/cli --home\` | Distribuicao standalone (\`gitpagedocshome/\`) |
 | \`npx @gitpagedocs/cli --push --owner X --repo Y\` | Configura workflow, commit, push |
 | \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interativo com prompts (padrao em um terminal) |
-| \`npx @gitpagedocs/cli --no-interactive\` / \`-y\` | Nunca pergunta; usa flags e padroes |
+| \`npx @gitpagedocs/cli --no-interactive\` / \`--yes\` / \`-y\` | Nunca pergunta; usa flags e padroes |
+| \`gitpagedocs ai\` | Gerador interativo de documentacao com IA |
+| \`gitpagedocs chat [pergunta]\` | Chat de IA com streaming no terminal (REPL em TTY; resposta unica com pergunta ou stdin) |
+| \`gitpagedocs provider [id]\` / \`models [provider]\` | Lista provedores de IA / modelos do catalogo |
+| \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Gera documentacao com IA |
+| \`gitpagedocs deploy\` / \`pages [actions\\|deploy]\` | Configura GitHub Pages via Actions + push |
+| \`gitpagedocs docs\` | Atualiza as regioes gerenciadas de README/CONTRIBUTING/SECURITY |
+| \`gitpagedocs password\` | Define a senha de acesso a documentacao (chave publica em \`site.docsAccess\`) |
+| \`gitpagedocs config\` / \`config clear\` | Mostra a config resolvida / apaga a config salva e o cofre de chaves |
+| \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnostico / versao / verificacao de atualizacao no registro |
+| \`gitpagedocs mcp start\` | Inicia o servidor MCP via stdio |
+
+Instale globalmente com \`npm install -g @gitpagedocs/cli\` ou rode sem instalar com \`npx @gitpagedocs/cli\`.
 
 ## Opcoes da CLI
 
@@ -124,6 +136,7 @@ Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runti
 | \`--layoutconfig\` | Gera layouts locais em \`gitpagelayouts/\` |
 | \`--layouts-dir <dir>\` | Pasta dos layouts locais (padrao: \`gitpagelayouts\`) |
 | \`--push\` | Cria workflow, commit de artefatos, push |
+| \`--pages-actions\` | Apenas muda a fonte do GitHub Pages para GitHub Actions (igual a \`pages actions\`) |
 | \`--home\` | Gera \`gitpagedocshome/\` (estatico + .env + Dockerfile) |
 
 ## Saida gerada
@@ -366,6 +379,12 @@ Conceitos basicos de Git para iniciantes.
 - \`git add\` - preparar alteracoes
 - \`git commit\` - registrar commit
 - \`git push\` - enviar para remoto
+
+## Video
+
+*A brief introduction to Git for beginners*, do canal do GitHub no YouTube:
+
+[![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
 `,
     authorizedRoutes: `# Rotas autorizadas
 

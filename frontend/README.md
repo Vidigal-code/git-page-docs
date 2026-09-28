@@ -1,6 +1,6 @@
 # Git Page Docs — Frontend
 
-The Next.js 15 (App Router) documentation viewer for `git-page-docs`. It renders multi-version, multi-language docs with a 36-theme layout system, an in-docs **AI chat drawer**, and a standalone **`/ai` console** — and static-exports to plain HTML for GitHub Pages.
+The Next.js 15 (App Router) documentation viewer for `git-page-docs`. It renders multi-version, multi-language docs with a 64-theme layout system (dark and light variants), an in-docs **AI chat drawer**, and a standalone **`/ai` console** — and static-exports to plain HTML for GitHub Pages.
 
 > This README covers the **frontend package only**. For the whole monorepo (CLI, MCP server, shared `tools/` core, deploy) see the [root README](../README.md).
 
@@ -10,7 +10,8 @@ The app lives in `frontend/` but is **built from the repository root** so the do
 
 ```bash
 # from the repo root
-pnpm dev                 # → next dev frontend   (http://localhost:3000)
+pnpm dev                 # → next dev frontend with the repository-search home (http://localhost:3000)
+pnpm dev:e2e             # → next dev frontend opening the local docs directly (what Playwright runs)
 pnpm build               # generate gitpagedocs/ + next build frontend
 next build frontend      # produces frontend/out/  (the Pages workflow then moves it to out/)
 ```
@@ -27,14 +28,18 @@ frontend/
 |-- public/                   # static assets, robots.txt, sitemap.xml (export-safe)
 |-- .env / .env.example       # GITPAGEDOCS_REPOSITORY_SEARCH, GITPAGEDOCS_PATH
 `-- src/
-    |-- app/                  # App Router: [[...repo]] catch-all, /ai, layout, not-found
-    |-- widgets/              # docs-shell, ai-chat-drawer (+ inactivity-lock-dialog)
-    |-- features/             # ask-ai (chat, retry-policy, inactivity-lock), ai-console, route-authorization
-    |-- entities/            # docs (config/content/io/layouts), ai-config
-    `-- shared/               # ui, lib (ai-storage, ai-secure-storage, base-path), config, icons
+    |-- app/                  # App Router: [[...repo]] catch-all, /ai, /introduction-guide, /source-viewer, layout, not-found
+    |-- page-slices/          # page compositions: docs-route, introduction-guide, source-viewer
+    |-- widgets/              # docs-shell, ai-chat-drawer (+ inactivity-lock-dialog), repository-source-browser,
+    |                         #   search-shell-header, search-shell-layout, not-found-shell
+    |-- features/             # ask-ai, ai-console, audio-player, docs-access, route-authorization, route-guide,
+    |                         #   language/theme/version selectors, quick-navigation, repository-search-form,
+    |                         #   source-viewer-link, source-viewer-search, source-code-highlight, …
+    |-- entities/             # docs (config/content/embed/layouts/theme), source-viewer
+    `-- shared/               # ui (dropdown-selector, selection-dialog, confirm-popup, …), lib, config, api
 ```
 
-FSD import direction is enforced by the root `eslint.config.mjs` (`app → widgets → features → entities → shared`).
+FSD import direction is enforced by the root `eslint.config.mjs` (`app → page-slices → widgets → features → entities → shared`).
 
 ## AI surfaces
 
@@ -79,15 +84,18 @@ On GitHub Pages (`GITHUB_ACTIONS=true`) the runtime enables Pages behavior and b
 
 ## Testing
 
-End-to-end specs live in the repo-root `e2e/` and run against `pnpm dev` (Playwright `webServer`):
+End-to-end specs live in the repo-root `e2e/` and run against `pnpm dev:e2e` (Playwright `webServer`):
 
 ```bash
 # from the repo root
-npx playwright test                 # desktop + mobile projects
-PORT=3100 npx playwright test       # use an alternate port if 3000 is taken
+pnpm run test:e2e                   # desktop + mobile projects
+PORT=3100 pnpm run test:e2e         # use an alternate port if 3000 is taken
 ```
 
-`e2e/ai-console.spec.ts` and `e2e/ai-chat-drawer.spec.ts` verify the password gate, encrypted persistence (no plaintext key in `localStorage`), and reload behavior. `e2e/docs.spec.ts` checks the docs home renders with no horizontal overflow.
+- `e2e/ai-console.spec.ts` and `e2e/ai-chat-drawer.spec.ts` verify the password gate, encrypted persistence (no plaintext key in `localStorage`), and reload behavior.
+- `e2e/docs.spec.ts` checks the docs home renders with no horizontal overflow.
+- `e2e/audio-playback.spec.ts` covers the audio route's centered fullscreen view and the mutual exclusion between the route player and the header radio.
+- `e2e/introduction-guide.spec.ts` checks the guide's backdrop, reveal and layout across light, dark and white-primary themes.
 
 ## Static export notes
 

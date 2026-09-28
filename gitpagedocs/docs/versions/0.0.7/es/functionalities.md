@@ -11,7 +11,19 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 | `npx @gitpagedocs/cli --home` | Distribucion standalone (`gitpagedocshome/`) |
 | `npx @gitpagedocs/cli --push --owner X --repo Y` | Configura workflow, commit, push |
 | `npx @gitpagedocs/cli --interactive` / `-i` | Modo interactivo con prompts (por defecto en una terminal) |
-| `npx @gitpagedocs/cli --no-interactive` / `-y` | Nunca pregunta; usa flags y valores por defecto |
+| `npx @gitpagedocs/cli --no-interactive` / `--yes` / `-y` | Nunca pregunta; usa flags y valores por defecto |
+| `gitpagedocs ai` | Generador interactivo de documentacion con IA |
+| `gitpagedocs chat [pregunta]` | Chat de IA con streaming en la terminal (REPL en TTY; respuesta unica con pregunta o stdin) |
+| `gitpagedocs provider [id]` / `models [provider]` | Lista proveedores de IA / modelos del catalogo |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Genera documentacion con IA |
+| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configura GitHub Pages via Actions + push |
+| `gitpagedocs docs` | Actualiza las regiones gestionadas de README/CONTRIBUTING/SECURITY |
+| `gitpagedocs password` | Define la contrasena de acceso a la documentacion (clave publica en `site.docsAccess`) |
+| `gitpagedocs config` / `config clear` | Muestra la config resuelta / borra la config guardada y la boveda de claves |
+| `gitpagedocs doctor` / `version` / `update` | Diagnostico / version / comprobacion de actualizacion en el registro |
+| `gitpagedocs mcp start` | Inicia el servidor MCP por stdio |
+
+Instala globalmente con `npm install -g @gitpagedocs/cli` o ejecuta sin instalar con `npx @gitpagedocs/cli`.
 
 ## Opciones CLI
 
@@ -25,6 +37,7 @@ Referencia completa de opciones CLI, claves de configuracion y funciones del run
 | `--layoutconfig` | Genera layouts locales en `gitpagelayouts/` |
 | `--layouts-dir <dir>` | Carpeta de layouts locales (por defecto: `gitpagelayouts`) |
 | `--push` | Crea workflow, commit de artefactos, push |
+| `--pages-actions` | Solo cambia la fuente de GitHub Pages a GitHub Actions (igual que `pages actions`) |
 | `--home` | Genera `gitpagedocshome/` (estatico + .env + Dockerfile) |
 
 ## Salida generada

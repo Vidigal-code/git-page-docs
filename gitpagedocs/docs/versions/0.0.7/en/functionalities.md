@@ -13,10 +13,13 @@ Complete reference of CLI options, configuration keys, and runtime features.
 | `gitpagedocs --interactive` / `-i` | Interactive mode with prompts (the default in a terminal) |
 | `gitpagedocs --no-interactive` / `--yes` / `-y` | Never prompt; use flags and defaults |
 | `gitpagedocs ai` | Interactive AI documentation generator |
+| `gitpagedocs chat [question]` | Streaming AI chat in the terminal (REPL on a TTY; one-shot with a question or piped stdin) |
 | `gitpagedocs provider [id]` / `models [provider]` | List AI providers / catalog models |
 | `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI |
 | `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
 | `gitpagedocs docs` | Refresh README/CONTRIBUTING/SECURITY managed regions |
+| `gitpagedocs password` | Set a documentation access password (public key in `site.docsAccess`) |
+| `gitpagedocs config` / `config clear` | Show the resolved config / delete the stored config and key vault |
 | `gitpagedocs doctor` / `version` / `update` | Diagnostics / version / registry update check |
 | `gitpagedocs mcp start` | Start the MCP server over stdio |
 
@@ -34,6 +37,7 @@ Install globally with `npm install -g @gitpagedocs/cli`, or run one-off with `np
 | `--layoutconfig` | Generate local layouts in `gitpagelayouts/` |
 | `--layouts-dir <dir>` | Folder for local layouts (default: `gitpagelayouts`) |
 | `--push` | Create workflow, commit artifacts, push |
+| `--pages-actions` | Only switch GitHub Pages to GitHub Actions (same as `pages actions`) |
 | `--home` | Generate `gitpagedocshome/` (static + .env + Dockerfile) |
 
 ## Generated output

@@ -25,6 +25,8 @@ This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the publi
 - `gitpagedocs config clear` — delete the stored .gitpagedocsconfig and the encrypted key vault
 - `gitpagedocs docs` — refresh the managed regions of README, CONTRIBUTING and SECURITY
 - `gitpagedocs deploy | pages` — configure GitHub Pages via Actions and push
+- `gitpagedocs pages actions` — switch the repository's GitHub Pages source to GitHub Actions (no docs generation or push)
+- `gitpagedocs pages deploy` — detect owner/repo, confirm, then generate, commit, push and print the site URL
 - `gitpagedocs doctor` — diagnose the environment
 - `gitpagedocs mcp start` — start the MCP server over stdio
 - `gitpagedocs version` — print the CLI version

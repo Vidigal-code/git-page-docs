@@ -102,7 +102,7 @@ Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's \`git
 - 14-provider AI system (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI, and more) with streaming
 - AI API keys stored **encrypted at rest** (AES-256-GCM) behind a local password gate — never plaintext
 - In-docs **AI chat drawer** plus a dedicated **\`/ai\` console**
-- 36-theme layout system; local and GitHub Pages execution modes
+- 64-theme layout system (dark and light variants); local and GitHub Pages execution modes
 `,
     functionalities: `# Functionalities
 
@@ -119,10 +119,13 @@ Complete reference of CLI options, configuration keys, and runtime features.
 | \`gitpagedocs --interactive\` / \`-i\` | Interactive mode with prompts (the default in a terminal) |
 | \`gitpagedocs --no-interactive\` / \`--yes\` / \`-y\` | Never prompt; use flags and defaults |
 | \`gitpagedocs ai\` | Interactive AI documentation generator |
+| \`gitpagedocs chat [question]\` | Streaming AI chat in the terminal (REPL on a TTY; one-shot with a question or piped stdin) |
 | \`gitpagedocs provider [id]\` / \`models [provider]\` | List AI providers / catalog models |
 | \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Generate documentation with AI |
 | \`gitpagedocs deploy\` / \`pages [actions\\|deploy]\` | Configure GitHub Pages via Actions + push |
 | \`gitpagedocs docs\` | Refresh README/CONTRIBUTING/SECURITY managed regions |
+| \`gitpagedocs password\` | Set a documentation access password (public key in \`site.docsAccess\`) |
+| \`gitpagedocs config\` / \`config clear\` | Show the resolved config / delete the stored config and key vault |
 | \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnostics / version / registry update check |
 | \`gitpagedocs mcp start\` | Start the MCP server over stdio |
 
@@ -140,6 +143,7 @@ Install globally with \`npm install -g @gitpagedocs/cli\`, or run one-off with \
 | \`--layoutconfig\` | Generate local layouts in \`gitpagelayouts/\` |
 | \`--layouts-dir <dir>\` | Folder for local layouts (default: \`gitpagelayouts\`) |
 | \`--push\` | Create workflow, commit artifacts, push |
+| \`--pages-actions\` | Only switch GitHub Pages to GitHub Actions (same as \`pages actions\`) |
 | \`--home\` | Generate \`gitpagedocshome/\` (static + .env + Dockerfile) |
 
 ## Generated output
@@ -230,6 +234,12 @@ Basic Git concepts for beginners.
 - \`git add\` - Stage changes
 - \`git commit\` - Create a snapshot
 - \`git push\` - Send to remote
+
+## Video
+
+*A brief introduction to Git for beginners*, from the GitHub YouTube channel:
+
+[![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
 `,
     authorizedRoutes: `# Authorized Routes
 

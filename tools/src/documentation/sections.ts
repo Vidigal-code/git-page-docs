@@ -82,6 +82,8 @@ export const CLI_COMMANDS: readonly CommandDoc[] = [
   { name: "config clear", summary: "delete the stored .gitpagedocsconfig and the encrypted key vault" },
   { name: "docs", summary: "refresh the managed regions of README, CONTRIBUTING and SECURITY" },
   { name: "deploy | pages", summary: "configure GitHub Pages via Actions and push" },
+  { name: "pages actions", summary: "switch the repository's GitHub Pages source to GitHub Actions (no docs generation or push)" },
+  { name: "pages deploy", summary: "detect owner/repo, confirm, then generate, commit, push and print the site URL" },
   { name: "doctor", summary: "diagnose the environment" },
   { name: "mcp start", summary: "start the MCP server over stdio" },
   { name: "version", summary: "print the CLI version" },

@@ -22,6 +22,6 @@ Git Page Docs es un monorepo pnpm + turborepo que convierte la carpeta `gitpaged
 - Sistema de IA con 14 proveedores (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI y mas) con streaming
 - Claves de IA **cifradas en reposo** (AES-256-GCM) detras de una contrasena local — nunca en texto plano
 - **Panel de chat de IA** en los docs + una **consola `/ai`** dedicada
-- Sistema de 36 temas; ejecucion local y en GitHub Pages
+- Sistema de 64 temas (variantes oscuras y claras); ejecucion local y en GitHub Pages
 
 > Version (ES): 0.0.7
