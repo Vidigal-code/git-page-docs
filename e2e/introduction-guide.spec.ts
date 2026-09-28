@@ -3,6 +3,8 @@ import { test, expect, type Page } from "@playwright/test";
 /** Themes with light, dark and a white-primary palette: the backdrop and reveal must work in all. */
 const THEMES = ["aurora-dark", "emerald-light", "carbon-dark"] as const;
 const MAX_OVERFLOW_PX = 2;
+/** WCAG AA contrast for normal-size text (button labels are 0.95rem, below the "large text" size). */
+const MIN_TEXT_CONTRAST = 4.5;
 
 async function horizontalOverflow(page: Page): Promise<number> {
   return page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
@@ -166,5 +168,64 @@ test.describe("introduction guide theme preload", () => {
 
     await expect.poll(() => page.evaluate(() => document.documentElement.style.getPropertyValue("--primary"))).not.toBe("");
     expect(hydrationErrors, hydrationErrors.join("\n")).toHaveLength(0);
+  });
+});
+
+test.describe("introduction guide hero", () => {
+  for (const theme of THEMES) {
+    test(`lines up both calls to action with one shared style (${theme})`, async ({ page }) => {
+      await openGuide(page, theme);
+      const actions = page.locator("[data-hero-action]");
+      await expect(actions).toHaveCount(2);
+      // Wait for the entrance to settle before measuring.
+      await expect.poll(() => actions.last().evaluate((el) => getComputedStyle(el.closest("[data-hero-row]") as Element).opacity)).toBe("1");
+
+      const boxes = await actions.evaluateAll((elements) =>
+        elements.map((el) => {
+          const rect = el.getBoundingClientRect();
+          const style = getComputedStyle(el);
+          return { height: Math.round(rect.height), font: `${style.fontFamily}|${style.fontSize}|${style.fontWeight}` };
+        }),
+      );
+      expect(boxes[0].height).toBe(boxes[1].height);
+      expect(boxes[0].font).toBe(boxes[1].font);
+
+      // The primary action takes its text colour from the theme's contrast token, so it stays legible
+      // on any primary (including white ones).
+      const contrast = await actions.first().evaluate((el) => {
+        const channels = (rgb: string) => (rgb.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+        const luminance = (rgb: string) => {
+          const [r, g, b] = channels(rgb).map((value) => {
+            const c = value / 255;
+            return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+          });
+          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        const style = getComputedStyle(el);
+        const [light, dark] = [luminance(style.color), luminance(style.backgroundColor)].sort((a, b) => b - a);
+        return (light + 0.05) / (dark + 0.05);
+      });
+      expect(contrast).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+    });
+  }
+
+  test("keeps the story skip link out of sight until it receives keyboard focus", async ({ page }) => {
+    await openGuide(page, THEMES[0]);
+    const skip = page.getByTestId("guide-story").getByRole("link");
+    const hidden = await skip.boundingBox();
+    expect(hidden?.width).toBeLessThanOrEqual(1);
+
+    await skip.focus();
+    const shown = await skip.boundingBox();
+    expect(shown?.width).toBeGreaterThan(1);
+    await expect(skip).toBeInViewport();
+  });
+
+  test("reads the animated title as one heading", async ({ page }) => {
+    await openGuide(page, THEMES[0]);
+    const heading = page.getByRole("heading", { level: 1 });
+    await expect(heading).toHaveAccessibleName(/\S/);
+    const glyphs = await heading.locator("[data-hero-glyph]").count();
+    expect(glyphs).toBeGreaterThan(1);
   });
 });

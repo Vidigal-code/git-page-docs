@@ -16,6 +16,16 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
   static list. New `storyLabel`, `storySkip`, `storyScrollHint` and `storyChaptersLabel` strings in
   en/pt/es.
 
+### Introduction guide hero motion
+
+- The hero now enters with a staggered focus-in: each row sharpens from a soft blur one after another
+  and the title's letters rise into place. While the hero scrolls away, every row drifts at its own
+  depth (eyebrow least, actions most) and the block fades. The title stays one heading for screen
+  readers.
+- The tour's numeral zooms from near to far between chapters, the highlights cascade at increasing
+  depths, and on desktop the numeral has its own row above the headline so it never covers text.
+  Chapter titles size to their column, so long words such as "Configuração" never break mid-word.
+
 ### Fixed
 
 - Opening a page with `?theme=` after the theme catalogue was cached logged a React hydration error: the
@@ -23,6 +33,14 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
   differs from the server HTML by design. The root `<html>` now sets `suppressHydrationWarning`, which
   covers only that element's own attributes. An E2E test reloads with a cached theme and asserts no
   hydration error.
+- The hero's two calls to action did not match: the primary button did not inherit the page font and
+  used the page background as its text colour. Both now share one style (font, 46px height, padding,
+  focus ring) with spring hover and press feedback.
+- The tour's "skip the tour" link showed on top of the hero buttons; it is now hidden until it gets
+  keyboard focus.
+- `--primary-foreground` now picks whichever of white or near-black has the higher WCAG contrast on
+  the theme's primary. The old fixed luminance cutoff put white text on mid-tone primaries such as
+  emerald (3.8:1); they now get near-black (5.5:1).
 
 ## 0.0.5 - 2026-09-27 - markdown copy/download on the published site
 

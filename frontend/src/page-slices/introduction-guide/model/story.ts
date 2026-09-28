@@ -1,4 +1,5 @@
 import type { GuideBlock, GuideSection } from "./types";
+import { STORY_DEPTH } from "./motion-config";
 
 /** One scene of the scroll story, derived from a guide section. */
 export interface StoryChapter {
@@ -113,4 +114,9 @@ export function chapterTimeline(index: number, total: number): ChapterTimeline {
 /** Index of the chapter that owns a scroll progress value. */
 export function chapterAt(progress: number, total: number): number {
   return Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
+}
+
+/** Parallax travel (px) of the highlight at `index`: later items sit deeper, so the list cascades in. */
+export function highlightDepth(index: number): number {
+  return STORY_DEPTH.detailsPx * (1 + index * STORY_DEPTH.highlightStepShare);
 }

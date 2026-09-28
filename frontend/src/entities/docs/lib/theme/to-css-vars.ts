@@ -62,8 +62,8 @@ const DEFAULT_CARD: ThemeCardComponent = {
 
 const DARK_FOREGROUND = "#0b0f15";
 const LIGHT_FOREGROUND = "#ffffff";
-/** Above this relative luminance a colour is light enough for dark text to read better than white. */
-const DARK_TEXT_LUMINANCE = 0.3;
+/** WCAG contrast ratio offset: the flare term added to both luminances. */
+const CONTRAST_FLARE = 0.05;
 /** Backgrounds brighter than this belong to a light scheme. */
 const LIGHT_SCHEME_LUMINANCE = 0.4;
 
@@ -85,10 +85,22 @@ export function relativeLuminance(value: string | undefined): number | undefined
   return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
 }
 
-/** Text colour that stays readable on the theme's primary: white on deep tones, near-black on light ones. */
+/** WCAG contrast ratio between two relative luminances (1 = none, 21 = black on white). */
+function contrastRatio(first: number, second: number): number {
+  const [lighter, darker] = first > second ? [first, second] : [second, first];
+  return (lighter + CONTRAST_FLARE) / (darker + CONTRAST_FLARE);
+}
+
+/**
+ * Text colour that reads best on the theme's primary: whichever of white or
+ * near-black has the higher WCAG contrast against it. Non-hex colours fall back to white.
+ */
 export function contrastForeground(color: string | undefined): string {
   const luminance = relativeLuminance(color);
-  return luminance !== undefined && luminance > DARK_TEXT_LUMINANCE ? DARK_FOREGROUND : LIGHT_FOREGROUND;
+  if (luminance === undefined) return LIGHT_FOREGROUND;
+  const onDark = contrastRatio(luminance, relativeLuminance(DARK_FOREGROUND) ?? 0);
+  const onLight = contrastRatio(luminance, relativeLuminance(LIGHT_FOREGROUND) ?? 1);
+  return onDark > onLight ? DARK_FOREGROUND : LIGHT_FOREGROUND;
 }
 
 /** `color-scheme` for native controls (select popups, scrollbars): the declared mode, else read off the background. */

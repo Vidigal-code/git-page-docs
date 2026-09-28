@@ -42,6 +42,13 @@ describe("toBaseThemeCssVars contrast and colour scheme", () => {
     expect(contrastForeground(undefined)).toBe("#ffffff");
   });
 
+  it("chooses the text colour with the higher WCAG contrast for mid-tone primaries", () => {
+    // Emerald (#059669): near-black reads at ~5.5:1, white only at ~3.8:1.
+    expect(contrastForeground("#059669")).toBe("#0b0f15");
+    // Blue (#2563eb): white wins (~5.2:1 against ~3.8:1).
+    expect(contrastForeground("#2563eb")).toBe("#ffffff");
+  });
+
   it("emits --primary-foreground next to --primary only when the theme has a primary", () => {
     const vars = toBaseThemeCssVars(theme({ primary: "#FFFFFF" })) as Record<string, string>;
     expect(vars["--primary"]).toBe("#FFFFFF");
