@@ -460,7 +460,7 @@ https://vidigal-code.github.io/git-page-docs
   https://vidigal-code.github.io/git-page-docs/source-viewer/Vidigal-code/git-page-docs/tree/main/frontend/src
 - The standalone viewer shows a back button beside the GitHub link (langmenu key `sourceViewerBackLabel`) that returns to the site root keeping the current look, e.g. `/?theme=skyline-dark&modetheme=dark`.
 
-**Video pages** (sign-in required; see [Video routes](#video-routes) for the embedded test video)
+**Video pages** (`id=8` to `id=10` require sign-in; `id=11` is open to every visitor, see [Video routes](#video-routes))
 
 - Interactive vs non-interactive modes (`id=8`):
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=8
@@ -514,18 +514,19 @@ Video pages come from `routes-video` in the version config. Each route sets `vid
 video id. The viewer renders the route inside the docs shell, and `?videofull=<lang>&id=<route id>`
 (or `&slug=<video id>`) opens it fullscreen.
 
-The four video routes of this repository (`id=8` to `id=11`) are GitHub channel videos and carry the
-demo `authorization` (`requireExternalAuth`), so they unlock only after signing in with a configured
-provider. The same test video is also embedded in the open *Introduction to Git* page (`id=5`), which
-any visitor can watch. Markdown pages embed a video as a linked YouTube thumbnail, which renders both
-on GitHub and in the viewer.
+The video routes of this repository are GitHub channel videos. Routes `id=8` to `id=10` carry the
+demo `authorization` (`requireExternalAuth`) and stay hidden from the sidebar until the visitor signs
+in with a configured provider. Route `id=11` has no `authorization`, so the **Video** menu section and
+its player are always visible. The same test video is also embedded in the *Introduction to Git* page
+(`id=5`); markdown pages embed a video as a linked YouTube thumbnail, which renders both on GitHub and
+in the viewer.
 
 Test video (GitHub channel, *A brief introduction to Git for beginners*):
 
 [![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
 
 - Watch on YouTube: https://www.youtube.com/watch?v=r8jQ9hVA2qs
-- Video route (sign-in required): https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=11
+- Video route: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=11
 - Open markdown page: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?lang=en&menu=en&id=5#video
 - Fullscreen: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.7/?videofull=en&slug=r8jQ9hVA2qs
 
@@ -541,10 +542,6 @@ Route definition in `gitpagedocs/docs/versions/0.0.7/config.json`:
       "video": {
         "videoType": { "en": "youtube", "pt": "youtube", "es": "youtube" },
         "pathVideo": { "en": "r8jQ9hVA2qs", "pt": "r8jQ9hVA2qs", "es": "r8jQ9hVA2qs" }
-      },
-      "authorization": {
-        "requireExternalAuth": true,
-        "allowedProviders": ["authjs", "clerk", "firebase", "jwt"]
       }
     }
   ],

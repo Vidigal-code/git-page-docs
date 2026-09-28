@@ -35,6 +35,10 @@ const VIDEO_ROUTE_AUTHORIZATION = {
   requireExternalAuth: true,
   allowedProviders: EXTERNAL_AUTH_PROVIDERS,
 };
+/** Video route left open so the scaffold always shows a playable video (GitHub's introduction to Git). */
+const PUBLIC_VIDEO_ROUTE_ID = 11;
+/** Video routes follow the six markdown pages and the source viewer (ids 8-11). */
+const VIDEO_ROUTE_ID_OFFSET = 7;
 
 const ROUTE_METAS = {
   1: ROUTE_META_ID1,
@@ -77,17 +81,19 @@ function buildVersionMdRoutes(versionId, includeDemoAuthorization) {
 }
 
 function buildVersionVideoRoutes(versionId, includeDemoAuthorization) {
-  return [1, 2, 3, 4].map((id) =>
-    buildVideoRoute(
+  return [1, 2, 3, 4].map((id) => {
+    const routeId = id + VIDEO_ROUTE_ID_OFFSET;
+    const isGuarded = includeDemoAuthorization && routeId !== PUBLIC_VIDEO_ROUTE_ID;
+    return buildVideoRoute(
       versionId,
-      id + 7,
+      routeId,
       "youtube",
       VIDEO_IDS[id - 1],
       VIDEO_METAS[id].title,
       VIDEO_METAS[id].description,
-      includeDemoAuthorization ? { authorization: VIDEO_ROUTE_AUTHORIZATION } : {},
-    )
-  );
+      isGuarded ? { authorization: VIDEO_ROUTE_AUTHORIZATION } : {},
+    );
+  });
 }
 
 function buildVersionAudioRoutes(versionId) {
@@ -122,12 +128,15 @@ function buildVersionMenus(versionId) {
     en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
     es: { title: ROUTE_METAS[id].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[id].es}` },
   }));
-  const menuVideo = [1, 2, 3, 4].map((id) => ({
-    id: id + 7,
-    pt: { title: `${VIDEO_METAS[id].title.pt.slice(0, 40)}...`, "path-click": `page:${id + 7}` },
-    en: { title: `${VIDEO_METAS[id].title.en.slice(0, 40)}...`, "path-click": `page:${id + 7}` },
-    es: { title: `${VIDEO_METAS[id].title.es.slice(0, 40)}...`, "path-click": `page:${id + 7}` },
-  }));
+  const menuVideo = [1, 2, 3, 4].map((id) => {
+    const routeId = id + VIDEO_ROUTE_ID_OFFSET;
+    return {
+      id: routeId,
+      pt: { title: `${VIDEO_METAS[id].title.pt.slice(0, 40)}...`, "path-click": `page:${routeId}` },
+      en: { title: `${VIDEO_METAS[id].title.en.slice(0, 40)}...`, "path-click": `page:${routeId}` },
+      es: { title: `${VIDEO_METAS[id].title.es.slice(0, 40)}...`, "path-click": `page:${routeId}` },
+    };
+  });
   const menuAudio = [
     {
       id: AUDIO_META_ID12.id,

@@ -373,15 +373,6 @@
           "en": "r8jQ9hVA2qs",
           "es": "r8jQ9hVA2qs"
         }
-      },
-      "authorization": {
-        "requireExternalAuth": true,
-        "allowedProviders": [
-          "authjs",
-          "clerk",
-          "firebase",
-          "jwt"
-        ]
       }
     }
   ],

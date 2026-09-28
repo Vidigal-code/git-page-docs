@@ -294,6 +294,8 @@ describe("buildVersionConfig", () => {
       pathVideo: { pt: VIDEO_IDS[0], en: VIDEO_IDS[0], es: VIDEO_IDS[0] },
     });
     expect(video[0].authorization).toEqual({ requireExternalAuth: true, allowedProviders: EXTERNAL_PROVIDERS });
+    expect(video.filter((route) => route.authorization).map((route) => route.id)).toEqual([8, 9, 10]);
+    expect(video[3].authorization).toBeUndefined();
 
     const [audio] = config["routes-audio"];
     expect(audio.id).toBe(AUDIO_META_ID12.id);
