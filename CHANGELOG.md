@@ -3,7 +3,7 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
-## Unreleased
+## 0.0.6 - 2026-09-28 - introduction guide scroll story, hero motion, contrast and hydration fixes
 
 ### Introduction guide scroll story
 
