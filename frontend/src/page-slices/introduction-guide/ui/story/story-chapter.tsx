@@ -6,7 +6,6 @@ import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { STORY_DEPTH } from "../../model/motion-config";
 import {
   chapterTimeline,
-  formatOrdinal,
   highlightDepth,
   type ChapterTimeline,
   type StoryChapter as StoryChapterModel,
@@ -76,14 +75,9 @@ export function StoryChapter({ chapter, index, total, progress }: Readonly<Story
         {chapter.number}
       </m.span>
       <m.header className={styles.headline} style={{ y: titleY }}>
-        <p className={styles.eyebrow}>
-          <span className={styles.eyebrowIcon} aria-hidden="true">
-            <ReactIconByTag tag={chapter.icon} />
-          </span>
-          <span className={styles.ordinal}>
-            {chapter.number} / {formatOrdinal(total)}
-          </span>
-        </p>
+        <span className={styles.eyebrowIcon} aria-hidden="true">
+          <ReactIconByTag tag={chapter.icon} />
+        </span>
         <h2 id={headingId} className={styles.title}>
           {chapter.title}
         </h2>

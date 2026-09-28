@@ -1,4 +1,8 @@
 .page {
+  /* Room for the sticky site header (its tallest layout); the hero and the
+     pinned story both measure the visible viewport below it. */
+  --guide-header-offset: 72px;
+
   position: relative;
   isolation: isolate;
   width: 100%;
@@ -15,13 +19,31 @@
 }
 
 /* ---- Hero ---- */
+/* The hero fills the first screen (content centred), so the tour always starts
+   below the fold instead of showing a half-empty stage under the hero. */
 .hero {
-  padding: 40px 0 56px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: calc(100svh - var(--guide-header-offset));
+  padding: 40px 0;
   border-bottom: 1px solid var(--card-border);
   text-align: left;
 }
 
+.heroStage {
+  margin-block: auto;
+}
+
+/* Short viewports (landscape phones): content height, no forced fill. */
+@media (max-height: 520px) {
+  .hero {
+    min-height: 0;
+  }
+}
+
 .backLink {
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -211,8 +233,12 @@
   }
 
   .hero {
-    padding: 28px 0 36px;
+    padding: 28px 0;
     text-align: center;
+  }
+
+  .backLink {
+    align-self: center;
   }
 
   .heroSubtitle {

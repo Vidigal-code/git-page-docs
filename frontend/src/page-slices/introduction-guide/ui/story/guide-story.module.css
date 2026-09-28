@@ -3,7 +3,12 @@
    so every layout (light or dark) gets the same composition. */
 .story {
   --story-chapter-height: 100svh;
-  --story-header-offset: 72px;
+  /* The stage pins just below the sticky site header (offset set on the page). */
+  --story-header-offset: var(--guide-header-offset);
+  /* Space between the stage's top edge (progress bar, counter) and the chapter. */
+  --story-content-gap: clamp(40px, 7svh, 72px);
+  /* Space kept under the chapter for the scroll hint. */
+  --story-bottom-gap: clamp(56px, 9svh, 88px);
   --story-rail-width: 220px;
   --story-accent: color-mix(in srgb, var(--primary) 70%, var(--secondary));
   --font-display: var(--font-heading, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
@@ -11,7 +16,7 @@
 
   position: relative;
   height: calc(var(--story-chapters, 1) * var(--story-chapter-height));
-  margin: 0 0 48px;
+  margin: 0;
 }
 
 /* ---- Skip link: out of sight (but reachable by keyboard) until focused ---- */
@@ -45,16 +50,14 @@
 /* ---- Pinned stage ---- */
 .stage {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: var(--story-header-offset);
+  height: calc(100svh - var(--story-header-offset));
   overflow: hidden;
-  padding-top: var(--story-header-offset);
-  box-sizing: border-box;
 }
 
 .progress {
   position: absolute;
-  top: var(--story-header-offset);
+  top: 0;
   left: 0;
   right: 0;
   height: 3px;
@@ -65,7 +68,7 @@
 
 .counter {
   position: absolute;
-  top: calc(var(--story-header-offset) + 20px);
+  top: 14px;
   right: 0;
   margin: 0;
   font-family: var(--font-mono);
@@ -82,7 +85,7 @@
   top: 50%;
   z-index: 3;
   width: var(--story-rail-width);
-  transform: translateY(-40%);
+  transform: translateY(-50%);
 }
 
 .rail ol {
@@ -153,8 +156,10 @@
   height: 100%;
 }
 
-/* Desktop: the numeral sits in its own row above the headline, so it can never
-   cover the text; the details column spans both rows. */
+/* Desktop: the numeral sits in its own row above the headline (it never covers
+   text) and the details column spans both rows. The composition is centred in
+   the pinned stage and its type scales with the viewport height as well as the
+   width, so the chapter fills the screen instead of leaving an empty half. */
 .chapter {
   position: absolute;
   inset: 0;
@@ -165,7 +170,8 @@
     "headline details";
   align-content: center;
   column-gap: clamp(32px, 5vw, 72px);
-  padding-left: calc(var(--story-rail-width) + 24px);
+  row-gap: clamp(12px, 2.5svh, 28px);
+  padding: var(--story-content-gap) 0 var(--story-bottom-gap) calc(var(--story-rail-width) + 24px);
 }
 
 .numeral {
@@ -174,10 +180,10 @@
   align-self: end;
   position: relative;
   z-index: 0;
-  margin-bottom: 0.14em;
   transform-origin: 0 100%;
   font-family: var(--font-display);
-  font-size: clamp(5.5rem, 11vw, 10rem);
+  /* Sized by width and height, so taller screens get a taller opening. */
+  font-size: clamp(5.5rem, min(14vw, 30svh), 18rem);
   font-weight: 900;
   line-height: 0.8;
   letter-spacing: -0.06em;
@@ -205,22 +211,14 @@
 .details {
   grid-area: details;
   align-self: center;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 20px;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--secondary);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 3svh, 32px);
 }
 
 .eyebrowIcon {
   display: inline-flex;
+  margin-bottom: 20px;
   align-items: center;
   justify-content: center;
   width: 34px;
@@ -229,16 +227,13 @@
   border: 1px solid color-mix(in srgb, var(--secondary) 40%, var(--card-border));
   background: color-mix(in srgb, var(--secondary) 10%, var(--card-background));
   font-size: 1rem;
-}
-
-.ordinal {
-  font-variant-numeric: tabular-nums;
+  color: var(--secondary);
 }
 
 .title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.1rem, 13cqi, 5rem);
+  font-size: clamp(2.1rem, min(13cqi, 10svh), 5.5rem);
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.035em;
@@ -250,7 +245,7 @@
 .lead {
   margin: 22px 0 0;
   max-width: 34ch;
-  font-size: clamp(1.1rem, 1.45vw, 1.4rem);
+  font-size: clamp(1.1rem, min(1.7vw, 2.8svh), 1.6rem);
   line-height: 1.5;
   color: var(--text-secondary);
   text-wrap: pretty;
@@ -259,14 +254,14 @@
 .body {
   margin: 0;
   max-width: 52ch;
-  font-size: 1rem;
+  font-size: clamp(1rem, 2.1svh, 1.2rem);
   line-height: 1.7;
   color: var(--text);
   text-wrap: pretty;
 }
 
 .highlights {
-  margin: 24px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
@@ -277,12 +272,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: clamp(10px, 1.7svh, 18px) 16px;
   border: 1px solid var(--card-border);
   border-radius: 12px;
   background: color-mix(in srgb, var(--card-background) 82%, transparent);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 1.7svh, 1rem);
   color: var(--text);
   overflow-wrap: anywhere;
 }
@@ -333,27 +328,22 @@
     display: none;
   }
 
+  /* One column: numeral, headline and details stack in reading order, centred. */
   .chapter {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
+      "numeral"
       "headline"
       "details";
-    row-gap: 24px;
     padding-left: 0;
   }
 
-  /* One column: the numeral becomes a watermark in the top corner. */
   .numeral {
-    position: absolute;
-    top: 10%;
-    right: -4%;
-    margin: 0;
-    transform-origin: 100% 0;
-    font-size: clamp(8rem, 44vw, 14rem);
+    font-size: clamp(3.75rem, min(24vw, 18svh), 8rem);
   }
 
   .title {
-    font-size: clamp(2rem, 12cqi, 3.4rem);
+    font-size: clamp(2rem, min(12cqi, 7svh), 3.6rem);
   }
 
   .lead {
@@ -361,14 +351,25 @@
   }
 
   .highlights {
-    margin-top: 16px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+/* Phones: the paragraph is trimmed to a few lines (the full text is in the guide
+   below); a chapter without highlights gets more lines to fill the stage. */
 @media (max-width: 480px) {
   .body {
-    display: none;
+    --story-body-lines: 3;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--story-body-lines);
+    line-clamp: var(--story-body-lines);
+    overflow: hidden;
+  }
+
+  .details:not(:has(.highlights)) .body {
+    --story-body-lines: 9;
   }
 
   .highlights {
@@ -386,16 +387,55 @@
   }
 }
 
-/* ---- Reduced motion: the tour still crossfades chapter to chapter (a fade is
-   not motion), but nothing travels, zooms or bounces. ---- */
-@media (prefers-reduced-motion: reduce) {
+/* ---- Short viewports (landscape phones, split windows): a pinned stage would
+   clip the chapter, so the tour becomes a plain stacked list. ---- */
+@media (max-height: 520px) {
+  .story {
+    height: auto;
+  }
+
+  .stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .progress,
+  .counter,
+  .rail,
+  .hint {
+    display: none;
+  }
+
+  .scenes {
+    display: grid;
+    gap: 48px;
+    height: auto;
+    padding: 32px 0;
+  }
+
+  .chapter {
+    position: relative;
+    inset: auto;
+    padding: 0;
+    /* Scroll-driven opacity is written inline by Motion. */
+    opacity: 1 !important;
+  }
+}
+
+/* ---- Reduced motion and the stacked list: nothing travels, zooms or bounces
+   (Motion writes the depth inline, hence the override). Under reduced motion the
+   tour still crossfades chapter to chapter, since a fade is not motion. ---- */
+@media (prefers-reduced-motion: reduce), (max-height: 520px) {
   .numeral,
   .headline,
   .body,
   .highlight {
     transform: none !important;
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
   .hint {
     animation-name: storyHintFade;
   }

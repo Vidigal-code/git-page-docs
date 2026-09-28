@@ -136,7 +136,7 @@ export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabe
         </span>
         {backToSearchLabel}
       </a>
-      <m.div style={{ opacity }} variants={HERO_VARIANTS.stage} initial="hidden" animate="shown">
+      <m.div className={styles.heroStage} style={{ opacity }} variants={HERO_VARIANTS.stage} initial="hidden" animate="shown">
         <HeroRow row="eyebrow" {...rowProps}>
           <p className={styles.heroEyebrow}>{hero.eyebrow}</p>
         </HeroRow>

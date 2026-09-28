@@ -7,6 +7,10 @@ const MAX_OVERFLOW_PX = 2;
 const MIN_TEXT_CONTRAST = 4.5;
 /** Hydration plus the hero entrance; generous because the dev server compiles on demand. */
 const ENTRANCE_SETTLE_TIMEOUT_MS = 15_000;
+/** A pinned chapter should use at least this share of the stage height (no empty half). */
+const MIN_CHAPTER_HEIGHT_SHARE = 0.55;
+/** A landscape phone: short enough for the tour's stacked-list fallback. */
+const LANDSCAPE_PHONE = { width: 844, height: 390 };
 
 /** WCAG contrast ratio between an element's text colour and its own background. */
 async function textContrast(locator: Locator): Promise<number> {
@@ -253,5 +257,44 @@ test.describe("introduction guide hero", () => {
     await expect(heading).toHaveAccessibleName(/\S/);
     const glyphs = await heading.locator("[data-hero-glyph]").count();
     expect(glyphs).toBeGreaterThan(1);
+  });
+});
+
+test.describe("introduction guide layout", () => {
+  test("fills the first screen with the hero, so the tour starts below the fold", async ({ page }) => {
+    await openGuide(page, THEMES[0]);
+    const storyTop = await page.getByTestId("guide-story").evaluate((story) => story.getBoundingClientRect().top);
+    const viewportHeight = page.viewportSize()?.height ?? 0;
+    expect(storyTop).toBeGreaterThanOrEqual(viewportHeight - MAX_OVERFLOW_PX);
+  });
+
+  test("lets a pinned chapter fill most of the stage height", async ({ page }) => {
+    await openGuide(page, THEMES[0]);
+    const total = await page.locator("[data-story-chapter]").count();
+    await scrollStoryTo(page, 5.5 / total);
+    await expect.poll(() => visibleChapters(page)).toHaveLength(1);
+
+    const share = await page.evaluate(() => {
+      const stage = document.querySelector("[data-testid=guide-story] > div") as HTMLElement;
+      const chapter = [...document.querySelectorAll("[data-story-chapter]")].find((node) => Number(getComputedStyle(node).opacity) > 0.5) as HTMLElement;
+      const boxes = [...chapter.querySelectorAll("span, h2, p, li")].map((node) => node.getBoundingClientRect()).filter((box) => box.height > 0);
+      const used = Math.max(...boxes.map((box) => box.bottom)) - Math.min(...boxes.map((box) => box.top));
+      return used / stage.getBoundingClientRect().height;
+    });
+    expect(share).toBeGreaterThanOrEqual(MIN_CHAPTER_HEIGHT_SHARE);
+  });
+
+  test("stacks the tour as a list on short landscape screens, with nothing clipped", async ({ page }) => {
+    await page.setViewportSize(LANDSCAPE_PHONE);
+    await openGuide(page, THEMES[0]);
+    const chapters = page.locator("[data-story-chapter]");
+    const count = await chapters.count();
+    for (let index = 0; index < count; index += 1) {
+      const chapter = chapters.nth(index);
+      await chapter.scrollIntoViewIfNeeded();
+      await expect(chapter).toHaveCSS("opacity", "1");
+      await expect(chapter.getByRole("heading")).toBeInViewport();
+    }
+    await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
   });
 });

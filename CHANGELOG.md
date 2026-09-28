@@ -26,6 +26,17 @@ All notable changes to Git Page Docs are documented here. Versions follow semver
   depths, and on desktop the numeral has its own row above the headline so it never covers text.
   Chapter titles size to their column, so long words such as "Configuração" never break mid-word.
 
+### Introduction guide layout
+
+- The hero fills the first screen (content centred), so the tour always starts below the fold instead
+  of leaving a half-empty stage with a lone counter under the hero.
+- The tour pins just below the sticky header, centres each chapter and scales its type with the
+  viewport height as well as the width, so a pinned chapter fills the screen. On phones the number
+  stacks above the title (it no longer sits behind the text), the repeated "01 / 10" label is gone,
+  and the paragraph is trimmed to a few lines instead of hidden.
+- Short screens (landscape phones, split windows) get the tour as a plain stacked list, so nothing is
+  clipped. Checked at 320x640 up to 1920x1080 with no horizontal scroll.
+
 ### Fixed
 
 - Opening a page with `?theme=` after the theme catalogue was cached logged a React hydration error: the
