@@ -11,7 +11,8 @@ interface GuideBackToTopProps {
 }
 
 /**
- * Closing call to action: scrolls back to the top of the guide and moves
+ * Closing icon button (an up arrow, named by `label` for assistive tech and as
+ * a tooltip): scrolls back to the top of the guide and moves
  * keyboard focus there, so the next Tab continues from the top instead of the
  * footer. The scroll is smooth unless the visitor asks for reduced motion.
  */
@@ -25,11 +26,16 @@ export function GuideBackToTop({ label, targetId }: Readonly<GuideBackToTopProps
 
   return (
     <div className={styles.backToTop}>
-      <button type="button" className={`${styles.heroAction} ${styles.secondaryButton}`} onClick={backToTop}>
+      <button
+        type="button"
+        className={`${styles.heroAction} ${styles.secondaryButton} ${styles.iconAction}`}
+        aria-label={label}
+        title={label}
+        onClick={backToTop}
+      >
         <span className={styles.buttonIcon} aria-hidden>
           <ReactIconByTag tag="FiArrowUp" />
         </span>
-        {label}
       </button>
     </div>
   );

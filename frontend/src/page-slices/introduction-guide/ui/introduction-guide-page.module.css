@@ -40,10 +40,10 @@
   outline: none;
 }
 
-/* Closing row: "back to top", centred under the guide. */
+/* Closing row: the "back to top" arrow, aligned with the guide's left edge. */
 .backToTop {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 64px;
   padding-top: 32px;
   border-top: 1px solid var(--card-border);
@@ -196,6 +196,13 @@
 .buttonIcon {
   display: inline-flex;
   font-size: 1.05rem;
+}
+
+/* Icon-only action: a square as tall as the other calls to action, on every
+   screen (the extra class outranks the full-width rule for phones). */
+.heroAction.iconAction {
+  width: var(--hero-action-height);
+  padding: 0;
 }
 
 /* Animated title: words never break apart; each glyph moves on its own. */
