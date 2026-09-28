@@ -9,6 +9,8 @@ import type { GuideHero as GuideHeroModel } from "../model/types";
 import styles from "./introduction-guide-page.module.css";
 
 interface GuideHeroProps {
+  /** Id of the hero, the landing spot (and focus target) of "back to top". */
+  readonly id: string;
   readonly hero: GuideHeroModel;
   readonly projectUrl: string;
   readonly backToSearchHref: string;
@@ -118,7 +120,7 @@ function HeroTitle({ text, glyphVariants }: Readonly<{ text: string; glyphVarian
  * own depth and the whole block fades. Reduced motion keeps the fades but drops
  * every movement.
  */
-export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabel, onPrimary }: Readonly<GuideHeroProps>) {
+export function GuideHero({ id, hero, projectUrl, backToSearchHref, backToSearchLabel, onPrimary }: Readonly<GuideHeroProps>) {
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: [...HERO_PARALLAX.offset] });
   const reduceMotion = useReducedMotion() ?? false;
@@ -129,7 +131,7 @@ export function GuideHero({ hero, projectUrl, backToSearchHref, backToSearchLabe
   const rowProps = { progress: scrollYProgress, variants: HERO_VARIANTS.row, reduceMotion };
 
   return (
-    <header ref={heroRef} className={styles.hero}>
+    <header ref={heroRef} id={id} className={styles.hero} tabIndex={-1}>
       <a className={styles.backLink} href={backToSearchHref}>
         <span className={styles.backIcon} aria-hidden>
           <ReactIconByTag tag="FiArrowLeft" />

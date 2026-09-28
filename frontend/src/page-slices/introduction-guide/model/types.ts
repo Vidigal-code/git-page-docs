@@ -45,6 +45,7 @@ export interface GuideUi {
   onThisPage: string;
   sectionsLabel: string;
   backToSearch: string;
+  backToTop: string;
   storyLabel: string;
   storySkip: string;
   storyScrollHint: string;

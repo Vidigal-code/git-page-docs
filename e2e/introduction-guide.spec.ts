@@ -284,6 +284,17 @@ test.describe("introduction guide layout", () => {
     expect(share).toBeGreaterThanOrEqual(MIN_CHAPTER_HEIGHT_SHARE);
   });
 
+  test("takes the reader from the end of the guide back to the top", async ({ page }) => {
+    await openGuide(page, THEMES[0]);
+    const backToTop = page.getByRole("button", { name: /top|topo|arriba/i });
+    await backToTop.scrollIntoViewIfNeeded();
+    await expect(backToTop).toBeInViewport();
+
+    await backToTop.click();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(page.locator("#guide-top")).toBeFocused();
+  });
+
   test("stacks the tour as a list on short landscape screens, with nothing clipped", async ({ page }) => {
     await page.setViewportSize(LANDSCAPE_PHONE);
     await openGuide(page, THEMES[0]);

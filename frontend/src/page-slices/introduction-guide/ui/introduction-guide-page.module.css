@@ -35,6 +35,20 @@
   margin-block: auto;
 }
 
+/* The hero only takes focus from "back to top"; it is a landmark, not a control. */
+.hero:focus {
+  outline: none;
+}
+
+/* Closing row: "back to top", centred under the guide. */
+.backToTop {
+  display: flex;
+  justify-content: center;
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--card-border);
+}
+
 /* Short viewports (landscape phones): content height, no forced fill. */
 @media (max-height: 520px) {
   .hero {

@@ -3,6 +3,14 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## Unreleased
+
+### Introduction guide
+
+- A "Back to top" button closes the guide. It scrolls smoothly to the hero (instantly with reduced
+  motion) and moves keyboard focus there, so the next Tab starts from the top. It shares the hero's
+  button style and is labelled in en/pt/es (`backToTop`).
+
 ## 0.0.6 - 2026-09-28 - introduction guide scroll story, hero motion, contrast and hydration fixes
 
 ### Introduction guide scroll story

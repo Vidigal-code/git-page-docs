@@ -59,7 +59,7 @@ describe("GuideHero", () => {
     const { hero } = getGuideContent("pt");
     render(
       <GuideMotionProvider>
-        <GuideHero hero={hero} projectUrl="https://example.com" backToSearchHref="/" backToSearchLabel="Back" onPrimary={vi.fn()} />
+        <GuideHero id="guide-top" hero={hero} projectUrl="https://example.com" backToSearchHref="/" backToSearchLabel="Back" onPrimary={vi.fn()} />
       </GuideMotionProvider>,
     );
     const heading = screen.getByRole("heading", { level: 1, name: hero.title });
@@ -70,7 +70,7 @@ describe("GuideHero", () => {
     const { hero } = getGuideContent("en");
     render(
       <GuideMotionProvider>
-        <GuideHero hero={hero} projectUrl="https://example.com" backToSearchHref="/" backToSearchLabel="Back" onPrimary={vi.fn()} />
+        <GuideHero id="guide-top" hero={hero} projectUrl="https://example.com" backToSearchHref="/" backToSearchLabel="Back" onPrimary={vi.fn()} />
       </GuideMotionProvider>,
     );
     const primary = screen.getByRole("button", { name: hero.ctaPrimary });

@@ -93,6 +93,7 @@ export function getGuideContent(language: LanguageCode): GuideContent {
       onThisPage: pickText(guide.ui.onThisPage, language),
       sectionsLabel: pickText(guide.ui.sectionsLabel, language),
       backToSearch: pickText(guide.ui.backToSearch, language),
+      backToTop: pickText(guide.ui.backToTop, language),
       storyLabel: pickText(guide.ui.storyLabel, language),
       storySkip: pickText(guide.ui.storySkip, language),
       storyScrollHint: pickText(guide.ui.storyScrollHint, language),

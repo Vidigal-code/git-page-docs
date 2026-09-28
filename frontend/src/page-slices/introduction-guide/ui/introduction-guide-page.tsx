@@ -25,11 +25,14 @@ import { GuideMotionProvider } from "./motion/guide-motion-provider";
 import { GuideParallaxBackdrop } from "./motion/guide-parallax-backdrop";
 import { GuideReveal } from "./motion/guide-reveal";
 import { GuideStory } from "./story/guide-story";
+import { GuideBackToTop } from "./guide-back-to-top";
 import styles from "./introduction-guide-page.module.css";
 
 const GUIDE_LANGUAGES: LanguageCode[] = ["en", "pt", "es"];
 /** Anchor of the full guide: the story's skip link lands here. */
 const GUIDE_BODY_ID = "guide-body";
+/** Anchor of the hero: "back to top" scrolls here and moves focus to it. */
+const GUIDE_TOP_ID = "guide-top";
 const FALLBACK_LANGMENU = {
   en: { en: "English", pt: "Português", es: "Español" },
   pt: { en: "English", pt: "Português", es: "Español" },
@@ -116,6 +119,7 @@ export function IntroductionGuidePage() {
         <div className={styles.page}>
           <GuideParallaxBackdrop />
           <GuideHero
+            id={GUIDE_TOP_ID}
             hero={content.hero}
             projectUrl={projectUrl}
             backToSearchHref={backToSearchHref}
@@ -140,6 +144,7 @@ export function IntroductionGuidePage() {
               ))}
             </div>
           </div>
+          <GuideBackToTop label={content.ui.backToTop} targetId={GUIDE_TOP_ID} />
         </div>
       </GuideMotionProvider>
     </SearchShellLayout>
