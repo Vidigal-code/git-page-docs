@@ -99,12 +99,12 @@ On GitHub Pages (`GITHUB_ACTIONS=true`) the runtime enables Pages behavior and b
 
 ## Testing
 
-End-to-end specs live in the repo-root `e2e/` and run against `pnpm dev:e2e` (Playwright `webServer`):
+End-to-end specs live in the repo-root `e2e/`. Playwright starts two dev servers: `pnpm dev:e2e` (local docs mode, on `PORT`) for the docs shell specs, and `pnpm dev:e2e:guide` (repository-search mode, on `PORT + 1`, build folder `frontend/.next-guide`) for the introduction guide, which only exists in repository-search builds. The `desktop`/`mobile` projects run against the first, `guide-desktop`/`guide-mobile` against the second.
 
 ```bash
 # from the repo root
-pnpm run test:e2e                   # desktop + mobile projects
-PORT=3100 pnpm run test:e2e         # use an alternate port if 3000 is taken
+pnpm run test:e2e                   # all projects
+PORT=3100 pnpm run test:e2e         # ports 3100 and 3101 when 3000 is taken
 ```
 
 - `e2e/ai-console.spec.ts` and `e2e/ai-chat-drawer.spec.ts` verify the password gate, encrypted persistence (no plaintext key in `localStorage`), and reload behavior.

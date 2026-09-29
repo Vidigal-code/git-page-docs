@@ -1,11 +1,32 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Frontend E2E. Starts `next dev` (local docs mode) and runs specs in a desktop
- * and a mobile project so responsiveness (no horizontal overflow) is covered.
+ * Frontend E2E. Starts two `next dev` servers and runs specs in a desktop and a
+ * mobile project so responsiveness (no horizontal overflow) is covered:
+ * - the docs server (local docs mode) for the docs shell specs;
+ * - the guide server (repository-search mode, next port) for the
+ *   introduction guide, which only exists in repository-search builds.
  */
 const PORT = Number(process.env.PORT) || 3000;
+const GUIDE_PORT = PORT + 1;
 const BASE_URL = `http://localhost:${PORT}`;
+const GUIDE_BASE_URL = `http://localhost:${GUIDE_PORT}`;
+const GUIDE_SPEC = /introduction-guide\.spec\.ts/;
+
+const DESKTOP = devices["Desktop Chrome"];
+const MOBILE = devices["Pixel 5"];
+
+/** Shared by both dev servers; specs navigate from the site root. */
+const SERVER_DEFAULTS = {
+  reuseExistingServer: !process.env.CI,
+  timeout: 180_000,
+  stdout: "ignore",
+  stderr: "pipe",
+} as const;
+
+// Force an empty base path so a local GITPAGEDOCS_PATH override (or the
+// repository-search base path) cannot mount the app under a subpath.
+const serverEnv = (port: number) => ({ ...process.env, PORT: String(port), GITPAGEDOCS_BASE_PATH: "" });
 
 export default defineConfig({
   testDir: "./e2e",
@@ -21,20 +42,19 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["Pixel 5"] } },
+    { name: "desktop", testIgnore: GUIDE_SPEC, use: { ...DESKTOP } },
+    { name: "mobile", testIgnore: GUIDE_SPEC, use: { ...MOBILE } },
+    { name: "guide-desktop", testMatch: GUIDE_SPEC, use: { ...DESKTOP, baseURL: GUIDE_BASE_URL } },
+    { name: "guide-mobile", testMatch: GUIDE_SPEC, use: { ...MOBILE, baseURL: GUIDE_BASE_URL } },
   ],
-  webServer: {
-    // Local docs mode: the specs exercise the docs shell (AI chat drawer,
-    // overflow) at the site root, so repository search stays disabled.
-    command: "pnpm dev:e2e",
-    url: BASE_URL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
-    stdout: "ignore",
-    stderr: "pipe",
-    // Specs navigate from the site root; force an empty base path so a local
-    // GITPAGEDOCS_PATH override cannot mount the app under a subpath.
-    env: { ...process.env, GITPAGEDOCS_BASE_PATH: "" },
-  },
+  webServer: [
+    { ...SERVER_DEFAULTS, command: "pnpm dev:e2e", url: BASE_URL, env: serverEnv(PORT) },
+    // Waiting on the guide route itself compiles it before the first test starts.
+    {
+      ...SERVER_DEFAULTS,
+      command: "pnpm dev:e2e:guide",
+      url: `${GUIDE_BASE_URL}/introduction-guide/`,
+      env: serverEnv(GUIDE_PORT),
+    },
+  ],
 });

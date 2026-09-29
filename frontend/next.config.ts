@@ -31,8 +31,12 @@ const basePath = explicitBasePath !== null
         : `/${repositoryName}${docsPathSegment ? `/${docsPathSegment}` : ""}`)
       : undefined;
 
+// A second dev server (E2E repository-search mode) needs its own build folder.
+const distDir = process.env.GITPAGEDOCS_DIST_DIR?.trim() || undefined;
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  distDir,
   transpilePackages: ["@gitpagedocs/tools"],
   output: isGithubPagesBuild ? "export" : undefined,
   trailingSlash: emulateGithubPagesRuntime,

@@ -349,13 +349,14 @@ Run from the repository root with `pnpm run <script>` (`npm run` works too). The
 | `gitpagedocs:home` | `node cli/index.mjs --home` — standalone `gitpagedocshome/` distribution (static site + .env + Dockerfile) |
 | `dev` | `next dev frontend` with the repository-search home (`GITPAGEDOCS_REPOSITORY_SEARCH=true`; `predev` copies `icon.svg`) |
 | `dev:e2e` | `next dev frontend` opening the local docs directly — what Playwright runs against |
+| `dev:e2e:guide` | `next dev frontend` in repository-search mode (build folder `frontend/.next-guide`) — the second Playwright server, for the introduction guide |
 | `build` | generate `gitpagedocs/` + copy `icon.svg` to `frontend/public/` + `next build frontend` (static export in `frontend/out/`) |
 | `build:prebuilt` | `build`, then copy the export to `cli/prebuilt/` |
 | `start` | `node cli/start.mjs` serves the build (`prestart` runs `build` first) |
 | `lint` / `lint:src` | `eslint .` / frontend sources only |
 | `typecheck` / `typecheck:strict-unused` | `tsc --noEmit` for root, frontend, tools and mcp / plus unused-symbol checks |
 | `test:unit` / `test:cov` | Vitest suite / with coverage |
-| `test:e2e` | Playwright E2E (`PORT=3100 pnpm run test:e2e` when 3000 is busy) |
+| `test:e2e` | Playwright E2E on two dev servers, `PORT` and `PORT + 1` (`PORT=3100 pnpm run test:e2e` when 3000 is busy) |
 | `smoke:cli` · `smoke:commands` · `smoke:flags` · `smoke:core` · `smoke:ai` · `smoke:secweb` · `smoke:mcp` · `smoke:docs` | self-tests of the CLI artifacts, command verbs, flag contract, tools core, AI providers, web security, MCP server and docs automation |
 | `smoke:all` / `test` / `test:ci` | every smoke suite (`smoke:all` and `test` also run `baseline:check`) |
 | `baseline:create` / `baseline:check` | recreate / verify the byte-stable snapshot of the generated `config.json` + `langs/*.json` (and `site-baseline.json`) |

@@ -36,9 +36,8 @@ async function horizontalOverflow(page: Page): Promise<number> {
 }
 
 /**
- * The guide only exists in repository-search builds; the default E2E server runs
- * the local docs mode, where the route is a 404. Run this spec against
- * `GITPAGEDOCS_REPOSITORY_SEARCH=true pnpm dev` (reused through PORT).
+ * The guide only exists in repository-search builds, so this spec runs in the
+ * `guide-*` Playwright projects against the repository-search dev server.
  */
 async function openGuide(page: Page, theme: string): Promise<string[]> {
   const errors: string[] = [];
@@ -48,7 +47,7 @@ async function openGuide(page: Page, theme: string): Promise<string[]> {
     if (message.type() === "error" && /hydrat/i.test(message.text())) errors.push(message.text());
   });
   const response = await page.goto(`/introduction-guide?theme=${theme}`);
-  test.skip(response?.status() === 404, "The introduction guide requires GITPAGEDOCS_REPOSITORY_SEARCH=true.");
+  expect(response?.ok()).toBe(true);
   await expect(page.getByTestId("guide-parallax-backdrop")).toBeAttached();
   // The static HTML ships the hero hidden until the client runs its entrance: once
   // the last row is fully shown the page is hydrated and settled.
