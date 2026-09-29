@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/cli",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "CLI that scaffolds and maintains gitpagedocs documentation, generates docs with AI, configures GitHub Pages, and runs the MCP server.",
   "bin": {
     "gitpagedocs": "index.mjs"
@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
-    "@gitpagedocs/mcp": "^0.0.7",
-    "@gitpagedocs/tools": "^0.0.7",
+    "@gitpagedocs/mcp": "^0.0.8",
+    "@gitpagedocs/tools": "^0.0.8",
     "tsx": "^4.21.0"
   },
   "repository": {

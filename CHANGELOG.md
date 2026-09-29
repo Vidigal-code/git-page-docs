@@ -3,6 +3,34 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.8 - 2026-09-29 - one sound at a time, GitHub test video, docs in sync with the code
+
+### Media playback
+
+- One sound at a time (`site.mediaExclusivePlayback`, default `true` in `gitpagedocs/config.json`):
+  playing a route video pauses the header radio and the audio tracks, and playing either of those
+  pauses the video. YouTube is followed through the official IFrame Player API, Vimeo through its
+  player `postMessage` protocol, native files (`mp4`, `webm`, …) through the media element, and any
+  other embed through focus moving into the player.
+- `"muted": true` in a route's `video` object plays only the picture and keeps that video out of the
+  rule, so it can run while the radio or an audio track explains it.
+
+### Docs
+
+- The Introduction to Git page shows GitHub's "A brief introduction to Git for beginners" in a video
+  container above its markdown; video route 11 is open to every visitor, so the Video menu section
+  is always visible.
+- README, frontend README, CONTRIBUTING and the generated pages reflect the current code: 64 layout
+  themes, Node 20+ / pnpm 10, `pages actions` / `pages deploy` / `--pages-actions`, a "Video routes"
+  and a "Media playback" section, and the full command table in every language.
+
+### Quality
+
+- Content containers share one frame, media card and header text helpers; the route builders share
+  their defaults (generated config unchanged). SonarQube: 0 issues, 0.0% duplication.
+- The introduction guide E2E spec runs on a second, repository-search dev server instead of being
+  skipped (58 E2E checks, none skipped).
+
 ## 0.0.7 - 2026-09-28 - back-to-top arrow beside the guide, site name "Git Page Docs"
 
 ### Introduction guide

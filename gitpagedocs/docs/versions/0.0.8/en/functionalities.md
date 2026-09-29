@@ -1,0 +1,104 @@
+# Functionalities
+
+Complete reference of CLI options, configuration keys, and runtime features.
+
+## CLI commands
+
+| Command | Description |
+|---------|--------------|
+| `gitpagedocs` | Generate config and docs in `gitpagedocs/` |
+| `gitpagedocs --layoutconfig` | Also generate local layouts/templates in `gitpagelayouts/` |
+| `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`) |
+| `gitpagedocs --push --owner X --repo Y` | Setup workflow, commit, push |
+| `gitpagedocs --interactive` / `-i` | Interactive mode with prompts (the default in a terminal) |
+| `gitpagedocs --no-interactive` / `--yes` / `-y` | Never prompt; use flags and defaults |
+| `gitpagedocs ai` | Interactive AI documentation generator |
+| `gitpagedocs chat [question]` | Streaming AI chat in the terminal (REPL on a TTY; one-shot with a question or piped stdin) |
+| `gitpagedocs provider [id]` / `models [provider]` | List AI providers / catalog models |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI |
+| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
+| `gitpagedocs docs` | Refresh README/CONTRIBUTING/SECURITY managed regions |
+| `gitpagedocs password` | Set a documentation access password (public key in `site.docsAccess`) |
+| `gitpagedocs config` / `config clear` | Show the resolved config / delete the stored config and key vault |
+| `gitpagedocs doctor` / `version` / `update` | Diagnostics / version / registry update check |
+| `gitpagedocs mcp start` | Start the MCP server over stdio |
+
+Install globally with `npm install -g @gitpagedocs/cli`, or run one-off with `npx @gitpagedocs/cli`.
+
+## CLI options
+
+| Option | Description |
+|--------|-------------|
+| `--owner <user>` | GitHub owner |
+| `--repo <repo>` | GitHub repository |
+| `--path <subpath>` | Docs subpath (e.g. `docs`); without it, base path = repo name for correct CSS/JS on project sites |
+| `--output <dir>` | Output directory (default: `gitpagedocs`) |
+| `--search true|false` | Enable/disable repository search (`--home`) |
+| `--layoutconfig` | Generate local layouts in `gitpagelayouts/` |
+| `--layouts-dir <dir>` | Folder for local layouts (default: `gitpagelayouts`) |
+| `--push` | Create workflow, commit artifacts, push |
+| `--pages-actions` | Only switch GitHub Pages to GitHub Actions (same as `pages actions`) |
+| `--home` | Generate `gitpagedocshome/` (static + .env + Dockerfile) |
+
+## Generated output
+
+- `gitpagedocs/config.json` – root config
+- `gitpagedocs/icon.svg` – default icon
+- `gitpagedocs/docs/versions/<ver>/config.json` – per-version routes
+- `gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md` – markdown docs
+- `gitpagelayouts/` – only with `--layoutconfig` (folder configurable with `--layouts-dir`)
+
+## Content types
+
+| Type | Config key | Description |
+|------|------------|-------------|
+| Markdown | `routes-md` | .md files with `path` per language |
+| HTML | `routes-html` | local `path` or external `url` |
+| Video | `routes-video` | `video.pathVideo`, `video.videoType` |
+| Audio | `routes-audio` | `audio.pathAudio`, `audio.audioType` |
+
+## Source code viewer
+
+The version config can render a **Source code** container through `routes-source-viewer` and `menus-header-source-viewer`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
+
+- Repository tree from `source-viewer-path`; branch defaults to `main`
+- Folder navigation and file filtering
+- GitHub-style directory listing
+- Code rendering with line numbers
+- Markdown preview/code toggle, including `README.md`
+- Collapsible folders in the sidebar
+
+## Config keys (site)
+
+- `name`, `defaultLanguage`
+- `docsVersion`, `rendering`, `ThemeDefault`, `ThemeModeDefault`
+- `ProjectLink`, `layoutsConfigPathOficial`, `layoutsConfigPath`
+- Languages: `site.languages` (enable/disable each one); UI strings: `gitpagedocs/langs/<lang>.json`
+
+## Media playback (one sound at a time)
+
+`site.mediaExclusivePlayback` (default `true`): playing a route video pauses the radio and the audio tracks, and playing the radio or an audio track pauses the video. It works with YouTube and Vimeo (through their player APIs), native files (`mp4`, `webm`, …) and any other embed.
+
+To show a video without sound while the radio or an audio track explains it, set `"muted": true` in that route's `video` object: the video plays only the picture and stays out of the rule. `"mediaExclusivePlayback": false` turns the rule off for the whole site.
+
+## Environment variables
+
+- `GITPAGEDOCS_REPOSITORY_SEARCH` – repository search (local)
+- `GITHUB_ACTIONS` – GitHub Pages build mode
+
+## AI assistant
+
+The docs ship an AI assistant in two surfaces: an in-docs **chat drawer** (the AI chat button in the sidebar, enabled via `site.AiChatEnabled`) and a dedicated **`/ai` console** page.
+
+- **14 providers** via one shared core: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
+- **Model selection** — pick from each provider's catalog (`gitpagedocs models <provider>`); a stored model id the provider has retired is replaced by the provider default automatically.
+- **Encrypted at rest** — your API key is sealed with AES-256-GCM behind a **local password** and is never stored in plaintext or logged.
+- **Inactivity auto-lock** — the chat drawer locks itself after `site.AiChatAutoLockSeconds` idle seconds (default 30, `0` disables): a centered countdown modal in your language lets you cancel or lock now, and unlocking asks for the password again.
+- **Resilient providers** — transient provider errors are retried (3 attempts) and a final failure is a plain message ending with "Try again!".
+- **AI documentation generation** — `gitpagedocs ai` scans chosen paths and writes multilingual markdown (pt/en/es); reusable via `.gitpagedocsconfig`, whose API key lives sealed in the encrypted `.gitpagedocsvault` (the vault password is asked on every run). `gitpagedocs chat` brings the same assistant to the terminal.
+
+## MCP server
+
+`gitpagedocs mcp start` runs a Model Context Protocol server (stdio) exposing **20 tools** (filesystem, AI, doc generation/analysis) and **7 resources** (`project://structure|docs|config|repository|readme|ai/providers|ai/models`) for editors and AI agents.
+
+> Version: 0.0.8
