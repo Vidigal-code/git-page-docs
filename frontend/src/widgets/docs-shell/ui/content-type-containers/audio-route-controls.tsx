@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { CiPlay1, FaPause, FiRefreshCw, FiRepeat } from "@/shared/ui/fallback-icons";
 import { renderAudioControlIcon, useAudioPlayer } from "@/features/audio-player";
 import type { AudioTrackConfig, LanguageCode } from "@/entities/docs";
@@ -32,6 +32,34 @@ interface AudioRouteControlsProps {
   controls: AudioRouteControlsConfig;
   /** Per-language WebVTT captions of the route; the empty site track is used when absent. */
   captions?: CaptionsByLanguage;
+}
+
+interface ControlButtonProps {
+  label: string;
+  onClick: () => void;
+  /** Marks the button as on (playing, looping) for styling. */
+  active?: boolean;
+  /** Toggle state for assistive technology (loop). */
+  pressed?: boolean;
+  testId?: string;
+  children: ReactNode;
+}
+
+function ControlButton({ label, onClick, active, pressed, testId, children }: Readonly<ControlButtonProps>) {
+  return (
+    <button
+      type="button"
+      className={styles.audioRouteControlButton}
+      onClick={onClick}
+      aria-label={label}
+      aria-pressed={pressed}
+      title={label}
+      data-active={active || undefined}
+      data-testid={testId}
+    >
+      {children}
+    </button>
+  );
 }
 
 export function AudioRouteControls({
@@ -77,40 +105,18 @@ export function AudioRouteControls({
   return (
     <div className={styles.audioRoutePlayer} aria-label={playStatusLabel}>
       <div className={styles.audioRouteControls}>
-        <button
-          type="button"
-          className={styles.audioRouteControlButton}
-          onClick={togglePlay}
-          aria-label={playStatusLabel}
-          title={playStatusLabel}
-          data-active={playing || undefined}
-          data-testid="audio-route-toggle"
-        >
+        <ControlButton label={playStatusLabel} onClick={togglePlay} active={playing} testId="audio-route-toggle">
           {renderAudioControlIcon(
             playing ? controls.pauseIcon : controls.playIcon,
             playing ? <FaPause aria-hidden /> : <CiPlay1 aria-hidden />,
           )}
-        </button>
-        <button
-          type="button"
-          className={styles.audioRouteControlButton}
-          onClick={restart}
-          aria-label={controls.restartLabel}
-          title={controls.restartLabel}
-        >
+        </ControlButton>
+        <ControlButton label={controls.restartLabel} onClick={restart}>
           {renderAudioControlIcon(controls.restartIcon, <FiRefreshCw aria-hidden />)}
-        </button>
-        <button
-          type="button"
-          className={styles.audioRouteControlButton}
-          onClick={toggleLoop}
-          aria-label={loopStatusLabel}
-          aria-pressed={loopEnabled}
-          title={loopStatusLabel}
-          data-active={loopEnabled || undefined}
-        >
+        </ControlButton>
+        <ControlButton label={loopStatusLabel} onClick={toggleLoop} active={loopEnabled} pressed={loopEnabled}>
           {renderAudioControlIcon(loopEnabled ? controls.loopOnIcon : controls.loopOffIcon, <FiRepeat aria-hidden />)}
-        </button>
+        </ControlButton>
       </div>
       {isNativeTrack && audioSrc && (
         <audio

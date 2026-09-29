@@ -10,11 +10,10 @@ import {
   type VideoPlaybackElement,
 } from "@/features/video-playback";
 import { usePageOrigin } from "@/shared/lib/use-page-origin";
-import { ContentContainerWrapper } from "./content-container-wrapper";
 import { resolveCaptionsTrackProps } from "./captions-track";
-import { CardInsideDescription, CardInsideTitle } from "./card-inside-text";
 import { resolveContentHeaderText } from "./content-header-text";
-import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
+import type { RouteContainerFrameProps } from "./container-wrapper-props";
+import { MediaCard } from "./route-content-frame";
 import styles from "../../docs-shell.module.css";
 
 /** Stable hook for E2E: the YouTube player replaces the iframe title with the video name. */
@@ -90,20 +89,16 @@ export function VideoContainer(props: Readonly<VideoContainerProps>) {
   const header = resolveContentHeaderText(hideTitleDescription ? undefined : config, language, isDarkMode);
 
   return (
-    <ContentContainerWrapper {...toContainerWrapperProps(props)}>
-      <article className={styles.card}>
-        <CardInsideTitle header={header} />
-        <div className={styles.videoWrapper}>
-          <MediaElement
-            type={type}
-            src={embedUrl}
-            muted={muted}
-            captions={resolveCaptionsTrackProps(config?.video?.captions, language)}
-            attach={attachMedia}
-          />
-        </div>
-        <CardInsideDescription header={header} />
-      </article>
-    </ContentContainerWrapper>
+    <MediaCard frame={props} header={header}>
+      <div className={styles.videoWrapper}>
+        <MediaElement
+          type={type}
+          src={embedUrl}
+          muted={muted}
+          captions={resolveCaptionsTrackProps(config?.video?.captions, language)}
+          attach={attachMedia}
+        />
+      </div>
+    </MediaCard>
   );
 }

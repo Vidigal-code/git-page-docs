@@ -3,10 +3,10 @@
 import { useMemo } from "react";
 import { extractHeadingsFromHtml, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
 import { getContainerStyle } from "./container-style";
-import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
+import type { RouteContainerFrameProps } from "./container-wrapper-props";
+import { RouteContentFrame } from "./route-content-frame";
 import { MdSourceActions, type MdSourceActionLabels } from "./md-source-actions";
 import { RouteGuideBreadcrumb, TocContainer } from "@/features/route-guide";
 import type { TocPosition } from "@/features/route-guide";
@@ -140,8 +140,8 @@ export function MdContainer(props: Readonly<MdContainerProps>) {
   };
 
   return (
-    <ContentContainerWrapper header={header} {...toContainerWrapperProps(props)}>
+    <RouteContentFrame frame={props} header={header}>
       {content}
-    </ContentContainerWrapper>
+    </RouteContentFrame>
   );
 }

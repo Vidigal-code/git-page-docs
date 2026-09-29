@@ -3,10 +3,10 @@
 import { useMemo } from "react";
 import type { LanguageCode } from "@/entities/docs";
 import { isFrameBlockedUrl } from "@/shared/lib/is-frame-blocked-url";
-import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
 import { getContainerStyle } from "./container-style";
-import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
+import type { RouteContainerFrameProps } from "./container-wrapper-props";
+import { RouteContentFrame } from "./route-content-frame";
 import styles from "../../docs-shell.module.css";
 
 const BASE_TARGET_BLANK = "<base target=\"_blank\" />";
@@ -132,8 +132,8 @@ export function HtmlContainer(props: Readonly<HtmlContainerProps>) {
   );
 
   return (
-    <ContentContainerWrapper header={header} {...toContainerWrapperProps(props)}>
+    <RouteContentFrame frame={props} header={header}>
       {content}
-    </ContentContainerWrapper>
+    </RouteContentFrame>
   );
 }

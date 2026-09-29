@@ -13,12 +13,14 @@ export interface ResolveChildrenOptions {
   contentOnly?: boolean;
 }
 
+/** Content, or a function that places the fullscreen button inside it (e.g. TOC + markdown layout). */
+export type ContentContainerChildren =
+  | React.ReactNode
+  | ((fullscreenButton: React.ReactNode, options?: ResolveChildrenOptions) => React.ReactNode);
+
 interface ContentContainerWrapperProps {
   header?: React.ReactNode;
-  /** Content, or function to inject fullscreen button into content (e.g. for TOC + MD layout) */
-  children:
-    | React.ReactNode
-    | ((fullscreenButton: React.ReactNode, options?: ResolveChildrenOptions) => React.ReactNode);
+  children: ContentContainerChildren;
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
