@@ -133,7 +133,9 @@ describe("GuideStory", () => {
     );
     const story = screen.getByTestId("guide-story");
     expect(story.querySelectorAll("[data-story-chapter]")).toHaveLength(content.sections.length);
-    for (const s of content.sections) expect(screen.getByRole("heading", { name: s.title })).toBeTruthy();
+    // One accessibility-tree query for all headings: a query per section is slow in jsdom under load.
+    const headingNames = screen.getAllByRole("heading").map((heading) => heading.textContent);
+    for (const s of content.sections) expect(headingNames).toContain(s.title);
     expect(screen.getByTestId("guide-story-counter").textContent).toBe(`01 / ${String(content.sections.length).padStart(2, "0")}`);
     const skip = screen.getByRole("link", { name: content.ui.storySkip });
     expect(skip.getAttribute("href")).toBe("#guide-body");
