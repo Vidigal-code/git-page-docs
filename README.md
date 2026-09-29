@@ -22,6 +22,7 @@ It does **not** generate `index.html` or `index.js`.
 - [Scripts](#scripts)
 - [URL Routes and Query Parameters](#url-routes-and-query-parameters)
 - [Video routes](#video-routes)
+- [Media playback](#media-playback)
 - [Authorized Routes](#authorized-routes)
 - [CLI Options](#cli-options)
 - [AI CLI (interactive docs generator)](#ai-cli-interactive-docs-generator)
@@ -558,6 +559,46 @@ Route definition in `gitpagedocs/docs/versions/0.0.7/config.json`:
   ]
 }
 ```
+
+## Media playback
+
+Only one sound plays at a time. With `site.mediaExclusivePlayback` (default `true` in
+`gitpagedocs/config.json`):
+
+| Starts playing | Is paused |
+| --- | --- |
+| a route video | the header radio and the audio tracks |
+| the header radio | the route video and the audio tracks |
+| an audio track | the route video and the header radio |
+
+How each video source is followed and paused:
+
+| Source (`video.videoType`) | Detects play | Pauses |
+| --- | --- | --- |
+| `youtube` | official YouTube IFrame Player API (`enablejsapi=1`, state `PLAYING`) | `pauseVideo()` |
+| `vimeo` | Vimeo player `postMessage` protocol (`play` event) | `pause` method |
+| `mp4`, `webm`, `ogg`, … (native) | the element's `play` event | `pause()` |
+| any other embed (`tiktok`, `instagram`, …) | focus moving into the player | reloads the embed |
+
+Customizing:
+
+- **Video with the picture only** — set `"muted": true` in a route's `video` object. The video starts
+  without sound (YouTube `mute=1`, Vimeo `muted=1`, native `muted`) and stays out of the rule, so it
+  can run while the radio or an audio track explains it:
+
+  ```json
+  {
+    "id": 5,
+    "video": {
+      "videoType": { "en": "youtube" },
+      "pathVideo": { "en": "r8jQ9hVA2qs" },
+      "muted": true
+    }
+  }
+  ```
+
+- **No rule at all** — `"mediaExclusivePlayback": false` in `site` lets every player run freely (the
+  radio and the audio tracks still pause each other, as before).
 
 ## Authorized Routes
 

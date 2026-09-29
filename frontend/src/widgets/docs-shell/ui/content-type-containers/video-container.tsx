@@ -1,123 +1,109 @@
 "use client";
 
-import { getEmbedUrl, isNativeAudio, isNativeVideo, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
-import type { BrowseNavConfig } from "../page-content-browse-nav";
+import { useCallback, useRef } from "react";
+import { getEmbedUrl, isNativeAudio, isNativeVideo, type LanguageCode } from "@/entities/docs";
+import {
+  isVideoExclusive,
+  resolveVideoProvider,
+  useVideoPlayback,
+  withVideoPlaybackParams,
+  type VideoPlaybackElement,
+} from "@/features/video-playback";
+import { usePageOrigin } from "@/shared/lib/use-page-origin";
 import { ContentContainerWrapper } from "./content-container-wrapper";
 import { resolveCaptionsTrackProps } from "./captions-track";
-import { parseCssToStyle } from "./parse-css-to-style";
+import { CardInsideDescription, CardInsideTitle } from "./card-inside-text";
+import { resolveContentHeaderText } from "./content-header-text";
+import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
 import styles from "../../docs-shell.module.css";
 
-interface VideoContainerProps {
+/** Stable hook for E2E: the YouTube player replaces the iframe title with the video name. */
+const ROUTE_VIDEO_TEST_ID = "route-video";
+const EMBED_ALLOW = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+interface VideoContainerProps extends RouteContainerFrameProps {
   videoType: string;
   pathVideo: string;
   language: LanguageCode;
-  config?: ContentTypeRouteConfig;
-  fullscreenEnabled?: boolean;
-  fullscreenCloseLabel: string;
-  fullscreenExpandLabel: string;
   isDarkMode?: boolean;
+  /** `site.mediaExclusivePlayback`: this video and the radio/audio tracks never sound together. */
+  mediaExclusivePlayback?: boolean;
   /** When true, hide title and description - e.g. in URL fullscreen overlay */
   hideTitleDescription?: boolean;
-  browseNav?: BrowseNavConfig;
-  /** Called when fullscreen is about to open (for URL sync) */
-  onFullscreenOpen?: () => void;
-  /** Called when fullscreen is about to close (for URL sync) */
-  onFullscreenClose?: () => void;
 }
 
-export function VideoContainer({
-  videoType,
-  pathVideo,
-  language,
-  config,
-  fullscreenEnabled = false,
-  fullscreenCloseLabel,
-  fullscreenExpandLabel,
-  isDarkMode = false,
-  browseNav,
-  onFullscreenOpen,
-  onFullscreenClose,
-  hideTitleDescription = false,
-}: Readonly<VideoContainerProps>) {
-  const type = String(videoType).toLowerCase();
-  const embedUrl = getEmbedUrl(videoType, pathVideo, language);
-  const captionsTrackProps = resolveCaptionsTrackProps(config?.video?.captions, language);
+interface MediaElementProps {
+  type: string;
+  src: string;
+  muted: boolean;
+  captions: ReturnType<typeof resolveCaptionsTrackProps>;
+  attach: (element: VideoPlaybackElement | null) => void;
+}
 
-  const title = config?.title?.[language] ?? config?.title?.en;
-  const description = config?.description?.[language] ?? config?.description?.en;
-  const titleIsVisible = config?.titleIsVisible ?? false;
-  const descriptionIsVisible = config?.descriptionIsVisible ?? false;
-  const titleCss = isDarkMode ? config?.titleDarkCss ?? config?.titleCss : config?.titleLightCss ?? config?.titleCss;
-  const descCss = isDarkMode ? config?.descriptionDarkCss ?? config?.descriptionCss : config?.descriptionLightCss ?? config?.descriptionCss;
-
-  const mediaElement = (() => {
-    if (isNativeAudio(type)) {
-      return (
-        <div className={styles.videoWrapper}>
-          <audio controls className={styles.videoNative} src={embedUrl}>
-            <track kind="captions" {...captionsTrackProps} />
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      );
-    }
-    if (isNativeVideo(type)) {
-      return (
-        <div className={styles.videoWrapper}>
-          <video controls className={styles.videoNative} src={embedUrl} style={{ width: "100%", maxWidth: "100%" }}>
-            <track kind="captions" {...captionsTrackProps} />
-            Your browser does not support the video element.
-          </video>
-        </div>
-      );
-    }
+function MediaElement({ type, src, muted, captions, attach }: Readonly<MediaElementProps>) {
+  if (isNativeAudio(type) || isNativeVideo(type)) {
+    const NativeMedia = isNativeAudio(type) ? "audio" : "video";
     return (
-      <div className={styles.videoWrapper}>
-        <iframe
-          title="Video embed"
-          className={styles.videoIframe}
-          src={embedUrl}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
-      </div>
+      <NativeMedia
+        ref={attach}
+        data-testid={ROUTE_VIDEO_TEST_ID}
+        controls
+        muted={muted}
+        className={styles.videoNative}
+        src={src}
+        style={{ width: "100%", maxWidth: "100%" }}
+      >
+        <track kind="captions" {...captions} />
+        Your browser does not support the {NativeMedia} element.
+      </NativeMedia>
     );
-  })();
-
-  const content = (
-    <article className={styles.card}>
-      {!hideTitleDescription && titleIsVisible && title && (
-        <h1
-          className={styles.contentTitleVideoInside}
-          style={{ textAlign: "center", ...parseCssToStyle(titleCss) }}
-        >
-          {title}
-        </h1>
-      )}
-      {mediaElement}
-      {!hideTitleDescription && descriptionIsVisible && description && (
-        <h3
-          className={styles.contentDescriptionVideoInside}
-          style={{ textAlign: "center", ...parseCssToStyle(descCss) }}
-        >
-          {description}
-        </h3>
-      )}
-    </article>
+  }
+  return (
+    <iframe
+      ref={attach}
+      data-testid={ROUTE_VIDEO_TEST_ID}
+      title="Video embed"
+      className={styles.videoIframe}
+      src={src}
+      allow={EMBED_ALLOW}
+      allowFullScreen
+    />
   );
+}
+
+export function VideoContainer(props: Readonly<VideoContainerProps>) {
+  const { videoType, pathVideo, language, config, isDarkMode = false, mediaExclusivePlayback, hideTitleDescription = false } = props;
+  const type = String(videoType).toLowerCase();
+  const provider = resolveVideoProvider(type);
+  const muted = config?.video?.muted === true;
+  const origin = usePageOrigin();
+  const embedUrl = withVideoPlaybackParams(getEmbedUrl(videoType, pathVideo, language), { provider, muted, origin });
+  const mediaRef = useRef<VideoPlaybackElement | null>(null);
+  const attachMedia = useCallback((element: VideoPlaybackElement | null) => {
+    mediaRef.current = element;
+  }, []);
+  useVideoPlayback(mediaRef, {
+    provider,
+    src: embedUrl,
+    exclusive: isVideoExclusive({ siteExclusive: mediaExclusivePlayback, muted }),
+  });
+  const header = resolveContentHeaderText(hideTitleDescription ? undefined : config, language, isDarkMode);
 
   return (
-    <ContentContainerWrapper
-      fullscreenEnabled={fullscreenEnabled}
-      fullscreenCloseLabel={fullscreenCloseLabel}
-      fullscreenExpandLabel={fullscreenExpandLabel}
-      onBeforeFullscreen={onFullscreenOpen}
-      onAfterFullscreen={onFullscreenClose}
-      marginTop={config?.marginTop}
-      marginBottom={config?.marginBottom}
-      browseNav={browseNav}
-    >
-      {content}
+    <ContentContainerWrapper {...toContainerWrapperProps(props)}>
+      <article className={styles.card}>
+        <CardInsideTitle header={header} />
+        <div className={styles.videoWrapper}>
+          <MediaElement
+            type={type}
+            src={embedUrl}
+            muted={muted}
+            captions={resolveCaptionsTrackProps(config?.video?.captions, language)}
+            attach={attachMedia}
+          />
+        </div>
+        <CardInsideDescription header={header} />
+      </article>
     </ContentContainerWrapper>
   );
 }

@@ -158,6 +158,7 @@
     "audioSequentialPlayback": false,
     "audioPopoverHideSource": false,
     "audioPopoverShowMinutes": true,
+    "mediaExclusivePlayback": true,
     "AiChatAutoLockSeconds": 30,
     "audioTracks": [
       {

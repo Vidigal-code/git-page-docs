@@ -1,21 +1,49 @@
 /** Build route objects for md, html, and video content types */
 
+/** Title/description styling every content route starts from (key order is part of the output). */
+const ROUTE_TEXT_DEFAULTS = {
+  titleCss: "font-size: 1.85rem; font-weight: 700;",
+  titleDarkCss: "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+  titleLightCss: "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+  titlePosition: "center",
+  titleIsVisible: true,
+  descriptionCss: "font-size: 1.2rem; font-weight: 500;",
+  descriptionDarkCss: "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+  descriptionLightCss: "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+  descriptionPosition: "center",
+  descriptionIsVisible: true,
+};
+
+/** Container frame settings every content route starts from. */
+const ROUTE_FRAME_DEFAULTS = {
+  fullscreenEnabled: true,
+  marginTop: "",
+  marginBottom: "",
+  blockLink: true,
+};
+
+/** Each default key, taking the option value when it is set. */
+function withDefaults(defaults, options) {
+  return Object.fromEntries(
+    Object.entries(defaults).map(([key, value]) => [key, options[key] === undefined ? value : options[key]]),
+  );
+}
+
+/** A single value becomes the same value for every language. */
+function perLanguage(value) {
+  return typeof value === "string" ? { pt: value, en: value, es: value } : value;
+}
+
+/** Copies only the fields that are set. */
+function assignDefined(target, fields) {
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined) target[key] = value;
+  }
+  return target;
+}
+
 export function buildMdRoute(versionId, routeId, pathByLang, titles, descriptions, options = {}) {
   const {
-    titleCss = "font-size: 1.85rem; font-weight: 700;",
-    titleDarkCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
-    titleLightCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
-    titlePosition = "center",
-    titleIsVisible = true,
-    descriptionCss = "font-size: 1.2rem; font-weight: 500;",
-    descriptionDarkCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
-    descriptionLightCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
-    descriptionPosition = "center",
-    descriptionIsVisible = true,
-    fullscreenEnabled = true,
-    marginTop = "",
-    marginBottom = "",
-    blockLink = true,
     container,
     browseAll = false,
     RouteguideBrand = true,
@@ -30,21 +58,9 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     id: routeId,
     title: titles ?? { pt: "Documentação", en: "Documentation", es: "Documentación" },
     description: descriptions ?? { pt: "Descrição da página", en: "Page description", es: "Descripción de la página" },
-    titleCss,
-    titleDarkCss,
-    titleLightCss,
-    titlePosition,
-    titleIsVisible,
-    descriptionCss,
-    descriptionDarkCss,
-    descriptionLightCss,
-    descriptionPosition,
-    descriptionIsVisible,
+    ...withDefaults(ROUTE_TEXT_DEFAULTS, options),
     path: pathByLang,
-    fullscreenEnabled,
-    marginTop,
-    marginBottom,
-    blockLink,
+    ...withDefaults(ROUTE_FRAME_DEFAULTS, options),
     container,
     browseAll,
     RouteguideBrand,
@@ -52,11 +68,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrandPosition,
     RouteguideBrandContainerTop,
   };
-  if (container !== undefined) out.container = container;
-  if (audio !== undefined) out.audio = audio;
-  if (authorization !== undefined) out.authorization = authorization;
-  if (hierarchyPage !== undefined) out.hierarchyPage = hierarchyPage;
-  return out;
+  return assignDefined(out, { container, audio, authorization, hierarchyPage });
 }
 
 export function buildHtmlRoute(versionId, routeId, pathByLang, titles, descriptions, options = {}) {
@@ -65,61 +77,25 @@ export function buildHtmlRoute(versionId, routeId, pathByLang, titles, descripti
 }
 
 export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles, descriptions, options = {}) {
-  const {
-    titleCss = "font-size: 1.85rem; font-weight: 700;",
-    titleDarkCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
-    titleLightCss = "font-size: 1.85rem; font-weight: 700; color: var(--text);",
-    titlePosition = "center",
-    titleIsVisible = true,
-    descriptionCss = "font-size: 1.2rem; font-weight: 500;",
-    descriptionDarkCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
-    descriptionLightCss = "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
-    descriptionPosition = "center",
-    descriptionIsVisible = true,
-    fullscreenEnabled = true,
-    marginTop = "",
-    marginBottom = "",
-    blockLink = true,
-    container,
-    browseAll = false,
-    authorization,
-  } = options;
-  const videoTypeByLang = typeof videoType === "string" ? { pt: videoType, en: videoType, es: videoType } : videoType;
-  const pathVideoByLang = typeof pathVideo === "string" ? { pt: pathVideo, en: pathVideo, es: pathVideo } : pathVideo;
+  const { container, browseAll = false, authorization } = options;
   const obj = {
     id: routeId,
     title: titles ?? { pt: "Vídeo", en: "Video", es: "Vídeo" },
     description: descriptions ?? { pt: "Descrição do vídeo", en: "Video description", es: "Descripción del vídeo" },
-    titleCss,
-    titleDarkCss,
-    titleLightCss,
-    titlePosition,
-    titleIsVisible,
-    descriptionCss,
-    descriptionDarkCss,
-    descriptionLightCss,
-    descriptionPosition,
-    descriptionIsVisible,
-    fullscreenEnabled,
-    marginTop,
-    marginBottom,
-    blockLink,
+    ...withDefaults(ROUTE_TEXT_DEFAULTS, options),
+    ...withDefaults(ROUTE_FRAME_DEFAULTS, options),
     browseAll,
-    video: { videoType: videoTypeByLang, pathVideo: pathVideoByLang },
+    video: { videoType: perLanguage(videoType), pathVideo: perLanguage(pathVideo) },
   };
-  if (container !== undefined) obj.container = container;
-  if (authorization !== undefined) obj.authorization = authorization;
-  return obj;
+  return assignDefined(obj, { container, authorization });
 }
 
 export function buildAudioRoute(versionId, routeId, audioType, pathAudio, titles, descriptions, options = {}) {
   const base = buildVideoRoute(versionId, routeId, audioType, pathAudio, titles, descriptions, options);
-  const audioTypeByLang = typeof audioType === "string" ? { pt: audioType, en: audioType, es: audioType } : audioType;
-  const pathAudioByLang = typeof pathAudio === "string" ? { pt: pathAudio, en: pathAudio, es: pathAudio } : pathAudio;
   const { video, ...rest } = base;
   return {
     ...rest,
-    audio: { audioType: audioTypeByLang, pathAudio: pathAudioByLang },
+    audio: { audioType: perLanguage(audioType), pathAudio: perLanguage(pathAudio) },
   };
 }
 

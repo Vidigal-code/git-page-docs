@@ -47,6 +47,12 @@ export interface VideoRouteConfig {
   videoType: Record<LanguageCode, string>;
   pathVideo: Record<LanguageCode, string>;
   /**
+   * Plays only the picture (YouTube, Vimeo and native videos start without sound).
+   * A muted video stays out of `site.mediaExclusivePlayback`, so it can run while
+   * the radio or an audio track explains it. Default false.
+   */
+  muted?: boolean;
+  /**
    * Optional WebVTT captions per language. When absent the player still renders a
    * captions <track> pointing at the empty `captions/empty.vtt` shipped with the site.
    */

@@ -75,6 +75,12 @@ The version config can render a **Source code** container through `routes-source
 - `ProjectLink`, `layoutsConfigPathOficial`, `layoutsConfigPath`
 - Languages: `site.languages` (enable/disable each one); UI strings: `gitpagedocs/langs/<lang>.json`
 
+## Media playback (one sound at a time)
+
+`site.mediaExclusivePlayback` (default `true`): playing a route video pauses the radio and the audio tracks, and playing the radio or an audio track pauses the video. It works with YouTube and Vimeo (through their player APIs), native files (`mp4`, `webm`, …) and any other embed.
+
+To show a video without sound while the radio or an audio track explains it, set `"muted": true` in that route's `video` object: the video plays only the picture and stays out of the rule. `"mediaExclusivePlayback": false` turns the rule off for the whole site.
+
 ## Environment variables
 
 - `GITPAGEDOCS_REPOSITORY_SEARCH` – repository search (local)

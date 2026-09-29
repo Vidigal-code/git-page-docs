@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
+import type { LanguageCode } from "@/entities/docs";
 import { isFrameBlockedUrl } from "@/shared/lib/is-frame-blocked-url";
-import type { BrowseNavConfig } from "../page-content-browse-nav";
 import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
+import { getContainerStyle } from "./container-style";
+import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
 import styles from "../../docs-shell.module.css";
 
 const BASE_TARGET_BLANK = "<base target=\"_blank\" />";
@@ -65,16 +66,6 @@ function injectBaseTarget(html: string, blockLink: boolean): string {
   return baseTag + html;
 }
 
-function getContainerStyle(container: ContentTypeRouteConfig["container"]): React.CSSProperties {
-  if (container === "full") {
-    return { minHeight: "80vh", overflow: "auto" };
-  }
-  if (typeof container === "number" && container > 0) {
-    return { height: container, overflow: "auto" };
-  }
-  return {};
-}
-
 interface HtmlBodyOptions {
   isBlocked: boolean;
   externalUrl: string | undefined;
@@ -94,60 +85,29 @@ function renderHtmlBody({ isBlocked, externalUrl, language, srcdoc }: HtmlBodyOp
       />
     );
   }
-  if (externalUrl) {
-    return (
-      <iframe
-        title="HTML content"
-        className={styles.htmlIframe}
-        src={externalUrl}
-        sandbox={IFRAME_SANDBOX}
-        referrerPolicy="no-referrer"
-      />
-    );
-  }
   return (
     <iframe
       title="HTML content"
       className={styles.htmlIframe}
-      srcDoc={srcdoc ?? undefined}
+      src={externalUrl || undefined}
+      srcDoc={externalUrl ? undefined : (srcdoc ?? undefined)}
       sandbox={IFRAME_SANDBOX}
       referrerPolicy="no-referrer"
     />
   );
 }
 
-interface HtmlContainerProps {
+interface HtmlContainerProps extends RouteContainerFrameProps {
   html?: string;
   url?: string;
-  config?: ContentTypeRouteConfig;
   language: LanguageCode;
-  fullscreenEnabled?: boolean;
-  fullscreenCloseLabel: string;
-  fullscreenExpandLabel: string;
   /** When true, hide header (title/description) - e.g. in URL fullscreen overlay */
   hideHeader?: boolean;
   isDarkMode?: boolean;
-  browseNav?: BrowseNavConfig;
-  /** Called when fullscreen is about to open (for URL sync) */
-  onFullscreenOpen?: () => void;
-  /** Called when fullscreen is about to close (for URL sync) */
-  onFullscreenClose?: () => void;
 }
 
-export function HtmlContainer({
-  html = "",
-  url,
-  config,
-  language,
-  fullscreenEnabled = false,
-  fullscreenCloseLabel,
-  fullscreenExpandLabel,
-  isDarkMode = false,
-  browseNav,
-  onFullscreenOpen,
-  onFullscreenClose,
-  hideHeader = false,
-}: Readonly<HtmlContainerProps>) {
+export function HtmlContainer(props: Readonly<HtmlContainerProps>) {
+  const { html = "", url, config, language, isDarkMode = false, hideHeader = false } = props;
   const blockLink = config?.blockLink !== false;
   const srcdoc = useMemo(
     () => (html ? injectBaseTarget(html, blockLink) : null),
@@ -172,17 +132,7 @@ export function HtmlContainer({
   );
 
   return (
-    <ContentContainerWrapper
-      header={header}
-      fullscreenEnabled={fullscreenEnabled}
-      fullscreenCloseLabel={fullscreenCloseLabel}
-      fullscreenExpandLabel={fullscreenExpandLabel}
-      onBeforeFullscreen={onFullscreenOpen}
-      onAfterFullscreen={onFullscreenClose}
-      marginTop={config?.marginTop}
-      marginBottom={config?.marginBottom}
-      browseNav={browseNav}
-    >
+    <ContentContainerWrapper header={header} {...toContainerWrapperProps(props)}>
       {content}
     </ContentContainerWrapper>
   );

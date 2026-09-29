@@ -32,11 +32,11 @@ frontend/
     |-- page-slices/          # page compositions: docs-route, introduction-guide, source-viewer
     |-- widgets/              # docs-shell, ai-chat-drawer (+ inactivity-lock-dialog), repository-source-browser,
     |                         #   search-shell-header, search-shell-layout, not-found-shell
-    |-- features/             # ask-ai, ai-console, audio-player, docs-access, route-authorization, route-guide,
+    |-- features/             # ask-ai, ai-console, audio-player, video-playback, docs-access, route-authorization, route-guide,
     |                         #   language/theme/version selectors, quick-navigation, repository-search-form,
     |                         #   source-viewer-link, source-viewer-search, source-code-highlight, …
     |-- entities/             # docs (config/content/embed/layouts/theme), source-viewer
-    `-- shared/               # ui (dropdown-selector, selection-dialog, confirm-popup, …), lib, config, api
+    `-- shared/               # ui (dropdown-selector, selection-dialog, confirm-popup, …), lib (media-playback, …), config, api
 ```
 
 FSD import direction is enforced by the root `eslint.config.mjs` (`app → page-slices → widgets → features → entities → shared`).
@@ -71,6 +71,21 @@ When `site.docsAccess.enabled` is set in `gitpagedocs/config.json` (via the `git
 - `GuideHero` enters with Motion variants: rows focus in with a stagger, and the title splits into grapheme glyphs (`model/hero-motion.ts`) that rise in while a visually hidden copy keeps the heading readable as one name. Each row drifts at its own `HERO_PARALLAX.depthPx` as the hero scrolls away.
 - `GuideStory` (`ui/story/`) is a scroll-driven tour placed before the full guide. The section is one viewport tall per chapter and a sticky stage plays one chapter per slice of the page's own scroll (wheel, touch, keyboard and scrollbar keep working). Each chapter's numeral, headline and details move at different depths; the keyframes come from `chapterTimeline` in `model/story.ts` and run through function-form `useTransform` with `interpolate`, because the range form hands opacity to the native scroll timeline, which left the first chapter half visible. A rail jumps to any chapter, a skip link goes straight to the full guide, and with reduced motion the tour still crossfades while CSS pins every layer in place.
 
+## Media playback
+
+`shared/lib/media-playback` holds the page-wide playback arbiter: every player registers a `pause`
+and calls `claim` before it starts, which pauses all the others. The radio and the audio tracks
+(`features/audio-player`) and the route videos (`features/video-playback`) use it, so with
+`site.mediaExclusivePlayback` (default `true`) only one of them sounds at a time.
+
+`features/video-playback` picks a controller per source (`resolveVideoProvider`): the official YouTube
+IFrame Player API attached to the existing iframe (`enablejsapi=1&origin=…`; it falls back to the
+generic rule if the script cannot load), the Vimeo player `postMessage` protocol, the native media
+`play` event, or, for any other embed, focus moving into the iframe (paused by reloading it).
+`useVideoPlayback` wires the controller to the arbiter and rebuilds it when the source changes; the
+page origin comes from `usePageOrigin`, empty in the static render so the exported markup stays
+stable. A route video with `video.muted: true` starts without sound and stays out of the rule.
+
 ## Environment
 
 `.env` (frontend-local; copy from `.env.example`):
@@ -95,6 +110,7 @@ PORT=3100 pnpm run test:e2e         # use an alternate port if 3000 is taken
 - `e2e/ai-console.spec.ts` and `e2e/ai-chat-drawer.spec.ts` verify the password gate, encrypted persistence (no plaintext key in `localStorage`), and reload behavior.
 - `e2e/docs.spec.ts` checks the docs home renders with no horizontal overflow.
 - `e2e/audio-playback.spec.ts` covers the audio route's centered fullscreen view and the mutual exclusion between the route player and the header radio.
+- `e2e/media-playback.spec.ts` plays the YouTube route video over the header radio and back (needs network access to youtube.com).
 - `e2e/introduction-guide.spec.ts` checks the guide's backdrop, reveal and layout across light, dark and white-primary themes.
 
 ## Static export notes

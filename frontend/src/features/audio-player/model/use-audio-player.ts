@@ -8,7 +8,7 @@ import {
   isEmbedTrack,
   isNativePlayableTrack,
 } from "./get-audio-src";
-import { useExclusivePlayback } from "./use-exclusive-playback";
+import { useExclusivePlayback } from "@/shared/lib/media-playback";
 
 /** Lets the media element mount before the autoplay attempt. */
 const AUTOPLAY_DELAY_MS = 300;

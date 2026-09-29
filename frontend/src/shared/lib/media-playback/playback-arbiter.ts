@@ -4,10 +4,10 @@ export interface PlaybackRegistration {
 }
 
 /**
- * Coordinates every audio engine on the page so only one plays at a time:
+ * Coordinates every audio and video player on the page so only one plays at a time:
  * claiming playback for one owner pauses all the others. The background
- * "radio" and the audio-route players are separate hook instances, so
- * without this they would happily play over each other.
+ * "radio", the audio-route players and the route videos are separate hook
+ * instances, so without this they would happily play over each other.
  */
 export interface PlaybackArbiter {
   /** Registers a pausable player and returns its unregister function. */

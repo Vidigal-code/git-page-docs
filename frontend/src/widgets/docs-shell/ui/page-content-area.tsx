@@ -296,6 +296,7 @@ export function PageContentArea({
         language={language}
         config={currentVideo.config}
         isDarkMode={isDarkMode}
+        mediaExclusivePlayback={data.config.site.mediaExclusivePlayback}
         fullscreenEnabled={resolveInlineFullscreen(isUrlFullscreen, currentVideo.fullscreenEnabled)}
         {...fullscreenLabels}
         browseNav={videoBrowseNav}

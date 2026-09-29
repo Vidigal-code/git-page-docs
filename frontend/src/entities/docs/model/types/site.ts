@@ -87,6 +87,13 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
   IconAudioPauseReactIconesTagColorLight?: string;
   IconAudioPauseReactIconesTagSize?: string;
 
+  /**
+   * One sound at a time: playing a route video pauses the radio and audio tracks,
+   * and playing either of those pauses the video. Default true; a route video with
+   * `video.muted: true` is always left out.
+   */
+  mediaExclusivePlayback?: boolean;
+
   /** AI Chat toggle: enable/disable entirely */
   AiChatEnabled?: boolean;
   /** Seconds of inactivity before the AI chat locks again (keys stay encrypted); 0 disables. Default 30. */

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createPlaybackArbiter } from "@/features/audio-player/model/playback-arbiter";
+import { createPlaybackArbiter } from "@/shared/lib/media-playback/playback-arbiter";
 
 describe("createPlaybackArbiter", () => {
   it("pauses every registered player except the claimant", () => {

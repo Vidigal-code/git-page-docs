@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import { extractHeadingsFromHtml, type BreadcrumbItem, type ContentTypeRouteConfig, type LanguageCode } from "@/entities/docs";
+import { extractHeadingsFromHtml, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import type { BrowseNavConfig } from "../page-content-browse-nav";
 import { ContentContainerWrapper } from "./content-container-wrapper";
 import { ContentHeaderBlock } from "./content-header-block";
+import { getContainerStyle } from "./container-style";
+import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
 import { MdSourceActions, type MdSourceActionLabels } from "./md-source-actions";
 import { RouteGuideBreadcrumb, TocContainer } from "@/features/route-guide";
 import type { TocPosition } from "@/features/route-guide";
@@ -13,25 +14,10 @@ import styles from "../../docs-shell.module.css";
 
 const VALID_TOC_POSITIONS: ReadonlySet<TocPosition> = new Set<TocPosition>(["center", "left", "right"]);
 
-function getContainerStyle(container: ContentTypeRouteConfig["container"]): React.CSSProperties {
-  if (container === "full") {
-    return { minHeight: "80vh", overflow: "auto" };
-  }
-  if (typeof container === "number" && container > 0) {
-    return { height: container, overflow: "auto" };
-  }
-  return {};
-}
-
-interface MdContainerProps {
+interface MdContainerProps extends RouteContainerFrameProps {
   html: string;
-  config?: ContentTypeRouteConfig;
   language: LanguageCode;
-  fullscreenEnabled?: boolean;
-  fullscreenCloseLabel: string;
-  fullscreenExpandLabel: string;
   isDarkMode?: boolean;
-  browseNav?: BrowseNavConfig;
   routeGuideEnabled?: boolean;
   breadcrumbTrail?: BreadcrumbItem[];
   onBreadcrumbClick?: (pathClick: string, ancestorKeys: string[]) => void;
@@ -46,10 +32,6 @@ interface MdContainerProps {
   useDefaultScrollBehavior?: boolean;
   /** When true, show only markdown content (hide routes/TOC) - for fullscreen mode */
   contentOnly?: boolean;
-  /** Called when fullscreen is about to open (for URL sync) */
-  onFullscreenOpen?: () => void;
-  /** Called when fullscreen is about to close (for URL sync) */
-  onFullscreenClose?: () => void;
   /** Original markdown of the page (current language); enables copy / download. */
   markdownSource?: string;
   /** File name offered by "download .md". */
@@ -57,31 +39,27 @@ interface MdContainerProps {
   sourceActionLabels?: MdSourceActionLabels;
 }
 
-export function MdContainer({
-  html,
-  config,
-  language,
-  fullscreenEnabled = false,
-  fullscreenCloseLabel,
-  fullscreenExpandLabel,
-  isDarkMode = false,
-  browseNav,
-  routeGuideEnabled = false,
-  breadcrumbTrail = [],
-  onBreadcrumbClick,
-  homePathClick,
-  homeAncestorKeys = [],
-  routeGuideIconConfig,
-  tocPositionDefault = "center",
-  tocContainerTopDefault = false,
-  useDefaultScrollBehavior = false,
-  contentOnly = false,
-  onFullscreenOpen,
-  onFullscreenClose,
-  markdownSource,
-  markdownFileName = "document.md",
-  sourceActionLabels,
-}: Readonly<MdContainerProps>) {
+export function MdContainer(props: Readonly<MdContainerProps>) {
+  const {
+    html,
+    config,
+    language,
+    fullscreenEnabled = false,
+    isDarkMode = false,
+    routeGuideEnabled = false,
+    breadcrumbTrail = [],
+    onBreadcrumbClick,
+    homePathClick,
+    homeAncestorKeys = [],
+    routeGuideIconConfig,
+    tocPositionDefault = "center",
+    tocContainerTopDefault = false,
+    useDefaultScrollBehavior = false,
+    contentOnly = false,
+    markdownSource,
+    markdownFileName = "document.md",
+    sourceActionLabels,
+  } = props;
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
     routeGuideEnabled &&
@@ -139,59 +117,30 @@ export function MdContainer({
     </>
   );
 
-  const content =
-    fullscreenEnabled
-      ? (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
-          const hideToc = contentOnly || options?.contentOnly;
-          const showToc = !hideToc && routeguideBrand && headings.length > 0;
-          return showToc ? (
-            <TocContainer
-              headings={headings}
-              position={tocPosition}
-              markdownContent={markdownContent}
-              useDefaultScrollBehavior={useDefaultScrollBehavior}
-              contentActions={withSourceActions(fullscreenButton)}
-              containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
-            />
-          ) : (
-            <div style={{ position: "relative" }}>
-              {markdownContent}
-              {withSourceActions(fullscreenButton)}
-            </div>
-          );
-        }
-      : (_fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
-          const hideToc = contentOnly || options?.contentOnly;
-          const showToc = !hideToc && routeguideBrand && headings.length > 0;
-          return showToc ? (
-          <TocContainer
-            headings={headings}
-            position={tocPosition}
-            markdownContent={markdownContent}
-            useDefaultScrollBehavior={useDefaultScrollBehavior}
-            contentActions={withSourceActions(null)}
-            containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
-          />
-        ) : (
-          <div style={{ position: "relative" }}>
-            {markdownContent}
-            {withSourceActions(null)}
-          </div>
-        );
-        };
+  // Without fullscreen the wrapper's button is left out, so only the source actions sit beside the content.
+  const content = (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
+    const contentActions = withSourceActions(fullscreenEnabled ? fullscreenButton : null);
+    const hideToc = contentOnly || options?.contentOnly;
+    const showToc = !hideToc && routeguideBrand && headings.length > 0;
+    return showToc ? (
+      <TocContainer
+        headings={headings}
+        position={tocPosition}
+        markdownContent={markdownContent}
+        useDefaultScrollBehavior={useDefaultScrollBehavior}
+        contentActions={contentActions}
+        containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
+      />
+    ) : (
+      <div style={{ position: "relative" }}>
+        {markdownContent}
+        {contentActions}
+      </div>
+    );
+  };
 
   return (
-    <ContentContainerWrapper
-      header={header}
-      fullscreenEnabled={fullscreenEnabled}
-      fullscreenCloseLabel={fullscreenCloseLabel}
-      fullscreenExpandLabel={fullscreenExpandLabel}
-      onBeforeFullscreen={onFullscreenOpen}
-      onAfterFullscreen={onFullscreenClose}
-      marginTop={config?.marginTop}
-      marginBottom={config?.marginBottom}
-      browseNav={browseNav}
-    >
+    <ContentContainerWrapper header={header} {...toContainerWrapperProps(props)}>
       {content}
     </ContentContainerWrapper>
   );

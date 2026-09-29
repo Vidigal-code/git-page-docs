@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createPlaybackArbiter, sharedPlaybackArbiter } from "@/features/audio-player/model/playback-arbiter";
-import { useExclusivePlayback } from "@/features/audio-player/model/use-exclusive-playback";
+import { createPlaybackArbiter, sharedPlaybackArbiter } from "@/shared/lib/media-playback/playback-arbiter";
+import { useExclusivePlayback } from "@/shared/lib/media-playback/use-exclusive-playback";
 
 afterEach(cleanup);
 
