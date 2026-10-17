@@ -41,10 +41,10 @@
 }
 
 .wrapper ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb, color-mix(in srgb, var(--text-secondary) 40%, transparent));
+  background: var(--scrollbar-thumb, color-mix(in srgb, var(--text-secondary) 65%, transparent));
   border-radius: 4px;
 }
 
 .wrapper ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover, color-mix(in srgb, var(--text-secondary) 60%, transparent));
+  background: var(--scrollbar-thumb-hover, color-mix(in srgb, var(--text-secondary) 85%, transparent));
 }

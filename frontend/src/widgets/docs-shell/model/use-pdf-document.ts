@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 interface PdfDocument {
   url: string;
+  blob: Blob;
 }
 
 interface PdfRequest {
@@ -10,7 +11,7 @@ interface PdfRequest {
 }
 
 type PdfLoadState = "idle" | "loading" | "ready" | "error";
-interface PdfResource {
+export interface PdfResource {
   state: PdfLoadState;
   document: PdfDocument | undefined;
   load: () => Promise<PdfDocument | undefined>;
@@ -41,7 +42,7 @@ export function usePdfDocument(source: string, options: { previewEnabled: boolea
     const promise = fetchPdfBlob(source, controller.signal)
       .then((blob) => {
         if (controller.signal.aborted) return undefined;
-        const loaded = { url: URL.createObjectURL(blob) };
+        const loaded = { url: URL.createObjectURL(blob), blob };
         cachedDocument.current = loaded;
         setDocument(loaded);
         setState("ready");

@@ -95,7 +95,9 @@ A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos
 
 ## URLs e anterior/próximo
 
-URLs versionadas usam `/v/<version>/`; `?lang=pt` escolhe o idioma e `?id=101` escolhe a página. `?name=chapter` seleciona o slug do documento. Mantenha `VersionControl.versions[].path` apontando para o config da versão correspondente. `site.ActiveNavigation` ativa anterior/próximo comum; a navegação entre documentos no modo foco possui opção própria. Consulte Modo foco para os controles de seção e documento.
+URLs versionadas usam `/v/<version>/`; `?lang=pt` escolhe o idioma e `?id=101` escolhe a página. `?name=chapter` seleciona o slug do documento. Mantenha `VersionControl.versions[].path` apontando para o config da versão correspondente. `site.ActiveNavigation` ativa a navegação rápida e seu atalho Ctrl+K. Os controles anterior/próximo do rodapé seguem os destinos disponíveis no menu; a navegação entre documentos no modo foco possui opção própria. Consulte Modo foco para os controles de seção e documento.
+
+Os botões Voltar/Próximo do rodapé usam `site.icons.DocumentPrevious` (`FiChevronLeft`) e `site.icons.DocumentNext` (`FiChevronRight`) por padrão. Defina `reactIcon: false` em qualquer entrada para exibir seu texto traduzido; cada entrada também aceita `tag`, `size`, `colorDark` e `colorLight`. A aparência não muda a navegação: o rodapé aparece quando há mais de um destino disponível no menu, e a direção indisponível continua desabilitada nas extremidades.
 
 Teste um menu novo pela lateral, por URL direta e em cada idioma habilitado; confirme que o destino existe e é permitido para o leitor atual.
 

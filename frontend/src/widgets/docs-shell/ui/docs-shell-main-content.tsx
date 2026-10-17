@@ -3,6 +3,10 @@
 import type { LoadedDocsData, LoadedPage } from "@/entities/docs";
 import type { ReactNode } from "react";
 import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
+import { ControlIcon } from "@/shared/ui/control-icon";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
+import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
+import { FiChevronRight } from "@react-icons/all-files/fi/FiChevronRight";
 import { DocsShellControls, type DocsShellControlsProps } from "./docs-shell-controls";
 import { DocsShellHeader } from "./docs-shell-header";
 import { PageContentArea } from "./page-content-area";
@@ -73,6 +77,8 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
     footerEnabled,
     footerConfig,
   } = props;
+  const previousIcon = resolveControlIcon(data.config.site, { name: "DocumentPrevious", mode: activeLayoutMode ?? "dark" });
+  const nextIcon = resolveControlIcon(data.config.site, { name: "DocumentNext", mode: activeLayoutMode ?? "dark" });
 
   return (
     <div className={styles.contentArea}>
@@ -109,11 +115,11 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
         />
         {linearNavigationEntries.length > 1 && (
           <div className={styles.footerActions}>
-            <button className={styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious}>
-              {labels.previousLabel}
+            <button type="button" className={previousIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious} aria-label={labels.previousLabel} title={labels.previousLabel}>
+              {previousIcon ? <ControlIcon icon={previousIcon} fallback={<FiChevronLeft aria-hidden />} /> : labels.previousLabel}
             </button>
-            <button className={styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext}>
-              {labels.nextLabel}
+            <button type="button" className={nextIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext} aria-label={labels.nextLabel} title={labels.nextLabel}>
+              {nextIcon ? <ControlIcon icon={nextIcon} fallback={<FiChevronRight aria-hidden />} /> : labels.nextLabel}
             </button>
           </div>
         )}

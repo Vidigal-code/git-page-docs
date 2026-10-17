@@ -1,3 +1,6 @@
+import { decodeHTMLAttribute } from "entities/decode";
+import { createHeadingSlug, getHeadingText } from "./heading-content";
+
 /**
  * Extract heading structure (h1-h6) from rendered Markdown HTML for TOC.
  */
@@ -27,9 +30,9 @@ export function extractHeadingsFromHtml(
     const level = Number.parseInt(match[1], 10);
     const attrs = match[2] || "";
     const rawContent = match[3] || "";
-    const text = stripHtmlTags(rawContent).trim();
+    const text = getHeadingText(rawContent);
     const idMatch = HEADING_ID_ATTR_REGEX.exec(attrs);
-    const id = idMatch?.[1] || slugify(text);
+    const id = decodeHTMLAttribute(idMatch?.[1] ?? "") || createHeadingSlug(text);
     if (!id) continue;
     if (specificIds.length > 0 && !specificIds.includes(id)) continue;
 
@@ -37,43 +40,4 @@ export function extractHeadingsFromHtml(
   }
 
   return headings;
-}
-
-/**
- * Drops every `<...>` run the way `/<[^>]+>/g` would, using one forward scan
- * (indexOf) instead of a regex that backtracks quadratically on unclosed "<".
- * "<>" and a "<" with no later ">" are kept verbatim, as the regex kept them.
- */
-function stripHtmlTags(html: string): string {
-  let output = "";
-  let index = 0;
-  while (index < html.length) {
-    const open = html.indexOf("<", index);
-    if (open === -1) {
-      output += html.slice(index);
-      break;
-    }
-    const close = html.indexOf(">", open + 1);
-    if (close === -1) {
-      output += html.slice(index);
-      break;
-    }
-    if (close === open + 1) {
-      output += html.slice(index, close + 1);
-      index = close + 1;
-      continue;
-    }
-    output += html.slice(index, open);
-    index = close + 1;
-  }
-  return output;
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim() || "";
 }

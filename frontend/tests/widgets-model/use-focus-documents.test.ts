@@ -21,10 +21,15 @@ it("follows menu order through readable authorized markdown only", () => {
   expect(result.current.documents.map((document) => document.pathClick)).toEqual([GUIDE, INTRO]);
   expect(result.current.previousDocument).toBeUndefined();
   expect(result.current.nextDocument?.pathClick).toBe(INTRO);
+  expect(result.current.getDocument("first")?.pathClick).toBe(GUIDE);
+  expect(result.current.getDocument("last")?.pathClick).toBe(INTRO);
   rerender({ language: "en", deniedPath: INTRO });
   expect(result.current.nextDocument).toBeUndefined();
+  expect(result.current.getDocument("last")?.pathClick).toBe(GUIDE);
   rerender({ language: "pt", deniedPath: "" });
   expect(result.current.documents).toEqual([]);
+  expect(result.current.getDocument("first")).toBeUndefined();
+  expect(result.current.getDocument("last")).toBeUndefined();
 });
 
 it("skips loader placeholders for unreadable documents and missing translations", () => {

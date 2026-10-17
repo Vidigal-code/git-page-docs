@@ -87,10 +87,10 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       '@gitpagedocs/mcp':
-        specifier: ^0.0.9
+        specifier: ^0.0.10
         version: link:../mcp
       '@gitpagedocs/tools':
-        specifier: ^0.0.9
+        specifier: ^0.0.10
         version: link:../tools
       tsx:
         specifier: ^4.21.0
@@ -104,6 +104,9 @@ importers:
       '@react-icons/all-files':
         specifier: ^4.1.0
         version: 4.1.0(react@19.2.4)
+      entities:
+        specifier: 6.0.1
+        version: 6.0.1
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -142,7 +145,7 @@ importers:
   mcp:
     dependencies:
       '@gitpagedocs/tools':
-        specifier: ^0.0.9
+        specifier: ^0.0.10
         version: link:../tools
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.0
@@ -1509,6 +1512,10 @@ packages:
   encodeurl@2.0.0:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
+
+  entities@6.0.1:
+    resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
+    engines: {node: '>=0.12'}
 
   entities@8.1.0:
     resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
@@ -4283,6 +4290,8 @@ snapshots:
   emoji-regex@9.2.2: {}
 
   encodeurl@2.0.0: {}
+
+  entities@6.0.1: {}
 
   entities@8.1.0: {}
 

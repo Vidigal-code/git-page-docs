@@ -169,6 +169,10 @@ export type StandardIconName =
   | "LanguageSelector"
   | "ThemeSelector"
   | "FocusMode"
+  | "PdfDownload"
+  | "PdfOpenInNewTab"
+  | "DocumentPrevious"
+  | "DocumentNext"
   /** Header brand icon */
   | "ImageMenuHeader"
   /** Project link icon */

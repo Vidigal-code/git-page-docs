@@ -19,8 +19,8 @@
   --card-background: #0f172a;
   --card-border: #334155;
   --scrollbar-track: transparent;
-  --scrollbar-thumb: color-mix(in srgb, var(--text-secondary) 40%, transparent);
-  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+  --scrollbar-thumb: color-mix(in srgb, var(--text-secondary) 65%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 85%, transparent);
   --header-background: #0f172a;
   --header-border: 1px solid #334155;
 }

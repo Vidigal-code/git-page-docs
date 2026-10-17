@@ -38,10 +38,7 @@ it("renders the native PDF preview and the two document actions by default", asy
   render(<PdfContainer {...baseProps} />);
   expect((await screen.findByTitle("PDF")).getAttribute("src")).toBe(previewUrl);
   expect(screen.getByRole("button", { name: "Download PDF" })).not.toBeNull();
-  const link = screen.getByRole("link", { name: "Open in new tab" });
-  expect(link.getAttribute("href")).toBe(documentUrl);
-  expect(link.getAttribute("target")).toBe("_blank");
-  expect(link.getAttribute("rel")).toBe("noopener noreferrer");
+  expect(screen.getByRole("button", { name: "Open in new tab" })).not.toBeNull();
 });
 
 it("honors site defaults, route overrides, and the global PDF switch", async () => {
@@ -49,11 +46,11 @@ it("honors site defaults, route overrides, and the global PDF switch", async () 
   const { rerender } = render(<PdfContainer {...baseProps} config={config} sitePdf={{ openInNewTabEnabled: false }} />);
   expect(screen.queryByTitle("PDF")).toBeNull();
   expect(screen.queryByRole("button", { name: "Download PDF" })).toBeNull();
-  expect(screen.queryByRole("link", { name: "Open in new tab" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Open in new tab" })).toBeNull();
   rerender(<PdfContainer {...baseProps} config={{ id: 23, pdf: { pathPdf: { en: documentUrl }, previewEnabled: true, downloadEnabled: true, openInNewTabEnabled: true } }} sitePdf={{ previewEnabled: false, downloadEnabled: false, openInNewTabEnabled: false }} />);
   expect(await screen.findByTitle("PDF")).not.toBeNull();
   expect(screen.getByRole("button", { name: "Download PDF" })).not.toBeNull();
-  expect(screen.getByRole("link", { name: "Open in new tab" })).not.toBeNull();
+  expect(screen.getByRole("button", { name: "Open in new tab" })).not.toBeNull();
   rerender(<PdfContainer {...baseProps} config={config} sitePdf={{ enabled: false }} />);
   expect(screen.queryByRole("article")).toBeNull();
 });
@@ -61,7 +58,7 @@ it("honors site defaults, route overrides, and the global PDF switch", async () 
 it.each(["javascript:alert(1)", "data:application/pdf;base64,AAAA", "//untrusted.example/file.pdf", "", "file:///C:/secret.pdf"])("rejects an unavailable or unsafe PDF source: %s", (pathPdf) => {
   render(<PdfContainer {...baseProps} pathPdf={pathPdf} />);
   expect(screen.queryByTitle("PDF")).toBeNull();
-  expect(screen.queryByRole("link", { name: "Open in new tab" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Open in new tab" })).toBeNull();
   expect(screen.queryByRole("button", { name: "Download PDF" })).toBeNull();
   expect(screen.getByRole("status").textContent).toContain("PDF unavailable");
 });
@@ -80,7 +77,7 @@ it("downloads the validated document using the preview cache and releases its te
   expect(revokeUrl).toHaveBeenCalledWith(previewUrl);
 });
 
-it.each(["http", "network", "html"])("reports %s download errors and keeps the original link available", async (failure) => {
+it.each(["http", "network", "html"])("reports %s download errors and keeps the open action available", async (failure) => {
   if (failure === "network") fetchPdf.mockRejectedValueOnce(new TypeError("CORS denied"));
   else fetchPdf.mockResolvedValueOnce(new Response("<html>Not a PDF</html>", { status: failure === "http" ? 404 : 200 }));
   render(<PdfContainer {...baseProps} sitePdf={{ previewEnabled: false }} />);
@@ -89,7 +86,7 @@ it.each(["http", "network", "html"])("reports %s download errors and keeps the o
   expect((screen.getByRole("button", { name: "Downloading PDF..." }) as HTMLButtonElement).disabled).toBe(true);
   expect((await screen.findByRole("alert")).textContent).toBe("Could not download PDF.");
   expect(screen.queryByTitle("PDF")).toBeNull();
-  expect(screen.getByRole("link", { name: "Open in new tab" }).getAttribute("href")).toBe(documentUrl);
+  expect(screen.getByRole("button", { name: "Open in new tab" })).not.toBeNull();
 });
 
 it("localizes PDF actions and status messages from langmenu", async () => {
@@ -97,7 +94,7 @@ it("localizes PDF actions and status messages from langmenu", async () => {
   const { rerender } = render(<PdfContainer {...baseProps} language="pt" langmenu={langmenu} />);
   expect(await screen.findByTitle("Documento PDF")).not.toBeNull();
   expect(screen.getByRole("button", { name: "Baixar PDF" })).not.toBeNull();
-  expect(screen.getByRole("link", { name: "Abrir em nova guia" })).not.toBeNull();
+  expect(screen.getByRole("button", { name: "Abrir em nova guia" })).not.toBeNull();
   rerender(<PdfContainer {...baseProps} language="pt" langmenu={langmenu} pathPdf="" />);
   expect(screen.getByRole("status").textContent).toBe("PDF indisponivel");
 });
@@ -153,12 +150,12 @@ it("releases the previous PDF preview and fetches the new source on navigation",
   expect(fetchPdf).toHaveBeenLastCalledWith("/git-page-docs/new.pdf", expect.objectContaining({ signal: expect.any(AbortSignal) }));
 });
 
-it("reports an invalid PDF preview without hiding the original document link", async () => {
+it("reports an invalid PDF preview without hiding the open action", async () => {
   fetchPdf.mockResolvedValueOnce(new Response("<html>Unexpected response</html>", { status: 200 }));
   render(<PdfContainer {...baseProps} />);
   await waitFor(() => expect(screen.getByRole("status").textContent).toContain("PDF unavailable"));
   expect(screen.queryByTitle("PDF")).toBeNull();
-  expect(screen.getByRole("link", { name: "Open in new tab" })).not.toBeNull();
+  expect(screen.getByRole("button", { name: "Open in new tab" })).not.toBeNull();
 });
 
 it("skips protected PDFs during browsing and does not fetch a denied PDF section in a mixed page", async () => {

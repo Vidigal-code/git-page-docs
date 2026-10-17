@@ -6,6 +6,10 @@ const CONTROL_ICON_TAGS = {
   LanguageSelector: "FiGlobe",
   ThemeSelector: "BsSunFill",
   FocusMode: "MdFullscreen",
+  PdfDownload: "FiDownload",
+  PdfOpenInNewTab: "FiExternalLink",
+  DocumentPrevious: "FiChevronLeft",
+  DocumentNext: "FiChevronRight",
 } as const;
 
 export type ControlIconName = keyof typeof CONTROL_ICON_TAGS;

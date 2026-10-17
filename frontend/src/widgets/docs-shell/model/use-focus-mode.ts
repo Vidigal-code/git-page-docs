@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { FocusModeOptions } from "@/entities/docs";
+import { resolveFocusNavigationIndex, type FocusNavigationTarget } from "./focus-navigation";
 
 function splitMarkdownHtmlIntoPages(html: string): string[] {
   const content = html.trim();
@@ -53,13 +54,10 @@ export function useFocusMode(markdownHtml: string, documentId = markdownHtml, op
     setFocusModeOpen(false);
   }
 
-  function onFocusModeNavigate(offset: -1 | 1) {
+  function onFocusModeNavigate(target: FocusNavigationTarget) {
     setPosition((previous) => {
-      const next = (previous.documentId === documentId ? previous.index : 0) + offset;
-      if (next < 0 || next >= focusModePages.length) {
-        return previous;
-      }
-      return { documentId, index: next };
+      const index = resolveFocusNavigationIndex({ target, currentIndex: previous.documentId === documentId ? previous.index : 0, count: focusModePages.length });
+      return index < 0 ? previous : { documentId, index };
     });
   }
 

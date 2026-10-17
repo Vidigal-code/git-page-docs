@@ -1363,10 +1363,10 @@ dialog.versionLinksCard {
 
 .focusModeNavigationGroup {
   display: grid;
-  grid-template-columns: 44px minmax(70px, 1fr) 44px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: center;
-  gap: 12px;
-  flex: 1 1 220px;
+  gap: 8px;
+  flex: 1 1 240px;
   min-width: 0;
   padding: 8px;
   border: 1px solid var(--card-border);
@@ -1378,7 +1378,8 @@ dialog.versionLinksCard {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
+  width: 100%;
+  min-width: 44px;
   height: 44px;
   padding: 0;
   border: var(--control-border, 1px solid var(--card-border));
@@ -1404,14 +1405,12 @@ dialog.versionLinksCard {
   outline-offset: 3px;
 }
 
-.focusModePreviousIcon {
-  transform: rotate(180deg);
-}
-
 .focusModeCounter {
+  grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   color: var(--text-secondary);
   font-size: 0.75rem;
   text-align: center;
@@ -1430,6 +1429,7 @@ dialog.versionLinksCard {
 
 .focusModeHeader {
   display: flex;
+  flex-shrink: 0;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
@@ -1470,11 +1470,12 @@ dialog.versionLinksCard {
 }
 
 .focusModeBody {
+  flex: 1 1 auto;
   border: 1px solid var(--card-border);
   border-radius: 12px;
   padding: clamp(12px, 2vw, 18px);
   overflow-y: auto;
-  min-height: 180px;
+  min-height: 0;
   max-height: min(64vh, calc(100dvh - 220px));
   background: color-mix(in srgb, var(--background) 86%, transparent);
   overflow-wrap: anywhere;
@@ -1483,6 +1484,7 @@ dialog.versionLinksCard {
 
 .focusModeFooter {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -1609,9 +1611,8 @@ dialog.versionLinksCard {
   }
 
   .mobileControls .modeIconButton {
-    margin: 0 auto;
-    width: 44px;
-    min-width: 44px;
+    width: 100%;
+    min-width: 0;
     height: 44px;
   }
 
@@ -1724,7 +1725,6 @@ dialog.versionLinksCard {
   }
 
   .focusModeBody {
-    min-height: 120px;
     max-height: calc(100dvh - 200px);
     padding: 12px;
     text-align: center;

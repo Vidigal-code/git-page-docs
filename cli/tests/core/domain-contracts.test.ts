@@ -92,7 +92,7 @@ describe("contracts index", () => {
 
 describe("route data", () => {
   it("maps every markdown route to a file per language", () => {
-    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]);
+    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30]);
     for (const paths of Object.values(ROUTE_PATHS)) {
       for (const language of ["pt", "en", "es"] as const) {
         expect(paths[language]).toMatch(/\.md$/);

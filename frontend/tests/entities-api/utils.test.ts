@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { markdownToHtml } from "@/entities/docs/api/utils/markdown";
+import { extractHeadingsFromHtml } from "@/entities/docs/lib/markdown/extract-headings";
 import { parseOwnerRepoFromRenderingUrl } from "@/entities/docs/api/utils/url-utils";
 import { getLanguages, getLanguagesFromPathRecord, hasAudio, hasPath, hasVideo } from "@/entities/docs/api/utils/route-utils";
 import { buildRemoteTemplateUrl, templatesBaseFromConfigUrl } from "@/entities/docs/api/layouts/remote-template-urls";
@@ -23,8 +24,36 @@ describe("markdownToHtml", () => {
     expect(markdownToHtml("# ???")).toContain('<h1 id="heading">???</h1>');
   });
 
-  it("leaves headings with inline markup untouched", () => {
-    expect(markdownToHtml("# Hello *World*")).toContain("<h1>Hello <em>World</em></h1>");
+  it("preserves inline markup while providing a working heading anchor", () => {
+    expect(markdownToHtml("# Hello *World*")).toContain('<h1 id="hello-world">Hello <em>World</em></h1>');
+  });
+
+  it("preserves Unicode headings and decoded TOC labels with matching anchors after a UTF-8 BOM", () => {
+    const markdown = "\uFEFF---\ntitle: Metadados\n---\n# Configuração & ação\n\n## Olá *mundo* &copy; &#x1F680;\n\n## 中文入门\n\n## 日本語の設定\n\n## Hello World!";
+    const html = markdownToHtml(markdown);
+    expect(extractHeadingsFromHtml(html)).toEqual([
+      { id: "configuração-ação", text: "Configuração & ação", level: 1 },
+      { id: "olá-mundo-", text: "Olá mundo © 🚀", level: 2 },
+      { id: "中文入门", text: "中文入门", level: 2 },
+      { id: "日本語の設定", text: "日本語の設定", level: 2 },
+      { id: "hello-world", text: "Hello World!", level: 2 },
+    ]);
+    expect(html).toContain('<h1 id="configuração-ação">Configuração &amp; ação</h1>');
+    expect(html).toContain('<h2 id="olá-mundo-">Olá <em>mundo</em> &copy; &#x1F680;</h2>');
+    expect(html).not.toContain("Metadados");
+  });
+
+  it("removes only the initial BOM and preserves Markdown indentation and combining accents", () => {
+    const html = markdownToHtml("\uFEFF    # Indented code\n\n# Cafe\u0301");
+    expect(html).toContain("<pre><code># Indented code");
+    expect(html).toContain('<h1 id="café">Cafe\u0301</h1>');
+    expect(extractHeadingsFromHtml(html)).toEqual([{ id: "café", text: "Cafe\u0301", level: 1 }]);
+  });
+
+  it("adds Unicode anchors to raw HTML headings without changing author-defined ids", () => {
+    const html = markdownToHtml('<h2>Olá <em>mundo</em></h2>\n<h3 id="author-id">中文</h3>');
+    expect(html).toContain('<h2 id="olá-mundo">Olá <em>mundo</em></h2>');
+    expect(html).toContain('<h3 id="author-id">中文</h3>');
   });
 });
 

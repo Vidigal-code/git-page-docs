@@ -23,13 +23,15 @@ Añade este bloque dentro de `site` en `gitpagedocs/config.json`:
 }
 ```
 
-`enabled` es el interruptor general del contenido PDF. Los demás campos controlan la vista previa, el botón de descarga y el enlace de nueva pestaña. Cada campo omitido toma el valor `true`, también en configuraciones antiguas.
+`enabled` es el interruptor general del contenido PDF. Los demás campos controlan la vista previa, el botón de descarga y el botón de nueva pestaña. Cada campo omitido toma el valor `true`, también en configuraciones antiguas.
 
 La precedencia de las acciones es `ruta.pdf.<flag>` > `site.pdf.<flag>` > `true`. Un `true` explícito en la ruta activa esa acción aunque el valor del sitio sea `false`; `site.pdf.enabled: false` sigue desactivando todos los PDFs. Si falta la ruta del idioma seleccionado, el PDF no está disponible; no hay cambio automático de idioma.
 
+Las acciones PDF usan iconos por defecto. Configura `site.icons.PdfDownload` (`FiDownload`) y `site.icons.PdfOpenInNewTab` (`FiExternalLink`) por separado con `reactIcon`, `tag`, `size`, `colorDark` y `colorLight`. Por ejemplo, `"PdfDownload": { "reactIcon": false }` muestra texto en descarga mientras la nueva pestaña conserva su icono. La apariencia no cambia las opciones de activación anteriores.
+
 ## Ejemplo de ruta y menú
 
-En `gitpagedocs/docs/versions/0.0.9/config.json`, conserva las listas de rutas y menús en el nivel principal:
+En `gitpagedocs/docs/versions/0.0.10/config.json`, conserva las listas de rutas y menús en el nivel principal:
 
 ```json
 {
@@ -38,9 +40,9 @@ En `gitpagedocs/docs/versions/0.0.9/config.json`, conserva las listas de rutas y
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -64,9 +66,9 @@ Las opciones de la ruta se colocan dentro de `pdf`. La presentación compartida,
 
 Las rutas relativas a la raíz del repositorio que empiezan por `gitpagedocs/` se copian a los assets públicos del visor al iniciar o compilar Next.js. La URL respeta el subdirectorio de publicación de GitHub Pages. Incluye el PDF en Git y publícalo junto con la documentación generada. Los archivos fuera de `gitpagedocs/` deben estar en `frontend/public/` del visor o ser accesibles mediante una URL HTTP(S).
 
-Usa la URL del PDF binario, no una página HTML de vista previa del repositorio. Para repositorios remotos, la ruta se resuelve dentro de ese repositorio. Tanto la vista previa como la descarga obtienen los bytes del archivo, por lo que un servidor externo debe permitir CORS en ambas operaciones. El visor valida la firma PDF y crea una URL Blob temporal de tipo `application/pdf` para la vista previa nativa; libera esa URL al cambiar o cerrar el documento. La política de incorporación y las cabeceras de tipo/disposición del servidor de origen no controlan esta vista previa Blob.
+Usa la URL del PDF binario, no una página HTML de vista previa del repositorio. Para repositorios remotos, la ruta se resuelve dentro de ese repositorio. La vista previa, la descarga y la apertura en una nueva pestaña obtienen los bytes del archivo, por lo que un servidor externo debe permitir CORS para las tres acciones. El visor valida la firma PDF y crea una URL Blob temporal de tipo `application/pdf`. La vista previa y la nueva pestaña utilizan el visor PDF nativo del navegador; la política de incorporación y las cabeceras de tipo/disposición del servidor de origen no controlan esta vista Blob.
 
-El enlace de nueva pestaña abre directamente la URL original. Su comportamiento depende del navegador y de las cabeceras `Content-Type` y `Content-Disposition`; una URL raw puede descargar el archivo en vez de mostrarlo. El enlace directo sigue disponible si falla la vista previa o la descarga, salvo cuando esa acción está desactivada.
+El botón de nueva pestaña abre el Blob PDF validado en lugar de navegar a la URL raw del repositorio. También funciona con la vista previa desactivada: la carga comienza cuando el lector descarga o abre el documento. Los bytes cargados se reutilizan para el PDF actual. Los fallos de red/CORS, los PDFs inválidos y el bloqueo de nuevas pestañas muestran un error; no hay fallback automático a la URL raw. El soporte PDF nativo y las preferencias de descarga del navegador siguen determinando cómo se muestra el archivo en la nueva pestaña.
 
 ## Lectura y diagnóstico
 
@@ -74,6 +76,6 @@ El enlace de nueva pestaña abre directamente la URL original. Su comportamiento
 - La vista previa no convierte PDF en Markdown. El modo foco, la navegación por secciones, la copia de Markdown y la narración actúan sobre documentos Markdown, no sobre el PDF incorporado.
 - Desactivar la vista previa puede conservar la descarga y la nueva pestaña. Desactivar todas las acciones deja el PDF sin controles interactivos.
 - Ocultar un botón no controla el acceso. Los PDFs alojados públicamente siguen disponibles mediante su URL. Los documentos confidenciales necesitan alojamiento protegido.
-- Si la vista previa está vacía, abre una pestaña nueva, comprueba que la ruta devuelve un PDF y revisa las cabeceras del servidor. Los fallos de descarga se muestran en la página.
+- Si la vista previa está vacía, confirma que la ruta devuelve un PDF y permite acceso mediante CORS; después prueba la nueva pestaña. Permite ventanas emergentes para el sitio si el navegador bloquea esa acción. Los fallos de descarga y apertura se muestran en la página.
 
 > Version (ES): 0.0.9

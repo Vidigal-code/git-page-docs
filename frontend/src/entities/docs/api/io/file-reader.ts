@@ -33,7 +33,7 @@ export async function readJsonFile<T>(filePath: string): Promise<T> {
   if (text === null) {
     throw new Error(`Failed to read local file: ${filePath}`);
   }
-  return JSON.parse(text) as T;
+  return JSON.parse(text.trimStart()) as T;
 }
 
 export async function tryReadJsonFile<T>(filePath: string): Promise<T | null> {

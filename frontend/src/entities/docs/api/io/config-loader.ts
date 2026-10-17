@@ -18,7 +18,7 @@ async function loadLocalConfig<T>(resolvedPath: string): Promise<T> {
   const ext = path.extname(resolvedPath);
   if (ext === ".json") {
     const text = await readFile(resolvedPath, "utf-8");
-    return JSON.parse(text) as T;
+    return JSON.parse(text.trimStart()) as T;
   }
   if (ext === ".js" || ext === ".ts") {
     const fileUrl = pathToFileURL(resolvedPath).href;

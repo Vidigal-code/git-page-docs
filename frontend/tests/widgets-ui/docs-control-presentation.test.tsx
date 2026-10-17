@@ -81,7 +81,18 @@ it("configures language and theme icons independently through site.icons", () =>
   expect(onLanguageChange).toHaveBeenCalledWith("pt");
 });
 
-it.each([undefined, false, "true", 1])("keeps text controls unless reactIcon is explicitly true (%s)", (reactIcon) => {
+it("inherits icon defaults when the compact control flags are omitted", () => {
+  renderControls({ site: { ActiveNavigation: true, icons: {
+    FocusMode: {}, QuickNavigation: {}, LanguageSelector: {}, ThemeSelector: {},
+  } } });
+  for (const name of ["Focus mode", "Ctrl+K", "Language selector", "Theme selector"]) {
+    const button = screen.getByRole("button", { name });
+    expect(button.textContent).toBe("");
+    expect(button.querySelector("svg")).not.toBeNull();
+  }
+});
+
+it.each([false, "true", 1])("keeps text controls when reactIcon is overridden without a boolean true (%s)", (reactIcon) => {
   renderControls({ site: { ActiveNavigation: true, icons: {
     FocusMode: { reactIcon }, QuickNavigation: { reactIcon }, LanguageSelector: { reactIcon }, ThemeSelector: { reactIcon },
   } } });

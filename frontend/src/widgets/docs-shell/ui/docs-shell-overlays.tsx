@@ -15,6 +15,8 @@ import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
 import type { OnMenuClickOptions } from "../model/use-docs-shell-navigation-state";
 import type { DocsShellLabels } from "../model/use-docs-shell-labels";
+import type { FocusNavigationTarget } from "../model/focus-navigation";
+import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 
 export interface DocsShellOverlaysControlsConfig {
   activeNavigation: boolean;
@@ -37,7 +39,7 @@ export interface DocsShellOverlaysProps {
   controlsProps: DocsShellControlsProps;
   navMenuConfig: NavMenuConfig;
   controlsConfig: DocsShellOverlaysControlsConfig;
-  labels: ContentLabels & Pick<DocsShellLabels, "focusPreviousSectionLabel" | "focusNextSectionLabel" | "focusSectionsLabel" | "focusDocumentsLabel">;
+  labels: ContentLabels & Pick<DocsShellLabels, "focusFirstSectionLabel" | "focusLastSectionLabel" | "focusPreviousSectionLabel" | "focusNextSectionLabel" | "focusSectionsLabel" | "focusDocumentsLabel">;
   versionLinksPopupOpen: boolean;
   setVersionLinksPopupOpen: (v: boolean) => void;
   infoPopupOpen: boolean;
@@ -66,10 +68,8 @@ export interface DocsShellOverlaysProps {
   focusDocumentNavigation: FocusDocumentNavigation;
   focusOptions?: FocusModeOptions;
   focusAccessibilityControls?: ReactNode;
-  canFocusModeGoPrevious: boolean;
-  canFocusModeGoNext: boolean;
   closeFocusMode: () => void;
-  onFocusModeNavigate: (offset: -1 | 1) => void;
+  onFocusModeNavigate: (target: FocusNavigationTarget) => void;
   versionLinksLabel: string;
   versionLinkOptionsWithLabels: VersionLinkOption[];
   lastUpdateLabel: string;
@@ -82,7 +82,7 @@ export interface DocsShellOverlaysProps {
   navigation: BrowseNavigationProps;
   closeUrlFullscreen: () => void;
   onOpenAiChat: () => void;
-  aiChatIconConfig: any;
+  aiChatIconConfig?: { open: ResolvedNavMenuIconConfig };
 }
 
 export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
@@ -126,6 +126,8 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         isOpen={controlsConfig.focusModeEnabled && props.focusModeOpen}
         focusModeLabel={props.focusModeLabel}
         menuCloseLabel={labels.menuCloseLabel}
+        firstLabel={labels.focusFirstSectionLabel}
+        lastLabel={labels.focusLastSectionLabel}
         previousLabel={labels.focusPreviousSectionLabel}
         nextLabel={labels.focusNextSectionLabel}
         sectionsLabel={labels.focusSectionsLabel}
@@ -138,8 +140,6 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         accessibilityControls={props.focusAccessibilityControls}
         sourceActionLabels={{ copy: labels.mdCopyLabel, copied: labels.mdCopiedLabel, copyError: labels.mdCopyErrorLabel, download: labels.mdDownloadLabel }}
         focusModeCurrentHtml={props.focusModeCurrentHtml}
-        canFocusModeGoPrevious={props.canFocusModeGoPrevious}
-        canFocusModeGoNext={props.canFocusModeGoNext}
         onClose={props.closeFocusMode}
         onNavigate={props.onFocusModeNavigate}
       />

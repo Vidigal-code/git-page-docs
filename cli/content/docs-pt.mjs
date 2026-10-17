@@ -1,4 +1,9 @@
+import { practicalPt } from "./practical-pt.mjs";
+import { operationsPt } from "./operations-pt.mjs";
+
 export const docsPt = {
+    ...practicalPt,
+    ...operationsPt,
     pdf: `# Documentos PDF
 
 PDF é um tipo de conteúdo próprio, junto com Markdown, HTML, código-fonte, vídeo e áudio. A prévia usa o visualizador nativo de PDF do navegador. As ações de baixar e abrir em nova aba são configuráveis de forma independente.
@@ -24,13 +29,15 @@ Adicione este bloco dentro de \`site\` em \`gitpagedocs/config.json\`:
 }
 \`\`\`
 
-\`enabled\` é a chave geral do conteúdo PDF. Os demais campos controlam a prévia, o botão de download e o link de nova aba. Todo campo omitido assume \`true\`, inclusive em configurações antigas.
+\`enabled\` é a chave geral do conteúdo PDF. Os demais campos controlam a prévia, o botão de download e o botão de nova aba. Todo campo omitido assume \`true\`, inclusive em configurações antigas.
 
 A precedência das ações é \`rota.pdf.<flag>\` > \`site.pdf.<flag>\` > \`true\`. Um \`true\` explícito na rota habilita aquela ação mesmo quando o padrão do site é \`false\`; \`site.pdf.enabled: false\` continua desabilitando todos os PDFs. Sem caminho para o idioma selecionado, o PDF fica indisponível; não há fallback automático de idioma.
 
+As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\`FiDownload\`) e \`site.icons.PdfOpenInNewTab\` (\`FiExternalLink\`) individualmente com \`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. Por exemplo, \`"PdfDownload": { "reactIcon": false }\` exibe texto no download enquanto a nova aba continua com ícone. A aparência não altera as opções de habilitação acima.
+
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.9/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.10/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -39,9 +46,9 @@ Em \`gitpagedocs/docs/versions/0.0.9/config.json\`, mantenha as listas de rotas 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -65,9 +72,9 @@ As flags opcionais da rota ficam dentro de \`pdf\`. Apresentação compartilhada
 
 Caminhos relativos à raiz do repositório que começam com \`gitpagedocs/\` são copiados para os assets públicos do visualizador ao iniciar ou compilar o Next.js. A URL respeita o subdiretório de publicação no GitHub Pages. Versione o PDF no Git e publique-o junto com a documentação gerada. Arquivos fora de \`gitpagedocs/\` devem estar em \`frontend/public/\` do visualizador ou acessíveis por uma URL HTTP(S).
 
-Use a URL do PDF binário, não uma página HTML de prévia do repositório. Em repositórios remotos, o caminho configurado é resolvido nesse repositório. Tanto a prévia quanto o download buscam os bytes do arquivo, portanto um servidor externo precisa permitir CORS nas duas operações. O visualizador valida a assinatura PDF e cria uma URL Blob temporária com tipo \`application/pdf\` para a prévia nativa; essa URL é liberada ao trocar ou fechar o documento. A política de incorporação e os cabeçalhos de tipo/disposição do servidor de origem não controlam essa prévia Blob.
+Use a URL do PDF binário, não uma página HTML de prévia do repositório. Em repositórios remotos, o caminho configurado é resolvido nesse repositório. Prévia, download e abertura em nova aba buscam os bytes do arquivo, portanto um servidor externo precisa permitir CORS nas três ações. O visualizador valida a assinatura PDF e cria uma URL Blob temporária com tipo \`application/pdf\`. A prévia e a nova aba usam o visualizador nativo de PDF do navegador; a política de incorporação e os cabeçalhos de tipo/disposição do servidor de origem não controlam essa exibição Blob.
 
-O link de nova aba abre diretamente a URL original. Seu comportamento depende do navegador e dos cabeçalhos \`Content-Type\` e \`Content-Disposition\`; uma URL raw pode baixar o arquivo em vez de exibi-lo. O link direto continua disponível se a prévia ou o download falhar, exceto quando essa ação está desabilitada.
+O botão de nova aba abre o Blob PDF validado em vez de navegar para a URL raw do repositório. Isso também funciona com a prévia desabilitada: o carregamento começa quando o leitor baixa ou abre o documento. Os bytes já carregados são reutilizados para o PDF atual. Falhas de rede/CORS, PDFs inválidos e bloqueio da nova aba geram um erro visível; não há fallback automático para a URL raw. O suporte nativo a PDF e as preferências de download do navegador ainda determinam como a nova aba exibe o arquivo.
 
 ## Leitura e diagnóstico
 
@@ -75,7 +82,7 @@ O link de nova aba abre diretamente a URL original. Seu comportamento depende do
 - A prévia não converte PDF em Markdown. Modo foco, navegação por seção, cópia de Markdown e narração atuam em documentos Markdown, não no PDF incorporado.
 - Desabilitar a prévia pode manter download e nova aba disponíveis. Desabilitar todas as ações deixa o PDF sem controle interativo.
 - Ocultar um botão não controla acesso. PDFs hospedados publicamente continuam acessíveis pela URL. Documentos confidenciais precisam de hospedagem protegida.
-- Se a prévia estiver vazia, use a ação de nova aba, confira se o caminho retorna um PDF e examine os cabeçalhos do servidor. Falhas de download são informadas na página.
+- Se a prévia estiver vazia, confira se o caminho retorna um PDF e permite acesso por CORS; depois tente a nova aba. Permita pop-ups para o site se o navegador bloquear essa ação. Falhas de download e abertura são informadas na página.
 `,
     index: `# Git Page Docs
 
@@ -118,6 +125,13 @@ O runtime espera esta estrutura:
 - **Modo foco**: copiar/baixar Markdown e navegar por seção/documento.
 - **Acessibilidade e narração**: vozes do navegador, controles e interação com mídias.
 - **Documentos PDF**: prévia nativa, download/nova aba e o guia incluído em inglês.
+- **Receitas de configuração**: um site multilíngue completo e um menu com seções dentro de seções.
+- **Migração e compatibilidade**: atualizar configurações desde a versão 0.0.1 preservando seu conteúdo.
+- **Solução de problemas**: UTF-8, caminhos locais e do Pages, carregamento de PDF, vozes e inicialização do MCP.
+- **Contribuição e validação**: arquivos fonte, geração, contratos públicos e verificações de publicação.
+- **Containers HTML**: páginas locais e externas, configuração de rotas/menus e o exemplo interativo DOOM.
+
+O menu gerado mantém Primeiros passos e Visão geral do projeto no início. Guias contém Configure seu site, Leia e explore e Automatize e integre; cada categoria contém suas páginas relacionadas. Operação e desenvolvimento agrupa publicação, manutenção e contribuição. Git e GitHub contém os exemplos de repositório. As categorias podem conter outras categorias sem um limite fixo de níveis.
 `,
     gettingStarted: `# Primeiros passos
 
@@ -277,7 +291,7 @@ Principais chaves:
 - \`ThemeModeDefault\`: modo inicial (\`light\` ou \`dark\`)
 - \`ProjectLink\`: URL de repositorio para acoes no cabecalho
 - \`docsVersion\`: versao inicial selecionada
-- \`ActiveNavigation\`: habilita comportamento de anterior/proximo
+- \`ActiveNavigation\`: habilita a navegação rápida e o atalho Ctrl+K
 - \`FocusMode\`: habilita modo foco/leitura
 - \`icons\`: icones do cabecalho. \`icons.defaults\` guarda o que todos compartilham (\`reactIcon\`, \`colorDark\`, \`colorLight\`, \`size\`, \`imgDark\`, \`imgLight\`, \`imgWidth\`, \`imgHeight\`) e cada icone define seu \`tag\` e o que muda (\`null\` remove um campo). As chaves planas abaixo continuam valendo e vencem quando as duas formas existem.
 - \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamanho do icone principal
@@ -293,9 +307,9 @@ Principais chaves:
 - \`layoutsConfigPath\`: fallback remoto para layouts
 - \`rendering\`: URL canonica publicada
 
-## Controles de idioma, tema e foco
+## Controles de idioma, tema, foco, navegação rápida, PDF e documentos
 
-Em \`gitpagedocs/config.json\`, adicione estas entradas a \`site.icons\` para usar React Icons no seletor de idioma, no seletor de tema e no botao de foco:
+Em \`gitpagedocs/config.json\`, estas entradas de \`site.icons\` configuram idioma, tema, foco, navegação Ctrl+K, ações PDF e navegação no rodapé dos documentos. Os oito controles usam React Icons por padrão:
 
 \`\`\`json
 {
@@ -316,13 +330,31 @@ Em \`gitpagedocs/config.json\`, adicione estas entradas a \`site.icons\` para us
       "QuickNavigation": {
         "reactIcon": true, "tag": "FiSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfDownload": {
+        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfOpenInNewTab": {
+        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentPrevious": {
+        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentNext": {
+        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
   }
 }
 \`\`\`
 
-Cada controle e independente: \`reactIcon: false\` preserva a aparencia atual com texto (padrao); \`true\` mostra o icone. Personalize \`tag\`, \`size\`, \`colorDark\` e \`colorLight\` por controle; \`currentColor\` acompanha o tema ativo. Os seletores com icone mantem seus menus e nomes acessiveis. \`site.FocusMode\` continua controlando se o modo foco esta habilitado; \`site.icons.FocusMode\` altera apenas a aparencia do botao.
+Cada controle é independente: \`reactIcon: true\` mostra o ícone (padrão); \`false\` exibe texto. Personalize \`tag\`, \`size\`, \`colorDark\` e \`colorLight\` por controle; \`currentColor\` acompanha o tema ativo. Controles com ícone mantêm seus nomes acessíveis, e seletores mantêm os menus. O atalho Ctrl+K continua disponível. \`site.FocusMode\` ainda habilita o modo foco; \`site.icons.FocusMode\` só altera a aparência do botão. \`site.icons.PdfDownload\` e \`site.icons.PdfOpenInNewTab\` selecionam texto ou ícone de forma independente; as opções correspondentes em \`site.pdf\` e no \`pdf\` da rota controlam a disponibilidade de cada ação.
+
+Configs compactos podem mover valores comuns para \`site.icons.defaults\`; campos omitidos herdam esses defaults. Defina \`reactIcon: false\` em uma entrada específica para substituir o ícone padrão por texto.
 
 ## Secao \`VersionControl\`
 
@@ -389,7 +421,7 @@ Opcoes por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
 
 | Chave | Padrão / finalidade |
 | --- | --- |
-| \`ActiveNavigation\` | true; controles comuns de anterior/próximo |
+| \`ActiveNavigation\` | true; navegação rápida e atalho Ctrl+K |
 | \`FocusMode / focusMode\` | Habilitação geral (true) e controles independentes de cópia, download, seção e documento; consulte Modo foco |
 | \`pdf\` | Habilitação geral, prévia, download e nova aba; todos true |
 | \`nestedMenusEnabled\` | true; árvore recursiva, ou destinos em lista plana quando false |
@@ -905,7 +937,9 @@ A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos
 
 ## URLs e anterior/próximo
 
-URLs versionadas usam \`/v/<version>/\`; \`?lang=pt\` escolhe o idioma e \`?id=101\` escolhe a página. \`?name=chapter\` seleciona o slug do documento. Mantenha \`VersionControl.versions[].path\` apontando para o config da versão correspondente. \`site.ActiveNavigation\` ativa anterior/próximo comum; a navegação entre documentos no modo foco possui opção própria. Consulte Modo foco para os controles de seção e documento.
+URLs versionadas usam \`/v/<version>/\`; \`?lang=pt\` escolhe o idioma e \`?id=101\` escolhe a página. \`?name=chapter\` seleciona o slug do documento. Mantenha \`VersionControl.versions[].path\` apontando para o config da versão correspondente. \`site.ActiveNavigation\` ativa a navegação rápida e seu atalho Ctrl+K. Os controles anterior/próximo do rodapé seguem os destinos disponíveis no menu; a navegação entre documentos no modo foco possui opção própria. Consulte Modo foco para os controles de seção e documento.
+
+Os botões Voltar/Próximo do rodapé usam \`site.icons.DocumentPrevious\` (\`FiChevronLeft\`) e \`site.icons.DocumentNext\` (\`FiChevronRight\`) por padrão. Defina \`reactIcon: false\` em qualquer entrada para exibir seu texto traduzido; cada entrada também aceita \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. A aparência não muda a navegação: o rodapé aparece quando há mais de um destino disponível no menu, e a direção indisponível continua desabilitada nas extremidades.
 
 Teste um menu novo pela lateral, por URL direta e em cada idioma habilitado; confirme que o destino existe e é permitido para o leitor atual.
 `,
@@ -931,15 +965,16 @@ Mescle este fragmento em \`gitpagedocs/config.json\`:
 }
 \`\`\`
 
-Cada opção tem padrão \`true\`; \`false\` oculta seu controle correspondente. Com \`sectionNavigationEnabled: false\`, o modo foco exibe o documento inteiro sem paginação por seções. Configurações existentes sem o novo objeto \`focusMode\` mantêm os controles habilitados.
+Cada opção tem padrão \`true\`; \`false\` oculta a ação ou o grupo de navegação correspondente. Com \`sectionNavigationEnabled: false\`, o modo foco exibe o documento inteiro sem paginação por seções. Configurações existentes sem o novo objeto \`focusMode\` mantêm os controles habilitados.
 
 ## Seções e documentos
 
-- Os controles anterior/próximo de seta simples mudam de seção no mesmo documento.
-- Os controles anterior/próximo de seta dupla mudam de documento Markdown na ordem dos menus, incluindo submenus.
+- A navegação de seções possui quatro botões: primeira seção, seção anterior, próxima seção e última seção do documento atual.
+- A navegação de documentos possui quatro botões: primeiro documento, documento anterior, próximo documento e último documento na ordem dos menus, incluindo submenus.
+- \`sectionNavigationEnabled\` controla os quatro botões de seção; \`documentNavigationEnabled\` controla os quatro botões de documento. Direções indisponíveis ficam desabilitadas nas extremidades.
 - Documentos sem tradução no idioma ativo, destinos sem Markdown e páginas sem permissão são ignorados.
 - Trocar de documento mantém o diálogo aberto e volta à primeira seção. Contadores de seção/documento mostram a posição atual.
-- \`site.ActiveNavigation\` controla a navegação comum da página; não desabilita a navegação de documentos no modo foco.
+- \`site.ActiveNavigation\` controla a navegação rápida; não desabilita a navegação de documentos no modo foco.
 
 ## Copiar e baixar
 
@@ -1044,7 +1079,7 @@ Porque o build de GitHub Pages habilita pagina inicial de busca e comportamento 
 
 ## Por que o ícone ainda mostra texto?
 
-Defina \`site.icons.<Controle>.reactIcon\` como booleano \`true\`, com o nome exato exportado por React Icons em \`tag\`. Os controles incluem LanguageSelector, ThemeSelector, FocusMode e QuickNavigation. Campos planos \`Icon*ReactIcones\` prevalecem se os dois formatos existirem. Confira se o próprio recurso está desabilitado por opções como \`HideThemeSelector\` ou \`FocusMode\`.
+Defina \`site.icons.<Controle>.reactIcon\` como booleano \`true\`, com o nome exato exportado por React Icons em \`tag\`. LanguageSelector, ThemeSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious e DocumentNext usam ícones por padrão; altere qualquer entrada para \`false\` para exibir texto. Campos planos \`Icon*ReactIcones\` prevalecem se os dois formatos existirem. Confira se o próprio recurso está desabilitado por opções como \`HideThemeSelector\`, \`FocusMode\` ou as ações PDF.
 
 ## Por que filhos de menus ou breadcrumbs aparecem diferentes?
 

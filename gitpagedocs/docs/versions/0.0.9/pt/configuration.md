@@ -20,7 +20,7 @@ Principais chaves:
 - `ThemeModeDefault`: modo inicial (`light` ou `dark`)
 - `ProjectLink`: URL de repositorio para acoes no cabecalho
 - `docsVersion`: versao inicial selecionada
-- `ActiveNavigation`: habilita comportamento de anterior/proximo
+- `ActiveNavigation`: habilita a navegação rápida e o atalho Ctrl+K
 - `FocusMode`: habilita modo foco/leitura
 - `icons`: icones do cabecalho. `icons.defaults` guarda o que todos compartilham (`reactIcon`, `colorDark`, `colorLight`, `size`, `imgDark`, `imgLight`, `imgWidth`, `imgHeight`) e cada icone define seu `tag` e o que muda (`null` remove um campo). As chaves planas abaixo continuam valendo e vencem quando as duas formas existem.
 - `IconImageMenuHeaderImgWidth`, `IconImageMenuHeaderImgHeight`: tamanho do icone principal
@@ -36,9 +36,9 @@ Principais chaves:
 - `layoutsConfigPath`: fallback remoto para layouts
 - `rendering`: URL canonica publicada
 
-## Controles de idioma, tema e foco
+## Controles de idioma, tema, foco, navegação rápida, PDF e documentos
 
-Em `gitpagedocs/config.json`, adicione estas entradas a `site.icons` para usar React Icons no seletor de idioma, no seletor de tema e no botao de foco:
+Em `gitpagedocs/config.json`, estas entradas de `site.icons` configuram idioma, tema, foco, navegação Ctrl+K, ações PDF e navegação no rodapé dos documentos. Os oito controles usam React Icons por padrão:
 
 ```json
 {
@@ -59,13 +59,31 @@ Em `gitpagedocs/config.json`, adicione estas entradas a `site.icons` para usar R
       "QuickNavigation": {
         "reactIcon": true, "tag": "FiSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfDownload": {
+        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfOpenInNewTab": {
+        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentPrevious": {
+        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentNext": {
+        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
   }
 }
 ```
 
-Cada controle e independente: `reactIcon: false` preserva a aparencia atual com texto (padrao); `true` mostra o icone. Personalize `tag`, `size`, `colorDark` e `colorLight` por controle; `currentColor` acompanha o tema ativo. Os seletores com icone mantem seus menus e nomes acessiveis. `site.FocusMode` continua controlando se o modo foco esta habilitado; `site.icons.FocusMode` altera apenas a aparencia do botao.
+Cada controle é independente: `reactIcon: true` mostra o ícone (padrão); `false` exibe texto. Personalize `tag`, `size`, `colorDark` e `colorLight` por controle; `currentColor` acompanha o tema ativo. Controles com ícone mantêm seus nomes acessíveis, e seletores mantêm os menus. O atalho Ctrl+K continua disponível. `site.FocusMode` ainda habilita o modo foco; `site.icons.FocusMode` só altera a aparência do botão. `site.icons.PdfDownload` e `site.icons.PdfOpenInNewTab` selecionam texto ou ícone de forma independente; as opções correspondentes em `site.pdf` e no `pdf` da rota controlam a disponibilidade de cada ação.
+
+Configs compactos podem mover valores comuns para `site.icons.defaults`; campos omitidos herdam esses defaults. Defina `reactIcon: false` em uma entrada específica para substituir o ícone padrão por texto.
 
 ## Secao `VersionControl`
 
@@ -132,7 +150,7 @@ Opcoes por rota em `routes-md`, `routes-html` e `routes-video`:
 
 | Chave | Padrão / finalidade |
 | --- | --- |
-| `ActiveNavigation` | true; controles comuns de anterior/próximo |
+| `ActiveNavigation` | true; navegação rápida e atalho Ctrl+K |
 | `FocusMode / focusMode` | Habilitação geral (true) e controles independentes de cópia, download, seção e documento; consulte Modo foco |
 | `pdf` | Habilitação geral, prévia, download e nova aba; todos true |
 | `nestedMenusEnabled` | true; árvore recursiva, ou destinos em lista plana quando false |

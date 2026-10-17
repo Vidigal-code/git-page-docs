@@ -20,15 +20,16 @@ Merge this fragment into `gitpagedocs/config.json`:
 }
 ```
 
-Each option defaults to `true`; setting one to `false` hides its corresponding control. With `sectionNavigationEnabled: false`, focus mode displays the entire document without section pagination. Existing configurations without the new `focusMode` object keep the controls enabled.
+Each option defaults to `true`; setting one to `false` hides its corresponding action or navigation group. With `sectionNavigationEnabled: false`, focus mode displays the entire document without section pagination. Existing configurations without the new `focusMode` object keep the controls enabled.
 
 ## Sections and documents
 
-- Single-arrow previous/next controls move between sections of the same document.
-- Double-arrow previous/next controls move between Markdown documents in menu order, including nested menus.
+- Section navigation has four buttons: first section, previous section, next section and last section of the current document.
+- Document navigation has four buttons: first document, previous document, next document and last document in menu order, including nested menus.
+- `sectionNavigationEnabled` controls the four section buttons; `documentNavigationEnabled` controls the four document buttons. Unavailable directions are disabled at the ends.
 - Documents without a translation in the active language, non-Markdown destinations and inaccessible pages are skipped.
 - Switching documents keeps the dialog open and starts at the first section. Section/document counters show the current position.
-- `site.ActiveNavigation` controls the ordinary page-navigation interface; it does not disable focus-mode document navigation.
+- `site.ActiveNavigation` controls the quick-navigation interface; it does not disable focus-mode document navigation.
 
 ## Copy and download
 

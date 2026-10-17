@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { hasMarkdownDocument, resolvePageMarkdownHtml, type LoadedDocsData, type MenuEntry } from "@/entities/docs";
 import { getPageIndexByPathClick } from "./menu-tree";
+import { resolveFocusNavigationIndex, type FocusNavigationTarget } from "./focus-navigation";
 
 interface FocusDocument extends MenuEntry {
   pageIndex: number;
@@ -19,6 +20,7 @@ interface FocusDocuments {
   currentDocumentIndex: number;
   previousDocument: FocusDocument | undefined;
   nextDocument: FocusDocument | undefined;
+  getDocument: (target: FocusNavigationTarget) => FocusDocument | undefined;
 }
 
 export function useFocusDocuments({ data, entries, language, currentPageIndex, isPathAllowed }: FocusDocumentsOptions): FocusDocuments {
@@ -42,5 +44,6 @@ export function useFocusDocuments({ data, entries, language, currentPageIndex, i
     currentDocumentIndex,
     previousDocument: currentDocumentIndex > 0 ? documents[currentDocumentIndex - 1] : undefined,
     nextDocument: currentDocumentIndex >= 0 ? documents[currentDocumentIndex + 1] : undefined,
+    getDocument: (target) => documents[resolveFocusNavigationIndex({ target, currentIndex: currentDocumentIndex, count: documents.length })],
   };
 }

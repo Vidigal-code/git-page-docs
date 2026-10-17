@@ -98,6 +98,33 @@ afterEach(() => {
 
 // Writes every shipped layout template plus all docs; give it room under CI load.
 describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, () => {
+  it("writes the localized HTML example, matching menus and its Markdown guide", async () => {
+    const root = makeRoot();
+    const artifacts = buildConfigArtifacts({ githubOwner: "acme", githubRepo: "docs" });
+    await writeConfigOnlyOutput({
+      root, pkgRoot: PACKAGE_ROOT, outputDir: "gitpagedocs", layoutsDir: "gitpagelayouts",
+      artifacts, useLocalLayoutConfig: false, layouts: [], createThemeTemplate,
+    });
+    for (const versionId of DOC_VERSIONS) {
+      const config = readJson(root, `gitpagedocs/docs/versions/${versionId}/config.json`) as {
+        "routes-html": { id: number; path: Record<string, string> }[];
+        "menus-header-html": Record<string, { title: string; "path-click": string }>[];
+      };
+      const route = config["routes-html"].find((entry) => entry.id === 29);
+      expect(route).toBeDefined();
+      for (const language of SUPPORTED_LANGUAGES) {
+        const destination = `gitpagedocs/docs/versions/${versionId}/${language}/doom.html`;
+        expect(route?.path[language]).toBe(destination);
+        expect(config["menus-header-html"][0][language]["path-click"]).toBe(destination);
+        const html = readFileSync(at(root, destination), "utf8");
+        expect(html.toLowerCase()).toContain("<!doctype html>");
+        expect(html).toContain(`lang="${language}"`);
+        expect(html).toContain("DOOM");
+        expect(readFileSync(at(root, `gitpagedocs/docs/versions/${versionId}/${language}/html-containers.md`), "utf8")).toContain("menus-header-html");
+      }
+    }
+  });
+
   it("copies the bundled PDF bytes into a custom output directory", async () => {
     const root = makeRoot();
     const pkgRoot = makeRoot();

@@ -315,6 +315,7 @@ export function PageContentArea({
         config={currentPdf.config}
         isDarkMode={isDarkMode}
         sitePdf={data.config.site.pdf}
+        siteIconSettings={data.config.site}
         langmenu={langmenu}
         fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentPdf.fullscreenEnabled })}
         {...fullscreenLabels}

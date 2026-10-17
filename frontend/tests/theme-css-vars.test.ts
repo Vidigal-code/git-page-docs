@@ -7,11 +7,11 @@ function theme(colors: Record<string, string>): ThemeTemplate {
 }
 
 describe("toBaseThemeCssVars scrollbar derivation", () => {
-  it("derives scrollbar colors from the theme accent when not declared", () => {
-    const vars = toBaseThemeCssVars(theme({ primary: "#7c3aed" })) as Record<string, string>;
+  it("derives neutral scrollbar colors from the theme text when not declared", () => {
+    const vars = toBaseThemeCssVars(theme({ primary: "#0969DA", textSecondary: "#57606A" })) as Record<string, string>;
     expect(vars["--scrollbar-track"]).toBe("transparent");
-    expect(vars["--scrollbar-thumb"]).toContain("var(--primary)");
-    expect(vars["--scrollbar-thumb-hover"]).toContain("var(--primary)");
+    expect(vars["--scrollbar-thumb"]).toContain("var(--text-secondary)");
+    expect(vars["--scrollbar-thumb-hover"]).toContain("var(--text-secondary)");
   });
 
   it("keeps explicit theme scrollbar colors over the derived ones", () => {
@@ -20,7 +20,7 @@ describe("toBaseThemeCssVars scrollbar derivation", () => {
     ) as Record<string, string>;
     expect(vars["--scrollbar-thumb"]).toBe("#ff0000");
     expect(vars["--scrollbar-track"]).toBe("transparent");
-    expect(vars["--scrollbar-thumb-hover"]).toContain("var(--primary)");
+    expect(vars["--scrollbar-thumb-hover"]).toContain("var(--text-secondary)");
   });
 
   it("emits nothing without a theme so :root defaults stay canonical", () => {

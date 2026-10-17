@@ -23,7 +23,6 @@
         "imgHeight": 20
       },
       "QuickNavigation": {
-        "reactIcon": false,
         "tag": "FiSearch",
         "colorDark": "currentColor",
         "colorLight": "currentColor",
@@ -34,7 +33,6 @@
         "imgHeight": null
       },
       "LanguageSelector": {
-        "reactIcon": false,
         "tag": "FiGlobe",
         "colorDark": "currentColor",
         "colorLight": "currentColor",
@@ -45,7 +43,6 @@
         "imgHeight": null
       },
       "ThemeSelector": {
-        "reactIcon": false,
         "tag": "BsSunFill",
         "colorDark": "currentColor",
         "colorLight": "currentColor",
@@ -56,8 +53,47 @@
         "imgHeight": null
       },
       "FocusMode": {
-        "reactIcon": false,
         "tag": "MdFullscreen",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "PdfDownload": {
+        "tag": "FiDownload",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "PdfOpenInNewTab": {
+        "tag": "FiExternalLink",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "DocumentPrevious": {
+        "tag": "FiChevronLeft",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "DocumentNext": {
+        "tag": "FiChevronRight",
         "colorDark": "currentColor",
         "colorLight": "currentColor",
         "size": "22px",
@@ -264,10 +300,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.9",
-        "path": "gitpagedocs/docs/versions/0.0.9/config.json",
+        "id": "0.0.10",
+        "path": "gitpagedocs/docs/versions/0.0.10/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/0.0.9/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.10/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

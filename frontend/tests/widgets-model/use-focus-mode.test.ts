@@ -16,7 +16,7 @@ describe("useFocusMode", () => {
       initialProps: { documentId: "first:en" },
     });
     act(() => result.current.openFocusMode());
-    act(() => result.current.onFocusModeNavigate(1));
+    act(() => result.current.onFocusModeNavigate("next"));
     expect(result.current.focusModeCurrentHtml).toBe(H1);
 
     rerender({ documentId: "second:en" });
@@ -56,26 +56,26 @@ describe("useFocusMode", () => {
   it("navigates within bounds and ignores offsets past either edge", () => {
     const { result } = renderHook(() => useFocusMode(THREE_PAGES));
 
-    act(() => result.current.onFocusModeNavigate(-1));
+    act(() => result.current.onFocusModeNavigate("previous"));
     expect(result.current.safeFocusModePageIndex).toBe(0);
 
-    act(() => result.current.onFocusModeNavigate(1));
+    act(() => result.current.onFocusModeNavigate("next"));
     expect(result.current.safeFocusModePageIndex).toBe(1);
     expect(result.current.focusModeCurrentHtml).toBe(H1);
     expect(result.current.canFocusModeGoPrevious).toBe(true);
     expect(result.current.canFocusModeGoNext).toBe(true);
 
-    act(() => result.current.onFocusModeNavigate(1));
+    act(() => result.current.onFocusModeNavigate("next"));
     expect(result.current.safeFocusModePageIndex).toBe(2);
     expect(result.current.canFocusModeGoNext).toBe(false);
 
-    act(() => result.current.onFocusModeNavigate(1));
+    act(() => result.current.onFocusModeNavigate("next"));
     expect(result.current.safeFocusModePageIndex).toBe(2);
   });
 
   it("opens on the first page, closes, and exposes the raw setter", () => {
     const { result } = renderHook(() => useFocusMode(THREE_PAGES));
-    act(() => result.current.onFocusModeNavigate(1));
+    act(() => result.current.onFocusModeNavigate("next"));
     expect(result.current.focusModeOpen).toBe(false);
 
     act(() => result.current.openFocusMode());
@@ -93,8 +93,8 @@ describe("useFocusMode", () => {
     const { result, rerender } = renderHook(({ html }) => useFocusMode(html), {
       initialProps: { html: THREE_PAGES },
     });
-    act(() => result.current.onFocusModeNavigate(1));
-    act(() => result.current.onFocusModeNavigate(1));
+    act(() => result.current.onFocusModeNavigate("next"));
+    act(() => result.current.onFocusModeNavigate("next"));
     expect(result.current.safeFocusModePageIndex).toBe(2);
 
     rerender({ html: H1 });

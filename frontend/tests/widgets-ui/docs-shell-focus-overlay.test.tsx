@@ -8,11 +8,11 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 function overlayProps(): ComponentProps<typeof DocsShellFocusOverlay> {
   return {
-    isOpen: true, focusModeLabel: "Focus mode", menuCloseLabel: "Close", previousLabel: "Previous section", nextLabel: "Next section",
-    focusModeCurrentHtml: "<h2>Introduction</h2><p>First section.</p>", canFocusModeGoPrevious: false, canFocusModeGoNext: true,
+    isOpen: true, focusModeLabel: "Focus mode", menuCloseLabel: "Close", previousLabel: "Previous section", nextLabel: "Next section", firstLabel: "First section", lastLabel: "Last section",
+    focusModeCurrentHtml: "<h2>Introduction</h2><p>First section.</p>",
     onClose: vi.fn(), onNavigate: vi.fn(), sectionIndex: 0, sectionCount: 2, sectionsLabel: "Sections", documentsLabel: "Documents",
     document: { id: "intro", title: "Introduction", source: "# Introduction", fileName: "intro.md", index: 0, count: 2 },
-    documentNavigation: { previousLabel: "Previous document", nextLabel: "Next document", nextTitle: "Installation", onNavigate: vi.fn() },
+    documentNavigation: { firstLabel: "First document", lastLabel: "Last document", previousLabel: "Previous document", nextLabel: "Next document", nextTitle: "Installation", onNavigate: vi.fn() },
     sourceActionLabels: { copy: "Copy Markdown", copied: "Copied", copyError: "Copy failed", download: "Download Markdown" },
   };
 }
@@ -24,9 +24,9 @@ it("offers separate section and document navigation while keeping focus open", (
   expect(screen.getByRole("dialog", { name: "Focus mode" })).toBeTruthy();
   expect(screen.getByRole("button", { name: "Previous document" }).hasAttribute("disabled")).toBe(true);
   fireEvent.click(screen.getByRole("button", { name: "Next section" }));
-  expect(props.onNavigate).toHaveBeenCalledWith(1);
+  expect(props.onNavigate).toHaveBeenCalledWith("next");
   fireEvent.click(screen.getByRole("button", { name: "Next document" }));
-  expect(props.documentNavigation.onNavigate).toHaveBeenCalledWith(1);
+  expect(props.documentNavigation.onNavigate).toHaveBeenCalledWith("next");
   expect(props.onClose).not.toHaveBeenCalled();
   expect(screen.getByRole("dialog", { name: "Focus mode" })).toBeTruthy();
 });

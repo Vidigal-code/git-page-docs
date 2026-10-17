@@ -20,15 +20,16 @@ Combina este fragmento con `gitpagedocs/config.json`:
 }
 ```
 
-Cada opción tiene valor predeterminado `true`; `false` oculta su control correspondiente. Con `sectionNavigationEnabled: false`, el modo foco muestra el documento completo sin paginación por secciones. Las configuraciones existentes sin el nuevo objeto `focusMode` mantienen los controles activados.
+Cada opción tiene valor predeterminado `true`; `false` oculta la acción o el grupo de navegación correspondiente. Con `sectionNavigationEnabled: false`, el modo foco muestra el documento completo sin paginación por secciones. Las configuraciones existentes sin el nuevo objeto `focusMode` mantienen los controles activados.
 
 ## Secciones y documentos
 
-- Los controles anterior/siguiente de flecha simple cambian de sección en el mismo documento.
-- Los controles anterior/siguiente de flecha doble cambian de documento Markdown en orden de menú, incluidos los submenús.
+- La navegación por secciones tiene cuatro botones: primera sección, sección anterior, sección siguiente y última sección del documento actual.
+- La navegación por documentos tiene cuatro botones: primer documento, documento anterior, documento siguiente y último documento en el orden del menú, incluidos los submenús.
+- `sectionNavigationEnabled` controla los cuatro botones de sección; `documentNavigationEnabled` controla los cuatro botones de documento. Las direcciones no disponibles quedan desactivadas en los extremos.
 - Se omiten documentos sin traducción en el idioma activo, destinos que no son Markdown y páginas sin permiso.
 - Cambiar de documento mantiene abierto el diálogo y vuelve a la primera sección. Los contadores de sección/documento muestran la posición actual.
-- `site.ActiveNavigation` controla la navegación habitual de la página; no desactiva la navegación de documentos en modo foco.
+- `site.ActiveNavigation` controla la navegación rápida; no desactiva la navegación de documentos en modo foco.
 
 ## Copiar y descargar
 

@@ -27,4 +27,11 @@ describe("GitPageDocsConfigLoader", () => {
     expect(await loader.resolveConfigPath(dir)).toBeUndefined();
     await expect(loader.loadGitPageDocsConfig(dir)).rejects.toBeInstanceOf(ConfigurationError);
   });
+
+  it("preserves UTF-8 site names through the CLI and MCP configuration loader", async () => {
+    const expected = { site: { name: "Documentação — España & 日本語 🚀" } };
+    writeFileSync(path.join(dir, "gitpagedocs", "config.json"), `\uFEFF${JSON.stringify(expected)}`, "utf8");
+    const { config } = await loader.loadGitPageDocsConfig(dir);
+    expect(config).toEqual(expected);
+  });
 });

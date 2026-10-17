@@ -83,6 +83,36 @@ export const REFERENCE_ROUTE_METAS = {
     titles: { pt: "Documentos PDF", en: "PDF documents", es: "Documentos PDF" },
     descriptions: { pt: "Rotas, prévia, download e publicação de anexos PDF", en: "Routes, previews, downloads and publishing PDF attachments", es: "Rutas, vista previa, descarga y publicación de anexos PDF" },
   },
+  25: {
+    titles: { pt: "Receitas de configuração", en: "Configuration recipes", es: "Recetas de configuración" },
+    descriptions: { pt: "Exemplos completos de configuração e seções aninhadas", en: "Complete configuration and nested-section examples", es: "Ejemplos completos de configuración y secciones anidadas" },
+  },
+  26: {
+    titles: { pt: "Migração e compatibilidade", en: "Migration and compatibility", es: "Migración y compatibilidad" },
+    descriptions: { pt: "Atualize preservando conteúdo e personalizações", en: "Upgrade while preserving content and customizations", es: "Actualiza conservando contenido y personalizaciones" },
+  },
+  27: {
+    titles: { pt: "Solução de problemas", en: "Troubleshooting", es: "Solución de problemas" },
+    descriptions: { pt: "Diagnostique configuração, publicação, PDF e integrações", en: "Diagnose configuration, deployment, PDF and integrations", es: "Diagnostica configuración, publicación, PDF e integraciones" },
+  },
+  28: {
+    titles: { pt: "Contribuição e testes", en: "Contributing and testing", es: "Contribución y pruebas" },
+    descriptions: { pt: "Fontes autorais, contratos, testes e publicação", en: "Authoring sources, contracts, tests and releases", es: "Fuentes, contratos, pruebas y publicación" },
+  },
+  30: {
+    titles: { pt: "Containers HTML", en: "HTML containers", es: "Contenedores HTML" },
+    descriptions: { pt: "Páginas HTML, URLs externas e o exemplo interativo DOOM", en: "HTML pages, external URLs and the interactive DOOM example", es: "Páginas HTML, URLs externas y el ejemplo interactivo DOOM" },
+  },
+};
+
+export const HTML_DOOM_META = {
+  id: 29,
+  titles: { pt: "DOOM: exemplo HTML", en: "DOOM: HTML example", es: "DOOM: ejemplo HTML" },
+  descriptions: {
+    pt: "Um container HTML com título, descrição e um jogo carregado apenas ao clicar.",
+    en: "An HTML container with a title, description and a game loaded only after clicking.",
+    es: "Un contenedor HTML con título, descripción y un juego que se carga solo al hacer clic.",
+  },
 };
 
 export const SOURCE_VIEWER_META = {

@@ -6,8 +6,12 @@ export interface DocsShellLabels {
   focusDocumentsLabel: string;
   focusPreviousSectionLabel: string;
   focusNextSectionLabel: string;
+  focusFirstSectionLabel: string;
+  focusLastSectionLabel: string;
   focusPreviousDocumentLabel: string;
   focusNextDocumentLabel: string;
+  focusFirstDocumentLabel: string;
+  focusLastDocumentLabel: string;
   previousLabel: string;
   nextLabel: string;
   browsePrevLabel: string;
@@ -298,8 +302,12 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       focusDocumentsLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusDocumentsLabel", "Documents"),
       focusPreviousSectionLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusPreviousSectionLabel", "Previous section"),
       focusNextSectionLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusNextSectionLabel", "Next section"),
+      focusFirstSectionLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusFirstSection", "First section"),
+      focusLastSectionLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusLastSection", "Last section"),
       focusPreviousDocumentLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusPreviousDocumentLabel", "Previous document"),
       focusNextDocumentLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusNextDocumentLabel", "Next document"),
+      focusFirstDocumentLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusFirstDocument", "First document"),
+      focusLastDocumentLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusLastDocument", "Last document"),
       aiChatTitle,
       aiChatPlaceholder,
       aiChatConfigTitle,

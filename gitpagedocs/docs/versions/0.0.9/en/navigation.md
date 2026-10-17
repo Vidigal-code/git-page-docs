@@ -95,7 +95,9 @@ The tree supplies sidebar navigation, search labels, parent expansion and breadc
 
 ## URLs and previous/next
 
-Versioned URLs use `/v/<version>/`; `?lang=pt` selects a language and `?id=101` selects a page ID. `?name=chapter` selects the document slug. Keep `VersionControl.versions[].path` pointing at the matching version config. `site.ActiveNavigation` enables ordinary previous/next page controls; focus-mode document navigation has its own option. See Focus mode for its section and document controls.
+Versioned URLs use `/v/<version>/`; `?lang=pt` selects a language and `?id=101` selects a page ID. `?name=chapter` selects the document slug. Keep `VersionControl.versions[].path` pointing at the matching version config. `site.ActiveNavigation` enables quick navigation and its Ctrl+K shortcut. Footer previous/next controls follow available menu destinations; focus-mode document navigation has its own option. See Focus mode for its section and document controls.
+
+Footer previous/next buttons use `site.icons.DocumentPrevious` (`FiChevronLeft`) and `site.icons.DocumentNext` (`FiChevronRight`) by default. Set `reactIcon: false` on either entry to show its translated text; each entry also accepts `tag`, `size`, `colorDark` and `colorLight`. Appearance does not change navigation: the footer appears when more than one menu destination is available, and the unavailable direction stays disabled at the ends.
 
 Test a new menu from the sidebar, by direct URL and in each enabled language; verify the destination exists and is allowed for the current reader.
 

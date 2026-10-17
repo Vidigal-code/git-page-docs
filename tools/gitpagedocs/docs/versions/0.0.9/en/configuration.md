@@ -34,9 +34,9 @@ Behavior:
 - If `layoutsConfigPathOficial=true`, runtime prefers official layout/template sources.
 - If `layoutsConfigPathOficial=false`, runtime prefers repository-local/custom layout sources.
 
-## Language, theme and focus controls
+## Language, theme, focus, quick navigation, PDF and document controls
 
-In `gitpagedocs/config.json`, merge these entries into `site.icons` to use React Icons for the language selector, theme selector and focus button:
+In `gitpagedocs/config.json`, these `site.icons` entries configure the language selector, theme selector, focus, Ctrl+K navigation, PDF actions and document-footer navigation. All eight controls use React Icons by default:
 
 ```json
 {
@@ -57,13 +57,31 @@ In `gitpagedocs/config.json`, merge these entries into `site.icons` to use React
       "QuickNavigation": {
         "reactIcon": true, "tag": "FiSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfDownload": {
+        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfOpenInNewTab": {
+        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentPrevious": {
+        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentNext": {
+        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
   }
 }
 ```
 
-Each control is independent: `reactIcon: false` preserves its current text appearance (the default); `true` shows its icon. Customize `tag`, `size`, `colorDark` and `colorLight` per control; `currentColor` follows the active theme. Icon selectors keep their menus and accessible names. `site.FocusMode` still controls whether focus mode is enabled; `site.icons.FocusMode` only changes the button's appearance.
+Each control is independent: `reactIcon: true` shows its icon (the default); `false` displays text. Customize `tag`, `size`, `colorDark` and `colorLight` per control; `currentColor` follows the active theme. Icon controls keep their accessible names, and selectors keep their menus. The Ctrl+K shortcut remains available. `site.FocusMode` still enables focus mode; `site.icons.FocusMode` only changes the button's appearance. `site.icons.PdfDownload` and `site.icons.PdfOpenInNewTab` independently select text or icons; the corresponding `site.pdf` and route `pdf` flags control whether each action is available.
+
+Compact configs may move shared values into `site.icons.defaults`; omitted fields inherit those defaults. Set `reactIcon: false` on a specific entry to override the default icon presentation with text.
 
 ## `VersionControl` section
 
@@ -133,7 +151,7 @@ Per-route options for `routes-md`, `routes-html`, `routes-video`, and `routes-au
 
 | Key | Default / purpose |
 | --- | --- |
-| `ActiveNavigation` | true; ordinary previous/next controls |
+| `ActiveNavigation` | true; quick-navigation control and Ctrl+K shortcut |
 | `FocusMode / focusMode` | Master switch (true) and independent copy, download, section and document controls; see Focus mode |
 | `pdf` | PDF master switch, preview, download and new-tab defaults; all true |
 | `nestedMenusEnabled` | true; recursive menu tree, or flat destinations when false |

@@ -40,7 +40,7 @@ export class GitPageDocsConfigLoader implements ConfigLoader {
   private async parse<TConfig>(resolvedPath: string, ext: ConfigExtension): Promise<TConfig> {
     if (ext === ".json") {
       const text = await readFile(resolvedPath, "utf8");
-      return JSON.parse(text) as TConfig;
+      return JSON.parse(text.trimStart()) as TConfig;
     }
     if (ext === ".js" || ext === ".ts") {
       const mod = (await import(pathToFileURL(resolvedPath).href)) as Record<string, unknown>;

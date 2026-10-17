@@ -23,6 +23,7 @@ import { getBasePath } from "@/shared/lib/base-path";
 import { useDocumentThemeVars } from "@/shared/lib/use-document-theme-vars";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
+import type { FocusNavigationTarget } from "./model/focus-navigation";
 import { NarrationPanel, resolveNarrationLabels, useMarkdownNarration } from "@/features/markdown-narration";
 import { useFocusDocuments } from "./model/use-focus-documents";
 import type { OnMenuClickOptions } from "./model/use-docs-shell-navigation-state";
@@ -171,8 +172,6 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     focusModeCurrentHtml,
     focusModePages,
     safeFocusModePageIndex,
-    canFocusModeGoPrevious,
-    canFocusModeGoNext,
     openFocusMode: openFocusModeInternal,
     closeFocusMode: closeFocusModeInternal,
     onFocusModeNavigate: onFocusModeNavigateInternal,
@@ -284,8 +283,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     [currentLinearNavigationIndex, linearNavigationEntries, onMenuClick],
   );
 
-  function navigateFocusDocument(offset: -1 | 1): void {
-    const target = offset < 0 ? focusDocuments.previousDocument : focusDocuments.nextDocument;
+  function navigateFocusDocument(destination: FocusNavigationTarget): void {
+    const target = focusDocuments.getDocument(destination);
     if (target) onMenuClick(target.pathClick, target.ancestorKeys, { origin: "focus" });
   }
 
@@ -659,16 +658,18 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           focusSectionCount={focusModePages.length}
           focusDocument={focusDocument}
           focusDocumentNavigation={{
+            firstLabel: labels.focusFirstDocumentLabel,
+            lastLabel: labels.focusLastDocumentLabel,
             previousLabel: labels.focusPreviousDocumentLabel,
             nextLabel: labels.focusNextDocumentLabel,
+            firstTitle: focusDocuments.documents[0]?.title,
+            lastTitle: focusDocuments.documents.at(-1)?.title,
             previousTitle: focusDocuments.previousDocument?.title,
             nextTitle: focusDocuments.nextDocument?.title,
             onNavigate: navigateFocusDocument,
           }}
           focusOptions={data.config.site.focusMode}
           focusAccessibilityControls={accessibilityControls}
-          canFocusModeGoPrevious={canFocusModeGoPrevious}
-          canFocusModeGoNext={canFocusModeGoNext}
           closeFocusMode={closeFocusModeInternal}
           onFocusModeNavigate={onFocusModeNavigateInternal}
           versionLinksLabel={controlsConfig.versionLinksLabel}

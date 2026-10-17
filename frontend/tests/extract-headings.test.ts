@@ -50,6 +50,13 @@ describe("extractHeadingsFromHtml", () => {
     expect(extractHeadingsFromHtml(html)).toEqual([{ id: "x", text: "Title code em", level: 2 }]);
   });
 
+  it("decodes HTML text and attribute entities without treating escaped markup as tags", () => {
+    const html = '<h2 id="r&amp;d">Caf&#233; &copy; &NotEqualTilde; &lt;code&gt; &missingEntity;</h2>';
+    expect(extractHeadingsFromHtml(html)).toEqual([
+      { id: "r&d", text: "Café © \u2242\u0338 <code> &missingEntity;", level: 2 },
+    ]);
+  });
+
   it("keeps a literal '<>' verbatim", () => {
     expect(extractHeadingsFromHtml(`<h2 id="x">a <> b</h2>`)).toEqual([{ id: "x", text: "a <> b", level: 2 }]);
   });

@@ -19,6 +19,11 @@ const DOC_FILE_KEYS = new Map([
   ["accessibility.md", "accessibility"],
   ["focus-mode.md", "focusMode"],
   ["pdf.md", "pdf"],
+  ["configuration-recipes.md", "configurationRecipes"],
+  ["migration.md", "migration"],
+  ["troubleshooting.md", "troubleshooting"],
+  ["contributing.md", "contributing"],
+  ["html-containers.md", "htmlContainers"],
 ]);
 
 export function parseDocFileToKey(fileName) {
@@ -28,6 +33,7 @@ export function parseDocFileToKey(fileName) {
 export function parseHtmlFileToKey(fileName) {
   const base = fileName.replace(/\.html$/, "");
   if (base === "source-viewer") return "sourceViewer";
+  if (base === "doom") return "doom";
   return undefined;
 }
 

@@ -52,6 +52,13 @@ describe("config-loader", () => {
     await expect(loadRootConfig<{ site: { name: string } }>()).resolves.toEqual({ site: { name: "json" } });
   });
 
+  it("preserves accented and special site names in UTF-8 JSON with a byte-order mark", async () => {
+    workspace = createTempWorkspace();
+    const config = { site: { name: 'Documentação — Español, 日本語 & <exemplos> 🚀', SiteHeaderName: 'Ações e soluções: çãéíóú ñ ¿? "' } };
+    workspace.write("gitpagedocs/config.json", `\uFEFF${JSON.stringify(config)}`);
+    await expect(loadRootConfig(workspace.root)).resolves.toEqual(config);
+  });
+
   it("rejects a JSON config that does not parse", async () => {
     workspace = createTempWorkspace();
     workspace.write("gitpagedocs/config.json", "{ nope");
@@ -85,6 +92,13 @@ describe("file-reader on node", () => {
     await expect(readJsonFile<{ ok: boolean }>("data.json")).resolves.toEqual({ ok: true });
     await expect(readJsonFile("missing.json")).rejects.toThrow("Failed to read local file: missing.json");
     await expect(readJsonFile("broken.json")).rejects.toThrow(SyntaxError);
+  });
+
+  it("preserves UTF-8 text in version and language JSON files with a byte-order mark", async () => {
+    workspace = createTempWorkspace();
+    const config = { title: "Configuração — España & 日本語 🚀" };
+    workspace.write("docs/versão/config.json", `\uFEFF${JSON.stringify(config)}`);
+    await expect(readJsonFile("docs/versão/config.json")).resolves.toEqual(config);
   });
 
   it("tryReadJsonFile swallows both missing files and invalid JSON", async () => {

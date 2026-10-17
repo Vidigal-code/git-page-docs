@@ -71,3 +71,10 @@
   display: block;
   flex-shrink: 0;
 }
+
+@media (max-width: 1024px) {
+  .list {
+    justify-content: center;
+    text-align: center;
+  }
+}

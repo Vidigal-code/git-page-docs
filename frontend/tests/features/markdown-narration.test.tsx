@@ -105,6 +105,15 @@ it("reports completion and speech errors without swallowing them", () => {
   expect(result.current.status).toBe("error");
 });
 
+it("clears a reading error when the user navigates to another document", () => {
+  const { result, rerender } = renderHook(({ documentId }) => useMarkdownNarration({ html: "<p>Read.</p>", language: "en", documentId }), { initialProps: { documentId: "first" } });
+  act(() => result.current.start());
+  act(() => synthesis.speak.mock.calls[0][0].dispatchEvent(new Event("error")));
+  expect(result.current.status).toBe("error");
+  rerender({ documentId: "next" });
+  expect(result.current.status).toBe("idle");
+});
+
 it("reads long documents in bounded chunks without dropping text", () => {
   const text = "A complete documentation paragraph. ".repeat(100).trim();
   const { result } = renderHook(() => useMarkdownNarration({ html: `<p>${text}</p>`, language: "en" }));
@@ -146,6 +155,31 @@ it("does not start when narration is disabled or the browser lacks speech synthe
   expect(unsupported.result.current.supported).toBe(false);
   act(() => unsupported.result.current.start());
   expect(synthesis.speak).not.toHaveBeenCalled();
+});
+
+it("keeps the decorated voice selector native, labelled and usable with long voice names", () => {
+  const voice = { voiceURI: "en-local", name: "English natural voice with a long descriptive name for document reading", lang: "en-US", localService: true, default: false };
+  synthesis.getVoices.mockReturnValue([voice]);
+  function Reader() {
+    const controller = useMarkdownNarration({ html: "<p>A readable page.</p>", language: "en" });
+    return <NarrationPanel controller={controller} labels={DEFAULT_NARRATION_LABELS} />;
+  }
+  render(<Reader />);
+  fireEvent.click(screen.getByText("Accessibility and reading", { selector: "summary" }));
+  const voiceControl = screen.getByRole("combobox", { name: "Browser voice" });
+  expect(voiceControl.tagName).toBe("SELECT");
+  const arrow = voiceControl.closest("label")?.querySelector('svg[aria-hidden="true"]');
+  expect(arrow).not.toBeNull();
+  expect(arrow?.getAttribute("focusable")).toBe("false");
+  fireEvent.change(voiceControl, { target: { value: voice.voiceURI } });
+  fireEvent.change(screen.getByRole("slider", { name: /Speed/ }), { target: { value: "1.5" } });
+  fireEvent.change(screen.getByRole("slider", { name: /Volume/ }), { target: { value: "0.7" } });
+  fireEvent.click(screen.getByRole("button", { name: "Read document" }));
+  expect(synthesis.speak.mock.calls[0]?.[0]).toMatchObject({ voice, rate: 1.5, volume: 0.7 });
+  expect(voiceControl.matches(":disabled")).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: "Stop reading" }));
+  expect(voiceControl.matches(":disabled")).toBe(false);
+  expect(screen.getByRole("option", { name: `${voice.name} (${voice.lang})` })).toBeTruthy();
 });
 
 it("normalizes invalid settings and ignores events from a stopped document", () => {

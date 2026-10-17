@@ -1,30 +1,37 @@
 import matter from "gray-matter";
-import { marked } from "marked";
+import { Marked } from "marked";
+import { createHeadingSlug, getHeadingText } from "../../lib/markdown/heading-content";
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim() || "heading";
-}
+const markdownParser = new Marked({
+  renderer: {
+    heading({ tokens, depth }) {
+      const content = this.parser.parseInline(tokens);
+      const id = createHeadingSlug(getHeadingText(content)) || "heading";
+      return `<h${depth} id="${id}">${content}</h${depth}>\n`;
+    },
+  },
+});
 
 /** Adds id attributes to h1-h6 that lack them, for TOC anchor links */
 function addHeadingIds(html: string): string {
-  return html.replace(
-    /<h([1-6])([^>]*)>([^<]*)<\/h[1-6]>/gi,
-    (_, level, attrs, content) => {
-      if (/id=/.test(attrs)) return `<h${level}${attrs}>${content}</h${level}>`;
-      const id = slugify(content);
-      const idAttr = id ? ` id="${id}"` : "";
-      return `<h${level}${attrs}${idAttr}>${content}</h${level}>`;
+  let output = "";
+  let previousEnd = 0;
+  for (const match of html.matchAll(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/gi)) {
+    const [heading, level, attributes, content] = match;
+    const start = match.index ?? 0;
+    output += html.slice(previousEnd, start);
+    if (/(?:^|\s)id\s*=/i.test(attributes)) output += heading;
+    else {
+      const id = createHeadingSlug(getHeadingText(content)) || "heading";
+      output += `<h${level}${attributes} id="${id}">${content}</h${level}>`;
     }
-  );
+    previousEnd = start + heading.length;
+  }
+  return output + html.slice(previousEnd);
 }
 
 export function markdownToHtml(markdown: string): string {
-  const parsed = matter(markdown);
-  const html = marked.parse(parsed.content) as string;
+  const parsed = matter(markdown.replace(/^\uFEFF/, ""));
+  const html = markdownParser.parse(parsed.content, { async: false });
   return addHeadingIds(html);
 }

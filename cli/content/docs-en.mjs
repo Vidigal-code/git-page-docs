@@ -1,6 +1,10 @@
 import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
+import { practicalEn } from "./practical-en.mjs";
+import { operationsEn } from "./operations-en.mjs";
 
 export const docsEn = {
+    ...practicalEn,
+    ...operationsEn,
     pdf: `# PDF documents
 
 PDF is a first-class content type alongside Markdown, HTML, source code, video and audio. The viewer uses the browser's native PDF preview. Download and open-in-new-tab actions remain independently configurable.
@@ -26,13 +30,15 @@ Add this block inside \`site\` in \`gitpagedocs/config.json\`:
 }
 \`\`\`
 
-\`enabled\` is the master switch for PDF content. The other fields control the preview, download button and new-tab link. Every field defaults to \`true\` when omitted, including older configurations.
+\`enabled\` is the master switch for PDF content. The other fields control the preview, download button and new-tab button. Every field defaults to \`true\` when omitted, including older configurations.
 
 Action precedence is \`route.pdf.<flag>\` > \`site.pdf.<flag>\` > \`true\`. An explicit route \`true\` enables that action even when its site default is \`false\`; \`site.pdf.enabled: false\` still disables PDF content everywhere. A missing path for the selected language makes the PDF unavailable; there is no automatic language fallback.
 
+PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`FiDownload\`) and \`site.icons.PdfOpenInNewTab\` (\`FiExternalLink\`) independently with \`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. For example, \`"PdfDownload": { "reactIcon": false }\` shows download text while the new-tab action remains an icon. Changing appearance does not change the action flags above.
+
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.9/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.10/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -41,9 +47,9 @@ In \`gitpagedocs/docs/versions/0.0.9/config.json\`, keep route and menu arrays a
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -67,9 +73,9 @@ The optional route flags live inside \`pdf\`. Shared presentation, \`container\`
 
 Repository-root paths beginning with \`gitpagedocs/\` are copied into the viewer's public assets when Next.js starts or builds. The URL respects the configured deployment subpath on GitHub Pages. Keep the PDF tracked in Git and publish it with the generated documentation. Assets outside \`gitpagedocs/\` must already be in the viewer's \`frontend/public/\` directory or be reachable through an HTTP(S) URL.
 
-Use the binary PDF URL, not an HTML repository preview URL. For remote repositories, the configured path resolves against that repository. Both preview and download fetch the file bytes, so an external server must allow CORS for both operations. The viewer validates the PDF signature and creates a temporary \`application/pdf\` Blob URL for the native browser preview; it releases that URL when the document changes or closes. The origin server's framing policy and MIME/disposition headers do not control this Blob preview.
+Use the binary PDF URL, not an HTML repository preview URL. For remote repositories, the configured path resolves against that repository. Preview, download and opening a new tab fetch the file bytes, so an external server must allow CORS for all three actions. The viewer validates the PDF signature and creates a temporary \`application/pdf\` Blob URL. Preview and new-tab viewing use the browser's native PDF viewer; the origin server's framing policy and MIME/disposition headers do not control the Blob view.
 
-The new-tab link opens the original URL directly. Its behavior depends on the browser and the server's \`Content-Type\` and \`Content-Disposition\`; a raw repository URL can download instead of displaying inline. This direct link remains available when preview or download fails, unless its action is disabled.
+The new-tab button opens the validated PDF Blob instead of navigating to the raw repository URL. This also works when preview is disabled: loading starts when the reader downloads or opens the document. Previously loaded bytes are reused for the current PDF. Network/CORS failures, invalid PDFs and blocked new tabs produce a visible error; there is no automatic fallback to the raw URL. Native PDF support and the browser's own download preferences still determine how the new tab displays the file.
 
 ## Reading and troubleshooting
 
@@ -77,7 +83,7 @@ The new-tab link opens the original URL directly. Its behavior depends on the br
 - Preview does not convert the PDF to Markdown. Markdown focus mode, section navigation, copy-as-Markdown and narration operate on Markdown documents, not the embedded PDF.
 - Disabling preview can keep the download and new-tab actions available. Turning off every PDF action leaves no interactive PDF control.
 - A disabled button is not access control. Publicly hosted PDFs remain downloadable by URL. Use protected hosting for confidential documents.
-- If a preview is blank, use the new-tab action, verify that the path returns a PDF, and check the host's response headers. If download fails, the page reports an error instead of silently succeeding.
+- If a preview is blank, verify that the path returns a PDF and that CORS permits access, then try the new-tab action. Allow pop-ups for the site if the browser blocks that action. Download and new-tab failures are reported on the page.
 `,
     index: `# Git Page Docs
 
@@ -120,6 +126,13 @@ The runtime expects this structure:
 - **Focus mode**: copy/download Markdown and section/document navigation.
 - **Accessibility and narration**: browser voices, controls and media interaction.
 - **PDF documents**: native previews, download/new-tab controls and the included English guide.
+- **Configuration recipes**: a complete multilingual site and a menu with sections inside sections.
+- **Migration and compatibility**: upgrade configurations from 0.0.1 onward while preserving your content.
+- **Troubleshooting**: UTF-8, local and Pages paths, PDF loading, browser voices and MCP startup.
+- **Contributing and validation**: source files, generation, public contracts and release checks.
+- **HTML containers**: local and external pages, route/menu configuration and the interactive DOOM example.
+
+The generated menu keeps Getting Started and Project overview first. Guides contains Configure your site, Read and explore, and Automate and integrate; each category contains its related pages. Operations and development groups publishing, maintenance and contribution guides. Git and GitHub contains the repository examples. Categories can contain further categories without a fixed nesting limit.
 `,
     gettingStarted: `# Getting Started
 
@@ -413,9 +426,9 @@ Behavior:
 - If \`layoutsConfigPathOficial=true\`, runtime prefers official layout/template sources.
 - If \`layoutsConfigPathOficial=false\`, runtime prefers repository-local/custom layout sources.
 
-## Language, theme and focus controls
+## Language, theme, focus, quick navigation, PDF and document controls
 
-In \`gitpagedocs/config.json\`, merge these entries into \`site.icons\` to use React Icons for the language selector, theme selector and focus button:
+In \`gitpagedocs/config.json\`, these \`site.icons\` entries configure the language selector, theme selector, focus, Ctrl+K navigation, PDF actions and document-footer navigation. All eight controls use React Icons by default:
 
 \`\`\`json
 {
@@ -436,13 +449,31 @@ In \`gitpagedocs/config.json\`, merge these entries into \`site.icons\` to use R
       "QuickNavigation": {
         "reactIcon": true, "tag": "FiSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfDownload": {
+        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "PdfOpenInNewTab": {
+        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentPrevious": {
+        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "DocumentNext": {
+        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
   }
 }
 \`\`\`
 
-Each control is independent: \`reactIcon: false\` preserves its current text appearance (the default); \`true\` shows its icon. Customize \`tag\`, \`size\`, \`colorDark\` and \`colorLight\` per control; \`currentColor\` follows the active theme. Icon selectors keep their menus and accessible names. \`site.FocusMode\` still controls whether focus mode is enabled; \`site.icons.FocusMode\` only changes the button's appearance.
+Each control is independent: \`reactIcon: true\` shows its icon (the default); \`false\` displays text. Customize \`tag\`, \`size\`, \`colorDark\` and \`colorLight\` per control; \`currentColor\` follows the active theme. Icon controls keep their accessible names, and selectors keep their menus. The Ctrl+K shortcut remains available. \`site.FocusMode\` still enables focus mode; \`site.icons.FocusMode\` only changes the button's appearance. \`site.icons.PdfDownload\` and \`site.icons.PdfOpenInNewTab\` independently select text or icons; the corresponding \`site.pdf\` and route \`pdf\` flags control whether each action is available.
+
+Compact configs may move shared values into \`site.icons.defaults\`; omitted fields inherit those defaults. Set \`reactIcon: false\` on a specific entry to override the default icon presentation with text.
 
 ## \`VersionControl\` section
 
@@ -512,7 +543,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 
 | Key | Default / purpose |
 | --- | --- |
-| \`ActiveNavigation\` | true; ordinary previous/next controls |
+| \`ActiveNavigation\` | true; quick-navigation control and Ctrl+K shortcut |
 | \`FocusMode / focusMode\` | Master switch (true) and independent copy, download, section and document controls; see Focus mode |
 | \`pdf\` | PDF master switch, preview, download and new-tab defaults; all true |
 | \`nestedMenusEnabled\` | true; recursive menu tree, or flat destinations when false |
@@ -953,7 +984,9 @@ The tree supplies sidebar navigation, search labels, parent expansion and breadc
 
 ## URLs and previous/next
 
-Versioned URLs use \`/v/<version>/\`; \`?lang=pt\` selects a language and \`?id=101\` selects a page ID. \`?name=chapter\` selects the document slug. Keep \`VersionControl.versions[].path\` pointing at the matching version config. \`site.ActiveNavigation\` enables ordinary previous/next page controls; focus-mode document navigation has its own option. See Focus mode for its section and document controls.
+Versioned URLs use \`/v/<version>/\`; \`?lang=pt\` selects a language and \`?id=101\` selects a page ID. \`?name=chapter\` selects the document slug. Keep \`VersionControl.versions[].path\` pointing at the matching version config. \`site.ActiveNavigation\` enables quick navigation and its Ctrl+K shortcut. Footer previous/next controls follow available menu destinations; focus-mode document navigation has its own option. See Focus mode for its section and document controls.
+
+Footer previous/next buttons use \`site.icons.DocumentPrevious\` (\`FiChevronLeft\`) and \`site.icons.DocumentNext\` (\`FiChevronRight\`) by default. Set \`reactIcon: false\` on either entry to show its translated text; each entry also accepts \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. Appearance does not change navigation: the footer appears when more than one menu destination is available, and the unavailable direction stays disabled at the ends.
 
 Test a new menu from the sidebar, by direct URL and in each enabled language; verify the destination exists and is allowed for the current reader.
 `,
@@ -979,15 +1012,16 @@ Merge this fragment into \`gitpagedocs/config.json\`:
 }
 \`\`\`
 
-Each option defaults to \`true\`; setting one to \`false\` hides its corresponding control. With \`sectionNavigationEnabled: false\`, focus mode displays the entire document without section pagination. Existing configurations without the new \`focusMode\` object keep the controls enabled.
+Each option defaults to \`true\`; setting one to \`false\` hides its corresponding action or navigation group. With \`sectionNavigationEnabled: false\`, focus mode displays the entire document without section pagination. Existing configurations without the new \`focusMode\` object keep the controls enabled.
 
 ## Sections and documents
 
-- Single-arrow previous/next controls move between sections of the same document.
-- Double-arrow previous/next controls move between Markdown documents in menu order, including nested menus.
+- Section navigation has four buttons: first section, previous section, next section and last section of the current document.
+- Document navigation has four buttons: first document, previous document, next document and last document in menu order, including nested menus.
+- \`sectionNavigationEnabled\` controls the four section buttons; \`documentNavigationEnabled\` controls the four document buttons. Unavailable directions are disabled at the ends.
 - Documents without a translation in the active language, non-Markdown destinations and inaccessible pages are skipped.
 - Switching documents keeps the dialog open and starts at the first section. Section/document counters show the current position.
-- \`site.ActiveNavigation\` controls the ordinary page-navigation interface; it does not disable focus-mode document navigation.
+- \`site.ActiveNavigation\` controls the quick-navigation interface; it does not disable focus-mode document navigation.
 
 ## Copy and download
 
@@ -1092,7 +1126,7 @@ Because GitHub Pages build mode enables repository-search home and static-export
 
 ## Why does an icon still show text?
 
-Set \`site.icons.<Control>.reactIcon\` to the boolean \`true\`, with an exact React Icons export name in \`tag\`. Supported controls include LanguageSelector, ThemeSelector, FocusMode and QuickNavigation. Flat \`Icon*ReactIcones\` fields take precedence if both formats are present. Check whether the feature itself is disabled, such as \`HideThemeSelector\` or \`FocusMode\`.
+Set \`site.icons.<Control>.reactIcon\` to the boolean \`true\`, with an exact React Icons export name in \`tag\`. LanguageSelector, ThemeSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious and DocumentNext use icons by default; set any entry to \`false\` for text. Flat \`Icon*ReactIcones\` fields take precedence if both formats are present. Check whether the feature itself is disabled, such as \`HideThemeSelector\`, \`FocusMode\` or the PDF action flags.
 
 ## Why do menu children or breadcrumbs differ?
 

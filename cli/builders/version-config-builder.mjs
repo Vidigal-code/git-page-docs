@@ -6,6 +6,7 @@ import {
   AUDIO_IDS,
   PAGE2_AUDIO,
   PDF_GUIDE_FILENAME,
+  HTML_DOOM_FILENAME,
 } from "../data/path-mappings.mjs";
 import {
   ROUTE_META_ID1,
@@ -21,12 +22,15 @@ import {
   VIDEO_META_ID4,
   AUDIO_META_ID12,
   PDF_GUIDE_META,
+  HTML_DOOM_META,
   SOURCE_VIEWER_META,
   DEFAULT_HIERARCHY,
   VIDEO_FIRST_HIERARCHY,
 } from "../data/route-metas.mjs";
 import { buildAudioRoute, buildMdRoute, buildPdfRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
 import { resolveSourceViewerPath } from "./project-links.mjs";
+import { MARKDOWN_MENU_SECTIONS } from "../data/menu-sections.mjs";
+import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
 
 /** Demo route protections showcasing the "Authorized Routes" feature. They are
  * applied only to the official (non-parameterized) scaffold — user sites
@@ -144,14 +148,48 @@ function buildVersionSourceViewerRoutes(options = {}) {
   ];
 }
 
+function buildMarkdownMenus(entries, base) {
+  return entries.map((entry) => {
+    if (typeof entry === "number") {
+      return {
+        id: entry,
+        pt: { title: ROUTE_METAS[entry].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[entry].pt}` },
+        en: { title: ROUTE_METAS[entry].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[entry].en}` },
+        es: { title: ROUTE_METAS[entry].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[entry].es}` },
+      };
+    }
+    return {
+      id: entry.id,
+      pt: { title: entry.titles.pt },
+      en: { title: entry.titles.en },
+      es: { title: entry.titles.es },
+      submenus: buildMarkdownMenus(entry.submenus, base),
+    };
+  });
+}
+
+function htmlExamplePaths(versionId) {
+  return Object.fromEntries(SUPPORTED_LANGUAGES.map((language) => [
+    language, `gitpagedocs/docs/versions/${versionId}/${language}/${HTML_DOOM_FILENAME}`,
+  ]));
+}
+
+function buildVersionHtmlRoutes(versionId) {
+  return [{
+    id: HTML_DOOM_META.id,
+    title: HTML_DOOM_META.titles,
+    description: HTML_DOOM_META.descriptions,
+    titleIsVisible: true,
+    descriptionIsVisible: true,
+    path: htmlExamplePaths(versionId),
+    fullscreenEnabled: true,
+    blockLink: true,
+  }];
+}
+
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  const menuMd = MARKDOWN_ROUTE_IDS.map((id) => ({
-    id,
-    pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
-    en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
-    es: { title: ROUTE_METAS[id].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[id].es}` },
-  }));
+  const menuMd = buildMarkdownMenus(MARKDOWN_MENU_SECTIONS, base);
   const menuVideo = [1, 2, 3, 4].map((id) => {
     const routeId = id + VIDEO_ROUTE_ID_OFFSET;
     return {
@@ -183,7 +221,14 @@ function buildVersionMenus(versionId) {
     en: { title: PDF_GUIDE_META.titles.en, "path-click": `page:${PDF_GUIDE_META.id}` },
     es: { title: PDF_GUIDE_META.titles.es, "path-click": `page:${PDF_GUIDE_META.id}` },
   }];
-  return { md: menuMd, sourceViewer: menuSourceViewer, html: [], video: menuVideo, audio: menuAudio, pdf: menuPdf };
+  const htmlPaths = htmlExamplePaths(versionId);
+  const menuHtml = [{
+    id: HTML_DOOM_META.id,
+    ...Object.fromEntries(SUPPORTED_LANGUAGES.map((language) => [language, {
+      title: HTML_DOOM_META.titles[language], "path-click": htmlPaths[language],
+    }])),
+  }];
+  return { md: menuMd, sourceViewer: menuSourceViewer, html: menuHtml, video: menuVideo, audio: menuAudio, pdf: menuPdf };
 }
 
 /**
@@ -211,7 +256,7 @@ export function buildVersionConfig(versionId, options = {}) {
     },
     "routes-md": buildVersionMdRoutes(versionId, includeDemoAuthorization),
     "routes-source-viewer": buildVersionSourceViewerRoutes(options),
-    "routes-html": [],
+    "routes-html": buildVersionHtmlRoutes(versionId),
     "routes-video": buildVersionVideoRoutes(versionId, includeDemoAuthorization),
     "routes-audio": buildVersionAudioRoutes(versionId),
     "routes-pdf": [buildPdfRoute(PDF_GUIDE_META, `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`)],

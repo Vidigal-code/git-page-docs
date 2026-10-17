@@ -50,7 +50,7 @@ interface AudioRoute extends Route {
 
 interface MenuLang {
   title: string;
-  "path-click": string;
+  "path-click"?: string;
 }
 
 interface MenuEntry {
@@ -58,6 +58,7 @@ interface MenuEntry {
   pt: MenuLang;
   en: MenuLang;
   es: MenuLang;
+  submenus?: MenuEntry[];
 }
 
 interface VersionConfig {
@@ -210,7 +211,7 @@ describe("buildConfigArtifacts", () => {
     expect(artifacts.layoutsConfig).toEqual({ layouts: LAYOUTS });
     expect(artifacts.fallbackLayoutsConfig).toEqual({ layouts: FALLBACK_LAYOUTS });
     expect(artifacts.docs).toBe(DOCS);
-    expect(artifacts.docsHtml).toEqual({});
+    expect(Object.keys(artifacts.docsHtml)).toEqual(["doom"]);
     expect(Object.keys(artifacts.versionConfigs)).toEqual([...DOC_VERSIONS]);
   });
 
@@ -283,7 +284,7 @@ describe("buildVersionConfig", () => {
     const config = buildVersionConfig(versionId);
     const md = config["routes-md"];
 
-    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]);
+    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30]);
     for (const route of md) {
       for (const lang of LANGS) {
         expect(route.path?.[lang]).toBe(`${base}/${lang}/${ROUTE_PATHS[route.id][lang]}`);
@@ -340,10 +341,10 @@ describe("buildVersionConfig", () => {
     expect(viewer["source-viewer"]).toBe(true);
     expect(viewer["source-viewer-path"]).toBe(`${DEFAULT_PROJECT_LINK}/tree/main`);
     expect(viewer.path).toBeUndefined();
-    expect(config["routes-html"]).toEqual([]);
+    expect(config["routes-html"][0]).toMatchObject({ id: 29, path: { en: `${base}/en/doom.html` } });
 
-    expect(config["menus-header-html"]).toEqual([]);
-    expect(config["menus-header-md"].map((entry) => entry.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]);
+    expect(config["menus-header-html"][0]).toMatchObject({ id: 29, en: { "path-click": `${base}/en/doom.html` } });
+    expect(config["menus-header-md"].map((entry) => entry.id)).toEqual([1, 2, 1000, 1100, 1200]);
     expect(config["menus-header-md"][0].en["path-click"]).toBe(`${base}/en/${ROUTE_PATHS[1].en}`);
     expect(config["menus-header-video"].map((entry) => entry.id)).toEqual([8, 9, 10, 11]);
     expect(config["menus-header-video"][0].en["path-click"]).toBe("page:8");

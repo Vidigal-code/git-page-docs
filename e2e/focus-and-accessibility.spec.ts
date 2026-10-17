@@ -14,6 +14,11 @@ test("focus navigates sections and documents without closing and offers original
   const focus = page.getByRole("dialog", { name: "Focus mode", exact: true });
   await expect(focus).toBeVisible();
   const initialTitle = await focus.getByRole("heading").first().innerText();
+  for (const target of ["document", "section"]) {
+    for (const action of ["First", "Previous", "Next", "Last"]) {
+      await expect(focus.getByRole("button", { name: `${action} ${target}`, exact: true })).toBeVisible();
+    }
+  }
   await expect(focus.getByRole("button", { name: "Previous section", exact: true })).toBeDisabled();
   await focus.getByRole("button", { name: "Next section", exact: true }).click();
   await expect(focus.getByRole("button", { name: "Previous section", exact: true })).toBeEnabled();
@@ -25,6 +30,17 @@ test("focus navigates sections and documents without closing and offers original
   await focus.getByRole("button", { name: "Previous document", exact: true }).click();
   await expect(page).toHaveURL(/id=1/);
   await expect(focus).toBeVisible();
+  await expect(focus.getByRole("heading").first()).toHaveText(initialTitle);
+  await focus.getByRole("button", { name: "Last document", exact: true }).click();
+  await expect(focus).toBeVisible();
+  await expect(focus.getByRole("button", { name: "Last document", exact: true })).toBeDisabled();
+  await focus.getByRole("button", { name: "First document", exact: true }).click();
+  await expect(page).toHaveURL(/id=1/);
+  await expect(focus.getByRole("button", { name: "First document", exact: true })).toBeDisabled();
+  await focus.getByRole("button", { name: "Last section", exact: true }).click();
+  await expect(focus.getByRole("button", { name: "Last section", exact: true })).toBeDisabled();
+  await focus.getByRole("button", { name: "First section", exact: true }).click();
+  await expect(focus.getByRole("button", { name: "First section", exact: true })).toBeDisabled();
   await expect(focus.getByRole("heading").first()).toHaveText(initialTitle);
   await focus.getByRole("button", { name: "Copy markdown", exact: true }).click();
   await expect(focus.getByRole("button", { name: "Copied!", exact: true })).toBeVisible();
@@ -43,6 +59,47 @@ test("focus navigates sections and documents without closing and offers original
   await focus.screenshot({ path: `test-results/focus-${test.info().project.name}.png` });
   await page.keyboard.press("Escape");
   await expect(focus).toBeHidden();
+});
+
+test("native reading events synchronize the page and focus controls", async ({ page, isMobile }) => {
+  await page.addInitScript(() => {
+    class BrowserUtterance extends EventTarget {
+      constructor(readonly text: string) { super(); }
+    }
+    let current: BrowserUtterance | undefined;
+    const synthesis = Object.assign(new EventTarget(), {
+      paused: false,
+      getVoices: () => [],
+      speak(utterance: BrowserUtterance) { current = utterance; utterance.dispatchEvent(new Event("start")); },
+      pause() { this.paused = true; current?.dispatchEvent(new Event("pause")); },
+      resume() { this.paused = false; current?.dispatchEvent(new Event("resume")); },
+      cancel() { current = undefined; },
+    });
+    Object.defineProperty(window, "speechSynthesis", { value: synthesis });
+    Object.defineProperty(window, "SpeechSynthesisUtterance", { value: BrowserUtterance });
+  });
+  await page.goto("/?menu=en&id=1");
+  const panel = page.getByRole("main").locator("details").filter({ has: page.locator("summary", { hasText: "Accessibility and reading" }) });
+  await panel.locator("summary").click();
+  await panel.getByRole("button", { name: "Read document", exact: true }).click();
+  await expect(panel.getByRole("button", { name: "Pause reading", exact: true })).toBeVisible();
+  await openFocus(page, { isMobile });
+  const focus = page.getByRole("dialog", { name: "Focus mode", exact: true });
+  await focus.locator("summary", { hasText: "Accessibility and reading" }).click();
+  await expect(focus.getByRole("button", { name: "Pause reading", exact: true })).toBeVisible();
+  await page.evaluate(() => window.speechSynthesis.pause());
+  await expect(focus.getByRole("button", { name: "Resume reading", exact: true })).toBeVisible();
+  await focus.getByRole("button", { name: "Resume reading", exact: true }).click();
+  await expect(focus.getByRole("button", { name: "Pause reading", exact: true })).toBeVisible();
+  await focus.getByRole("button", { name: "Pause reading", exact: true }).click();
+  await focus.getByRole("button", { name: "Stop reading", exact: true }).click();
+  await expect(focus.getByRole("button", { name: "Read document", exact: true })).toBeVisible();
+  await expect(focus.getByRole("button", { name: "Stop reading", exact: true })).toBeDisabled();
+  await page.keyboard.press("Escape");
+  await expect(focus).toBeHidden();
+  if (await panel.getAttribute("open") === null) await panel.locator("summary").click();
+  await expect(panel.getByRole("button", { name: "Read document", exact: true })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Stop reading", exact: true })).toBeDisabled();
 });
 
 test("reading preferences carry into focus and Ctrl+K keeps opening navigation", async ({ page, isMobile }) => {

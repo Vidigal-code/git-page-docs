@@ -1,37 +1,69 @@
 import { expect, it } from "vitest";
-import { compactSiteIcons } from "@gitpagedocs/tools/config-format";
+import { compactSiteIcons, expandSiteIcons } from "@gitpagedocs/tools/config-format";
 import { buildRootConfig } from "../builders/root-config-builder.mjs";
 
-it("generates optional language, theme and focus icons while keeping text controls by default", () => {
+it("generates icons for header controls, PDF actions and document navigation by default", () => {
   const site = compactSiteIcons(buildRootConfig().site);
+
+  expect(expandSiteIcons(site)).toMatchObject({
+    IconQuickNavigationReactIcones: true,
+    IconLanguageSelectorReactIcones: true,
+    IconThemeSelectorReactIcones: true,
+    IconFocusModeReactIcones: true,
+    IconPdfDownloadReactIcones: true,
+    IconPdfOpenInNewTabReactIcones: true,
+    IconDocumentPreviousReactIcones: true,
+    IconDocumentNextReactIcones: true,
+  });
 
   expect(site).toMatchObject({
     FocusMode: true,
     icons: {
+      defaults: { reactIcon: true },
       QuickNavigation: {
-        reactIcon: false,
         tag: "FiSearch",
         size: "22px",
         colorDark: "currentColor",
         colorLight: "currentColor",
       },
       LanguageSelector: {
-        reactIcon: false,
         tag: "FiGlobe",
         size: "22px",
         colorDark: "currentColor",
         colorLight: "currentColor",
       },
       ThemeSelector: {
-        reactIcon: false,
         tag: "BsSunFill",
         size: "22px",
         colorDark: "currentColor",
         colorLight: "currentColor",
       },
       FocusMode: {
-        reactIcon: false,
         tag: "MdFullscreen",
+        size: "22px",
+        colorDark: "currentColor",
+        colorLight: "currentColor",
+      },
+      PdfDownload: {
+        tag: "FiDownload",
+        size: "22px",
+        colorDark: "currentColor",
+        colorLight: "currentColor",
+      },
+      PdfOpenInNewTab: {
+        tag: "FiExternalLink",
+        size: "22px",
+        colorDark: "currentColor",
+        colorLight: "currentColor",
+      },
+      DocumentPrevious: {
+        tag: "FiChevronLeft",
+        size: "22px",
+        colorDark: "currentColor",
+        colorLight: "currentColor",
+      },
+      DocumentNext: {
+        tag: "FiChevronRight",
         size: "22px",
         colorDark: "currentColor",
         colorLight: "currentColor",

@@ -95,7 +95,9 @@ El árbol sirve para navegación lateral, etiquetas de búsqueda, expansión de 
 
 ## URLs y anterior/siguiente
 
-Las URLs versionadas utilizan `/v/<version>/`; `?lang=pt` elige el idioma y `?id=101` elige la página. `?name=chapter` selecciona el slug del documento. Mantén `VersionControl.versions[].path` apuntando al config de la versión correspondiente. `site.ActiveNavigation` activa anterior/siguiente habitual; la navegación entre documentos en modo foco tiene su propia opción. Consulta Modo foco para controles de sección y documento.
+Las URLs versionadas utilizan `/v/<version>/`; `?lang=pt` elige el idioma y `?id=101` elige la página. `?name=chapter` selecciona el slug del documento. Mantén `VersionControl.versions[].path` apuntando al config de la versión correspondiente. `site.ActiveNavigation` activa la navegación rápida y su atajo Ctrl+K. Los controles anterior/siguiente del pie siguen los destinos disponibles en el menú; la navegación entre documentos en modo foco tiene su propia opción. Consulta Modo foco para controles de sección y documento.
+
+Los botones anterior/siguiente del pie usan `site.icons.DocumentPrevious` (`FiChevronLeft`) y `site.icons.DocumentNext` (`FiChevronRight`) por defecto. Define `reactIcon: false` en cualquier entrada para mostrar su texto traducido; cada entrada también acepta `tag`, `size`, `colorDark` y `colorLight`. La apariencia no cambia la navegación: el pie aparece cuando hay más de un destino disponible en el menú, y la dirección no disponible permanece desactivada en los extremos.
 
 Prueba un menú nuevo desde la barra lateral, por URL directa y en cada idioma habilitado; confirma que el destino existe y está permitido para el lector actual.
 

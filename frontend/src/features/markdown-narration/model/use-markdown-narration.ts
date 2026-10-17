@@ -39,14 +39,23 @@ export function useMarkdownNarration({ html, language, documentId, settings, ena
   const [volume, setVolume] = useState(() => normalizeNarrationSetting(settings?.defaultVolume, NARRATION_VOLUME));
   const [status, setStatus] = useState<NarrationController["status"]>("idle");
   const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
+  const paused = useRef(false);
+  const pendingChunk = useRef<(() => void) | null>(null);
   const stop = useCallback((): void => {
+    paused.current = false;
+    pendingChunk.current = null;
+    setStatus("idle");
     if (!currentUtterance.current) return;
     currentUtterance.current = null;
     window.speechSynthesis.cancel();
-    setStatus("idle");
   }, []);
   useEffect(() => stop, [html, language, documentId, enabled, stop]);
   const claimPlayback = useExclusivePlayback(() => { if (exclusivePlayback) stop(); });
+  function continuePendingChunk(): void {
+    const continuation = pendingChunk.current;
+    pendingChunk.current = null;
+    continuation?.();
+  }
   function start(): void {
     if (!supported || !enabled) return;
     stop();
@@ -60,7 +69,18 @@ export function useMarkdownNarration({ html, language, documentId, settings, ena
       utterance.rate = rate;
       utterance.volume = volume;
       currentUtterance.current = utterance;
-      utterance.addEventListener("end", () => {
+      utterance.addEventListener("pause", () => {
+        if (currentUtterance.current !== utterance) return;
+        paused.current = true;
+        setStatus("paused");
+      });
+      utterance.addEventListener("resume", () => {
+        if (currentUtterance.current !== utterance) return;
+        paused.current = false;
+        setStatus("speaking");
+        continuePendingChunk();
+      });
+      const finishChunk = (): void => {
         if (currentUtterance.current !== utterance) return;
         if (index + 1 < chunks.length) {
           speakChunk(index + 1);
@@ -68,10 +88,17 @@ export function useMarkdownNarration({ html, language, documentId, settings, ena
           currentUtterance.current = null;
           setStatus("idle");
         }
+      };
+      utterance.addEventListener("end", () => {
+        if (currentUtterance.current !== utterance) return;
+        if (paused.current) pendingChunk.current = finishChunk;
+        else finishChunk();
       });
       utterance.addEventListener("error", () => {
         if (currentUtterance.current !== utterance) return;
         currentUtterance.current = null;
+        pendingChunk.current = null;
+        paused.current = false;
         setStatus("error");
       });
       window.speechSynthesis.speak(utterance);
@@ -83,14 +110,17 @@ export function useMarkdownNarration({ html, language, documentId, settings, ena
   }
   function pause(): void {
     if (status !== "speaking") return;
-    window.speechSynthesis.pause();
+    paused.current = true;
     setStatus("paused");
+    window.speechSynthesis.pause();
   }
   function resume(): void {
     if (status !== "paused") return;
     if (exclusivePlayback) claimPlayback();
-    window.speechSynthesis.resume();
+    paused.current = false;
     setStatus("speaking");
+    window.speechSynthesis.resume();
+    continuePendingChunk();
   }
   return {
     start, pause, resume, stop, status, supported, voices, voiceUri, setVoiceUri, rate, volume,

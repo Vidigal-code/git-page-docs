@@ -22,11 +22,15 @@ function check(label: string, cond: boolean, detail = ""): void {
 }
 
 function readGeneratedVersionConfig(): Record<string, unknown> {
-  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/0.0.9/config.json", "utf8")) as Record<string, unknown>;
+  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/0.0.10/config.json", "utf8")) as Record<string, unknown>;
 }
 
 function asArray(value: unknown): Array<Record<string, unknown>> {
   return Array.isArray(value) ? value as Array<Record<string, unknown>> : [];
+}
+
+function menuItems(value: unknown): Array<Record<string, unknown>> {
+  return asArray(value).flatMap((item) => [item, ...menuItems(item.submenus)]);
 }
 
 /**
@@ -55,19 +59,29 @@ function assertGeneratedMenuContract(): void {
   const ids = routeIds(config, routeKeys);
 
   check("generated config includes source viewer routes", asArray(config["routes-source-viewer"]).length > 0);
+  check("generated config includes HTML routes", asArray(config["routes-html"]).length > 0);
   check("generated config includes video routes", asArray(config["routes-video"]).length > 0);
   check("generated config includes audio routes", asArray(config["routes-audio"]).length > 0);
   check("generated config includes PDF routes", asArray(config["routes-pdf"]).length > 0);
   check("generated config includes source viewer menu", asArray(config["menus-header-source-viewer"]).length > 0);
+  check("generated config includes HTML menu", asArray(config["menus-header-html"]).length > 0);
   check("generated config includes video menu", asArray(config["menus-header-video"]).length > 0);
   check("generated config includes audio menu", asArray(config["menus-header-audio"]).length > 0);
   check("generated config includes PDF menu", asArray(config["menus-header-pdf"]).length > 0);
 
   for (const key of menuKeys) {
-    for (const item of asArray(config[key])) {
+    for (const item of menuItems(config[key])) {
       for (const lang of ["pt", "en", "es"]) {
         const localized = item[lang] as { "path-click"?: string } | undefined;
         const pathClick = localized?.["path-click"];
+        if (pathClick && (key === "menus-header-md" || key === "menus-header-html")) {
+          const routeKey = key.replace("menus-header-", "routes-");
+          const routeExists = asArray(config[routeKey]).some((route) => {
+            const paths = route.path as Record<string, unknown> | undefined;
+            return paths?.[lang] === pathClick;
+          });
+          check(`generated ${key} ${lang} points to a localized route`, routeExists, pathClick);
+        }
         if (!pathClick?.startsWith("page:")) continue;
         const id = Number(pathClick.slice("page:".length));
         check(`generated ${key} ${lang} points to an existing route`, ids.has(id), pathClick);

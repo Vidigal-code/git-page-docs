@@ -1,6 +1,7 @@
 /** Path and media mappings for doc versions */
 
 export const PDF_GUIDE_FILENAME = "gitpagedocs-project-guide.pdf";
+export const HTML_DOOM_FILENAME = "doom.html";
 
 export const ROUTE_PATHS = {
   1: { pt: "getting-started.md", en: "getting-started.md", es: "getting-started.md" },
@@ -20,6 +21,11 @@ export const ROUTE_PATHS = {
   21: { pt: "accessibility.md", en: "accessibility.md", es: "accessibility.md" },
   22: { pt: "focus-mode.md", en: "focus-mode.md", es: "focus-mode.md" },
   24: { pt: "pdf.md", en: "pdf.md", es: "pdf.md" },
+  25: { pt: "configuration-recipes.md", en: "configuration-recipes.md", es: "configuration-recipes.md" },
+  26: { pt: "migration.md", en: "migration.md", es: "migration.md" },
+  27: { pt: "troubleshooting.md", en: "troubleshooting.md", es: "troubleshooting.md" },
+  28: { pt: "contributing.md", en: "contributing.md", es: "contributing.md" },
+  30: { pt: "html-containers.md", en: "html-containers.md", es: "html-containers.md" },
 };
 
 export const VIDEO_IDS = ["bdIJkGr2NV0", "c67GaAkf1BE", "N3my6W_Rdwg", "r8jQ9hVA2qs"];
