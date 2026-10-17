@@ -9,4 +9,4 @@ Conceptos basicos de Git para principiantes.
 - `git commit` - registrar commit
 - `git push` - enviar a remoto
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

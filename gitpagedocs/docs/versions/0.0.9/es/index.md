@@ -1,14 +1,14 @@
 # Git Page Docs
 
-Git Page Docs es un runtime de documentacion multilenguaje para repositorios que incluyen la carpeta `gitpagedocs/`.
+Git Page Docs es un runtime de documentación multilenguaje para repositorios que incluyen la carpeta `gitpagedocs/`.
 
-## Que entrega este proyecto
+## Qué ofrece este proyecto
 
 - Renderizado markdown multilenguaje (`en`, `pt`, `es`)
-- Ruteo por version (`/v/:version`)
+- Ruteo por versión (`/v/:version`)
 - Sistema de temas con templates JSON
-- Ejecucion local y en GitHub Pages
-- Busqueda de repositorio + render remoto opcional
+- Ejecución local y en GitHub Pages
+- Búsqueda de repositorio + render remoto opcional
 
 ## Contrato de carpetas
 
@@ -21,14 +21,14 @@ El runtime espera esta estructura:
 - `gitpagelayouts/layoutsConfig.json`
 - `gitpagelayouts/templates/*.json`
 
-## Navegacion rapida
+## Navegación rápida
 
 - Abre **Primeros pasos** para setup local.
-- Abre **Configuracion** para detalle completo de `config.json`.
-- Abre **Publicacion** para comportamiento local/produccion/GitHub Pages.
-- Abre **Arquitectura** para mapa de codigo y flujo de datos.
-- Abre **Temas y layouts** para creacion de templates.
-- Abre **Rutas autorizadas** para configurar clave, roles y autenticacion externa.
+- Abre **Configuración** para detalle completo de `config.json`.
+- Abre **Publicación** para comportamiento local/producción/GitHub Pages.
+- Abre **Arquitectura** para mapa de código y flujo de datos.
+- Abre **Temas y layouts** para creación de templates.
+- Abre **Rutas autorizadas** para configurar clave, roles y autenticación externa.
 - Abre **FAQ** para troubleshooting.
 
 ## Referencias detalladas
@@ -39,4 +39,4 @@ El runtime espera esta estructura:
 - **Modo foco**: copiar/descargar Markdown y navegar por sección/documento.
 - **Accesibilidad y narración**: voces del navegador, controles e interacción con medios.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

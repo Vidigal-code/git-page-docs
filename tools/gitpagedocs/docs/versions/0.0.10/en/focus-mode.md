@@ -33,6 +33,8 @@ Each option defaults to `true`; setting one to `false` hides its corresponding a
 
 ## Copy and download
 
+On a composed page, focus reads the authorized Markdown blocks in order, including repetitions. Its copy/download actions join those sources and use `page-<id>.md`; individual block actions retain their original filenames. See Ordered content blocks for the full contract.
+
 Copy and download use the **entire original Markdown document in the selected language**, including sections not currently visible. They do not export the rendered HTML or only the current reading section.
 
 The download keeps the Markdown basename from the route's localized `path`; if unavailable, the filename is `document.md`. Clipboard access follows the browser's permission and secure-context rules. If copying fails, use download instead and check the displayed error.

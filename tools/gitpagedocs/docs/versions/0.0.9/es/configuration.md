@@ -1,40 +1,40 @@
-# Configuracion
+# Configuración
 
-La configuracion de runtime esta en `gitpagedocs/config.json`. Los textos de la UI viven al lado, un archivo por idioma.
+La configuración de runtime está en `gitpagedocs/config.json`. Los textos de la UI viven al lado, un archivo por idioma.
 
 ## Idiomas (`site.languages` + `langs/`)
 
-- `site.languages` en `gitpagedocs/config.json` activa (`true`) o desactiva (`false`) cada idioma, en el orden del menu: `{ "languages": { "en": true, "pt": true, "es": false } }`. Un idioma en `false` desaparece del selector de idiomas y sus textos no se cargan, aunque existan sus docs.
-- `gitpagedocs/langs/<lang>.json` guarda los textos de ese idioma: `langmenu` (cabecera, busqueda, visor de codigo, reproductor de audio, chat de IA y acceso a los docs) y `translations` (`notFound`, `navigation`, `footer`).
+- `site.languages` en `gitpagedocs/config.json` activa (`true`) o desactiva (`false`) cada idioma, en el orden del menú: `{ "languages": { "en": true, "pt": true, "es": false } }`. Un idioma en `false` desaparece del selector de idiomas y sus textos no se cargan, aunque existan sus docs.
+- `gitpagedocs/langs/<lang>.json` guarda los textos de ese idioma: `langmenu` (cabecera, búsqueda, visor de código, reproductor de audio, chat de IA y acceso a los docs) y `translations` (`notFound`, `navigation`, `footer`).
 - Para agregar un idioma, crea `langs/<lang>.json` y agrega `"<lang>": true` en `site.languages`.
-- Los `config.json` antiguos que aun traen `site.langmenu` / `translations` inline siguen funcionando; cuando existen ambos, los archivos de `langs/` prevalecen y cualquier clave ausente se completa desde la version actual.
+- Los `config.json` antiguos que aún traen `site.langmenu` / `translations` inline siguen funcionando; cuando existen ambos, los archivos de `langs/` prevalecen y cualquier clave ausente se completa desde la versión actual.
 
-## Seccion `site`
+## Sección `site`
 
 Claves principales:
 
-- `name`: titulo del proyecto en UI
+- `name`: título del proyecto en UI
 - `defaultLanguage`: idioma por defecto
 - `HideThemeSelector`: ocultar/mostrar selector de tema
 - `ThemeDefault`: id del tema inicial
 - `ThemeModeDefault`: modo inicial (`light` o `dark`)
 - `ProjectLink`: URL de repositorio para acciones de cabecera
-- `docsVersion`: version seleccionada por defecto
+- `docsVersion`: versión seleccionada por defecto
 - `ActiveNavigation`: habilita la navegación rápida y el atajo Ctrl+K
 - `FocusMode`: habilita modo foco/lectura
 - `icons`: iconos de la cabecera. `icons.defaults` guarda lo que todos comparten (`reactIcon`, `colorDark`, `colorLight`, `size`, `imgDark`, `imgLight`, `imgWidth`, `imgHeight`) y cada icono define su `tag` y lo que cambia (`null` quita un campo). Las claves planas de abajo siguen valiendo y ganan cuando existen ambas formas.
-- `IconImageMenuHeaderImgWidth`, `IconImageMenuHeaderImgHeight`: tamano del icono principal
+- `IconImageMenuHeaderImgWidth`, `IconImageMenuHeaderImgHeight`: tamaño del icono principal
 - `IconImageMenuHeaderLightImg`, `IconImageMenuHeaderDarkImg`: icono principal (light/dark)
-- `IconProjectLinkImgWidth`, `IconProjectLinkImgHeight`: tamano del icono enlace del proyecto
+- `IconProjectLinkImgWidth`, `IconProjectLinkImgHeight`: tamaño del icono enlace del proyecto
 - `IconProjectLinkLightImg`, `IconProjectLinkDarkImg`: icono enlace del proyecto
-- `IconVersionLinksImgWidth`, `IconVersionLinksImgHeight`: tamano del icono enlaces de version
-- `IconVersionLinksLightImg`, `IconVersionLinksDarkImg`: icono enlaces de version
-- `IconInfoHeaderMenuImgWidth`, `IconInfoHeaderMenuImgHeight`: tamano del icono info
+- `IconVersionLinksImgWidth`, `IconVersionLinksImgHeight`: tamaño del icono enlaces de versión
+- `IconVersionLinksLightImg`, `IconVersionLinksDarkImg`: icono enlaces de versión
+- `IconInfoHeaderMenuImgWidth`, `IconInfoHeaderMenuImgHeight`: tamaño del icono info
 - `IconInfoHeaderMenuLightImg`, `IconInfoHeaderMenuDarkImg`: icono info
-- `IconPreviewProjectLinkImgWidth`, `IconPreviewProjectLinkImgHeight`: tamano del icono preview
+- `IconPreviewProjectLinkImgWidth`, `IconPreviewProjectLinkImgHeight`: tamaño del icono preview
 - `IconPreviewProjectLinkLightImg`, `IconPreviewProjectLinkDarkImg`: icono preview
 - `layoutsConfigPath`: fallback remoto de layouts
-- `rendering`: URL canonica publicada
+- `rendering`: URL canónica publicada
 
 ## Controles de idioma, tema, foco, navegación rápida, PDF y documentos
 
@@ -85,66 +85,66 @@ Cada control es independiente: `reactIcon: true` muestra el icono (por defecto);
 
 Las configuraciones compactas pueden mover valores comunes a `site.icons.defaults`; los campos omitidos heredan esos valores. Define `reactIcon: false` en una entrada concreta para sustituir el icono predeterminado por texto.
 
-## Seccion `VersionControl`
+## Sección `VersionControl`
 
 `VersionControl.versions` define:
 
-- `id`: identificador de version
-- `path`: ruta de config de version
+- `id`: identificador de versión
+- `path`: ruta de config de versión
 - links opcionales (`ProjectLink`, `branch`, `release`, `commit`)
 - metadatos opcionales del source viewer (`source-viewer`, `source-viewer-path`)
 
-## Navegacion y rutas
+## Navegación y rutas
 
 - `routes`: rutas markdown por idioma (legado)
-- `menus-header`: menu jerarquico
-- `translations`: etiquetas UI para not-found y navegacion
+- `menus-header`: menú jerarquico
+- `translations`: etiquetas UI para not-found y navegación
 
-## Autorizacion (config de version)
+## Autorización (config de versión)
 
-- `auth`: configuraciones globales de autorizacion para esa version
+- `auth`: configuraciones globales de autorización para esa versión
 - `auth.accessKeys`: mapa de claves usado por `authorization.accessKeyId`
 - `auth.rolesStorageKey`: clave de localStorage para bootstrap de roles
 - `auth.providers`: adaptadores de proveedor (`authjs`, `clerk`, `firebase`, `jwt`)
 
-## Tipos de contenido (config de version)
+## Tipos de contenido (config de versión)
 
-Los configs de version soportan multiples tipos:
+Los configs de versión soportan múltiples tipos:
 
-- `routes-md`: Rutas markdown con `title`, `description` (centrados via `titlePosition`, `descriptionPosition`)
-- `routes-source-viewer`: Contenedores de codigo fuente con `source-viewer: true` y `source-viewer-path`
-- `routes-html`: Rutas de paginas HTML por idioma
-- `routes-video`: Config de video con `video.videoType` (youtube, vimeo, mp4, etc.) y `video.pathVideo`
+- `routes-md`: Rutas markdown con `title`, `description` (centrados vía `titlePosition`, `descriptionPosition`)
+- `routes-source-viewer`: Contenedores de código fuente con `source-viewer: true` y `source-viewer-path`
+- `routes-html`: Rutas de páginas HTML por idioma
+- `routes-video`: Config de vídeo con `video.videoType` (youtube, vimeo, mp4, etc.) y `video.pathVideo`
 - `routes-audio`: Config de audio con `audio.audioType` (youtube, mp3, etc.) y `audio.pathAudio`
 - `routes-pdf`: PDF con `pdf.pathPdf` por idioma; consulta Documentos PDF.
-- `authorization` (md/html/video): guardia de acceso por clave, roles y autenticacion externa
-- `menus-header-md`, `menus-header-source-viewer`, `menus-header-html`, `menus-header-video`, `menus-header-audio`, `menus-header-pdf`: menus por tipo
-- `hierarchyPage`: orden de contenedores en la pagina `{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }`
-- `hierarchyMenu`: orden de secciones del menu `{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }`
+- `authorization` (md/html/vídeo): guardia de acceso por clave, roles y autenticación externa
+- `menus-header-md`, `menus-header-source-viewer`, `menus-header-html`, `menus-header-video`, `menus-header-audio`, `menus-header-pdf`: menús por tipo
+- `hierarchyPage`: orden de contenedores en la página `{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }`
+- `hierarchyMenu`: orden de secciones del menú `{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }`
 
 Cada ruta puede incluir `title`, `description` (por idioma), `titleCss`, `titlePosition: "center"`, `descriptionPosition: "center"`, `titleIsVisible`, `descriptionIsVisible`.
 
-Los ajustes que comparten todas las rutas se escriben una sola vez en `routeDefaults`, al inicio del config de la version; cada ruta guarda solo sus propios valores, y un valor escrito en la ruta gana sobre `routeDefaults`.
+Los ajustes que comparten todas las rutas se escriben una sola vez en `routeDefaults`, al inicio del config de la versión; cada ruta guarda solo sus propios valores, y un valor escrito en la ruta gana sobre `routeDefaults`.
 
 ## Variables por ruta (blockLink, container, url, browseAll)
 
 Opciones por ruta en `routes-md`, `routes-html` y `routes-video`:
 
 - **`blockLink`** (defecto: true) – Para HTML: si true, los enlaces abren en nueva pestaña (`target="_blank"`); si false, en el mismo contexto.
-- **`container`** – `"full"` = altura automatica; numero (ej: `500`) = altura fija en px con overflow auto. Se aplica a md, html y video.
-- **`url`** – Solo en `routes-html`: `Record<LanguageCode, string>` con URLs externas. Al definirse, el iframe usa `src={url}` en vez de HTML local via `srcDoc`. Las rutas con `url` no generan archivos HTML locales.
+- **`container`** – `"full"` = altura automática; numero (ej: `500`) = altura fija en px con overflow auto. Se aplica a md, html y vídeo.
+- **`url`** – Solo en `routes-html`: `Record<LanguageCode, string>` con URLs externas. Al definirse, el iframe usa `src={url}` en vez de HTML local vía `srcDoc`. Las rutas con `url` no generan archivos HTML locales.
 - **`browseAll`** (defecto: false) – Si true, el contenedor muestra botones Anterior/Siguiente para navegar entre todos los items de ese tipo.
 
 ## Tipos de contenido: path vs url (HTML)
 
 - **Markdown (`routes-md`)**: usa `path` apuntando a archivos `.md` locales.
-- **HTML (`routes-html`)**: usa `path` para archivos HTML locales (sin extension .html en config) o `url` para URLs externas. Con `url`, el iframe carga la pagina externa; no se genera archivo local.
-- **Video (`routes-video`)**: usa `video.pathVideo` y `video.videoType` (youtube, vimeo, mp4, etc.).
+- **HTML (`routes-html`)**: usa `path` para archivos HTML locales (sin extensión .html en config) o `url` para URLs externas. Con `url`, el iframe carga la página externa; no se genera archivo local.
+- **Vídeo (`routes-video`)**: usa `video.pathVideo` y `video.videoType` (youtube, vimeo, mp4, etc.).
 
 ## Variables de entorno
 
-- `GITPAGEDOCS_REPOSITORY_SEARCH`: activa/desactiva busqueda remota en local
-- `GITHUB_ACTIONS`: habilita comportamiento especifico de GitHub Pages
+- `GITPAGEDOCS_REPOSITORY_SEARCH`: activa/desactiva búsqueda remota en local
+- `GITHUB_ACTIONS`: habilita comportamiento específico de GitHub Pages
 
 ## Comportamiento del sitio y valores predeterminados
 
@@ -182,4 +182,4 @@ Las opciones visuales son configuración pública. Nunca guardes credenciales de
 
 La entrada `QuickNavigation` controla la apariencia de icono/texto del botón Ctrl+K. El atajo de teclado y el panel de búsqueda siguen disponibles.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

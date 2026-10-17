@@ -119,4 +119,4 @@ A etapa de geração envia o conteúdo selecionado do projeto ao provedor config
 - Falhas de tools incluem `isError: true`. Resources ausentes retornam `Unavailable: ...`. Consulte stderr no cliente para falhas de inicialização; stdout é reservado para JSON-RPC.
 - Se as tools funcionam mas a geração falha, confira seleção do provedor, credenciais de ambiente, modelo e conectividade.
 
-> Versao: 0.0.10
+> Versão: 0.0.10

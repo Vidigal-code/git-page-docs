@@ -1,6 +1,6 @@
 # Publicación
 
-Elige el visor oficial para un repositorio público, publica tu propio GitHub Pages o aloja un export estático compilado desde el runtime.
+Elige el visor oficial para un repositorio público, pública tu propio GitHub Pages o aloja un export estático compilado desde el runtime.
 
 ## Visor oficial
 
@@ -36,8 +36,8 @@ En un checkout del runtime con dependencias instaladas, `node cli/index.mjs --ho
 
 ## Releases npm para mantenedores
 
-El monorepo publica `@gitpagedocs/tools`, `@gitpagedocs/mcp` y `@gitpagedocs/cli`; raíz y frontend son privados. El `npm-publish.yml` actual se ejecuta en pushes a `main` y omite una versión de CLI ya publicada. Utiliza el secret `NPM_TOKEN` del repositorio y publica workspaces en orden de dependencia. Crear solo una release de GitHub no es su disparador.
+El monorepo pública `@gitpagedocs/tools`, `@gitpagedocs/mcp` y `@gitpagedocs/cli`; raíz y frontend son privados. El `npm-publish.yml` actual se ejecuta en pushes a `main` y omite una versión de CLI ya publicada. Utiliza el secret `NPM_TOKEN` del repositorio y pública workspaces en orden de dependencia. Crear solo una release de GitHub no es su disparador.
 
 Sincroniza versiones y dependencias internas, regenera docs/baselines, ejecuta typecheck, lint, pruebas, smoke, build y Playwright y revisa antes del push. Confirma las tres versiones en npm y el resultado de Pages. La CLI de configuración ignora `prebuilt/`; el workflow de publicación no requiere esa carpeta.
 
-> Version (ES): 0.0.8
+> Versión: 0.0.8

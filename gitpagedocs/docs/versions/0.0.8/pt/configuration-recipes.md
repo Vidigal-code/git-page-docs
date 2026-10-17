@@ -194,4 +194,4 @@ Consulte Documentos PDF para adicionar `routes-pdf` e `menus-header-pdf`; o exem
 
 Confira todos os idiomas, expanda cada categoria e percorra as folhas. Teste URLs diretas, alterações entre texto e ícone, primeiro/anterior/próximo/último no foco e direções desabilitadas nas extremidades. Inspecione o config da versão quando o rótulo aparece mas o destino falha. Faça commit da configuração revisada junto com os documentos e anexos referenciados.
 
-> Versao: 0.0.8
+> Versão: 0.0.8

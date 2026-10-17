@@ -39,6 +39,10 @@ export const ROUTE_META_ID6 = {
 };
 
 export const REFERENCE_ROUTE_METAS = {
+  40: {
+    titles: { en: "Ordered content blocks", pt: "Blocos de conteúdo ordenados", es: "Bloques de contenido ordenados" },
+    descriptions: { en: "Combine and repeat content in one page", pt: "Combine e repita conteúdos na mesma página", es: "Combina y repite contenidos en una página" },
+  },
   13: {
     titles: { pt: "Configuração", en: "Configuration", es: "Configuración" },
     descriptions: { pt: "Idiomas, ícones, navegação, foco e acessibilidade", en: "Languages, icons, navigation, focus and accessibility", es: "Idiomas, iconos, navegación, foco y accesibilidad" },
@@ -103,35 +107,67 @@ export const REFERENCE_ROUTE_METAS = {
     titles: { pt: "Containers HTML", en: "HTML containers", es: "Contenedores HTML" },
     descriptions: { pt: "Páginas HTML, URLs externas e o exemplo interativo DOOM", en: "HTML pages, external URLs and the interactive DOOM example", es: "Páginas HTML, URLs externas y el ejemplo interactivo DOOM" },
   },
+  31: {
+    titles: { pt: "Guias", en: "Guides", es: "Guías" },
+    descriptions: { pt: "Escolha um caminho para configurar, ler ou integrar", en: "Choose a path to configure, read or integrate", es: "Elige un recorrido para configurar, leer o integrar" },
+  },
+  32: {
+    titles: { pt: "Configure seu site", en: "Configure your site", es: "Configura tu sitio" },
+    descriptions: { pt: "Organize conteúdo, navegação e apresentação", en: "Organize content, navigation and presentation", es: "Organiza contenido, navegación y presentación" },
+  },
+  33: {
+    titles: { pt: "Leia e explore", en: "Read and explore", es: "Lee y explora" },
+    descriptions: { pt: "Escolha como ler documentos e exemplos interativos", en: "Choose how to read documents and interactive examples", es: "Elige cómo leer documentos y ejemplos interactivos" },
+  },
+  34: {
+    titles: { pt: "Automatize e integre", en: "Automate and integrate", es: "Automatiza e integra" },
+    descriptions: { pt: "Use CLI, MCP e políticas de acesso", en: "Use the CLI, MCP and access policies", es: "Usa la CLI, MCP y políticas de acceso" },
+  },
+  35: {
+    titles: { pt: "Operação e desenvolvimento", en: "Operations and development", es: "Operación y desarrollo" },
+    descriptions: { pt: "Publique, mantenha e desenvolva a documentação", en: "Publish, maintain and develop the documentation", es: "Pública, mantén y desarrolla la documentación" },
+  },
+  36: {
+    titles: { pt: "Publique e mantenha", en: "Ship and maintain", es: "Pública y mantén" },
+    descriptions: { pt: "Prepare a publicação e preserve compatibilidade", en: "Prepare releases and preserve compatibility", es: "Prepara publicaciones y conserva compatibilidad" },
+  },
+  37: {
+    titles: { pt: "Desenvolva o projeto", en: "Develop the project", es: "Desarrolla el proyecto" },
+    descriptions: { pt: "Localize fontes, contratos e verificações", en: "Locate sources, contracts and checks", es: "Localiza fuentes, contratos y comprobaciones" },
+  },
+  38: {
+    titles: { pt: "Git e GitHub", en: "Git and GitHub", es: "Git y GitHub" },
+    descriptions: { pt: "Versione mudanças e organize o trabalho", en: "Version changes and organize the work", es: "Versiona cambios y organiza el trabajo" },
+  },
 };
 
 export const HTML_DOOM_META = {
   id: 29,
   titles: { pt: "DOOM: exemplo HTML", en: "DOOM: HTML example", es: "DOOM: ejemplo HTML" },
   descriptions: {
-    pt: "Um container HTML com título, descrição e um jogo carregado apenas ao clicar.",
-    en: "An HTML container with a title, description and a game loaded only after clicking.",
-    es: "Un contenedor HTML con título, descripción y un juego que se carga solo al hacer clic.",
+    pt: "Jogue DOOM em um container HTML usando os controles do próprio player.",
+    en: "Play DOOM in an HTML container using the player’s native controls.",
+    es: "Juega a DOOM en un contenedor HTML con los controles del reproductor.",
   },
 };
 
 export const SOURCE_VIEWER_META = {
   id: 7,
-  titles: { pt: "Codigo fonte", en: "Source code", es: "Codigo fuente" },
+  titles: { pt: "Código fonte", en: "Source code", es: "Código fuente" },
   descriptions: {
-    pt: "Explore a arvore do repositorio, navegue por pastas e visualize arquivos diretamente na documentacao.",
+    pt: "Explore a árvore do repositório, navegue por pastas e visualize arquivos diretamente na documentação.",
     en: "Explore the repository tree, browse folders, and preview files directly inside the documentation.",
-    es: "Explora el arbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentacion.",
+    es: "Explora el árbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentación.",
   },
 };
 
 export const AUDIO_META_ID12 = {
   id: 12,
-  title: { pt: "Trilha de audio", en: "Audio track", es: "Pista de audio" },
+  title: { pt: "Trilha de áudio", en: "Audio track", es: "Pista de audio" },
   description: {
-    pt: "Ouça uma faixa de exemplo diretamente na documentacao.",
+    pt: "Ouça uma faixa de exemplo diretamente na documentação.",
     en: "Listen to a sample track directly inside the documentation.",
-    es: "Escucha una pista de ejemplo directamente en la documentacion.",
+    es: "Escucha una pista de ejemplo directamente en la documentación.",
   },
 };
 

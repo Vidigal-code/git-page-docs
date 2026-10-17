@@ -30,4 +30,4 @@ Menus ocultos e autorização no navegador não protegem arquivos públicos em h
 
 O processo `gitpagedocs mcp start` aguardando é normal: ele conversa por stdio com um cliente, não com um terminal interativo. Confira diretório, executável e ambiente herdado. As credenciais devem existir nesse processo; o cofre da CLI e o `.env` não são carregados automaticamente. Reserve stdout ao protocolo, consulte stderr e resultados `isError`, compartilhando diagnósticos sem segredos.
 
-> Versao: 0.0.9
+> Versão: 0.0.9

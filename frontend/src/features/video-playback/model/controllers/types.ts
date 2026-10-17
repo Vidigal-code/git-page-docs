@@ -9,4 +9,6 @@ export interface VideoPlaybackController {
 export interface VideoPlaybackControllerOptions {
   /** Called every time the video starts playing. */
   onPlay: () => void;
+  /** Initial route preference; player controls remain available after initialization. */
+  muted?: boolean;
 }

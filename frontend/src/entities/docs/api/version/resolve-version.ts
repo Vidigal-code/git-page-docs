@@ -4,6 +4,7 @@ import type {
   ContentTypeRouteConfig,
   GitPageDocsConfig,
   HierarchyConfig,
+  PageCompositionConfig,
   RouteConfig,
   VersionEntry,
 } from "@/entities/docs/model/types";
@@ -12,6 +13,7 @@ import { tryReadJsonFile } from "../io/file-reader";
 
 export interface VersionRoutesConfig {
   auth?: AuthConfig;
+  pages?: PageCompositionConfig[];
   routes?: RouteConfig[];
   "menus-header"?: GitPageDocsConfig["menus-header"];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
@@ -126,6 +128,7 @@ function hasAnyEntries(versionConfig: VersionRoutesConfig, keys: readonly Versio
 /** A version config is only worth applying when it carries routes, menus or auth. */
 function hasVersionContent(versionConfig: VersionRoutesConfig): boolean {
   return (
+    Array.isArray(versionConfig.pages) ||
     hasAnyEntries(versionConfig, ROUTE_LIST_KEYS) ||
     hasAnyEntries(versionConfig, MENU_LIST_KEYS) ||
     typeof versionConfig.auth === "object"

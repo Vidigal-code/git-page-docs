@@ -10,8 +10,8 @@ Record the deployed commit, CLI version and workflow revision. Run \`git status 
 For a reproducible comparison, invoke the target package explicitly:
 
 \`\`\`sh
-npx --yes @gitpagedocs/cli@0.0.10 version
-npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY --output gitpagedocs-candidate
+npx --yes @gitpagedocs/cli@0.0.11 version
+npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY --output gitpagedocs-candidate
 git diff --no-index -- gitpagedocs gitpagedocs-candidate
 \`\`\`
 

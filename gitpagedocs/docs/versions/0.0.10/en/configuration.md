@@ -43,35 +43,35 @@ In `gitpagedocs/config.json`, these `site.icons` entries configure the language 
   "site": {
     "icons": {
       "LanguageSelector": {
-        "reactIcon": true, "tag": "FiGlobe", "size": "22px",
+        "reactIcon": true, "tag": "SiGoogletranslate", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "ThemeSelector": {
-        "reactIcon": true, "tag": "BsSunFill", "size": "22px",
+        "reactIcon": true, "tag": "LuPencil", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "MdFullscreen", "size": "22px",
+        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
-        "reactIcon": true, "tag": "FiSearch", "size": "22px",
+        "reactIcon": true, "tag": "LuSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfDownload": {
-        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "reactIcon": true, "tag": "LuDownload", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfOpenInNewTab": {
-        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "reactIcon": true, "tag": "LuExternalLink", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentPrevious": {
-        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronLeft", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentNext": {
-        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronRight", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }

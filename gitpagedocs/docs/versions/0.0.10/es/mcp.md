@@ -119,4 +119,4 @@ La generación envía el contenido seleccionado del proyecto al proveedor config
 - Los fallos de tools incluyen `isError: true`. Los resources ausentes devuelven `Unavailable: ...`. Revisa stderr en el cliente para errores de inicio; stdout está reservado para JSON-RPC.
 - Si las tools funcionan pero la generación falla, comprueba selección del proveedor, credenciales del entorno, modelo y conectividad.
 
-> Version (ES): 0.0.10
+> Versión: 0.0.10

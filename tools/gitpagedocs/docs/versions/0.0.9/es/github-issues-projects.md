@@ -8,4 +8,4 @@ Aprende a usar GitHub Issues y Projects para gestionar tu trabajo.
 - Projects para visualizar y organizar el trabajo
 - Flujos recomendados para equipos
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

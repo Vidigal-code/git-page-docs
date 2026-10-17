@@ -42,6 +42,6 @@ La configuración E2E usa los puertos 3100 y 3101; conserva el servicio existent
 
 Revisa accesibilidad, autorización, validación de entradas, errores, liberación de recursos y coherencia de archivos generados. Analiza cada fuente modificada en el proyecto SonarQube configurado con el alcance de prueba o producción correspondiente; usa parser/linter de la stack para formatos no compatibles. Mantén credenciales y archivos temporales fuera de commits.
 
-Los paquetes publicables son `@gitpagedocs/tools`, `@gitpagedocs/mcp` y `@gitpagedocs/cli`; raíz y frontend son privados. Sincroniza versiones, dependencias internas y lockfile, inspecciona los paquetes y completa las verificaciones antes del push. El workflow npm actual se ejecuta en pushes a main y publica en orden de dependencias cuando la versión CLI es nueva. Confirma npm y Pages después; un build local correcto no equivale a publicar.
+Los paquetes publicables son `@gitpagedocs/tools`, `@gitpagedocs/mcp` y `@gitpagedocs/cli`; raíz y frontend son privados. Sincroniza versiones, dependencias internas y lockfile, inspecciona los paquetes y completa las verificaciones antes del push. El workflow npm actual se ejecuta en pushes a main y pública en orden de dependencias cuando la versión CLI es nueva. Confirma npm y Pages después; un build local correcto no equivale a publicar.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

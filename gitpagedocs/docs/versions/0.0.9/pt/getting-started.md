@@ -46,4 +46,4 @@ O repositório fixa o pnpm em `packageManager`. `pnpm dev` ativa a busca de repo
 
 Use Configuração para idiomas, ícones, navegação, foco e narração; Funcionalidades para CLI e MCP; Temas e layouts para tokens visuais; Perguntas frequentes para diagnóstico.
 
-> Versao: 0.0.9
+> Versão: 0.0.9

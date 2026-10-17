@@ -14,211 +14,174 @@
     "icons": {
       "defaults": {
         "reactIcon": true,
-        "colorDark": "White",
-        "colorLight": "black",
-        "size": "25px",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
         "imgDark": "",
         "imgLight": "",
         "imgWidth": 20,
         "imgHeight": 20
       },
       "QuickNavigation": {
-        "tag": "FiSearch",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuSearch",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "LanguageSelector": {
-        "tag": "FiGlobe",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "SiGoogletranslate",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "ThemeSelector": {
-        "tag": "BsSunFill",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuPencil",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "FocusMode": {
-        "tag": "MdFullscreen",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuBookOpen",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "PdfDownload": {
-        "tag": "FiDownload",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuDownload",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "PdfOpenInNewTab": {
-        "tag": "FiExternalLink",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuExternalLink",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "DocumentPrevious": {
-        "tag": "FiChevronLeft",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuChevronLeft",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "DocumentNext": {
-        "tag": "FiChevronRight",
-        "colorDark": "currentColor",
-        "colorLight": "currentColor",
-        "size": "22px",
+        "tag": "LuChevronRight",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "ImageMenuHeader": {
-        "tag": "FaGithubAlt"
+        "tag": "LuBookOpenText"
       },
       "ProjectLink": {
-        "tag": "FaGithubAlt",
+        "tag": "LuGithub",
         "size": null
       },
       "VersionLinks": {
-        "tag": "FaCodeBranch"
+        "tag": "LuGitBranch"
       },
       "InfoHeaderMenu": {
-        "tag": "BsInfoSquareFill"
+        "tag": "LuInfo"
       },
       "PreviewProjectLink": {
-        "tag": "CiGlobe"
+        "tag": "LuGlobe"
       },
       "NavMenuOpen": {
-        "tag": "FaBars"
+        "tag": "LuMenu"
       },
       "NavMenuClose": {
-        "tag": "IoMdClose"
+        "tag": "LuX"
       },
       "NavMenuMobileOpen": {
-        "tag": "FaBars"
+        "tag": "LuMenu"
       },
       "NavMenuMobileClose": {
-        "tag": "IoMdClose"
+        "tag": "LuX"
       },
       "NavMenuBlockActive": {
-        "tag": "FiLock"
+        "tag": "LuLockKeyhole"
       },
       "NavMenuBlockInactive": {
-        "tag": "FiUnlock"
+        "tag": "LuLockKeyholeOpen"
       },
       "DocsLock": {
-        "tag": "FiLock",
-        "size": "22px"
+        "tag": "LuLockKeyhole"
       },
       "AudioPlay": {
-        "tag": "CiPlay1",
+        "tag": "LuCirclePlay",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "AudioPause": {
-        "tag": "FaPause",
+        "tag": "LuCirclePause",
         "imgDark": null,
         "imgLight": null,
         "imgWidth": null,
         "imgHeight": null
       },
       "AudioPlayerPopoverClose": {
-        "tag": "IoMdClose"
+        "tag": "LuX"
       },
       "AudioPlayerPopoverPlay": {
-        "tag": "CiPlay1"
+        "tag": "LuPlay"
       },
       "AudioPlayerPopoverPause": {
-        "tag": "FaPause"
+        "tag": "LuPause"
       },
       "AudioPlayerPopoverRestart": {
-        "tag": "FiRefreshCw"
+        "tag": "LuRotateCcw"
       },
       "AudioPlayerPopoverLoopOn": {
-        "tag": "FiRepeat"
+        "tag": "LuRepeat"
       },
       "AudioPlayerPopoverLoopOff": {
-        "tag": "FiRepeat"
+        "tag": "LuRepeat2"
       },
       "AiChatOpen": {
-        "tag": "BsRobot",
-        "size": "22px"
+        "tag": "LuMessagesSquare"
       },
       "AiChatClose": {
-        "tag": "IoMdClose",
-        "size": "22px"
+        "tag": "LuX"
       },
       "AiChatSettings": {
-        "tag": "FiSettings",
-        "size": "20px"
+        "tag": "LuSettings2"
       },
       "AiChatSend": {
-        "tag": "FiSend",
-        "size": "20px"
+        "tag": "LuSend"
       },
       "AiChatCancel": {
-        "tag": "FiXCircle",
-        "size": "20px"
+        "tag": "LuCircleStop"
       },
       "AiChatTrash": {
-        "tag": "FiTrash2",
-        "size": "20px"
+        "tag": "LuTrash2"
       },
       "AiChatClearChat": {
-        "tag": "FiMessageSquare",
-        "size": "20px"
+        "tag": "LuMessageSquareX"
       },
       "AiChatClearData": {
-        "tag": "FiDatabase",
-        "size": "20px"
+        "tag": "LuDatabaseZap"
       },
       "AiChatExpand": {
-        "tag": "FiMaximize2",
-        "size": "20px"
+        "tag": "LuMaximize2"
       },
       "AiChatCollapse": {
-        "tag": "FiMinimize2",
-        "size": "20px"
+        "tag": "LuMinimize2"
       },
       "SidebarCollapse": {
-        "tag": "FiChevronsLeft",
-        "size": "22px"
+        "tag": "LuPanelLeftClose"
       },
       "SidebarExpand": {
-        "tag": "FiChevronsRight",
-        "size": "22px"
+        "tag": "LuPanelLeftOpen"
       }
     },
     "FocusMode": true,
@@ -299,6 +262,19 @@
   },
   "VersionControl": {
     "versions": [
+      {
+        "id": "0.0.11",
+        "path": "gitpagedocs/docs/versions/0.0.11/config.json",
+        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.11/config.json",
+        "PreviewProject": "",
+        "UpdateDate": "",
+        "branch": "",
+        "release": "",
+        "commit": "",
+        "source-viewer": true,
+        "source-viewer-path": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+      },
       {
         "id": "0.0.10",
         "path": "gitpagedocs/docs/versions/0.0.10/config.json",

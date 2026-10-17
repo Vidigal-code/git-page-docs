@@ -2,17 +2,17 @@
   "notFound": {
     "title": {
       "en": "Page not found",
-      "pt": "Pagina nao encontrada",
-      "es": "Pagina no encontrada"
+      "pt": "Página não encontrada",
+      "es": "Página no encontrada"
     },
     "description": {
       "en": "The requested documentation page does not exist in this repository context.",
-      "pt": "A pagina de documentacao solicitada nao existe neste contexto de repositorio.",
-      "es": "La pagina de documentacion solicitada no existe en este contexto de repositorio."
+      "pt": "A página de documentação solicitada não existe neste contexto de repositório.",
+      "es": "La página de documentación solicitada no existe en este contexto de repositorio."
     },
     "returnHome": {
       "en": "Return Home",
-      "pt": "Voltar para inicio",
+      "pt": "Voltar para início",
       "es": "Volver al inicio"
     }
   },
@@ -24,13 +24,13 @@
     },
     "next": {
       "en": "Next",
-      "pt": "Proximo",
+      "pt": "Próximo",
       "es": "Siguiente"
     },
     "menuOpen": {
       "en": "Menu",
       "pt": "Menu",
-      "es": "Menu"
+      "es": "Menú"
     },
     "menuClose": {
       "en": "Close",
@@ -44,7 +44,7 @@
     },
     "browseNext": {
       "en": "Next",
-      "pt": "Proximo",
+      "pt": "Próximo",
       "es": "Siguiente"
     }
   },

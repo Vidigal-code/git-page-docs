@@ -1,14 +1,14 @@
 # Git Page Docs
 
-Git Page Docs e um runtime de documentacao multi-idioma para repositorios que possuem a pasta `gitpagedocs/`.
+Git Page Docs é um runtime de documentação multi-idioma para repositórios que possuem a pasta `gitpagedocs/`.
 
 ## O que este projeto entrega
 
-- Renderizacao markdown em varios idiomas (`en`, `pt`, `es`)
-- Roteamento por versao (`/v/:versao`)
+- Renderização markdown em varios idiomas (`en`, `pt`, `es`)
+- Roteamento por versão (`/v/:versao`)
 - Sistema de temas por templates JSON
-- Execucao local e em GitHub Pages
-- Busca de repositorio + renderizacao remota opcional
+- Execução local e em GitHub Pages
+- Busca de repositório + renderização remota opcional
 
 ## Contrato de pastas
 
@@ -21,14 +21,14 @@ O runtime espera esta estrutura:
 - `gitpagelayouts/layoutsConfig.json`
 - `gitpagelayouts/templates/*.json`
 
-## Navegacao rapida
+## Navegação rápida
 
 - Abra **Primeiros passos** para setup local.
-- Abra **Configuracao** para detalhes completos do `config.json`.
-- Abra **Publicacao** para comportamento local/producao/GitHub Pages.
-- Abra **Arquitetura** para mapa de codigo e fluxo de dados.
+- Abra **Configuração** para detalhes completos do `config.json`.
+- Abra **Publicação** para comportamento local/produção/GitHub Pages.
+- Abra **Arquitetura** para mapa de código e fluxo de dados.
 - Abra **Temas e layouts** para autoria de templates.
-- Abra **Rotas autorizadas** para configurar chave, papeis e autenticacao externa.
+- Abra **Rotas autorizadas** para configurar chave, papeis e autenticação externa.
 - Abra **FAQ** para troubleshooting.
 
-> Versao: 0.0.8
+> Versão: 0.0.8

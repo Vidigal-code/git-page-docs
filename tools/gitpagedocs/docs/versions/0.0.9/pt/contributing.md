@@ -40,8 +40,8 @@ A configuração E2E usa as portas 3100 e 3101; preserve o serviço existente na
 
 ## Revise e publique
 
-Revise acessibilidade, autorização, validação de entrada, erros, liberação de recursos e consistência dos arquivos gerados. Analise cada fonte alterada no projeto SonarQube configurado com o escopo correto de teste ou produção; use parser/linter da stack nos formatos sem suporte. Não inclua credenciais ou artefatos temporários nos commits.
+Revise acessibilidade, autorização, validação de entrada, erros, liberação de recursos e consistência dos arquivos gerados. Análise cada fonte alterada no projeto SonarQube configurado com o escopo correto de teste ou produção; use parser/linter da stack nos formatos sem suporte. Não inclua credenciais ou artefatos temporários nos commits.
 
-Os pacotes publicáveis são `@gitpagedocs/tools`, `@gitpagedocs/mcp` e `@gitpagedocs/cli`; raiz e frontend são privados. Sincronize versões, dependências internas e lockfile, inspecione os pacotes e conclua a validação antes do push. O workflow npm atual roda em pushes para main e publica em ordem de dependência quando a versão da CLI é nova. Confirme npm e Pages depois; um build local verde não equivale à publicação.
+Os pacotes publicáveis são `@gitpagedocs/tools`, `@gitpagedocs/mcp` e `@gitpagedocs/cli`; raiz e frontend são privados. Sincronize versões, dependências internas e lockfile, inspecione os pacotes e conclua a validação antes do push. O workflow npm atual roda em pushes para main e pública em ordem de dependência quando a versão da CLI é nova. Confirme npm e Pages depois; um build local verde não equivale à publicação.
 
-> Versao: 0.0.9
+> Versão: 0.0.9

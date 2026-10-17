@@ -10,8 +10,8 @@ Anote o commit publicado, a versão da CLI e a revisão do workflow. Execute \`g
 Para uma comparação reproduzível, invoque explicitamente o pacote desejado:
 
 \`\`\`sh
-npx --yes @gitpagedocs/cli@0.0.10 version
-npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO --output gitpagedocs-candidate
+npx --yes @gitpagedocs/cli@0.0.11 version
+npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO --output gitpagedocs-candidate
 git diff --no-index -- gitpagedocs gitpagedocs-candidate
 \`\`\`
 
@@ -33,7 +33,7 @@ Neste repositório de runtime, altere as fontes de geração antes de compilar: 
 
 Teste todas as versões e idiomas preservados, links diretos, menus aninhados, ícones/texto, ações de PDF e autorização. Confira a exportação no subcaminho real do Pages. Faça commit dos arquivos revisados e envie pelo workflow existente. O comando inicial \`pages deploy\` gera arquivos, cria commit e faz push; não o repita sem revisão sobre documentação personalizada.
 
-Registre o commit publicado após o sucesso no Actions. Se a verificação falhar, reverta o commit específico com \`git revert COMMIT_DA_ATUALIZACAO\`, restaure a versão anterior do runtime quando aplicável, envie e execute a publicação novamente. Confirme o conteúdo restaurado na URL pública; o revert sozinho não publica o site.
+Registre o commit publicado após o sucesso no Actions. Se a verificação falhar, reverta o commit específico com \`git revert COMMIT_DA_ATUALIZACAO\`, restaure a versão anterior do runtime quando aplicável, envie e execute a publicação novamente. Confirme o conteúdo restaurado na URL pública; o revert sozinho não pública o site.
 `,
   troubleshooting: `# Diagnosticar problemas na documentação
 

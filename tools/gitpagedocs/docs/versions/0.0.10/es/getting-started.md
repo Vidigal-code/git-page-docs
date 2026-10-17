@@ -46,4 +46,4 @@ El repositorio fija pnpm en `packageManager`. `pnpm dev` activa la búsqueda de 
 
 Usa Configuración para idiomas, iconos, navegación, foco y narración; Funcionalidades para CLI y MCP; Temas y diseños para tokens visuales; Preguntas frecuentes para diagnóstico.
 
-> Version (ES): 0.0.10
+> Versión: 0.0.10

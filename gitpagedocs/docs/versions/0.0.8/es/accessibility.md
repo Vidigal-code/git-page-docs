@@ -57,4 +57,4 @@ No supongas que todas las voces funcionan sin conexión: pueden ser locales o re
 
 Consulta la [referencia de Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis) para el comportamiento del navegador.
 
-> Version (ES): 0.0.8
+> Versión: 0.0.8

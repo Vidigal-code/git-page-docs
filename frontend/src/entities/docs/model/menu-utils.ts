@@ -112,6 +112,7 @@ export function getPathClickByRouteId(
 ): string | null {
   const orderedContentTypes = getOrderedContentTypes(data);
   const pageIndex = data.pages?.findIndex((page) => page.id === routeId) ?? -1;
+  if (data.pages?.[pageIndex]?.blocks !== undefined) return `page:${routeId}`;
   if (pageIndex >= 0) {
     for (const contentType of orderedContentTypes) {
       const pathClick = findPathClickByPageAndType(data, pageIndex, { contentType, language });

@@ -57,4 +57,4 @@ Não presuma que toda voz funciona offline: as vozes podem ser locais ou remotas
 
 Consulte a [referência da Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis) para o comportamento do navegador.
 
-> Versao: 0.0.8
+> Versão: 0.0.8

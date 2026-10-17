@@ -250,6 +250,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     (pageIndex: number): boolean => {
       const page = data.pages?.[pageIndex];
       if (!page) return false;
+      if (page.blocks !== undefined) return isRouteAccessible(page.authorization);
       const candidates = [
         page.md?.config?.path?.[language] ?? page.md?.config?.path?.en,
         page.html?.config?.path?.[language] ?? page.html?.config?.path?.en,
@@ -261,7 +262,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
       if (!candidates.length) return true;
       return candidates.some((candidate) => evaluatePathAccess(candidate).allowed);
     },
-    [data.pages, evaluatePathAccess, language],
+    [data.pages, evaluatePathAccess, isRouteAccessible, language],
   );
 
   const firstAccessiblePageIndex = useMemo(() => {

@@ -43,4 +43,4 @@ El diálogo tiene nombre accesible, gestión de foco del teclado y control de ci
 
 La narración se configura por separado en Accesibilidad. Cambiar de documento o idioma cancela la narración anterior para que no siga leyendo contenido antiguo.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

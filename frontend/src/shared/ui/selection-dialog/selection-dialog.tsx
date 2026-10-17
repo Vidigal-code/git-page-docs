@@ -20,6 +20,18 @@ interface SelectionDialogProps {
   themeVarsStyle?: React.CSSProperties;
 }
 
+function containKeyboardFocus(dialog: HTMLDialogElement, event: KeyboardEvent): void {
+  const buttons = dialog.querySelectorAll<HTMLButtonElement>("button:not(:disabled)");
+  const first = buttons[0];
+  const last = buttons[buttons.length - 1];
+  const boundary = event.shiftKey ? first : last;
+  const target = event.shiftKey ? last : first;
+  if (target && document.activeElement === boundary) {
+    event.preventDefault();
+    target.focus();
+  }
+}
+
 /**
  * Centered, theme-aware selection modal for small screens. Portaled to <body>
  * so transformed ancestors (e.g. the sliding mobile drawer) cannot capture the
@@ -49,11 +61,16 @@ export function SelectionDialog({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
         onClose();
       }
+      if (event.key === "Tab" && dialogRef.current) {
+        containKeyboardFocus(dialogRef.current, event);
+      }
     };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [onClose]);
 
   if (typeof document === "undefined") {

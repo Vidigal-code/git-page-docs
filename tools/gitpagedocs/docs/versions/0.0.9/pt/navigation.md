@@ -101,4 +101,4 @@ Os botões Voltar/Próximo do rodapé usam `site.icons.DocumentPrevious` (`FiChe
 
 Teste um menu novo pela lateral, por URL direta e em cada idioma habilitado; confirme que o destino existe e é permitido para o leitor atual.
 
-> Versao: 0.0.9
+> Versão: 0.0.9

@@ -1,9 +1,14 @@
 import { practicalPt } from "./practical-pt.mjs";
 import { operationsPt } from "./operations-pt.mjs";
+import { overviewsPt } from "./overviews-pt.mjs";
+import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
+import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 
 export const docsPt = {
     ...practicalPt,
     ...operationsPt,
+    ...overviewsPt,
+    contentBlocks: CONTENT_BLOCKS_DOCS.pt,
     pdf: `# Documentos PDF
 
 PDF é um tipo de conteúdo próprio, junto com Markdown, HTML, código-fonte, vídeo e áudio. A prévia usa o visualizador nativo de PDF do navegador. As ações de baixar e abrir em nova aba são configuráveis de forma independente.
@@ -33,11 +38,11 @@ Adicione este bloco dentro de \`site\` em \`gitpagedocs/config.json\`:
 
 A precedência das ações é \`rota.pdf.<flag>\` > \`site.pdf.<flag>\` > \`true\`. Um \`true\` explícito na rota habilita aquela ação mesmo quando o padrão do site é \`false\`; \`site.pdf.enabled: false\` continua desabilitando todos os PDFs. Sem caminho para o idioma selecionado, o PDF fica indisponível; não há fallback automático de idioma.
 
-As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\`FiDownload\`) e \`site.icons.PdfOpenInNewTab\` (\`FiExternalLink\`) individualmente com \`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. Por exemplo, \`"PdfDownload": { "reactIcon": false }\` exibe texto no download enquanto a nova aba continua com ícone. A aparência não altera as opções de habilitação acima.
+As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\`LuDownload\`) e \`site.icons.PdfOpenInNewTab\` (\`LuExternalLink\`) individualmente com \`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. Por exemplo, \`"PdfDownload": { "reactIcon": false }\` exibe texto no download enquanto a nova aba continua com ícone. A aparência não altera as opções de habilitação acima.
 
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.10/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.11/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -46,9 +51,9 @@ Em \`gitpagedocs/docs/versions/0.0.10/config.json\`, mantenha as listas de rotas
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -86,15 +91,15 @@ O botão de nova aba abre o Blob PDF validado em vez de navegar para a URL raw d
 `,
     index: `# Git Page Docs
 
-Git Page Docs e um runtime de documentacao multi-idioma para repositorios que possuem a pasta \`gitpagedocs/\`.
+Git Page Docs é um runtime de documentação multi-idioma para repositórios que possuem a pasta \`gitpagedocs/\`.
 
 ## O que este projeto entrega
 
-- Renderizacao markdown em varios idiomas (\`en\`, \`pt\`, \`es\`)
-- Roteamento por versao (\`/v/:versao\`)
+- Renderização markdown em varios idiomas (\`en\`, \`pt\`, \`es\`)
+- Roteamento por versão (\`/v/:versao\`)
 - Sistema de temas por templates JSON
-- Execucao local e em GitHub Pages
-- Busca de repositorio + renderizacao remota opcional
+- Execução local e em GitHub Pages
+- Busca de repositório + renderização remota opcional
 
 ## Contrato de pastas
 
@@ -107,14 +112,14 @@ O runtime espera esta estrutura:
 - \`gitpagelayouts/layoutsConfig.json\`
 - \`gitpagelayouts/templates/*.json\`
 
-## Navegacao rapida
+## Navegação rápida
 
 - Abra **Primeiros passos** para setup local.
-- Abra **Configuracao** para detalhes completos do \`config.json\`.
-- Abra **Publicacao** para comportamento local/producao/GitHub Pages.
-- Abra **Arquitetura** para mapa de codigo e fluxo de dados.
+- Abra **Configuração** para detalhes completos do \`config.json\`.
+- Abra **Publicação** para comportamento local/produção/GitHub Pages.
+- Abra **Arquitetura** para mapa de código e fluxo de dados.
 - Abra **Temas e layouts** para autoria de templates.
-- Abra **Rotas autorizadas** para configurar chave, papeis e autenticacao externa.
+- Abra **Rotas autorizadas** para configurar chave, papeis e autenticação externa.
 - Abra **FAQ** para troubleshooting.
 
 ## Referências detalhadas
@@ -122,6 +127,7 @@ O runtime espera esta estrutura:
 - **Referência da CLI**: instalação, todos os comandos e flags de compatibilidade.
 - **Servidor MCP**: cliente, 20 tools, 7 resources e configuração de provedores.
 - **Navegação e submenus**: árvores recursivas, URLs e sobrescritas dos breadcrumbs.
+- **Blocos de conteúdo ordenados**: repita e ordene Markdown, HTML, vídeo, áudio e PDF na mesma página; posicione títulos e descrições configurados independentemente.
 - **Modo foco**: copiar/baixar Markdown e navegar por seção/documento.
 - **Acessibilidade e narração**: vozes do navegador, controles e interação com mídias.
 - **Documentos PDF**: prévia nativa, download/nova aba e o guia incluído em inglês.
@@ -181,59 +187,59 @@ O repositório fixa o pnpm em \`packageManager\`. \`pnpm dev\` ativa a busca de 
 
 Use Configuração para idiomas, ícones, navegação, foco e narração; Funcionalidades para CLI e MCP; Temas e layouts para tokens visuais; Perguntas frequentes para diagnóstico.
 `,
-    projectOverview: `# Visao geral do projeto
+    projectOverview: `# Visão geral do projeto
 
-Git Page Docs e um monorepo pnpm + turborepo que transforma a pasta \`gitpagedocs/\` de um repositorio em um site de documentacao multilinguagem e versionado — com assistente de IA integrado e um servidor MCP (Model Context Protocol).
+Git Page Docs é um monorepo pnpm + turborepo que transforma a pasta \`gitpagedocs/\` de um repositório em um site de documentação multilinguagem e versionado — com assistente de IA integrado e um servidor MCP (Model Context Protocol).
 
 ## Pacotes do monorepo
 
 - **frontend/** — visualizador Next.js 15 (App Router, React 19), exportado estaticamente para o GitHub Pages.
 - **cli/** — o pacote npm publicado \`@gitpagedocs/cli\` (\`npm install -g @gitpagedocs/cli\`): gera a estrutura de docs, documenta com IA, configura o Pages e roda o servidor MCP.
-- **tools/** — \`@gitpagedocs/tools\`, o nucleo de logica compartilhado: sistema de IA com 14 provedores, cofre de credenciais criptografado, loader de config, caches e logger.
+- **tools/** — \`@gitpagedocs/tools\`, o núcleo de lógica compartilhado: sistema de IA com 14 provedores, cofre de credenciais criptografado, loader de config, caches e logger.
 - **mcp/** — \`@gitpagedocs/mcp\`, servidor Model Context Protocol (20 ferramentas + 7 recursos).
-- **gitpagedocs/** — o contrato do usuario: \`config.json\`, docs versionados e layouts.
+- **gitpagedocs/** — o contrato do usuário: \`config.json\`, docs versionados e layouts.
 
 ## Stack
 
-- Next.js 15 (App Router) + React 19 + TypeScript; exportacao estatica para GitHub Pages
+- Next.js 15 (App Router) + React 19 + TypeScript; exportação estática para GitHub Pages
 - gray-matter + marked para Markdown; react-icons
 - pnpm workspaces + turborepo; Vitest + Playwright; ESLint
 
 ## Destaques
 
-- Multilinguagem (\`en\`, \`pt\`, \`es\`) e rotas por versao (\`/v/:version\`)
+- Multilinguagem (\`en\`, \`pt\`, \`es\`) e rotas por versão (\`/v/:version\`)
 - Sistema de IA com 14 provedores (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI e mais) com streaming
 - Chaves de IA **criptografadas em repouso** (AES-256-GCM) atras de uma senha local — nunca em texto puro
 - **Drawer de chat de IA** nos docs + um **console \`/ai\`** dedicado
-- Sistema de 64 temas (variantes escuras e claras); execucao local e no GitHub Pages
+- Sistema de 64 temas (variantes escuras e claras); execução local e no GitHub Pages
 `,
     functionalities: `# Funcionalidades
 
-Referencia completa de opcoes da CLI, chaves de configuracao e recursos do runtime.
+Referência completa de opções da CLI, chaves de configuração e recursos do runtime.
 
 ## Linha de comando
 
 Consulte **Referência da CLI** para comandos, flags, exemplos e compatibilidade. Consulte **Servidor MCP** para integração com editores.
 
-## Tipos de conteudo
+## Tipos de conteúdo
 
-| Tipo | Chave config | Descricao |
+| Tipo | Chave config | Descrição |
 |------|--------------|-----------|
 | Markdown | \`routes-md\` | Arquivos .md com \`path\` por idioma |
 | HTML | \`routes-html\` | \`path\` local ou \`url\` externa |
-| Video | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
-| Audio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
+| Vídeo | \`routes-video\` | \`video.pathVideo\`, \`video.videoType\` |
+| Áudio | \`routes-audio\` | \`audio.pathAudio\`, \`audio.audioType\` |
 | PDF | \`routes-pdf\` | \`pdf.pathPdf\` por idioma; prévia nativa e download |
 
-## Visualizador de codigo fonte
+## Visualizador de código fonte
 
-O config da versao pode renderizar um container **Codigo fonte** via \`routes-source-viewer\` e \`menus-header-source-viewer\`. O viewer le a arvore do repositorio no GitHub em tempo de execucao e aplica o tema atual da documentacao.
+O config da versão pode renderizar um container **Código fonte** via \`routes-source-viewer\` e \`menus-header-source-viewer\`. O viewer lê a árvore do repositório no GitHub em tempo de execução e aplica o tema atual da documentação.
 
-- Arvore do repositorio a partir de \`source-viewer-path\`; a branch padrao e \`main\`
-- Navegacao por pastas e filtro de arquivos
-- Listagem de diretorios no estilo GitHub
-- Renderizacao de codigo com numeros de linha
-- Alternancia preview/codigo para Markdown, incluindo \`README.md\`
+- Árvore do repositório a partir de \`source-viewer-path\`; a branch padrão é \`main\`
+- Navegação por pastas e filtro de arquivos
+- Listagem de diretórios no estilo GitHub
+- Renderização de código com números de linha
+- Alternância preview/código para Markdown, incluindo \`README.md\`
 - Pastas recolhiveis na lateral
 
 ## Chaves de config (site)
@@ -243,67 +249,67 @@ O config da versao pode renderizar um container **Codigo fonte** via \`routes-so
 - \`ProjectLink\`, \`layoutsConfigPathOficial\`, \`layoutsConfigPath\`
 - Idiomas: \`site.languages\` (liga/desliga cada um); textos da UI: \`gitpagedocs/langs/<lang>.json\`
 
-## Reproducao de midia (um som por vez)
+## Reprodução de midia (um som por vez)
 
-\`site.mediaExclusivePlayback\` (padrao \`true\`): dar play num video de rota pausa o radio e as trilhas de audio, e dar play no radio ou numa trilha de audio pausa o video. Funciona com YouTube e Vimeo (pelas APIs dos players), arquivos nativos (\`mp4\`, \`webm\`, …) e qualquer outro embed.
+\`site.mediaExclusivePlayback\` (padrão \`true\`): dar play num vídeo de rota pausa o rádio e as trilhas de áudio, e dar play no rádio ou numa trilha de áudio pausa o vídeo. Funciona com YouTube e Vimeo (pelas APIs dos players), arquivos nativos (\`mp4\`, \`webm\`, …) e qualquer outro embed.
 
-Para mostrar um video sem som enquanto o radio ou uma trilha de audio o explica, use \`"muted": true\` no objeto \`video\` da rota: o video roda so a imagem e fica fora da regra. \`"mediaExclusivePlayback": false\` desliga a regra no site inteiro.
+Para mostrar um vídeo sem som enquanto o rádio ou uma trilha de áudio o explica, use \`"muted": true\` no objeto \`video\` da rota: o vídeo roda só a imagem e fica fora da regra. \`"mediaExclusivePlayback": false\` desliga a regra no site inteiro.
 
-## Variaveis de ambiente
+## Variáveis de ambiente
 
-- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busca de repositorio (local)
+- \`GITPAGEDOCS_REPOSITORY_SEARCH\` – busca de repositório (local)
 - \`GITHUB_ACTIONS\` – modo build GitHub Pages
 
 ## Assistente de IA
 
-Os docs trazem um assistente de IA em duas superficies: um **chat drawer** dentro dos docs (botao de chat de IA na barra lateral, ativado por \`site.AiChatEnabled\`) e uma pagina **console \`/ai\`** dedicada.
+Os docs trazem um assistente de IA em duas superfícies: um **chat drawer** dentro dos docs (botão de chat de IA na barra lateral, ativado por \`site.AiChatEnabled\`) e uma página **console \`/ai\`** dedicada.
 
-- **14 provedores** em um unico core compartilhado: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
-- **Escolha de modelo** — a partir do catalogo de cada provedor (\`gitpagedocs models <provedor>\`); um id de modelo salvo que o provedor aposentou e trocado pelo padrao do provedor automaticamente.
+- **14 provedores** em um único core compartilhado: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, Azure OpenAI, Mistral, DeepSeek, Cohere, Groq, xAI, Together, Fireworks, Perplexity.
+- **Escolha de modelo** — a partir do catálogo de cada provedor (\`gitpagedocs models <provedor>\`); um id de modelo salvo que o provedor aposentou é trocado pelo padrão do provedor automaticamente.
 - **Criptografia em repouso** — sua chave de API e selada com AES-256-GCM atras de uma **senha local** e nunca fica em texto puro nem em logs.
-- **Bloqueio por inatividade** — o chat drawer se bloqueia sozinho apos \`site.AiChatAutoLockSeconds\` segundos sem uso (padrao 30, \`0\` desativa): um modal centralizado com contagem regressiva, no seu idioma, permite cancelar ou bloquear agora, e desbloquear pede a senha de novo.
-- **Provedores resilientes** — erros transitorios do provedor sao repetidos (3 tentativas) e uma falha final vira uma mensagem simples terminando em "Tente novamente!".
-- **Geracao de documentacao com IA** — \`gitpagedocs ai\` varre os caminhos escolhidos e escreve markdown multilingue (pt/en/es); reutilizavel via \`.gitpagedocsconfig\`, cuja chave de API fica selada no cofre criptografado \`.gitpagedocsvault\` (a senha do cofre e pedida em toda execucao). \`gitpagedocs chat\` leva o mesmo assistente ao terminal.
+- **Bloqueio por inatividade** — o chat drawer se bloqueia sozinho após \`site.AiChatAutoLockSeconds\` segundos sem uso (padrão 30, \`0\` desativa): um modal centralizado com contagem regressiva, no seu idioma, permite cancelar ou bloquear agora, e desbloquear pede a senha de novo.
+- **Provedores resilientes** — erros transitórios do provedor são repetidos (3 tentativas) e uma falha final vira uma mensagem simples terminando em "Tente novamente!".
+- **Geração de documentação com IA** — \`gitpagedocs ai\` varre os caminhos escolhidos e escreve markdown multilíngue (pt/en/es); reutilizável via \`.gitpagedocsconfig\`, cuja chave de API fica selada no cofre criptografado \`.gitpagedocsvault\` (a senha do cofre é pedida em toda execução). \`gitpagedocs chat\` leva o mesmo assistente ao terminal.
 
 ## Servidor MCP
 
-\`gitpagedocs mcp start\` sobe um servidor Model Context Protocol (stdio) expondo **20 tools** (sistema de arquivos, IA, geracao/analise de docs) e **7 resources** (\`project://structure|docs|config|repository|readme|ai/providers|ai/models\`) para editores e agentes de IA.
+\`gitpagedocs mcp start\` sobe um servidor Model Context Protocol (stdio) expondo **20 tools** (sistema de arquivos, IA, geração/análise de docs) e **7 resources** (\`project://structure|docs|config|repository|readme|ai/providers|ai/models\`) para editores e agentes de IA.
 `,
-    configuration: `# Configuracao
+    configuration: `# Configuração
 
-A configuracao de runtime fica em \`gitpagedocs/config.json\`. Os textos da UI ficam ao lado, um arquivo por idioma.
+A configuração de runtime fica em \`gitpagedocs/config.json\`. Os textos da UI ficam ao lado, um arquivo por idioma.
 
 ## Idiomas (\`site.languages\` + \`langs/\`)
 
-- \`site.languages\` em \`gitpagedocs/config.json\` liga (\`true\`) ou desliga (\`false\`) cada idioma, na ordem do menu: \`{ "languages": { "en": true, "pt": true, "es": false } }\`. Um idioma em \`false\` some do seletor de idiomas e seus textos nao sao carregados, mesmo que os docs existam.
-- \`gitpagedocs/langs/<lang>.json\` guarda os textos daquele idioma: \`langmenu\` (cabecalho, busca, visualizador de codigo, player de audio, chat de IA e acesso aos docs) e \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
+- \`site.languages\` em \`gitpagedocs/config.json\` liga (\`true\`) ou desliga (\`false\`) cada idioma, na ordem do menu: \`{ "languages": { "en": true, "pt": true, "es": false } }\`. Um idioma em \`false\` some do seletor de idiomas e seus textos não são carregados, mesmo que os docs existam.
+- \`gitpagedocs/langs/<lang>.json\` guarda os textos daquele idioma: \`langmenu\` (cabeçalho, busca, visualizador de código, player de áudio, chat de IA e acesso aos docs) e \`translations\` (\`notFound\`, \`navigation\`, \`footer\`).
 - Para adicionar um idioma, crie \`langs/<lang>.json\` e inclua \`"<lang>": true\` em \`site.languages\`.
-- Arquivos \`config.json\` antigos que ainda trazem \`site.langmenu\` / \`translations\` inline continuam funcionando; quando os dois existem, os arquivos de \`langs/\` prevalecem e qualquer chave ausente e preenchida a partir da versao atual.
+- Arquivos \`config.json\` antigos que ainda trazem \`site.langmenu\` / \`translations\` inline continuam funcionando; quando os dois existem, os arquivos de \`langs/\` prevalecem e qualquer chave ausente é preenchida a partir da versão atual.
 
-## Secao \`site\`
+## Seção \`site\`
 
 Principais chaves:
 
-- \`name\`: titulo do projeto no UI
-- \`defaultLanguage\`: idioma padrao
+- \`name\`: título do projeto no UI
+- \`defaultLanguage\`: idioma padrão
 - \`HideThemeSelector\`: esconde/mostra seletor de tema
 - \`ThemeDefault\`: id do tema inicial
 - \`ThemeModeDefault\`: modo inicial (\`light\` ou \`dark\`)
-- \`ProjectLink\`: URL de repositorio para acoes no cabecalho
-- \`docsVersion\`: versao inicial selecionada
+- \`ProjectLink\`: URL de repositório para acoes no cabeçalho
+- \`docsVersion\`: versão inicial selecionada
 - \`ActiveNavigation\`: habilita a navegação rápida e o atalho Ctrl+K
 - \`FocusMode\`: habilita modo foco/leitura
-- \`icons\`: icones do cabecalho. \`icons.defaults\` guarda o que todos compartilham (\`reactIcon\`, \`colorDark\`, \`colorLight\`, \`size\`, \`imgDark\`, \`imgLight\`, \`imgWidth\`, \`imgHeight\`) e cada icone define seu \`tag\` e o que muda (\`null\` remove um campo). As chaves planas abaixo continuam valendo e vencem quando as duas formas existem.
-- \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamanho do icone principal
-- \`IconImageMenuHeaderLightImg\`, \`IconImageMenuHeaderDarkImg\`: icone principal (light/dark)
-- \`IconProjectLinkImgWidth\`, \`IconProjectLinkImgHeight\`: tamanho do icone link do projeto
-- \`IconProjectLinkLightImg\`, \`IconProjectLinkDarkImg\`: icone link do projeto
-- \`IconVersionLinksImgWidth\`, \`IconVersionLinksImgHeight\`: tamanho do icone links de versao
-- \`IconVersionLinksLightImg\`, \`IconVersionLinksDarkImg\`: icone links de versao
-- \`IconInfoHeaderMenuImgWidth\`, \`IconInfoHeaderMenuImgHeight\`: tamanho do icone info
-- \`IconInfoHeaderMenuLightImg\`, \`IconInfoHeaderMenuDarkImg\`: icone info
-- \`IconPreviewProjectLinkImgWidth\`, \`IconPreviewProjectLinkImgHeight\`: tamanho do icone preview
-- \`IconPreviewProjectLinkLightImg\`, \`IconPreviewProjectLinkDarkImg\`: icone preview
+- \`icons\`: ícones do cabeçalho. \`icons.defaults\` guarda o que todos compartilham (\`reactIcon\`, \`colorDark\`, \`colorLight\`, \`size\`, \`imgDark\`, \`imgLight\`, \`imgWidth\`, \`imgHeight\`) e cada ícone define seu \`tag\` e o que muda (\`null\` remove um campo). As chaves planas abaixo continuam valendo e vencem quando as duas formas existem.
+- \`IconImageMenuHeaderImgWidth\`, \`IconImageMenuHeaderImgHeight\`: tamanho do ícone principal
+- \`IconImageMenuHeaderLightImg\`, \`IconImageMenuHeaderDarkImg\`: ícone principal (light/dark)
+- \`IconProjectLinkImgWidth\`, \`IconProjectLinkImgHeight\`: tamanho do ícone link do projeto
+- \`IconProjectLinkLightImg\`, \`IconProjectLinkDarkImg\`: ícone link do projeto
+- \`IconVersionLinksImgWidth\`, \`IconVersionLinksImgHeight\`: tamanho do ícone links de versão
+- \`IconVersionLinksLightImg\`, \`IconVersionLinksDarkImg\`: ícone links de versão
+- \`IconInfoHeaderMenuImgWidth\`, \`IconInfoHeaderMenuImgHeight\`: tamanho do ícone info
+- \`IconInfoHeaderMenuLightImg\`, \`IconInfoHeaderMenuDarkImg\`: ícone info
+- \`IconPreviewProjectLinkImgWidth\`, \`IconPreviewProjectLinkImgHeight\`: tamanho do ícone preview
+- \`IconPreviewProjectLinkLightImg\`, \`IconPreviewProjectLinkDarkImg\`: ícone preview
 - \`layoutsConfigPath\`: fallback remoto para layouts
 - \`rendering\`: URL canonica publicada
 
@@ -316,35 +322,35 @@ Em \`gitpagedocs/config.json\`, estas entradas de \`site.icons\` configuram idio
   "site": {
     "icons": {
       "LanguageSelector": {
-        "reactIcon": true, "tag": "FiGlobe", "size": "22px",
+        "reactIcon": true, "tag": "SiGoogletranslate", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "ThemeSelector": {
-        "reactIcon": true, "tag": "BsSunFill", "size": "22px",
+        "reactIcon": true, "tag": "LuPencil", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "MdFullscreen", "size": "22px",
+        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
-        "reactIcon": true, "tag": "FiSearch", "size": "22px",
+        "reactIcon": true, "tag": "LuSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfDownload": {
-        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "reactIcon": true, "tag": "LuDownload", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfOpenInNewTab": {
-        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "reactIcon": true, "tag": "LuExternalLink", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentPrevious": {
-        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronLeft", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentNext": {
-        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronRight", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
@@ -356,66 +362,66 @@ Cada controle é independente: \`reactIcon: true\` mostra o ícone (padrão); \`
 
 Configs compactos podem mover valores comuns para \`site.icons.defaults\`; campos omitidos herdam esses defaults. Defina \`reactIcon: false\` em uma entrada específica para substituir o ícone padrão por texto.
 
-## Secao \`VersionControl\`
+## Seção \`VersionControl\`
 
 \`VersionControl.versions\` define:
 
-- \`id\`: identificador da versao
-- \`path\`: caminho do config da versao
+- \`id\`: identificador da versão
+- \`path\`: caminho do config da versão
 - links opcionais (\`ProjectLink\`, \`branch\`, \`release\`, \`commit\`)
 - metadados opcionais do source viewer (\`source-viewer\`, \`source-viewer-path\`)
 
-## Navegacao e rotas
+## Navegação e rotas
 
 - \`routes\`: caminhos markdown por idioma (legado)
 - \`menus-header\`: menu hierarquico
-- \`translations\`: labels de UI para not-found e navegacao
+- \`translations\`: labels de UI para not-found e navegação
 
-## Autorizacao (config de versao)
+## Autorização (config de versão)
 
-- \`auth\`: configuracoes globais de autorizacao para a versao
+- \`auth\`: configurações globais de autorização para a versão
 - \`auth.accessKeys\`: mapa de chaves usado por \`authorization.accessKeyId\`
 - \`auth.rolesStorageKey\`: chave de localStorage para bootstrap de papeis
 - \`auth.providers\`: adaptadores de provedor (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
 
-## Tipos de conteudo (config de versao)
+## Tipos de conteúdo (config de versão)
 
-Configs de versao suportam multiplos tipos:
+Configs de versão suportam múltiplos tipos:
 
 - \`routes-md\`: Rotas markdown com \`title\`, \`description\` (centralizados via \`titlePosition\`, \`descriptionPosition\`)
-- \`routes-source-viewer\`: Containers de codigo fonte com \`source-viewer: true\` e \`source-viewer-path\`
-- \`routes-html\`: Caminhos de paginas HTML por idioma
-- \`routes-video\`: Config de video com \`video.videoType\` (youtube, vimeo, mp4, etc.) e \`video.pathVideo\`
-- \`routes-audio\`: Config de audio com \`audio.audioType\` (youtube, mp3, etc.) e \`audio.pathAudio\`
+- \`routes-source-viewer\`: Containers de código fonte com \`source-viewer: true\` e \`source-viewer-path\`
+- \`routes-html\`: Caminhos de páginas HTML por idioma
+- \`routes-video\`: Config de vídeo com \`video.videoType\` (youtube, vimeo, mp4, etc.) e \`video.pathVideo\`
+- \`routes-audio\`: Config de áudio com \`audio.audioType\` (youtube, mp3, etc.) e \`audio.pathAudio\`
 - \`routes-pdf\`: PDF com \`pdf.pathPdf\` por idioma; consulte Documentos PDF.
-- \`authorization\` (md/html/video): guarda de acesso por chave, papeis e autenticacao externa
+- \`authorization\` (md/html/vídeo): guarda de acesso por chave, papeis e autenticação externa
 - \`menus-header-md\`, \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\`, \`menus-header-pdf\`: menus por tipo
-- \`hierarchyPage\`: ordem dos containers na pagina \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }\`
-- \`hierarchyMenu\`: ordem das secoes do menu \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }\`
+- \`hierarchyPage\`: ordem dos containers na página \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }\`
+- \`hierarchyMenu\`: ordem das seções do menu \`{ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 }\`
 
 Cada rota pode incluir \`title\`, \`description\` (por idioma), \`titleCss\`, \`titlePosition: "center"\`, \`descriptionPosition: "center"\`, \`titleIsVisible\`, \`descriptionIsVisible\`.
 
-Configuracoes que todas as rotas compartilham ficam uma unica vez em \`routeDefaults\`, no topo do config da versao; cada rota guarda so os proprios valores, e um valor escrito na rota vence o \`routeDefaults\`.
+Configurações que todas as rotas compartilham ficam uma única vez em \`routeDefaults\`, no topo do config da versão; cada rota guarda só os próprios valores, e um valor escrito na rota vence o \`routeDefaults\`.
 
-## Variaveis por rota (blockLink, container, url, browseAll)
+## Variáveis por rota (blockLink, container, url, browseAll)
 
-Opcoes por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
+Opções por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
 
-- **\`blockLink\`** (padrao: true) – Para HTML: se true, links abrem em nova aba (\`target="_blank"\`); se false, no proprio contexto.
-- **\`container\`** – \`"full"\` = altura automatica; numero (ex: \`500\`) = altura fixa em px com overflow auto. Aplica-se a md, html e video.
-- **\`url\`** – Apenas em \`routes-html\`: \`Record<LanguageCode, string>\` com URLs externas. Quando definido, o iframe usa \`src={url}\` em vez de HTML local via \`srcDoc\`. Rotas com \`url\` nao geram arquivos HTML locais.
-- **\`browseAll\`** (padrao: false) – Se true, o container mostra botoes Anterior/Proximo para navegar entre todos os itens daquele tipo.
+- **\`blockLink\`** (padrão: true) – Para HTML: se true, links abrem em nova aba (\`target="_blank"\`); se false, no próprio contexto.
+- **\`container\`** – \`"full"\` = altura automática; numero (ex: \`500\`) = altura fixa em px com overflow auto. Aplica-se a md, html e vídeo.
+- **\`url\`** – Apenas em \`routes-html\`: \`Record<LanguageCode, string>\` com URLs externas. Quando definido, o iframe usa \`src={url}\` em vez de HTML local via \`srcDoc\`. Rotas com \`url\` não geram arquivos HTML locais.
+- **\`browseAll\`** (padrão: false) – Se true, o container mostra botões Anterior/Próximo para navegar entre todos os itens daquele tipo.
 
-## Tipos de conteudo: path vs url (HTML)
+## Tipos de conteúdo: path vs url (HTML)
 
 - **Markdown (\`routes-md\`)**: usa \`path\` apontando para arquivos \`.md\` locais.
-- **HTML (\`routes-html\`)**: usa \`path\` para arquivos HTML locais (sem extensao .html no config) ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a pagina externa; nenhum arquivo local e gerado.
-- **Video (\`routes-video\`)**: usa \`video.pathVideo\` e \`video.videoType\` (youtube, vimeo, mp4, etc.).
+- **HTML (\`routes-html\`)**: usa \`path\` para arquivos HTML locais (sem extensão .html no config) ou \`url\` para URLs externas. Com \`url\`, o iframe carrega a página externa; nenhum arquivo local é gerado.
+- **Vídeo (\`routes-video\`)**: usa \`video.pathVideo\` e \`video.videoType\` (youtube, vimeo, mp4, etc.).
 
-## Variaveis de ambiente
+## Variáveis de ambiente
 
 - \`GITPAGEDOCS_REPOSITORY_SEARCH\`: ativa/desativa busca remota localmente
-- \`GITHUB_ACTIONS\`: ativa comportamento especifico de GitHub Pages
+- \`GITHUB_ACTIONS\`: ativa comportamento específico de GitHub Pages
 
 ## Comportamento do site e padrões
 
@@ -491,7 +497,7 @@ Em um checkout do runtime com dependências instaladas, \`node cli/index.mjs --h
 
 ## Releases npm para mantenedores
 
-O monorepo publica \`@gitpagedocs/tools\`, \`@gitpagedocs/mcp\` e \`@gitpagedocs/cli\`; raiz e frontend são privados. O \`npm-publish.yml\` atual roda em pushes para \`main\` e ignora uma versão da CLI já publicada. Usa o secret \`NPM_TOKEN\` do repositório e publica workspaces na ordem de dependência. Criar somente uma release no GitHub não é seu gatilho.
+O monorepo pública \`@gitpagedocs/tools\`, \`@gitpagedocs/mcp\` e \`@gitpagedocs/cli\`; raiz e frontend são privados. O \`npm-publish.yml\` atual roda em pushes para \`main\` e ignora uma versão da CLI já publicada. Usa o secret \`NPM_TOKEN\` do repositório e pública workspaces na ordem de dependência. Criar somente uma release no GitHub não é seu gatilho.
 
 Sincronize versões e dependências internas, regenere docs/baselines, execute typecheck, lint, testes, smoke, build e Playwright e revise antes do push. Confirme as três versões no npm e o resultado do Pages. A CLI de configuração ignora \`prebuilt/\`; essa pasta não é exigida pelo workflow de publicação.
 `,
@@ -502,34 +508,34 @@ O projeto e organizado por fronteiras de feature e responsabilidades do runtime.
 ## Pacotes
 
 - **frontend/** — visualizador Next.js (Feature-Sliced: app / widgets / features / entities / shared); export estatico.
-- **cli/** — o bin publicado \`gitpagedocs\` (hexagonal) + \`cli/ai/\` (CLI de documentacao com IA).
+- **cli/** — o bin publicado \`gitpagedocs\` (hexagonal) + \`cli/ai/\` (CLI de documentação com IA).
 - **tools/** — \`@gitpagedocs/tools\`: ai/ security/ crypto/ cache/ config/ logger/ errors/ filesystem/ documentation/ i18n/ ports/.
 - **mcp/** — \`@gitpagedocs/mcp\`: ferramentas + recursos MCP que delegam ao tools/.
 
 ## Modulos principais (frontend)
 
-- \`frontend/src/app/[[...repo]]/page.tsx\` — parser de rota, generateStaticParams, selecao de shell.
-- \`frontend/src/entities/docs/api/load-docs-data.ts\` — config local/remota, versao, parse markdown, layouts + temas.
-- \`frontend/src/widgets/docs-shell/docs-shell.tsx\` — UI, estado idioma/versao/tema, sync de URL, montagem do chat de IA.
+- \`frontend/src/app/[[...repo]]/page.tsx\` — parser de rota, generateStaticParams, seleção de shell.
+- \`frontend/src/entities/docs/api/load-docs-data.ts\` — config local/remota, versão, parse markdown, layouts + temas.
+- \`frontend/src/widgets/docs-shell/docs-shell.tsx\` — UI, estado idioma/versão/tema, sync de URL, montagem do chat de IA.
 
-## Seguranca: credenciais de IA criptografadas
+## Segurança: credenciais de IA criptografadas
 
-O console \`/ai\` e o chat drawer exigem uma senha local que deriva (PBKDF2) uma chave AES-256-GCM; as chaves ficam criptografadas no \`localStorage\` e so sao descriptografadas durante a sessao (\`@gitpagedocs/tools/security\`). O drawer se bloqueia sozinho apos \`site.AiChatAutoLockSeconds\` segundos sem uso (padrao 30; \`0\` desativa): um modal centralizado com contagem regressiva, no idioma selecionado, permite cancelar ou bloquear agora, e voltar exige a senha de novo. Na CLI, a chave de \`.gitpagedocsconfig\` fica selada no cofre criptografado \`.gitpagedocsvault\` e a senha do cofre e pedida em toda execucao.
+O console \`/ai\` e o chat drawer exigem uma senha local que deriva (PBKDF2) uma chave AES-256-GCM; as chaves ficam criptografadas no \`localStorage\` e só são descriptografadas durante a sessão (\`@gitpagedocs/tools/security\`). O drawer se bloqueia sozinho após \`site.AiChatAutoLockSeconds\` segundos sem uso (padrão 30; \`0\` desativa): um modal centralizado com contagem regressiva, no idioma selecionado, permite cancelar ou bloquear agora, e voltar exige a senha de novo. Na CLI, a chave de \`.gitpagedocsconfig\` fica selada no cofre criptografado \`.gitpagedocsvault\` e a senha do cofre é pedida em toda execução.
 
 ## Fluxo de dados
 
 1. A rota chega (\`/owner/repo/v/x.y.z\` ou equivalente local)
 2. O config e resolvido (local ou remoto)
-3. Config de versao sobrescreve rotas/menus base
+3. Config de versão sobrescreve rotas/menus base
 4. Markdown e carregado e convertido para HTML
 5. Template de layout e resolvido e aplicado em CSS vars
-6. Shell renderiza conteudo e controles
+6. Shell renderiza conteúdo e controles
 
 ## Pontos de resiliencia
 
 - fallback de carga para layouts/templates
 - carregamento de markdown por idioma com fallback de erro
-- sincronizacao de linguagem/versao/tema via localStorage
+- sincronização de linguagem/versão/tema via localStorage
 `,
     githubIssuesProjects: `# GitHub Issues e Projects
 
@@ -547,7 +553,7 @@ Conceitos basicos de Git para iniciantes.
 
 ## Comandos essenciais
 
-- \`git init\` - iniciar repositorio
+- \`git init\` - iniciar repositório
 - \`git add\` - preparar alteracoes
 - \`git commit\` - registrar commit
 - \`git push\` - enviar para remoto
@@ -556,21 +562,21 @@ Conceitos basicos de Git para iniciantes.
 
 Proteja rotas por chave de acesso, papeis obrigatorios e provedores externos.
 
-## Local do config de versao
+## Local do config de versão
 
 Configure em:
 
 - \`gitpagedocs/docs/versions/<versao>/config.json\`
 
-## Secao global auth
+## Seção global auth
 
-Use \`auth\` no topo do config de versao:
+Use \`auth\` no topo do config de versão:
 
 - \`accessKeys\`: mapa de ids de chave para segredo esperado
 - \`rolesStorageKey\`: chave de localStorage para bootstrap de papeis
 - \`providers\`: lista de provedores externos (\`authjs\`, \`clerk\`, \`firebase\`, \`jwt\`)
 
-## Autorizacao por rota
+## Autorização por rota
 
 Dentro de cada rota (\`routes-md\`, \`routes-html\`, \`routes-video\`):
 
@@ -608,7 +614,7 @@ Adaptadores suportados:
 `,
     themes: `# Temas e layouts
 
-Temas sao templates JSON mapeados por \`layoutsConfig.json\`.
+Temas são templates JSON mapeados por \`layoutsConfig.json\`.
 
 ## Arquivos
 
@@ -629,15 +635,15 @@ Cada template normalmente contem:
 
 ## Comportamento em runtime
 
-- tema ativo vem de config/usuario
-- toggle light/dark resolve o tema pareado por referencia
-- variaveis CSS sao geradas dos tokens do template
+- tema ativo vem de config/usuário
+- toggle light/dark resolve o tema pareado por referência
+- variáveis CSS são geradas dos tokens do template
 
 ## Boas praticas
 
 - mantenha contraste acessivel
 - padronize escala de espaco e borda
-- ofereca variantes dark e light quando possivel
+- ofereca variantes dark e light quando possível
 
 ## Escolher e personalizar
 
@@ -772,47 +778,47 @@ A etapa de geração envia o conteúdo selecionado do projeto ao provedor config
 
 ## Comandos da CLI
 
-| Comando | Descricao |
+| Comando | Descrição |
 |---------|------------|
 | \`npx @gitpagedocs/cli\` | Gera config e docs em \`gitpagedocs/\` |
-| \`npx @gitpagedocs/cli --layoutconfig\` | Tambem gera layouts/templates locais em \`gitpagelayouts/\` |
+| \`npx @gitpagedocs/cli --layoutconfig\` | Também gera layouts/templates locais em \`gitpagelayouts/\` |
 | \`npx @gitpagedocs/cli --home\` | Distribuicao standalone (\`gitpagedocshome/\`) |
 | \`npx @gitpagedocs/cli --push --owner X --repo Y\` | Configura workflow, commit, push |
-| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interativo com prompts (padrao em um terminal) |
-| \`npx @gitpagedocs/cli --no-interactive\` / \`--yes\` / \`-y\` | Nunca pergunta; usa flags e padroes |
-| \`gitpagedocs ai\` | Gerador interativo de documentacao com IA |
-| \`gitpagedocs chat [pergunta]\` | Chat de IA com streaming no terminal (REPL em TTY; resposta unica com pergunta ou stdin) |
-| \`gitpagedocs provider [id]\` / \`models [provider]\` | Lista provedores de IA / modelos do catalogo |
-| \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Gera documentacao com IA |
+| \`npx @gitpagedocs/cli --interactive\` / \`-i\` | Modo interativo com prompts (padrão em um terminal) |
+| \`npx @gitpagedocs/cli --no-interactive\` / \`--yes\` / \`-y\` | Nunca pergunta; usa flags e padrões |
+| \`gitpagedocs ai\` | Gerador interativo de documentação com IA |
+| \`gitpagedocs chat [pergunta]\` | Chat de IA com streaming no terminal (REPL em TTY; resposta única com pergunta ou stdin) |
+| \`gitpagedocs provider [id]\` / \`models [provider]\` | Lista provedores de IA / modelos do catálogo |
+| \`gitpagedocs document[:repo\\|:file\\|:folder]\` | Gera documentação com IA |
 | \`gitpagedocs deploy\` / \`pages [actions\\|deploy]\` | Configura GitHub Pages via Actions + push |
 | \`gitpagedocs docs\` | Atualiza as regioes gerenciadas de README/CONTRIBUTING/SECURITY |
-| \`gitpagedocs password\` | Define a senha de acesso a documentacao (chave publica em \`site.docsAccess\`) |
+| \`gitpagedocs password\` | Define a senha de acesso a documentação (chave pública em \`site.docsAccess\`) |
 | \`gitpagedocs config\` / \`config clear\` | Mostra a config resolvida / apaga a config salva e o cofre de chaves |
-| \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnostico / versao / verificacao de atualizacao no registro |
+| \`gitpagedocs doctor\` / \`version\` / \`update\` | Diagnóstico / versão / verificação de atualização no registro |
 | \`gitpagedocs mcp start\` | Inicia o servidor MCP via stdio |
 
 Instale globalmente com \`npm install -g @gitpagedocs/cli\` ou rode sem instalar com \`npx @gitpagedocs/cli\`.
 
-## Opcoes da CLI
+## Opções da CLI
 
-| Opcao | Descricao |
+| Opção | Descrição |
 |-------|-----------|
 | \`--owner <user>\` | Owner do GitHub |
-| \`--repo <repo>\` | Repositorio GitHub |
+| \`--repo <repo>\` | Repositório GitHub |
 | \`--path <subpath>\` | Subcaminho dos docs (ex: \`docs\`); sem ele, base path = nome do repo para CSS/JS em project sites |
-| \`--output <dir>\` | Diretorio de saida (padrao: \`gitpagedocs\`) |
-| \`--search <true-or-false>\` | Habilita/desabilita busca de repositorio (\`--home\`) |
+| \`--output <dir>\` | Diretório de saída (padrão: \`gitpagedocs\`) |
+| \`--search <true-or-false>\` | Habilita/desabilita busca de repositório (\`--home\`) |
 | \`--layoutconfig\` | Gera layouts locais em \`gitpagelayouts/\` |
-| \`--layouts-dir <dir>\` | Pasta dos layouts locais (padrao: \`gitpagelayouts\`) |
+| \`--layouts-dir <dir>\` | Pasta dos layouts locais (padrão: \`gitpagelayouts\`) |
 | \`--push\` | Cria workflow, commit de artefatos, push |
 | \`--pages-actions\` | Apenas muda a fonte do GitHub Pages para GitHub Actions (igual a \`pages actions\`) |
 | \`--home\` | Gera \`gitpagedocshome/\` (estatico + .env + Dockerfile) |
 
-## Saida gerada
+## Saída gerada
 
 - \`gitpagedocs/config.json\` – config raiz
-- \`gitpagedocs/icon.svg\` – icone padrao
-- \`gitpagedocs/docs/versions/<ver>/config.json\` – rotas por versao
+- \`gitpagedocs/icon.svg\` – ícone padrão
+- \`gitpagedocs/docs/versions/<ver>/config.json\` – rotas por versão
 - \`gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md\` – docs em markdown
 - \`gitpagelayouts/\` – apenas com \`--layoutconfig\` (pasta configuravel com \`--layouts-dir\`)
 
@@ -857,7 +863,7 @@ Rotas definem o conteúdo; menus definem como o leitor o encontra. Configure-os 
 
 Cada entrada de \`menus-header-md\` tem \`id\` e objetos \`pt\`, \`en\`, \`es\` com \`title\` e \`path-click\` opcional. Adicione \`submenus\` com novas entradas para aninhar a árvore. O objeto de um idioma também aceita \`submenus\` localizados com título/caminho. Use uma forma de maneira consistente para não listar o mesmo filho duas vezes.
 
-Grupos sem \`path-click\` organizam os filhos. Para um destino Markdown, use seu caminho localizado real de \`routes-md[].path\`. O alias \`page:<id>\` é registrado por rotas source-viewer, vídeo, áudio e PDF; não o use em uma página somente Markdown. O exemplo usa a versão \`0.0.8\`: troque esse trecho pela versão editada e crie os três arquivos chapter.
+Grupos sem \`path-click\` organizam os filhos. Para o destino de uma rota Markdown, use seu caminho localizado real de \`routes-md[].path\`. Rotas source-viewer, vídeo, áudio, PDF e composições explícitas em \`pages\` registram \`page:<id>\`; uma rota Markdown simples usa o caminho do arquivo. O exemplo usa a versão \`0.0.8\`: troque esse trecho pela versão editada e crie os três arquivos chapter.
 
 \`\`\`json
 {
@@ -925,6 +931,14 @@ Grupos sem \`path-click\` organizam os filhos. Para um destino Markdown, use seu
 
 ## Comportamento do aninhamento
 
+Um pai pode ser documento e grupo ao mesmo tempo. Mantenha seu \`path-click\` localizado junto com \`submenus\`: o título abre a página Markdown e a seta separada expande ou recolhe os filhos. O scaffold inclui visões gerais úteis para os oito grupos pais. Os ancestrais dos breadcrumbs apontam para esses documentos; o destino atual continua marcado como atual. Um grupo sem caminho ainda organiza filhos, mas não possui destino para abrir.
+
+O trecho abaixo usa as rotas Markdown 31, 32 e 13 já presentes no scaffold. Combine-o com \`menus-header-md\` e preserve as definições correspondentes em \`routes-md\` e seus arquivos:
+
+\`\`\`json
+${PARENT_MENU_JSON}
+\`\`\`
+
 \`site.nestedMenusEnabled: true\` exibe menus recursivos expansíveis. Você pode acrescentar \`submenus\` em qualquer nó: não há limite fixo de profundidade na aplicação. A configuração deve ser finita e adequada à memória do navegador e à usabilidade. Com \`false\`, os destinos aparecem em uma lista plana; as páginas aninhadas não são removidas.
 
 A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos pais e à trilha de navegação. Mantenha IDs estáveis e sem ambiguidade; destinos protegidos seguem as regras de autorização da página. A mesma estrutura vale para \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\` e \`menus-header-pdf\`. \`hierarchyMenu\` ordena as seções por tipo; \`hierarchyPage\` ordena os containers que compartilham o ID da página.
@@ -939,7 +953,7 @@ A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos
 
 URLs versionadas usam \`/v/<version>/\`; \`?lang=pt\` escolhe o idioma e \`?id=101\` escolhe a página. \`?name=chapter\` seleciona o slug do documento. Mantenha \`VersionControl.versions[].path\` apontando para o config da versão correspondente. \`site.ActiveNavigation\` ativa a navegação rápida e seu atalho Ctrl+K. Os controles anterior/próximo do rodapé seguem os destinos disponíveis no menu; a navegação entre documentos no modo foco possui opção própria. Consulte Modo foco para os controles de seção e documento.
 
-Os botões Voltar/Próximo do rodapé usam \`site.icons.DocumentPrevious\` (\`FiChevronLeft\`) e \`site.icons.DocumentNext\` (\`FiChevronRight\`) por padrão. Defina \`reactIcon: false\` em qualquer entrada para exibir seu texto traduzido; cada entrada também aceita \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. A aparência não muda a navegação: o rodapé aparece quando há mais de um destino disponível no menu, e a direção indisponível continua desabilitada nas extremidades.
+Os botões Voltar/Próximo do rodapé usam \`site.icons.DocumentPrevious\` (\`LuChevronLeft\`) e \`site.icons.DocumentNext\` (\`LuChevronRight\`) por padrão. Defina \`reactIcon: false\` em qualquer entrada para exibir seu texto traduzido; cada entrada também aceita \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. A aparência não muda a navegação: o rodapé aparece quando há mais de um destino disponível no menu, e a direção indisponível continua desabilitada nas extremidades.
 
 Teste um menu novo pela lateral, por URL direta e em cada idioma habilitado; confirme que o destino existe e é permitido para o leitor atual.
 `,
@@ -977,6 +991,8 @@ Cada opção tem padrão \`true\`; \`false\` oculta a ação ou o grupo de naveg
 - \`site.ActiveNavigation\` controla a navegação rápida; não desabilita a navegação de documentos no modo foco.
 
 ## Copiar e baixar
+
+Em uma página composta, o foco lê os blocos Markdown autorizados em ordem, incluindo repetições. Copiar/baixar reúne essas fontes e usa \`page-<id>.md\`; as ações individuais dos blocos mantêm os nomes originais. Consulte Blocos de conteúdo ordenados para o contrato completo.
 
 Copiar e baixar usam o **Markdown original inteiro no idioma selecionado**, incluindo seções que não estão visíveis no momento. Não exportam o HTML renderizado nem apenas a seção atual.
 
@@ -1049,33 +1065,33 @@ Consulte a [referência da Web Speech API](https://developer.mozilla.org/en-US/d
 `,
     faq: `# FAQ
 
-## Por que repositorios remotos nao abrem localmente?
+## Por que repositórios remotos não abrem localmente?
 
 Verifique:
 
 - \`GITPAGEDOCS_REPOSITORY_SEARCH=true\` no \`.env\`
-- repositorio alvo contem \`gitpagedocs/config.json\`
-- paths markdown do repositorio batem com seu config de rotas
+- repositório alvo contem \`gitpagedocs/config.json\`
+- paths markdown do repositório batem com seu config de rotas
 
-## Por que rota de versao mostra conteudo errado?
+## Por que rota de versão mostra conteúdo errado?
 
 Verifique:
 
 - \`VersionControl.versions[*].path\` em \`gitpagedocs/config.json\`
-- config da versao possui \`routes\` e \`menus-header\` validos
+- config da versão possui \`routes\` e \`menus-header\` válidos
 - markdown existe para cada idioma
 
-## Por que tema nao aplica corretamente?
+## Por que tema não aplica corretamente?
 
 Verifique:
 
-- \`layoutsConfig.json\` referencia templates validos
-- ids de template sao unicos
+- \`layoutsConfig.json\` referência templates válidos
+- ids de template são únicos
 - tema selecionado existe no mapa de temas carregados
 
 ## Por que GitHub Pages pode se comportar diferente do local?
 
-Porque o build de GitHub Pages habilita pagina inicial de busca e comportamento especifico de exportacao.
+Porque o build de GitHub Pages habilita página inicial de busca e comportamento específico de exportação.
 
 ## Por que o ícone ainda mostra texto?
 

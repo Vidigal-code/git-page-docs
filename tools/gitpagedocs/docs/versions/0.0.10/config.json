@@ -112,9 +112,9 @@
             "url": "https://www.youtube.com/watch?v=0w80F8FffQ4",
             "type": "youtube",
             "title": {
-              "pt": "Musica pagina 2",
+              "pt": "Música página 2",
               "en": "Page 2 music",
-              "es": "Musica pagina 2"
+              "es": "Música página 2"
             }
           }
         ]
@@ -825,20 +825,326 @@
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 31,
+      "title": {
+        "pt": "Guias",
+        "en": "Guides",
+        "es": "Guías"
+      },
+      "description": {
+        "pt": "Escolha um caminho para configurar, ler ou integrar",
+        "en": "Choose a path to configure, read or integrate",
+        "es": "Elige un recorrido para configurar, leer o integrar"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/guides.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/guides.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/guides.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 32,
+      "title": {
+        "pt": "Configure seu site",
+        "en": "Configure your site",
+        "es": "Configura tu sitio"
+      },
+      "description": {
+        "pt": "Organize conteúdo, navegação e apresentação",
+        "en": "Organize content, navigation and presentation",
+        "es": "Organiza contenido, navegación y presentación"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/configure-your-site.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/configure-your-site.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/configure-your-site.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 33,
+      "title": {
+        "pt": "Leia e explore",
+        "en": "Read and explore",
+        "es": "Lee y explora"
+      },
+      "description": {
+        "pt": "Escolha como ler documentos e exemplos interativos",
+        "en": "Choose how to read documents and interactive examples",
+        "es": "Elige cómo leer documentos y ejemplos interactivos"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/read-and-explore.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/read-and-explore.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/read-and-explore.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 34,
+      "title": {
+        "pt": "Automatize e integre",
+        "en": "Automate and integrate",
+        "es": "Automatiza e integra"
+      },
+      "description": {
+        "pt": "Use CLI, MCP e políticas de acesso",
+        "en": "Use the CLI, MCP and access policies",
+        "es": "Usa la CLI, MCP y políticas de acceso"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/automate-and-integrate.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/automate-and-integrate.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/automate-and-integrate.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 35,
+      "title": {
+        "pt": "Operação e desenvolvimento",
+        "en": "Operations and development",
+        "es": "Operación y desarrollo"
+      },
+      "description": {
+        "pt": "Publique, mantenha e desenvolva a documentação",
+        "en": "Publish, maintain and develop the documentation",
+        "es": "Pública, mantén y desarrolla la documentación"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/operations-and-development.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/operations-and-development.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/operations-and-development.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 36,
+      "title": {
+        "pt": "Publique e mantenha",
+        "en": "Ship and maintain",
+        "es": "Pública y mantén"
+      },
+      "description": {
+        "pt": "Prepare a publicação e preserve compatibilidade",
+        "en": "Prepare releases and preserve compatibility",
+        "es": "Prepara publicaciones y conserva compatibilidad"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/ship-and-maintain.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/ship-and-maintain.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/ship-and-maintain.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 37,
+      "title": {
+        "pt": "Desenvolva o projeto",
+        "en": "Develop the project",
+        "es": "Desarrolla el proyecto"
+      },
+      "description": {
+        "pt": "Localize fontes, contratos e verificações",
+        "en": "Locate sources, contracts and checks",
+        "es": "Localiza fuentes, contratos y comprobaciones"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/develop-the-project.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/develop-the-project.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/develop-the-project.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 38,
+      "title": {
+        "pt": "Git e GitHub",
+        "en": "Git and GitHub",
+        "es": "Git y GitHub"
+      },
+      "description": {
+        "pt": "Versione mudanças e organize o trabalho",
+        "en": "Version changes and organize the work",
+        "es": "Versiona cambios y organiza el trabajo"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/git-and-github.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/git-and-github.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/git-and-github.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 40,
+      "title": {
+        "en": "Ordered content blocks",
+        "pt": "Blocos de conteúdo ordenados",
+        "es": "Bloques de contenido ordenados"
+      },
+      "description": {
+        "en": "Combine and repeat content in one page",
+        "pt": "Combine e repita conteúdos na mesma página",
+        "es": "Combina y repite contenidos en una página"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.10/pt/content-blocks.md",
+        "en": "gitpagedocs/docs/versions/0.0.10/en/content-blocks.md",
+        "es": "gitpagedocs/docs/versions/0.0.10/es/content-blocks.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     }
   ],
   "routes-source-viewer": [
     {
       "id": 7,
       "title": {
-        "pt": "Codigo fonte",
+        "pt": "Código fonte",
         "en": "Source code",
-        "es": "Codigo fuente"
+        "es": "Código fuente"
       },
       "description": {
-        "pt": "Explore a arvore do repositorio, navegue por pastas e visualize arquivos diretamente na documentacao.",
+        "pt": "Explore a árvore do repositório, navegue por pastas e visualize arquivos diretamente na documentação.",
         "en": "Explore the repository tree, browse folders, and preview files directly inside the documentation.",
-        "es": "Explora el arbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentacion."
+        "es": "Explora el árbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentación."
       },
       "titleCss": "font-size: 1.85rem; font-weight: 700;",
       "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
@@ -869,9 +1175,9 @@
         "es": "DOOM: ejemplo HTML"
       },
       "description": {
-        "pt": "Um container HTML com título, descrição e um jogo carregado apenas ao clicar.",
-        "en": "An HTML container with a title, description and a game loaded only after clicking.",
-        "es": "Un contenedor HTML con título, descripción y un juego que se carga solo al hacer clic."
+        "pt": "Jogue DOOM em um container HTML usando os controles do próprio player.",
+        "en": "Play DOOM in an HTML container using the player’s native controls.",
+        "es": "Juega a DOOM en un contenedor HTML con los controles del reproductor."
       },
       "path": {
         "en": "gitpagedocs/docs/versions/0.0.10/en/doom.html",
@@ -1099,14 +1405,14 @@
     {
       "id": 12,
       "title": {
-        "pt": "Trilha de audio",
+        "pt": "Trilha de áudio",
         "en": "Audio track",
         "es": "Pista de audio"
       },
       "description": {
-        "pt": "Ouça uma faixa de exemplo diretamente na documentacao.",
+        "pt": "Ouça uma faixa de exemplo diretamente na documentação.",
         "en": "Listen to a sample track directly inside the documentation.",
-        "es": "Escucha una pista de ejemplo directamente en la documentacion."
+        "es": "Escucha una pista de ejemplo directamente en la documentación."
       },
       "titleCss": "font-size: 1.85rem; font-weight: 700;",
       "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
@@ -1167,6 +1473,73 @@
       }
     }
   ],
+  "pages": [
+    {
+      "id": 39,
+      "blocks": [
+        {
+          "id": "getting-started",
+          "type": "md",
+          "routeId": 1
+        },
+        {
+          "id": "project-overview",
+          "type": "md",
+          "routeId": 2
+        },
+        {
+          "id": "html-guide",
+          "type": "md",
+          "routeId": 30
+        },
+        {
+          "id": "doom-first",
+          "type": "html",
+          "routeId": 29
+        },
+        {
+          "id": "doom-second",
+          "type": "html",
+          "routeId": 29
+        },
+        {
+          "id": "video-first",
+          "type": "video",
+          "routeId": 11
+        },
+        {
+          "id": "video-second",
+          "type": "video",
+          "routeId": 11
+        },
+        {
+          "id": "audio-first",
+          "type": "audio",
+          "routeId": 12
+        },
+        {
+          "id": "audio-second",
+          "type": "audio",
+          "routeId": 12
+        },
+        {
+          "id": "pdf-first",
+          "type": "pdf",
+          "routeId": 23
+        },
+        {
+          "id": "pdf-second",
+          "type": "pdf",
+          "routeId": 23
+        },
+        {
+          "id": "pdf-third",
+          "type": "pdf",
+          "routeId": 23
+        }
+      ]
+    }
+  ],
   "menus-header-md": [
     {
       "id": 1,
@@ -1200,26 +1573,32 @@
     },
     {
       "id": 1000,
-      "pt": {
-        "title": "Guias"
-      },
       "en": {
-        "title": "Guides"
+        "title": "Guides",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/en/guides.md"
+      },
+      "pt": {
+        "title": "Guias",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/pt/guides.md"
       },
       "es": {
-        "title": "Guías"
+        "title": "Guías",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/es/guides.md"
       },
       "submenus": [
         {
           "id": 1001,
-          "pt": {
-            "title": "Configure seu site"
-          },
           "en": {
-            "title": "Configure your site"
+            "title": "Configure your site",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/en/configure-your-site.md"
+          },
+          "pt": {
+            "title": "Configure seu site",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/pt/configure-your-site.md"
           },
           "es": {
-            "title": "Configura tu sitio"
+            "title": "Configura tu sitio",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/es/configure-your-site.md"
           },
           "submenus": [
             {
@@ -1286,14 +1665,17 @@
         },
         {
           "id": 1002,
-          "pt": {
-            "title": "Leia e explore"
-          },
           "en": {
-            "title": "Read and explore"
+            "title": "Read and explore",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/en/read-and-explore.md"
+          },
+          "pt": {
+            "title": "Leia e explore",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/pt/read-and-explore.md"
           },
           "es": {
-            "title": "Lee y explora"
+            "title": "Lee y explora",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/es/read-and-explore.md"
           },
           "submenus": [
             {
@@ -1355,19 +1737,52 @@
                 "title": "Contenedores HTML",
                 "path-click": "gitpagedocs/docs/versions/0.0.10/es/html-containers.md"
               }
+            },
+            {
+              "id": 40,
+              "pt": {
+                "title": "Blocos de conteúdo ordenados",
+                "path-click": "gitpagedocs/docs/versions/0.0.10/pt/content-blocks.md"
+              },
+              "en": {
+                "title": "Ordered content blocks",
+                "path-click": "gitpagedocs/docs/versions/0.0.10/en/content-blocks.md"
+              },
+              "es": {
+                "title": "Bloques de contenido ordenados",
+                "path-click": "gitpagedocs/docs/versions/0.0.10/es/content-blocks.md"
+              }
+            },
+            {
+              "id": 39,
+              "en": {
+                "title": "Multiple content blocks",
+                "path-click": "page:39"
+              },
+              "pt": {
+                "title": "Múltiplos blocos de conteúdo",
+                "path-click": "page:39"
+              },
+              "es": {
+                "title": "Múltiples bloques de contenido",
+                "path-click": "page:39"
+              }
             }
           ]
         },
         {
           "id": 1003,
-          "pt": {
-            "title": "Automatize e integre"
-          },
           "en": {
-            "title": "Automate and integrate"
+            "title": "Automate and integrate",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/en/automate-and-integrate.md"
+          },
+          "pt": {
+            "title": "Automatize e integre",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/pt/automate-and-integrate.md"
           },
           "es": {
-            "title": "Automatiza e integra"
+            "title": "Automatiza e integra",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/es/automate-and-integrate.md"
           },
           "submenus": [
             {
@@ -1421,26 +1836,32 @@
     },
     {
       "id": 1100,
-      "pt": {
-        "title": "Operação e desenvolvimento"
-      },
       "en": {
-        "title": "Operations and development"
+        "title": "Operations and development",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/en/operations-and-development.md"
+      },
+      "pt": {
+        "title": "Operação e desenvolvimento",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/pt/operations-and-development.md"
       },
       "es": {
-        "title": "Operación y desarrollo"
+        "title": "Operación y desarrollo",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/es/operations-and-development.md"
       },
       "submenus": [
         {
           "id": 1101,
-          "pt": {
-            "title": "Publique e mantenha"
-          },
           "en": {
-            "title": "Ship and maintain"
+            "title": "Ship and maintain",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/en/ship-and-maintain.md"
+          },
+          "pt": {
+            "title": "Publique e mantenha",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/pt/ship-and-maintain.md"
           },
           "es": {
-            "title": "Publica y mantén"
+            "title": "Publica y mantén",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/es/ship-and-maintain.md"
           },
           "submenus": [
             {
@@ -1507,14 +1928,17 @@
         },
         {
           "id": 1102,
-          "pt": {
-            "title": "Desenvolva o projeto"
-          },
           "en": {
-            "title": "Develop the project"
+            "title": "Develop the project",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/en/develop-the-project.md"
+          },
+          "pt": {
+            "title": "Desenvolva o projeto",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/pt/develop-the-project.md"
           },
           "es": {
-            "title": "Desarrolla el proyecto"
+            "title": "Desarrolla el proyecto",
+            "path-click": "gitpagedocs/docs/versions/0.0.10/es/develop-the-project.md"
           },
           "submenus": [
             {
@@ -1568,14 +1992,17 @@
     },
     {
       "id": 1200,
-      "pt": {
-        "title": "Git e GitHub"
-      },
       "en": {
-        "title": "Git and GitHub"
+        "title": "Git and GitHub",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/en/git-and-github.md"
+      },
+      "pt": {
+        "title": "Git e GitHub",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/pt/git-and-github.md"
       },
       "es": {
-        "title": "Git y GitHub"
+        "title": "Git y GitHub",
+        "path-click": "gitpagedocs/docs/versions/0.0.10/es/git-and-github.md"
       },
       "submenus": [
         {
@@ -1615,7 +2042,7 @@
     {
       "id": 7,
       "pt": {
-        "title": "Codigo fonte",
+        "title": "Código fonte",
         "path-click": "page:7"
       },
       "en": {
@@ -1623,7 +2050,7 @@
         "path-click": "page:7"
       },
       "es": {
-        "title": "Codigo fuente",
+        "title": "Código fuente",
         "path-click": "page:7"
       }
     }
@@ -1711,7 +2138,7 @@
     {
       "id": 12,
       "pt": {
-        "title": "Trilha de audio",
+        "title": "Trilha de áudio",
         "path-click": "page:12"
       },
       "en": {

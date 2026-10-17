@@ -14,6 +14,7 @@ import type {
   LoadedDocsData,
   LoadedPage,
   PathToPageEntry,
+  PageCompositionConfig,
   RouteConfig,
   ThemeTemplate,
   VersionEntry,
@@ -40,9 +41,11 @@ import { applyLanguageToggles } from "./utils/route-utils";
 import { markdownToHtml } from "./utils/markdown";
 import { resolvePdfUrl } from "../lib/pdf/resolve-pdf-url";
 import { getPdfRoutes, isPdfRoute } from "../lib/pdf/validate-pdf-route";
+import { composePages } from "../model/compose-pages";
 
 type VersionConfig = {
   auth?: AuthConfig;
+  pages?: PageCompositionConfig[];
   routes?: RouteConfig[];
   "menus-header"?: HeaderMenuItem[];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];
@@ -443,6 +446,7 @@ export async function checkRepositoryHasGitPageDocs(owner: string, repo: string)
 
 type ContentSections = {
   auth: AuthConfig | undefined;
+  pageCompositions: PageCompositionConfig[];
   routesMd: Array<ContentTypeRouteConfig | RouteConfig>;
   routesSourceViewer: ContentTypeRouteConfig[];
   routesHtml: ContentTypeRouteConfig[];
@@ -490,6 +494,7 @@ function resolveContentSections(config: GitPageDocsConfig, versionConfig: Versio
   const version: VersionConfig = versionConfig ?? {};
   return {
     auth: overrideWhenSet(version.auth, config.auth),
+    pageCompositions: version.pages ?? config.pages ?? [],
     routesMd: pickSection<ContentTypeRouteConfig | RouteConfig>([version["routes-md"], version.routes], [config["routes-md"], config.routes]),
     routesSourceViewer: pickSection([version["routes-source-viewer"]], [config["routes-source-viewer"]]),
     routesHtml: pickSection([version["routes-html"]], [config["routes-html"]]),
@@ -523,6 +528,7 @@ function buildEffectiveConfig(config: GitPageDocsConfig, sections: ContentSectio
   return {
     ...config,
     auth: sections.auth,
+    pages: sections.pageCompositions,
     // ThemeDefault/ThemeModeDefault stay as loaded: the repository's own values
     // win, and withConfigDefaults already backfilled them when absent. Forcing
     // the runtime site's defaults here would ignore a repository's fixed theme.
@@ -837,8 +843,9 @@ export async function loadRemoteDocsData(
   const preferredLanguage = resolvePreferredLanguage(availableLanguages, selectedLanguage, config.site.defaultLanguage);
   const effectiveConfig = buildEffectiveConfig(config, sections, preferredLanguage);
 
-  const pathToPageMap: Record<string, PathToPageEntry> = {};
-  const pages = await buildPages({ owner, repo, availableLanguages, preferredLanguage, pathToPageMap }, sections);
+  const sourcePaths: Record<string, PathToPageEntry> = {};
+  const sourcePages = await buildPages({ owner, repo, availableLanguages, preferredLanguage, pathToPageMap: sourcePaths }, sections);
+  const { pages, pathToPageMap } = composePages({ pages: sourcePages, pathToPageMap: sourcePaths, definitions: sections.pageCompositions });
   const docs = pages
     .filter((page) => page.md)
     .map((page) => ({

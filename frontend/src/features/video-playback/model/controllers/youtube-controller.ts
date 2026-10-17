@@ -16,7 +16,7 @@ export interface YoutubeControllerOptions extends VideoPlaybackControllerOptions
  */
 export function createYoutubeController(
   iframe: HTMLIFrameElement,
-  { onPlay, loadYoutubeApi }: YoutubeControllerOptions,
+  { onPlay, loadYoutubeApi, muted = false }: YoutubeControllerOptions,
 ): VideoPlaybackController {
   let disposed = false;
   let player: YoutubePlayer | undefined;
@@ -27,6 +27,11 @@ export function createYoutubeController(
       if (disposed) return;
       player = new api.Player(iframe, {
         events: {
+          onReady: ({ target }) => {
+            if (disposed) return;
+            if (muted) target.mute();
+            else target.unMute();
+          },
           onStateChange: ({ data }) => {
             if (!disposed && data === YOUTUBE_PLAYING_STATE) onPlay();
           },

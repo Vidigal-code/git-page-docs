@@ -31,6 +31,7 @@ import { buildAudioRoute, buildMdRoute, buildPdfRoute, buildSourceViewerRoute, b
 import { resolveSourceViewerPath } from "./project-links.mjs";
 import { MARKDOWN_MENU_SECTIONS } from "../data/menu-sections.mjs";
 import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
+import { COMPOSED_PAGES } from "../data/composed-pages.mjs";
 
 /** Demo route protections showcasing the "Authorized Routes" feature. They are
  * applied only to the official (non-parameterized) scaffold — user sites
@@ -158,12 +159,16 @@ function buildMarkdownMenus(entries, base) {
         es: { title: ROUTE_METAS[entry].titles.es, "path-click": `${base}/es/${ROUTE_PATHS[entry].es}` },
       };
     }
+    const parentPaths = ROUTE_PATHS[entry.routeId];
+    const parentLabels = Object.fromEntries(SUPPORTED_LANGUAGES.map((language) => [language, {
+      title: entry.titles[language],
+      ...(parentPaths ? { "path-click": `${base}/${language}/${parentPaths[language]}` } : {}),
+      ...(entry.pathClick ? { "path-click": entry.pathClick } : {}),
+    }]));
     return {
       id: entry.id,
-      pt: { title: entry.titles.pt },
-      en: { title: entry.titles.en },
-      es: { title: entry.titles.es },
-      submenus: buildMarkdownMenus(entry.submenus, base),
+      ...parentLabels,
+      ...(entry.submenus ? { submenus: buildMarkdownMenus(entry.submenus, base) } : {}),
     };
   });
 }
@@ -260,6 +265,7 @@ export function buildVersionConfig(versionId, options = {}) {
     "routes-video": buildVersionVideoRoutes(versionId, includeDemoAuthorization),
     "routes-audio": buildVersionAudioRoutes(versionId),
     "routes-pdf": [buildPdfRoute(PDF_GUIDE_META, `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`)],
+    pages: structuredClone(COMPOSED_PAGES),
     "menus-header-md": menus.md,
     "menus-header-source-viewer": menus.sourceViewer,
     "menus-header-html": menus.html,

@@ -22,7 +22,7 @@ const htmlRoute: ContentTypeRouteConfig = { id: 1, path: { en: LANDING } };
 const htmlUrlRoute: ContentTypeRouteConfig = { id: 1, url: { en: LANDING_URL } };
 
 /** A page carrying every content type, so the hierarchy decides which one wins. */
-function fullPage(id = 1): Required<Omit<LoadedPage, "pdf">> {
+function fullPage(id = 1): Required<Omit<LoadedPage, "pdf" | "blocks" | "authorization">> {
   return {
     id,
     md: { routeId: id, config: mdRoute, markdownByLanguage: { en: "<p>hi</p>" } },

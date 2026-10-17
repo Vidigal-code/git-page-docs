@@ -2,7 +2,7 @@
 
 ## Comandos CLI
 
-| Comando | Descripcion |
+| Comando | Descripción |
 |---------|-------------|
 | `npx @gitpagedocs/cli` | Genera config y docs en `gitpagedocs/` |
 | `npx @gitpagedocs/cli --layoutconfig` | Tambien genera layouts/templates locales en `gitpagelayouts/` |
@@ -10,28 +10,28 @@
 | `npx @gitpagedocs/cli --push --owner X --repo Y` | Configura workflow, commit, push |
 | `npx @gitpagedocs/cli --interactive` / `-i` | Modo interactivo con prompts (por defecto en una terminal) |
 | `npx @gitpagedocs/cli --no-interactive` / `--yes` / `-y` | Nunca pregunta; usa flags y valores por defecto |
-| `gitpagedocs ai` | Generador interactivo de documentacion con IA |
-| `gitpagedocs chat [pregunta]` | Chat de IA con streaming en la terminal (REPL en TTY; respuesta unica con pregunta o stdin) |
-| `gitpagedocs provider [id]` / `models [provider]` | Lista proveedores de IA / modelos del catalogo |
-| `gitpagedocs document[:repo\|:file\|:folder]` | Genera documentacion con IA |
-| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configura GitHub Pages via Actions + push |
+| `gitpagedocs ai` | Generador interactivo de documentación con IA |
+| `gitpagedocs chat [pregunta]` | Chat de IA con streaming en la terminal (REPL en TTY; respuesta única con pregunta o stdin) |
+| `gitpagedocs provider [id]` / `models [provider]` | Lista proveedores de IA / modelos del catálogo |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Genera documentación con IA |
+| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configura GitHub Pages vía Actions + push |
 | `gitpagedocs docs` | Actualiza las regiones gestionadas de README/CONTRIBUTING/SECURITY |
-| `gitpagedocs password` | Define la contrasena de acceso a la documentacion (clave publica en `site.docsAccess`) |
-| `gitpagedocs config` / `config clear` | Muestra la config resuelta / borra la config guardada y la boveda de claves |
-| `gitpagedocs doctor` / `version` / `update` | Diagnostico / version / comprobacion de actualizacion en el registro |
+| `gitpagedocs password` | Define la contraseña de acceso a la documentación (clave pública en `site.docsAccess`) |
+| `gitpagedocs config` / `config clear` | Muestra la config resuelta / borra la config guardada y la bóveda de claves |
+| `gitpagedocs doctor` / `version` / `update` | Diagnóstico / versión / comprobacion de actualización en el registro |
 | `gitpagedocs mcp start` | Inicia el servidor MCP por stdio |
 
 Instala globalmente con `npm install -g @gitpagedocs/cli` o ejecuta sin instalar con `npx @gitpagedocs/cli`.
 
 ## Opciones CLI
 
-| Opcion | Descripcion |
+| Opcion | Descripción |
 |--------|-------------|
 | `--owner <user>` | Owner de GitHub |
 | `--repo <repo>` | Repositorio GitHub |
 | `--path <subpath>` | Subruta de docs (ej: `docs`); sin ella, base path = nombre del repo para CSS/JS en project sites |
 | `--output <dir>` | Directorio de salida (default: `gitpagedocs`) |
-| `--search <true-or-false>` | Habilita/deshabilita busqueda de repositorio (`--home`) |
+| `--search <true-or-false>` | Habilita/deshabilita búsqueda de repositorio (`--home`) |
 | `--layoutconfig` | Genera layouts locales en `gitpagelayouts/` |
 | `--layouts-dir <dir>` | Carpeta de layouts locales (por defecto: `gitpagelayouts`) |
 | `--push` | Crea workflow, commit de artefactos, push |
@@ -42,7 +42,7 @@ Instala globalmente con `npm install -g @gitpagedocs/cli` o ejecuta sin instalar
 
 - `gitpagedocs/config.json` – config raiz
 - `gitpagedocs/icon.svg` – icono por defecto
-- `gitpagedocs/docs/versions/<ver>/config.json` – rutas por version
+- `gitpagedocs/docs/versions/<ver>/config.json` – rutas por versión
 - `gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md` – docs en markdown
 - `gitpagelayouts/` – solo con `--layoutconfig` (carpeta configurable con `--layouts-dir`)
 
@@ -70,4 +70,4 @@ Las opciones visuales están en `gitpagedocs/config.json`. El generador interact
 
 `gitpagedocs docs` actualiza solo regiones delimitadas por marcadores en README.md, CONTRIBUTING.md y SECURITY.md, conservando el texto alrededor. `password` configura el par de claves de acceso a la documentación; los controles de presentación del cliente no vuelven confidenciales los archivos de un repositorio público.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

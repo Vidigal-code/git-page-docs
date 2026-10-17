@@ -97,6 +97,12 @@ export function resolveRouteAuthorizationTarget(
   pathClick: string,
   language: LanguageCode,
 ): RouteAuthorizationTarget | undefined {
+  const composition = data.pages?.find((page) => page.blocks !== undefined && pathClick === `page:${page.id}`);
+  if (composition) return {
+    routeId: composition.id,
+    contentType: composition.blocks?.[0]?.type ?? "md",
+    authorization: composition.authorization,
+  };
   const pageTarget = resolvePageRouteTarget(data.config, pathClick, language);
   if (pageTarget) return pageTarget;
 

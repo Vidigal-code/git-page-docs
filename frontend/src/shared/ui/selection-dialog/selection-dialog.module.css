@@ -18,6 +18,8 @@
   max-height: calc(100dvh - 48px);
   background: var(--card-background, #0f172a);
   color: var(--text, inherit);
+  color-scheme: var(--color-scheme, dark);
+  min-width: 0;
   border: 1px solid var(--card-border, #334155);
   /* The dialog is a surface, not a control: follow the theme radius but cap it
    * so pill-shaped tokens cannot ovalize the card. */
@@ -55,6 +57,8 @@ dialog.dialog {
   flex-direction: column;
   gap: 4px;
   overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -71,6 +75,8 @@ dialog.dialog {
   cursor: pointer;
   font-family: inherit;
   font-size: 1rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
   text-align: center;
   border-radius: 10px;
   transition: background-color 0.12s;

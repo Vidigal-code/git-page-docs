@@ -15,11 +15,14 @@ import {
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { BrowseIndexSetter, BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
 import { canAccessPdfContent, resolvePdfBrowseState } from "../model/pdf-browse";
+import { evaluateRouteAccess } from "@/features/route-authorization";
 import { SourceBrowserSkeleton } from "@/widgets/repository-source-browser/ui/source-browser-skeleton";
 import { isBrowseAllEnabled, buildBrowseNavConfig } from "./page-content-browse-nav";
 import { HtmlContainer, MdContainer, VideoContainer, AudioContainer, PdfContainer } from "./content-type-containers";
 import { markdownFileName } from "./content-type-containers/md-source-actions";
 import styles from "../docs-shell.module.css";
+
+const ANONYMOUS_SESSION = { unlockedKeyIds: [], roles: [], authenticatedProviders: [] };
 
 /** Localized file path of a markdown route (`path` is a per-language record), if any. */
 function mdPathFor(config: unknown, language: LanguageCode): string | undefined {
@@ -86,7 +89,27 @@ interface PageContentAreaProps {
   onFullscreenClose?: () => void;
 }
 
-export function PageContentArea({
+export function PageContentArea(props: Readonly<PageContentAreaProps>) {
+  const blocks = props.currentPage?.blocks;
+  if (!blocks) return <LegacyPageContentArea {...props} />;
+  const canAccess = (config: ContentTypeRouteConfig): boolean => props.navigation.canAccessContent?.(config)
+    ?? evaluateRouteAccess(config.authorization, props.data.config.auth, ANONYMOUS_SESSION).allowed;
+  if (!props.currentPage || !canAccess({ id: props.currentPage.id, authorization: props.currentPage.authorization })) return null;
+  return <div className={styles.contentBlocksStack}>{blocks.filter((block) => canAccess(block.content.config)).map((block) => (
+    <LegacyPageContentArea
+      key={block.id}
+      {...props}
+      navigation={{ ...props.navigation, canAccessPdf: canAccess }}
+      instanceId={`page-${props.currentPage?.id}-${block.id}`}
+      currentPage={{ id: block.content.routeId, [block.type]: {
+        ...block.content, config: { ...block.content.config, browseAll: false },
+      } }}
+    />
+  ))}</div>;
+}
+
+function LegacyPageContentArea({
+  instanceId,
   currentPage,
   data,
   language,
@@ -99,7 +122,7 @@ export function PageContentArea({
   isUrlFullscreen = false,
   onFullscreenOpen,
   onFullscreenClose,
-}: Readonly<PageContentAreaProps>) {
+}: Readonly<PageContentAreaProps & { instanceId?: string }>) {
   const types = resolvePageHierarchy(currentPage, data.config, contentTypeFilter);
 
   const mdBrowseAll = isBrowseAllEnabled(currentPage?.md?.config);
@@ -218,6 +241,7 @@ export function PageContentArea({
     md: currentMd ? (
       <MdContainer
         key="md"
+        instanceId={instanceId}
         html={currentMd.markdownByLanguage[language] ?? ""}
         config={currentMd.config}
         language={language}

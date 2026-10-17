@@ -3,6 +3,20 @@ import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 const docsDirectory = `gitpagedocs/docs/versions/${PACKAGE_VERSION}`;
 const localizedPath = (file) => Object.fromEntries(["en", "pt", "es"].map((language) => [language, `${docsDirectory}/${language}/${file}`]));
 
+const menuLabels = (titles, file) => Object.fromEntries(["en", "pt", "es"].map((language) => [language, {
+  title: titles[language], "path-click": `${docsDirectory}/${language}/${file}`,
+}]));
+
+export const PARENT_MENU_JSON = JSON.stringify({
+  id: 1000,
+  ...menuLabels({ en: "Guides", pt: "Guias", es: "Guías" }, "guides.md"),
+  submenus: [{
+    id: 1001,
+    ...menuLabels({ en: "Configure your site", pt: "Configure seu site", es: "Configura tu sitio" }, "configure-your-site.md"),
+    submenus: [{ id: 13, ...menuLabels({ en: "Configuration", pt: "Configuração", es: "Configuración" }, "configuration.md") }],
+  }],
+}, null, 2);
+
 export const HTML_ROUTE_JSON = JSON.stringify({
   id: 29,
   title: { en: "DOOM: HTML example", pt: "DOOM: exemplo HTML", es: "DOOM: ejemplo HTML" },
@@ -27,14 +41,14 @@ export const RECIPE_ROOT_JSON = JSON.stringify({
     focusMode: { copyEnabled: true, downloadEnabled: true, sectionNavigationEnabled: true, documentNavigationEnabled: true },
     icons: {
       defaults: { reactIcon: true, size: "22px", colorDark: "currentColor", colorLight: "currentColor" },
-      LanguageSelector: { tag: "FiGlobe" },
-      ThemeSelector: { tag: "BsSunFill" },
-      FocusMode: { tag: "MdFullscreen" },
-      QuickNavigation: { tag: "FiSearch" },
-      PdfDownload: { tag: "FiDownload" },
-      PdfOpenInNewTab: { tag: "FiExternalLink" },
-      DocumentPrevious: { tag: "FiChevronLeft" },
-      DocumentNext: { tag: "FiChevronRight" },
+      LanguageSelector: { tag: "SiGoogletranslate" },
+      ThemeSelector: { tag: "LuPencil" },
+      FocusMode: { tag: "LuBookOpen" },
+      QuickNavigation: { tag: "LuSearch" },
+      PdfDownload: { tag: "LuDownload" },
+      PdfOpenInNewTab: { tag: "LuExternalLink" },
+      DocumentPrevious: { tag: "LuChevronLeft" },
+      DocumentNext: { tag: "LuChevronRight" },
     },
     pdf: { enabled: true, previewEnabled: true, downloadEnabled: true, openInNewTabEnabled: true },
   },

@@ -18,6 +18,11 @@ export type {
 } from "./types/theme";
 export type {
   ContentType,
+  PageBlockType,
+  PageContentBlockConfig,
+  PageCompositionConfig,
+  ContentMetadataPlacement,
+  ContentMetadataLayout,
   ExternalAuthProviderType,
   ExternalAuthProviderConfig,
   AuthConfig,
@@ -44,6 +49,7 @@ export type {
   LoadedAudioContent,
   LoadedPdfContent,
   LoadedPage,
+  LoadedContentBlock,
   PathToPageEntry,
 } from "./types/content";
 export type { LoadedDocsData } from "./types/docs";

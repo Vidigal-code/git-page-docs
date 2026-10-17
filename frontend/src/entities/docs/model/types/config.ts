@@ -4,6 +4,31 @@ import type { VersionControlConfig } from "./version";
 export type ContentType = "md" | "source-viewer" | "html" | "video" | "audio" | "pdf";
 export const CONTENT_TYPES: ContentType[] = ["md", "source-viewer", "html", "video", "audio", "pdf"];
 
+export const PAGE_BLOCK_TYPES = ["md", "html", "video", "audio", "pdf"] as const;
+export type PageBlockType = (typeof PAGE_BLOCK_TYPES)[number];
+
+export interface PageContentBlockConfig {
+  id: string;
+  type: PageBlockType;
+  routeId: number;
+}
+
+export interface PageCompositionConfig {
+  id: number;
+  authorization?: RouteAuthorizationConfig;
+  blocks: PageContentBlockConfig[];
+}
+
+export interface ContentMetadataPlacement {
+  placement?: "outside" | "inside";
+  position?: "before" | "after";
+}
+
+export interface ContentMetadataLayout {
+  title?: ContentMetadataPlacement;
+  description?: ContentMetadataPlacement;
+}
+
 export type ExternalAuthProviderType = "authjs" | "clerk" | "firebase" | "jwt";
 
 export interface ExternalAuthProviderConfig {
@@ -104,6 +129,7 @@ export interface PageRouteAudioConfig {
 
 export interface ContentTypeRouteConfig {
   id: number;
+  layout?: ContentMetadataLayout;
   title?: Record<LanguageCode, string>;
   titleCss?: string;
   titleDarkCss?: string;
@@ -176,6 +202,7 @@ export interface HeaderMenuLocalizedContent {
 export interface GitPageDocsConfig {
   site: SiteConfig;
   auth?: AuthConfig;
+  pages?: PageCompositionConfig[];
   routes: RouteConfig[];
   "menus-header": HeaderMenuItem[];
   "routes-md"?: ContentTypeRouteConfig[] | RouteConfig[];

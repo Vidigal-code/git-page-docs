@@ -11,6 +11,7 @@ import type {
   LoadedSourceViewerContent,
   LoadedVideoContent,
   PathToPageEntry,
+  PageCompositionConfig,
   RouteConfig,
   VideoRouteConfig,
 } from "@/entities/docs/model/types";
@@ -20,6 +21,7 @@ import { markdownToHtml } from "../utils/markdown";
 import { hasPath, hasVideo, hasAudio } from "../utils/route-utils";
 import { resolvePdfUrl } from "../../lib/pdf/resolve-pdf-url";
 import { isPdfRoute } from "../../lib/pdf/validate-pdf-route";
+import { composePages } from "../../model/compose-pages";
 
 interface PageLoadContext {
   languages: LanguageCode[];
@@ -201,6 +203,7 @@ function buildPdfContent(route: ContentTypeRouteConfig, context: PageLoadContext
 }
 
 export async function loadPages(options: {
+  pageCompositions?: PageCompositionConfig[];
   sortedIds: number[];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
   routesSourceViewer: ContentTypeRouteConfig[];
@@ -244,5 +247,5 @@ export async function loadPages(options: {
     pages.push(page);
   }
 
-  return { pages, pathToPageMap };
+  return composePages({ pages, pathToPageMap, definitions: options.pageCompositions });
 }

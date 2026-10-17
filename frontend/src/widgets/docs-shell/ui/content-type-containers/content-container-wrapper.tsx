@@ -20,6 +20,7 @@ export type ContentContainerChildren =
 
 interface ContentContainerWrapperProps {
   header?: React.ReactNode;
+  footer?: React.ReactNode;
   children: ContentContainerChildren;
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
@@ -38,6 +39,7 @@ interface ContentContainerWrapperProps {
 
 export function ContentContainerWrapper({
   header,
+  footer,
   children,
   fullscreenEnabled = false,
   fullscreenCloseLabel,
@@ -73,6 +75,7 @@ export function ContentContainerWrapper({
         {header}
         {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
         <div className={styles.contentContainerWithButton}>{resolveChildren(null)}</div>
+        {footer}
       </div>
     );
   }
@@ -107,6 +110,7 @@ export function ContentContainerWrapper({
       {header}
       {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
       <div className={styles.contentContainerWithButton}>{resolvedChildren}</div>
+      {footer}
       {isFullscreen && (
         <dialog
           open

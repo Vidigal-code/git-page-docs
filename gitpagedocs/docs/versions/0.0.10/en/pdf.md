@@ -27,7 +27,7 @@ Add this block inside `site` in `gitpagedocs/config.json`:
 
 Action precedence is `route.pdf.<flag>` > `site.pdf.<flag>` > `true`. An explicit route `true` enables that action even when its site default is `false`; `site.pdf.enabled: false` still disables PDF content everywhere. A missing path for the selected language makes the PDF unavailable; there is no automatic language fallback.
 
-PDF actions use icons by default. Configure `site.icons.PdfDownload` (`FiDownload`) and `site.icons.PdfOpenInNewTab` (`FiExternalLink`) independently with `reactIcon`, `tag`, `size`, `colorDark` and `colorLight`. For example, `"PdfDownload": { "reactIcon": false }` shows download text while the new-tab action remains an icon. Changing appearance does not change the action flags above.
+PDF actions use icons by default. Configure `site.icons.PdfDownload` (`LuDownload`) and `site.icons.PdfOpenInNewTab` (`LuExternalLink`) independently with `reactIcon`, `tag`, `size`, `colorDark` and `colorLight`. For example, `"PdfDownload": { "reactIcon": false }` shows download text while the new-tab action remains an icon. Changing appearance does not change the action flags above.
 
 ## Route and menu example
 

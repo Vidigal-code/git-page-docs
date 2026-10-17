@@ -80,6 +80,19 @@ describe("useDocsShellNavigationState", () => {
     expect(setSidebarOpen).toHaveBeenCalledWith(true);
   });
 
+  it("navigates between breadcrumb ancestors without opening the sidebar", () => {
+    const { result, setSidebarOpen, setMenuOpen } = setup();
+    act(() => result.current.onMenuClick(GUIDE, ["Guide-2"], { origin: "breadcrumb" }));
+    expect(result.current.pageIndex).toBe(PAGE_INDEX.guide);
+    expect(result.current.isNodeExpanded("Guide-2")).toBe(true);
+    expect(setSidebarOpen).not.toHaveBeenCalled();
+
+    act(() => result.current.onMenuClick(INTRO, [], { origin: "breadcrumb" }));
+    expect(result.current.pageIndex).toBe(PAGE_INDEX.intro);
+    expect(setSidebarOpen).not.toHaveBeenCalled();
+    expect(setMenuOpen).toHaveBeenCalledWith(false);
+  });
+
   it("keeps the sidebar closed for linear and quick navigation when blocking is on", () => {
     const { result, setSidebarOpen } = setup({ blockSidebarOpenOnNav: true });
     act(() => result.current.onMenuClick(GUIDE, [], { origin: "linear" }));

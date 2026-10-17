@@ -1,6 +1,6 @@
 # FAQ
 
-## Por que repositorios remotos no abren en local?
+## ¿Por qué repositorios remotos no abren en local?
 
 Verifica:
 
@@ -8,25 +8,25 @@ Verifica:
 - repositorio objetivo contiene `gitpagedocs/config.json`
 - paths markdown del repositorio coinciden con su config de rutas
 
-## Por que una ruta de version muestra contenido incorrecto?
+## ¿Por qué una ruta de versión muestra contenido incorrecto?
 
 Verifica:
 
 - `VersionControl.versions[*].path` en `gitpagedocs/config.json`
-- config de version tiene `routes` y `menus-header` validos
+- config de versión tiene `routes` y `menus-header` válidos
 - markdown existe para cada idioma
 
-## Por que tema no se aplica correctamente?
+## ¿Por qué tema no se aplica correctamente?
 
 Verifica:
 
-- `layoutsConfig.json` referencia templates validos
-- ids de template son unicos
+- `layoutsConfig.json` referencia templates válidos
+- ids de template son únicos
 - tema seleccionado existe en el mapa de temas cargados
 
-## Por que GitHub Pages puede comportarse distinto a local?
+## ¿Por qué GitHub Pages puede comportarse distinto a local?
 
-Porque el build de GitHub Pages habilita la pagina inicial de busqueda y comportamiento especifico de exportacion.
+Porque el build de GitHub Pages habilita la página inicial de búsqueda y comportamiento específico de exportación.
 
 ## ¿Por qué el icono sigue mostrando texto?
 
@@ -48,4 +48,4 @@ Comprueba soporte del navegador, voz disponible, idioma, volumen y salida de aud
 
 El scaffold vuelve a escribir rutas, configs y documentación generada. Revisa Git y conserva el contenido específico en sus fuentes. En este repositorio, edita `cli/content/docs-{en,pt,es}.mjs` y los metadatos de rutas antes de regenerar; no uses las copias generadas como única fuente.
 
-> Version (ES): 0.0.8
+> Versión: 0.0.8

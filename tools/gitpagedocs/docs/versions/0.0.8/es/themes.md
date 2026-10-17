@@ -21,7 +21,7 @@ Cada template normalmente incluye:
 
 ## Comportamiento en runtime
 
-- tema activo viene de config/seleccion de usuario
+- tema activo viene de config/selección de usuario
 - toggle light/dark resuelve tema pareado por referencia
 - variables CSS se generan desde tokens del template
 
@@ -39,4 +39,4 @@ En tu repositorio, ejecuta la CLI con `--layoutconfig`, edita la plantilla gener
 
 Al contribuir en Git Page Docs, la fuente es `gitpagelayouts/v2/base.json` junto con `gitpagelayouts/v2/layouts/<id>.json`. Ejecuta `pnpm layouts:sync` para generar plantillas y documentación. La sincronización puede sobrescribir las ediciones directas de plantillas generadas.
 
-> Version (ES): 0.0.8
+> Versión: 0.0.8

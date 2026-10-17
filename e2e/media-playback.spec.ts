@@ -45,6 +45,9 @@ test.describe("media playback", () => {
 
     await page.locator(routeVideo).click();
     await expect(youtubePlayer(page)).toHaveClass(/playing-mode/, { timeout: YOUTUBE_TIMEOUT_MS });
+    const video = page.frameLocator(routeVideo).locator("video");
+    await expect(video).toHaveJSProperty("muted", false);
+    expect(await video.evaluate((element: HTMLVideoElement) => element.volume)).toBeGreaterThan(0);
     await expect(page.locator(backgroundMedia)).toHaveCount(0);
 
     await startBackgroundRadio(page);

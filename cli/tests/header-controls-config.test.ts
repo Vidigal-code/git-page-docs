@@ -19,54 +19,30 @@ it("generates icons for header controls, PDF actions and document navigation by 
   expect(site).toMatchObject({
     FocusMode: true,
     icons: {
-      defaults: { reactIcon: true },
+      defaults: { reactIcon: true, size: "22px", colorDark: "currentColor", colorLight: "currentColor" },
       QuickNavigation: {
-        tag: "FiSearch",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuSearch",
       },
       LanguageSelector: {
-        tag: "FiGlobe",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "SiGoogletranslate",
       },
       ThemeSelector: {
-        tag: "BsSunFill",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuPencil",
       },
       FocusMode: {
-        tag: "MdFullscreen",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuBookOpen",
       },
       PdfDownload: {
-        tag: "FiDownload",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuDownload",
       },
       PdfOpenInNewTab: {
-        tag: "FiExternalLink",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuExternalLink",
       },
       DocumentPrevious: {
-        tag: "FiChevronLeft",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuChevronLeft",
       },
       DocumentNext: {
-        tag: "FiChevronRight",
-        size: "22px",
-        colorDark: "currentColor",
-        colorLight: "currentColor",
+        tag: "LuChevronRight",
       },
     },
   });

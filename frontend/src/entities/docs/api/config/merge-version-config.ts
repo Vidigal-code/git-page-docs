@@ -2,6 +2,7 @@ import type {
   ContentTypeRouteConfig,
   GitPageDocsConfig,
   HierarchyConfig,
+  PageCompositionConfig,
   RouteConfig,
 } from "@/entities/docs/model/types";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
@@ -10,6 +11,7 @@ import { getPdfRoutes } from "../../lib/pdf/validate-pdf-route";
 
 export interface MergedRoutesConfig {
   auth: GitPageDocsConfig["auth"];
+  pageCompositions: PageCompositionConfig[];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
   routesSourceViewer: ContentTypeRouteConfig[];
   routesHtml: ContentTypeRouteConfig[];
@@ -31,6 +33,7 @@ function readBaseRoutesConfig(baseConfig: GitPageDocsConfig): MergedRoutesConfig
   const defaultHierarchy = DEFAULT_HIERARCHY as HierarchyConfig;
   return {
     auth: baseConfig.auth,
+    pageCompositions: baseConfig.pages ?? [],
     routesMd: baseConfig["routes-md"] ?? baseConfig.routes ?? [],
     routesSourceViewer: baseConfig["routes-source-viewer"] ?? [],
     routesHtml: baseConfig["routes-html"] ?? [],
@@ -57,6 +60,7 @@ function pickNonEmpty<T>(current: T[], ...overrides: (T[] | undefined)[]): T[] {
 function applyVersionOverrides(base: MergedRoutesConfig, versionConfig: VersionRoutesConfig): MergedRoutesConfig {
   return {
     auth: versionConfig.auth ?? base.auth,
+    pageCompositions: versionConfig.pages ?? base.pageCompositions,
     routesMd: pickNonEmpty(base.routesMd, versionConfig["routes-md"], versionConfig.routes),
     routesSourceViewer: pickNonEmpty(base.routesSourceViewer, versionConfig["routes-source-viewer"]),
     routesHtml: pickNonEmpty(base.routesHtml, versionConfig["routes-html"]),

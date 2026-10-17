@@ -1,10 +1,15 @@
 /** Subset of the YouTube IFrame Player API used to follow and pause a video. */
 export interface YoutubePlayer {
   pauseVideo(): void;
+  mute(): void;
+  unMute(): void;
 }
 
 export interface YoutubePlayerOptions {
-  events?: { onStateChange?: (event: { data: number }) => void };
+  events?: {
+    onReady?: (event: { target: YoutubePlayer }) => void;
+    onStateChange?: (event: { data: number }) => void;
+  };
 }
 
 export interface YoutubeIframeApi {

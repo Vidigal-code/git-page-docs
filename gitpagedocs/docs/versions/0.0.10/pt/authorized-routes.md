@@ -2,21 +2,21 @@
 
 Proteja rotas por chave de acesso, papeis obrigatorios e provedores externos.
 
-## Local do config de versao
+## Local do config de versão
 
 Configure em:
 
 - `gitpagedocs/docs/versions/<versao>/config.json`
 
-## Secao global auth
+## Seção global auth
 
-Use `auth` no topo do config de versao:
+Use `auth` no topo do config de versão:
 
 - `accessKeys`: mapa de ids de chave para segredo esperado
 - `rolesStorageKey`: chave de localStorage para bootstrap de papeis
 - `providers`: lista de provedores externos (`authjs`, `clerk`, `firebase`, `jwt`)
 
-## Autorizacao por rota
+## Autorização por rota
 
 Dentro de cada rota (`routes-md`, `routes-html`, `routes-video`):
 
@@ -52,4 +52,4 @@ Adaptadores suportados:
 - Firebase Auth (`type: "firebase"`)
 - JWT custom (`type: "jwt"`)
 
-> Versao: 0.0.10
+> Versão: 0.0.10

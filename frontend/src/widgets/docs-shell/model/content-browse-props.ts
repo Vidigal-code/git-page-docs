@@ -46,6 +46,7 @@ export interface BrowseState {
  * resolves once per render.
  */
 export interface BrowseNavigationProps {
+  canAccessContent?: (config: ContentTypeRouteConfig) => boolean;
   canAccessPdf?: (config: ContentTypeRouteConfig) => boolean;
   routeGuideEnabled: boolean;
   breadcrumbTrail: BreadcrumbItem[];

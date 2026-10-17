@@ -1,25 +1,40 @@
 .container {
   position: relative;
   display: inline-block;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .trigger {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  min-height: 44px;
+  max-width: 100%;
+  font-family: inherit;
+  line-height: 1.4;
 }
+
+.label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arrow { position: absolute; inset-inline-end: 0.8rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: var(--text-secondary); pointer-events: none; }
+.trigger[aria-expanded="true"] .arrow { transform: translateY(-50%) rotate(180deg); }
+.trigger:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 
 /* Dropdown panel (pointer-first screens): themed like the shell controls. */
 .menu {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  right: 0;
+  width: max-content;
   padding: 4px;
   z-index: 50;
-  min-width: max-content;
-  background: var(--control-background, var(--card-background, rgba(127, 127, 127, 0.15)));
+  min-width: 100%;
+  max-width: min(24rem, calc(100vw - 32px));
+  transform: translateX(var(--dropdown-shift, 0px));
+  color-scheme: var(--color-scheme, dark);
+  background: var(--card-background, #0f172a);
   color: var(--text, inherit);
   border: var(--control-border, 1px solid var(--card-border, rgba(127, 127, 127, 0.3)));
   /* The panel is a surface, not a control: follow the theme radius but cap it
@@ -64,9 +79,12 @@
   color: inherit;
   padding: 8px 12px;
   cursor: pointer;
-  white-space: nowrap;
+  min-height: 44px;
+  white-space: normal;
+  overflow-wrap: anywhere;
   font-family: inherit;
   font-size: 0.95rem;
+  line-height: 1.4;
   text-align: center;
   border-radius: min(calc(var(--control-radius, 10px) - 4px), 10px);
   transition: background-color 0.12s;

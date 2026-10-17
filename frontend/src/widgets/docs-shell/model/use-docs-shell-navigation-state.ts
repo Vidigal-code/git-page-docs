@@ -46,7 +46,7 @@ function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): nu
 }
 
 export interface OnMenuClickOptions {
-  origin?: "menu" | "linear" | "quick" | "focus";
+  origin?: "menu" | "linear" | "quick" | "focus" | "breadcrumb";
 }
 
 interface UseDocsShellNavigationStateArgs {
@@ -112,7 +112,8 @@ export function useDocsShellNavigationState({
       });
     }
     const skipSidebarOpen =
-      options.origin === "focus" || (blockSidebarOpenOnNav && (options.origin === "linear" || options.origin === "quick"));
+      options.origin === "focus" || options.origin === "breadcrumb" ||
+      (blockSidebarOpenOnNav && (options.origin === "linear" || options.origin === "quick"));
     if (!skipSidebarOpen) {
       setSidebarOpen(true);
     }

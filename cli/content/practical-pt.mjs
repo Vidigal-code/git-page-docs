@@ -3,7 +3,7 @@ import { HTML_ROUTE_JSON, RECIPE_ROOT_JSON, RECIPE_VERSION_JSON } from "./config
 export const practicalPt = {
   htmlContainers: `# Containers HTML e exemplos interativos
 
-Uma rota HTML exibe um documento local ou uma página externa dentro de um iframe. Use-a para uma demonstração interativa confiável que o Markdown não consegue representar. O scaffold inclui **DOOM: exemplo HTML**, rota 29, com título, descrição e botão traduzidos. O player externo só é carregado quando o visitante decide jogar. O jogo continua hospedado pelo provedor; o pacote npm inclui a página HTML de apresentação, não os arquivos do jogo.
+Uma rota HTML exibe um documento local ou uma página externa dentro de um iframe. Use-a para uma demonstração interativa confiável que o Markdown não consegue representar. O scaffold inclui **DOOM: exemplo HTML**, rota 29. O título e a descrição pertencem ao container da documentação; o HTML contém somente o player, sem repetir títulos, instruções ou criar um botão próprio de carregamento. O jogo continua hospedado pelo provedor; o pacote npm inclui a integração HTML, não os arquivos do jogo.
 
 ## Configure uma rota HTML local
 
@@ -13,7 +13,7 @@ Adicione esta rota ao array \`routes-html\` existente na configuração da vers�
 ${HTML_ROUTE_JSON}
 \`\`\`
 
-Adicione um item traduzido em \`menus-header-html\`. Cada \`path-click\` deve corresponder ao caminho da rota no mesmo idioma, como \`gitpagedocs/docs/versions/0.0.10/pt/doom.html\`; não substitua esse caminho HTML local por \`page:29\`. Um rótulo de menu não cria uma rota. HTML aceita a mesma estrutura recursiva \`submenus\` dos outros menus.
+Adicione um item traduzido em \`menus-header-html\`. Cada \`path-click\` deve corresponder ao caminho da rota no mesmo idioma, como \`gitpagedocs/docs/versions/0.0.11/pt/doom.html\`; não substitua esse caminho HTML local por \`page:29\`. Um rótulo de menu não cria uma rota. HTML aceita a mesma estrutura recursiva \`submenus\` dos outros menus.
 
 ## Dimensões, conteúdo e URLs externas
 
@@ -25,7 +25,7 @@ O servidor externo pode impedir incorporação por CSP ou X-Frame-Options. Hosts
 
 ## Use e mantenha o exemplo do jogo
 
-Escolha o item HTML no menu, leia o aviso sobre o provedor e pressione o botão de carregamento. É necessária conexão; depois siga os controles de início e teclado do próprio player. A página inclui um link direto ao provedor caso a incorporação falhe. Teste foco de teclado, telas pequenas, tela cheia e retorno à documentação. Disponibilidade do player e recursos do navegador podem mudar independentemente do GitPageDocs.
+Escolha o item HTML no menu. O SDK do player carrega quando a página abre; use o controle Play nativo para iniciar o jogo. Não há início automático nem botão de carregamento separado da documentação. É necessária conexão. Uma falha de inicialização exibe um erro que orienta recarregar a página; a visualização normal contém apenas o player. Teste foco de teclado, telas pequenas, tela cheia e retorno à documentação. Disponibilidade do player e recursos do navegador podem mudar independentemente do GitPageDocs.
 
 Revise o HTML e suas dependências antes de publicar. O iframe atual permite scripts e conteúdo de mesma origem, portanto não funciona como barreira de segurança para HTML arbitrário não confiável. Não inclua segredos em HTML, URLs ou configuração do cliente. A hospedagem estática expõe os arquivos independentemente da visibilidade do menu ou autorização da rota. No ambiente local e no Pages, versione a página com a configuração correspondente e valide os caminhos gerados antes da publicação.
 `,
@@ -35,7 +35,9 @@ Este guia monta um site pequeno em três idiomas, com duas páginas Markdown e m
 
 ## 1. Gere e confira a estrutura
 
-Execute \`npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO\` em um diretório de projeto novo. Neste repositório de código-fonte, \`node cli/index.mjs\` executa a versão do checkout. A geração grava configuração e documentação; ela não inicia o visualizador Next.js.
+O scaffold inclui as versões 0.0.11 e 0.0.10 no seletor. Ambas contêm os exemplos atuais; a versão do pacote continua sendo 0.0.11. Caminhos e rótulos de versão são gerados para a versão correspondente da documentação. Pastas existentes de versões anteriores não são apagadas.
+
+Execute \`npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO\` em um diretório de projeto novo. Neste repositório de código-fonte, \`node cli/index.mjs\` executa a versão do checkout. A geração grava configuração e documentação; ela não inicia o visualizador Next.js.
 
 O JSON completo abaixo é um exemplo mínimo de \`gitpagedocs/config.json\`. Em um site existente, mescle os campos relevantes e preserve a identidade do repositório, opções de publicação, temas e demais versões.
 
@@ -109,8 +111,8 @@ A configuração E2E usa as portas 3100 e 3101; preserve o serviço existente na
 
 ## Revise e publique
 
-Revise acessibilidade, autorização, validação de entrada, erros, liberação de recursos e consistência dos arquivos gerados. Analise cada fonte alterada no projeto SonarQube configurado com o escopo correto de teste ou produção; use parser/linter da stack nos formatos sem suporte. Não inclua credenciais ou artefatos temporários nos commits.
+Revise acessibilidade, autorização, validação de entrada, erros, liberação de recursos e consistência dos arquivos gerados. Análise cada fonte alterada no projeto SonarQube configurado com o escopo correto de teste ou produção; use parser/linter da stack nos formatos sem suporte. Não inclua credenciais ou artefatos temporários nos commits.
 
-Os pacotes publicáveis são \`@gitpagedocs/tools\`, \`@gitpagedocs/mcp\` e \`@gitpagedocs/cli\`; raiz e frontend são privados. Sincronize versões, dependências internas e lockfile, inspecione os pacotes e conclua a validação antes do push. O workflow npm atual roda em pushes para main e publica em ordem de dependência quando a versão da CLI é nova. Confirme npm e Pages depois; um build local verde não equivale à publicação.
+Os pacotes publicáveis são \`@gitpagedocs/tools\`, \`@gitpagedocs/mcp\` e \`@gitpagedocs/cli\`; raiz e frontend são privados. Sincronize versões, dependências internas e lockfile, inspecione os pacotes e conclua a validação antes do push. O workflow npm atual roda em pushes para main e pública em ordem de dependência quando a versão da CLI é nova. Confirme npm e Pages depois; um build local verde não equivale à publicação.
 `,
 };

@@ -11,6 +11,8 @@ export interface UseVideoPlaybackOptions {
   src: string;
   /** From `isVideoExclusive`: false keeps the video out of the page-wide rule. */
   exclusive: boolean;
+  /** Initial sound setting, applied once when the provider is ready. */
+  muted?: boolean;
   /** Injectable for tests; defaults to the page-wide arbiter. */
   arbiter?: PlaybackArbiter;
 }
@@ -24,7 +26,7 @@ const noop = (): void => undefined;
  */
 export function useVideoPlayback(
   elementRef: RefObject<VideoPlaybackElement | null>,
-  { provider, src, exclusive, arbiter = sharedPlaybackArbiter }: UseVideoPlaybackOptions,
+  { provider, src, exclusive, muted = false, arbiter = sharedPlaybackArbiter }: UseVideoPlaybackOptions,
 ): void {
   const pauseRef = useRef<() => void>(noop);
   const pause = useCallback(() => pauseRef.current(), []);
@@ -32,12 +34,12 @@ export function useVideoPlayback(
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!exclusive || !element) return;
-    const controller = createVideoPlaybackController(provider, element, { onPlay: claimPlayback });
-    pauseRef.current = controller.pause;
+    if (!element || (!exclusive && provider !== "youtube")) return;
+    const controller = createVideoPlaybackController(provider, element, { onPlay: exclusive ? claimPlayback : noop, muted });
+    pauseRef.current = exclusive ? controller.pause : noop;
     return () => {
       pauseRef.current = noop;
       controller.dispose();
     };
-  }, [elementRef, provider, src, exclusive, claimPlayback]);
+  }, [elementRef, provider, src, exclusive, muted, claimPlayback]);
 }

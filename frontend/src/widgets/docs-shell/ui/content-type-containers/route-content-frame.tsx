@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ContentContainerWrapper, type ContentContainerChildren } from "./content-container-wrapper";
-import { CardInsideDescription, CardInsideTitle } from "./card-inside-text";
+import { MEDIA_METADATA_LAYOUT, resolveRouteMetadataLayout, RouteMetadata, type MetadataSlot } from "./route-metadata";
 import type { ContentHeaderText } from "./content-header-text";
 import { toContainerWrapperProps, type RouteContainerFrameProps } from "./container-wrapper-props";
 import type { FullscreenAlign } from "./fullscreen-alignment";
@@ -12,14 +12,15 @@ interface RouteContentFrameProps {
   /** The container's own props: fullscreen, labels, margins and browse navigation. */
   frame: RouteContainerFrameProps;
   header?: ReactNode;
+  footer?: ReactNode;
   fullscreenAlign?: FullscreenAlign;
   children: ContentContainerChildren;
 }
 
 /** Frame shared by every route content container (fullscreen, margins, browse navigation). */
-export function RouteContentFrame({ frame, header, fullscreenAlign, children }: Readonly<RouteContentFrameProps>) {
+export function RouteContentFrame({ frame, header, footer, fullscreenAlign, children }: Readonly<RouteContentFrameProps>) {
   return (
-    <ContentContainerWrapper header={header} fullscreenAlign={fullscreenAlign} {...toContainerWrapperProps(frame)}>
+    <ContentContainerWrapper header={header} footer={footer} fullscreenAlign={fullscreenAlign} {...toContainerWrapperProps(frame)}>
       {children}
     </ContentContainerWrapper>
   );
@@ -33,14 +34,18 @@ interface MediaCardProps {
   children: ReactNode;
 }
 
-/** A media route (video, audio): the player in a card, between the route title and description. */
+/** A media route with independently positioned title and description around its content. */
 export function MediaCard({ frame, header, fullscreenAlign, children }: Readonly<MediaCardProps>) {
+  const layout = resolveRouteMetadataLayout(frame.config?.layout, MEDIA_METADATA_LAYOUT);
+  const metadata = (slot: MetadataSlot) => <RouteMetadata header={header} config={frame.config} layout={layout} slot={slot} />;
   return (
-    <RouteContentFrame frame={frame} fullscreenAlign={fullscreenAlign}>
+    <RouteContentFrame frame={frame} fullscreenAlign={fullscreenAlign}
+      header={metadata({ placement: "outside", position: "before" })}
+      footer={metadata({ placement: "outside", position: "after" })}>
       <article className={styles.card}>
-        <CardInsideTitle header={header} />
+        {metadata({ placement: "inside", position: "before" })}
         {children}
-        <CardInsideDescription header={header} />
+        {metadata({ placement: "inside", position: "after" })}
       </article>
     </RouteContentFrame>
   );

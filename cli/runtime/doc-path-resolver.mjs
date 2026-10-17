@@ -1,6 +1,9 @@
 /** Map doc paths to content keys and apply version badges */
 
+import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
+
 const DOC_FILE_KEYS = new Map([
+  ["content-blocks.md", "contentBlocks"],
   ["index.md", "index"],
   ["getting-started.md", "gettingStarted"],
   ["configuration.md", "configuration"],
@@ -24,6 +27,14 @@ const DOC_FILE_KEYS = new Map([
   ["troubleshooting.md", "troubleshooting"],
   ["contributing.md", "contributing"],
   ["html-containers.md", "htmlContainers"],
+  ["guides.md", "guides"],
+  ["configure-your-site.md", "configureYourSite"],
+  ["read-and-explore.md", "readAndExplore"],
+  ["automate-and-integrate.md", "automateAndIntegrate"],
+  ["operations-and-development.md", "operationsAndDevelopment"],
+  ["ship-and-maintain.md", "shipAndMaintain"],
+  ["develop-the-project.md", "developTheProject"],
+  ["git-and-github.md", "gitAndGitHub"],
 ]);
 
 export function parseDocFileToKey(fileName) {
@@ -43,13 +54,17 @@ export function extractLanguageFromPath(docPath) {
 }
 
 export function withVersionBadge(content, versionId, language) {
-  const normalized = typeof content === "string" ? content : "";
+  const normalized = typeof content === "string"
+    ? content.replaceAll(`/versions/${PACKAGE_VERSION}/`, `/versions/${versionId}/`)
+    : "";
   if (!normalized.trim()) {
     return normalized;
   }
 
   const alreadyTagged =
     normalized.includes(`Version: ${versionId}`) ||
+    normalized.includes(`Versão: ${versionId}`) ||
+    normalized.includes(`Versión: ${versionId}`) ||
     normalized.includes(`Versao: ${versionId}`) ||
     normalized.includes(`Version (ES): ${versionId}`);
   if (alreadyTagged) {
@@ -62,7 +77,7 @@ export function withVersionBadge(content, versionId, language) {
 }
 
 /** Badge wording per language; every other language reads the English form. */
-const VERSION_LABEL_PREFIXES = { pt: "Versao", es: "Version (ES)" };
+const VERSION_LABEL_PREFIXES = { pt: "Versão", es: "Versión" };
 
 function versionLabelPrefix(language) {
   return VERSION_LABEL_PREFIXES[language] ?? "Version";

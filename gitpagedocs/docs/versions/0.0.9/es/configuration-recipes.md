@@ -194,4 +194,4 @@ Consulta Documentos PDF para añadir `routes-pdf` y `menus-header-pdf`; el ejemp
 
 Comprueba todos los idiomas, expande cada categoría y sigue cada hoja. Prueba URLs directas, cambios de texto/icono, primero/anterior/siguiente/último en foco y direcciones desactivadas en los extremos. Inspecciona el config de versión cuando aparece una etiqueta pero falla su destino. Haz commit de la configuración revisada junto con los documentos y anexos referenciados.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

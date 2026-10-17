@@ -4,7 +4,9 @@ Este guia monta um site pequeno em três idiomas, com duas páginas Markdown e m
 
 ## 1. Gere e confira a estrutura
 
-Execute `npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO` em um diretório de projeto novo. Neste repositório de código-fonte, `node cli/index.mjs` executa a versão do checkout. A geração grava configuração e documentação; ela não inicia o visualizador Next.js.
+O scaffold inclui as versões 0.0.11 e 0.0.10 no seletor. Ambas contêm os exemplos atuais; a versão do pacote continua sendo 0.0.11. Caminhos e rótulos de versão são gerados para a versão correspondente da documentação. Pastas existentes de versões anteriores não são apagadas.
+
+Execute `npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO` em um diretório de projeto novo. Neste repositório de código-fonte, `node cli/index.mjs` executa a versão do checkout. A geração grava configuração e documentação; ela não inicia o visualizador Next.js.
 
 O JSON completo abaixo é um exemplo mínimo de `gitpagedocs/config.json`. Em um site existente, mescle os campos relevantes e preserve a identidade do repositório, opções de publicação, temas e demais versões.
 
@@ -12,7 +14,7 @@ O JSON completo abaixo é um exemplo mínimo de `gitpagedocs/config.json`. Em um
 {
   "site": {
     "name": "Documentação • Guía • Documentation",
-    "docsVersion": "0.0.10",
+    "docsVersion": "0.0.11",
     "languages": {
       "en": true,
       "pt": true,
@@ -36,28 +38,28 @@ O JSON completo abaixo é um exemplo mínimo de `gitpagedocs/config.json`. Em um
         "colorLight": "currentColor"
       },
       "LanguageSelector": {
-        "tag": "FiGlobe"
+        "tag": "SiGoogletranslate"
       },
       "ThemeSelector": {
-        "tag": "BsSunFill"
+        "tag": "LuPencil"
       },
       "FocusMode": {
-        "tag": "MdFullscreen"
+        "tag": "LuBookOpen"
       },
       "QuickNavigation": {
-        "tag": "FiSearch"
+        "tag": "LuSearch"
       },
       "PdfDownload": {
-        "tag": "FiDownload"
+        "tag": "LuDownload"
       },
       "PdfOpenInNewTab": {
-        "tag": "FiExternalLink"
+        "tag": "LuExternalLink"
       },
       "DocumentPrevious": {
-        "tag": "FiChevronLeft"
+        "tag": "LuChevronLeft"
       },
       "DocumentNext": {
-        "tag": "FiChevronRight"
+        "tag": "LuChevronRight"
       }
     },
     "pdf": {
@@ -70,7 +72,7 @@ O JSON completo abaixo é um exemplo mínimo de `gitpagedocs/config.json`. Em um
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.10",
+        "id": "0.0.11",
         "path": "gitpagedocs/docs/versions/0.0.10/config.json"
       }
     ]
@@ -194,4 +196,4 @@ Consulte Documentos PDF para adicionar `routes-pdf` e `menus-header-pdf`; o exem
 
 Confira todos os idiomas, expanda cada categoria e percorra as folhas. Teste URLs diretas, alterações entre texto e ícone, primeiro/anterior/próximo/último no foco e direções desabilitadas nas extremidades. Inspecione o config da versão quando o rótulo aparece mas o destino falha. Faça commit da configuração revisada junto com os documentos e anexos referenciados.
 
-> Versao: 0.0.10
+> Versão: 0.0.10

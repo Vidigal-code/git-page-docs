@@ -78,4 +78,4 @@ El botón de nueva pestaña abre el Blob PDF validado en lugar de navegar a la U
 - Ocultar un botón no controla el acceso. Los PDFs alojados públicamente siguen disponibles mediante su URL. Los documentos confidenciales necesitan alojamiento protegido.
 - Si la vista previa está vacía, confirma que la ruta devuelve un PDF y permite acceso mediante CORS; después prueba la nueva pestaña. Permite ventanas emergentes para el sitio si el navegador bloquea esa acción. Los fallos de descarga y apertura se muestran en la página.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

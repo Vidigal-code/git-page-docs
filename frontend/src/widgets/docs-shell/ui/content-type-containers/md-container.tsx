@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, type ReactElement } from "react";
-import { extractHeadingsFromHtml, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
+import { extractHeadingsFromHtml, scopeMarkdownHtml, scopeMarkdownId, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
-import { ContentHeaderBlock } from "./content-header-block";
+import { resolveContentHeaderText } from "./content-header-text";
+import { DOCUMENT_METADATA_LAYOUT, resolveRouteMetadataLayout, RouteMetadata } from "./route-metadata";
 import { getContainerStyle } from "./container-style";
 import type { RouteContainerFrameProps } from "./container-wrapper-props";
 import { RouteContentFrame } from "./route-content-frame";
@@ -16,6 +17,7 @@ const VALID_TOC_POSITIONS: ReadonlySet<TocPosition> = new Set<TocPosition>(["cen
 
 interface MdContainerProps extends RouteContainerFrameProps {
   html: string;
+  instanceId?: string;
   language: LanguageCode;
   isDarkMode?: boolean;
   routeGuideEnabled?: boolean;
@@ -42,6 +44,7 @@ interface MdContainerProps extends RouteContainerFrameProps {
 export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
   const {
     html,
+    instanceId,
     config,
     language,
     fullscreenEnabled = false,
@@ -61,6 +64,15 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
     sourceActionLabels,
   } = props;
   const containerStyle = getContainerStyle(config?.container);
+  const configuredLayout = resolveRouteMetadataLayout(config?.layout, DOCUMENT_METADATA_LAYOUT);
+  const metadata = {
+    config,
+    header: resolveContentHeaderText(contentOnly ? undefined : config, language, isDarkMode),
+    layout: {
+      title: { ...configuredLayout.title, placement: "outside" as const },
+      description: { ...configuredLayout.description, placement: "outside" as const },
+    },
+  };
   const breadcrumb =
     (config?.RouteGuide ?? routeGuideEnabled) &&
     breadcrumbTrail.length > 0 &&
@@ -80,8 +92,11 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
     if (!routeguideBrand) return [];
     const specificIds =
       config && "RouteGuideSpeciFicbrand" in config ? (config.RouteGuideSpeciFicbrand ?? []) : [];
-    return extractHeadingsFromHtml(html, specificIds);
-  }, [routeguideBrand, html, config]);
+    return extractHeadingsFromHtml(html, specificIds).map((heading) => ({
+      ...heading, id: instanceId ? scopeMarkdownId(heading.id, instanceId) : heading.id,
+    }));
+  }, [routeguideBrand, html, config, instanceId]);
+  const renderedHtml = useMemo(() => instanceId ? scopeMarkdownHtml(html, instanceId) : html, [html, instanceId]);
 
   const fromConfig = config && "RouteguideBrandPosition" in config ? config.RouteguideBrandPosition : undefined;
   const tocPosition: TocPosition =
@@ -90,7 +105,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
 
   const markdownContent = (
     <article className={styles.card}>
-      <div className={styles.markdown} style={containerStyle} dangerouslySetInnerHTML={{ __html: html }} />
+      <div className={styles.markdown} style={containerStyle} dangerouslySetInnerHTML={{ __html: renderedHtml }} />
     </article>
   );
 
@@ -113,7 +128,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
   const header = (
     <>
       {breadcrumb}
-      {!contentOnly && <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />}
+      <RouteMetadata {...metadata} slot={{ placement: "outside", position: "before" }} />
     </>
   );
 
@@ -140,7 +155,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
   };
 
   return (
-    <RouteContentFrame frame={props} header={header}>
+    <RouteContentFrame frame={props} header={header} footer={<RouteMetadata {...metadata} slot={{ placement: "outside", position: "after" }} />}>
       {content}
     </RouteContentFrame>
   );

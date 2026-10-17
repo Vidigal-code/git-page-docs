@@ -32,6 +32,6 @@ Neste repositório de runtime, altere as fontes de geração antes de compilar: 
 
 Teste todas as versões e idiomas preservados, links diretos, menus aninhados, ícones/texto, ações de PDF e autorização. Confira a exportação no subcaminho real do Pages. Faça commit dos arquivos revisados e envie pelo workflow existente. O comando inicial `pages deploy` gera arquivos, cria commit e faz push; não o repita sem revisão sobre documentação personalizada.
 
-Registre o commit publicado após o sucesso no Actions. Se a verificação falhar, reverta o commit específico com `git revert COMMIT_DA_ATUALIZACAO`, restaure a versão anterior do runtime quando aplicável, envie e execute a publicação novamente. Confirme o conteúdo restaurado na URL pública; o revert sozinho não publica o site.
+Registre o commit publicado após o sucesso no Actions. Se a verificação falhar, reverta o commit específico com `git revert COMMIT_DA_ATUALIZACAO`, restaure a versão anterior do runtime quando aplicável, envie e execute a publicação novamente. Confirme o conteúdo restaurado na URL pública; o revert sozinho não pública o site.
 
-> Versao: 0.0.8
+> Versão: 0.0.8

@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { DocsShell } from "@/widgets/docs-shell";
 import { makeConfig, makeDocsData, makePages, makeSite } from "../widgets-model/fixtures";
+import type { LoadedMdContent, LoadedPage } from "@/entities/docs";
 
 const navigation = vi.hoisted(() => ({ params: new URLSearchParams(), router: { replace: vi.fn(), push: vi.fn() } }));
 vi.mock("next/navigation", () => ({
@@ -18,6 +19,32 @@ beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn();
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+
+it("copies the authorized Markdown composition in focus and downloads it with the page filename", async () => {
+  const copy = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: copy } });
+  const first: LoadedMdContent = { routeId: 1, config: { id: 1, path: { en: "first.md" } }, markdownByLanguage: { en: '<h1 id="first">First block</h1>' }, sourceByLanguage: { en: "# First block" } };
+  const second: LoadedMdContent = { routeId: 2, config: { id: 2, path: { en: "second.md" } }, markdownByLanguage: { en: '<h1 id="second">Second block</h1>' }, sourceByLanguage: { en: "# Second block" } };
+  const secret: LoadedMdContent = { routeId: 3, config: { id: 3, path: { en: "secret.md" }, authorization: { requiredRoles: ["editor"] } }, markdownByLanguage: { en: "<h1>Secret</h1>" }, sourceByLanguage: { en: "# Secret" } };
+  const page: LoadedPage = { id: 39, blocks: [{ id: "one", type: "md", content: first }, { id: "two", type: "md", content: second }, { id: "private", type: "md", content: secret }] };
+  const data = makeDocsData({ pages: [page], pathToPageMap: { "page:39": { pageIndex: 0, contentType: "md" } }, config: makeConfig({
+    site: makeSite({ FocusMode: true, AiChatEnabled: false, focusMode: { sectionNavigationEnabled: false } }),
+    pages: [{ id: 39, blocks: [] }], "menus-header-md": [{ id: 39, en: { title: "Composition", "path-click": "page:39" } }], "menus-header-html": [],
+  }) });
+  let filename = "";
+  vi.stubGlobal("URL", class extends URL { static createObjectURL = () => "blob:combined"; static revokeObjectURL = vi.fn(); });
+  const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) { filename = this.download; });
+  render(<DocsShell data={data} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Focus mode" }));
+  const dialog = screen.getByRole("dialog", { name: "Focus mode" });
+  expect(within(dialog).getAllByRole("heading").map((heading) => heading.textContent)).toEqual(["First block", "Second block"]);
+  expect(screen.queryByRole("heading", { name: "Secret" })).toBeNull();
+  fireEvent.click(within(dialog).getByRole("button", { name: "Copy markdown" }));
+  expect(copy).toHaveBeenCalledWith("# First block\n\n# Second block");
+  fireEvent.click(within(dialog).getByRole("button", { name: "Download .md" }));
+  expect(filename).toBe("page-39.md");
+  click.mockRestore();
+});
 
 it("keeps the focus dialog open when following nested menu documents and resets the section", async () => {
   const pages = makePages();

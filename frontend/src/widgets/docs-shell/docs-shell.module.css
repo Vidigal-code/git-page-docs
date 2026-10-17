@@ -337,7 +337,7 @@
 
 .select,
 .button {
-  height: clamp(38px, 1.2vw + 30px, 42px);
+  height: 44px;
   border-radius: var(--control-radius);
   border: var(--control-border);
   background: var(--control-background);
@@ -355,9 +355,6 @@
   border: var(--select-border);
   background: color-mix(in srgb, var(--card-background) 98%, var(--background));
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
   text-align: center;
   text-align-last: center;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -397,8 +394,8 @@
 }
 
 .modeIconButton {
-  width: clamp(38px, 1.8vw + 26px, 42px);
-  min-width: clamp(38px, 1.8vw + 26px, 42px);
+  width: 44px;
+  min-width: 44px;
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -1137,12 +1134,13 @@ dialog.contentContainerFullscreen {
 }
 
 .quickNavList {
+  --quick-nav-list-trim: 24px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
   min-height: 0;
-  max-height: calc(100dvh - 240px);
+  max-height: calc(100dvh - 240px - var(--quick-nav-list-trim));
 }
 
 .quickNavItemActive {
@@ -1639,7 +1637,7 @@ dialog.versionLinksCard {
   }
 
   .quickNavList {
-    max-height: calc(100dvh - 250px);
+    max-height: calc(100dvh - 250px - var(--quick-nav-list-trim));
   }
 
   .focusModeCard {
@@ -1682,7 +1680,7 @@ dialog.versionLinksCard {
   }
 
   .quickNavList {
-    max-height: calc(100dvh - 240px);
+    max-height: calc(100dvh - 240px - var(--quick-nav-list-trim));
   }
 
   .quickNavFooter {

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ContentTypeRouteConfig, LanguageCode } from "@/entities/docs";
-import { resolveContentHeaderText, toTextAlign } from "./content-header-text";
+import { resolveContentHeaderText, toTextAlign, type ContentHeaderText } from "./content-header-text";
 import { parseCssToStyle } from "./parse-css-to-style";
 import styles from "../../docs-shell.module.css";
 
@@ -11,9 +11,13 @@ export interface ContentHeaderBlockProps {
   isDarkMode?: boolean;
 }
 
-/** Route title and description shown above a content card (markdown, HTML). */
+/** Route title and description rendered outside a content card. */
 export function ContentHeaderBlock({ config, language, isDarkMode = false }: Readonly<ContentHeaderBlockProps>) {
   const header = resolveContentHeaderText(config, language, isDarkMode);
+  return <ContentHeaderTextBlock header={header} config={config} />;
+}
+
+export function ContentHeaderTextBlock({ header, config }: Readonly<{ header: ContentHeaderText; config?: ContentTypeRouteConfig }>) {
   if (!header.showTitle && !header.showDescription) return null;
 
   return (

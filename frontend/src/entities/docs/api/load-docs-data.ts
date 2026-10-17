@@ -62,6 +62,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
   const languages = getLanguages(effectiveConfig, merged);
 
   const { pages, pathToPageMap } = await loadPages({
+    pageCompositions: merged.pageCompositions,
     sortedIds,
     routesMd: merged.routesMd,
     routesSourceViewer: merged.routesSourceViewer,

@@ -6,6 +6,7 @@ import { FiPlay } from "@react-icons/all-files/fi/FiPlay";
 import { FiPause } from "@react-icons/all-files/fi/FiPause";
 import { FiSquare } from "@react-icons/all-files/fi/FiSquare";
 import { FiChevronDown } from "@react-icons/all-files/fi/FiChevronDown";
+import { NativeSelect } from "@/shared/ui/native-select";
 import type { NarrationController } from "../model/use-markdown-narration";
 import type { NarrationLabels } from "../model/narration-labels";
 import { NARRATION_RATE, NARRATION_VOLUME } from "../model/narration-settings";
@@ -46,13 +47,10 @@ export function NarrationPanel({ controller, labels }: Readonly<NarrationPanelPr
             <legend className={styles.legend}>{labels.narrationTitle}</legend>
             <label className={styles.voice} htmlFor={`${id}-voice`}>
               <span className={styles.labelText}>{labels.narrationVoice}</span>
-              <span className={styles.selectControl}>
-                <select id={`${id}-voice`} value={controller.voiceUri} onChange={(event) => controller.setVoiceUri(event.target.value)}>
+                <NativeSelect id={`${id}-voice`} value={controller.voiceUri} onChange={(event) => controller.setVoiceUri(event.target.value)}>
                   <option value="">{labels.narrationAutomaticVoice}</option>
                   {controller.voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} ({voice.lang})</option>)}
-                </select>
-                <FiChevronDown className={styles.selectArrow} aria-hidden="true" focusable="false" />
-              </span>
+                </NativeSelect>
             </label>
             <label htmlFor={`${id}-rate`}>
               <span className={styles.labelText}>{labels.narrationRate} <span className={styles.value}>{controller.rate}×</span></span>

@@ -36,8 +36,8 @@ Em um checkout do runtime com dependências instaladas, `node cli/index.mjs --ho
 
 ## Releases npm para mantenedores
 
-O monorepo publica `@gitpagedocs/tools`, `@gitpagedocs/mcp` e `@gitpagedocs/cli`; raiz e frontend são privados. O `npm-publish.yml` atual roda em pushes para `main` e ignora uma versão da CLI já publicada. Usa o secret `NPM_TOKEN` do repositório e publica workspaces na ordem de dependência. Criar somente uma release no GitHub não é seu gatilho.
+O monorepo pública `@gitpagedocs/tools`, `@gitpagedocs/mcp` e `@gitpagedocs/cli`; raiz e frontend são privados. O `npm-publish.yml` atual roda em pushes para `main` e ignora uma versão da CLI já publicada. Usa o secret `NPM_TOKEN` do repositório e pública workspaces na ordem de dependência. Criar somente uma release no GitHub não é seu gatilho.
 
 Sincronize versões e dependências internas, regenere docs/baselines, execute typecheck, lint, testes, smoke, build e Playwright e revise antes do push. Confirme as três versões no npm e o resultado do Pages. A CLI de configuração ignora `prebuilt/`; essa pasta não é exigida pelo workflow de publicação.
 
-> Versao: 0.0.10
+> Versão: 0.0.10

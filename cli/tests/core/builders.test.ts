@@ -277,6 +277,13 @@ describe("buildRootConfig", () => {
 });
 
 describe("buildVersionConfig", () => {
+  it("preserves accents in localized page audio titles", () => {
+    const route = buildVersionConfig("0.0.11")["routes-md"].find((entry) => entry.id === 2);
+    expect(route?.audio).toMatchObject({
+      tracks: [{ title: { pt: "Música página 2", en: "Page 2 music", es: "Música página 2" } }],
+    });
+  });
+
   const versionId = "1.2.3";
   const base = `gitpagedocs/docs/versions/${versionId}`;
 
@@ -284,7 +291,7 @@ describe("buildVersionConfig", () => {
     const config = buildVersionConfig(versionId);
     const md = config["routes-md"];
 
-    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30]);
+    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40]);
     for (const route of md) {
       for (const lang of LANGS) {
         expect(route.path?.[lang]).toBe(`${base}/${lang}/${ROUTE_PATHS[route.id][lang]}`);

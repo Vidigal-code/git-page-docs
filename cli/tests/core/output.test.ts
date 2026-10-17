@@ -65,7 +65,7 @@ const { LAYOUTS } = layoutsData as { LAYOUTS: Layout[] };
 const { DOC_VERSIONS } = docVersions as { DOC_VERSIONS: string[] };
 const { SUPPORTED_LANGUAGES } = languages as { SUPPORTED_LANGUAGES: readonly string[] };
 
-const BADGES: Record<string, string> = { en: "> Version: ", pt: "> Versao: ", es: "> Version (ES): " };
+const BADGES: Record<string, string> = { en: "> Version: ", pt: "> Versão: ", es: "> Versión: " };
 const PACKAGE_ROOT = path.resolve(__dirname, "../..");
 
 const temporaryRoots: string[] = [];
@@ -98,6 +98,24 @@ afterEach(() => {
 
 // Writes every shipped layout template plus all docs; give it room under CI load.
 describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, () => {
+  it("writes overview Markdown documents for parent menus in all supported languages", async () => {
+    const root = makeRoot();
+    const artifacts = buildConfigArtifacts({ githubOwner: "acme", githubRepo: "docs" });
+    await writeConfigOnlyOutput({
+      root, pkgRoot: PACKAGE_ROOT, outputDir: "gitpagedocs", layoutsDir: "gitpagelayouts",
+      artifacts, useLocalLayoutConfig: false, layouts: [], createThemeTemplate,
+    });
+    for (const versionId of DOC_VERSIONS) {
+      for (const language of SUPPORTED_LANGUAGES) {
+        for (const file of ["guides", "configure-your-site", "read-and-explore", "automate-and-integrate", "operations-and-development", "ship-and-maintain", "develop-the-project", "git-and-github"]) {
+          const content = readFileSync(at(root, `gitpagedocs/docs/versions/${versionId}/${language}/${file}.md`), "utf8");
+          expect(content).toMatch(/^# .+/);
+          expect(content).toContain("## ");
+        }
+      }
+    }
+  });
+
   it("writes the localized HTML example, matching menus and its Markdown guide", async () => {
     const root = makeRoot();
     const artifacts = buildConfigArtifacts({ githubOwner: "acme", githubRepo: "docs" });
@@ -215,6 +233,8 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
       expect(applyRouteDefaults(readJson(root, `gitpagedocs/docs/versions/${id}/config.json`))).toEqual(artifacts.versionConfigs[id]);
       for (const language of SUPPORTED_LANGUAGES) {
         const badge = `${BADGES[language]}${id}`;
+        const navigation = readFileSync(at(root, `gitpagedocs/docs/versions/${id}/${language}/navigation.md`), "utf8");
+        expect(navigation).toContain(`gitpagedocs/docs/versions/${id}/${language}/guides.md`);
         const gettingStarted = readFileSync(at(root, `gitpagedocs/docs/versions/${id}/${language}/getting-started.md`), "utf8");
         expect(gettingStarted).toContain(artifacts.docs?.[language].gettingStarted.trim());
         expect(gettingStarted.endsWith(`\n\n${badge}\n`)).toBe(true);

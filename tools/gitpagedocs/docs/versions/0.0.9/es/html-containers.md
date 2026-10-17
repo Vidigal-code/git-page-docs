@@ -48,4 +48,4 @@ Selecciona la entrada HTML, lee el aviso del proveedor y pulsa el botón de carg
 
 Revisa el HTML y sus dependencias antes de publicar. El iframe actual permite scripts y contenido del mismo origen, por lo que no es una barrera de seguridad para HTML arbitrario no confiable. No incluyas secretos en HTML, URLs ni configuración del cliente. El alojamiento estático expone los archivos independientemente de la visibilidad del menú o autorización de la ruta. En local y Pages, versiona la página junto con su configuración y valida las rutas generadas antes de publicar.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

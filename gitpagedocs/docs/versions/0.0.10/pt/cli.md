@@ -2,47 +2,47 @@
 
 ## Comandos da CLI
 
-| Comando | Descricao |
+| Comando | Descrição |
 |---------|------------|
 | `npx @gitpagedocs/cli` | Gera config e docs em `gitpagedocs/` |
-| `npx @gitpagedocs/cli --layoutconfig` | Tambem gera layouts/templates locais em `gitpagelayouts/` |
+| `npx @gitpagedocs/cli --layoutconfig` | Também gera layouts/templates locais em `gitpagelayouts/` |
 | `npx @gitpagedocs/cli --home` | Distribuicao standalone (`gitpagedocshome/`) |
 | `npx @gitpagedocs/cli --push --owner X --repo Y` | Configura workflow, commit, push |
-| `npx @gitpagedocs/cli --interactive` / `-i` | Modo interativo com prompts (padrao em um terminal) |
-| `npx @gitpagedocs/cli --no-interactive` / `--yes` / `-y` | Nunca pergunta; usa flags e padroes |
-| `gitpagedocs ai` | Gerador interativo de documentacao com IA |
-| `gitpagedocs chat [pergunta]` | Chat de IA com streaming no terminal (REPL em TTY; resposta unica com pergunta ou stdin) |
-| `gitpagedocs provider [id]` / `models [provider]` | Lista provedores de IA / modelos do catalogo |
-| `gitpagedocs document[:repo\|:file\|:folder]` | Gera documentacao com IA |
+| `npx @gitpagedocs/cli --interactive` / `-i` | Modo interativo com prompts (padrão em um terminal) |
+| `npx @gitpagedocs/cli --no-interactive` / `--yes` / `-y` | Nunca pergunta; usa flags e padrões |
+| `gitpagedocs ai` | Gerador interativo de documentação com IA |
+| `gitpagedocs chat [pergunta]` | Chat de IA com streaming no terminal (REPL em TTY; resposta única com pergunta ou stdin) |
+| `gitpagedocs provider [id]` / `models [provider]` | Lista provedores de IA / modelos do catálogo |
+| `gitpagedocs document[:repo\|:file\|:folder]` | Gera documentação com IA |
 | `gitpagedocs deploy` / `pages [actions\|deploy]` | Configura GitHub Pages via Actions + push |
 | `gitpagedocs docs` | Atualiza as regioes gerenciadas de README/CONTRIBUTING/SECURITY |
-| `gitpagedocs password` | Define a senha de acesso a documentacao (chave publica em `site.docsAccess`) |
+| `gitpagedocs password` | Define a senha de acesso a documentação (chave pública em `site.docsAccess`) |
 | `gitpagedocs config` / `config clear` | Mostra a config resolvida / apaga a config salva e o cofre de chaves |
-| `gitpagedocs doctor` / `version` / `update` | Diagnostico / versao / verificacao de atualizacao no registro |
+| `gitpagedocs doctor` / `version` / `update` | Diagnóstico / versão / verificação de atualização no registro |
 | `gitpagedocs mcp start` | Inicia o servidor MCP via stdio |
 
 Instale globalmente com `npm install -g @gitpagedocs/cli` ou rode sem instalar com `npx @gitpagedocs/cli`.
 
-## Opcoes da CLI
+## Opções da CLI
 
-| Opcao | Descricao |
+| Opção | Descrição |
 |-------|-----------|
 | `--owner <user>` | Owner do GitHub |
-| `--repo <repo>` | Repositorio GitHub |
+| `--repo <repo>` | Repositório GitHub |
 | `--path <subpath>` | Subcaminho dos docs (ex: `docs`); sem ele, base path = nome do repo para CSS/JS em project sites |
-| `--output <dir>` | Diretorio de saida (padrao: `gitpagedocs`) |
-| `--search <true-or-false>` | Habilita/desabilita busca de repositorio (`--home`) |
+| `--output <dir>` | Diretório de saída (padrão: `gitpagedocs`) |
+| `--search <true-or-false>` | Habilita/desabilita busca de repositório (`--home`) |
 | `--layoutconfig` | Gera layouts locais em `gitpagelayouts/` |
-| `--layouts-dir <dir>` | Pasta dos layouts locais (padrao: `gitpagelayouts`) |
+| `--layouts-dir <dir>` | Pasta dos layouts locais (padrão: `gitpagelayouts`) |
 | `--push` | Cria workflow, commit de artefatos, push |
 | `--pages-actions` | Apenas muda a fonte do GitHub Pages para GitHub Actions (igual a `pages actions`) |
 | `--home` | Gera `gitpagedocshome/` (estatico + .env + Dockerfile) |
 
-## Saida gerada
+## Saída gerada
 
 - `gitpagedocs/config.json` – config raiz
-- `gitpagedocs/icon.svg` – icone padrao
-- `gitpagedocs/docs/versions/<ver>/config.json` – rotas por versao
+- `gitpagedocs/icon.svg` – ícone padrão
+- `gitpagedocs/docs/versions/<ver>/config.json` – rotas por versão
 - `gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md` – docs em markdown
 - `gitpagelayouts/` – apenas com `--layoutconfig` (pasta configuravel com `--layouts-dir`)
 
@@ -70,4 +70,4 @@ As opções visuais ficam em `gitpagedocs/config.json`. O gerador interativo/cha
 
 `gitpagedocs docs` atualiza somente regiões delimitadas por marcadores em README.md, CONTRIBUTING.md e SECURITY.md, preservando o texto ao redor. `password` configura o par de chaves de acesso à documentação; controles de apresentação no cliente não tornam confidenciais arquivos de um repositório público.
 
-> Versao: 0.0.10
+> Versão: 0.0.10

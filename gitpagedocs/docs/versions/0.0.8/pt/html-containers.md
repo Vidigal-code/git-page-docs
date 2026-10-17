@@ -48,4 +48,4 @@ Escolha o item HTML no menu, leia o aviso sobre o provedor e pressione o botão 
 
 Revise o HTML e suas dependências antes de publicar. O iframe atual permite scripts e conteúdo de mesma origem, portanto não funciona como barreira de segurança para HTML arbitrário não confiável. Não inclua segredos em HTML, URLs ou configuração do cliente. A hospedagem estática expõe os arquivos independentemente da visibilidade do menu ou autorização da rota. No ambiente local e no Pages, versione a página com a configuração correspondente e valide os caminhos gerados antes da publicação.
 
-> Versao: 0.0.8
+> Versão: 0.0.8

@@ -30,4 +30,4 @@ Ocultar menús y autorizar en el navegador no protege archivos públicos en aloj
 
 Que `gitpagedocs mcp start` espere es normal: habla por stdio con un cliente, no con un terminal interactivo. Comprueba directorio, ejecutable y entorno heredado. Las credenciales deben existir en ese proceso; el almacén de la CLI y `.env` no se cargan automáticamente. Reserva stdout al protocolo, revisa stderr y resultados `isError`, y comparte diagnósticos sin secretos.
 
-> Version (ES): 0.0.10
+> Versión: 0.0.10

@@ -21,8 +21,8 @@ type ControllerFactory = (
 const CONTROLLER_FACTORIES: Readonly<Record<VideoProvider, ControllerFactory>> = {
   native: (element, { onPlay }) => createNativeMediaController(element as HTMLMediaElement, { onPlay }),
   vimeo: (element, { onPlay }) => createVimeoController(element as HTMLIFrameElement, { onPlay }),
-  youtube: (element, { onPlay, loadYoutubeApi = loadYoutubeIframeApi }) =>
-    createYoutubeController(element as HTMLIFrameElement, { onPlay, loadYoutubeApi }),
+  youtube: (element, { onPlay, muted, loadYoutubeApi = loadYoutubeIframeApi }) =>
+    createYoutubeController(element as HTMLIFrameElement, { onPlay, muted, loadYoutubeApi }),
   iframe: (element, { onPlay }) => createIframeFocusController(element as HTMLIFrameElement, { onPlay }),
 };
 

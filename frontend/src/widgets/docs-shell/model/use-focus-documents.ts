@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { hasMarkdownDocument, resolvePageMarkdownHtml, type LoadedDocsData, type MenuEntry } from "@/entities/docs";
+import { hasMarkdownDocument, resolvePageMarkdownHtml, type LoadedDocsData, type MenuEntry, type RouteAuthorizationConfig } from "@/entities/docs";
 import { getPageIndexByPathClick } from "./menu-tree";
 import { resolveFocusNavigationIndex, type FocusNavigationTarget } from "./focus-navigation";
 
@@ -13,6 +13,7 @@ interface FocusDocumentsOptions {
   language: string;
   currentPageIndex: number;
   isPathAllowed: (path: string) => boolean;
+  canAccessRoute?: (authorization: RouteAuthorizationConfig | undefined) => boolean;
 }
 
 interface FocusDocuments {
@@ -23,7 +24,7 @@ interface FocusDocuments {
   getDocument: (target: FocusNavigationTarget) => FocusDocument | undefined;
 }
 
-export function useFocusDocuments({ data, entries, language, currentPageIndex, isPathAllowed }: FocusDocumentsOptions): FocusDocuments {
+export function useFocusDocuments({ data, entries, language, currentPageIndex, isPathAllowed, canAccessRoute }: FocusDocumentsOptions): FocusDocuments {
   const documents = useMemo(() => {
     const seenPages = new Set<number>();
     return entries.flatMap((entry) => {
@@ -31,13 +32,13 @@ export function useFocusDocuments({ data, entries, language, currentPageIndex, i
       const pageIndex = getPageIndexByPathClick(data, entry.pathClick);
       if (pageIndex < 0 || seenPages.has(pageIndex)) return [];
       const markdown = resolvePageMarkdownHtml(data.pages?.[pageIndex], {
-        legacyDocs: data.pages ? undefined : data.docs, pageIndex, language,
+        legacyDocs: data.pages ? undefined : data.docs, pageIndex, language, canAccessRoute,
       });
       if (!hasMarkdownDocument(markdown)) return [];
       seenPages.add(pageIndex);
       return [{ ...entry, pageIndex }];
     });
-  }, [data, entries, language, isPathAllowed]);
+  }, [data, entries, language, isPathAllowed, canAccessRoute]);
   const currentDocumentIndex = documents.findIndex((document) => document.pageIndex === currentPageIndex);
   return {
     documents,

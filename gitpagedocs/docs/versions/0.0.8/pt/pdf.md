@@ -78,4 +78,4 @@ O botão de nova aba abre o Blob PDF validado em vez de navegar para a URL raw d
 - Ocultar um botão não controla acesso. PDFs hospedados publicamente continuam acessíveis pela URL. Documentos confidenciais precisam de hospedagem protegida.
 - Se a prévia estiver vazia, confira se o caminho retorna um PDF e permite acesso por CORS; depois tente a nova aba. Permita pop-ups para o site se o navegador bloquear essa ação. Falhas de download e abertura são informadas na página.
 
-> Versao: 0.0.8
+> Versão: 0.0.8

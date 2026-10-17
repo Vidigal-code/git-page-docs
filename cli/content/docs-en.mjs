@@ -1,10 +1,15 @@
 import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 import { practicalEn } from "./practical-en.mjs";
 import { operationsEn } from "./operations-en.mjs";
+import { overviewsEn } from "./overviews-en.mjs";
+import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
+import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 
 export const docsEn = {
     ...practicalEn,
     ...operationsEn,
+    ...overviewsEn,
+    contentBlocks: CONTENT_BLOCKS_DOCS.en,
     pdf: `# PDF documents
 
 PDF is a first-class content type alongside Markdown, HTML, source code, video and audio. The viewer uses the browser's native PDF preview. Download and open-in-new-tab actions remain independently configurable.
@@ -34,11 +39,11 @@ Add this block inside \`site\` in \`gitpagedocs/config.json\`:
 
 Action precedence is \`route.pdf.<flag>\` > \`site.pdf.<flag>\` > \`true\`. An explicit route \`true\` enables that action even when its site default is \`false\`; \`site.pdf.enabled: false\` still disables PDF content everywhere. A missing path for the selected language makes the PDF unavailable; there is no automatic language fallback.
 
-PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`FiDownload\`) and \`site.icons.PdfOpenInNewTab\` (\`FiExternalLink\`) independently with \`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. For example, \`"PdfDownload": { "reactIcon": false }\` shows download text while the new-tab action remains an icon. Changing appearance does not change the action flags above.
+PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDownload\`) and \`site.icons.PdfOpenInNewTab\` (\`LuExternalLink\`) independently with \`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. For example, \`"PdfDownload": { "reactIcon": false }\` shows download text while the new-tab action remains an icon. Changing appearance does not change the action flags above.
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.10/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.11/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -47,9 +52,9 @@ In \`gitpagedocs/docs/versions/0.0.10/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -123,6 +128,7 @@ The runtime expects this structure:
 - **CLI reference**: installation, every command and compatibility flags.
 - **MCP server**: client setup, all 20 tools, 7 resources and provider configuration.
 - **Navigation and nested menus**: recursive trees, URLs and breadcrumb overrides.
+- **Ordered content blocks**: repeat and reorder Markdown, HTML, video, audio and PDF in one page; independently position configured titles and descriptions.
 - **Focus mode**: copy/download Markdown and section/document navigation.
 - **Accessibility and narration**: browser voices, controls and media interaction.
 - **PDF documents**: native previews, download/new-tab controls and the included English guide.
@@ -435,35 +441,35 @@ In \`gitpagedocs/config.json\`, these \`site.icons\` entries configure the langu
   "site": {
     "icons": {
       "LanguageSelector": {
-        "reactIcon": true, "tag": "FiGlobe", "size": "22px",
+        "reactIcon": true, "tag": "SiGoogletranslate", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "ThemeSelector": {
-        "reactIcon": true, "tag": "BsSunFill", "size": "22px",
+        "reactIcon": true, "tag": "LuPencil", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "MdFullscreen", "size": "22px",
+        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
-        "reactIcon": true, "tag": "FiSearch", "size": "22px",
+        "reactIcon": true, "tag": "LuSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfDownload": {
-        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "reactIcon": true, "tag": "LuDownload", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfOpenInNewTab": {
-        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "reactIcon": true, "tag": "LuExternalLink", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentPrevious": {
-        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronLeft", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentNext": {
-        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronRight", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
@@ -904,7 +910,7 @@ Routes define page content; menus define how readers reach it. Configure them in
 
 Each \`menus-header-md\` entry has an \`id\` and localized \`pt\`, \`en\`, \`es\` objects with \`title\` and optional \`path-click\`. Add \`submenus\` containing more entries to nest the tree. A language object may also contain localized \`submenus\` with the same title/path structure. Use one form consistently to avoid listing the same child twice.
 
-Groups without \`path-click\` organize children. For a Markdown destination, use its actual localized path from \`routes-md[].path\`. The \`page:<id>\` alias is registered by source-viewer, video, audio and PDF routes; do not use it for a Markdown-only page. The example below uses version \`0.0.8\`: replace that segment with the version you are editing and create the three chapter files.
+Groups without \`path-click\` organize children. For a Markdown route destination, use its actual localized path from \`routes-md[].path\`. Source-viewer, video, audio, PDF and explicitly composed \`pages\` register \`page:<id>\`; a plain Markdown route uses its file path. The example below uses version \`0.0.8\`: replace that segment with the version you are editing and create the three chapter files.
 
 \`\`\`json
 {
@@ -972,6 +978,14 @@ Groups without \`path-click\` organize children. For a Markdown destination, use
 
 ## Nesting behavior
 
+A parent can be both a document and a group. Keep its localized \`path-click\` together with \`submenus\`: the title opens its Markdown page, while the separate arrow expands or collapses children. The scaffold includes useful overviews for all eight parent groups. Breadcrumb ancestors link to those documents; the current destination remains the current breadcrumb. A group without a path can still organize children, but has no destination to open.
+
+The following excerpt uses the scaffold's existing Markdown routes 31, 32 and 13. Merge it into \`menus-header-md\` and retain the matching \`routes-md\` definitions and files:
+
+\`\`\`json
+${PARENT_MENU_JSON}
+\`\`\`
+
 \`site.nestedMenusEnabled: true\` renders expandable recursive menus. You may add another \`submenus\` array at any node: there is no fixed application depth limit. The configuration must remain finite and practical for browser memory and usability. Setting it to \`false\` displays destinations as a flat list; it does not remove nested pages.
 
 The tree supplies sidebar navigation, search labels, parent expansion and breadcrumb trails. Keep IDs stable and unambiguous; nodes pointing at a protected page follow its authorization rules. Apply the same structure to \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\` , \`menus-header-audio\` and \`menus-header-pdf\`. \`hierarchyMenu\` orders the type sections; \`hierarchyPage\` orders content containers that share a page ID.
@@ -986,7 +1000,7 @@ The tree supplies sidebar navigation, search labels, parent expansion and breadc
 
 Versioned URLs use \`/v/<version>/\`; \`?lang=pt\` selects a language and \`?id=101\` selects a page ID. \`?name=chapter\` selects the document slug. Keep \`VersionControl.versions[].path\` pointing at the matching version config. \`site.ActiveNavigation\` enables quick navigation and its Ctrl+K shortcut. Footer previous/next controls follow available menu destinations; focus-mode document navigation has its own option. See Focus mode for its section and document controls.
 
-Footer previous/next buttons use \`site.icons.DocumentPrevious\` (\`FiChevronLeft\`) and \`site.icons.DocumentNext\` (\`FiChevronRight\`) by default. Set \`reactIcon: false\` on either entry to show its translated text; each entry also accepts \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. Appearance does not change navigation: the footer appears when more than one menu destination is available, and the unavailable direction stays disabled at the ends.
+Footer previous/next buttons use \`site.icons.DocumentPrevious\` (\`LuChevronLeft\`) and \`site.icons.DocumentNext\` (\`LuChevronRight\`) by default. Set \`reactIcon: false\` on either entry to show its translated text; each entry also accepts \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. Appearance does not change navigation: the footer appears when more than one menu destination is available, and the unavailable direction stays disabled at the ends.
 
 Test a new menu from the sidebar, by direct URL and in each enabled language; verify the destination exists and is allowed for the current reader.
 `,
@@ -1024,6 +1038,8 @@ Each option defaults to \`true\`; setting one to \`false\` hides its correspondi
 - \`site.ActiveNavigation\` controls the quick-navigation interface; it does not disable focus-mode document navigation.
 
 ## Copy and download
+
+On a composed page, focus reads the authorized Markdown blocks in order, including repetitions. Its copy/download actions join those sources and use \`page-<id>.md\`; individual block actions retain their original filenames. See Ordered content blocks for the full contract.
 
 Copy and download use the **entire original Markdown document in the selected language**, including sections not currently visible. They do not export the rendered HTML or only the current reading section.
 

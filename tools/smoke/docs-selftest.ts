@@ -22,7 +22,7 @@ function check(label: string, cond: boolean, detail = ""): void {
 }
 
 function readGeneratedVersionConfig(): Record<string, unknown> {
-  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/0.0.10/config.json", "utf8")) as Record<string, unknown>;
+  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/0.0.11/config.json", "utf8")) as Record<string, unknown>;
 }
 
 function asArray(value: unknown): Array<Record<string, unknown>> {
@@ -52,11 +52,32 @@ function routeIds(config: Record<string, unknown>, routeKeys: string[]): Set<num
   return ids;
 }
 
+function assertComposedPages(config: Record<string, unknown>, ids: Set<number>): void {
+  const blockTypes = new Set(["md", "html", "video", "audio", "pdf"]);
+  for (const page of asArray(config.pages)) {
+    const pageId = Number(page.id);
+    check("composed page has an integer ID", Number.isInteger(pageId));
+    check("composed page does not collide with another destination", !ids.has(pageId), String(pageId));
+    ids.add(pageId);
+    const blockIds = new Set<string>();
+    for (const block of asArray(page.blocks)) {
+      const blockId = typeof block.id === "string" ? block.id : "";
+      const blockType = typeof block.type === "string" ? block.type : "";
+      check("composed block has a unique nonempty ID", blockId.trim().length > 0 && !blockIds.has(blockId), blockId);
+      blockIds.add(blockId);
+      check("composed block type is supported", blockTypes.has(blockType), blockType);
+      const routes = asArray(config[`routes-${blockType}`]);
+      check("composed block points to a route of its type", routes.some((route) => route.id === block.routeId), blockId);
+    }
+  }
+}
+
 function assertGeneratedMenuContract(): void {
   const config = readGeneratedVersionConfig();
   const routeKeys = ["routes-md", "routes-source-viewer", "routes-html", "routes-video", "routes-audio", "routes-pdf"];
   const menuKeys = ["menus-header-md", "menus-header-source-viewer", "menus-header-html", "menus-header-video", "menus-header-audio", "menus-header-pdf"];
   const ids = routeIds(config, routeKeys);
+  assertComposedPages(config, ids);
 
   check("generated config includes source viewer routes", asArray(config["routes-source-viewer"]).length > 0);
   check("generated config includes HTML routes", asArray(config["routes-html"]).length > 0);
@@ -74,7 +95,7 @@ function assertGeneratedMenuContract(): void {
       for (const lang of ["pt", "en", "es"]) {
         const localized = item[lang] as { "path-click"?: string } | undefined;
         const pathClick = localized?.["path-click"];
-        if (pathClick && (key === "menus-header-md" || key === "menus-header-html")) {
+        if (pathClick && !pathClick.startsWith("page:") && (key === "menus-header-md" || key === "menus-header-html")) {
           const routeKey = key.replace("menus-header-", "routes-");
           const routeExists = asArray(config[routeKey]).some((route) => {
             const paths = route.path as Record<string, unknown> | undefined;

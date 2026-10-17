@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import type { LanguageCode } from "@/entities/docs";
 import { isFrameBlockedUrl } from "@/shared/lib/is-frame-blocked-url";
-import { ContentHeaderBlock } from "./content-header-block";
+import { resolveContentHeaderText } from "./content-header-text";
+import { DOCUMENT_METADATA_LAYOUT, resolveRouteMetadataLayout, RouteMetadata, type MetadataSlot } from "./route-metadata";
 import { getContainerStyle } from "./container-style";
 import type { RouteContainerFrameProps } from "./container-wrapper-props";
 import { RouteContentFrame } from "./route-content-frame";
@@ -56,8 +57,7 @@ function ExternalLinkFallback({
   );
 }
 
-function injectBaseTarget(html: string, blockLink: boolean): string {
-  const baseTag = blockLink ? BASE_TARGET_BLANK : BASE_TARGET_SELF;
+function injectBaseTarget(html: string, baseTag: string): string {
   const lower = html.toLowerCase();
   const headEnd = lower.indexOf("</head>");
   if (headEnd >= 0) {
@@ -108,10 +108,10 @@ interface HtmlContainerProps extends RouteContainerFrameProps {
 
 export function HtmlContainer(props: Readonly<HtmlContainerProps>) {
   const { html = "", url, config, language, isDarkMode = false, hideHeader = false } = props;
-  const blockLink = config?.blockLink !== false;
+  const baseTarget = config?.blockLink === false ? BASE_TARGET_SELF : BASE_TARGET_BLANK;
   const srcdoc = useMemo(
-    () => (html ? injectBaseTarget(html, blockLink) : null),
-    [html, blockLink],
+    () => (html ? injectBaseTarget(html, baseTarget) : null),
+    [html, baseTarget],
   );
 
   const containerStyle = getContainerStyle(config?.container);
@@ -119,20 +119,29 @@ export function HtmlContainer(props: Readonly<HtmlContainerProps>) {
   const useExternalUrl = Boolean(externalUrl);
   const isBlocked = useExternalUrl && isFrameBlockedUrl(externalUrl ?? undefined);
 
-  const header = hideHeader ? null : <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
+  const metadataProps = {
+    config,
+    header: resolveContentHeaderText(hideHeader ? undefined : config, language, isDarkMode),
+    layout: resolveRouteMetadataLayout(config?.layout, DOCUMENT_METADATA_LAYOUT),
+  };
+  const metadata = (slot: MetadataSlot) => <RouteMetadata {...metadataProps} slot={slot} />;
   const wrapperClass = isBlocked
     ? `${styles.htmlWrapper} ${styles.htmlWrapperExternalLink}`
     : styles.htmlWrapper;
   const content = (
     <article className={styles.card}>
+      {metadata({ placement: "inside", position: "before" })}
       <div className={wrapperClass} style={containerStyle}>
         {renderHtmlBody({ isBlocked, externalUrl, language, srcdoc })}
       </div>
+      {metadata({ placement: "inside", position: "after" })}
     </article>
   );
 
   return (
-    <RouteContentFrame frame={props} header={header}>
+    <RouteContentFrame frame={props}
+      header={metadata({ placement: "outside", position: "before" })}
+      footer={metadata({ placement: "outside", position: "after" })}>
       {content}
     </RouteContentFrame>
   );

@@ -27,7 +27,7 @@ Añade este bloque dentro de `site` en `gitpagedocs/config.json`:
 
 La precedencia de las acciones es `ruta.pdf.<flag>` > `site.pdf.<flag>` > `true`. Un `true` explícito en la ruta activa esa acción aunque el valor del sitio sea `false`; `site.pdf.enabled: false` sigue desactivando todos los PDFs. Si falta la ruta del idioma seleccionado, el PDF no está disponible; no hay cambio automático de idioma.
 
-Las acciones PDF usan iconos por defecto. Configura `site.icons.PdfDownload` (`FiDownload`) y `site.icons.PdfOpenInNewTab` (`FiExternalLink`) por separado con `reactIcon`, `tag`, `size`, `colorDark` y `colorLight`. Por ejemplo, `"PdfDownload": { "reactIcon": false }` muestra texto en descarga mientras la nueva pestaña conserva su icono. La apariencia no cambia las opciones de activación anteriores.
+Las acciones PDF usan iconos por defecto. Configura `site.icons.PdfDownload` (`LuDownload`) y `site.icons.PdfOpenInNewTab` (`LuExternalLink`) por separado con `reactIcon`, `tag`, `size`, `colorDark` y `colorLight`. Por ejemplo, `"PdfDownload": { "reactIcon": false }` muestra texto en descarga mientras la nueva pestaña conserva su icono. La apariencia no cambia las opciones de activación anteriores.
 
 ## Ejemplo de ruta y menú
 
@@ -78,4 +78,4 @@ El botón de nueva pestaña abre el Blob PDF validado en lugar de navegar a la U
 - Ocultar un botón no controla el acceso. Los PDFs alojados públicamente siguen disponibles mediante su URL. Los documentos confidenciales necesitan alojamiento protegido.
 - Si la vista previa está vacía, confirma que la ruta devuelve un PDF y permite acceso mediante CORS; después prueba la nueva pestaña. Permite ventanas emergentes para el sitio si el navegador bloquea esa acción. Los fallos de descarga y apertura se muestran en la página.
 
-> Version (ES): 0.0.10
+> Versión: 0.0.10

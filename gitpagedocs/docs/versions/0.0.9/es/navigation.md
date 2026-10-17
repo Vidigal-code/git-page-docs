@@ -101,4 +101,4 @@ Los botones anterior/siguiente del pie usan `site.icons.DocumentPrevious` (`FiCh
 
 Prueba un menú nuevo desde la barra lateral, por URL directa y en cada idioma habilitado; confirma que el destino existe y está permitido para el lector actual.
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9

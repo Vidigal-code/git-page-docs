@@ -21,6 +21,7 @@ export function buildEffectiveConfig(
   const effectiveConfig: GitPageDocsConfig = {
     ...baseConfig,
     auth,
+    pages: merged.pageCompositions,
     routes,
     "menus-header": menusHeader,
     "routes-md": routesMd,

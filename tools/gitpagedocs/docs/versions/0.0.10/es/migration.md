@@ -9,8 +9,8 @@ Anota el commit publicado, la versión de la CLI y la revisión del workflow. Ej
 Para comparar de forma reproducible, indica el paquete exacto:
 
 ```sh
-npx --yes @gitpagedocs/cli@0.0.10 version
-npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO --output gitpagedocs-candidate
+npx --yes @gitpagedocs/cli@0.0.11 version
+npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO --output gitpagedocs-candidate
 git diff --no-index -- gitpagedocs gitpagedocs-candidate
 ```
 
@@ -26,12 +26,12 @@ El formato compacto `site.icons.defaults` comparte valores entre iconos, y cada 
 
 La apertura de PDF ahora obtiene bytes validados y abre un Blob `application/pdf` en otra pestaña. Los servidores externos deben permitir CORS incluso con la vista previa desactivada. Revisa las tres acciones por separado, comprueba el permiso de ventanas emergentes y conserva los errores traducidos. Las preferencias de PDF del navegador siguen aplicándose.
 
-## Valida y publica el resultado revisado
+## Valida y pública el resultado revisado
 
-En este repositorio del runtime, cambia las fuentes de generación antes de compilar: el build vuelve a generar la documentación. Ejecuta `pnpm run typecheck`, `pnpm run lint`, `pnpm exec vitest run`, `pnpm run smoke:all` y `pnpm run build`. Ejecuta `pnpm run test:e2e` con `PORT=3100` establecido en el shell. Un repositorio consumidor necesita sus propias comprobaciones equivalentes.
+En este repositorio del runtime, cambia las fuentes de generación antes de compilar: el build vuelve a generar la documentación. Ejecuta `pnpm run typecheck`, `pnpm run lint`, `pnpm exec vitest run`, `pnpm run smoke:all` y `pnpm run build`. Ejecuta `pnpm run test:e2e` con `PORT=3100` establecido en el shell. Un repositorio consumidor necesita sus propias comprobaciónes equivalentes.
 
 Prueba todas las versiones e idiomas conservados, enlaces directos, menús anidados, iconos/texto, acciones PDF y autorización. Comprueba la exportación bajo la subruta real de Pages. Crea el commit revisado y envíalo mediante el workflow existente. El comando inicial `pages deploy` genera archivos, crea un commit y hace push; no lo repitas sin revisar sobre documentación personalizada.
 
-Registra el commit publicado cuando Actions termine correctamente. Si falla la comprobación, revierte el commit específico con `git revert COMMIT_DE_ACTUALIZACION`, restaura la versión anterior del runtime cuando corresponda, envía y ejecuta de nuevo el despliegue. Confirma el contenido restaurado en la URL pública; revertir por sí solo no publica el sitio.
+Registra el commit publicado cuando Actions termine correctamente. Si falla la comprobación, revierte el commit específico con `git revert COMMIT_DE_ACTUALIZACION`, restaura la versión anterior del runtime cuando corresponda, envía y ejecuta de nuevo el despliegue. Confirma el contenido restaurado en la URL pública; revertir por sí solo no pública el sitio.
 
-> Version (ES): 0.0.10
+> Versión: 0.0.10

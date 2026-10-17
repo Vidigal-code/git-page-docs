@@ -67,8 +67,8 @@ describe("extractLanguageFromPath", () => {
 describe("withVersionBadge", () => {
   it("appends a language-specific badge after the trimmed content", () => {
     expect(withVersionBadge("# Title\n\ntext  \n\n", "1.2.3", "en")).toBe("# Title\n\ntext\n\n> Version: 1.2.3\n");
-    expect(withVersionBadge("# Titulo", "1.2.3", "pt")).toBe("# Titulo\n\n> Versao: 1.2.3\n");
-    expect(withVersionBadge("# Titulo", "1.2.3", "es")).toBe("# Titulo\n\n> Version (ES): 1.2.3\n");
+    expect(withVersionBadge("# Título", "1.2.3", "pt")).toBe("# Título\n\n> Versão: 1.2.3\n");
+    expect(withVersionBadge("# Título", "1.2.3", "es")).toBe("# Título\n\n> Versión: 1.2.3\n");
   });
 
   it("uses the English badge for unknown or missing languages", () => {

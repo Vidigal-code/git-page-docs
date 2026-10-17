@@ -78,9 +78,9 @@ describe("contracts index", () => {
     expect(contracts.layoutsArtifactPaths("themes").config).toBe("themes/layoutsConfig.json");
   });
 
-  it("publishes the package version as the only doc version", () => {
+  it("publishes the current docs and the editable 0.0.10 example", () => {
     expect(PACKAGE_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
-    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION]);
+    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.10"]);
     expect(versionConstants.DOC_VERSIONS).toBe(DOC_VERSIONS);
   });
 
@@ -92,7 +92,7 @@ describe("contracts index", () => {
 
 describe("route data", () => {
   it("maps every markdown route to a file per language", () => {
-    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30]);
+    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40]);
     for (const paths of Object.values(ROUTE_PATHS)) {
       for (const language of ["pt", "en", "es"] as const) {
         expect(paths[language]).toMatch(/\.md$/);

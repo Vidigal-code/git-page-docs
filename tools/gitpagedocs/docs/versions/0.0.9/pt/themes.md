@@ -1,6 +1,6 @@
 # Temas e layouts
 
-Temas sao templates JSON mapeados por `layoutsConfig.json`.
+Temas são templates JSON mapeados por `layoutsConfig.json`.
 
 ## Arquivos
 
@@ -21,15 +21,15 @@ Cada template normalmente contem:
 
 ## Comportamento em runtime
 
-- tema ativo vem de config/usuario
-- toggle light/dark resolve o tema pareado por referencia
-- variaveis CSS sao geradas dos tokens do template
+- tema ativo vem de config/usuário
+- toggle light/dark resolve o tema pareado por referência
+- variáveis CSS são geradas dos tokens do template
 
 ## Boas praticas
 
 - mantenha contraste acessivel
 - padronize escala de espaco e borda
-- ofereca variantes dark e light quando possivel
+- ofereca variantes dark e light quando possível
 
 ## Escolher e personalizar
 
@@ -39,4 +39,4 @@ No seu repositório, execute a CLI com `--layoutconfig`, edite o template gerado
 
 Ao contribuir no Git Page Docs, a fonte autoral é `gitpagelayouts/v2/base.json` com `gitpagelayouts/v2/layouts/<id>.json`. Execute `pnpm layouts:sync` para gerar templates e documentação. Edições diretas nos templates gerados podem ser substituídas pela sincronização.
 
-> Versao: 0.0.9
+> Versão: 0.0.9

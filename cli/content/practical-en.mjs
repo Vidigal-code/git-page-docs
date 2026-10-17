@@ -3,7 +3,7 @@ import { HTML_ROUTE_JSON, RECIPE_ROOT_JSON, RECIPE_VERSION_JSON } from "./config
 export const practicalEn = {
   htmlContainers: `# HTML containers and interactive examples
 
-An HTML route displays a local document or an external web page inside an iframe. Use it for a trusted interactive demonstration that Markdown cannot express. The scaffold includes **DOOM: HTML example**, route 29, with a localized title, description and a button that loads the external game player only when the visitor chooses to play. The game remains hosted by its provider; the npm package contains the HTML wrapper, not the game assets.
+An HTML route displays a local document or an external web page inside an iframe. Use it for a trusted interactive demonstration that Markdown cannot express. The scaffold includes **DOOM: HTML example**, route 29. Its title and description belong to the documentation container; the HTML itself contains only the game player, without repeated headings, instructions or a custom load button. The game remains hosted by its provider; the npm package contains the HTML integration, not the game assets.
 
 ## Configure a local HTML route
 
@@ -13,7 +13,7 @@ Add this route to the version configuration's existing \`routes-html\` array. Ke
 ${HTML_ROUTE_JSON}
 \`\`\`
 
-Add a localized item in \`menus-header-html\`. Each \`path-click\` must match its language's route path, such as \`gitpagedocs/docs/versions/0.0.10/en/doom.html\`; do not substitute \`page:29\` for this local HTML path. Menu labels do not create routes. HTML uses the same recursive \`submenus\` structure as other menus.
+Add a localized item in \`menus-header-html\`. Each \`path-click\` must match its language's route path, such as \`gitpagedocs/docs/versions/0.0.11/en/doom.html\`; do not substitute \`page:29\` for this local HTML path. Menu labels do not create routes. HTML uses the same recursive \`submenus\` structure as other menus.
 
 ## Size, content and external URLs
 
@@ -25,7 +25,7 @@ The external host can prevent framing through CSP or X-Frame-Options. Known bloc
 
 ## Use and maintain the game example
 
-Select the HTML menu entry, read the provider notice and press the localized load button. Network access is needed; then follow the player's own start and keyboard controls. The wrapper includes a direct provider link if embedding fails. Test keyboard focus, small screens, fullscreen and returning to the documentation. Third-party player availability and browser capabilities can change independently of GitPageDocs.
+Select the HTML menu entry. The player SDK loads when the page opens; use its native Play control to start the game. There is no automatic game start or separate documentation load button. Network access is required. A bootstrap failure displays an error asking you to reload the page; the normal view contains only the player. Test keyboard focus, small screens, fullscreen and returning to the documentation. Third-party player availability and browser capabilities can change independently of GitPageDocs.
 
 Review HTML and dependencies before publishing. The current iframe permits scripts and same-origin content, so it is not a security boundary for arbitrary untrusted HTML. Do not put secrets in HTML, URLs or client configuration. Static hosting exposes the files independently of menu visibility or route authorization. For local development and Pages, commit the wrapper alongside its version configuration and validate the generated paths before deployment.
 `,
@@ -35,7 +35,9 @@ This guide builds a small multilingual documentation site with two Markdown page
 
 ## 1. Generate and inspect the scaffold
 
-Run \`npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY\` in a new project directory. In this source repository, \`node cli/index.mjs\` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
+The scaffold includes versions 0.0.11 and 0.0.10 in the version selector. Both contain the current examples; the package version remains 0.0.11. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
+
+Run \`npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY\` in a new project directory. In this source repository, \`node cli/index.mjs\` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
 
 Use the following complete JSON as a minimal root-config example in \`gitpagedocs/config.json\`. For an existing site, merge the relevant fields and preserve its repository identity, deployment settings, themes and other versions.
 

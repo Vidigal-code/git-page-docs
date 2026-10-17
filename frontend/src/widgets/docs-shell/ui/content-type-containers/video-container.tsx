@@ -84,6 +84,7 @@ export function VideoContainer(props: Readonly<VideoContainerProps>) {
   useVideoPlayback(mediaRef, {
     provider,
     src: embedUrl,
+    muted,
     exclusive: isVideoExclusive({ siteExclusive: mediaExclusivePlayback, muted }),
   });
   const header = resolveContentHeaderText(hideTitleDescription ? undefined : config, language, isDarkMode);

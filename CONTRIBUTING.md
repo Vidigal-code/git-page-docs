@@ -34,9 +34,10 @@ This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the publi
 
 ### User references
 
-The generated documentation includes 23 Markdown pages per language: focused references plus complete configuration recipes, migration/compatibility, troubleshooting, contributing/testing and HTML-container guides. All pages are available in English, Portuguese and Spanish; Markdown filenames stay in English while titles and content preserve UTF-8 accents and special characters.
+The generated documentation includes 32 Markdown pages per language: focused references plus complete configuration recipes, migration/compatibility, troubleshooting, contributing/testing and HTML-container guides. All pages are available in English, Portuguese and Spanish; Markdown filenames stay in English while titles and content preserve UTF-8 accents and special characters.
+The scaffold registers documentation versions 0.0.11 and 0.0.10, both with the current examples; the npm package version is 0.0.11. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
 
-The scaffold has real nested sections: Guides → Configure your site / Read and explore / Automate and integrate → documents, plus Operations and development and Git/GitHub groups. Getting Started and Project overview remain the first destinations. Recursive `submenus` can extend the hierarchy without a fixed depth limit; `site.nestedMenusEnabled: false` keeps every destination in a flat presentation.
+The scaffold has real nested sections: Guides → Configure your site / Read and explore / Automate and integrate → documents, plus Operations and development and Git/GitHub groups. Getting Started and Project overview remain the first destinations. Every parent section has its own localized Markdown overview: click its title to read it, or use the separate arrow to expand children. Breadcrumb ancestors such as Guides → Configure your site remain navigable. Recursive `submenus` can extend the hierarchy without a fixed depth limit; `site.nestedMenusEnabled: false` keeps every destination in a flat presentation.
 
 Configure controls through `gitpagedocs/config.json` → `site.icons`. `LanguageSelector`, `ThemeSelector`, `FocusMode`, `QuickNavigation`, `PdfDownload`, `PdfOpenInNewTab`, `DocumentPrevious` and `DocumentNext` use icons by default. Set `reactIcon: false` independently to display text; `true` displays the icon. Customize `tag`, `size`, `colorDark` and `colorLight` per entry. Compact configs inherit omitted values from `icons.defaults`, so an omitted per-control `reactIcon` does not mean text mode. The Ctrl+K shortcut and accessible control names remain available.
 
@@ -44,7 +45,7 @@ Configure controls through `gitpagedocs/config.json` → `site.icons`. `Language
 
 Focus mode provides eight navigation buttons: first, previous, next and last document, plus first, previous, next and last section. Each navigation flag controls its group of four; document changes keep the reader open and restart at the first section.
 
-Document-footer controls use `DocumentPrevious` (`FiChevronLeft`) and `DocumentNext` (`FiChevronRight`); either can use its translated text with `reactIcon: false`. The footer appears for multiple available menu destinations and disables unavailable directions. `site.ActiveNavigation` controls quick navigation and Ctrl+K separately.
+Document-footer controls use `DocumentPrevious` (`LuChevronLeft`) and `DocumentNext` (`LuChevronRight`); either can use its translated text with `reactIcon: false`. The footer appears for multiple available menu destinations and disables unavailable directions. `site.ActiveNavigation` controls quick navigation and Ctrl+K separately.
 
 `site.accessibility.narration` configures native browser reading. Voices and offline availability depend on the browser and operating system. `site.mediaExclusivePlayback` coordinates narration, radio, audio and video so only one audible source plays by default.
 
@@ -57,18 +58,26 @@ Read or download the [GitPageDocs project guide (PDF, English)](cli/content/asse
 Configure `site.pdf` with `enabled`, `previewEnabled`, `downloadEnabled` and `openInNewTabEnabled` (all default to `true`). The version config uses `routes-pdf`, `pdf.pathPdf` per language and `menus-header-pdf` with `page:23` for the bundled example. Route-level preview/download/new-tab options go inside `pdf`; `hierarchyPage.pdf` and `hierarchyMenu.pdf` order the content and menu sections.
 
 ```json
-{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
+{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
 ```
 
 The native browser viewer handles PDF previews and new tabs through validated `application/pdf` Blob URLs. Preview, download and new-tab actions all require CORS permission for external files. Opening a new tab does not navigate to the raw repository URL, so that server's Content-Type/Content-Disposition does not force a download. Browser PDF support and user preferences still apply. With preview disabled, the first download or new-tab action loads the PDF; cached bytes are reused. File/network errors and blocked pop-ups are reported without silently falling back to the raw URL.
 
-PDF action icons are independent: `site.icons.PdfDownload` defaults to `FiDownload`, and `site.icons.PdfOpenInNewTab` defaults to `FiExternalLink`. For example, `"PdfDownload": { "reactIcon": false }` shows download text while the new-tab control remains an icon. The `site.pdf` and route `pdf` action flags control availability separately from appearance.
+PDF action icons are independent: `site.icons.PdfDownload` defaults to `LuDownload`, and `site.icons.PdfOpenInNewTab` defaults to `LuExternalLink`. For example, `"PdfDownload": { "reactIcon": false }` shows download text while the new-tab control remains an icon. The `site.pdf` and route `pdf` action flags control availability separately from appearance.
 
 Next.js dev/build stages repository PDFs from `gitpagedocs/` into public assets and respects the Pages subpath; other local files must be in `frontend/public/`. See the generated PDF documents page for complete site, route, menu and icon examples.
 
+### Multiple ordered content blocks
+
+A version config can define `pages: [{ id: 39, blocks: [{ id: 'intro', type: 'md', routeId: 1 }, { id: 'repeat', type: 'md', routeId: 1 }] }]`. Use valid JSON with double quotes in the configuration. Block IDs are unique within a page; route references can repeat. The list order determines display order, independently of `hierarchyPage`. Supported types are `md`, `html`, `video`, `audio` and `pdf`; their sources and individual options remain in the corresponding `routes-*` arrays. Reference two route IDs pointing to the same file when two instances need different options.
+
+The example at `gitpagedocs/docs/versions/0.0.10/config.json` and the current scaffold use one destination, `page:39`, containing three Markdown blocks, two HTML blocks, two videos, two audio tracks and three PDFs. See the generated Ordered content blocks guide for the complete JSON, access behavior and compatibility rules. Existing pages without this array retain their behavior.
+
+Routes independently position their configured title and description through `layout.title` and `layout.description`: each accepts `placement: 'inside' | 'outside'` and `position: 'before' | 'after'`. Markdown always keeps configured labels outside its document while honoring before/after. Omitted layout preserves existing presentation. Existing visibility, alignment and CSS settings remain applicable.
+
 ### HTML containers and the DOOM example
 
-The scaffold includes a local HTML demonstration with a title, description and an explicit load button for the externally hosted DOOM player. Game assets are not bundled. The wrapper is generated as `docs/versions/<version>/{en,pt,es}/doom.html`; the HTML containers guide explains sizing, external URLs and browser restrictions.
+The scaffold includes a local HTML demonstration whose outer documentation container supplies its title and description. The HTML itself contains only the externally hosted DOOM player, without duplicated prose or a custom load button. Game assets are not bundled. The wrapper is generated as `docs/versions/<version>/{en,pt,es}/doom.html`; the HTML containers guide explains sizing, external URLs and browser restrictions.
 
 Keep both `routes-html` and `menus-header-html` in the version configuration. Menu paths must match the localized HTML paths; local HTML does not use a `page:29` alias. Merge this example with existing arrays:
 
@@ -79,16 +88,16 @@ Keep both `routes-html` and `menus-header-html` in the version configuration. Me
     "title": { "en": "DOOM: HTML example", "pt": "DOOM: exemplo HTML", "es": "DOOM: ejemplo HTML" },
     "description": { "en": "Load an interactive HTML demo", "pt": "Carregue uma demonstração HTML interativa", "es": "Carga una demostración HTML interactiva" },
     "titleIsVisible": true, "descriptionIsVisible": true, "container": "full",
-    "path": { "en": "gitpagedocs/docs/versions/0.0.10/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.10/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.10/es/doom.html" }
+    "path": { "en": "gitpagedocs/docs/versions/0.0.11/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.11/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.11/es/doom.html" }
   }],
   "menus-header-html": [{
     "id": 29,
-    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.10/en/doom.html" },
-    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.10/pt/doom.html" },
-    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.10/es/doom.html" }
+    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.11/en/doom.html" },
+    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.11/pt/doom.html" },
+    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.11/es/doom.html" }
   }]
 }
 ```
 
-Select the HTML menu entry and press its load button, then use the player's controls. Internet access and a compatible browser are required. The direct provider link remains available if embedding fails. Only publish trusted HTML: the existing iframe permits scripts and same-origin content. Test keyboard access, mobile layout and the actual deployed Pages URL; external availability and framing policies remain controlled by the provider.
+Select the HTML menu entry: the SDK loads when the page opens, and the native Play control starts the game. Internet access and a compatible browser are required. Bootstrap failures display an error asking you to reload the page. Only publish trusted HTML: the existing iframe permits scripts and same-origin content. Test keyboard access, mobile layout and the actual deployed Pages URL; external availability and framing policies remain controlled by the provider.
 <!-- gitpagedocs:end -->

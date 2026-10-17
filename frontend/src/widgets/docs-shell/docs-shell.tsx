@@ -5,8 +5,10 @@ import { useSearchParams } from "next/navigation";
 import {
   hasMarkdownDocument,
   resolvePageMarkdownHtml,
+  resolvePageMarkdownSource,
   toDocsShellCssVars,
   type LoadedDocsData,
+  type LoadedPage,
 } from "@/entities/docs";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
@@ -53,6 +55,17 @@ const AiChatDrawer = dynamic(
 );
 import { resolveAiChatOpenIconConfig, resolveAiChatCloseIconConfig, resolveAiChatSettingsIconConfig, resolveAiChatSendIconConfig, resolveAiChatCancelIconConfig, resolveAiChatTrashIconConfig, resolveAiChatClearChatIconConfig, resolveAiChatClearDataIconConfig, resolveAiChatExpandIconConfig, resolveAiChatCollapseIconConfig, resolveAiChatLockIconConfig } from "@/shared/lib/icons/ai-chat/resolve-ai-chat-icon";
 import styles from "./docs-shell.module.css";
+
+function getCurrentPagePath(page: LoadedPage | undefined, language: string): string {
+  if (page?.blocks) return `page:${page.id}`;
+  return page?.md?.config.path?.[language] ?? page?.html?.config.path?.[language] ??
+    (page?.html?.config.url ? `url:${page.html.config.url[language] ?? page.html.config.url.en}` : null) ??
+    (page?.video ? `page:${page.id}` : null) ?? (page?.audio ? `page:${page.id}` : "");
+}
+
+function getFocusFileName(page: LoadedPage | undefined, language: string): string {
+  return page?.blocks ? `page-${page.id}.md` : markdownFileName(page?.md?.config.path?.[language]);
+}
 
 export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   const { getCurrentSearchParams, replaceUrlWithoutNavigation, pathname, router } = useDocsShellUrl();
@@ -135,7 +148,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
   const safeAccessiblePageIndex = isPageAccessible(safePageIndex) ? safePageIndex : firstAccessiblePageIndex;
   const currentPage = data.pages?.[safeAccessiblePageIndex];
-  const markdownHtml = resolvePageMarkdownHtml(currentPage, { legacyDocs: data.docs, pageIndex: safeAccessiblePageIndex, language });
+  const markdownOptions = { legacyDocs: data.docs, pageIndex: safeAccessiblePageIndex, language, canAccessRoute: isRouteAccessible };
+  const markdownHtml = resolvePageMarkdownHtml(currentPage, markdownOptions);
   // Focus mode reads the page's markdown, so routes without one (source-viewer,
   // media-only, untranslated) must not offer it at all.
   const pageHasMarkdown = hasMarkdownDocument(markdownHtml);
@@ -149,7 +163,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     canGoNext,
   } = useDocsShellLinearNav(data, language, { pageIndex: safeAccessiblePageIndex, isPathAllowed });
   const displayHeaderMenuTree = useMemo(() => getMenuDisplayNodes(headerMenuTree, data.config.site), [headerMenuTree, data.config.site]);
-  const focusDocuments = useFocusDocuments({ data, entries: headerMenuEntries, language, currentPageIndex: safeAccessiblePageIndex, isPathAllowed });
+  const focusDocuments = useFocusDocuments({ data, entries: headerMenuEntries, language, currentPageIndex: safeAccessiblePageIndex, isPathAllowed, canAccessRoute: isRouteAccessible });
   const focusDocumentId = `${data.activeVersionId ?? ""}:${language}:${currentPage?.id ?? safeAccessiblePageIndex}`;
 
   const {
@@ -273,6 +287,13 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     ],
   );
 
+  const onBreadcrumbNavigate = useCallback(
+    (pathClick: string, ancestorKeys: string[]) => {
+      onMenuClick(pathClick, ancestorKeys, { origin: "breadcrumb" });
+    },
+    [onMenuClick],
+  );
+
   const goToLinearNavigation = useCallback(
     (offset: -1 | 1) => {
       if (currentLinearNavigationIndex < 0) return;
@@ -352,11 +373,11 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   // on the active palette across live theme switches.
   useDocumentThemeVars(cssVars);
   const labels = useDocsShellLabels(data, language);
-  const focusFileName = markdownFileName(currentPage?.md?.config.path?.[language]);
+  const focusFileName = getFocusFileName(currentPage, language);
   const focusDocument = {
     id: focusDocumentId,
     title: focusDocuments.documents[focusDocuments.currentDocumentIndex]?.title ?? focusFileName,
-    source: currentPage?.md?.sourceByLanguage?.[language],
+    source: resolvePageMarkdownSource(currentPage, markdownOptions),
     fileName: focusFileName,
     index: focusDocuments.currentDocumentIndex,
     count: focusDocuments.documents.length,
@@ -373,15 +394,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   } = headerIconConfig;
 
   const routeGuideEnabled = data.config.site.RouteGuide !== false;
-  const currentPagePath =
-    currentPage?.md?.config?.path?.[language as keyof typeof currentPage.md.config.path] ??
-    currentPage?.html?.config?.path?.[language] ??
-    (currentPage?.html?.config?.url
-      ? `url:${currentPage.html.config.url[language] ?? currentPage.html.config.url.en}`
-      : null) ??
-    (currentPage?.video ? `page:${currentPage.id}` : null) ??
-    (currentPage?.audio ? `page:${currentPage.id}` : null) ??
-    "";
+  const currentPagePath = getCurrentPagePath(currentPage, language);
   const breadcrumbTrail = useMemo(
     () => (currentPagePath ? getCurrentPageBreadcrumbTrail(headerMenuTree, currentPagePath) : []),
     [currentPagePath, headerMenuTree],
@@ -469,7 +482,9 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
   const aiContext = useMemo(() => {
     let rawContent = labels.aiChatEmptyPageContent;
-    if (currentPage?.md) {
+    if (currentPage?.blocks) {
+      rawContent = markdownHtml || labels.aiChatEmptyPageContent;
+    } else if (currentPage?.md) {
       rawContent = (currentPage.md.markdownByLanguage as Record<string, string>)[language] || labels.aiChatEmptyPageContent;
     } else if (currentPage?.html) {
       rawContent = (currentPage.html.htmlByLanguage as Record<string, string>)[language] || labels.aiChatEmptyPageContent;
@@ -483,7 +498,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
       .replace('{language}', fullLang)
       .replace('{pageId}', String(currentPage?.id || labels.aiChatNoPageId))
       .replace('{rawContent}', rawContent);
-  }, [headerName, currentPage, language, labels]);
+  }, [headerName, currentPage, language, labels, markdownHtml]);
 
   const contextValue = {
     data,
@@ -508,10 +523,11 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
   // Shared by the inline content blocks and the URL fullscreen overlay.
   const navigation: BrowseNavigationProps = {
+    canAccessContent: (config) => isRouteAccessible(config.authorization),
     canAccessPdf: (config) => isRouteAccessible(config.authorization),
     routeGuideEnabled,
     breadcrumbTrail,
-    onMenuClick,
+    onMenuClick: onBreadcrumbNavigate,
     homePathClick,
     homeAncestorKeys,
     routeGuideIconConfig,

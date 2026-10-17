@@ -1,4 +1,4 @@
-import type { ContentType, ContentTypeRouteConfig, RouteConfig } from "./config";
+import type { ContentType, ContentTypeRouteConfig, RouteAuthorizationConfig, RouteConfig } from "./config";
 import type { LanguageCode } from "./site";
 
 export type VideoType =
@@ -61,6 +61,8 @@ export interface LoadedSourceViewerContent {
 
 export interface LoadedPage {
   id: number;
+  authorization?: RouteAuthorizationConfig;
+  blocks?: LoadedContentBlock[];
   md?: LoadedMdContent;
   sourceViewer?: LoadedSourceViewerContent;
   html?: LoadedHtmlContent;
@@ -68,6 +70,13 @@ export interface LoadedPage {
   audio?: LoadedAudioContent;
   pdf?: LoadedPdfContent;
 }
+
+export type LoadedContentBlock =
+  | { id: string; type: "md"; content: LoadedMdContent }
+  | { id: string; type: "html"; content: LoadedHtmlContent }
+  | { id: string; type: "video"; content: LoadedVideoContent }
+  | { id: string; type: "audio"; content: LoadedAudioContent }
+  | { id: string; type: "pdf"; content: LoadedPdfContent };
 
 export interface LoadedPdfContent {
   routeId: number;

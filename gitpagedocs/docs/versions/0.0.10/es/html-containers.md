@@ -1,6 +1,6 @@
 # Contenedores HTML y ejemplos interactivos
 
-Una ruta HTML muestra un documento local o una página externa dentro de un iframe. Úsala para una demostración interactiva de confianza que Markdown no puede representar. El scaffold incluye **DOOM: ejemplo HTML**, ruta 29, con título, descripción y botón traducidos. El reproductor externo solo se carga cuando el visitante decide jugar. El juego permanece alojado por su proveedor; el paquete npm incluye la página HTML de presentación, no los archivos del juego.
+Una ruta HTML muestra un documento local o una página externa dentro de un iframe. Úsala para una demostración interactiva de confianza que Markdown no puede representar. El scaffold incluye **DOOM: ejemplo HTML**, ruta 29. El título y la descripción pertenecen al contenedor de documentación; el HTML contiene solo el reproductor, sin repetir encabezados, instrucciones ni crear un botón de carga propio. El juego permanece alojado por su proveedor; el paquete npm incluye la integración HTML, no los archivos del juego.
 
 ## Configura una ruta HTML local
 
@@ -44,8 +44,8 @@ El servidor externo puede impedir la incorporación mediante CSP o X-Frame-Optio
 
 ## Utiliza y mantén el ejemplo del juego
 
-Selecciona la entrada HTML, lee el aviso del proveedor y pulsa el botón de carga. Se necesita conexión; después sigue los controles de inicio y teclado del reproductor. La página incluye un enlace directo al proveedor si falla la incorporación. Prueba el foco del teclado, pantallas pequeñas, pantalla completa y el regreso a la documentación. La disponibilidad del reproductor y las capacidades del navegador pueden cambiar independientemente de GitPageDocs.
+Selecciona la entrada HTML. El SDK del reproductor se carga al abrir la página; usa su control Play nativo para iniciar el juego. No hay inicio automático ni un botón de carga separado de la documentación. Se necesita conexión. Un fallo de inicialización muestra un error que indica recargar la página; la vista normal contiene solo el reproductor. Prueba el foco del teclado, pantallas pequeñas, pantalla completa y el regreso a la documentación. La disponibilidad del reproductor y las capacidades del navegador pueden cambiar independientemente de GitPageDocs.
 
 Revisa el HTML y sus dependencias antes de publicar. El iframe actual permite scripts y contenido del mismo origen, por lo que no es una barrera de seguridad para HTML arbitrario no confiable. No incluyas secretos en HTML, URLs ni configuración del cliente. El alojamiento estático expone los archivos independientemente de la visibilidad del menú o autorización de la ruta. En local y Pages, versiona la página junto con su configuración y valida las rutas generadas antes de publicar.
 
-> Version (ES): 0.0.10
+> Versión: 0.0.10

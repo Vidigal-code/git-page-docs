@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { AiProviderId } from '@gitpagedocs/tools/ports';
 import { useAiConsole } from '@/features/ai-console';
 import type { ConsoleMessage } from '@/features/ai-console';
+import { NativeSelect } from '@/shared/ui/native-select';
 
 const box: React.CSSProperties = {
   maxWidth: 760,
@@ -13,20 +14,20 @@ const box: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 const card: React.CSSProperties = {
-  border: '1px solid #30363d',
+  border: '1px solid var(--card-border)',
   borderRadius: 12,
   padding: '1rem',
-  background: '#0d1117',
-  color: '#e6edf3',
+  background: 'var(--card-background)',
+  color: 'var(--text)',
   boxSizing: 'border-box',
 };
 const input: React.CSSProperties = {
   width: '100%',
   padding: '0.6rem',
   borderRadius: 8,
-  border: '1px solid #30363d',
-  background: '#161b22',
-  color: '#e6edf3',
+  border: '1px solid var(--card-border)',
+  background: 'var(--background)',
+  color: 'var(--text)',
   boxSizing: 'border-box',
 };
 const button: React.CSSProperties = {
@@ -102,19 +103,18 @@ function ProviderCard({ ai }: Readonly<{ ai: AiConsole }>) {
   return (
     <div style={card}>
       <label htmlFor="ai-console-provider" style={{ display: 'block', marginBottom: '0.5rem' }}>Provider</label>
-      <select
+      <div style={{ marginBottom: '0.75rem' }}><NativeSelect
         id="ai-console-provider"
         data-testid="provider-select"
         value={ai.providerId}
         onChange={(e) => ai.selectProvider(e.target.value as AiProviderId)}
-        style={{ ...input, marginBottom: '0.75rem' }}
       >
         {ai.providers.map((p) => (
           <option key={p.id} value={p.id}>
             {p.label}
           </option>
         ))}
-      </select>
+      </NativeSelect></div>
 
       <label htmlFor="ai-console-model" style={{ display: 'block', marginBottom: '0.5rem' }}>Model</label>
       <input id="ai-console-model" value={ai.model} onChange={(e) => ai.setModel(e.target.value)} style={{ ...input, marginBottom: '0.75rem' }} />
@@ -219,9 +219,9 @@ export default function AiConsolePage() {
   const ai = useAiConsole();
 
   return (
-    <main style={{ minHeight: '100vh', background: '#010409', padding: '1rem 0' }} data-testid="ai-console">
+    <main style={{ minHeight: '100vh', background: 'var(--background)', padding: '1rem 0' }} data-testid="ai-console">
       <div style={box}>
-        <h1 style={{ color: '#e6edf3', fontSize: '1.4rem', marginBottom: '1rem' }}>AI Console</h1>
+        <h1 style={{ color: 'var(--text)', fontSize: '1.4rem', marginBottom: '1rem' }}>AI Console</h1>
         <ConsoleBody ai={ai} />
       </div>
     </main>

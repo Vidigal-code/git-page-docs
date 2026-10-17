@@ -4,7 +4,9 @@ This guide builds a small multilingual documentation site with two Markdown page
 
 ## 1. Generate and inspect the scaffold
 
-Run `npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY` in a new project directory. In this source repository, `node cli/index.mjs` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
+The scaffold includes versions 0.0.11 and 0.0.10 in the version selector. Both contain the current examples; the package version remains 0.0.11. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
+
+Run `npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY` in a new project directory. In this source repository, `node cli/index.mjs` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
 
 Use the following complete JSON as a minimal root-config example in `gitpagedocs/config.json`. For an existing site, merge the relevant fields and preserve its repository identity, deployment settings, themes and other versions.
 
@@ -12,7 +14,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
 {
   "site": {
     "name": "Documentação • Guía • Documentation",
-    "docsVersion": "0.0.10",
+    "docsVersion": "0.0.11",
     "languages": {
       "en": true,
       "pt": true,
@@ -36,28 +38,28 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
         "colorLight": "currentColor"
       },
       "LanguageSelector": {
-        "tag": "FiGlobe"
+        "tag": "SiGoogletranslate"
       },
       "ThemeSelector": {
-        "tag": "BsSunFill"
+        "tag": "LuPencil"
       },
       "FocusMode": {
-        "tag": "MdFullscreen"
+        "tag": "LuBookOpen"
       },
       "QuickNavigation": {
-        "tag": "FiSearch"
+        "tag": "LuSearch"
       },
       "PdfDownload": {
-        "tag": "FiDownload"
+        "tag": "LuDownload"
       },
       "PdfOpenInNewTab": {
-        "tag": "FiExternalLink"
+        "tag": "LuExternalLink"
       },
       "DocumentPrevious": {
-        "tag": "FiChevronLeft"
+        "tag": "LuChevronLeft"
       },
       "DocumentNext": {
-        "tag": "FiChevronRight"
+        "tag": "LuChevronRight"
       }
     },
     "pdf": {
@@ -70,7 +72,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.10",
+        "id": "0.0.11",
         "path": "gitpagedocs/docs/versions/0.0.10/config.json"
       }
     ]

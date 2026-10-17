@@ -2,21 +2,21 @@
 
 Protege rutas por clave de acceso, roles requeridos y proveedores externos.
 
-## Ubicacion del config de version
+## Ubicacion del config de versión
 
 Configura en:
 
 - `gitpagedocs/docs/versions/<version>/config.json`
 
-## Seccion global auth
+## Sección global auth
 
-Usa `auth` en la raiz del config de version:
+Usa `auth` en la raiz del config de versión:
 
 - `accessKeys`: mapa de ids de clave al secreto esperado
 - `rolesStorageKey`: clave de localStorage para bootstrap de roles
 - `providers`: lista de proveedores externos (`authjs`, `clerk`, `firebase`, `jwt`)
 
-## Autorizacion por ruta
+## Autorización por ruta
 
 Dentro de cada ruta (`routes-md`, `routes-html`, `routes-video`):
 
@@ -33,7 +33,7 @@ Define `authorization.accessKeyId` y la clave correspondiente en `auth.accessKey
 
 ### Fase B - Roles
 
-Define `authorization.requiredRoles` con uno o mas roles.
+Define `authorization.requiredRoles` con uno o más roles.
 
 Los roles pueden venir de:
 
@@ -52,4 +52,4 @@ Adaptadores soportados:
 - Firebase Auth (`type: "firebase"`)
 - JWT custom (`type: "jwt"`)
 
-> Version (ES): 0.0.9
+> Versión: 0.0.9
