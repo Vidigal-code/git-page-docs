@@ -1,6 +1,8 @@
 "use client";
 
 import type { LanguageCode } from "@/entities/docs";
+import { FiGlobe } from "@react-icons/all-files/fi/FiGlobe";
+import { ControlIcon, type ControlIconConfig } from "@/shared/ui/control-icon";
 import { DropdownSelector } from "@/shared/ui/dropdown-selector";
 
 interface LanguageSelectorProps {
@@ -10,6 +12,7 @@ interface LanguageSelectorProps {
   onChange: (lang: LanguageCode) => void;
   className?: string;
   ariaLabel?: string;
+  icon?: ControlIconConfig;
   /** Theme CSS variables forwarded to the small-screen modal (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
 }
@@ -25,6 +28,7 @@ export function LanguageSelector({
   onChange,
   className,
   ariaLabel,
+  icon,
   themeVarsStyle,
 }: Readonly<LanguageSelectorProps>) {
   return (
@@ -34,6 +38,7 @@ export function LanguageSelector({
       selectedId={value}
       onSelect={(lang) => onChange(lang as LanguageCode)}
       className={className}
+      triggerIcon={icon && <ControlIcon icon={icon} fallback={<FiGlobe aria-hidden />} />}
       themeVarsStyle={themeVarsStyle}
     />
   );

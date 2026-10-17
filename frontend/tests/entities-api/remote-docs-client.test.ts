@@ -79,6 +79,31 @@ describe("checkRepositoryHasGitPageDocs", () => {
 });
 
 describe("fetchOfficialSiteConfig", () => {
+  it("expands compact selector icons while preserving explicit flat overrides", async () => {
+    stubRepoFetch({
+      [`${OFFICIAL}/gitpagedocs/config.json`]: {
+        site: {
+          icons: {
+            defaults: { reactIcon: true, colorDark: "white", colorLight: "black", size: "24px" },
+            LanguageSelector: { tag: "FiGlobe" },
+            ThemeSelector: { tag: "BsSunFill" },
+          },
+          IconThemeSelectorReactIcones: false,
+        },
+      },
+    });
+
+    await expect(fetchOfficialSiteConfig()).resolves.toMatchObject({
+      IconLanguageSelectorReactIcones: true,
+      IconLanguageSelectorReactIconesTag: "FiGlobe",
+      IconLanguageSelectorReactIconesTagColorDark: "white",
+      IconLanguageSelectorReactIconesTagColorLight: "black",
+      IconLanguageSelectorReactIconesTagSize: "24px",
+      IconThemeSelectorReactIcones: false,
+      IconThemeSelectorReactIconesTag: "BsSunFill",
+    });
+  });
+
   it("returns the official site section with its language bundles folded in", async () => {
     stubRepoFetch({
       [`${OFFICIAL}/gitpagedocs/config.json`]: { site: { SiteHeaderName: "Official", languages: { en: true } } },
@@ -294,7 +319,7 @@ describe("loadRemoteDocsData", () => {
     expect(data.config.routes).toEqual([{ id: 2, path: VERSION_V1["routes-md"][0].path }]);
     expect(data.config["menus-header"]).toEqual([{ id: 2 }]);
     expect(data.config.hierarchyPage).toEqual(VERSION_V1.hierarchyPage);
-    expect(data.config.hierarchyMenu).toEqual({ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 });
+    expect(data.config.hierarchyMenu).toEqual({ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 });
 
     expect(data.pages.map((p) => p.id)).toEqual([2, 3, 4, 5, 6, 7]);
     expect(data.docs).toEqual([{ routeId: 2, markdownByLanguage: { en: '<h1 id="b-en">B en</h1>\n', pt: '<h1 id="b-pt">B pt</h1>\n' } }]);

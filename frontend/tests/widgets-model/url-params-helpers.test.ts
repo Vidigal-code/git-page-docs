@@ -45,6 +45,11 @@ describe("parseFullscreenParams", () => {
 });
 
 describe("findPathClickBySlug", () => {
+  it.each(["project-guide", "PROJECT-GUIDE.PDF"])("resolves the PDF slug %s", (slug) => {
+    const pdfPath = "docs/project-guide.pdf";
+    const data = makeDocsData({ pathToPageMap: { [pdfPath]: { pageIndex: 0, contentType: "pdf" } } });
+    expect(findPathClickBySlug(data, slug)).toBe(pdfPath);
+  });
   const data = makeDocsData();
 
   it("matches the last path segment ignoring case and a md/html extension", () => {

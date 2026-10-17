@@ -10,6 +10,31 @@ export type LanguageCode = `${string}`;
 
 export type ThemeMode = "light" | "dark";
 
+export interface PdfOptions {
+  enabled?: boolean;
+  previewEnabled?: boolean;
+  downloadEnabled?: boolean;
+  openInNewTabEnabled?: boolean;
+}
+
+export interface FocusModeOptions {
+  copyEnabled?: boolean;
+  downloadEnabled?: boolean;
+  sectionNavigationEnabled?: boolean;
+  documentNavigationEnabled?: boolean;
+}
+
+export interface NarrationSettings {
+  enabled?: boolean;
+  defaultRate?: number;
+  defaultVolume?: number;
+}
+
+export interface AccessibilitySettings {
+  enabled?: boolean;
+  narration?: NarrationSettings;
+}
+
 export interface SiteConfig extends IconConfigFields<StandardIconName> {
   name: string;
   defaultLanguage: LanguageCode;
@@ -27,6 +52,10 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
   docsVersion?: string;
   ActiveNavigation?: boolean;
   FocusMode?: boolean;
+  focusMode?: FocusModeOptions;
+  pdf?: PdfOptions;
+  nestedMenusEnabled?: boolean;
+  accessibility?: AccessibilitySettings;
   FooterEnabled?: boolean;
   FooterLinkName?: string;
   FooterLinkUrl?: string;
@@ -136,6 +165,10 @@ export type { IconConfigFields };
  * such group; slots with a different shape stay declared inline above.
  */
 export type StandardIconName =
+  | "QuickNavigation"
+  | "LanguageSelector"
+  | "ThemeSelector"
+  | "FocusMode"
   /** Header brand icon */
   | "ImageMenuHeader"
   /** Project link icon */

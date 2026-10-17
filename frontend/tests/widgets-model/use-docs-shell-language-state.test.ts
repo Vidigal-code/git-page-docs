@@ -161,7 +161,7 @@ describe("useDocsShellState", () => {
     act(() => result.current.onLanguageChange("pt"));
     expect(replaceUrlWithoutNavigation).toHaveBeenLastCalledWith("/", expect.any(URLSearchParams));
 
-    act(() => result.current.onMenuClick(GUIDE, [], { fromLinearNav: true }));
+    act(() => result.current.onMenuClick(GUIDE, [], { origin: "linear" }));
     expect(result.current.sidebarOpen).toBe(false);
   });
 });

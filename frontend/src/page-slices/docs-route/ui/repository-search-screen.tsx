@@ -22,6 +22,7 @@ import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath, trimSlashes } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
 import styles from "./repository-search-screen.module.css";
 
 export function RepositorySearchScreen({
@@ -145,6 +146,8 @@ export function RepositorySearchScreen({
 
   const header = (
     <SearchShellHeader
+      languageSelectorIcon={resolveControlIcon(data.config.site, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
+      themeSelectorIcon={resolveControlIcon(data.config.site, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}

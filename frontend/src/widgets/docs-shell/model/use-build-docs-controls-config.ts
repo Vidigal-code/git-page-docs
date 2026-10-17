@@ -16,6 +16,7 @@ import {
   resolveAudioPlayerPopoverRestartIconConfig,
 } from "@/shared/lib/resolve-site-assets";
 import { getBasePath } from "@/shared/lib/base-path";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
 import type { DocsShellControlsConfig } from "./use-docs-shell-config";
 
 type ThemeMode = "dark" | "light";
@@ -184,8 +185,10 @@ export function useBuildDocsControlsConfig({
       // that have none (source-viewer, media-only, untranslated document).
       focusModeEnabled: Boolean(site.FocusMode) && pageHasMarkdown,
       focusModeLabel: getLabel(site, language, "focusMode", "Focus mode"),
+      focusModeIcon: resolveControlIcon(site, { name: "FocusMode", mode }),
       activeNavigation: Boolean(site.ActiveNavigation),
       quickNavLabel: getLabel(site, language, "quickNavigation", "Ctrl+K"),
+      quickNavigationIcon: resolveControlIcon(site, { name: "QuickNavigation", mode }),
       showVersionSelector: data.availableVersions.length > 1,
       availableVersions: data.availableVersions,
       selectedVersionValue,
@@ -194,7 +197,9 @@ export function useBuildDocsControlsConfig({
       availableLanguages: data.availableLanguages,
       language,
       languageLabelResolver: (lang: string) => getLanguageLabelFromMenu(site.langmenu, language, lang),
+      languageSelectorIcon: resolveControlIcon(site, { name: "LanguageSelector", mode }),
       hideThemeSelector: Boolean(site.HideThemeSelector),
+      themeSelectorIcon: resolveControlIcon(site, { name: "ThemeSelector", mode }),
       activeThemeId,
       layouts: data.layoutsConfig.layouts,
       canToggleMode,

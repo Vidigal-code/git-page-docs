@@ -1,4 +1,5 @@
 import { BsRobot, FiX } from "@/shared/ui/fallback-icons";
+import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { MenuNode } from "../model/menu-tree";
 import { ConfiguredIcon } from "./docs-shell-icon";
 import { DocsShellControls } from "./docs-shell-controls";
@@ -15,9 +16,9 @@ interface DocsShellMobileDrawerProps {
   onToggleNode: (nodeKey: string) => void;
   isNodeExpanded: (nodeKey: string) => boolean;
   controls: React.ComponentProps<typeof DocsShellControls>;
-  navMenuCloseIcon?: import("@/shared/lib/resolve-nav-menu-icon").ResolvedNavMenuIconConfig;
+  navMenuCloseIcon?: ResolvedNavMenuIconConfig;
   onOpenAiChat: () => void;
-  aiChatIconConfig: any;
+  aiChatIconConfig?: { open: ResolvedNavMenuIconConfig };
 }
 
 export function DocsShellMobileDrawer({
@@ -33,7 +34,7 @@ export function DocsShellMobileDrawer({
   navMenuCloseIcon,
   onOpenAiChat,
   aiChatIconConfig,
-}: Readonly<DocsShellMobileDrawerProps>) {
+}: Readonly<DocsShellMobileDrawerProps>): React.JSX.Element | null {
   if (!isOpen) {
     return null;
   }
@@ -43,9 +44,11 @@ export function DocsShellMobileDrawer({
       <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
       <aside className={styles.mobileDrawer}>
         <div className={styles.mobileDrawerHeader}>
-          <button data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligencia Artificial" title="Assistente de IA">
-            <ConfiguredIcon icon={aiChatIconConfig.open} fallback={<BsRobot aria-hidden />} alt="IA" />
-          </button>
+          {aiChatIconConfig && (
+            <button type="button" data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligencia Artificial" title="Assistente de IA">
+              <ConfiguredIcon icon={aiChatIconConfig.open} fallback={<BsRobot aria-hidden />} alt="IA" />
+            </button>
+          )}
           <strong>{siteName}</strong>
           <button className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onClose} aria-label={menuCloseLabel} title={menuCloseLabel}>
             <ConfiguredIcon icon={navMenuCloseIcon} fallback={<FiX aria-hidden />} />

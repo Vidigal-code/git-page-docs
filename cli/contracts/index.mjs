@@ -1,4 +1,5 @@
 export { DOC_VERSIONS } from "./doc-versions.mjs";
+export { PDF_GUIDE_FILENAME } from "../data/path-mappings.mjs";
 export {
   DEFAULT_LAYOUTS_DIR,
   LAYOUTS_CONFIG_FILENAME,

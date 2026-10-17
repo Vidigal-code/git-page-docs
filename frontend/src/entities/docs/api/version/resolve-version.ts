@@ -19,11 +19,13 @@ export interface VersionRoutesConfig {
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
   "routes-audio"?: ContentTypeRouteConfig[];
+  "routes-pdf"?: ContentTypeRouteConfig[];
   "menus-header-md"?: GitPageDocsConfig["menus-header"];
   "menus-header-source-viewer"?: GitPageDocsConfig["menus-header"];
   "menus-header-html"?: GitPageDocsConfig["menus-header"];
   "menus-header-video"?: GitPageDocsConfig["menus-header"];
   "menus-header-audio"?: GitPageDocsConfig["menus-header"];
+  "menus-header-pdf"?: GitPageDocsConfig["menus-header"];
   hierarchyPage?: HierarchyConfig;
   hierarchyMenu?: HierarchyConfig;
 }
@@ -37,6 +39,7 @@ const ROUTE_LIST_KEYS: readonly VersionListKey[] = [
   "routes-html",
   "routes-video",
   "routes-audio",
+  "routes-pdf",
 ];
 
 const MENU_LIST_KEYS: readonly VersionListKey[] = [
@@ -46,6 +49,7 @@ const MENU_LIST_KEYS: readonly VersionListKey[] = [
   "menus-header-html",
   "menus-header-video",
   "menus-header-audio",
+  "menus-header-pdf",
 ];
 
 export function resolveActiveVersionId(

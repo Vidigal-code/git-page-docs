@@ -217,6 +217,32 @@ describe("useRouteAuthorization", () => {
     expect(allLocked.result.current.firstAccessiblePageIndex).toBe(0);
   });
 
+  it("checks PDF-only pages against their PDF authorization before direct navigation", async () => {
+    const route = { id: 23, pdf: { pathPdf: { en: "docs/private.pdf" } }, authorization: { requiredRoles: ["reader"] } };
+    const data = buildData(DEFAULT_AUTH, [{ id: 23, pdf: { routeId: 23, config: route, pathPdfByLanguage: { en: "/docs/private.pdf" } } }]);
+    data.config["routes-pdf"] = [route];
+    const anonymous = renderAuth(data);
+    await waitFor(() => expect(anonymous.result.current.providersResolved).toBe(true));
+    expect(anonymous.result.current.isPageAccessible(0)).toBe(false);
+    const reader = renderAuth(data, "authRoles=reader");
+    await waitFor(() => expect(reader.result.current.providersResolved).toBe(true));
+    expect(reader.result.current.isPageAccessible(0)).toBe(true);
+  });
+
+  it("evaluates a content block's own authorization without route paths or page metadata", async () => {
+    const authorization = { requiredRoles: ["reader"] };
+    const data = buildData(DEFAULT_AUTH, []);
+    const anonymous = renderAuth(data);
+    await waitFor(() => expect(anonymous.result.current.providersResolved).toBe(true));
+    expect(anonymous.result.current.isRouteAccessible(authorization)).toBe(false);
+    expect(anonymous.result.current.isRouteAccessible(undefined)).toBe(true);
+    expect(anonymous.result.current.isRouteAccessible({ requireExternalAuth: true })).toBe(false);
+    const reader = renderAuth(data, "authRoles=reader");
+    await waitFor(() => expect(reader.result.current.providersResolved).toBe(true));
+    expect(reader.result.current.isRouteAccessible(authorization)).toBe(true);
+    expect(reader.result.current.isRouteAccessible({ accessKeyId: "docs-key" })).toBe(false);
+  });
+
   it("keeps working in memory when storage is blocked", async () => {
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new Error("blocked");

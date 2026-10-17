@@ -27,7 +27,7 @@ interface DocsShellSidebarProps {
   setBlockMenuOnNav: (v: boolean) => void;
   navMenuConfig: NavMenuConfig;
   onOpenAiChat: () => void;
-  aiChatIconConfig: any;
+  aiChatIconConfig?: { open: ResolvedNavMenuIconConfig };
   docsLock?: {
     icon: ResolvedNavMenuIconConfig;
     texts: DocsLockTexts;
@@ -56,7 +56,7 @@ export function DocsShellSidebar({
   onOpenAiChat,
   aiChatIconConfig,
   docsLock,
-}: Readonly<DocsShellSidebarProps>) {
+}: Readonly<DocsShellSidebarProps>): React.JSX.Element {
   const aiChatFallback = <BsRobot aria-hidden />;
   const collapseFallback = <FiChevronsLeft aria-hidden />;
 
@@ -104,9 +104,11 @@ export function DocsShellSidebar({
           labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
           className={`${styles.button} ${styles.sidebarRailButton}`}
         />
-        <button data-testid="ai-chat-open" className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
-          <ConfiguredIcon icon={aiChatIconConfig.open} fallback={aiChatFallback} reactIconFallback={aiChatFallback} alt="IA" />
-        </button>
+        {aiChatIconConfig && (
+          <button type="button" data-testid="ai-chat-open" className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
+            <ConfiguredIcon icon={aiChatIconConfig.open} fallback={aiChatFallback} reactIconFallback={aiChatFallback} alt="IA" />
+          </button>
+        )}
         <button className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onCollapseSidebar} aria-label={menuCloseLabel} title={menuCloseLabel}>
           <ConfiguredIcon
             icon={navMenuConfig.sidebarCollapseIcon}

@@ -28,11 +28,13 @@ export function buildEffectiveConfig(
     "routes-html": routesHtml,
     "routes-video": routesVideo,
     "routes-audio": routesAudio,
+    "routes-pdf": merged.routesPdf,
     "menus-header-md": merged.menusHeaderMd,
     "menus-header-source-viewer": merged.menusHeaderSourceViewer,
     "menus-header-html": merged.menusHeaderHtml,
     "menus-header-video": merged.menusHeaderVideo,
     "menus-header-audio": merged.menusHeaderAudio,
+    "menus-header-pdf": merged.menusHeaderPdf,
     hierarchyPage,
     hierarchyMenu,
   };
@@ -43,6 +45,7 @@ export function buildEffectiveConfig(
   routesHtml.forEach((r) => allIds.add(r.id));
   routesVideo.forEach((r) => allIds.add(r.id));
   routesAudio.forEach((r) => allIds.add(r.id));
+  merged.routesPdf.forEach((r) => allIds.add(r.id));
   const sortedIds = Array.from(allIds).sort((a, b) => a - b);
 
   return { effectiveConfig, sortedIds };

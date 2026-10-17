@@ -15,6 +15,7 @@ import { SearchShellLayout } from "@/widgets/search-shell-layout";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
 import { getGuideContent } from "../content";
 import { useGuideSearch } from "../model/use-guide-search";
 import { useActiveSection, scrollToSection } from "../model/use-active-section";
@@ -89,6 +90,8 @@ export function IntroductionGuidePage() {
 
   const header = (
     <SearchShellHeader
+      languageSelectorIcon={resolveControlIcon(siteConfig, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
+      themeSelectorIcon={resolveControlIcon(siteConfig, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}

@@ -24,7 +24,7 @@ export interface RouteAuthSession {
 
 export interface RouteAuthorizationTarget {
   routeId: number;
-  contentType: "md" | "html" | "video" | "audio";
+  contentType: "md" | "html" | "video" | "audio" | "pdf";
   authorization?: RouteAuthorizationConfig;
   title?: string;
 }

@@ -1,8 +1,8 @@
 import type { LanguageCode, SiteConfig, UiTranslationsConfig } from "./site";
 import type { VersionControlConfig } from "./version";
 
-export type ContentType = "md" | "source-viewer" | "html" | "video" | "audio";
-export const CONTENT_TYPES: ContentType[] = ["md", "source-viewer", "html", "video", "audio"];
+export type ContentType = "md" | "source-viewer" | "html" | "video" | "audio" | "pdf";
+export const CONTENT_TYPES: ContentType[] = ["md", "source-viewer", "html", "video", "audio", "pdf"];
 
 export type ExternalAuthProviderType = "authjs" | "clerk" | "firebase" | "jwt";
 
@@ -41,6 +41,14 @@ export interface HierarchyConfig {
   html: number;
   video: number;
   audio?: number;
+  pdf?: number;
+}
+
+export interface PdfRouteConfig {
+  pathPdf: Record<LanguageCode, string>;
+  previewEnabled?: boolean;
+  downloadEnabled?: boolean;
+  openInNewTabEnabled?: boolean;
 }
 
 export interface VideoRouteConfig {
@@ -112,6 +120,7 @@ export interface ContentTypeRouteConfig {
   "source-viewer"?: boolean;
   "source-viewer-path"?: string | Record<LanguageCode, string>;
   video?: VideoRouteConfig;
+  pdf?: PdfRouteConfig;
   /** routes-audio: AudioRouteConfig. routes-md/html/video: PageRouteAudioConfig (background music). Discriminate by "tracks" vs "pathAudio". */
   audio?: AudioRouteConfig | PageRouteAudioConfig;
   fullscreenEnabled?: boolean;
@@ -127,6 +136,8 @@ export interface ContentTypeRouteConfig {
   url?: Record<LanguageCode, string>;
   /** If true, container shows prev/next buttons to browse all items of that type. */
   browseAll?: boolean;
+  /** Overrides the site's breadcrumb visibility for this document. */
+  RouteGuide?: boolean;
   /** If true, show TOC tree of headings (#h1-#h6). If false, hide (for large MD). */
   RouteguideBrand?: boolean;
   /** Specific heading IDs to include in TOC. Empty = all headings. */
@@ -172,11 +183,13 @@ export interface GitPageDocsConfig {
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
   "routes-audio"?: ContentTypeRouteConfig[];
+  "routes-pdf"?: ContentTypeRouteConfig[];
   "menus-header-md"?: HeaderMenuItem[];
   "menus-header-source-viewer"?: HeaderMenuItem[];
   "menus-header-html"?: HeaderMenuItem[];
   "menus-header-video"?: HeaderMenuItem[];
   "menus-header-audio"?: HeaderMenuItem[];
+  "menus-header-pdf"?: HeaderMenuItem[];
   hierarchyPage?: HierarchyConfig;
   hierarchyMenu?: HierarchyConfig;
   VersionControl?: VersionControlConfig;

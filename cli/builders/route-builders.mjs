@@ -99,6 +99,19 @@ export function buildAudioRoute(versionId, routeId, audioType, pathAudio, titles
   };
 }
 
+export function buildPdfRoute(meta, pathPdf, options = {}) {
+  const { container, authorization, pdf } = options;
+  const route = {
+    id: meta.id,
+    title: meta.titles,
+    description: meta.descriptions,
+    ...withDefaults(ROUTE_TEXT_DEFAULTS, options),
+    ...withDefaults(ROUTE_FRAME_DEFAULTS, options),
+    pdf: { pathPdf: perLanguage(pathPdf), ...pdf },
+  };
+  return assignDefined(route, { container, authorization });
+}
+
 export function buildSourceViewerRoute(routeId, sourceViewerPath, titles, descriptions, options = {}) {
   const base = buildMdRoute("", routeId, {}, titles, descriptions, {
     ...options,

@@ -1,19 +1,28 @@
 /** Map doc paths to content keys and apply version badges */
 
+const DOC_FILE_KEYS = new Map([
+  ["index.md", "index"],
+  ["getting-started.md", "gettingStarted"],
+  ["configuration.md", "configuration"],
+  ["deployment.md", "deployment"],
+  ["architecture.md", "architecture"],
+  ["themes.md", "themes"],
+  ["faq.md", "faq"],
+  ["project-overview.md", "projectOverview"],
+  ["functionalities.md", "functionalities"],
+  ["github-issues-projects.md", "githubIssuesProjects"],
+  ["git-introduction.md", "gitIntroduction"],
+  ["authorized-routes.md", "authorizedRoutes"],
+  ["cli.md", "cli"],
+  ["mcp.md", "mcp"],
+  ["navigation.md", "navigation"],
+  ["accessibility.md", "accessibility"],
+  ["focus-mode.md", "focusMode"],
+  ["pdf.md", "pdf"],
+]);
+
 export function parseDocFileToKey(fileName) {
-  if (fileName === "index.md") return "index";
-  if (fileName === "getting-started.md") return "gettingStarted";
-  if (fileName === "configuration.md") return "configuration";
-  if (fileName === "deployment.md") return "deployment";
-  if (fileName === "architecture.md") return "architecture";
-  if (fileName === "themes.md") return "themes";
-  if (fileName === "faq.md") return "faq";
-  if (fileName === "project-overview.md") return "projectOverview";
-  if (fileName === "functionalities.md") return "functionalities";
-  if (fileName === "github-issues-projects.md") return "githubIssuesProjects";
-  if (fileName === "git-introduction.md") return "gitIntroduction";
-  if (fileName === "authorized-routes.md") return "authorizedRoutes";
-  return undefined;
+  return DOC_FILE_KEYS.get(fileName);
 }
 
 export function parseHtmlFileToKey(fileName) {

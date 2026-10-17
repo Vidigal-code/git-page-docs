@@ -7,6 +7,7 @@ import type {
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedPage,
+  LoadedPdfContent,
   LoadedSourceViewerContent,
   LoadedVideoContent,
 } from "@/entities/docs";
@@ -35,14 +36,17 @@ function getAudioItems(pages: LoadedPage[]): BrowseItem<LoadedAudioContent>[] {
   return pages.flatMap((p, i) => (p.audio ? [{ pageIndex: i, content: p.audio }] : []));
 }
 
+function getPdfItems(pages: LoadedPage[]): BrowseItem<LoadedPdfContent>[] {
+  return pages.flatMap((page, pageIndex) => (page.pdf ? [{ pageIndex, content: page.pdf }] : []));
+}
+
 function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): number {
   // findIndex yields -1 for a page outside the list, which browses from the first item.
   return Math.max(items.findIndex((x) => x.pageIndex === pageIndex), 0);
 }
 
 export interface OnMenuClickOptions {
-  fromLinearNav?: boolean;
-  fromQuickNav?: boolean;
+  origin?: "menu" | "linear" | "quick" | "focus";
 }
 
 interface UseDocsShellNavigationStateArgs {
@@ -69,6 +73,7 @@ export function useDocsShellNavigationState({
   const [sourceViewerBrowseIndex, setSourceViewerBrowseIndex] = useState(0);
   const [videoBrowseIndex, setVideoBrowseIndex] = useState(0);
   const [audioBrowseIndex, setAudioBrowseIndex] = useState(0);
+  const [pdfBrowseIndex, setPdfBrowseIndex] = useState(0);
 
   const pages = data.pages ?? [];
   const mdItems = getMdItems(pages);
@@ -76,6 +81,7 @@ export function useDocsShellNavigationState({
   const htmlItems = getHtmlItems(pages);
   const videoItems = getVideoItems(pages);
   const audioItems = getAudioItems(pages);
+  const pdfItems = getPdfItems(pages);
 
   useEffect(() => {
     setMdBrowseIndex(getBrowseIndexForPage(mdItems, pageIndex));
@@ -83,8 +89,9 @@ export function useDocsShellNavigationState({
     setHtmlBrowseIndex(getBrowseIndexForPage(htmlItems, pageIndex));
     setVideoBrowseIndex(getBrowseIndexForPage(videoItems, pageIndex));
     setAudioBrowseIndex(getBrowseIndexForPage(audioItems, pageIndex));
+    setPdfBrowseIndex(getBrowseIndexForPage(pdfItems, pageIndex));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync browse indices when page or items change
-  }, [pageIndex, pages.length, mdItems.length, sourceViewerItems.length, htmlItems.length, videoItems.length, audioItems.length]);
+  }, [pageIndex, pages.length, mdItems.length, sourceViewerItems.length, htmlItems.length, videoItems.length, audioItems.length, pdfItems.length]);
 
   function onMenuClick(pathClick: string, ancestorKeys: string[] = [], options: OnMenuClickOptions = {}) {
     if (pathClick && canNavigateToPathClick && !canNavigateToPathClick(pathClick)) {
@@ -105,7 +112,7 @@ export function useDocsShellNavigationState({
       });
     }
     const skipSidebarOpen =
-      blockSidebarOpenOnNav && (options?.fromLinearNav === true || options?.fromQuickNav === true);
+      options.origin === "focus" || (blockSidebarOpenOnNav && (options.origin === "linear" || options.origin === "quick"));
     if (!skipSidebarOpen) {
       setSidebarOpen(true);
     }
@@ -115,7 +122,7 @@ export function useDocsShellNavigationState({
   function toggleNode(nodeKey: string) {
     setExpandedMenuMap((prev) => ({
       ...prev,
-      [nodeKey]: !prev[nodeKey],
+      [nodeKey]: !(prev[nodeKey] ?? true),
     }));
   }
 
@@ -137,14 +144,17 @@ export function useDocsShellNavigationState({
     htmlBrowseIndex,
     videoBrowseIndex,
     audioBrowseIndex,
+    pdfBrowseIndex,
     setMdBrowseIndex,
     setHtmlBrowseIndex,
     setVideoBrowseIndex,
     setAudioBrowseIndex,
+    setPdfBrowseIndex,
     mdItems,
     htmlItems,
     videoItems,
     audioItems,
+    pdfItems,
   };
 
   return {

@@ -18,11 +18,15 @@ import { useDocsShellUrl } from "./model/use-docs-shell-url";
 import { useDocsShellVersionSync } from "./model/use-docs-shell-version-sync";
 import { useDocsShellLabels } from "./model/use-docs-shell-labels";
 import { useDocsShellUrlParams } from "./model/use-docs-shell-url-params";
-import { getBreadcrumbTrail, getUrlParamsForPathClick } from "./model/menu-tree";
+import { getCurrentPageBreadcrumbTrail, getUrlParamsForPathClick, getMenuDisplayNodes } from "./model/menu-tree";
 import { getBasePath } from "@/shared/lib/base-path";
 import { useDocumentThemeVars } from "@/shared/lib/use-document-theme-vars";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { useFocusMode } from "./model/use-focus-mode";
+import { NarrationPanel, resolveNarrationLabels, useMarkdownNarration } from "@/features/markdown-narration";
+import { useFocusDocuments } from "./model/use-focus-documents";
+import type { OnMenuClickOptions } from "./model/use-docs-shell-navigation-state";
+import { markdownFileName } from "./ui/content-type-containers/md-source-actions";
 import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference";
 import { useRouteAuthorization } from "@/features/route-authorization";
 import { useDocsAccess, DocsAccessGate } from "@/features/docs-access";
@@ -100,6 +104,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     evaluatePathAccess,
     ensurePathAccess,
     isPageAccessible,
+    isRouteAccessible,
     firstAccessiblePageIndex,
     getDeniedMessage,
   } = useRouteAuthorization(data, language, searchParams);
@@ -129,7 +134,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
   const safeAccessiblePageIndex = isPageAccessible(safePageIndex) ? safePageIndex : firstAccessiblePageIndex;
   const currentPage = data.pages?.[safeAccessiblePageIndex];
-  const markdownHtml = resolvePageMarkdownHtml(currentPage, data.docs, safeAccessiblePageIndex, language);
+  const markdownHtml = resolvePageMarkdownHtml(currentPage, { legacyDocs: data.docs, pageIndex: safeAccessiblePageIndex, language });
   // Focus mode reads the page's markdown, so routes without one (source-viewer,
   // media-only, untranslated) must not offer it at all.
   const pageHasMarkdown = hasMarkdownDocument(markdownHtml);
@@ -141,7 +146,10 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     currentLinearNavigationIndex,
     canGoPrevious,
     canGoNext,
-  } = useDocsShellLinearNav(data, language, safeAccessiblePageIndex, isPathAllowed);
+  } = useDocsShellLinearNav(data, language, { pageIndex: safeAccessiblePageIndex, isPathAllowed });
+  const displayHeaderMenuTree = useMemo(() => getMenuDisplayNodes(headerMenuTree, data.config.site), [headerMenuTree, data.config.site]);
+  const focusDocuments = useFocusDocuments({ data, entries: headerMenuEntries, language, currentPageIndex: safeAccessiblePageIndex, isPathAllowed });
+  const focusDocumentId = `${data.activeVersionId ?? ""}:${language}:${currentPage?.id ?? safeAccessiblePageIndex}`;
 
   const {
     quickNavOpen,
@@ -161,12 +169,14 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     focusModeOpen,
     setFocusModeOpen,
     focusModeCurrentHtml,
+    focusModePages,
+    safeFocusModePageIndex,
     canFocusModeGoPrevious,
     canFocusModeGoNext,
     openFocusMode: openFocusModeInternal,
     closeFocusMode: closeFocusModeInternal,
     onFocusModeNavigate: onFocusModeNavigateInternal,
-  } = useFocusMode(markdownHtml);
+  } = useFocusMode(markdownHtml, focusDocumentId, data.config.site.focusMode);
 
   const versionFromQuery = searchParams.get("version");
   const pathnameValue = pathname ?? "/";
@@ -226,7 +236,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   });
 
   const onMenuClick = useCallback(
-    (pathClick: string, ancestorKeys: string[] = [], options?: { fromLinearNav?: boolean; fromQuickNav?: boolean }) => {
+    (pathClick: string, ancestorKeys: string[] = [], options?: OnMenuClickOptions) => {
       void (async () => {
         if (pathClick) {
           const access = await ensurePathAccess(pathClick);
@@ -241,7 +251,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
         onMenuClickState(pathClick, ancestorKeys, options);
         setQuickNavOpen(false);
-        setFocusModeOpen(false);
+        if (options?.origin !== "focus") setFocusModeOpen(false);
         setQuickNavQuery("");
         if (pathClick && typeof window !== "undefined") {
           const params = getUrlParamsForPathClick(data, pathClick, language, getCurrentSearchParams());
@@ -269,10 +279,15 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
       if (currentLinearNavigationIndex < 0) return;
       const targetEntry = linearNavigationEntries[currentLinearNavigationIndex + offset];
       if (!targetEntry) return;
-      onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys, { fromLinearNav: true });
+      onMenuClick(targetEntry.pathClick, targetEntry.ancestorKeys, { origin: "linear" });
     },
     [currentLinearNavigationIndex, linearNavigationEntries, onMenuClick],
   );
+
+  function navigateFocusDocument(offset: -1 | 1): void {
+    const target = offset < 0 ? focusDocuments.previousDocument : focusDocuments.nextDocument;
+    if (target) onMenuClick(target.pathClick, target.ancestorKeys, { origin: "focus" });
+  }
 
   const onVersionChange = useCallback(
     (versionId: string) => {
@@ -338,6 +353,15 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   // on the active palette across live theme switches.
   useDocumentThemeVars(cssVars);
   const labels = useDocsShellLabels(data, language);
+  const focusFileName = markdownFileName(currentPage?.md?.config.path?.[language]);
+  const focusDocument = {
+    id: focusDocumentId,
+    title: focusDocuments.documents[focusDocuments.currentDocumentIndex]?.title ?? focusFileName,
+    source: currentPage?.md?.sourceByLanguage?.[language],
+    fileName: focusFileName,
+    index: focusDocuments.currentDocumentIndex,
+    count: focusDocuments.documents.length,
+  };
 
   const {
     iconImage,
@@ -349,7 +373,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     iconImgHeight: iconImageMenuHeaderImgHeight,
   } = headerIconConfig;
 
-  const routeGuideEnabled = Boolean(data.config.site.RouteGuide);
+  const routeGuideEnabled = data.config.site.RouteGuide !== false;
   const currentPagePath =
     currentPage?.md?.config?.path?.[language as keyof typeof currentPage.md.config.path] ??
     currentPage?.html?.config?.path?.[language] ??
@@ -360,8 +384,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     (currentPage?.audio ? `page:${currentPage.id}` : null) ??
     "";
   const breadcrumbTrail = useMemo(
-    () => (routeGuideEnabled && currentPagePath ? getBreadcrumbTrail(headerMenuTree, currentPagePath) : []),
-    [routeGuideEnabled, currentPagePath, headerMenuTree],
+    () => (currentPagePath ? getCurrentPageBreadcrumbTrail(headerMenuTree, currentPagePath) : []),
+    [currentPagePath, headerMenuTree],
   );
   const homePathClick = linearNavigationEntries[0]?.pathClick;
   const homeAncestorKeys = linearNavigationEntries[0]?.ancestorKeys ?? [];
@@ -371,6 +395,19 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   );
 
   const docsAccess = useDocsAccess(data.config.site.docsAccess, data.config.site.name);
+  const narrationEnabled = pageHasMarkdown && docsAccess.state === "unlocked" &&
+    data.config.site.accessibility?.enabled !== false && data.config.site.accessibility?.narration?.enabled !== false;
+  const narration = useMarkdownNarration({
+    html: markdownHtml,
+    language,
+    documentId: focusDocumentId,
+    enabled: narrationEnabled,
+    settings: data.config.site.accessibility?.narration,
+    exclusivePlayback: data.config.site.mediaExclusivePlayback !== false,
+  });
+  const accessibilityControls = narrationEnabled ? (
+    <NarrationPanel controller={narration} labels={resolveNarrationLabels(data.config.site.langmenu, language)} />
+  ) : undefined;
   const docsLockIconConfig = useMemo(
     () => resolveDocsLockIconConfig(data.config.site, nextMode === "dark" ? "dark" : "light", getBasePath()),
     [data.config.site, nextMode],
@@ -472,6 +509,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
   // Shared by the inline content blocks and the URL fullscreen overlay.
   const navigation: BrowseNavigationProps = {
+    canAccessPdf: (config) => isRouteAccessible(config.authorization),
     routeGuideEnabled,
     breadcrumbTrail,
     onMenuClick,
@@ -519,7 +557,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           iconImage={iconImage}
           iconImgWidth={iconImageMenuHeaderImgWidth}
           iconImgHeight={iconImageMenuHeaderImgHeight}
-          menuNodes={headerMenuTree}
+          menuNodes={displayHeaderMenuTree}
           menuCloseLabel={labels.menuCloseLabel}
           onMenuClick={onMenuClick}
           onToggleNode={toggleNode}
@@ -544,6 +582,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
         )}
 
         <DocsShellMainContent
+          accessibilityControls={focusModeOpen ? undefined : accessibilityControls}
           headerName={headerName}
           iconImage={iconImage}
           useReactHeaderIcon={useReactHeaderIcon}
@@ -578,7 +617,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           menuOpen={menuOpen}
           setMenuOpen={setMenuOpen}
           headerName={headerName}
-          headerMenuTree={headerMenuTree}
+          headerMenuTree={displayHeaderMenuTree}
           onMenuClick={onMenuClick}
           toggleNode={toggleNode}
           isNodeExpanded={isNodeExpanded}
@@ -616,6 +655,18 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           focusModeOpen={focusModeOpen}
           focusModeLabel={controlsConfig.focusModeLabel}
           focusModeCurrentHtml={focusModeCurrentHtml}
+          focusSectionIndex={safeFocusModePageIndex}
+          focusSectionCount={focusModePages.length}
+          focusDocument={focusDocument}
+          focusDocumentNavigation={{
+            previousLabel: labels.focusPreviousDocumentLabel,
+            nextLabel: labels.focusNextDocumentLabel,
+            previousTitle: focusDocuments.previousDocument?.title,
+            nextTitle: focusDocuments.nextDocument?.title,
+            onNavigate: navigateFocusDocument,
+          }}
+          focusOptions={data.config.site.focusMode}
+          focusAccessibilityControls={accessibilityControls}
           canFocusModeGoPrevious={canFocusModeGoPrevious}
           canFocusModeGoNext={canFocusModeGoNext}
           closeFocusMode={closeFocusModeInternal}

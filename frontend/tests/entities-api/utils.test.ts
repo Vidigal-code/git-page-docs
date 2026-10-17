@@ -71,26 +71,26 @@ describe("getLanguages content fallback chain", () => {
   const config = minimalConfig({}, { defaultLanguage: "pt" });
 
   it("uses the first md route path when it has one", () => {
-    expect(getLanguages(config, [{ id: 1, path: { en: "a", es: "b" } }], [], [], [], [])).toEqual(["en", "es"]);
+    expect(getLanguages(config, { routesMd: [{ id: 1, path: { en: "a", es: "b" } }] })).toEqual(["en", "es"]);
   });
 
   it("falls through source viewer titles, html paths, video and audio paths", () => {
     const mdWithoutPath = [{ id: 1 }] as ContentTypeRouteConfig[];
-    expect(getLanguages(config, mdWithoutPath, [{ id: 2, title: { es: "t" } }], [], [], [])).toEqual(["es"]);
-    expect(getLanguages(config, mdWithoutPath, [{ id: 2 }], [{ id: 3, path: { en: "h" } }], [], [])).toEqual(["en"]);
+    expect(getLanguages(config, { routesMd: mdWithoutPath, routesSourceViewer: [{ id: 2, title: { es: "t" } }] })).toEqual(["es"]);
+    expect(getLanguages(config, { routesMd: mdWithoutPath, routesSourceViewer: [{ id: 2 }], routesHtml: [{ id: 3, path: { en: "h" } }] })).toEqual(["en"]);
     expect(
-      getLanguages(config, mdWithoutPath, [], [{ id: 3 }], [{ id: 4, video: { videoType: { fr: "youtube" }, pathVideo: { fr: "v" } } }], []),
+      getLanguages(config, { routesMd: mdWithoutPath, routesHtml: [{ id: 3 }], routesVideo: [{ id: 4, video: { videoType: { fr: "youtube" }, pathVideo: { fr: "v" } } }] }),
     ).toEqual(["fr"]);
     expect(
-      getLanguages(config, mdWithoutPath, [], [], [{ id: 4 }], [{ id: 5, audio: { audioType: { de: "mp3" }, pathAudio: { de: "a" } } }]),
+      getLanguages(config, { routesMd: mdWithoutPath, routesVideo: [{ id: 4 }], routesAudio: [{ id: 5, audio: { audioType: { de: "mp3" }, pathAudio: { de: "a" } } }] }),
     ).toEqual(["de"]);
   });
 
   it("falls back to the legacy routes list, then to the default language", () => {
     const withRoutes = minimalConfig({ routes: [{ id: 1, path: { it: "x" } }] }, { defaultLanguage: "pt" });
-    expect(getLanguages(withRoutes, [], [], [], [])).toEqual(["it"]);
-    expect(getLanguages(config, [], [], [], [])).toEqual(["pt"]);
-    expect(getLanguages(config, [], [], [], [], undefined)).toEqual(["pt"]);
+    expect(getLanguages(withRoutes, {})).toEqual(["it"]);
+    expect(getLanguages(config, {})).toEqual(["pt"]);
+    expect(getLanguages(config, { routesAudio: undefined })).toEqual(["pt"]);
   });
 });
 

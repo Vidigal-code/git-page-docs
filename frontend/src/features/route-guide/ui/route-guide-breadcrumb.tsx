@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import type { ReactElement } from "react";
 import type { BreadcrumbItem } from "@/entities/docs";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { FiHome } from "@react-icons/all-files/fi/FiHome";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import styles from "./route-guide-breadcrumb.module.css";
 
@@ -20,7 +22,7 @@ export function RouteGuideBreadcrumb({
   iconConfig,
   homePathClick,
   homeAncestorKeys = [],
-}: Readonly<RouteGuideBreadcrumbProps>) {
+}: Readonly<RouteGuideBreadcrumbProps>): ReactElement {
   const { iconImage, useReactIcon, reactIconTag, reactIconStyle, iconImgWidth, iconImgHeight } =
     iconConfig;
 
@@ -35,9 +37,9 @@ export function RouteGuideBreadcrumb({
             aria-label="Home"
             disabled={!homePathClick}
           >
-            {useReactIcon && reactIconTag ? (
+            {useReactIcon ? (
               <span className={styles.icon} style={reactIconStyle}>
-                <ReactIconByTag tag={reactIconTag} />
+                <ReactIconByTag tag={reactIconTag ?? "FiHome"} fallback={<FiHome aria-hidden />} />
               </span>
             ) : (
               <Image
@@ -59,12 +61,11 @@ export function RouteGuideBreadcrumb({
                 {" "}
                 &gt;{" "}
               </span>
-              {item.pathClick ? (
+              {item.pathClick && !isLast ? (
                 <button
                   type="button"
                   className={styles.link}
                   onClick={() => onNavigate(item.pathClick, item.ancestorKeys)}
-                  aria-current={isLast ? "page" : undefined}
                 >
                   {item.title}
                 </button>

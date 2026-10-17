@@ -1,5 +1,7 @@
 import {
+  getBreadcrumbTrail,
   getPageIndexByPathClick,
+  type BreadcrumbItem,
   type ContentType,
   type HeaderMenuItem,
   type HeaderMenuLocalizedContent,
@@ -7,6 +9,7 @@ import {
   type LoadedDocsData,
   type MenuEntry,
   type MenuNode,
+  type SiteConfig,
 } from "@/entities/docs";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 
@@ -15,12 +18,17 @@ export { getPageIndexByPathClick };
 export { getBreadcrumbTrail, getUrlParamsForPathClick, type BreadcrumbItem } from "@/entities/docs";
 
 /** What every level of a menu tree needs to resolve pages and filter paths. */
-interface MenuTreeContext {
-  data: LoadedDocsData;
-  language: LanguageCode;
+export interface MenuTreeSelection {
   pageIndex: number;
   isPathAllowed?: (pathClick: string) => boolean;
 }
+
+interface MenuTreeContext extends MenuTreeSelection {
+  data: LoadedDocsData;
+  language: LanguageCode;
+}
+
+const UNORDERED_SECTION_PRIORITY = 999;
 
 /** Where a nested submenu list hangs in the tree being built. */
 interface SubmenuPosition {
@@ -59,8 +67,8 @@ function buildLocalizedSubmenuTree(
       key,
       id: index,
       title,
-      pathClick,
-      active: pathClick ? pageIndex === getPageIndexByPathClick(data, pathClick) : false,
+      pathClick: allowed ? pathClick : "",
+      active: allowed && pathClick ? pageIndex === getPageIndexByPathClick(data, pathClick) : false,
       level,
       searchLabel: trail.join(" / "),
       ancestorKeys,
@@ -70,24 +78,20 @@ function buildLocalizedSubmenuTree(
   return entries;
 }
 
-export interface BuildHeaderMenuTreeOptions {
+export interface BuildHeaderMenuTreeOptions extends MenuTreeContext {
   /** Nesting depth of `menus` (0 = top level). */
   level?: number;
   /** Titles of the ancestors, used to build stable keys and search labels. */
   parentTrail?: string[];
   /** Keys of the ancestors (expansion map). */
   parentAncestors?: string[];
-  isPathAllowed?: (pathClick: string) => boolean;
 }
 
 export function buildHeaderMenuTree(
   menus: HeaderMenuItem[],
-  data: LoadedDocsData,
-  language: LanguageCode,
-  pageIndex: number,
-  options: BuildHeaderMenuTreeOptions = {},
+  options: BuildHeaderMenuTreeOptions,
 ): MenuNode[] {
-  const { level = 0, parentTrail = [], parentAncestors = [], isPathAllowed } = options;
+  const { data, language, pageIndex, level = 0, parentTrail = [], parentAncestors = [], isPathAllowed } = options;
   const entries: MenuNode[] = [];
   menus.forEach((menu) => {
     const value = menu[language] as HeaderMenuLocalizedContent | undefined;
@@ -97,7 +101,8 @@ export function buildHeaderMenuTree(
     const key = `${trail.join("-")}-${menu.id}`;
     const ancestorKeys = [...parentAncestors];
     const nestedByItem = Array.isArray(menu.submenus)
-      ? buildHeaderMenuTree(menu.submenus, data, language, pageIndex, {
+      ? buildHeaderMenuTree(menu.submenus, {
+          data, language, pageIndex,
           level: level + 1,
           parentTrail: trail,
           parentAncestors: [...ancestorKeys, key],
@@ -119,8 +124,8 @@ export function buildHeaderMenuTree(
       key,
       id: menu.id,
       title,
-      pathClick,
-      active: pathClick ? pageIndex === getPageIndexByPathClick(data, pathClick) : false,
+      pathClick: allowed ? pathClick : "",
+      active: allowed && pathClick ? pageIndex === getPageIndexByPathClick(data, pathClick) : false,
       level,
       searchLabel: trail.join(" / "),
       ancestorKeys,
@@ -133,35 +138,22 @@ export function buildHeaderMenuTree(
 export function buildUnifiedHeaderMenuTree(
   data: LoadedDocsData,
   language: LanguageCode,
-  pageIndex: number,
-  isPathAllowed?: (pathClick: string) => boolean,
+  selection: MenuTreeSelection,
 ): MenuNode[] {
+  const { pageIndex, isPathAllowed } = selection;
   const hierarchyMenu = data.config.hierarchyMenu ?? DEFAULT_HIERARCHY as Record<string, number>;
   const langmenu = data.config.site.langmenu;
-  const sections: { type: ContentType; menus: HeaderMenuItem[]; labelKey: string }[] = [];
+  const candidates: { type: ContentType; menus: HeaderMenuItem[]; labelKey: string }[] = [
+    { type: "md", menus: data.config["menus-header-md"] ?? data.config["menus-header"] ?? [], labelKey: "titleHeaderMenuMd" },
+    { type: "source-viewer", menus: data.config["menus-header-source-viewer"] ?? [], labelKey: "titleHeaderMenuSourceViewer" },
+    { type: "html", menus: data.config["menus-header-html"] ?? [], labelKey: "titleHeaderMenuHtml" },
+    { type: "video", menus: data.config["menus-header-video"] ?? [], labelKey: "titleHeaderMenuVideo" },
+    { type: "audio", menus: data.config["menus-header-audio"] ?? [], labelKey: "titleHeaderMenuAudio" },
+    { type: "pdf", menus: data.config["menus-header-pdf"] ?? [], labelKey: "titleHeaderMenuPdf" },
+  ];
+  const sections = candidates.filter(({ type, menus }) => menus.length > 0 && (type !== "pdf" || data.config.site.pdf?.enabled !== false));
 
-  const menusMd = data.config["menus-header-md"] ?? data.config["menus-header"];
-  if (menusMd?.length) {
-    sections.push({ type: "md", menus: menusMd, labelKey: "titleHeaderMenuMd" });
-  }
-  const menusSourceViewer = data.config["menus-header-source-viewer"];
-  if (menusSourceViewer?.length) {
-    sections.push({ type: "source-viewer", menus: menusSourceViewer, labelKey: "titleHeaderMenuSourceViewer" });
-  }
-  const menusHtml = data.config["menus-header-html"];
-  if (menusHtml?.length) {
-    sections.push({ type: "html", menus: menusHtml, labelKey: "titleHeaderMenuHtml" });
-  }
-  const menusVideo = data.config["menus-header-video"];
-  if (menusVideo?.length) {
-    sections.push({ type: "video", menus: menusVideo, labelKey: "titleHeaderMenuVideo" });
-  }
-  const menusAudio = data.config["menus-header-audio"];
-  if (menusAudio?.length) {
-    sections.push({ type: "audio", menus: menusAudio, labelKey: "titleHeaderMenuAudio" });
-  }
-
-  sections.sort((a, b) => (hierarchyMenu[a.type] ?? 999) - (hierarchyMenu[b.type] ?? 999));
+  sections.sort((a, b) => (hierarchyMenu[a.type] ?? UNORDERED_SECTION_PRIORITY) - (hierarchyMenu[b.type] ?? UNORDERED_SECTION_PRIORITY));
   const showSectionLabels = sections.length > 1;
   const result: MenuNode[] = [];
 
@@ -183,7 +175,8 @@ export function buildUnifiedHeaderMenuTree(
     }
     // Section labels are sibling rows, not hierarchy parents: the title trail
     // (keys, search labels) and the ancestor keys start fresh in every section.
-    const sectionNodes = buildHeaderMenuTree(menus, data, language, pageIndex, {
+    const sectionNodes = buildHeaderMenuTree(menus, {
+      data, language, pageIndex,
       level: showSectionLabels ? 1 : 0,
       isPathAllowed,
     });
@@ -217,4 +210,19 @@ export function flattenMenuTree(nodes: MenuNode[]): MenuEntry[] {
     }
   });
   return result;
+}
+
+export function getMenuDisplayNodes(nodes: MenuNode[], site: Pick<SiteConfig, "nestedMenusEnabled">): MenuNode[] {
+  if (site.nestedMenusEnabled !== false) return nodes;
+  return nodes.flatMap((node) => {
+    const row = node.pathClick || node.isSectionHeader ? [{ ...node, level: 0, children: [] }] : [];
+    return [...row, ...getMenuDisplayNodes(node.children, site)];
+  });
+}
+
+export function getCurrentPageBreadcrumbTrail(nodes: MenuNode[], pathClick: string | undefined): BreadcrumbItem[] {
+  const exactTrail = getBreadcrumbTrail(nodes, pathClick ?? "");
+  if (exactTrail.length > 0) return exactTrail;
+  const activeDestination = flattenMenuTree(nodes).find((entry) => entry.active && entry.pathClick);
+  return activeDestination ? getBreadcrumbTrail(nodes, activeDestination.pathClick) : [];
 }

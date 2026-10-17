@@ -1,8 +1,8 @@
 /** Route and video metadata for doc versions */
 
-export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 };
+export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 };
 /** Page order that puts the video container above the markdown. */
-export const VIDEO_FIRST_HIERARCHY = { video: 0, md: 1, "source-viewer": 2, html: 3, audio: 4 };
+export const VIDEO_FIRST_HIERARCHY = { video: 0, md: 1, "source-viewer": 2, html: 3, audio: 4, pdf: 5 };
 
 export const ROUTE_META_ID1 = {
   titles: { pt: "Primeiros passos", en: "Getting Started", es: "Primeros pasos" },
@@ -38,6 +38,53 @@ export const ROUTE_META_ID6 = {
   },
 };
 
+export const REFERENCE_ROUTE_METAS = {
+  13: {
+    titles: { pt: "Configuração", en: "Configuration", es: "Configuración" },
+    descriptions: { pt: "Idiomas, ícones, navegação, foco e acessibilidade", en: "Languages, icons, navigation, focus and accessibility", es: "Idiomas, iconos, navegación, foco y accesibilidad" },
+  },
+  14: {
+    titles: { pt: "Publicação", en: "Deployment", es: "Publicación" },
+    descriptions: { pt: "Execução local e publicação no GitHub Pages", en: "Local runtime and GitHub Pages deployment", es: "Ejecución local y publicación en GitHub Pages" },
+  },
+  15: {
+    titles: { pt: "Arquitetura", en: "Architecture", es: "Arquitectura" },
+    descriptions: { pt: "Pacotes, contratos e fluxo de dados", en: "Packages, contracts and data flow", es: "Paquetes, contratos y flujo de datos" },
+  },
+  16: {
+    titles: { pt: "Temas e layouts", en: "Themes and layouts", es: "Temas y diseños" },
+    descriptions: { pt: "Personalize templates e tokens visuais", en: "Customize templates and visual tokens", es: "Personaliza plantillas y tokens visuales" },
+  },
+  17: {
+    titles: { pt: "Perguntas frequentes", en: "FAQ", es: "Preguntas frecuentes" },
+    descriptions: { pt: "Diagnóstico e solução de problemas", en: "Diagnostics and troubleshooting", es: "Diagnóstico y solución de problemas" },
+  },
+  18: {
+    titles: { pt: "Referência da CLI", en: "CLI reference", es: "Referencia de la CLI" },
+    descriptions: { pt: "Instalação, comandos, opções e exemplos", en: "Installation, commands, options and examples", es: "Instalación, comandos, opciones y ejemplos" },
+  },
+  19: {
+    titles: { pt: "Servidor MCP", en: "MCP server", es: "Servidor MCP" },
+    descriptions: { pt: "Instalação, clientes, tools, resources e provedores", en: "Installation, clients, tools, resources and providers", es: "Instalación, clientes, tools, resources y proveedores" },
+  },
+  20: {
+    titles: { pt: "Navegação e submenus", en: "Navigation and nested menus", es: "Navegación y submenús" },
+    descriptions: { pt: "Árvores recursivas, URLs e breadcrumbs", en: "Recursive trees, URLs and breadcrumbs", es: "Árboles recursivos, URLs y breadcrumbs" },
+  },
+  21: {
+    titles: { pt: "Acessibilidade e narração", en: "Accessibility and narration", es: "Accesibilidad y narración" },
+    descriptions: { pt: "Leitura com vozes nativas do navegador", en: "Reading with native browser voices", es: "Lectura con voces nativas del navegador" },
+  },
+  22: {
+    titles: { pt: "Modo foco", en: "Focus mode", es: "Modo foco" },
+    descriptions: { pt: "Leitura, cópia, download e navegação entre documentos", en: "Reading, copy, download and document navigation", es: "Lectura, copia, descarga y navegación entre documentos" },
+  },
+  24: {
+    titles: { pt: "Documentos PDF", en: "PDF documents", es: "Documentos PDF" },
+    descriptions: { pt: "Rotas, prévia, download e publicação de anexos PDF", en: "Routes, previews, downloads and publishing PDF attachments", es: "Rutas, vista previa, descarga y publicación de anexos PDF" },
+  },
+};
+
 export const SOURCE_VIEWER_META = {
   id: 7,
   titles: { pt: "Codigo fonte", en: "Source code", es: "Codigo fuente" },
@@ -55,6 +102,16 @@ export const AUDIO_META_ID12 = {
     pt: "Ouça uma faixa de exemplo diretamente na documentacao.",
     en: "Listen to a sample track directly inside the documentation.",
     es: "Escucha una pista de ejemplo directamente en la documentacion.",
+  },
+};
+
+export const PDF_GUIDE_META = {
+  id: 23,
+  titles: { pt: "Guia do projeto em PDF (inglês)", en: "Project guide PDF (English)", es: "Guía del proyecto en PDF (inglés)" },
+  descriptions: {
+    pt: "Visualize ou baixe o guia do GitPageDocs em inglês.",
+    en: "Preview or download the GitPageDocs project guide in English.",
+    es: "Visualiza o descarga la guía de GitPageDocs en inglés.",
   },
 };
 

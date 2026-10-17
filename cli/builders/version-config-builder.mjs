@@ -5,6 +5,7 @@ import {
   VIDEO_IDS,
   AUDIO_IDS,
   PAGE2_AUDIO,
+  PDF_GUIDE_FILENAME,
 } from "../data/path-mappings.mjs";
 import {
   ROUTE_META_ID1,
@@ -13,16 +14,18 @@ import {
   ROUTE_META_ID4,
   ROUTE_META_ID5,
   ROUTE_META_ID6,
+  REFERENCE_ROUTE_METAS,
   VIDEO_META_ID1,
   VIDEO_META_ID2,
   VIDEO_META_ID3,
   VIDEO_META_ID4,
   AUDIO_META_ID12,
+  PDF_GUIDE_META,
   SOURCE_VIEWER_META,
   DEFAULT_HIERARCHY,
   VIDEO_FIRST_HIERARCHY,
 } from "../data/route-metas.mjs";
-import { buildAudioRoute, buildMdRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
+import { buildAudioRoute, buildMdRoute, buildPdfRoute, buildSourceViewerRoute, buildVideoRoute } from "./route-builders.mjs";
 import { resolveSourceViewerPath } from "./project-links.mjs";
 
 /** Demo route protections showcasing the "Authorized Routes" feature. They are
@@ -52,12 +55,14 @@ const ROUTE_METAS = {
   4: ROUTE_META_ID4,
   5: ROUTE_META_ID5,
   6: ROUTE_META_ID6,
+  ...REFERENCE_ROUTE_METAS,
 };
+const MARKDOWN_ROUTE_IDS = Object.keys(ROUTE_PATHS).map(Number);
 const VIDEO_METAS = { 1: VIDEO_META_ID1, 2: VIDEO_META_ID2, 3: VIDEO_META_ID3, 4: VIDEO_META_ID4 };
 
 function buildVersionMdRoutes(versionId, includeDemoAuthorization) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  return [1, 2, 3, 4, 5, 6].map((id) => {
+  return MARKDOWN_ROUTE_IDS.map((id) => {
     const paths = ROUTE_PATHS[id];
     const meta = ROUTE_METAS[id];
     const pathByLang = {
@@ -141,7 +146,7 @@ function buildVersionSourceViewerRoutes(options = {}) {
 
 function buildVersionMenus(versionId) {
   const base = `gitpagedocs/docs/versions/${versionId}`;
-  const menuMd = [1, 2, 3, 4, 5, 6].map((id) => ({
+  const menuMd = MARKDOWN_ROUTE_IDS.map((id) => ({
     id,
     pt: { title: ROUTE_METAS[id].titles.pt, "path-click": `${base}/pt/${ROUTE_PATHS[id].pt}` },
     en: { title: ROUTE_METAS[id].titles.en, "path-click": `${base}/en/${ROUTE_PATHS[id].en}` },
@@ -172,7 +177,13 @@ function buildVersionMenus(versionId) {
       es: { title: SOURCE_VIEWER_META.titles.es, "path-click": `page:${SOURCE_VIEWER_META.id}` },
     },
   ];
-  return { md: menuMd, sourceViewer: menuSourceViewer, html: [], video: menuVideo, audio: menuAudio };
+  const menuPdf = [{
+    id: PDF_GUIDE_META.id,
+    pt: { title: PDF_GUIDE_META.titles.pt, "path-click": `page:${PDF_GUIDE_META.id}` },
+    en: { title: PDF_GUIDE_META.titles.en, "path-click": `page:${PDF_GUIDE_META.id}` },
+    es: { title: PDF_GUIDE_META.titles.es, "path-click": `page:${PDF_GUIDE_META.id}` },
+  }];
+  return { md: menuMd, sourceViewer: menuSourceViewer, html: [], video: menuVideo, audio: menuAudio, pdf: menuPdf };
 }
 
 /**
@@ -203,11 +214,13 @@ export function buildVersionConfig(versionId, options = {}) {
     "routes-html": [],
     "routes-video": buildVersionVideoRoutes(versionId, includeDemoAuthorization),
     "routes-audio": buildVersionAudioRoutes(versionId),
+    "routes-pdf": [buildPdfRoute(PDF_GUIDE_META, `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`)],
     "menus-header-md": menus.md,
     "menus-header-source-viewer": menus.sourceViewer,
     "menus-header-html": menus.html,
     "menus-header-video": menus.video,
     "menus-header-audio": menus.audio,
+    "menus-header-pdf": menus.pdf,
     hierarchyPage: DEFAULT_HIERARCHY,
     hierarchyMenu: DEFAULT_HIERARCHY,
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { SelectionDialog } from "@/shared/ui/selection-dialog";
 import type { SelectionDialogOption } from "@/shared/ui/selection-dialog";
 import { useMediaQuery } from "@/shared/lib/use-media-query";
@@ -16,6 +17,7 @@ interface DropdownSelectorProps {
   selectedId: string;
   onSelect: (id: string) => void;
   className?: string;
+  triggerIcon?: ReactNode;
   /** Theme CSS variables forwarded to the small-screen modal (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
 }
@@ -35,6 +37,7 @@ export function DropdownSelector({
   selectedId,
   onSelect,
   className,
+  triggerIcon,
   themeVarsStyle,
 }: Readonly<DropdownSelectorProps>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -135,9 +138,9 @@ export function DropdownSelector({
         aria-label={label}
         aria-expanded={isOpen}
         aria-haspopup={isSmallScreen ? "dialog" : "true"}
-        title={label}
+        title={triggerIcon ? `${label}: ${selectedLabel}` : label}
       >
-        <span>{selectedLabel}</span>
+        {triggerIcon ?? <span>{selectedLabel}</span>}
       </button>
 
       {isOpen && !isSmallScreen && (

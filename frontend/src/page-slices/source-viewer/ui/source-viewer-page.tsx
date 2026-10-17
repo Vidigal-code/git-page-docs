@@ -15,6 +15,7 @@ import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath, toFullPath } from "@/shared/lib/base-path";
 import { SOURCE_VIEWER_FALLBACK_PARAM } from "@/shared/lib/source-viewer-fallback";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
 import styles from "./source-viewer-page.module.css";
 
 interface SourceViewerPageProps {
@@ -78,6 +79,8 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
 
   const header = (
     <SearchShellHeader
+      languageSelectorIcon={resolveControlIcon(data.config.site, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
+      themeSelectorIcon={resolveControlIcon(data.config.site, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}

@@ -6,6 +6,7 @@ import type {
 } from "@/entities/docs/model/types";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
 import type { VersionRoutesConfig } from "../version/resolve-version";
+import { getPdfRoutes } from "../../lib/pdf/validate-pdf-route";
 
 export interface MergedRoutesConfig {
   auth: GitPageDocsConfig["auth"];
@@ -14,11 +15,13 @@ export interface MergedRoutesConfig {
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
   routesAudio: ContentTypeRouteConfig[];
+  routesPdf: ContentTypeRouteConfig[];
   menusHeaderMd: GitPageDocsConfig["menus-header"];
   menusHeaderSourceViewer: GitPageDocsConfig["menus-header"];
   menusHeaderHtml: GitPageDocsConfig["menus-header"];
   menusHeaderVideo: GitPageDocsConfig["menus-header"];
   menusHeaderAudio: GitPageDocsConfig["menus-header"];
+  menusHeaderPdf: GitPageDocsConfig["menus-header"];
   hierarchyPage: HierarchyConfig;
   hierarchyMenu: HierarchyConfig;
 }
@@ -33,11 +36,13 @@ function readBaseRoutesConfig(baseConfig: GitPageDocsConfig): MergedRoutesConfig
     routesHtml: baseConfig["routes-html"] ?? [],
     routesVideo: baseConfig["routes-video"] ?? [],
     routesAudio: baseConfig["routes-audio"] ?? [],
+    routesPdf: getPdfRoutes(baseConfig["routes-pdf"]),
     menusHeaderMd: baseConfig["menus-header-md"] ?? baseConfig["menus-header"] ?? [],
     menusHeaderSourceViewer: baseConfig["menus-header-source-viewer"] ?? [],
     menusHeaderHtml: baseConfig["menus-header-html"] ?? [],
     menusHeaderVideo: baseConfig["menus-header-video"] ?? [],
     menusHeaderAudio: baseConfig["menus-header-audio"] ?? [],
+    menusHeaderPdf: baseConfig["menus-header-pdf"] ?? [],
     hierarchyPage: baseConfig.hierarchyPage ?? defaultHierarchy,
     hierarchyMenu: baseConfig.hierarchyMenu ?? defaultHierarchy,
   };
@@ -57,11 +62,13 @@ function applyVersionOverrides(base: MergedRoutesConfig, versionConfig: VersionR
     routesHtml: pickNonEmpty(base.routesHtml, versionConfig["routes-html"]),
     routesVideo: pickNonEmpty(base.routesVideo, versionConfig["routes-video"]),
     routesAudio: pickNonEmpty(base.routesAudio, versionConfig["routes-audio"]),
+    routesPdf: getPdfRoutes(pickNonEmpty(base.routesPdf, versionConfig["routes-pdf"])),
     menusHeaderMd: pickNonEmpty(base.menusHeaderMd, versionConfig["menus-header-md"], versionConfig["menus-header"]),
     menusHeaderSourceViewer: pickNonEmpty(base.menusHeaderSourceViewer, versionConfig["menus-header-source-viewer"]),
     menusHeaderHtml: pickNonEmpty(base.menusHeaderHtml, versionConfig["menus-header-html"]),
     menusHeaderVideo: pickNonEmpty(base.menusHeaderVideo, versionConfig["menus-header-video"]),
     menusHeaderAudio: pickNonEmpty(base.menusHeaderAudio, versionConfig["menus-header-audio"]),
+    menusHeaderPdf: pickNonEmpty(base.menusHeaderPdf, versionConfig["menus-header-pdf"]),
     hierarchyPage: versionConfig.hierarchyPage ?? base.hierarchyPage,
     hierarchyMenu: versionConfig.hierarchyMenu ?? base.hierarchyMenu,
   };

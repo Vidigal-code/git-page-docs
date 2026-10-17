@@ -1,0 +1,15 @@
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  height: 75vh;
+  min-height: 24rem;
+  border: 0;
+  border-radius: 0.5rem;
+}

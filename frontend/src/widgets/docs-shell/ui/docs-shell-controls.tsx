@@ -5,6 +5,8 @@ import { QuickNavigationTrigger } from "@/features/quick-navigation";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ThemeSelector } from "@/features/theme-selector";
 import { VersionSelector } from "@/features/version-selector";
+import { ControlIcon } from "@/shared/ui/control-icon";
+import { MdFullscreen } from "@/shared/ui/fallback-icons";
 import type {
   DocsShellControlsBaseProps,
   DocsShellControlsAudioProps,
@@ -46,8 +48,10 @@ export function DocsShellControls({
   previewIconImage,
   focusModeEnabled,
   focusModeLabel,
+  focusModeIcon,
   activeNavigation,
   quickNavLabel,
+  quickNavigationIcon,
   showVersionSelector,
   availableVersions,
   selectedVersionValue,
@@ -56,6 +60,8 @@ export function DocsShellControls({
   availableLanguages,
   language,
   languageLabelResolver,
+  languageSelectorIcon,
+  themeSelectorIcon,
   hideThemeSelector,
   activeThemeId,
   layouts,
@@ -125,11 +131,17 @@ export function DocsShellControls({
         audioPauseLabel={audioPauseLabel}
       />
       {focusModeEnabled && (
-        <button className={styles.button} onClick={onOpenFocusMode} aria-label={focusModeLabel}>
-          {focusModeLabel}
+        <button
+          type="button"
+          className={focusModeIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button}
+          onClick={onOpenFocusMode}
+          aria-label={focusModeLabel}
+          title={focusModeLabel}
+        >
+          {focusModeIcon ? <ControlIcon icon={focusModeIcon} fallback={<MdFullscreen aria-hidden />} /> : focusModeLabel}
         </button>
       )}
-      {activeNavigation && <QuickNavigationTrigger className={styles.button} label={quickNavLabel} onClick={onOpenQuickNavigation} />}
+      {activeNavigation && <QuickNavigationTrigger className={quickNavigationIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} label={quickNavLabel} icon={quickNavigationIcon} onClick={onOpenQuickNavigation} />}
       {showVersionSelector && (
         <VersionSelector
           className={styles.select}
@@ -142,7 +154,8 @@ export function DocsShellControls({
       )}
       {isLanguageSelectVisible && (
         <LanguageSelector
-          className={styles.select}
+          className={languageSelectorIcon ? `${styles.button} ${styles.modeIconButton}` : styles.select}
+          icon={languageSelectorIcon}
           languages={availableLanguages}
           value={language}
           onChange={onLanguageChange}
@@ -153,7 +166,8 @@ export function DocsShellControls({
       )}
       {!hideThemeSelector && (
         <ThemeSelector
-          className={styles.select}
+          className={themeSelectorIcon ? `${styles.button} ${styles.modeIconButton}` : styles.select}
+          icon={themeSelectorIcon}
           layouts={layouts}
           value={activeThemeId}
           onChange={onThemeChange}

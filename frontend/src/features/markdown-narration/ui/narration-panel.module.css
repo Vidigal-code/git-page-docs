@@ -1,0 +1,37 @@
+.panel {
+  margin-block: 0.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 0.85rem;
+  background: var(--card-background);
+  color: var(--text);
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.panel summary {
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.panel summary svg {
+  vertical-align: middle;
+  margin-inline: 0.3rem;
+}
+
+.content { padding: 0 1rem 1rem; }
+.settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; border: 0; padding: 0; margin: 0; }
+.settings label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.45rem; min-width: 0; }
+.voice { grid-column: 1 / -1; }
+.settings select, .settings input { width: 100%; min-width: 0; font: inherit; accent-color: var(--primary); }
+.settings select { padding: 0.55rem; color: var(--text); background: var(--background); border: 1px solid var(--card-border); border-radius: 0.5rem; }
+.hint, .status { color: var(--text-secondary); font-size: 0.8rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.actions button { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 44px; padding: 0.5rem 0.8rem; border-radius: 0.6rem; border: 1px solid var(--card-border); background: var(--background); color: var(--text); font: inherit; cursor: pointer; }
+.actions button:disabled { opacity: 0.5; cursor: default; }
+.panel :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.legend { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 480px) {
+  .status { flex-basis: 100%; }
+}

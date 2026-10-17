@@ -20,4 +20,4 @@ export const CONFIG_EXTENSIONS = [".json", ".js", ".ts"] as const;
 export const DEFAULT_CONFIG_PATH = "gitpagedocs/config.json";
 
 /** Default content hierarchy. */
-export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 } as const;
+export const DEFAULT_HIERARCHY = { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 } as const;

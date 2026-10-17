@@ -66,6 +66,7 @@ const { DOC_VERSIONS } = docVersions as { DOC_VERSIONS: string[] };
 const { SUPPORTED_LANGUAGES } = languages as { SUPPORTED_LANGUAGES: readonly string[] };
 
 const BADGES: Record<string, string> = { en: "> Version: ", pt: "> Versao: ", es: "> Version (ES): " };
+const PACKAGE_ROOT = path.resolve(__dirname, "../..");
 
 const temporaryRoots: string[] = [];
 
@@ -97,6 +98,58 @@ afterEach(() => {
 
 // Writes every shipped layout template plus all docs; give it room under CI load.
 describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, () => {
+  it("copies the bundled PDF bytes into a custom output directory", async () => {
+    const root = makeRoot();
+    const pkgRoot = makeRoot();
+    const source = Buffer.from([0x25, 0x50, 0x44, 0x46, 0x2d, 0x00, 0xff, 0x80]);
+    const filename = "gitpagedocs-project-guide.pdf";
+    const sourcePath = at(pkgRoot, `content/assets/${filename}`);
+    mkdirSync(path.dirname(sourcePath), { recursive: true });
+    writeFileSync(sourcePath, source);
+    const artifacts = buildConfigArtifacts();
+    const [versionId] = DOC_VERSIONS;
+
+    await writeConfigOnlyOutput({
+      root, pkgRoot, outputDir: "custom-docs", layoutsDir: "gitpagelayouts",
+      artifacts, useLocalLayoutConfig: false, layouts: [], createThemeTemplate,
+    });
+
+    expect(readFileSync(at(root, `custom-docs/docs/versions/${versionId}/en/${filename}`))).toEqual(source);
+  });
+
+  it("reports a missing bundled PDF instead of silently publishing a broken link", async () => {
+    const root = makeRoot();
+    await expect(writeConfigOnlyOutput({
+      root, pkgRoot: root, outputDir: "docs", layoutsDir: "layouts",
+      artifacts: buildConfigArtifacts(), useLocalLayoutConfig: false, layouts: [], createThemeTemplate,
+    })).rejects.toMatchObject({ code: "ENOENT" });
+  });
+
+  it("publishes all user references in every language", async () => {
+    const root = makeRoot();
+    const artifacts = buildConfigArtifacts();
+    const [versionId] = DOC_VERSIONS;
+
+    await writeConfigOnlyOutput({
+      root,
+      pkgRoot: PACKAGE_ROOT,
+      outputDir: "gitpagedocs",
+      layoutsDir: "gitpagelayouts",
+      artifacts,
+      useLocalLayoutConfig: false,
+      layouts: LAYOUTS,
+      createThemeTemplate,
+    });
+
+    for (const language of SUPPORTED_LANGUAGES) {
+      for (const page of ["configuration", "deployment", "architecture", "themes", "faq", "cli", "mcp", "navigation", "accessibility", "focus-mode", "pdf"]) {
+        const markdown = readFileSync(at(root, `gitpagedocs/docs/versions/${versionId}/${language}/${page}.md`), "utf8");
+        const contentKey = page === "focus-mode" ? "focusMode" : page;
+        expect(markdown).toContain(artifacts.docs?.[language][contentKey].trim());
+      }
+    }
+  });
+
   it("writes the complete docs output and local layouts home", async () => {
     const root = makeRoot();
     const artifacts = buildConfigArtifacts({ useLocalLayoutConfig: true, layoutsDir: "gitpagelayouts" });
@@ -104,7 +157,7 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
 
     await writeConfigOnlyOutput({
       root,
-      pkgRoot: root,
+      pkgRoot: PACKAGE_ROOT,
       outputDir: "gitpagedocs",
       layoutsDir: "gitpagelayouts",
       artifacts,
@@ -153,7 +206,7 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
 
     await writeConfigOnlyOutput({
       root,
-      pkgRoot: root,
+      pkgRoot: PACKAGE_ROOT,
       outputDir: "gitpagedocs",
       layoutsDir: "gitpagelayouts",
       artifacts,

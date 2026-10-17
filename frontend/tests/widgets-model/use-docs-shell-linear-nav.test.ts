@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 describe("useDocsShellLinearNav", () => {
   it("builds the sectioned tree and a de-duplicated linear entry list", () => {
-    const { result } = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", PAGE_INDEX.guide));
+    const { result } = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", { pageIndex: PAGE_INDEX.guide }));
     expect(result.current.headerMenuTree.map((node) => node.key)).toEqual(["section-md", "Intro-1", "Guide-2", "section-html", "Landing-20"]);
     expect(result.current.headerMenuEntries.map((entry) => entry.key)).toEqual([
       "section-md",
@@ -26,16 +26,16 @@ describe("useDocsShellLinearNav", () => {
   });
 
   it("reports the edges of the linear list and pages outside it", () => {
-    const first = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", PAGE_INDEX.intro)).result.current;
+    const first = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", { pageIndex: PAGE_INDEX.intro })).result.current;
     expect(first.currentLinearNavigationIndex).toBe(0);
     expect(first.canGoPrevious).toBe(false);
     expect(first.canGoNext).toBe(true);
 
-    const last = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", PAGE_INDEX.landing)).result.current;
+    const last = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", { pageIndex: PAGE_INDEX.landing })).result.current;
     expect(last.currentLinearNavigationIndex).toBe(2);
     expect(last.canGoNext).toBe(false);
 
-    const outside = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", PAGE_INDEX.video)).result.current;
+    const outside = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", { pageIndex: PAGE_INDEX.video })).result.current;
     expect(outside.currentLinearNavigationIndex).toBe(-1);
     expect(outside.canGoPrevious).toBe(false);
     expect(outside.canGoNext).toBe(false);
@@ -52,20 +52,20 @@ describe("useDocsShellLinearNav", () => {
         "menus-header-html": undefined,
       }),
     });
-    const { result } = renderHook(() => useDocsShellLinearNav(data, "en", 0));
+    const { result } = renderHook(() => useDocsShellLinearNav(data, "en", { pageIndex: 0 }));
     expect(result.current.linearNavigationEntries.map((entry) => entry.key)).toEqual(["Intro-1", "Guide-2"]);
   });
 
   it("applies the path filter to the tree, the entries and the linear list", () => {
     const isPathAllowed = (pathClick: string) => pathClick !== LANDING;
-    const { result } = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", 0, isPathAllowed));
+    const { result } = renderHook(() => useDocsShellLinearNav(makeDocsData(), "en", { pageIndex: 0, isPathAllowed: isPathAllowed }));
     expect(result.current.headerMenuTree.map((node) => node.key)).toEqual(["section-md", "Intro-1", "Guide-2"]);
     expect(result.current.linearNavigationEntries.map((entry) => entry.pathClick)).toEqual([INTRO, GUIDE]);
   });
 
   it("memoises its derived structures across identical renders", () => {
     const data = makeDocsData();
-    const { result, rerender } = renderHook(({ page }) => useDocsShellLinearNav(data, "en", page), {
+    const { result, rerender } = renderHook(({ page }) => useDocsShellLinearNav(data, "en", { pageIndex: page }), {
       initialProps: { page: 0 },
     });
     const first = result.current;

@@ -2,51 +2,9 @@
 
 Complete reference of CLI options, configuration keys, and runtime features.
 
-## CLI commands
+## Command line
 
-| Command | Description |
-|---------|--------------|
-| `gitpagedocs` | Generate config and docs in `gitpagedocs/` |
-| `gitpagedocs --layoutconfig` | Also generate local layouts/templates in `gitpagelayouts/` |
-| `gitpagedocs --home` | Standalone distribution (`gitpagedocshome/`) |
-| `gitpagedocs --push --owner X --repo Y` | Setup workflow, commit, push |
-| `gitpagedocs --interactive` / `-i` | Interactive mode with prompts (the default in a terminal) |
-| `gitpagedocs --no-interactive` / `--yes` / `-y` | Never prompt; use flags and defaults |
-| `gitpagedocs ai` | Interactive AI documentation generator |
-| `gitpagedocs chat [question]` | Streaming AI chat in the terminal (REPL on a TTY; one-shot with a question or piped stdin) |
-| `gitpagedocs provider [id]` / `models [provider]` | List AI providers / catalog models |
-| `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI |
-| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
-| `gitpagedocs docs` | Refresh README/CONTRIBUTING/SECURITY managed regions |
-| `gitpagedocs password` | Set a documentation access password (public key in `site.docsAccess`) |
-| `gitpagedocs config` / `config clear` | Show the resolved config / delete the stored config and key vault |
-| `gitpagedocs doctor` / `version` / `update` | Diagnostics / version / registry update check |
-| `gitpagedocs mcp start` | Start the MCP server over stdio |
-
-Install globally with `npm install -g @gitpagedocs/cli`, or run one-off with `npx @gitpagedocs/cli`.
-
-## CLI options
-
-| Option | Description |
-|--------|-------------|
-| `--owner <user>` | GitHub owner |
-| `--repo <repo>` | GitHub repository |
-| `--path <subpath>` | Docs subpath (e.g. `docs`); without it, base path = repo name for correct CSS/JS on project sites |
-| `--output <dir>` | Output directory (default: `gitpagedocs`) |
-| `--search true|false` | Enable/disable repository search (`--home`) |
-| `--layoutconfig` | Generate local layouts in `gitpagelayouts/` |
-| `--layouts-dir <dir>` | Folder for local layouts (default: `gitpagelayouts`) |
-| `--push` | Create workflow, commit artifacts, push |
-| `--pages-actions` | Only switch GitHub Pages to GitHub Actions (same as `pages actions`) |
-| `--home` | Generate `gitpagedocshome/` (static + .env + Dockerfile) |
-
-## Generated output
-
-- `gitpagedocs/config.json` – root config
-- `gitpagedocs/icon.svg` – default icon
-- `gitpagedocs/docs/versions/<ver>/config.json` – per-version routes
-- `gitpagedocs/docs/versions/<ver>/{en,pt,es}/*.md` – markdown docs
-- `gitpagelayouts/` – only with `--layoutconfig` (folder configurable with `--layouts-dir`)
+See **CLI reference** for all commands, flags, examples and compatibility behavior. See **MCP server** for editor integration.
 
 ## Content types
 
@@ -56,6 +14,7 @@ Install globally with `npm install -g @gitpagedocs/cli`, or run one-off with `np
 | HTML | `routes-html` | local `path` or external `url` |
 | Video | `routes-video` | `video.pathVideo`, `video.videoType` |
 | Audio | `routes-audio` | `audio.pathAudio`, `audio.audioType` |
+| PDF | `routes-pdf` | `pdf.pathPdf` per language; native preview and download |
 
 ## Source code viewer
 

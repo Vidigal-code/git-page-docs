@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { FocusModeOptions } from "@/entities/docs";
 
 function splitMarkdownHtmlIntoPages(html: string): string[] {
   const content = html.trim();
@@ -27,18 +28,24 @@ function splitMarkdownHtmlIntoPages(html: string): string[] {
   return pages.length ? pages : [content];
 }
 
-export function useFocusMode(markdownHtml: string) {
+export function useFocusMode(markdownHtml: string, documentId = markdownHtml, options?: Pick<FocusModeOptions, "sectionNavigationEnabled">) {
   const [focusModeOpen, setFocusModeOpen] = useState(false);
-  const [focusModePageIndex, setFocusModePageIndex] = useState(0);
-  const focusModePages = useMemo(() => splitMarkdownHtmlIntoPages(markdownHtml), [markdownHtml]);
+  const [position, setPosition] = useState({ documentId, index: 0 });
+  if (position.documentId !== documentId) {
+    setPosition({ documentId, index: 0 });
+  }
+  const focusModePages = useMemo(
+    () => options?.sectionNavigationEnabled === false ? [markdownHtml] : splitMarkdownHtmlIntoPages(markdownHtml),
+    [markdownHtml, options?.sectionNavigationEnabled],
+  );
   const safeFocusModePageIndex =
-    focusModePageIndex >= 0 && focusModePageIndex < focusModePages.length ? focusModePageIndex : 0;
+    position.documentId === documentId && position.index >= 0 && position.index < focusModePages.length ? position.index : 0;
   const focusModeCurrentHtml = focusModePages[safeFocusModePageIndex] ?? markdownHtml;
   const canFocusModeGoPrevious = safeFocusModePageIndex > 0;
   const canFocusModeGoNext = safeFocusModePageIndex < focusModePages.length - 1;
 
   function openFocusMode() {
-    setFocusModePageIndex(0);
+    setPosition({ documentId, index: 0 });
     setFocusModeOpen(true);
   }
 
@@ -47,12 +54,12 @@ export function useFocusMode(markdownHtml: string) {
   }
 
   function onFocusModeNavigate(offset: -1 | 1) {
-    setFocusModePageIndex((prev) => {
-      const next = prev + offset;
+    setPosition((previous) => {
+      const next = (previous.documentId === documentId ? previous.index : 0) + offset;
       if (next < 0 || next >= focusModePages.length) {
-        return prev;
+        return previous;
       }
-      return next;
+      return { documentId, index: next };
     });
   }
 

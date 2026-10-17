@@ -36,6 +36,9 @@ const { ROUTE_PATHS, VIDEO_IDS, AUDIO_IDS, PAGE2_AUDIO } = pathMappings as {
 const metas = routeMetas as Record<string, { titles?: LangMap; descriptions?: LangMap; title?: LangMap; description?: LangMap; id?: number }> & {
   DEFAULT_HIERARCHY: Record<string, number>;
 };
+const { REFERENCE_ROUTE_METAS } = routeMetas as {
+  REFERENCE_ROUTE_METAS: Record<number, { titles: LangMap; descriptions: LangMap }>;
+};
 const { OFFICIAL_LAYOUTS_CONFIG_URL, OFFICIAL_LAYOUTS_TEMPLATES_URL } = urls as Record<string, string>;
 
 describe("sanitizeSegment", () => {
@@ -89,7 +92,7 @@ describe("contracts index", () => {
 
 describe("route data", () => {
   it("maps every markdown route to a file per language", () => {
-    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]);
     for (const paths of Object.values(ROUTE_PATHS)) {
       for (const language of ["pt", "en", "es"] as const) {
         expect(paths[language]).toMatch(/\.md$/);
@@ -102,8 +105,10 @@ describe("route data", () => {
   });
 
   it("describes every route in the three languages", () => {
-    for (const id of [1, 2, 3, 4, 5, 6]) {
-      const meta = metas[`ROUTE_META_ID${id}`];
+    const markdownMetas = [1, 2, 3, 4, 5, 6]
+      .map((id) => metas[`ROUTE_META_ID${id}`])
+      .concat(Object.values(REFERENCE_ROUTE_METAS));
+    for (const meta of markdownMetas) {
       expect(Object.keys(meta.titles ?? {}).sort()).toEqual(["en", "es", "pt"]);
       expect(Object.keys(meta.descriptions ?? {}).sort()).toEqual(["en", "es", "pt"]);
     }
@@ -114,7 +119,7 @@ describe("route data", () => {
     }
     expect(metas.SOURCE_VIEWER_META.id).toBe(7);
     expect(metas.AUDIO_META_ID12.id).toBe(12);
-    expect(metas.DEFAULT_HIERARCHY).toEqual({ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 });
+    expect(metas.DEFAULT_HIERARCHY).toEqual({ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 });
   });
 
   it("points the official layout URLs at the standalone layouts home", () => {

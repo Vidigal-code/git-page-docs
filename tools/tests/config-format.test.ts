@@ -81,6 +81,21 @@ describe("site icons", () => {
 });
 
 describe("route defaults", () => {
+  it("inherits defaults for PDF routes and keeps explicit route overrides", () => {
+    const config = {
+      routeDefaults: { marginTop: "4px" },
+      "routes-pdf": [
+        { id: 23, pdf: { pathPdf: { en: "guide.pdf" } } },
+        { id: 25, marginTop: "8px", pdf: { pathPdf: { en: "reference.pdf" } } },
+      ],
+    };
+
+    expect(applyRouteDefaults(config)["routes-pdf"]).toEqual([
+      { id: 23, marginTop: "4px", pdf: { pathPdf: { en: "guide.pdf" } } },
+      { id: 25, marginTop: "8px", pdf: { pathPdf: { en: "reference.pdf" } } },
+    ]);
+  });
+
   const md = (id: number, extra: Record<string, unknown> = {}) => ({
     id,
     title: { en: `Page ${id}` },

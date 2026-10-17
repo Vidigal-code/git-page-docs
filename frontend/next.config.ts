@@ -1,4 +1,13 @@
 import type { NextConfig } from "next";
+import path from "node:path";
+import { createRequire } from "node:module";
+
+// Next 15's transpiled config module has no filename for relative resolution.
+const requireConfig = createRequire(__filename);
+const { preparePdfAssets } = requireConfig("./build/prepare-pdf-assets.ts") as typeof import("./build/prepare-pdf-assets");
+const { trimSlashes } = requireConfig("./src/shared/lib/base-path.ts") as typeof import("./src/shared/lib/base-path");
+
+preparePdfAssets(path.resolve(__dirname, ".."));
 
 const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
 const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";
@@ -6,30 +15,20 @@ const emulateGithubPagesRuntime = isGithubPagesBuild || repositorySearchEnabledB
 const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "git-page-docs";
 const isUserPage = repositoryName.toLowerCase().endsWith(".github.io");
 
-const rawDocsPath = process.env.GITPAGEDOCS_PATH?.trim();
-const docsPathSegment = rawDocsPath ? rawDocsPath.replace(/^\/+|\/+$/g, "") : "";
+const docsPathSegment = trimSlashes(process.env.GITPAGEDOCS_PATH?.trim() ?? "");
 
 // Local path: only when GITPAGEDOCS_REPOSITORY_SEARCH=false and GITPAGEDOCS_PATH is set
 const isLocalMode = !repositorySearchEnabledByEnv && !isGithubPagesBuild;
 
-// Explicit base path definition taking precedence (interprets "/" and "" as root/undefined)
-const explicitBasePath = "GITPAGEDOCS_BASE_PATH" in process.env
-  ? (process.env.GITPAGEDOCS_BASE_PATH === "/" || process.env.GITPAGEDOCS_BASE_PATH === ""
-    ? undefined
-    : process.env.GITPAGEDOCS_BASE_PATH)
-  : null;
+function resolveBasePath(): string | undefined {
+  const override = process.env.GITPAGEDOCS_BASE_PATH;
+  if (override !== undefined) return override === "/" || override === "" ? undefined : override;
+  const docsBasePath = docsPathSegment ? `/${docsPathSegment}` : undefined;
+  if (isLocalMode || isUserPage) return docsBasePath;
+  return `/${repositoryName}` + (docsBasePath ?? "");
+}
 
-// `!== null` keeps the explicit-root override working: an explicit ""/"/" maps
-// to `undefined` above and must NOT fall through to the derived base path.
-const basePath = explicitBasePath !== null
-  ? explicitBasePath
-  : isLocalMode
-    ? (docsPathSegment ? `/${docsPathSegment}` : undefined)
-    : emulateGithubPagesRuntime
-      ? (isUserPage
-        ? (docsPathSegment ? `/${docsPathSegment}` : undefined)
-        : `/${repositoryName}${docsPathSegment ? `/${docsPathSegment}` : ""}`)
-      : undefined;
+const basePath = resolveBasePath();
 
 // A second dev server (E2E repository-search mode) needs its own build folder.
 const distDir = process.env.GITPAGEDOCS_DIST_DIR?.trim() || undefined;

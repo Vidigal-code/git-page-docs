@@ -100,16 +100,16 @@ describe("available languages honour site.languages", () => {
   ] as ContentTypeRouteConfig[];
 
   it("getLanguages hides languages toggled off in config.json", () => {
-    expect(getLanguages(withSite({ languages: { en: true, pt: true, es: false } }), routesMd, [], [], [], [])).toEqual(["en", "pt"]);
+    expect(getLanguages(withSite({ languages: { en: true, pt: true, es: false } }), { routesMd })).toEqual(["en", "pt"]);
   });
 
   it("getLanguages keeps every content language when there are no toggles", () => {
-    expect(getLanguages(LEGACY_CONFIG, routesMd, [], [], [], [])).toEqual(["en", "pt", "es"]);
+    expect(getLanguages(LEGACY_CONFIG, { routesMd })).toEqual(["en", "pt", "es"]);
   });
 
   it("getLanguages falls back to the default language when everything is disabled", () => {
     const config = withSite({ defaultLanguage: "pt", languages: { en: false, pt: false, es: false } });
-    expect(getLanguages(config, routesMd, [], [], [], [])).toEqual(["pt"]);
+    expect(getLanguages(config, { routesMd })).toEqual(["pt"]);
   });
 
   it("applyLanguageToggles is the shared filter of the remote loader", () => {

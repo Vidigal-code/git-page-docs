@@ -27,6 +27,18 @@ describe("markdownFileName", () => {
 });
 
 describe("MdSourceActions", () => {
+  it("can disable downloads while retaining copying", () => {
+    render(<MdSourceActions source="# Document" fileName="document.md" labels={labels} downloadEnabled={false} />);
+    expect(screen.getByTestId("md-copy")).toBeTruthy();
+    expect(screen.queryByTestId("md-download")).toBeNull();
+  });
+
+  it("can disable copying while keeping the original file available to download", () => {
+    render(<MdSourceActions source="# Document" fileName="document.md" labels={labels} copyEnabled={false} placement="inline" />);
+    expect(screen.queryByTestId("md-copy")).toBeNull();
+    expect(screen.getByTestId("md-download")).toBeTruthy();
+  });
+
   it("copies the original markdown and confirms it for a moment", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     vi.stubGlobal("navigator", { clipboard: { writeText } });

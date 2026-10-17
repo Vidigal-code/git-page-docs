@@ -11,6 +11,21 @@ const THREE_PAGES = `${INTRO}\n${H1}\n${H2}`;
 afterEach(cleanup);
 
 describe("useFocusMode", () => {
+  it("keeps focus open and resets its section when the document identity changes", () => {
+    const { result, rerender } = renderHook(({ documentId }) => useFocusMode(THREE_PAGES, documentId), {
+      initialProps: { documentId: "first:en" },
+    });
+    act(() => result.current.openFocusMode());
+    act(() => result.current.onFocusModeNavigate(1));
+    expect(result.current.focusModeCurrentHtml).toBe(H1);
+
+    rerender({ documentId: "second:en" });
+    expect(result.current.focusModeOpen).toBe(true);
+    expect(result.current.focusModeCurrentHtml).toBe(INTRO);
+    rerender({ documentId: "first:en" });
+    expect(result.current.focusModeCurrentHtml).toBe(INTRO);
+  });
+
   it("yields no pages for empty markdown and falls back to the raw html", () => {
     const { result } = renderHook(() => useFocusMode("   "));
     expect(result.current.focusModePages).toEqual([]);

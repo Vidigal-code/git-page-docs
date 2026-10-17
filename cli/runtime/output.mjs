@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   parseDocFileToKey,
@@ -11,6 +11,7 @@ import {
 import { layoutsArtifactPaths } from "../contracts/layouts-paths.mjs";
 import { languageArtifactPaths } from "../contracts/langs-paths.mjs";
 import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
+import { PDF_GUIDE_FILENAME } from "../data/path-mappings.mjs";
 import { compactSiteIcons, factorRouteDefaults } from "@gitpagedocs/tools/config-format";
 
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
@@ -160,4 +161,18 @@ export async function writeConfigOnlyOutput(options) {
 
 
   await writeVersionedDocs(root, outputDir, artifacts);
+  await writePdfArtifacts(options);
+}
+
+async function writePdfArtifacts({ root, pkgRoot, outputDir, artifacts }) {
+  const source = path.join(pkgRoot, "content", "assets", PDF_GUIDE_FILENAME);
+  for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
+    const bundledPath = `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`;
+    const routes = versionConfig["routes-pdf"] ?? [];
+    const usesBundledGuide = routes.some((route) => Object.values(route.pdf?.pathPdf ?? {}).includes(bundledPath));
+    if (!usesBundledGuide) continue;
+    const destination = path.join(root, normalizeToOutputPath(outputDir, bundledPath));
+    await mkdir(path.dirname(destination), { recursive: true });
+    await copyFile(source, destination);
+  }
 }

@@ -1,45 +1,49 @@
 # Getting Started
 
-This guide configures your repository from zero to running docs.
+Git Page Docs separates the documentation files from the viewer. Install the CLI to create the files; use the official viewer, GitHub Pages or a checkout of the runtime to display them.
 
-## Prerequisites
+## Requirements and installation
 
-- Node.js 20+
-- npm 10+
+Use Node.js 20 or newer. Git is needed for publishing; GitHub CLI is needed when asking the CLI to configure Pages automatically.
 
-## Install and generate
+```bash
+npm install --save-dev @gitpagedocs/cli
+npx gitpagedocs --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY
+```
 
-1. Install package:
-   - `npm install @gitpagedocs/cli`
-2. Generate docs config and versions:
-   - `npx @gitpagedocs/cli`
-3. Optional: generate local layouts/templates:
-   - `npx @gitpagedocs/cli --layoutconfig`
+For a one-off run, use `npx --yes @gitpagedocs/cli --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY`. For a global command, use `npm install -g @gitpagedocs/cli`, then `gitpagedocs`. Run from the repository root.
 
-## Local run
+## Generated contract
 
-1. Development:
-   - `npm run dev`
-2. Production locally:
-   - `npm run build`
-   - `npm start`
+- `gitpagedocs/config.json`: site options and version references.
+- `gitpagedocs/langs/{en,pt,es}.json`: UI strings.
+- `gitpagedocs/docs/versions/<version>/config.json`: routes and menus.
+- `gitpagedocs/docs/versions/<version>/{en,pt,es}/*.md`: page content; filenames stay in English across languages.
+- `gitpagedocs/icon.svg`: site icon.
+- `--layoutconfig` additionally writes `gitpagelayouts/`; use `--layouts-dir` to change that directory.
 
-## CLI behavior
+The generator writes configuration and content; it does not install a Next.js application into your repository. Rerunning it writes the scaffold files again: review the Git diff before keeping changes to hand-edited documentation.
 
-`npx @gitpagedocs/cli` generates only artifacts in `gitpagedocs/`:
+## Read and publish
 
-- JSON + markdown docs assets
-- No `index.html`
-- No `index.js`
-- No install command execution
+Commit and push the generated folder, then open `https://vidigal-code.github.io/git-page-docs/YOUR_USER/YOUR_REPOSITORY/` for a public repository. To publish your own site, authenticate with `gh auth login`, then run `npx gitpagedocs pages deploy --owner YOUR_USER --repo YOUR_REPOSITORY`. This generates files, commits and pushes; inspect the resulting GitHub Actions run. See Deployment for the subpath and workflow contract.
 
-## Repository search mode
+## Develop the viewer locally
 
-Local repository search is controlled by:
+The following commands belong to a checkout of Git Page Docs, not to a repository containing only generated files:
 
-- `GITPAGEDOCS_REPOSITORY_SEARCH=true`
-- `GITPAGEDOCS_REPOSITORY_SEARCH=false`
+```bash
+git clone https://github.com/Vidigal-code/git-page-docs.git
+cd git-page-docs
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
+```
 
-On GitHub Pages builds (`GITHUB_ACTIONS=true`), repository-search home is enabled.
+The repository pins pnpm in `packageManager`. `pnpm dev` enables repository search; `pnpm dev:e2e` uses the local documentation. For a production build, run `pnpm build` and `pnpm start`; the start script rebuilds before starting. Use `PORT=3100` in the process environment when port 3000 is occupied.
+
+## Next steps
+
+Use Configuration for languages, icons, navigation, focus and narration; Functionalities for CLI and MCP; Themes and layouts for visual tokens; FAQ for diagnostics.
 
 > Version: 0.0.8

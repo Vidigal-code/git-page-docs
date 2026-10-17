@@ -20,3 +20,4 @@ playwright-report
 # SonarQube scanner work dir
 .scannerwork
 .next-guide
+frontend/public/gitpagedocs

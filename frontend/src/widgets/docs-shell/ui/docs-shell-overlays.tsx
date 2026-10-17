@@ -1,8 +1,9 @@
 "use client";
 
-import type { LoadedDocsData, MenuNode, VersionLinkOption } from "@/entities/docs";
+import type { FocusModeOptions, LoadedDocsData, MenuNode, VersionLinkOption } from "@/entities/docs";
+import type { ReactNode } from "react";
 import type { MenuEntry } from "../model/menu-tree";
-import { DocsShellFocusOverlay } from "./docs-shell-focus-overlay";
+import { DocsShellFocusOverlay, type FocusDocumentView, type FocusDocumentNavigation } from "./docs-shell-focus-overlay";
 import { DocsShellInfoOverlay } from "./docs-shell-info-overlay";
 import { DocsShellMobileDrawer } from "./docs-shell-mobile-drawer";
 import { DocsShellQuickNavOverlay } from "./docs-shell-quick-nav-overlay";
@@ -12,6 +13,8 @@ import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { DocsShellControlsProps } from "./docs-shell-controls";
 import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
+import type { OnMenuClickOptions } from "../model/use-docs-shell-navigation-state";
+import type { DocsShellLabels } from "../model/use-docs-shell-labels";
 
 export interface DocsShellOverlaysControlsConfig {
   activeNavigation: boolean;
@@ -28,13 +31,13 @@ export interface DocsShellOverlaysProps {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   headerName: string;
   headerMenuTree: MenuNode[];
-  onMenuClick: (pathClick: string, ancestorKeys: string[], options?: { fromLinearNav?: boolean; fromQuickNav?: boolean }) => void;
+  onMenuClick: (pathClick: string, ancestorKeys: string[], options?: OnMenuClickOptions) => void;
   toggleNode: (key: string) => void;
   isNodeExpanded: (key: string) => boolean;
   controlsProps: DocsShellControlsProps;
   navMenuConfig: NavMenuConfig;
   controlsConfig: DocsShellOverlaysControlsConfig;
-  labels: ContentLabels;
+  labels: ContentLabels & Pick<DocsShellLabels, "focusPreviousSectionLabel" | "focusNextSectionLabel" | "focusSectionsLabel" | "focusDocumentsLabel">;
   versionLinksPopupOpen: boolean;
   setVersionLinksPopupOpen: (v: boolean) => void;
   infoPopupOpen: boolean;
@@ -57,6 +60,12 @@ export interface DocsShellOverlaysProps {
   focusModeOpen: boolean;
   focusModeLabel: string;
   focusModeCurrentHtml: string;
+  focusSectionIndex: number;
+  focusSectionCount: number;
+  focusDocument: FocusDocumentView;
+  focusDocumentNavigation: FocusDocumentNavigation;
+  focusOptions?: FocusModeOptions;
+  focusAccessibilityControls?: ReactNode;
   canFocusModeGoPrevious: boolean;
   canFocusModeGoNext: boolean;
   closeFocusMode: () => void;
@@ -117,8 +126,17 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         isOpen={controlsConfig.focusModeEnabled && props.focusModeOpen}
         focusModeLabel={props.focusModeLabel}
         menuCloseLabel={labels.menuCloseLabel}
-        previousLabel={labels.previousLabel}
-        nextLabel={labels.nextLabel}
+        previousLabel={labels.focusPreviousSectionLabel}
+        nextLabel={labels.focusNextSectionLabel}
+        sectionsLabel={labels.focusSectionsLabel}
+        documentsLabel={labels.focusDocumentsLabel}
+        sectionIndex={props.focusSectionIndex}
+        sectionCount={props.focusSectionCount}
+        document={props.focusDocument}
+        documentNavigation={props.focusDocumentNavigation}
+        options={props.focusOptions}
+        accessibilityControls={props.focusAccessibilityControls}
+        sourceActionLabels={{ copy: labels.mdCopyLabel, copied: labels.mdCopiedLabel, copyError: labels.mdCopyErrorLabel, download: labels.mdDownloadLabel }}
         focusModeCurrentHtml={props.focusModeCurrentHtml}
         canFocusModeGoPrevious={props.canFocusModeGoPrevious}
         canFocusModeGoNext={props.canFocusModeGoNext}

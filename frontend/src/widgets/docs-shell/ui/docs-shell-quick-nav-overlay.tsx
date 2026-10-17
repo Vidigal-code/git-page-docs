@@ -1,5 +1,6 @@
 import { FiX } from "@/shared/ui/fallback-icons";
 import type { MenuEntry } from "../model/menu-tree";
+import type { OnMenuClickOptions } from "../model/use-docs-shell-navigation-state";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellQuickNavOverlayProps {
@@ -19,7 +20,7 @@ interface DocsShellQuickNavOverlayProps {
   onClose: () => void;
   onQueryChange: (value: string) => void;
   onActiveIndexChange: (nextIndex: number | ((prev: number) => number)) => void;
-  onMenuClick: (pathClick: string, ancestorKeys: string[], options?: { fromQuickNav?: boolean }) => void;
+  onMenuClick: (pathClick: string, ancestorKeys: string[], options?: OnMenuClickOptions) => void;
 }
 
 export function DocsShellQuickNavOverlay({
@@ -81,7 +82,7 @@ export function DocsShellQuickNavOverlay({
               event.preventDefault();
               const selectedEntry = filteredQuickNavEntries[quickNavActiveIndex];
               if (selectedEntry) {
-                onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys, { fromQuickNav: true });
+                onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys, { origin: "quick" });
               }
             } else if (event.key === "Escape") {
               event.preventDefault();
@@ -97,7 +98,7 @@ export function DocsShellQuickNavOverlay({
                 quickNavItemRefs.current[index] = element;
               }}
               className={`${styles.menuButton} ${index === quickNavActiveIndex ? styles.quickNavItemActive : ""}`}
-              onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys, { fromQuickNav: true })}
+              onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys, { origin: "quick" })}
               onMouseEnter={() => onActiveIndexChange(index)}
             >
               {entry.searchLabel}

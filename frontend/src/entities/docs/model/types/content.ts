@@ -66,6 +66,14 @@ export interface LoadedPage {
   html?: LoadedHtmlContent;
   video?: LoadedVideoContent;
   audio?: LoadedAudioContent;
+  pdf?: LoadedPdfContent;
+}
+
+export interface LoadedPdfContent {
+  routeId: number;
+  config: ContentTypeRouteConfig;
+  pathPdfByLanguage: Record<LanguageCode, string>;
+  fullscreenEnabled?: boolean;
 }
 
 export interface PathToPageEntry {

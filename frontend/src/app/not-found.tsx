@@ -15,6 +15,7 @@ import type { LoadedDocsData } from "@/widgets/not-found-shell";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
 import {
   SearchShellHeader,
   useStandaloneShellConfig,
@@ -260,6 +261,8 @@ function useNotFoundShell() {
 
   const header = (
     <SearchShellHeader
+      languageSelectorIcon={resolveControlIcon(siteConfig, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
+      themeSelectorIcon={resolveControlIcon(siteConfig, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}

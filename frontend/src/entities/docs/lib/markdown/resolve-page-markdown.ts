@@ -1,5 +1,11 @@
 import type { DocsContent, LanguageCode, LoadedPage } from "../../model/types";
 
+interface MarkdownResolutionOptions {
+  legacyDocs: readonly DocsContent[] | undefined;
+  pageIndex: number;
+  language: LanguageCode;
+}
+
 /**
  * Markdown HTML for a page in the requested language, falling back to the
  * legacy flat `docs` array for configs generated before the page structure.
@@ -12,11 +18,16 @@ import type { DocsContent, LanguageCode, LoadedPage } from "../../model/types";
  */
 export function resolvePageMarkdownHtml(
   page: LoadedPage | undefined,
-  legacyDocs: readonly DocsContent[] | undefined,
-  pageIndex: number,
-  language: LanguageCode,
+  { legacyDocs, pageIndex, language }: MarkdownResolutionOptions,
 ): string {
-  return page?.md?.markdownByLanguage[language] ?? legacyDocs?.[pageIndex]?.markdownByLanguage[language] ?? "";
+  if (!page) return legacyDocs?.[pageIndex]?.markdownByLanguage[language] ?? "";
+  if (!page.md?.config.path?.[language]?.trim()) return "";
+  const sources = page.md.sourceByLanguage;
+  if (sources !== undefined) {
+    const source = sources[language];
+    if (!Object.hasOwn(sources, language) || typeof source !== "string" || !hasMarkdownDocument(source)) return "";
+  }
+  return page.md.markdownByLanguage[language] ?? "";
 }
 
 /** Whether a page has a readable markdown document in the requested language. */

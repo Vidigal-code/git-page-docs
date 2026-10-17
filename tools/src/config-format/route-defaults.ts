@@ -19,6 +19,7 @@ export const ROUTE_LIST_KEYS = [
   "routes-html",
   "routes-video",
   "routes-audio",
+  "routes-pdf",
   "routes",
 ] as const;
 

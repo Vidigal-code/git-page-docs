@@ -43,7 +43,7 @@ function extractAuthorization(route: unknown): RouteAuthorizationConfig | undefi
 
 function toTarget(
   route: ContentTypeRouteConfig,
-  contentType: "md" | "html" | "video" | "audio",
+  contentType: RouteAuthorizationTarget["contentType"],
   language: LanguageCode,
 ): RouteAuthorizationTarget {
   return {
@@ -57,25 +57,23 @@ function toTarget(
 function findById(
   routes: ContentTypeRouteConfig[] | undefined,
   id: number,
-  language: LanguageCode,
-  contentType: "video" | "audio",
+  selection: { language: LanguageCode; contentType: RouteAuthorizationTarget["contentType"] },
 ): RouteAuthorizationTarget | undefined {
   if (!routes?.length) return undefined;
   const route = routes.find((candidate) => candidate.id === id);
   if (!route) return undefined;
-  return toTarget(route, contentType, language);
+  return toTarget(route, selection.contentType, selection.language);
 }
 
 function findByPath(
   routes: ContentTypeRouteConfig[] | undefined,
   pathClick: string,
-  language: LanguageCode,
-  contentType: "md" | "html" | "video" | "audio",
+  selection: { language: LanguageCode; contentType: RouteAuthorizationTarget["contentType"] },
 ): RouteAuthorizationTarget | undefined {
   if (!routes?.length) return undefined;
   const route = routes.find((candidate) => routeHasPathMatch(candidate, pathClick));
   if (!route) return undefined;
-  return toTarget(route, contentType, language);
+  return toTarget(route, selection.contentType, selection.language);
 }
 
 function resolvePageRouteTarget(
@@ -88,8 +86,9 @@ function resolvePageRouteTarget(
   const routeId = Number.parseInt(pageMatch[1] ?? "", 10);
   if (Number.isNaN(routeId)) return undefined;
   return (
-    findById(config["routes-video"], routeId, language, "video") ??
-    findById(config["routes-audio"], routeId, language, "audio")
+    findById(config["routes-video"], routeId, { language, contentType: "video" }) ??
+    findById(config["routes-audio"], routeId, { language, contentType: "audio" }) ??
+    findById(config["routes-pdf"], routeId, { language, contentType: "pdf" })
   );
 }
 
@@ -104,26 +103,32 @@ export function resolveRouteAuthorizationTarget(
   const mdRoutes = (data.config["routes-md"] ?? []).filter(
     (route): route is ContentTypeRouteConfig => "path" in route,
   );
-  const mdTarget = findByPath(mdRoutes, pathClick, language, "md");
+  const mdTarget = findByPath(mdRoutes, pathClick, { language, contentType: "md" });
   if (mdTarget) return mdTarget;
 
   const htmlRoutes = data.config["routes-html"] ?? [];
-  const htmlPathTarget = findByPath(htmlRoutes, pathClick, language, "html");
+  const htmlPathTarget = findByPath(htmlRoutes, pathClick, { language, contentType: "html" });
   if (htmlPathTarget) return htmlPathTarget;
   const htmlUrlRoute = htmlRoutes.find((route) => routeHasUrlMatch(route, pathClick));
   if (htmlUrlRoute) return toTarget(htmlUrlRoute, "html", language);
 
   const videoRoutes = data.config["routes-video"] ?? [];
-  const videoPathTarget = findByPath(videoRoutes, pathClick, language, "video");
+  const videoPathTarget = findByPath(videoRoutes, pathClick, { language, contentType: "video" });
   if (videoPathTarget) return videoPathTarget;
   const videoUrlRoute = videoRoutes.find((route) => routeHasVideoMatch(route, pathClick));
   if (videoUrlRoute) return toTarget(videoUrlRoute, "video", language);
 
   const audioRoutes = data.config["routes-audio"] ?? [];
-  const audioPathTarget = findByPath(audioRoutes, pathClick, language, "audio");
+  const audioPathTarget = findByPath(audioRoutes, pathClick, { language, contentType: "audio" });
   if (audioPathTarget) return audioPathTarget;
   const audioUrlRoute = audioRoutes.find((route) => routeHasAudioMatch(route, pathClick));
   if (audioUrlRoute) return toTarget(audioUrlRoute, "audio", language);
+
+  const pdfRoute = data.config["routes-pdf"]?.find((route) => Object.values(route.pdf?.pathPdf ?? {}).includes(pathClick));
+  if (pdfRoute) return toTarget(pdfRoute, "pdf", language);
+  const entry = data.pathToPageMap?.[pathClick];
+  const loadedPdf = entry?.contentType === "pdf" ? data.pages[entry.pageIndex]?.pdf : undefined;
+  if (loadedPdf) return toTarget(loadedPdf.config, "pdf", language);
 
   return undefined;
 }

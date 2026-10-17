@@ -2,9 +2,11 @@ import type { Dispatch, SetStateAction } from "react";
 import type {
   BreadcrumbItem,
   BrowseItem,
+  ContentTypeRouteConfig,
   LoadedAudioContent,
   LoadedHtmlContent,
   LoadedMdContent,
+  LoadedPdfContent,
   LoadedVideoContent,
 } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
@@ -25,14 +27,17 @@ export interface BrowseState {
   htmlBrowseIndex: number;
   videoBrowseIndex: number;
   audioBrowseIndex: number;
+  pdfBrowseIndex: number;
   setMdBrowseIndex: BrowseIndexSetter;
   setHtmlBrowseIndex: BrowseIndexSetter;
   setVideoBrowseIndex: BrowseIndexSetter;
   setAudioBrowseIndex: BrowseIndexSetter;
+  setPdfBrowseIndex: BrowseIndexSetter;
   mdItems: BrowseItem<LoadedMdContent>[];
   htmlItems: BrowseItem<LoadedHtmlContent>[];
   videoItems: BrowseItem<LoadedVideoContent>[];
   audioItems: BrowseItem<LoadedAudioContent>[];
+  pdfItems: BrowseItem<LoadedPdfContent>[];
 }
 
 /**
@@ -41,6 +46,7 @@ export interface BrowseState {
  * resolves once per render.
  */
 export interface BrowseNavigationProps {
+  canAccessPdf?: (config: ContentTypeRouteConfig) => boolean;
   routeGuideEnabled: boolean;
   breadcrumbTrail: BreadcrumbItem[];
   onMenuClick: (pathClick: string, ancestorKeys: string[]) => void;

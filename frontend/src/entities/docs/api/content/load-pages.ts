@@ -7,6 +7,7 @@ import type {
   LoadedHtmlContent,
   LoadedMdContent,
   LoadedPage,
+  LoadedPdfContent,
   LoadedSourceViewerContent,
   LoadedVideoContent,
   PathToPageEntry,
@@ -17,6 +18,8 @@ import { readLocalText } from "../io/file-reader";
 import { readRemoteText } from "../io/remote-fetcher";
 import { markdownToHtml } from "../utils/markdown";
 import { hasPath, hasVideo, hasAudio } from "../utils/route-utils";
+import { resolvePdfUrl } from "../../lib/pdf/resolve-pdf-url";
+import { isPdfRoute } from "../../lib/pdf/validate-pdf-route";
 
 interface PageLoadContext {
   languages: LanguageCode[];
@@ -191,6 +194,12 @@ function buildAudioContent(route: AudioRoute, context: PageLoadContext, index: P
   return { routeId: route.id, config: route, audioTypeByLanguage, pathAudioByLanguage, fullscreenEnabled: route.fullscreenEnabled ?? true };
 }
 
+function buildPdfContent(route: ContentTypeRouteConfig, context: PageLoadContext, index: PageIndex): LoadedPdfContent {
+  const pathPdfByLanguage = Object.fromEntries(context.languages.map((language) => [language, resolvePdfUrl(route.pdf?.pathPdf[language], context)]));
+  registerPaths(index, "pdf", [`page:${route.id}`, ...Object.values(route.pdf?.pathPdf ?? {}), ...Object.values(pathPdfByLanguage)]);
+  return { routeId: route.id, config: route, pathPdfByLanguage, fullscreenEnabled: route.fullscreenEnabled ?? false };
+}
+
 export async function loadPages(options: {
   sortedIds: number[];
   routesMd: (ContentTypeRouteConfig | RouteConfig)[];
@@ -198,6 +207,7 @@ export async function loadPages(options: {
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
   routesAudio: ContentTypeRouteConfig[];
+  routesPdf?: ContentTypeRouteConfig[];
   languages: LanguageCode[];
   source: "local" | "remote";
   owner?: string;
@@ -227,6 +237,9 @@ export async function loadPages(options: {
 
     const audioRoute = findAudioRoute(routesAudio, id);
     if (audioRoute) page.audio = buildAudioContent(audioRoute, context, index);
+
+    const pdfRoute = options.routesPdf?.find((route) => isPdfRoute(route) && route.id === id);
+    if (pdfRoute) page.pdf = buildPdfContent(pdfRoute, context, index);
 
     pages.push(page);
   }

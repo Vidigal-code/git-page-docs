@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactElement } from "react";
 import { extractHeadingsFromHtml, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { ContentHeaderBlock } from "./content-header-block";
@@ -39,14 +39,14 @@ interface MdContainerProps extends RouteContainerFrameProps {
   sourceActionLabels?: MdSourceActionLabels;
 }
 
-export function MdContainer(props: Readonly<MdContainerProps>) {
+export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
   const {
     html,
     config,
     language,
     fullscreenEnabled = false,
     isDarkMode = false,
-    routeGuideEnabled = false,
+    routeGuideEnabled = true,
     breadcrumbTrail = [],
     onBreadcrumbClick,
     homePathClick,
@@ -62,7 +62,7 @@ export function MdContainer(props: Readonly<MdContainerProps>) {
   } = props;
   const containerStyle = getContainerStyle(config?.container);
   const breadcrumb =
-    routeGuideEnabled &&
+    (config?.RouteGuide ?? routeGuideEnabled) &&
     breadcrumbTrail.length > 0 &&
     onBreadcrumbClick &&
     routeGuideIconConfig ? (

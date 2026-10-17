@@ -55,10 +55,10 @@ export function parseFullscreenParams(params: URLSearchParams): FullscreenParams
   return null;
 }
 
-/** Matches a `?name=` slug against the known path keys, ignoring case and a `.md`/`.html` extension. */
+/** Matches a `?name=` slug against known paths, ignoring case and document extensions. */
 export function findPathClickBySlug(data: LoadedDocsData, slug: string): string | null {
-  const normalized = slug.toLowerCase().replace(/\.(md|html)$/, "");
-  const suffixes = [`/${normalized}`, `/${normalized}.md`, `/${normalized}.html`];
+  const normalized = slug.toLowerCase().replace(/\.(md|html|pdf)$/, "");
+  const suffixes = [`/${normalized}`, `/${normalized}.md`, `/${normalized}.html`, `/${normalized}.pdf`];
   for (const key of Object.keys(data.pathToPageMap ?? {})) {
     const lower = key.toLowerCase();
     if (suffixes.some((suffix) => lower.endsWith(suffix))) {
@@ -90,8 +90,9 @@ export function resolveMenuSelection(data: LoadedDocsData, params: URLSearchPara
   return pathClick ? { lang, pathClick } : null;
 }
 
-function buildPageTarget(data: LoadedDocsData, language: LanguageCode, pathClick: string, pageIndex: number): PageTarget {
-  const tree = buildUnifiedHeaderMenuTree(data, language, pageIndex);
+function buildPageTarget(data: LoadedDocsData, language: LanguageCode, target: { pathClick: string; pageIndex: number }): PageTarget {
+  const { pathClick, pageIndex } = target;
+  const tree = buildUnifiedHeaderMenuTree(data, language, { pageIndex });
   const trail = getBreadcrumbTrail(tree, pathClick);
   return { pageIndex, ancestorKeys: trail.at(-1)?.ancestorKeys ?? [] };
 }
@@ -99,7 +100,7 @@ function buildPageTarget(data: LoadedDocsData, language: LanguageCode, pathClick
 /** Locates the page a path click opens and the menu ancestors leading to it; null when the path is unknown. */
 export function resolvePageTarget(data: LoadedDocsData, language: LanguageCode, pathClick: string): PageTarget | null {
   const pageIndex = getPageIndexByPathClick(data, pathClick);
-  return pageIndex < 0 ? null : buildPageTarget(data, language, pathClick, pageIndex);
+  return pageIndex < 0 ? null : buildPageTarget(data, language, { pathClick, pageIndex });
 }
 
 /** The navigation a menu selection triggers, or null when it points nowhere or at the current page. */
@@ -112,5 +113,5 @@ export function resolveMenuNavigationTarget(
   if (pageIndex < 0 || pageIndex === currentPageIndex) {
     return null;
   }
-  return buildPageTarget(data, selection.lang, selection.pathClick, pageIndex);
+  return buildPageTarget(data, selection.lang, { pathClick: selection.pathClick, pageIndex });
 }

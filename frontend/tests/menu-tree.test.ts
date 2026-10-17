@@ -4,6 +4,7 @@ import {
   buildUnifiedHeaderMenuTree,
   flattenMenuTree,
   getBreadcrumbTrail,
+  getCurrentPageBreadcrumbTrail,
   getPageIndexByPathClick,
   getUrlParamsForPathClick,
 } from "@/widgets/docs-shell/model/menu-tree";
@@ -81,9 +82,28 @@ const NESTED_MD: HeaderMenuItem[] = [
 const HTML_MENUS: HeaderMenuItem[] = one(20, "Landing", REFERENCE);
 
 describe("buildHeaderMenuTree", () => {
+  const deepItems = ["One", "Two", "Three", "Four"].reduceRight<HeaderMenuItem[]>(
+    (submenus, title, id) => [{ id, en: { title, "path-click": "" }, submenus }],
+    one(5, "Leaf", GUIDE),
+  );
+  const deepLocalized = ["Two", "Three", "Four"].reduceRight<HeaderMenuLocalizedContent[]>(
+    (submenus, title) => [{ title, "path-click": "", submenus }],
+    [{ title: "Leaf", "path-click": GUIDE }],
+  );
+
+  it.each([
+    { format: "item-level", menus: deepItems },
+    { format: "language-local", menus: [{ id: 1, en: { title: "One", "path-click": "", submenus: deepLocalized } }] },
+  ])("preserves five levels of $format nesting and the complete breadcrumb", ({ menus }) => {
+    const tree = buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 1 });
+    expect(getBreadcrumbTrail(tree, GUIDE).map((item) => item.title)).toEqual(["One", "Two", "Three", "Four", "Leaf"]);
+    const leaf = flattenMenuTree(tree).at(-1);
+    expect(leaf).toMatchObject({ title: "Leaf", level: 4, pathClick: GUIDE, active: true });
+    expect(leaf?.ancestorKeys).toHaveLength(4);
+  });
   it("builds one root node per menu and marks the current page active", () => {
     const menus: HeaderMenuItem[] = [...one(1, "Intro", INTRO), ...one(2, "Guide", GUIDE)];
-    expect(buildHeaderMenuTree(menus, makeData(), "en", 1)).toEqual([
+    expect(buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 1 })).toEqual([
       { key: "Intro-1", id: 1, title: "Intro", pathClick: INTRO, active: false, level: 0, searchLabel: "Intro", ancestorKeys: [], children: [] },
       { key: "Guide-2", id: 2, title: "Guide", pathClick: GUIDE, active: true, level: 0, searchLabel: "Guide", ancestorKeys: [], children: [] },
     ]);
@@ -91,13 +111,13 @@ describe("buildHeaderMenuTree", () => {
 
   it("falls back to a generic title and an empty path when the language entry is missing", () => {
     const menus: HeaderMenuItem[] = [{ id: 9, pt: { title: "Somente PT", "path-click": INTRO } }];
-    expect(buildHeaderMenuTree(menus, makeData(), "en", 0)).toEqual([
+    expect(buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 0 })).toEqual([
       { key: "Menu-9", id: 9, title: "Menu", pathClick: "", active: false, level: 0, searchLabel: "Menu", ancestorKeys: [], children: [] },
     ]);
   });
 
   it("nests item-level submenus with trail-based keys, levels and ancestor keys", () => {
-    const [root] = buildHeaderMenuTree(NESTED_MD, makeData(), "en", 1);
+    const [root] = buildHeaderMenuTree(NESTED_MD, { data: makeData(), language: "en", pageIndex: 1 });
     expect(root).toMatchObject({ key: "Guide-1", level: 0, ancestorKeys: [], searchLabel: "Guide", active: false });
     expect(root.children).toHaveLength(1);
     const [install] = root.children;
@@ -134,7 +154,7 @@ describe("buildHeaderMenuTree", () => {
         },
       },
     ];
-    const [api] = buildHeaderMenuTree(menus, makeData(), "en", 1);
+    const [api] = buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 1 });
     expect(api).toMatchObject({ key: "API-4", level: 0, ancestorKeys: [] });
     expect(api.children).toHaveLength(2);
 
@@ -174,7 +194,7 @@ describe("buildHeaderMenuTree", () => {
         submenus: one(6, "Item", GUIDE),
       },
     ];
-    const [mixed] = buildHeaderMenuTree(menus, makeData(), "en", 0);
+    const [mixed] = buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 0 });
     expect(mixed.children.map((node) => node.key)).toEqual(["Mixed-Item-6", "5-l1-0"]);
   });
 
@@ -183,7 +203,7 @@ describe("buildHeaderMenuTree", () => {
 
     it("drops leaves whose path is denied and always keeps empty paths", () => {
       const menus: HeaderMenuItem[] = [...one(1, "Intro", INTRO), ...one(2, "Guide", GUIDE), ...one(3, "Group")];
-      const tree = buildHeaderMenuTree(menus, makeData(), "en", 0, { isPathAllowed: denyGuide });
+      const tree = buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 0, ...{ isPathAllowed: denyGuide } });
       expect(tree.map((node) => node.key)).toEqual(["Intro-1", "Group-3"]);
     });
 
@@ -191,15 +211,15 @@ describe("buildHeaderMenuTree", () => {
       const menus: HeaderMenuItem[] = [
         { id: 1, en: { title: "Parent", "path-click": GUIDE }, submenus: [...one(2, "Denied", GUIDE), ...one(3, "Allowed", INTRO)] },
       ];
-      const tree = buildHeaderMenuTree(menus, makeData(), "en", 0, { isPathAllowed: denyGuide });
+      const tree = buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 0, ...{ isPathAllowed: denyGuide } });
       expect(tree).toHaveLength(1);
-      expect(tree[0].pathClick).toBe(GUIDE);
+      expect(tree[0].pathClick).toBe("");
       expect(tree[0].children.map((node) => node.key)).toEqual(["Parent-Allowed-3"]);
     });
 
     it("drops a denied parent whose children are all denied", () => {
       const menus: HeaderMenuItem[] = [{ id: 1, en: { title: "Parent", "path-click": GUIDE }, submenus: one(2, "Child", GUIDE) }];
-      expect(buildHeaderMenuTree(menus, makeData(), "en", 0, { isPathAllowed: denyGuide })).toEqual([]);
+      expect(buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 0, ...{ isPathAllowed: denyGuide } })).toEqual([]);
     });
 
     it("applies the same rule to language-level submenus, keeping original indexes in keys", () => {
@@ -217,7 +237,7 @@ describe("buildHeaderMenuTree", () => {
           },
         },
       ];
-      const [api] = buildHeaderMenuTree(menus, makeData(), "en", 0, { isPathAllowed: denyGuide });
+      const [api] = buildHeaderMenuTree(menus, { data: makeData(), language: "en", pageIndex: 0, ...{ isPathAllowed: denyGuide } });
       expect(api.children.map((node) => node.key)).toEqual(["4-l1-1", "4-l1-2"]);
       expect(api.children[1].children.map((node) => node.key)).toEqual(["4-l1-2-l2-0"]);
     });
@@ -228,23 +248,23 @@ describe("buildUnifiedHeaderMenuTree", () => {
   const MD_MENUS = one(1, "Intro", INTRO);
 
   it("renders a single section without section headers, at level 0", () => {
-    expect(buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": MD_MENUS }), "en", 0)).toEqual([
+    expect(buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": MD_MENUS }), "en", { pageIndex: 0 })).toEqual([
       { key: "Intro-1", id: 1, title: "Intro", pathClick: INTRO, active: true, level: 0, searchLabel: "Intro", ancestorKeys: [], children: [] },
     ]);
   });
 
   it("falls back to menus-header when menus-header-md is absent", () => {
-    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header": MD_MENUS }), "en", 0);
+    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header": MD_MENUS }), "en", { pageIndex: 0 });
     expect(tree.map((node) => node.key)).toEqual(["Intro-1"]);
   });
 
   it("returns an empty tree when no section has menus", () => {
-    expect(buildUnifiedHeaderMenuTree(makeData(), "en", 0)).toEqual([]);
-    expect(buildUnifiedHeaderMenuTree(makeData({ "menus-header-html": [] }), "en", 0)).toEqual([]);
+    expect(buildUnifiedHeaderMenuTree(makeData(), "en", { pageIndex: 0 })).toEqual([]);
+    expect(buildUnifiedHeaderMenuTree(makeData({ "menus-header-html": [] }), "en", { pageIndex: 0 })).toEqual([]);
   });
 
   it("inserts a section header row before each section when more than one section exists", () => {
-    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": MD_MENUS, "menus-header-html": HTML_MENUS }), "en", 0);
+    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": MD_MENUS, "menus-header-html": HTML_MENUS }), "en", { pageIndex: 0 });
     expect(tree).toEqual([
       {
         key: "section-md",
@@ -276,7 +296,7 @@ describe("buildUnifiedHeaderMenuTree", () => {
   });
 
   it("treats section headers as sibling rows, not hierarchy parents", () => {
-    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": NESTED_MD, "menus-header-html": HTML_MENUS }), "en", 0);
+    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": NESTED_MD, "menus-header-html": HTML_MENUS }), "en", { pageIndex: 0 });
     expect(tree[0]).toMatchObject({ key: "section-md", isSectionHeader: true, ancestorKeys: [], children: [] });
     const guide = tree[1];
     // The key, search label and ancestor keys start fresh: no "Docs" prefix, no "section-md" ancestor.
@@ -294,15 +314,16 @@ describe("buildUnifiedHeaderMenuTree", () => {
     });
   });
 
-  it("orders sections by the default hierarchy (md, source-viewer, html, video, audio)", () => {
+  it("orders sections by the default hierarchy (md, source-viewer, html, video, audio, pdf)", () => {
     const data = makeData({
+      "menus-header-pdf": one(60, "P"),
       "menus-header-audio": one(50, "A"),
       "menus-header-video": one(40, "V"),
       "menus-header-html": one(30, "H"),
       "menus-header-source-viewer": one(20, "S"),
       "menus-header-md": one(10, "M"),
     });
-    expect(buildUnifiedHeaderMenuTree(data, "en", 0).map((node) => node.key)).toEqual([
+    expect(buildUnifiedHeaderMenuTree(data, "en", { pageIndex: 0 }).map((node) => node.key)).toEqual([
       "section-md",
       "M-10",
       "section-source-viewer",
@@ -313,6 +334,8 @@ describe("buildUnifiedHeaderMenuTree", () => {
       "V-40",
       "section-audio",
       "A-50",
+      "section-pdf",
+      "P-60",
     ]);
   });
 
@@ -322,12 +345,30 @@ describe("buildUnifiedHeaderMenuTree", () => {
       "menus-header-html": HTML_MENUS,
       hierarchyMenu: { html: 0, md: 1, video: 2 },
     });
-    expect(buildUnifiedHeaderMenuTree(data, "en", 0).map((node) => node.key)).toEqual([
+    expect(buildUnifiedHeaderMenuTree(data, "en", { pageIndex: 0 }).map((node) => node.key)).toEqual([
       "section-html",
       "Landing-20",
       "section-md",
       "Intro-1",
     ]);
+  });
+
+  it("keeps nested PDF destinations and filters denied paths", () => {
+    const data = makeData({ "menus-header-pdf": [{
+      id: 60,
+      en: { title: "PDF guides", "path-click": "", submenus: [
+        { title: "Public guide", "path-click": "page:23" },
+        { title: "Private guide", "path-click": "page:25" },
+      ] },
+    }] });
+    const tree = buildUnifiedHeaderMenuTree(data, "en", { pageIndex: 0, isPathAllowed: (value) => value !== "page:25" });
+    expect(tree[0].children.map((node) => node.title)).toEqual(["Public guide"]);
+  });
+
+  it("hides the PDF section when the site feature is disabled", () => {
+    const data = makeData({ "menus-header-pdf": one(60, "PDF guide", "page:23") });
+    data.config.site.pdf = { enabled: false };
+    expect(buildUnifiedHeaderMenuTree(data, "en", { pageIndex: 0 })).toEqual([]);
   });
 
   it("resolves section labels from the active language, then English, then the label key", () => {
@@ -338,7 +379,7 @@ describe("buildUnifiedHeaderMenuTree", () => {
       "menus-header-audio": one(50, "A"),
     });
     const labelsFor = (language: string) =>
-      buildUnifiedHeaderMenuTree(data, language, 0)
+      buildUnifiedHeaderMenuTree(data, language, { pageIndex: 0 })
         .filter((node) => node.isSectionHeader)
         .map((node) => node.title);
     expect(labelsFor("pt")).toEqual(["Documentos", "Pages", "Videos", "titleHeaderMenuAudio"]);
@@ -348,13 +389,13 @@ describe("buildUnifiedHeaderMenuTree", () => {
 
   it("removes the section header when every node of that section is filtered out", () => {
     const data = makeData({ "menus-header-md": MD_MENUS, "menus-header-html": HTML_MENUS });
-    const tree = buildUnifiedHeaderMenuTree(data, "en", 0, (pathClick) => pathClick !== REFERENCE);
+    const tree = buildUnifiedHeaderMenuTree(data, "en", { pageIndex: 0, isPathAllowed: (pathClick) => pathClick !== REFERENCE });
     expect(tree.map((node) => node.key)).toEqual(["section-md", "Intro-1"]);
   });
 
   it("returns an empty tree when every section is filtered out", () => {
     const data = makeData({ "menus-header-md": MD_MENUS, "menus-header-html": HTML_MENUS });
-    expect(buildUnifiedHeaderMenuTree(data, "en", 0, () => false)).toEqual([]);
+    expect(buildUnifiedHeaderMenuTree(data, "en", { pageIndex: 0, isPathAllowed: () => false })).toEqual([]);
   });
 });
 
@@ -364,7 +405,7 @@ describe("flattenMenuTree", () => {
   });
 
   it("flattens depth-first, dropping children and the section flag", () => {
-    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": NESTED_MD, "menus-header-html": HTML_MENUS }), "en", 0);
+    const tree = buildUnifiedHeaderMenuTree(makeData({ "menus-header-md": NESTED_MD, "menus-header-html": HTML_MENUS }), "en", { pageIndex: 0 });
     const flat = flattenMenuTree(tree);
     expect(flat.map((entry) => entry.key)).toEqual([
       "section-md",
@@ -392,9 +433,18 @@ describe("flattenMenuTree", () => {
 });
 
 describe("re-exported menu helpers", () => {
+  it("resolves the current breadcrumb through an active page alias", () => {
+    const data = makeData();
+    data.pathToPageMap = { ...data.pathToPageMap, "page:1": { pageIndex: 0, contentType: "video" } };
+    const menus = [{ id: 1, en: { title: "Guide", "path-click": "" }, submenus: [{ id: 2, en: { title: "Introduction", "path-click": "page:1" } }] }];
+    const tree = buildHeaderMenuTree(menus, { data, language: "en", pageIndex: 0 });
+    expect(getCurrentPageBreadcrumbTrail(tree, INTRO).map((item) => item.title)).toEqual(["Guide", "Introduction"]);
+    expect(getCurrentPageBreadcrumbTrail(tree, "page:1").map((item) => item.title)).toEqual(["Guide", "Introduction"]);
+    expect(getCurrentPageBreadcrumbTrail([], undefined)).toEqual([]);
+  });
   it("exposes the entity helpers through the widget model", () => {
     const data = makeData();
-    const tree = buildHeaderMenuTree(NESTED_MD, data, "en", 0);
+    const tree = buildHeaderMenuTree(NESTED_MD, { data: data, language: "en", pageIndex: 0 });
     expect(getBreadcrumbTrail(tree, GUIDE).map((item) => item.title)).toEqual(["Guide", "Install", "Windows"]);
     expect(getPageIndexByPathClick(data, GUIDE)).toBe(1);
     expect(getUrlParamsForPathClick(data, GUIDE, "en", new URLSearchParams()).toString()).toBe("menu=en&name=guide");

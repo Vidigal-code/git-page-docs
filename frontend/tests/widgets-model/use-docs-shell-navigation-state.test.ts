@@ -82,8 +82,8 @@ describe("useDocsShellNavigationState", () => {
 
   it("keeps the sidebar closed for linear and quick navigation when blocking is on", () => {
     const { result, setSidebarOpen } = setup({ blockSidebarOpenOnNav: true });
-    act(() => result.current.onMenuClick(GUIDE, [], { fromLinearNav: true }));
-    act(() => result.current.onMenuClick(INTRO, [], { fromQuickNav: true }));
+    act(() => result.current.onMenuClick(GUIDE, [], { origin: "linear" }));
+    act(() => result.current.onMenuClick(INTRO, [], { origin: "quick" }));
     expect(setSidebarOpen).not.toHaveBeenCalled();
 
     act(() => result.current.onMenuClick(GUIDE));
@@ -94,10 +94,6 @@ describe("useDocsShellNavigationState", () => {
     const { result } = setup();
     expect(result.current.isNodeExpanded("Guide-2")).toBe(true);
 
-    // An untouched node has no map entry, so the first toggle records `!undefined`
-    // (still expanded); only from then on does it alternate.
-    act(() => result.current.toggleNode("Guide-2"));
-    expect(result.current.expandedMenuMap).toEqual({ "Guide-2": true });
     act(() => result.current.toggleNode("Guide-2"));
     expect(result.current.isNodeExpanded("Guide-2")).toBe(false);
     act(() => result.current.toggleNode("Guide-2"));

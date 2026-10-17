@@ -1,5 +1,6 @@
 import type { LanguageCode, LayoutItem, ResolvedBackgroundAudioConfig, VersionEntry, VersionLinkOption } from "@/entities/docs";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
+import type { ControlIconConfig } from "@/shared/ui/control-icon";
 
 /** Version selector and repository links config */
 export interface DocsShellVersionConfig {
@@ -80,6 +81,10 @@ export interface DocsShellAudioConfig {
 
 /** Theme and navigation controls config */
 export interface DocsShellThemeNavConfig {
+  quickNavigationIcon?: ControlIconConfig;
+  focusModeIcon?: ControlIconConfig;
+  languageSelectorIcon?: ControlIconConfig;
+  themeSelectorIcon?: ControlIconConfig;
   focusModeEnabled: boolean;
   focusModeLabel: string;
   activeNavigation: boolean;
@@ -99,6 +104,10 @@ export interface DocsShellThemeNavConfig {
 
 /** Base controls props (header, version, theme, nav) */
 export interface DocsShellControlsBaseProps {
+  quickNavigationIcon?: ControlIconConfig;
+  focusModeIcon?: ControlIconConfig;
+  languageSelectorIcon?: ControlIconConfig;
+  themeSelectorIcon?: ControlIconConfig;
   fallbackProjectLink: string | undefined;
   projectLabel: string;
   useReactProjectLinkIcon: boolean;

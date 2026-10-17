@@ -35,24 +35,28 @@ export function applyLanguageToggles(config: GitPageDocsConfig, languages: Langu
   return filterEnabledLanguages(languages, getSiteLanguageToggles(config), config.site.defaultLanguage);
 }
 
-function getContentLanguages(
-  config: GitPageDocsConfig,
-  routesMd: (ContentTypeRouteConfig | RouteConfig)[],
-  routesSourceViewer: ContentTypeRouteConfig[],
-  routesHtml: ContentTypeRouteConfig[],
-  routesVideo: ContentTypeRouteConfig[],
-  routesAudio?: ContentTypeRouteConfig[],
-): LanguageCode[] {
-  const firstMd = routesMd[0];
-  const firstSourceViewer = routesSourceViewer[0];
-  const firstHtml = routesHtml[0];
-  const firstVideo = routesVideo[0];
-  const firstAudio = routesAudio?.[0];
+export interface ContentLanguageRoutes {
+  routesMd?: (ContentTypeRouteConfig | RouteConfig)[];
+  routesSourceViewer?: ContentTypeRouteConfig[];
+  routesHtml?: ContentTypeRouteConfig[];
+  routesVideo?: ContentTypeRouteConfig[];
+  routesAudio?: ContentTypeRouteConfig[];
+  routesPdf?: ContentTypeRouteConfig[];
+}
+
+function getContentLanguages(config: GitPageDocsConfig, routes: ContentLanguageRoutes): LanguageCode[] {
+  const firstMd = routes.routesMd?.[0];
+  const firstSourceViewer = routes.routesSourceViewer?.[0];
+  const firstHtml = routes.routesHtml?.[0];
+  const firstVideo = routes.routesVideo?.[0];
+  const firstAudio = routes.routesAudio?.[0];
   if (firstMd && hasPath(firstMd)) return getLanguagesFromPathRecord(firstMd.path);
   if (firstSourceViewer?.title) return getLanguagesFromPathRecord(firstSourceViewer.title);
   if (firstHtml?.path) return getLanguagesFromPathRecord(firstHtml.path);
   if (firstVideo?.video?.pathVideo) return getLanguagesFromPathRecord(firstVideo.video.pathVideo);
   if (firstAudio && hasAudio(firstAudio)) return getLanguagesFromPathRecord(firstAudio.audio.pathAudio);
+  const pdfLanguages = routes.routesPdf?.flatMap((route) => getLanguagesFromPathRecord(route.pdf?.pathPdf)) ?? [];
+  if (pdfLanguages.length) return Array.from(new Set(pdfLanguages));
   if (config.routes?.[0]?.path) return getLanguagesFromPathRecord(config.routes[0].path);
   return [config.site.defaultLanguage];
 }
@@ -60,14 +64,10 @@ function getContentLanguages(
 /** Languages the content ships, minus the ones `site.languages` disables. */
 export function getLanguages(
   config: GitPageDocsConfig,
-  routesMd: (ContentTypeRouteConfig | RouteConfig)[],
-  routesSourceViewer: ContentTypeRouteConfig[],
-  routesHtml: ContentTypeRouteConfig[],
-  routesVideo: ContentTypeRouteConfig[],
-  routesAudio?: ContentTypeRouteConfig[],
+  routes: ContentLanguageRoutes,
 ): LanguageCode[] {
   return applyLanguageToggles(
     config,
-    getContentLanguages(config, routesMd, routesSourceViewer, routesHtml, routesVideo, routesAudio),
+    getContentLanguages(config, routes),
   );
 }

@@ -43,8 +43,7 @@
     "descriptionIsVisible": true,
     "marginTop": "",
     "marginBottom": "",
-    "blockLink": true,
-    "browseAll": false
+    "blockLink": true
   },
   "routes-md": [
     {
@@ -65,6 +64,7 @@
         "es": "gitpagedocs/docs/versions/0.0.8/es/getting-started.md"
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -88,6 +88,7 @@
         "es": "gitpagedocs/docs/versions/0.0.8/es/project-overview.md"
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -127,6 +128,7 @@
         "es": "gitpagedocs/docs/versions/0.0.8/es/functionalities.md"
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -155,6 +157,7 @@
         "es": "gitpagedocs/docs/versions/0.0.8/es/github-issues-projects.md"
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -178,6 +181,7 @@
         "es": "gitpagedocs/docs/versions/0.0.8/es/git-introduction.md"
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -187,7 +191,8 @@
         "md": 1,
         "source-viewer": 2,
         "html": 3,
-        "audio": 4
+        "audio": 4,
+        "pdf": 5
       }
     },
     {
@@ -208,6 +213,7 @@
         "es": "gitpagedocs/docs/versions/0.0.8/es/authorized-routes.md"
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -225,6 +231,270 @@
           "jwt"
         ]
       }
+    },
+    {
+      "id": 13,
+      "title": {
+        "pt": "Configuração",
+        "en": "Configuration",
+        "es": "Configuración"
+      },
+      "description": {
+        "pt": "Idiomas, ícones, navegação, foco e acessibilidade",
+        "en": "Languages, icons, navigation, focus and accessibility",
+        "es": "Idiomas, iconos, navegación, foco y accesibilidad"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/configuration.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/configuration.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/configuration.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 14,
+      "title": {
+        "pt": "Publicação",
+        "en": "Deployment",
+        "es": "Publicación"
+      },
+      "description": {
+        "pt": "Execução local e publicação no GitHub Pages",
+        "en": "Local runtime and GitHub Pages deployment",
+        "es": "Ejecución local y publicación en GitHub Pages"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/deployment.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/deployment.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/deployment.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 15,
+      "title": {
+        "pt": "Arquitetura",
+        "en": "Architecture",
+        "es": "Arquitectura"
+      },
+      "description": {
+        "pt": "Pacotes, contratos e fluxo de dados",
+        "en": "Packages, contracts and data flow",
+        "es": "Paquetes, contratos y flujo de datos"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/architecture.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/architecture.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/architecture.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 16,
+      "title": {
+        "pt": "Temas e layouts",
+        "en": "Themes and layouts",
+        "es": "Temas y diseños"
+      },
+      "description": {
+        "pt": "Personalize templates e tokens visuais",
+        "en": "Customize templates and visual tokens",
+        "es": "Personaliza plantillas y tokens visuales"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/themes.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/themes.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/themes.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 17,
+      "title": {
+        "pt": "Perguntas frequentes",
+        "en": "FAQ",
+        "es": "Preguntas frecuentes"
+      },
+      "description": {
+        "pt": "Diagnóstico e solução de problemas",
+        "en": "Diagnostics and troubleshooting",
+        "es": "Diagnóstico y solución de problemas"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/faq.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/faq.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/faq.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 18,
+      "title": {
+        "pt": "Referência da CLI",
+        "en": "CLI reference",
+        "es": "Referencia de la CLI"
+      },
+      "description": {
+        "pt": "Instalação, comandos, opções e exemplos",
+        "en": "Installation, commands, options and examples",
+        "es": "Instalación, comandos, opciones y ejemplos"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/cli.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/cli.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/cli.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 19,
+      "title": {
+        "pt": "Servidor MCP",
+        "en": "MCP server",
+        "es": "Servidor MCP"
+      },
+      "description": {
+        "pt": "Instalação, clientes, tools, resources e provedores",
+        "en": "Installation, clients, tools, resources and providers",
+        "es": "Instalación, clientes, tools, resources y proveedores"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/mcp.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/mcp.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/mcp.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 20,
+      "title": {
+        "pt": "Navegação e submenus",
+        "en": "Navigation and nested menus",
+        "es": "Navegación y submenús"
+      },
+      "description": {
+        "pt": "Árvores recursivas, URLs e breadcrumbs",
+        "en": "Recursive trees, URLs and breadcrumbs",
+        "es": "Árboles recursivos, URLs y breadcrumbs"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/navigation.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/navigation.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/navigation.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 21,
+      "title": {
+        "pt": "Acessibilidade e narração",
+        "en": "Accessibility and narration",
+        "es": "Accesibilidad y narración"
+      },
+      "description": {
+        "pt": "Leitura com vozes nativas do navegador",
+        "en": "Reading with native browser voices",
+        "es": "Lectura con voces nativas del navegador"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/accessibility.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/accessibility.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/accessibility.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 22,
+      "title": {
+        "pt": "Modo foco",
+        "en": "Focus mode",
+        "es": "Modo foco"
+      },
+      "description": {
+        "pt": "Leitura, cópia, download e navegação entre documentos",
+        "en": "Reading, copy, download and document navigation",
+        "es": "Lectura, copia, descarga y navegación entre documentos"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/focus-mode.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/focus-mode.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/focus-mode.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 24,
+      "title": {
+        "pt": "Documentos PDF",
+        "en": "PDF documents",
+        "es": "Documentos PDF"
+      },
+      "description": {
+        "pt": "Rotas, prévia, download e publicação de anexos PDF",
+        "en": "Routes, previews, downloads and publishing PDF attachments",
+        "es": "Rutas, vista previa, descarga y publicación de anexos PDF"
+      },
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.8/pt/pdf.md",
+        "en": "gitpagedocs/docs/versions/0.0.8/en/pdf.md",
+        "es": "gitpagedocs/docs/versions/0.0.8/es/pdf.md"
+      },
+      "fullscreenEnabled": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
     }
   ],
   "routes-source-viewer": [
@@ -241,6 +511,7 @@
         "es": "Explora el arbol del repositorio, navega por carpetas y previsualiza archivos directamente en la documentacion."
       },
       "fullscreenEnabled": false,
+      "browseAll": false,
       "RouteguideBrand": false,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
@@ -264,6 +535,7 @@
         "es": "Una breve introducción a Git para principiantes."
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -290,6 +562,7 @@
         "es": "¿Quieres conocer la forma más rápida de usar GitHub Copilot desde tu terminal? En este tutorial exploramos los dos modos principales del Copilot CLI."
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -325,6 +598,7 @@
         "es": "Aprende a usar GitHub Issues y Projects para gestionar tu trabajo."
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -360,6 +634,7 @@
         "es": "Construyendo un tutor de Python con IA usando el GitHub Copilot SDK."
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -395,6 +670,7 @@
         "es": "Una breve introducción a Git para principiantes."
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "video": {
         "videoType": {
           "pt": "youtube",
@@ -423,6 +699,7 @@
         "es": "Escucha una pista de ejemplo directamente en la documentacion."
       },
       "fullscreenEnabled": true,
+      "browseAll": false,
       "audio": {
         "audioType": {
           "pt": "youtube",
@@ -433,6 +710,29 @@
           "pt": "0w80F8FffQ4",
           "en": "0w80F8FffQ4",
           "es": "0w80F8FffQ4"
+        }
+      }
+    }
+  ],
+  "routes-pdf": [
+    {
+      "id": 23,
+      "title": {
+        "pt": "Guia do projeto em PDF (inglês)",
+        "en": "Project guide PDF (English)",
+        "es": "Guía del proyecto en PDF (inglés)"
+      },
+      "description": {
+        "pt": "Visualize ou baixe o guia do GitPageDocs em inglês.",
+        "en": "Preview or download the GitPageDocs project guide in English.",
+        "es": "Visualiza o descarga la guía de GitPageDocs en inglés."
+      },
+      "fullscreenEnabled": true,
+      "pdf": {
+        "pathPdf": {
+          "pt": "gitpagedocs/docs/versions/0.0.8/en/gitpagedocs-project-guide.pdf",
+          "en": "gitpagedocs/docs/versions/0.0.8/en/gitpagedocs-project-guide.pdf",
+          "es": "gitpagedocs/docs/versions/0.0.8/en/gitpagedocs-project-guide.pdf"
         }
       }
     }
@@ -526,6 +826,171 @@
       "es": {
         "title": "Rutas autorizadas",
         "path-click": "gitpagedocs/docs/versions/0.0.8/es/authorized-routes.md"
+      }
+    },
+    {
+      "id": 13,
+      "pt": {
+        "title": "Configuração",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/configuration.md"
+      },
+      "en": {
+        "title": "Configuration",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/configuration.md"
+      },
+      "es": {
+        "title": "Configuración",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/configuration.md"
+      }
+    },
+    {
+      "id": 14,
+      "pt": {
+        "title": "Publicação",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/deployment.md"
+      },
+      "en": {
+        "title": "Deployment",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/deployment.md"
+      },
+      "es": {
+        "title": "Publicación",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/deployment.md"
+      }
+    },
+    {
+      "id": 15,
+      "pt": {
+        "title": "Arquitetura",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/architecture.md"
+      },
+      "en": {
+        "title": "Architecture",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/architecture.md"
+      },
+      "es": {
+        "title": "Arquitectura",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/architecture.md"
+      }
+    },
+    {
+      "id": 16,
+      "pt": {
+        "title": "Temas e layouts",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/themes.md"
+      },
+      "en": {
+        "title": "Themes and layouts",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/themes.md"
+      },
+      "es": {
+        "title": "Temas y diseños",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/themes.md"
+      }
+    },
+    {
+      "id": 17,
+      "pt": {
+        "title": "Perguntas frequentes",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/faq.md"
+      },
+      "en": {
+        "title": "FAQ",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/faq.md"
+      },
+      "es": {
+        "title": "Preguntas frecuentes",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/faq.md"
+      }
+    },
+    {
+      "id": 18,
+      "pt": {
+        "title": "Referência da CLI",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/cli.md"
+      },
+      "en": {
+        "title": "CLI reference",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/cli.md"
+      },
+      "es": {
+        "title": "Referencia de la CLI",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/cli.md"
+      }
+    },
+    {
+      "id": 19,
+      "pt": {
+        "title": "Servidor MCP",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/mcp.md"
+      },
+      "en": {
+        "title": "MCP server",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/mcp.md"
+      },
+      "es": {
+        "title": "Servidor MCP",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/mcp.md"
+      }
+    },
+    {
+      "id": 20,
+      "pt": {
+        "title": "Navegação e submenus",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/navigation.md"
+      },
+      "en": {
+        "title": "Navigation and nested menus",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/navigation.md"
+      },
+      "es": {
+        "title": "Navegación y submenús",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/navigation.md"
+      }
+    },
+    {
+      "id": 21,
+      "pt": {
+        "title": "Acessibilidade e narração",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/accessibility.md"
+      },
+      "en": {
+        "title": "Accessibility and narration",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/accessibility.md"
+      },
+      "es": {
+        "title": "Accesibilidad y narración",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/accessibility.md"
+      }
+    },
+    {
+      "id": 22,
+      "pt": {
+        "title": "Modo foco",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/focus-mode.md"
+      },
+      "en": {
+        "title": "Focus mode",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/focus-mode.md"
+      },
+      "es": {
+        "title": "Modo foco",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/focus-mode.md"
+      }
+    },
+    {
+      "id": 24,
+      "pt": {
+        "title": "Documentos PDF",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/pt/pdf.md"
+      },
+      "en": {
+        "title": "PDF documents",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/en/pdf.md"
+      },
+      "es": {
+        "title": "Documentos PDF",
+        "path-click": "gitpagedocs/docs/versions/0.0.8/es/pdf.md"
       }
     }
   ],
@@ -626,18 +1091,37 @@
       }
     }
   ],
+  "menus-header-pdf": [
+    {
+      "id": 23,
+      "pt": {
+        "title": "Guia do projeto em PDF (inglês)",
+        "path-click": "page:23"
+      },
+      "en": {
+        "title": "Project guide PDF (English)",
+        "path-click": "page:23"
+      },
+      "es": {
+        "title": "Guía del proyecto en PDF (inglés)",
+        "path-click": "page:23"
+      }
+    }
+  ],
   "hierarchyPage": {
     "md": 0,
     "source-viewer": 1,
     "html": 2,
     "video": 3,
-    "audio": 4
+    "audio": 4,
+    "pdf": 5
   },
   "hierarchyMenu": {
     "md": 0,
     "source-viewer": 1,
     "html": 2,
     "video": 3,
-    "audio": 4
+    "audio": 4,
+    "pdf": 5
   }
 }

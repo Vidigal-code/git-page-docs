@@ -1,6 +1,7 @@
 "use client";
 
 import type { LoadedDocsData, LoadedPage } from "@/entities/docs";
+import type { ReactNode } from "react";
 import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
 import { DocsShellControls, type DocsShellControlsProps } from "./docs-shell-controls";
 import { DocsShellHeader } from "./docs-shell-header";
@@ -11,6 +12,7 @@ import type { BrowseNavigationProps, BrowseState, ContentLabels } from "../model
 import styles from "../docs-shell.module.css";
 
 export interface DocsShellMainContentProps {
+  accessibilityControls?: ReactNode;
   headerName: string;
   iconImage: string | undefined;
   useReactHeaderIcon: boolean;
@@ -92,6 +94,7 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
       />
 
       <main className={styles.main}>
+        {props.accessibilityControls}
         <PageContentArea
           currentPage={currentPage}
           data={data}

@@ -69,9 +69,9 @@ Supported adapters:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/0.0.8/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/0.0.8/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/0.0.8/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/0.0.9/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/0.0.9/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/0.0.9/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",

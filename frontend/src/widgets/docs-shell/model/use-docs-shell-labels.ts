@@ -2,6 +2,12 @@ import { useMemo } from "react";
 import { getLangMenuLabelFromMenu, resolveTranslation, type LoadedDocsData } from "@/entities/docs";
 
 export interface DocsShellLabels {
+  focusSectionsLabel: string;
+  focusDocumentsLabel: string;
+  focusPreviousSectionLabel: string;
+  focusNextSectionLabel: string;
+  focusPreviousDocumentLabel: string;
+  focusNextDocumentLabel: string;
   previousLabel: string;
   nextLabel: string;
   browsePrevLabel: string;
@@ -288,6 +294,12 @@ export function useDocsShellLabels(data: LoadedDocsData, language: string): Docs
       mdCopiedLabel,
       mdCopyErrorLabel,
       mdDownloadLabel,
+      focusSectionsLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusSectionsLabel", "Sections"),
+      focusDocumentsLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusDocumentsLabel", "Documents"),
+      focusPreviousSectionLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusPreviousSectionLabel", "Previous section"),
+      focusNextSectionLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusNextSectionLabel", "Next section"),
+      focusPreviousDocumentLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusPreviousDocumentLabel", "Previous document"),
+      focusNextDocumentLabel: getLangMenuLabelFromMenu(data.config.site.langmenu, language, "focusNextDocumentLabel", "Next document"),
       aiChatTitle,
       aiChatPlaceholder,
       aiChatConfigTitle,

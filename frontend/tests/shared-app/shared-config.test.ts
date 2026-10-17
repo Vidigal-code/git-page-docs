@@ -68,7 +68,7 @@ describe("constants", () => {
     expect(CONFIG_BASE).toBe("gitpagedocs/config");
     expect(CONFIG_EXTENSIONS).toEqual([".json", ".js", ".ts"]);
     expect(DEFAULT_CONFIG_PATH).toBe(`${CONFIG_BASE}.json`);
-    expect(DEFAULT_HIERARCHY).toEqual({ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 });
+    expect(DEFAULT_HIERARCHY).toEqual({ md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4, pdf: 5 });
     expect(DEFAULT_ICON_FALLBACK_URL).toMatch(/^https:\/\//);
   });
 });

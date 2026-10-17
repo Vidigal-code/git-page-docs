@@ -6,6 +6,7 @@ import { execSync } from "node:child_process";
 import { DOC_VERSIONS } from "../../cli/contracts/doc-versions.mjs";
 import { languageArtifactPaths } from "../../cli/contracts/langs-paths.mjs";
 import { SUPPORTED_LANGUAGES } from "../../cli/contracts/languages.mjs";
+import { PDF_GUIDE_FILENAME } from "../../cli/contracts/index.mjs";
 import { getEnabledLanguages, parseLanguageBundle, parseLanguageToggles } from "../../tools/src/i18n/language-bundles.ts";
 
 const root = process.cwd();
@@ -78,6 +79,16 @@ for (const version of DOC_VERSIONS) {
   }
   if (!Array.isArray(versionConfig["routes-html"])) {
     throw new Error(`Invalid version config (${version}): routes-html is missing.`);
+  }
+  if (!Array.isArray(versionConfig["routes-pdf"]) || versionConfig["routes-pdf"].length === 0) {
+    throw new Error(`Invalid version config (${version}): routes-pdf is missing.`);
+  }
+  const pdfPath = path.join(root, "gitpagedocs", "docs", "versions", version, "en", PDF_GUIDE_FILENAME);
+  if (readFileSync(pdfPath).subarray(0, 5).toString("ascii") !== "%PDF-") {
+    throw new Error(`Invalid generated PDF (${version}): expected a PDF header.`);
+  }
+  for (const language of SUPPORTED_LANGUAGES) {
+    ensureExists(path.join("gitpagedocs", "docs", "versions", version, language, "pdf.md"));
   }
   ensureMissing(path.join("gitpagedocs", "docs", "versions", version, "en", "source-viewer"));
   ensureMissing(path.join("gitpagedocs", "docs", "versions", version, "en", "source-viewer.html"));

@@ -5,14 +5,16 @@ import type {
   LoadedDocsData,
 } from "@/entities/docs/model/types";
 import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
+import { CONTENT_TYPES } from "./types/config";
 
 /** Config sections whose routes resolve to a `page:<id>` path click. */
-type PageRoutesKey = "routes-source-viewer" | "routes-video" | "routes-audio";
+type PageRoutesKey = "routes-source-viewer" | "routes-video" | "routes-audio" | "routes-pdf";
 
 const PAGE_ROUTES_KEY_BY_CONTENT_TYPE: Partial<Record<ContentType, PageRoutesKey>> = {
   "source-viewer": "routes-source-viewer",
   video: "routes-video",
   audio: "routes-audio",
+  pdf: "routes-pdf",
 };
 
 export function getRouteIndexByPath(data: LoadedDocsData, language: LanguageCode, filePath: string): number {
@@ -21,7 +23,7 @@ export function getRouteIndexByPath(data: LoadedDocsData, language: LanguageCode
 
 function getOrderedContentTypes(data: LoadedDocsData): ContentType[] {
   const hierarchy = data.config.hierarchyPage ?? DEFAULT_HIERARCHY;
-  return (["md", "source-viewer", "html", "video", "audio"] as ContentType[]).sort(
+  return CONTENT_TYPES.filter((type) => type !== "pdf" || data.config.site.pdf?.enabled !== false).sort(
     (a, b) => (hierarchy[a] ?? 999) - (hierarchy[b] ?? 999),
   );
 }
@@ -56,9 +58,9 @@ function findPathInRoutes(
 function findPathClickByPageAndType(
   data: LoadedDocsData,
   pageIndex: number,
-  contentType: ContentType,
-  language: LanguageCode,
+  selection: { contentType: ContentType; language: LanguageCode },
 ): string | undefined {
+  const { contentType, language } = selection;
   const page = data.pages?.[pageIndex];
   if (!page) return undefined;
 
@@ -77,6 +79,9 @@ function findPathClickByPageAndType(
   if (contentType === "audio" && page.audio) {
     return `page:${page.audio.routeId}`;
   }
+  if (contentType === "pdf" && page.pdf) {
+    return `page:${page.pdf.routeId}`;
+  }
 
   return undefined;
 }
@@ -85,9 +90,9 @@ function findPathClickByPageAndType(
 function findPathClickInConfigRoutes(
   data: LoadedDocsData,
   routeId: number,
-  contentType: ContentType,
-  language: LanguageCode,
+  selection: { contentType: ContentType; language: LanguageCode },
 ): string | undefined {
+  const { contentType, language } = selection;
   if (contentType === "md") {
     return findPathInRoutes(data.config["routes-md"] ?? data.config.routes, routeId, language);
   }
@@ -109,13 +114,13 @@ export function getPathClickByRouteId(
   const pageIndex = data.pages?.findIndex((page) => page.id === routeId) ?? -1;
   if (pageIndex >= 0) {
     for (const contentType of orderedContentTypes) {
-      const pathClick = findPathClickByPageAndType(data, pageIndex, contentType, language);
+      const pathClick = findPathClickByPageAndType(data, pageIndex, { contentType, language });
       if (pathClick) return pathClick;
     }
   }
 
   for (const contentType of orderedContentTypes) {
-    const pathClick = findPathClickInConfigRoutes(data, routeId, contentType, language);
+    const pathClick = findPathClickInConfigRoutes(data, routeId, { contentType, language });
     if (pathClick) return pathClick;
   }
 
@@ -143,7 +148,12 @@ export function getPageIndexByPathClick(data: LoadedDocsData, pathClick: string)
     const sourceViewerPath = page.sourceViewer ? [page.sourceViewer.sourceViewerPath, `page:${page.sourceViewer.routeId}`] : [];
     const videoPath = page.video ? Object.values(page.video.pathVideoByLanguage ?? {}) : [];
     const audioPath = page.audio ? Object.values(page.audio.pathAudioByLanguage ?? {}) : [];
-    return [...mdPath, ...sourceViewerPath, ...htmlPath, ...htmlUrl, ...videoPath, ...audioPath].includes(normalizedPathClick);
+    const pdfPath = page.pdf ? [
+      ...Object.values(page.pdf.config.pdf?.pathPdf ?? {}),
+      ...Object.values(page.pdf.pathPdfByLanguage),
+      `page:${page.pdf.routeId}`,
+    ] : [];
+    return [...mdPath, ...sourceViewerPath, ...htmlPath, ...htmlUrl, ...videoPath, ...audioPath, ...pdfPath].includes(normalizedPathClick);
   }) ?? -1;
   if (pageIdx >= 0) return pageIdx;
 
@@ -152,7 +162,7 @@ export function getPageIndexByPathClick(data: LoadedDocsData, pathClick: string)
 
 function extractSlugFromPath(path: string): string {
   const basename = path.split("/").pop() ?? "";
-  return basename.replace(/\.(md|html)$/i, "").toLowerCase();
+  return basename.replace(/\.(md|html|pdf)$/i, "").toLowerCase();
 }
 
 export function getUrlParamsForPathClick(

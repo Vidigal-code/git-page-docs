@@ -3,3 +3,4 @@ export { HtmlContainer } from "./html-container";
 export { SourceViewerContainer } from "./source-viewer-container";
 export { VideoContainer } from "./video-container";
 export { AudioContainer } from "./audio-container";
+export { PdfContainer } from "./pdf-container";

@@ -8,6 +8,7 @@ import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ThemeSelector } from "@/features/theme-selector";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import type { ControlIconConfig } from "@/shared/ui/control-icon";
 import type { LanguageCode, LayoutItem } from "@/entities/docs";
 import styles from "../search-shell-header.module.css";
 
@@ -65,6 +66,8 @@ interface SearchShellHeaderProps {
   reactHeaderIconTag?: string;
   headerReactIconStyle?: React.CSSProperties;
   getLanguageLabel: (lang: LanguageCode) => string;
+  languageSelectorIcon?: ControlIconConfig;
+  themeSelectorIcon?: ControlIconConfig;
   /** Theme CSS variables forwarded to selector modals (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
 }
@@ -88,6 +91,8 @@ export function SearchShellHeader({
   reactHeaderIconTag,
   headerReactIconStyle,
   getLanguageLabel,
+  languageSelectorIcon,
+  themeSelectorIcon,
   themeVarsStyle,
 }: Readonly<SearchShellHeaderProps>) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -118,11 +123,12 @@ export function SearchShellHeader({
     <>
       {layouts.length > 1 && (
         <ThemeSelector
-          className={styles.select}
+          className={themeSelectorIcon ? `${styles.modeIconButton} ${styles.selectorIconButton}` : styles.select}
           layouts={layouts}
           value={activeThemeId}
           onChange={onThemeChange}
           ariaLabel="Theme selector"
+          icon={themeSelectorIcon}
           themeVarsStyle={themeVarsStyle}
         />
       )}
@@ -137,12 +143,13 @@ export function SearchShellHeader({
 
       {languages.length > 1 && (
         <LanguageSelector
-          className={styles.select}
+          className={languageSelectorIcon ? `${styles.modeIconButton} ${styles.selectorIconButton}` : styles.select}
           languages={languages}
           value={language}
           onChange={onLanguageChange}
           getLabel={getLanguageLabel}
           ariaLabel="Language selector"
+          icon={languageSelectorIcon}
           themeVarsStyle={themeVarsStyle}
         />
       )}

@@ -1,4 +1,6 @@
+import { expandSiteIcons } from "@gitpagedocs/tools/config-format";
 import { buildFallbackLayoutsAndThemes } from "@/entities/docs/lib/fallback-layouts";
+import type { ControlIconSettings } from "@/shared/lib/icons/resolve-control-icon";
 import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type {
   AuthConfig,
@@ -36,6 +38,8 @@ import { expandVersionConfig } from "../lib/expand-version-config";
 import { localizeConfig } from "./config/localize-config";
 import { applyLanguageToggles } from "./utils/route-utils";
 import { markdownToHtml } from "./utils/markdown";
+import { resolvePdfUrl } from "../lib/pdf/resolve-pdf-url";
+import { getPdfRoutes, isPdfRoute } from "../lib/pdf/validate-pdf-route";
 
 type VersionConfig = {
   auth?: AuthConfig;
@@ -46,11 +50,13 @@ type VersionConfig = {
   "routes-html"?: ContentTypeRouteConfig[];
   "routes-video"?: ContentTypeRouteConfig[];
   "routes-audio"?: ContentTypeRouteConfig[];
+  "routes-pdf"?: ContentTypeRouteConfig[];
   "menus-header-md"?: HeaderMenuItem[];
   "menus-header-source-viewer"?: HeaderMenuItem[];
   "menus-header-html"?: HeaderMenuItem[];
   "menus-header-video"?: HeaderMenuItem[];
   "menus-header-audio"?: HeaderMenuItem[];
+  "menus-header-pdf"?: HeaderMenuItem[];
   hierarchyPage?: HierarchyConfig;
   hierarchyMenu?: HierarchyConfig;
 };
@@ -100,7 +106,7 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
   }
 }
 
-export interface OfficialSiteConfig {
+export interface OfficialSiteConfig extends ControlIconSettings {
   SiteHeaderName?: string;
   SiteIconPath?: string;
   name?: string;
@@ -132,7 +138,7 @@ async function fetchLocalizedRepoConfig(owner: string, repo: string): Promise<Gi
 
 export async function fetchOfficialSiteConfig(): Promise<OfficialSiteConfig | null> {
   const config = await fetchLocalizedRepoConfig(OFFICIAL_REPO.owner, OFFICIAL_REPO.repo);
-  return (config?.site as OfficialSiteConfig | undefined) ?? null;
+  return config?.site ? expandSiteIcons(config.site) as OfficialSiteConfig : null;
 }
 
 export function parseSupportedLanguage(input: string | null | undefined): SupportedLanguage {
@@ -148,13 +154,10 @@ function getLanguagesFromRecord(record: Record<LanguageCode, string> | undefined
 }
 
 function getAvailableLanguagesFromContent(
-  routesMd: Array<ContentTypeRouteConfig | RouteConfig>,
-  routesSourceViewer: ContentTypeRouteConfig[],
-  routesHtml: ContentTypeRouteConfig[],
-  routesVideo: ContentTypeRouteConfig[],
-  routesAudio: ContentTypeRouteConfig[],
+  sections: ContentSections,
   fallbackLanguage: LanguageCode,
 ): LanguageCode[] {
+  const { routesMd, routesSourceViewer, routesHtml, routesVideo, routesAudio, routesPdf } = sections;
   const mdPath = routesMd.find((route) => route.path && Object.keys(route.path).length > 0)?.path;
   if (mdPath) return getLanguagesFromRecord(mdPath);
 
@@ -175,6 +178,9 @@ function getAvailableLanguagesFromContent(
     return audio && "pathAudio" in audio && audio.pathAudio;
   })?.audio;
   if (audioPath && "pathAudio" in audioPath) return getLanguagesFromRecord(audioPath.pathAudio);
+
+  const pdfLanguages = routesPdf.flatMap((route) => getLanguagesFromRecord(route.pdf?.pathPdf));
+  if (pdfLanguages.length) return Array.from(new Set(pdfLanguages));
 
   return [fallbackLanguage];
 }
@@ -442,11 +448,13 @@ type ContentSections = {
   routesHtml: ContentTypeRouteConfig[];
   routesVideo: ContentTypeRouteConfig[];
   routesAudio: ContentTypeRouteConfig[];
+  routesPdf: ContentTypeRouteConfig[];
   menusHeaderMd: HeaderMenuItem[];
   menusHeaderSourceViewer: HeaderMenuItem[];
   menusHeaderHtml: HeaderMenuItem[];
   menusHeaderVideo: HeaderMenuItem[];
   menusHeaderAudio: HeaderMenuItem[];
+  menusHeaderPdf: HeaderMenuItem[];
   hierarchyPage: HierarchyConfig;
   hierarchyMenu: HierarchyConfig;
 };
@@ -487,11 +495,13 @@ function resolveContentSections(config: GitPageDocsConfig, versionConfig: Versio
     routesHtml: pickSection([version["routes-html"]], [config["routes-html"]]),
     routesVideo: pickSection([version["routes-video"]], [config["routes-video"]]),
     routesAudio: pickSection([version["routes-audio"]], [config["routes-audio"]]),
+    routesPdf: getPdfRoutes(pickSection([version["routes-pdf"]], [config["routes-pdf"]])),
     menusHeaderMd: pickSection([version["menus-header-md"], version["menus-header"]], [config["menus-header-md"], config["menus-header"]]),
     menusHeaderSourceViewer: pickSection([version["menus-header-source-viewer"]], [config["menus-header-source-viewer"]]),
     menusHeaderHtml: pickSection([version["menus-header-html"]], [config["menus-header-html"]]),
     menusHeaderVideo: pickSection([version["menus-header-video"]], [config["menus-header-video"]]),
     menusHeaderAudio: pickSection([version["menus-header-audio"]], [config["menus-header-audio"]]),
+    menusHeaderPdf: pickSection([version["menus-header-pdf"]], [config["menus-header-pdf"]]),
     hierarchyPage: overrideWhenSet(version.hierarchyPage, config.hierarchyPage ?? defaultHierarchy),
     hierarchyMenu: overrideWhenSet(version.hierarchyMenu, config.hierarchyMenu ?? defaultHierarchy),
   };
@@ -527,11 +537,13 @@ function buildEffectiveConfig(config: GitPageDocsConfig, sections: ContentSectio
     "routes-html": sections.routesHtml,
     "routes-video": sections.routesVideo,
     "routes-audio": sections.routesAudio,
+    "routes-pdf": sections.routesPdf,
     "menus-header-md": sections.menusHeaderMd,
     "menus-header-source-viewer": sections.menusHeaderSourceViewer,
     "menus-header-html": sections.menusHeaderHtml,
     "menus-header-video": sections.menusHeaderVideo,
     "menus-header-audio": sections.menusHeaderAudio,
+    "menus-header-pdf": sections.menusHeaderPdf,
     hierarchyPage: sections.hierarchyPage,
     hierarchyMenu: sections.hierarchyMenu,
   };
@@ -544,6 +556,7 @@ function collectSortedRouteIds(sections: ContentSections): number[] {
     sections.routesHtml,
     sections.routesVideo,
     sections.routesAudio,
+    sections.routesPdf,
   ];
   const allIds = new Set<number>();
   routeLists.forEach((routes) => routes.forEach((route) => allIds.add(route.id)));
@@ -740,8 +753,25 @@ function resolveAudioSection(
   };
 }
 
-/** One page per route id: each content type contributes its section and registers its paths, in md, source-viewer, html, video, audio order. */
-async function buildPage(ctx: PageBuildContext, sections: ContentSections, id: number, pageIndex: number): Promise<LoadedPage> {
+function resolvePdfSection(ctx: PageBuildContext, route: ContentTypeRouteConfig | undefined, pageIndex: number): LoadedPage["pdf"] {
+  if (!isPdfRoute(route)) return undefined;
+  const pathPdfByLanguage: Record<LanguageCode, string> = {};
+  for (const language of ctx.availableLanguages) {
+    const raw = route.pdf.pathPdf[language];
+    const url = resolvePdfUrl(raw, { source: "remote", owner: ctx.owner, repo: ctx.repo });
+    pathPdfByLanguage[language] = url;
+    if (url) {
+      ctx.pathToPageMap[raw] = { pageIndex, contentType: "pdf" };
+      ctx.pathToPageMap[url] = { pageIndex, contentType: "pdf" };
+    }
+  }
+  ctx.pathToPageMap[`page:${route.id}`] = { pageIndex, contentType: "pdf" };
+  return { routeId: route.id, config: route, pathPdfByLanguage, fullscreenEnabled: route.fullscreenEnabled ?? false };
+}
+
+/** One page per route id: each content type contributes its section and registers its paths. */
+async function buildPage(ctx: PageBuildContext, sections: ContentSections, selection: { id: number; pageIndex: number }): Promise<LoadedPage> {
+  const { id, pageIndex } = selection;
   const page: LoadedPage = { id };
   const md = await loadMarkdownSection(ctx, sections.routesMd, id, pageIndex);
   if (md) page.md = md;
@@ -753,6 +783,8 @@ async function buildPage(ctx: PageBuildContext, sections: ContentSections, id: n
   if (video) page.video = video;
   const audio = resolveAudioSection(ctx, sections.routesAudio, id, pageIndex);
   if (audio) page.audio = audio;
+  const pdf = resolvePdfSection(ctx, sections.routesPdf.find((route) => route.id === id), pageIndex);
+  if (pdf) page.pdf = pdf;
   return page;
 }
 
@@ -761,7 +793,7 @@ async function buildPages(ctx: PageBuildContext, sections: ContentSections): Pro
   const sortedIds = collectSortedRouteIds(sections);
   const pages: LoadedPage[] = [];
   for (let pageIndex = 0; pageIndex < sortedIds.length; pageIndex++) {
-    pages.push(await buildPage(ctx, sections, sortedIds[pageIndex], pageIndex));
+    pages.push(await buildPage(ctx, sections, { id: sortedIds[pageIndex], pageIndex }));
   }
   return pages;
 }
@@ -798,11 +830,7 @@ export async function loadRemoteDocsData(
   const availableLanguages = applyLanguageToggles(
     config,
     getAvailableLanguagesFromContent(
-      sections.routesMd,
-      sections.routesSourceViewer,
-      sections.routesHtml,
-      sections.routesVideo,
-      sections.routesAudio,
+      sections,
       config.site.defaultLanguage,
     ),
   );

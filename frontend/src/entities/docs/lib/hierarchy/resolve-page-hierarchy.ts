@@ -3,8 +3,17 @@ import type {
     GitPageDocsConfig,
     HierarchyConfig,
     ContentType,
+    ContentTypeRouteConfig,
+    RouteConfig,
 } from "../../model/types";
 import { CONTENT_TYPES } from "../../model/types/config";
+import { DEFAULT_HIERARCHY } from "@/shared/config/constants";
+
+const UNORDERED_CONTENT = 999;
+
+function getRouteHierarchy(config: ContentTypeRouteConfig | RouteConfig | undefined): HierarchyConfig | undefined {
+    return config && "hierarchyPage" in config ? config.hierarchyPage : undefined;
+}
 
 export function resolvePageHierarchy(
     currentPage: LoadedPage | undefined,
@@ -13,18 +22,16 @@ export function resolvePageHierarchy(
 ): ContentType[] {
     if (!currentPage) return [];
 
-    const localHierarchy =
-        (currentPage.md?.config as any)?.hierarchyPage ??
-        (currentPage.html?.config as any)?.hierarchyPage ??
-        (currentPage.video?.config as any)?.hierarchyPage ??
-        (currentPage.audio?.config as any)?.hierarchyPage;
+    const localHierarchy = [currentPage.md, currentPage.sourceViewer, currentPage.html, currentPage.video, currentPage.audio, currentPage.pdf]
+        .map((content) => getRouteHierarchy(content?.config)).find((hierarchy) => hierarchy !== undefined);
 
     const effectiveHierarchy: HierarchyConfig =
         localHierarchy ??
         globalConfig.hierarchyPage ??
-        { md: 0, "source-viewer": 1, html: 2, video: 3, audio: 4 };
+        DEFAULT_HIERARCHY;
 
     const availableTypes = CONTENT_TYPES.filter((contentType) => {
+        if (contentType === "pdf" && globalConfig.site.pdf?.enabled === false) return false;
         if (contentType === "source-viewer") return Boolean(currentPage.sourceViewer);
         return Boolean(currentPage[contentType]);
     });
@@ -37,8 +44,8 @@ export function resolvePageHierarchy(
     }
 
     return availableTypes.sort((a, b) => {
-        const orderA = effectiveHierarchy[a] ?? 999;
-        const orderB = effectiveHierarchy[b] ?? 999;
+        const orderA = effectiveHierarchy[a] ?? UNORDERED_CONTENT;
+        const orderB = effectiveHierarchy[b] ?? UNORDERED_CONTENT;
         return orderA - orderB;
     });
 }

@@ -67,11 +67,13 @@ interface VersionConfig {
   "routes-html": Route[];
   "routes-video": Route[];
   "routes-audio": AudioRoute[];
+  "routes-pdf": Route[];
   "menus-header-md": MenuEntry[];
   "menus-header-source-viewer": MenuEntry[];
   "menus-header-html": MenuEntry[];
   "menus-header-video": MenuEntry[];
   "menus-header-audio": MenuEntry[];
+  "menus-header-pdf": MenuEntry[];
   hierarchyPage: Record<string, number>;
   hierarchyMenu: Record<string, number>;
 }
@@ -179,6 +181,23 @@ const { SOURCE_VIEWER_META, AUDIO_META_ID12, DEFAULT_HIERARCHY } = routeMetas as
 const EXTERNAL_PROVIDERS = ["authjs", "clerk", "firebase", "jwt"];
 
 describe("buildConfigArtifacts", () => {
+  it("scaffolds an enabled PDF route with a destination in every language", () => {
+    const artifacts = buildConfigArtifacts();
+    const [versionId] = Object.keys(artifacts.versionConfigs);
+    const config = artifacts.versionConfigs[versionId];
+    const expectedPath = `gitpagedocs/docs/versions/${versionId}/en/gitpagedocs-project-guide.pdf`;
+
+    expect(config["routes-pdf"]).toEqual([
+      expect.objectContaining({ id: 23, pdf: { pathPdf: { en: expectedPath, pt: expectedPath, es: expectedPath } } }),
+    ]);
+    expect(config["menus-header-pdf"]).toEqual([
+      expect.objectContaining({ id: 23, en: expect.objectContaining({ "path-click": "page:23" }) }),
+    ]);
+    expect(artifacts.rootConfig.site.pdf).toEqual({
+      enabled: true, previewEnabled: true, downloadEnabled: true, openInNewTabEnabled: true,
+    });
+  });
+
   it("assembles root config, language bundles, layouts, docs and one config per doc version", () => {
     const artifacts = buildConfigArtifacts();
 
@@ -264,7 +283,7 @@ describe("buildVersionConfig", () => {
     const config = buildVersionConfig(versionId);
     const md = config["routes-md"];
 
-    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]);
     for (const route of md) {
       for (const lang of LANGS) {
         expect(route.path?.[lang]).toBe(`${base}/${lang}/${ROUTE_PATHS[route.id][lang]}`);
@@ -324,7 +343,7 @@ describe("buildVersionConfig", () => {
     expect(config["routes-html"]).toEqual([]);
 
     expect(config["menus-header-html"]).toEqual([]);
-    expect(config["menus-header-md"].map((entry) => entry.id)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(config["menus-header-md"].map((entry) => entry.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]);
     expect(config["menus-header-md"][0].en["path-click"]).toBe(`${base}/en/${ROUTE_PATHS[1].en}`);
     expect(config["menus-header-video"].map((entry) => entry.id)).toEqual([8, 9, 10, 11]);
     expect(config["menus-header-video"][0].en["path-click"]).toBe("page:8");

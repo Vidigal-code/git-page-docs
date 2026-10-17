@@ -7,6 +7,7 @@ import type {
   GitPageDocsConfig,
   LanguageCode,
   LoadedDocsData,
+  RouteAuthorizationConfig,
 } from "@/entities/docs";
 import { getLangMenuLabelFromMenu } from "@/entities/docs";
 import { resolveExternalProviderState } from "../infrastructure/external-auth-adapters";
@@ -217,6 +218,15 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     [evaluatePathAccessWithKeys, unlockedKeyIds],
   );
 
+  const isRouteAccessible = useCallback(
+    (authorization: RouteAuthorizationConfig | undefined): boolean => evaluateRouteAccess(authorization, authConfig, {
+      unlockedKeyIds,
+      roles: effectiveRoles,
+      authenticatedProviders,
+    }).allowed,
+    [authConfig, authenticatedProviders, effectiveRoles, unlockedKeyIds],
+  );
+
   const ensurePathAccess = useCallback(
     async (pathClick: string) => {
       const initial = evaluatePathAccess(pathClick);
@@ -245,6 +255,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
         page.html?.config?.path?.[language] ?? page.html?.config?.path?.en,
         page.html?.config?.url?.[language] ?? page.html?.config?.url?.en,
         page.video ? `page:${page.video.routeId}` : undefined,
+        page.pdf ? page.pdf.config.pdf?.pathPdf[language] ?? `page:${page.pdf.routeId}` : undefined,
       ].filter((candidate): candidate is string => Boolean(candidate));
 
       if (!candidates.length) return true;
@@ -274,6 +285,7 @@ export function useRouteAuthorization(data: LoadedDocsData, language: LanguageCo
     effectiveRoles,
     authenticatedProviders,
     evaluatePathAccess,
+    isRouteAccessible,
     ensurePathAccess,
     isPageAccessible,
     firstAccessiblePageIndex,

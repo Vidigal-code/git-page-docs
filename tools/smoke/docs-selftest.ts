@@ -22,7 +22,7 @@ function check(label: string, cond: boolean, detail = ""): void {
 }
 
 function readGeneratedVersionConfig(): Record<string, unknown> {
-  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/0.0.8/config.json", "utf8")) as Record<string, unknown>;
+  return JSON.parse(readFileSync("tools/gitpagedocs/docs/versions/0.0.9/config.json", "utf8")) as Record<string, unknown>;
 }
 
 function asArray(value: unknown): Array<Record<string, unknown>> {
@@ -50,16 +50,18 @@ function routeIds(config: Record<string, unknown>, routeKeys: string[]): Set<num
 
 function assertGeneratedMenuContract(): void {
   const config = readGeneratedVersionConfig();
-  const routeKeys = ["routes-md", "routes-source-viewer", "routes-html", "routes-video", "routes-audio"];
-  const menuKeys = ["menus-header-md", "menus-header-source-viewer", "menus-header-html", "menus-header-video", "menus-header-audio"];
+  const routeKeys = ["routes-md", "routes-source-viewer", "routes-html", "routes-video", "routes-audio", "routes-pdf"];
+  const menuKeys = ["menus-header-md", "menus-header-source-viewer", "menus-header-html", "menus-header-video", "menus-header-audio", "menus-header-pdf"];
   const ids = routeIds(config, routeKeys);
 
   check("generated config includes source viewer routes", asArray(config["routes-source-viewer"]).length > 0);
   check("generated config includes video routes", asArray(config["routes-video"]).length > 0);
   check("generated config includes audio routes", asArray(config["routes-audio"]).length > 0);
+  check("generated config includes PDF routes", asArray(config["routes-pdf"]).length > 0);
   check("generated config includes source viewer menu", asArray(config["menus-header-source-viewer"]).length > 0);
   check("generated config includes video menu", asArray(config["menus-header-video"]).length > 0);
   check("generated config includes audio menu", asArray(config["menus-header-audio"]).length > 0);
+  check("generated config includes PDF menu", asArray(config["menus-header-pdf"]).length > 0);
 
   for (const key of menuKeys) {
     for (const item of asArray(config[key])) {

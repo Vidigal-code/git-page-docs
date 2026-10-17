@@ -59,14 +59,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     layoutsConfigPathTemplates: effectiveConfig.site.layoutsConfigPathTemplates,
   });
 
-  const languages = getLanguages(
-    effectiveConfig,
-    merged.routesMd,
-    merged.routesSourceViewer,
-    merged.routesHtml,
-    merged.routesVideo,
-    merged.routesAudio,
-  );
+  const languages = getLanguages(effectiveConfig, merged);
 
   const { pages, pathToPageMap } = await loadPages({
     sortedIds,
@@ -75,6 +68,7 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
     routesHtml: merged.routesHtml,
     routesVideo: merged.routesVideo,
     routesAudio: merged.routesAudio,
+    routesPdf: merged.routesPdf,
     languages,
     source,
     owner,

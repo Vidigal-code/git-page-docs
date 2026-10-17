@@ -64,9 +64,20 @@ interface MdSourceActionsProps {
   labels: MdSourceActionLabels;
   /** True when the fullscreen button sits at the right edge, so these shift left of it. */
   besideFullscreen?: boolean;
+  placement?: "floating" | "inline";
+  copyEnabled?: boolean;
+  downloadEnabled?: boolean;
 }
 
-export function MdSourceActions({ source, fileName, labels, besideFullscreen = false }: Readonly<MdSourceActionsProps>) {
+export function MdSourceActions({
+  source,
+  fileName,
+  labels,
+  besideFullscreen = false,
+  placement = "floating",
+  copyEnabled = true,
+  downloadEnabled = true,
+}: Readonly<MdSourceActionsProps>) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -84,8 +95,8 @@ export function MdSourceActions({ source, fileName, labels, besideFullscreen = f
   const copyLabel = { idle: labels.copy, copied: labels.copied, error: labels.copyError }[copyState];
 
   return (
-    <div className={`${styles.mdSourceActions} ${besideFullscreen ? styles.mdSourceActionsBesideFullscreen : ""}`}>
-      <button
+    <div className={`${styles.mdSourceActions} ${placement === "inline" ? styles.mdSourceActionsInline : ""} ${besideFullscreen ? styles.mdSourceActionsBesideFullscreen : ""}`}>
+      {copyEnabled && <button
         type="button"
         data-testid="md-copy"
         className={`${styles.fullscreenButton} ${copyState === "copied" ? styles.mdSourceActionDone : ""}`}
@@ -94,8 +105,8 @@ export function MdSourceActions({ source, fileName, labels, besideFullscreen = f
         title={copyLabel}
       >
         {copyState === "copied" ? <FiCheck aria-hidden /> : <FiCopy aria-hidden />}
-      </button>
-      <button
+      </button>}
+      {downloadEnabled && <button
         type="button"
         data-testid="md-download"
         className={styles.fullscreenButton}
@@ -104,7 +115,7 @@ export function MdSourceActions({ source, fileName, labels, besideFullscreen = f
         title={labels.download}
       >
         <FiDownload aria-hidden />
-      </button>
+      </button>}
       <output className={styles.visuallyHidden} aria-live="polite">
         {copyState === "idle" ? "" : copyLabel}
       </output>

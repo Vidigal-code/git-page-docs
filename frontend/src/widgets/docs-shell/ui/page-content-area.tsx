@@ -14,9 +14,10 @@ import {
 } from "@/entities/docs";
 import type { FullscreenParams } from "../model/use-docs-shell-url-params";
 import type { BrowseIndexSetter, BrowseNavigationProps, BrowseState, ContentLabels } from "../model/content-browse-props";
+import { canAccessPdfContent, resolvePdfBrowseState } from "../model/pdf-browse";
 import { SourceBrowserSkeleton } from "@/widgets/repository-source-browser/ui/source-browser-skeleton";
 import { isBrowseAllEnabled, buildBrowseNavConfig } from "./page-content-browse-nav";
-import { HtmlContainer, MdContainer, VideoContainer, AudioContainer } from "./content-type-containers";
+import { HtmlContainer, MdContainer, VideoContainer, AudioContainer, PdfContainer } from "./content-type-containers";
 import { markdownFileName } from "./content-type-containers/md-source-actions";
 import styles from "../docs-shell.module.css";
 
@@ -42,23 +43,27 @@ const SourceViewerContainer = dynamic(
  * The browse-all item at `index` (clamped to the list) while browsing is on,
  * else the page's own content; nothing without a page.
  */
+interface BrowseContentSelection<T> {
+  enabled: boolean;
+  items: BrowseItem<T>[];
+  index: number;
+}
+
 function resolveBrowseContent<T>(
   page: LoadedPage | undefined,
   ownContent: T | undefined,
-  browseAll: boolean,
-  items: BrowseItem<T>[],
-  index: number,
+  selection: BrowseContentSelection<T>,
 ): T | undefined {
   if (!page) return undefined;
-  if (browseAll && items.length > 0) {
-    return items[Math.min(index, items.length - 1)]?.content;
+  if (selection.enabled && selection.items.length > 0) {
+    return selection.items[Math.min(selection.index, selection.items.length - 1)]?.content;
   }
   return ownContent;
 }
 
 /** Inline fullscreen stays off while the content already sits in the URL fullscreen overlay. */
-function resolveInlineFullscreen(isUrlFullscreen: boolean, enabled: boolean | undefined): boolean | undefined {
-  return isUrlFullscreen ? false : enabled;
+function resolveInlineFullscreen(options: { isUrlFullscreen: boolean; enabled: boolean | undefined }): boolean | undefined {
+  return options.isUrlFullscreen ? false : options.enabled;
 }
 
 interface PageContentAreaProps {
@@ -101,8 +106,9 @@ export function PageContentArea({
   const htmlBrowseAll = isBrowseAllEnabled(currentPage?.html?.config);
   const videoBrowseAll = isBrowseAllEnabled(currentPage?.video?.config);
   const audioBrowseAll = isBrowseAllEnabled(currentPage?.audio?.config);
+  const pdfBrowseAll = isBrowseAllEnabled(currentPage?.pdf?.config);
 
-  const currentMd = resolveBrowseContent(currentPage, currentPage?.md, mdBrowseAll, browse.mdItems, browse.mdBrowseIndex);
+  const currentMd = resolveBrowseContent(currentPage, currentPage?.md, { enabled: mdBrowseAll, items: browse.mdItems, index: browse.mdBrowseIndex });
   // The source viewer has no browse-all list here (no items/index props are
   // threaded through and its container renders no browse nav), so the current
   // page content is the only candidate regardless of its browseAll flag.
@@ -110,24 +116,23 @@ export function PageContentArea({
   const currentHtml = resolveBrowseContent(
     currentPage,
     currentPage?.html,
-    htmlBrowseAll,
-    browse.htmlItems,
-    browse.htmlBrowseIndex,
+    { enabled: htmlBrowseAll, items: browse.htmlItems, index: browse.htmlBrowseIndex },
   );
   const currentVideo = resolveBrowseContent(
     currentPage,
     currentPage?.video,
-    videoBrowseAll,
-    browse.videoItems,
-    browse.videoBrowseIndex,
+    { enabled: videoBrowseAll, items: browse.videoItems, index: browse.videoBrowseIndex },
   );
   const currentAudio = resolveBrowseContent(
     currentPage,
     currentPage?.audio,
-    audioBrowseAll,
-    browse.audioItems,
-    browse.audioBrowseIndex,
+    { enabled: audioBrowseAll, items: browse.audioItems, index: browse.audioBrowseIndex },
   );
+  const pdfAccess = { authConfig: data.config.auth, canAccessPdf: navigation.canAccessPdf };
+  const pdfBrowse = resolvePdfBrowseState(browse, pdfAccess);
+  const currentPdf = canAccessPdfContent(currentPage?.pdf, pdfAccess)
+    ? resolveBrowseContent(currentPage, currentPage.pdf, { enabled: pdfBrowseAll, items: pdfBrowse.items, index: pdfBrowse.index })
+    : undefined;
 
   const mdFullscreenOpen = useCallback(() => {
     if (!currentMd || isUrlFullscreen) return;
@@ -171,53 +176,34 @@ export function PageContentArea({
   const langmenu = data.config.site.langmenu;
   // Every content type pages through its browse-all list with the same prev/next labels.
   const browseNavFor = (
-    browseAllEnabled: boolean,
-    itemsCount: number,
-    currentIndex: number,
-    setIndex: BrowseIndexSetter,
-    menuKey: string,
-    fallbackLabel: string,
+    selection: { browseAllEnabled: boolean; itemsCount: number; currentIndex: number; setIndex: BrowseIndexSetter },
+    label: { menuKey: string; fallback: string },
   ) =>
     buildBrowseNavConfig({
-      browseAllEnabled,
-      itemsCount,
-      currentIndex,
-      setIndex,
+      ...selection,
       prevLabel: labels.browsePrevLabel,
       nextLabel: labels.browseNextLabel,
-      contentTypeLabel: getLangMenuLabelFromMenu(langmenu, language, menuKey, fallbackLabel),
+      contentTypeLabel: getLangMenuLabelFromMenu(langmenu, language, label.menuKey, label.fallback),
     });
   const mdBrowseNav = browseNavFor(
-    mdBrowseAll,
-    browse.mdItems.length,
-    browse.mdBrowseIndex,
-    browse.setMdBrowseIndex,
-    "titleHeaderMenuMd",
-    "Markdown",
+    { browseAllEnabled: mdBrowseAll, itemsCount: browse.mdItems.length, currentIndex: browse.mdBrowseIndex, setIndex: browse.setMdBrowseIndex },
+    { menuKey: "titleHeaderMenuMd", fallback: "Markdown" },
   );
   const htmlBrowseNav = browseNavFor(
-    htmlBrowseAll,
-    browse.htmlItems.length,
-    browse.htmlBrowseIndex,
-    browse.setHtmlBrowseIndex,
-    "titleHeaderMenuHtml",
-    "Pages",
+    { browseAllEnabled: htmlBrowseAll, itemsCount: browse.htmlItems.length, currentIndex: browse.htmlBrowseIndex, setIndex: browse.setHtmlBrowseIndex },
+    { menuKey: "titleHeaderMenuHtml", fallback: "Pages" },
   );
   const videoBrowseNav = browseNavFor(
-    videoBrowseAll,
-    browse.videoItems.length,
-    browse.videoBrowseIndex,
-    browse.setVideoBrowseIndex,
-    "titleHeaderMenuVideo",
-    "Video",
+    { browseAllEnabled: videoBrowseAll, itemsCount: browse.videoItems.length, currentIndex: browse.videoBrowseIndex, setIndex: browse.setVideoBrowseIndex },
+    { menuKey: "titleHeaderMenuVideo", fallback: "Video" },
   );
   const audioBrowseNav = browseNavFor(
-    audioBrowseAll,
-    browse.audioItems.length,
-    browse.audioBrowseIndex,
-    browse.setAudioBrowseIndex,
-    "titleHeaderMenuAudio",
-    "Audio",
+    { browseAllEnabled: audioBrowseAll, itemsCount: browse.audioItems.length, currentIndex: browse.audioBrowseIndex, setIndex: browse.setAudioBrowseIndex },
+    { menuKey: "titleHeaderMenuAudio", fallback: "Audio" },
+  );
+  const pdfBrowseNav = browseNavFor(
+    { browseAllEnabled: pdfBrowseAll, itemsCount: pdfBrowse.items.length, currentIndex: pdfBrowse.index, setIndex: pdfBrowse.setIndex },
+    { menuKey: "titleHeaderMenuPdf", fallback: "PDF" },
   );
 
   // Labels every content block shares: the inline fullscreen controls.
@@ -236,7 +222,7 @@ export function PageContentArea({
         config={currentMd.config}
         language={language}
         isDarkMode={isDarkMode}
-        fullscreenEnabled={resolveInlineFullscreen(isUrlFullscreen, currentMd.fullscreenEnabled)}
+        fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentMd.fullscreenEnabled })}
         {...fullscreenLabels}
         useDefaultScrollBehavior={isUrlFullscreen}
         contentOnly={isUrlFullscreen}
@@ -280,7 +266,7 @@ export function PageContentArea({
         config={currentHtml.config}
         language={language}
         isDarkMode={isDarkMode}
-        fullscreenEnabled={resolveInlineFullscreen(isUrlFullscreen, currentHtml.fullscreenEnabled)}
+        fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentHtml.fullscreenEnabled })}
         {...fullscreenLabels}
         browseNav={htmlBrowseNav}
         onFullscreenOpen={htmlFullscreenOpen}
@@ -297,7 +283,7 @@ export function PageContentArea({
         config={currentVideo.config}
         isDarkMode={isDarkMode}
         mediaExclusivePlayback={data.config.site.mediaExclusivePlayback}
-        fullscreenEnabled={resolveInlineFullscreen(isUrlFullscreen, currentVideo.fullscreenEnabled)}
+        fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentVideo.fullscreenEnabled })}
         {...fullscreenLabels}
         browseNav={videoBrowseNav}
         onFullscreenOpen={videoFullscreenOpen}
@@ -313,12 +299,26 @@ export function PageContentArea({
         language={language}
         config={currentAudio.config}
         isDarkMode={isDarkMode}
-        fullscreenEnabled={resolveInlineFullscreen(isUrlFullscreen, currentAudio.fullscreenEnabled)}
+        fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentAudio.fullscreenEnabled })}
         {...fullscreenLabels}
         browseNav={audioBrowseNav}
         controlsConfig={navigation.audioRouteControlsConfig}
         onFullscreenOpen={audioFullscreenOpen}
         onFullscreenClose={onFullscreenClose}
+      />
+    ) : null,
+    pdf: currentPdf ? (
+      <PdfContainer
+        key="pdf"
+        pathPdf={currentPdf.pathPdfByLanguage[language] ?? ""}
+        language={language}
+        config={currentPdf.config}
+        isDarkMode={isDarkMode}
+        sitePdf={data.config.site.pdf}
+        langmenu={langmenu}
+        fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentPdf.fullscreenEnabled })}
+        {...fullscreenLabels}
+        browseNav={pdfBrowseNav}
       />
     ) : null,
   };

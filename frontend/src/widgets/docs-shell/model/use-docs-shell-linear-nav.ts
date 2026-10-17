@@ -1,16 +1,25 @@
 import { useMemo } from "react";
-import type { LoadedDocsData } from "@/entities/docs";
-import { buildUnifiedHeaderMenuTree, flattenMenuTree, getPageIndexByPathClick } from "./menu-tree";
+import type { LoadedDocsData, MenuEntry, MenuNode } from "@/entities/docs";
+import { buildUnifiedHeaderMenuTree, flattenMenuTree, getPageIndexByPathClick, type MenuTreeSelection } from "./menu-tree";
+
+interface DocsShellLinearNavigation {
+  headerMenuTree: MenuNode[];
+  headerMenuEntries: MenuEntry[];
+  linearNavigationEntries: MenuEntry[];
+  currentLinearNavigationIndex: number;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+}
 
 export function useDocsShellLinearNav(
   data: LoadedDocsData,
   language: string,
-  safePageIndex: number,
-  isPathAllowed?: (pathClick: string) => boolean,
-) {
+  selection: MenuTreeSelection,
+): DocsShellLinearNavigation {
+  const { pageIndex, isPathAllowed } = selection;
   const headerMenuTree = useMemo(
-    () => buildUnifiedHeaderMenuTree(data, language, safePageIndex, isPathAllowed),
-    [data, language, safePageIndex, isPathAllowed],
+    () => buildUnifiedHeaderMenuTree(data, language, { pageIndex, isPathAllowed }),
+    [data, language, pageIndex, isPathAllowed],
   );
 
   const headerMenuEntries = useMemo(() => flattenMenuTree(headerMenuTree), [headerMenuTree]);
@@ -27,8 +36,8 @@ export function useDocsShellLinearNav(
   }, [headerMenuEntries, data]);
 
   const currentLinearNavigationIndex = useMemo(
-    () => linearNavigationEntries.findIndex((entry) => getPageIndexByPathClick(data, entry.pathClick) === safePageIndex),
-    [linearNavigationEntries, data, safePageIndex],
+    () => linearNavigationEntries.findIndex((entry) => getPageIndexByPathClick(data, entry.pathClick) === pageIndex),
+    [linearNavigationEntries, data, pageIndex],
   );
 
   const canGoPrevious = currentLinearNavigationIndex > 0;

@@ -1,4 +1,4 @@
-export type { LanguageCode, ThemeMode, SiteConfig, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
+export type { LanguageCode, ThemeMode, SiteConfig, PdfOptions, FocusModeOptions, AccessibilitySettings, NarrationSettings, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
 export type { VersionEntry, VersionControlConfig } from "./types/version";
 export type {
   LayoutItem,
@@ -24,6 +24,7 @@ export type {
   RouteAuthorizationConfig,
   HierarchyConfig,
   VideoRouteConfig,
+  PdfRouteConfig,
   AudioRouteConfig,
   AudioTrackConfig,
   PageRouteAudioConfig,
@@ -41,6 +42,7 @@ export type {
   LoadedSourceViewerContent,
   LoadedVideoContent,
   LoadedAudioContent,
+  LoadedPdfContent,
   LoadedPage,
   PathToPageEntry,
 } from "./types/content";

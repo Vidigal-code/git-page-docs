@@ -11,15 +11,6 @@
     "ThemeDefault": "aurora-dark",
     "ThemeModeDefault": "dark",
     "ActiveNavigation": true,
-    "FocusMode": true,
-    "FooterEnabled": true,
-    "FooterLinkName": "GitPageDocs",
-    "FooterLinkUrl": "https://github.com/Vidigal-code/git-page-docs",
-    "FooterDateMode": "browser",
-    "FooterDateCustom": "",
-    "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-    "SiteIconPath": "/icon.svg",
-    "SiteHeaderName": "Git Page Docs",
     "icons": {
       "defaults": {
         "reactIcon": true,
@@ -30,6 +21,50 @@
         "imgLight": "",
         "imgWidth": 20,
         "imgHeight": 20
+      },
+      "QuickNavigation": {
+        "reactIcon": false,
+        "tag": "FiSearch",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "LanguageSelector": {
+        "reactIcon": false,
+        "tag": "FiGlobe",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "ThemeSelector": {
+        "reactIcon": false,
+        "tag": "BsSunFill",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
+      },
+      "FocusMode": {
+        "reactIcon": false,
+        "tag": "MdFullscreen",
+        "colorDark": "currentColor",
+        "colorLight": "currentColor",
+        "size": "22px",
+        "imgDark": null,
+        "imgLight": null,
+        "imgWidth": null,
+        "imgHeight": null
       },
       "ImageMenuHeader": {
         "tag": "FaGithubAlt"
@@ -150,6 +185,37 @@
         "size": "22px"
       }
     },
+    "FocusMode": true,
+    "focusMode": {
+      "copyEnabled": true,
+      "downloadEnabled": true,
+      "sectionNavigationEnabled": true,
+      "documentNavigationEnabled": true
+    },
+    "nestedMenusEnabled": true,
+    "pdf": {
+      "enabled": true,
+      "previewEnabled": true,
+      "downloadEnabled": true,
+      "openInNewTabEnabled": true
+    },
+    "RouteGuide": true,
+    "accessibility": {
+      "enabled": true,
+      "narration": {
+        "enabled": true,
+        "defaultRate": 1,
+        "defaultVolume": 1
+      }
+    },
+    "FooterEnabled": true,
+    "FooterLinkName": "GitPageDocs",
+    "FooterLinkUrl": "https://github.com/Vidigal-code/git-page-docs",
+    "FooterDateMode": "browser",
+    "FooterDateCustom": "",
+    "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+    "SiteIconPath": "/icon.svg",
+    "SiteHeaderName": "Git Page Docs",
     "RouteguideBrandPositionDefault": "center",
     "RouteguideBrandContainerTopDefault": false,
     "audioPlayerEnabled": true,
@@ -198,10 +264,10 @@
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.8",
-        "path": "gitpagedocs/docs/versions/0.0.8/config.json",
+        "id": "0.0.9",
+        "path": "gitpagedocs/docs/versions/0.0.9/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
-        "PathConfig": "gitpagedocs/docs/versions/0.0.8/config.json",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.9/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

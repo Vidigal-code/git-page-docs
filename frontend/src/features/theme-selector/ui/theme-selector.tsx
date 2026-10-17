@@ -1,6 +1,8 @@
 "use client";
 
 import { DropdownSelector } from "@/shared/ui/dropdown-selector";
+import { BsSunFill } from "@/shared/ui/fallback-icons";
+import { ControlIcon, type ControlIconConfig } from "@/shared/ui/control-icon";
 
 export interface ThemeSelectorOption {
   id: string;
@@ -13,6 +15,7 @@ interface ThemeSelectorProps {
   onChange: (themeId: string) => void;
   className?: string;
   ariaLabel?: string;
+  icon?: ControlIconConfig;
   /** Theme CSS variables forwarded to the small-screen modal (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
 }
@@ -28,6 +31,7 @@ export function ThemeSelector({
   onChange,
   className,
   ariaLabel,
+  icon,
   themeVarsStyle,
 }: Readonly<ThemeSelectorProps>) {
   return (
@@ -37,6 +41,7 @@ export function ThemeSelector({
       selectedId={value}
       onSelect={onChange}
       className={className}
+      triggerIcon={icon && <ControlIcon icon={icon} fallback={<BsSunFill aria-hidden />} />}
       themeVarsStyle={themeVarsStyle}
     />
   );

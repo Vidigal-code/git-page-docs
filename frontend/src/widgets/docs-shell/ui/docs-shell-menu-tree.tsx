@@ -10,18 +10,14 @@ interface DocsShellMenuTreeProps {
   isNodeExpanded: (nodeKey: string) => boolean;
 }
 
-/** Visual nesting marker: one chevron per level below the root. */
-function indentPrefix(level: number): string {
-  return level > 0 ? "› ".repeat(level) : "";
-}
-
 interface MenuTreeNodeProps extends Omit<DocsShellMenuTreeProps, "nodes"> {
   node: MenuNode;
 }
 
-function MenuTreeNode({ node, keyPrefix, onMenuClick, onToggleNode, isNodeExpanded }: Readonly<MenuTreeNodeProps>) {
+function MenuTreeNode({ node, keyPrefix, onMenuClick, onToggleNode, isNodeExpanded }: Readonly<MenuTreeNodeProps>): ReactElement {
   const hasChildren = node.children.length > 0;
   const expanded = isNodeExpanded(node.key);
+  const childrenId = useId();
 
   if (node.isSectionHeader === true) {
     return (
@@ -33,36 +29,48 @@ function MenuTreeNode({ node, keyPrefix, onMenuClick, onToggleNode, isNodeExpand
     );
   }
 
-  const label = `${indentPrefix(node.level)}${node.title}`;
   const activeClass = node.active ? styles.menuButtonActive : "";
-  const toggleLabel = expanded ? "Collapse submenu" : "Expand submenu";
+  const toggleLabel = `${expanded ? "Collapse submenu" : "Expand submenu"}: ${node.title}`;
   const navigate = () => onMenuClick(node.pathClick, node.ancestorKeys);
+  const toggle = () => onToggleNode(node.key);
+  const chevron = expanded ? <FiChevronDown aria-hidden /> : <FiChevronRight aria-hidden />;
 
   return (
     <div className={styles.menuNode}>
       <div className={styles.menuNodeRow}>
-        {hasChildren ? (
-          <div className={`${styles.menuActionContainer} ${activeClass}`}>
-            <button className={styles.menuActionMain} onClick={navigate}>
-              {label}
-            </button>
-            <button
-              className={styles.menuExpandInline}
-              onClick={() => onToggleNode(node.key)}
-              aria-label={toggleLabel}
-              title={toggleLabel}
-            >
-              {expanded ? <FiChevronDown aria-hidden /> : <FiChevronRight aria-hidden />}
-            </button>
-          </div>
-        ) : (
-          <button className={`${styles.menuButton} ${activeClass}`} onClick={navigate}>
-            {label}
+        {hasChildren && !node.pathClick && (
+          <button type="button" className={`${styles.menuButton} ${styles.menuCategoryButton}`} onClick={toggle} aria-expanded={expanded} aria-controls={childrenId}>
+            <span>{node.title}</span>
+            {chevron}
           </button>
         )}
+        {hasChildren && node.pathClick && (
+          <div className={`${styles.menuActionContainer} ${activeClass}`}>
+            <button type="button" className={styles.menuActionMain} onClick={navigate} aria-current={node.active ? "page" : undefined}>
+              {node.title}
+            </button>
+            <button
+              type="button"
+              className={styles.menuExpandInline}
+              onClick={toggle}
+              aria-label={toggleLabel}
+              aria-expanded={expanded}
+              aria-controls={childrenId}
+              title={toggleLabel}
+            >
+              {chevron}
+            </button>
+          </div>
+        )}
+        {!hasChildren && node.pathClick && (
+          <button type="button" className={`${styles.menuButton} ${activeClass}`} onClick={navigate} aria-current={node.active ? "page" : undefined}>
+            {node.title}
+          </button>
+        )}
+        {!hasChildren && !node.pathClick && <span className={styles.menuGroupLabel}>{node.title}</span>}
       </div>
       {hasChildren && expanded && (
-        <div className={styles.menuChildren}>
+        <div id={childrenId} className={styles.menuChildren}>
           <DocsShellMenuTree
             nodes={node.children}
             keyPrefix={keyPrefix}
@@ -76,7 +84,7 @@ function MenuTreeNode({ node, keyPrefix, onMenuClick, onToggleNode, isNodeExpand
   );
 }
 
-export function DocsShellMenuTree({ nodes, keyPrefix, onMenuClick, onToggleNode, isNodeExpanded }: Readonly<DocsShellMenuTreeProps>) {
+export function DocsShellMenuTree({ nodes, keyPrefix, onMenuClick, onToggleNode, isNodeExpanded }: Readonly<DocsShellMenuTreeProps>): ReactElement[] {
   return nodes.map((node) => (
     <MenuTreeNode
       key={`${keyPrefix}-${node.key}`}
@@ -88,3 +96,4 @@ export function DocsShellMenuTree({ nodes, keyPrefix, onMenuClick, onToggleNode,
     />
   ));
 }
+import { useId, type ReactElement } from "react";
