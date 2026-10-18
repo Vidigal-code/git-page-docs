@@ -1,5 +1,6 @@
 export const defaultLangMenu = {
         pt: {
+          backToTop: "Voltar ao topo",
           titleHeaderMenuPdf: "PDF",
           PdfDownload: "Baixar PDF",
           PdfOpenInNewTab: "Abrir PDF em nova aba",
@@ -171,6 +172,7 @@ export const defaultLangMenu = {
           docsAccessBlockCancelBtn: "Cancelar",
         },
         en: {
+          backToTop: "Back to top",
           titleHeaderMenuPdf: "PDF",
           PdfDownload: "Download PDF",
           PdfOpenInNewTab: "Open PDF in a new tab",
@@ -342,6 +344,7 @@ export const defaultLangMenu = {
           docsAccessBlockCancelBtn: "Cancel",
         },
         es: {
+          backToTop: "Volver arriba",
           titleHeaderMenuPdf: "PDF",
           PdfDownload: "Descargar PDF",
           PdfOpenInNewTab: "Abrir PDF en una pestaña nueva",

@@ -4,6 +4,10 @@
   "HideThemeSelector": false,
   "ThemeDefault": "aurora-dark",
   "ThemeModeDefault": "dark",
+  "backToTop": {
+    "enabled": true,
+    "minPageHeightViewports": 3
+  },
   "backgroundEffects": {
     "enabled": true,
     "overrides": {
@@ -425,6 +429,7 @@
   },
   "langmenu": {
     "en": {
+      "backToTop": "Back to top",
       "titleHeaderMenuPdf": "PDF",
       "PdfDownload": "Download PDF",
       "PdfOpenInNewTab": "Open PDF in a new tab",
@@ -596,6 +601,7 @@
       "docsAccessBlockCancelBtn": "Cancel"
     },
     "pt": {
+      "backToTop": "Voltar ao topo",
       "titleHeaderMenuPdf": "PDF",
       "PdfDownload": "Baixar PDF",
       "PdfOpenInNewTab": "Abrir PDF em nova aba",
@@ -767,6 +773,7 @@
       "docsAccessBlockCancelBtn": "Cancelar"
     },
     "es": {
+      "backToTop": "Volver arriba",
       "titleHeaderMenuPdf": "PDF",
       "PdfDownload": "Descargar PDF",
       "PdfOpenInNewTab": "Abrir PDF en una pestaña nueva",

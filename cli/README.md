@@ -39,7 +39,7 @@ The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the
 
 ## Generated documentation and themes
 
-Version 0.0.12 registers documentation versions 0.0.12, 0.0.11 and 0.0.10 with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
+Version 0.0.13 registers documentation versions 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9, newest first, with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
 
 The scaffold demonstrates parent Markdown destinations with recursive submenus and navigable breadcrumbs, PDF routes/actions, and a page with ordered, repeated Markdown/HTML/video/audio/PDF blocks. Route titles and descriptions have independent placement settings. Focus mode provides source actions and eight document/section navigation controls; browser narration is configured separately. See the generated configuration, content-blocks, focus, accessibility and HTML/PDF guides for complete examples.
 

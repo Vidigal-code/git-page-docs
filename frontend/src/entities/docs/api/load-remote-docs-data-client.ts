@@ -4,6 +4,7 @@ import type { ControlIconSettings } from "@/shared/lib/icons/resolve-control-ico
 import { ensureTrailingSlash, toRawGithubUrl } from "@/shared/lib/remote/github-url";
 import type {
   AuthConfig,
+  BackToTopOptions,
   ContentTypeRouteConfig,
   GitPageDocsConfig,
   HeaderMenuItem,
@@ -111,6 +112,7 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
 }
 
 export interface OfficialSiteConfig extends ControlIconSettings {
+  backToTop?: BackToTopOptions;
   backgroundEffects?: SiteBackgroundEffectsConfig;
   SiteHeaderName?: string;
   SiteIconPath?: string;

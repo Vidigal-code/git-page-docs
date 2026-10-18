@@ -42,6 +42,9 @@ export function useFocusMode(markdownHtml: string, documentId = markdownHtml, op
   const safeFocusModePageIndex =
     position.documentId === documentId && position.index >= 0 && position.index < focusModePages.length ? position.index : 0;
   const focusModeCurrentHtml = focusModePages[safeFocusModePageIndex] ?? markdownHtml;
+  const visibleMarkdown = focusModeOpen
+    ? { html: focusModeCurrentHtml, documentId: `${documentId}:section:${safeFocusModePageIndex}` }
+    : { html: markdownHtml, documentId };
   const canFocusModeGoPrevious = safeFocusModePageIndex > 0;
   const canFocusModeGoNext = safeFocusModePageIndex < focusModePages.length - 1;
 
@@ -67,6 +70,7 @@ export function useFocusMode(markdownHtml: string, documentId = markdownHtml, op
     focusModePages,
     safeFocusModePageIndex,
     focusModeCurrentHtml,
+    visibleMarkdown,
     canFocusModeGoPrevious,
     canFocusModeGoNext,
     openFocusMode,

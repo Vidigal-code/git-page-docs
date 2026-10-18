@@ -36,6 +36,16 @@ Principais chaves:
 - `layoutsConfigPath`: fallback remoto para layouts
 - `rendering`: URL canonica publicada
 
+## Voltar ao topo em páginas longas
+
+A seta de voltar ao topo nas páginas de documentação e em `/introduction-guide` é controlada por `site.backToTop` em `gitpagedocs/config.json`:
+
+```json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+```
+
+Por padrão, a seta fica habilitada somente em uma página com rolagem cuja altura total seja pelo menos três vezes a altura da área visível do navegador. Use `enabled: false` para ocultá-la. `minPageHeightViewports` aceita um número finito maior que `1`; valores ausentes ou inválidos usam `3`. Por exemplo, `4` exige uma página com pelo menos quatro alturas da área visível. O limiar mede a altura total da página, não a distância já percorrida. A mesma configuração controla as páginas de documentação e o guia de introdução.
+
 ## Controles de idioma, tema, foco, navegação rápida, PDF e documentos
 
 Em `gitpagedocs/config.json`, estas entradas de `site.icons` configuram idioma, tema, versão, foco, navegação Ctrl+K, ações PDF e navegação no rodapé dos documentos. Os nove controles usam React Icons por padrão:

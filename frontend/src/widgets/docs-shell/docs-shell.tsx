@@ -193,6 +193,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     focusModeOpen,
     setFocusModeOpen,
     focusModeCurrentHtml,
+    visibleMarkdown,
     focusModePages,
     safeFocusModePageIndex,
     openFocusMode: openFocusModeInternal,
@@ -439,9 +440,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   const narrationEnabled = pageHasMarkdown && docsAccess.state === "unlocked" &&
     data.config.site.accessibility?.enabled !== false && data.config.site.accessibility?.narration?.enabled !== false;
   const narration = useMarkdownNarration({
-    html: markdownHtml,
+    ...visibleMarkdown,
     language,
-    documentId: focusDocumentId,
     enabled: narrationEnabled,
     settings: data.config.site.accessibility?.narration,
     exclusivePlayback: data.config.site.mediaExclusivePlayback !== false,

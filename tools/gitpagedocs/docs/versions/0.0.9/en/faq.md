@@ -30,7 +30,7 @@ Because GitHub Pages build mode enables repository-search home and static-export
 
 ## Why does an icon still show text?
 
-Set `site.icons.<Control>.reactIcon` to the boolean `true`, with an exact React Icons export name in `tag`. LanguageSelector, ThemeSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious and DocumentNext use icons by default; set any entry to `false` for text. Flat `Icon*ReactIcones` fields take precedence if both formats are present. Check whether the feature itself is disabled, such as `HideThemeSelector`, `FocusMode` or the PDF action flags.
+Set `site.icons.<Control>.reactIcon` to the boolean `true`, with an exact React Icons export name in `tag`. LanguageSelector, ThemeSelector, VersionSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious and DocumentNext use icons by default; set any entry to `false` for text. Flat `Icon*ReactIcones` fields take precedence if both formats are present. Check whether the feature itself is disabled, such as `HideThemeSelector`, `FocusMode` or the PDF action flags.
 
 ## Why do menu children or breadcrumbs differ?
 

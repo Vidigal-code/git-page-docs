@@ -21,6 +21,16 @@ Important keys:
 - `ThemeModeDefault`
 - `ProjectLink`
 
+## Back to top on long pages
+
+The back-to-top arrow on documentation pages and `/introduction-guide` is controlled by `site.backToTop` in `gitpagedocs/config.json`:
+
+```json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+```
+
+The default enables the arrow only on a scrollable page whose total height is at least three viewport heights. Set `enabled: false` to hide it. `minPageHeightViewports` accepts a finite number greater than `1`; omitted or invalid values use `3`. For example, `4` requires a page at least four viewport heights tall. The threshold measures total page height, not distance already scrolled. The same setting controls documentation pages and the introduction guide.
+
 ## Layout source keys
 
 - `layoutsConfigPathOficial`

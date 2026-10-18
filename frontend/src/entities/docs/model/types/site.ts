@@ -25,6 +25,11 @@ export interface FocusModeOptions {
   documentNavigationEnabled?: boolean;
 }
 
+export interface BackToTopOptions {
+  enabled?: boolean;
+  minPageHeightViewports?: number;
+}
+
 export interface NarrationSettings {
   enabled?: boolean;
   defaultRate?: number;
@@ -55,6 +60,7 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
   ActiveNavigation?: boolean;
   FocusMode?: boolean;
   focusMode?: FocusModeOptions;
+  backToTop?: BackToTopOptions;
   pdf?: PdfOptions;
   nestedMenusEnabled?: boolean;
   accessibility?: AccessibilitySettings;

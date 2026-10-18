@@ -9,8 +9,8 @@ Anote o commit publicado, a versão da CLI e a revisão do workflow. Execute `gi
 Para uma comparação reproduzível, invoque explicitamente o pacote desejado:
 
 ```sh
-npx --yes @gitpagedocs/cli@0.0.10 version
-npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO --output gitpagedocs-candidate
+npx --yes @gitpagedocs/cli@0.0.11 version
+npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO --output gitpagedocs-candidate
 git diff --no-index -- gitpagedocs gitpagedocs-candidate
 ```
 

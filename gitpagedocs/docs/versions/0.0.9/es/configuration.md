@@ -36,44 +36,58 @@ Claves principales:
 - `layoutsConfigPath`: fallback remoto de layouts
 - `rendering`: URL canónica publicada
 
+## Volver arriba en páginas largas
+
+La flecha para volver arriba en las páginas de documentación y en `/introduction-guide` se controla mediante `site.backToTop` en `gitpagedocs/config.json`:
+
+```json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+```
+
+Por defecto, la flecha está activada solo en una página desplazable cuya altura total sea al menos tres veces la altura del área visible del navegador. Usa `enabled: false` para ocultarla. `minPageHeightViewports` acepta un número finito mayor que `1`; los valores ausentes o no válidos usan `3`. Por ejemplo, `4` exige una página de al menos cuatro alturas del área visible. El umbral mide la altura total de la página, no la distancia ya recorrida. La misma configuración controla las páginas de documentación y la guía de introducción.
+
 ## Controles de idioma, tema, foco, navegación rápida, PDF y documentos
 
-En `gitpagedocs/config.json`, estas entradas de `site.icons` configuran idioma, tema, foco, navegación Ctrl+K, acciones PDF y navegación al pie de los documentos. Los ocho controles utilizan React Icons por defecto:
+En `gitpagedocs/config.json`, estas entradas de `site.icons` configuran idioma, tema, versión, foco, navegación Ctrl+K, acciones PDF y navegación al pie de los documentos. Los nueve controles utilizan React Icons por defecto:
 
 ```json
 {
   "site": {
     "icons": {
       "LanguageSelector": {
-        "reactIcon": true, "tag": "FiGlobe", "size": "22px",
+        "reactIcon": true, "tag": "SiGoogletranslate", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "ThemeSelector": {
-        "reactIcon": true, "tag": "BsSunFill", "size": "22px",
+        "reactIcon": true, "tag": "LuPencil", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "MdFullscreen", "size": "22px",
+        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "VersionSelector": {
+        "reactIcon": true, "tag": "LuGitBranch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
-        "reactIcon": true, "tag": "FiSearch", "size": "22px",
+        "reactIcon": true, "tag": "LuSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfDownload": {
-        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "reactIcon": true, "tag": "LuDownload", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfOpenInNewTab": {
-        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "reactIcon": true, "tag": "LuExternalLink", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentPrevious": {
-        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronLeft", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentNext": {
-        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronRight", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
@@ -86,6 +100,8 @@ Cada control es independiente: `reactIcon: true` muestra el icono (por defecto);
 Las configuraciones compactas pueden mover valores comunes a `site.icons.defaults`; los campos omitidos heredan esos valores. Define `reactIcon: false` en una entrada concreta para sustituir el icono predeterminado por texto.
 
 ## Sección `VersionControl`
+
+`site.icons.VersionSelector` utiliza `LuGitBranch` por defecto. Define `reactIcon: false` para mostrar el texto de la versión seleccionada; `true` muestra el icono. Personaliza los mismos campos `tag`, `size`, `colorDark` y `colorLight`. El selector aparece solo cuando hay más de una versión de documentación; conserva el nombre accesible localizado del selector y muestra la versión seleccionada en el tooltip.
 
 `VersionControl.versions` define:
 

@@ -10,6 +10,10 @@
     "HideThemeSelector": false,
     "ThemeDefault": "aurora-dark",
     "ThemeModeDefault": "dark",
+    "backToTop": {
+      "enabled": true,
+      "minPageHeightViewports": 3
+    },
     "backgroundEffects": {
       "enabled": true,
       "overrides": {
@@ -293,6 +297,19 @@
   "VersionControl": {
     "versions": [
       {
+        "id": "0.0.13",
+        "path": "gitpagedocs/docs/versions/0.0.13/config.json",
+        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.13/config.json",
+        "PreviewProject": "",
+        "UpdateDate": "",
+        "branch": "",
+        "release": "",
+        "commit": "",
+        "source-viewer": true,
+        "source-viewer-path": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+      },
+      {
         "id": "0.0.12",
         "path": "gitpagedocs/docs/versions/0.0.12/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
@@ -323,6 +340,19 @@
         "path": "gitpagedocs/docs/versions/0.0.10/config.json",
         "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
         "PathConfig": "gitpagedocs/docs/versions/0.0.10/config.json",
+        "PreviewProject": "",
+        "UpdateDate": "",
+        "branch": "",
+        "release": "",
+        "commit": "",
+        "source-viewer": true,
+        "source-viewer-path": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+      },
+      {
+        "id": "0.0.9",
+        "path": "gitpagedocs/docs/versions/0.0.9/config.json",
+        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.9/config.json",
         "PreviewProject": "",
         "UpdateDate": "",
         "branch": "",

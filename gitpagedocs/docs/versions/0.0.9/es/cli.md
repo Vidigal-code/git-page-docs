@@ -18,7 +18,7 @@
 | `gitpagedocs docs` | Actualiza las regiones gestionadas de README/CONTRIBUTING/SECURITY |
 | `gitpagedocs password` | Define la contraseña de acceso a la documentación (clave pública en `site.docsAccess`) |
 | `gitpagedocs config` / `config clear` | Muestra la config resuelta / borra la config guardada y la bóveda de claves |
-| `gitpagedocs doctor` / `version` / `update` | Diagnóstico / versión / comprobacion de actualización en el registro |
+| `gitpagedocs doctor` / `version` / `update` | Diagnóstico / versión / comprobación de actualización en el registro |
 | `gitpagedocs mcp start` | Inicia el servidor MCP por stdio |
 
 Instala globalmente con `npm install -g @gitpagedocs/cli` o ejecuta sin instalar con `npx @gitpagedocs/cli`.

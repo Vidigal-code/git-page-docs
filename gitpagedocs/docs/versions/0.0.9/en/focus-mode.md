@@ -33,6 +33,8 @@ Each option defaults to `true`; setting one to `false` hides its corresponding a
 
 ## Copy and download
 
+On a composed page, focus reads the authorized Markdown blocks in order, including repetitions. Its copy/download actions join those sources and use `page-<id>.md`; individual block actions retain their original filenames. See Ordered content blocks for the full contract.
+
 Copy and download use the **entire original Markdown document in the selected language**, including sections not currently visible. They do not export the rendered HTML or only the current reading section.
 
 The download keeps the Markdown basename from the route's localized `path`; if unavailable, the filename is `document.md`. Clipboard access follows the browser's permission and secure-context rules. If copying fails, use download instead and check the displayed error.
@@ -41,6 +43,6 @@ The download keeps the Markdown basename from the route's localized `path`; if u
 
 The dialog has an accessible name, keyboard focus management and a close control. Use Tab to move through controls and Escape to close it. Keep icon-only controls accessible by retaining their translated names. Closing the dialog returns to the documentation view.
 
-Narration is configured separately in Accessibility. Changing the active document or language cancels the previous narration so it cannot continue reading stale content.
+Narration is configured separately in Accessibility. In focus mode, it reads only the section currently displayed. Changing the section, document or language, or entering or leaving focus mode, stops the previous speech; the next reading starts from the visible content. Voice, speed and volume preferences are retained. With `sectionNavigationEnabled: false`, the entire document is visible and available for narration. Copy/download still includes the complete original source.
 
 > Version: 0.0.9

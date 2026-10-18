@@ -13,6 +13,10 @@ export function getDefaultSiteConfig(projectLink, languageToggles = buildLanguag
         HideThemeSelector: false,
         ThemeDefault: "aurora-dark",
         ThemeModeDefault: "dark",
+        backToTop: {
+            enabled: true,
+            minPageHeightViewports: 3,
+        },
         backgroundEffects: {
             enabled: true,
             overrides: { accessibility: { showPauseButton: true } },

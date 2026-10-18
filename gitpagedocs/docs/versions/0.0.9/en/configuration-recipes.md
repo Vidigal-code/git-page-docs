@@ -4,7 +4,9 @@ This guide builds a small multilingual documentation site with two Markdown page
 
 ## 1. Generate and inspect the scaffold
 
-Run `npx --yes @gitpagedocs/cli@0.0.10 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY` in a new project directory. In this source repository, `node cli/index.mjs` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
+The scaffold includes versions 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in the version selector, newest first. All five contain the current examples; the package version is 0.0.13. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
+
+Run `npx --yes @gitpagedocs/cli@0.0.13 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY` in a new project directory. In this source repository, `node cli/index.mjs` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
 
 Use the following complete JSON as a minimal root-config example in `gitpagedocs/config.json`. For an existing site, merge the relevant fields and preserve its repository identity, deployment settings, themes and other versions.
 
@@ -12,7 +14,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
 {
   "site": {
     "name": "Documentação • Guía • Documentation",
-    "docsVersion": "0.0.10",
+    "docsVersion": "0.0.13",
     "languages": {
       "en": true,
       "pt": true,
@@ -36,28 +38,31 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
         "colorLight": "currentColor"
       },
       "LanguageSelector": {
-        "tag": "FiGlobe"
+        "tag": "SiGoogletranslate"
       },
       "ThemeSelector": {
-        "tag": "BsSunFill"
+        "tag": "LuPencil"
+      },
+      "VersionSelector": {
+        "tag": "LuGitBranch"
       },
       "FocusMode": {
-        "tag": "MdFullscreen"
+        "tag": "LuBookOpen"
       },
       "QuickNavigation": {
-        "tag": "FiSearch"
+        "tag": "LuSearch"
       },
       "PdfDownload": {
-        "tag": "FiDownload"
+        "tag": "LuDownload"
       },
       "PdfOpenInNewTab": {
-        "tag": "FiExternalLink"
+        "tag": "LuExternalLink"
       },
       "DocumentPrevious": {
-        "tag": "FiChevronLeft"
+        "tag": "LuChevronLeft"
       },
       "DocumentNext": {
-        "tag": "FiChevronRight"
+        "tag": "LuChevronRight"
       }
     },
     "pdf": {
@@ -70,15 +75,15 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.10",
-        "path": "gitpagedocs/docs/versions/0.0.10/config.json"
+        "id": "0.0.13",
+        "path": "gitpagedocs/docs/versions/0.0.9/config.json"
       }
     ]
   }
 }
 ```
 
-The eight entries inherit the common icon presentation from `icons.defaults`. To display text for one action, add `"reactIcon": false` to that entry. Do not change a shared default just to alter one button. Existing flat icon fields win over compact fields, so remove or update an old conflicting field deliberately.
+The nine entries inherit the common icon presentation from `icons.defaults`. To display text for one action, add `"reactIcon": false` to that entry. Do not change a shared default just to alter one button. Existing flat icon fields win over compact fields, so remove or update an old conflicting field deliberately.
 
 ## 2. Create the version configuration
 
@@ -98,9 +103,9 @@ Save the next complete JSON document at the version-config path shown above. A m
         "es": "Inicio"
       },
       "path": {
-        "en": "gitpagedocs/docs/versions/0.0.10/en/start.md",
-        "pt": "gitpagedocs/docs/versions/0.0.10/pt/start.md",
-        "es": "gitpagedocs/docs/versions/0.0.10/es/start.md"
+        "en": "gitpagedocs/docs/versions/0.0.9/en/start.md",
+        "pt": "gitpagedocs/docs/versions/0.0.9/pt/start.md",
+        "es": "gitpagedocs/docs/versions/0.0.9/es/start.md"
       }
     },
     {
@@ -111,9 +116,9 @@ Save the next complete JSON document at the version-config path shown above. A m
         "es": "Próximos pasos"
       },
       "path": {
-        "en": "gitpagedocs/docs/versions/0.0.10/en/next-steps.md",
-        "pt": "gitpagedocs/docs/versions/0.0.10/pt/next-steps.md",
-        "es": "gitpagedocs/docs/versions/0.0.10/es/next-steps.md"
+        "en": "gitpagedocs/docs/versions/0.0.9/en/next-steps.md",
+        "pt": "gitpagedocs/docs/versions/0.0.9/pt/next-steps.md",
+        "es": "gitpagedocs/docs/versions/0.0.9/es/next-steps.md"
       }
     }
   ],
@@ -146,30 +151,30 @@ Save the next complete JSON document at the version-config path shown above. A m
               "id": 101,
               "en": {
                 "title": "Start",
-                "path-click": "gitpagedocs/docs/versions/0.0.10/en/start.md"
+                "path-click": "gitpagedocs/docs/versions/0.0.9/en/start.md"
               },
               "pt": {
                 "title": "Início",
-                "path-click": "gitpagedocs/docs/versions/0.0.10/pt/start.md"
+                "path-click": "gitpagedocs/docs/versions/0.0.9/pt/start.md"
               },
               "es": {
                 "title": "Inicio",
-                "path-click": "gitpagedocs/docs/versions/0.0.10/es/start.md"
+                "path-click": "gitpagedocs/docs/versions/0.0.9/es/start.md"
               }
             },
             {
               "id": 102,
               "en": {
                 "title": "Next steps",
-                "path-click": "gitpagedocs/docs/versions/0.0.10/en/next-steps.md"
+                "path-click": "gitpagedocs/docs/versions/0.0.9/en/next-steps.md"
               },
               "pt": {
                 "title": "Próximos passos",
-                "path-click": "gitpagedocs/docs/versions/0.0.10/pt/next-steps.md"
+                "path-click": "gitpagedocs/docs/versions/0.0.9/pt/next-steps.md"
               },
               "es": {
                 "title": "Próximos pasos",
-                "path-click": "gitpagedocs/docs/versions/0.0.10/es/next-steps.md"
+                "path-click": "gitpagedocs/docs/versions/0.0.9/es/next-steps.md"
               }
             }
           ]

@@ -43,7 +43,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.12/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.13/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -52,9 +52,9 @@ En \`gitpagedocs/docs/versions/0.0.12/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -212,7 +212,7 @@ Git Page Docs es un monorepo pnpm + turborepo que convierte la carpeta \`gitpage
 - Sistema de IA con 14 proveedores (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI y más) con streaming
 - Claves de IA **cifradas en reposo** (AES-256-GCM) detrás de una contraseña local — nunca en texto plano
 - **Panel de chat de IA** en los docs + una **consola \`/ai\`** dedicada
-- Sistema de 64 temas (variantes oscuras y claras); ejecución local y en GitHub Pages
+- Sistema de 124 temas (variantes oscuras y claras); ejecución local y en GitHub Pages
 `,
     functionalities: `# Funcionalidades
 
@@ -313,6 +313,16 @@ Claves principales:
 - \`IconPreviewProjectLinkLightImg\`, \`IconPreviewProjectLinkDarkImg\`: icono preview
 - \`layoutsConfigPath\`: fallback remoto de layouts
 - \`rendering\`: URL canónica publicada
+
+## Volver arriba en páginas largas
+
+La flecha para volver arriba en las páginas de documentación y en \`/introduction-guide\` se controla mediante \`site.backToTop\` en \`gitpagedocs/config.json\`:
+
+\`\`\`json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+\`\`\`
+
+Por defecto, la flecha está activada solo en una página desplazable cuya altura total sea al menos tres veces la altura del área visible del navegador. Usa \`enabled: false\` para ocultarla. \`minPageHeightViewports\` acepta un número finito mayor que \`1\`; los valores ausentes o no válidos usan \`3\`. Por ejemplo, \`4\` exige una página de al menos cuatro alturas del área visible. El umbral mide la altura total de la página, no la distancia ya recorrida. La misma configuración controla las páginas de documentación y la guía de introducción.
 
 ## Controles de idioma, tema, foco, navegación rápida, PDF y documentos
 
@@ -1011,7 +1021,7 @@ La descarga conserva el nombre base Markdown del \`path\` localizado de la ruta;
 
 El diálogo tiene nombre accesible, gestión de foco del teclado y control de cierre. Usa Tab para recorrer controles y Escape para cerrar. Los controles de solo icono conservan nombres traducidos accesibles. Cerrar el diálogo vuelve a la documentación.
 
-La narración se configura por separado en Accesibilidad. Cambiar de documento o idioma cancela la narración anterior para que no siga leyendo contenido antiguo.
+La narración se configura por separado en Accesibilidad. En modo foco, lee solo la sección mostrada. Cambiar de sección, documento o idioma, entrar o salir del modo foco detiene la voz anterior; la próxima lectura empieza desde el contenido visible. Se conservan las preferencias de voz, velocidad y volumen. Con \`sectionNavigationEnabled: false\`, el documento completo queda visible y disponible para narración. Copiar/descargar sigue incluyendo toda la fuente original.
 `,
     accessibility: `# Accesibilidad y narración
 
@@ -1052,7 +1062,9 @@ Combina estas opciones con \`gitpagedocs/config.json\`:
 
 La narración empieza solo después de tu acción; no hay reproducción automática. La selección automática de voz sigue el idioma del documento; elegir una voz explícitamente utiliza el idioma de esa voz. La narración no traduce el documento.
 
-La voz utiliza texto legible extraído del Markdown renderizado. Se excluyen scripts, estilos, contenido SVG y elementos ocultos para tecnologías de asistencia. Los documentos largos se leen completos en bloques sucesivos. Cambiar de documento o idioma, desactivar la narración o salir de la página cancela la voz anterior.
+La voz utiliza texto legible extraído del Markdown renderizado. Se excluyen scripts, estilos, contenido SVG y elementos ocultos para tecnologías de asistencia. El contenido visible largo se lee completo en bloques sucesivos. Cambiar de documento o idioma, desactivar la narración o salir de la página cancela la voz anterior.
+
+En modo foco, la narración usa solo la sección mostrada. Cambiar de sección o documento, entrar o salir del modo foco detiene la lectura anterior. Inicia de nuevo para leer el contenido que ahora está visible. Con \`site.focusMode.sectionNavigationEnabled: false\`, el documento completo permanece visible y se puede narrar. Estas transiciones conservan la voz, velocidad y volumen seleccionados.
 
 La vista habitual y el modo foco comparten preferencias de voz, velocidad y volumen mientras la página permanece montada. Las preferencias no se guardan entre recargas. Los valores no numéricos de velocidad o volumen usan \`1\`; los valores numéricos fuera de los rangos admitidos se limitan al extremo más cercano.
 

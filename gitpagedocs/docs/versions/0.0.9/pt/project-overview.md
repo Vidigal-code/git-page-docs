@@ -1,4 +1,4 @@
-# Visao geral do projeto
+# Visão geral do projeto
 
 Git Page Docs é um monorepo pnpm + turborepo que transforma a pasta `gitpagedocs/` de um repositório em um site de documentação multilinguagem e versionado — com assistente de IA integrado e um servidor MCP (Model Context Protocol).
 
@@ -22,6 +22,6 @@ Git Page Docs é um monorepo pnpm + turborepo que transforma a pasta `gitpagedoc
 - Sistema de IA com 14 provedores (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI e mais) com streaming
 - Chaves de IA **criptografadas em repouso** (AES-256-GCM) atras de uma senha local — nunca em texto puro
 - **Drawer de chat de IA** nos docs + um **console `/ai`** dedicado
-- Sistema de 64 temas (variantes escuras e claras); execução local e no GitHub Pages
+- Sistema de 124 temas (variantes escuras e claras); execução local e no GitHub Pages
 
 > Versão: 0.0.9

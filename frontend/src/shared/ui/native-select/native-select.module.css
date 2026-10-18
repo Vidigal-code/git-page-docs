@@ -52,7 +52,55 @@
   pointer-events: none;
 }
 
+@supports (appearance: base-select) {
+  .select,
+  .select::picker(select) {
+    appearance: base-select;
+  }
+
+  .select::picker-icon { display: none; }
+  .select:open + .arrow { transform: translateY(-50%) rotate(180deg); }
+
+  .select::picker(select) {
+    box-sizing: border-box;
+    max-inline-size: calc(100vw - 2rem);
+    max-block-size: min(60dvh, 24rem);
+    margin-block-start: 0.25rem;
+    padding: 0.25rem;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border: var(--select-border, 1px solid var(--card-border));
+    border-radius: min(var(--select-radius, 0.6rem), 0.875rem);
+    background: var(--card-background);
+    color: var(--text);
+    box-shadow: var(--card-shadow, none);
+  }
+
+  .select option {
+    box-sizing: border-box;
+    min-block-size: 2.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: min(var(--select-radius, 0.6rem), 0.5rem);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .select option:checked {
+    background: color-mix(in srgb, var(--primary) 20%, var(--card-background));
+    font-weight: 600;
+  }
+
+  .select option:hover,
+  .select option:focus-visible {
+    background: color-mix(in srgb, var(--primary) 12%, var(--card-background));
+  }
+
+  .select option:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+  .select option::checkmark { color: var(--primary); }
+}
+
 @media (forced-colors: active) {
   .select { appearance: auto; border: 1px solid ButtonText; }
+  .select::picker(select) { appearance: auto; }
   .arrow { display: none; }
 }

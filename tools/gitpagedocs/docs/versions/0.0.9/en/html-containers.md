@@ -1,6 +1,6 @@
 # HTML containers and interactive examples
 
-An HTML route displays a local document or an external web page inside an iframe. Use it for a trusted interactive demonstration that Markdown cannot express. The scaffold includes **DOOM: HTML example**, route 29, with a localized title, description and a button that loads the external game player only when the visitor chooses to play. The game remains hosted by its provider; the npm package contains the HTML wrapper, not the game assets.
+An HTML route displays a local document or an external web page inside an iframe. Use it for a trusted interactive demonstration that Markdown cannot express. The scaffold includes **DOOM: HTML example**, route 29. Its title and description belong to the documentation container; the HTML itself contains only the game player, without repeated headings, instructions or a custom load button. The game remains hosted by its provider; the npm package contains the HTML integration, not the game assets.
 
 ## Configure a local HTML route
 
@@ -22,9 +22,9 @@ Add this route to the version configuration's existing `routes-html` array. Keep
   "titleIsVisible": true,
   "descriptionIsVisible": true,
   "path": {
-    "en": "gitpagedocs/docs/versions/0.0.10/en/doom.html",
-    "pt": "gitpagedocs/docs/versions/0.0.10/pt/doom.html",
-    "es": "gitpagedocs/docs/versions/0.0.10/es/doom.html"
+    "en": "gitpagedocs/docs/versions/0.0.9/en/doom.html",
+    "pt": "gitpagedocs/docs/versions/0.0.9/pt/doom.html",
+    "es": "gitpagedocs/docs/versions/0.0.9/es/doom.html"
   },
   "container": "full",
   "fullscreenEnabled": true,
@@ -32,7 +32,7 @@ Add this route to the version configuration's existing `routes-html` array. Keep
 }
 ```
 
-Add a localized item in `menus-header-html`. Each `path-click` must match its language's route path, such as `gitpagedocs/docs/versions/0.0.10/en/doom.html`; do not substitute `page:29` for this local HTML path. Menu labels do not create routes. HTML uses the same recursive `submenus` structure as other menus.
+Add a localized item in `menus-header-html`. Each `path-click` must match its language's route path, such as `gitpagedocs/docs/versions/0.0.9/en/doom.html`; do not substitute `page:29` for this local HTML path. Menu labels do not create routes. HTML uses the same recursive `submenus` structure as other menus.
 
 ## Size, content and external URLs
 
@@ -44,7 +44,7 @@ The external host can prevent framing through CSP or X-Frame-Options. Known bloc
 
 ## Use and maintain the game example
 
-Select the HTML menu entry, read the provider notice and press the localized load button. Network access is needed; then follow the player's own start and keyboard controls. The wrapper includes a direct provider link if embedding fails. Test keyboard focus, small screens, fullscreen and returning to the documentation. Third-party player availability and browser capabilities can change independently of GitPageDocs.
+Select the HTML menu entry. The player SDK loads when the page opens; use its native Play control to start the game. There is no automatic game start or separate documentation load button. Network access is required. A bootstrap failure displays an error asking you to reload the page; the normal view contains only the player. Test keyboard focus, small screens, fullscreen and returning to the documentation. Third-party player availability and browser capabilities can change independently of GitPageDocs.
 
 Review HTML and dependencies before publishing. The current iframe permits scripts and same-origin content, so it is not a security boundary for arbitrary untrusted HTML. Do not put secrets in HTML, URLs or client configuration. Static hosting exposes the files independently of menu visibility or route authorization. For local development and Pages, commit the wrapper alongside its version configuration and validate the generated paths before deployment.
 

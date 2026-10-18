@@ -37,7 +37,9 @@ Combina estas opciones con `gitpagedocs/config.json`:
 
 La narración empieza solo después de tu acción; no hay reproducción automática. La selección automática de voz sigue el idioma del documento; elegir una voz explícitamente utiliza el idioma de esa voz. La narración no traduce el documento.
 
-La voz utiliza texto legible extraído del Markdown renderizado. Se excluyen scripts, estilos, contenido SVG y elementos ocultos para tecnologías de asistencia. Los documentos largos se leen completos en bloques sucesivos. Cambiar de documento o idioma, desactivar la narración o salir de la página cancela la voz anterior.
+La voz utiliza texto legible extraído del Markdown renderizado. Se excluyen scripts, estilos, contenido SVG y elementos ocultos para tecnologías de asistencia. El contenido visible largo se lee completo en bloques sucesivos. Cambiar de documento o idioma, desactivar la narración o salir de la página cancela la voz anterior.
+
+En modo foco, la narración usa solo la sección mostrada. Cambiar de sección o documento, entrar o salir del modo foco detiene la lectura anterior. Inicia de nuevo para leer el contenido que ahora está visible. Con `site.focusMode.sectionNavigationEnabled: false`, el documento completo permanece visible y se puede narrar. Estas transiciones conservan la voz, velocidad y volumen seleccionados.
 
 La vista habitual y el modo foco comparten preferencias de voz, velocidad y volumen mientras la página permanece montada. Las preferencias no se guardan entre recargas. Los valores no numéricos de velocidad o volumen usan `1`; los valores numéricos fuera de los rangos admitidos se limitan al extremo más cercano.
 

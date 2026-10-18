@@ -1,7 +1,8 @@
 "use client";
 
-import type { LoadedDocsData, LoadedPage } from "@/entities/docs";
-import type { ReactNode } from "react";
+import { getLangMenuLabelFromMenu, type LoadedDocsData, type LoadedPage } from "@/entities/docs";
+import { useId, type ReactNode } from "react";
+import { BackToTop } from "@/shared/ui/back-to-top";
 import { SiteFooter, type FooterConfig } from "@/shared/ui/site-footer";
 import { ControlIcon } from "@/shared/ui/control-icon";
 import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
@@ -48,6 +49,7 @@ export interface DocsShellMainContentProps {
 }
 
 export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>) {
+  const mainId = useId();
   const {
     headerName,
     iconImage,
@@ -99,7 +101,7 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
         controls={<DocsShellControls {...controlsProps} />}
       />
 
-      <main className={styles.main}>
+      <main id={mainId} className={styles.main} tabIndex={-1}>
         {props.accessibilityControls}
         <PageContentArea
           currentPage={currentPage}
@@ -123,6 +125,12 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
             </button>
           </div>
         )}
+        <BackToTop
+          label={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "backToTop", "Back to top")}
+          targetId={mainId}
+          enabled={data.config.site.backToTop?.enabled}
+          minPageHeightViewports={data.config.site.backToTop?.minPageHeightViewports}
+        />
       </main>
       {footerEnabled && (
         <SiteFooter

@@ -36,6 +36,16 @@ Claves principales:
 - `layoutsConfigPath`: fallback remoto de layouts
 - `rendering`: URL canónica publicada
 
+## Volver arriba en páginas largas
+
+La flecha para volver arriba en las páginas de documentación y en `/introduction-guide` se controla mediante `site.backToTop` en `gitpagedocs/config.json`:
+
+```json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+```
+
+Por defecto, la flecha está activada solo en una página desplazable cuya altura total sea al menos tres veces la altura del área visible del navegador. Usa `enabled: false` para ocultarla. `minPageHeightViewports` acepta un número finito mayor que `1`; los valores ausentes o no válidos usan `3`. Por ejemplo, `4` exige una página de al menos cuatro alturas del área visible. El umbral mide la altura total de la página, no la distancia ya recorrida. La misma configuración controla las páginas de documentación y la guía de introducción.
+
 ## Controles de idioma, tema, foco, navegación rápida, PDF y documentos
 
 En `gitpagedocs/config.json`, estas entradas de `site.icons` configuran idioma, tema, versión, foco, navegación Ctrl+K, acciones PDF y navegación al pie de los documentos. Los nueve controles utilizan React Icons por defecto:

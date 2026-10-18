@@ -6,6 +6,10 @@ async function openFocus(page: Page, { isMobile }: { isMobile: boolean }): Promi
   await page.locator('button[aria-label="Focus mode"]:visible').click();
 }
 
+async function narratedText(page: Page): Promise<string> {
+  return page.evaluate(() => (window.speechSynthesis as SpeechSynthesis & { lastSpokenText: string }).lastSpokenText);
+}
+
 test("focus navigates sections and documents without closing and offers original Markdown actions", async ({ page, context, isMobile }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/?menu=en&id=1");
@@ -61,7 +65,7 @@ test("focus navigates sections and documents without closing and offers original
   await expect(focus).toBeHidden();
 });
 
-test("native reading events synchronize the page and focus controls", async ({ page, isMobile }) => {
+test("native reading follows the visible focus section and keeps the controls synchronized", async ({ page, isMobile }) => {
   await page.addInitScript(() => {
     class BrowserUtterance extends EventTarget {
       constructor(readonly text: string) { super(); }
@@ -69,8 +73,9 @@ test("native reading events synchronize the page and focus controls", async ({ p
     let current: BrowserUtterance | undefined;
     const synthesis = Object.assign(new EventTarget(), {
       paused: false,
+      lastSpokenText: "",
       getVoices: () => [],
-      speak(utterance: BrowserUtterance) { current = utterance; utterance.dispatchEvent(new Event("start")); },
+      speak(utterance: BrowserUtterance) { current = utterance; this.lastSpokenText = utterance.text; utterance.dispatchEvent(new Event("start")); },
       pause() { this.paused = true; current?.dispatchEvent(new Event("pause")); },
       resume() { this.paused = false; current?.dispatchEvent(new Event("resume")); },
       cancel() { current = undefined; },
@@ -86,7 +91,9 @@ test("native reading events synchronize the page and focus controls", async ({ p
   await openFocus(page, { isMobile });
   const focus = page.getByRole("dialog", { name: "Focus mode", exact: true });
   await focus.locator("summary", { hasText: "Accessibility and reading" }).click();
+  await focus.getByRole("button", { name: "Read document", exact: true }).click();
   await expect(focus.getByRole("button", { name: "Pause reading", exact: true })).toBeVisible();
+  expect(await narratedText(page)).toBe("Getting Started Git Page Docs separates the documentation files from the viewer. Install the CLI to create the files; use the official viewer, GitHub Pages or a checkout of the runtime to display them.");
   await page.evaluate(() => window.speechSynthesis.pause());
   await expect(focus.getByRole("button", { name: "Resume reading", exact: true })).toBeVisible();
   await focus.getByRole("button", { name: "Resume reading", exact: true }).click();
@@ -95,6 +102,11 @@ test("native reading events synchronize the page and focus controls", async ({ p
   await focus.getByRole("button", { name: "Stop reading", exact: true }).click();
   await expect(focus.getByRole("button", { name: "Read document", exact: true })).toBeVisible();
   await expect(focus.getByRole("button", { name: "Stop reading", exact: true })).toBeDisabled();
+  await focus.getByRole("button", { name: "Read document", exact: true }).click();
+  await focus.getByRole("button", { name: "Next section", exact: true }).click();
+  await focus.getByRole("button", { name: "Read document", exact: true }).click();
+  expect(await narratedText(page)).toContain("Requirements and installation");
+  expect(await narratedText(page)).not.toContain("Git Page Docs separates the documentation files from the viewer");
   await page.keyboard.press("Escape");
   await expect(focus).toBeHidden();
   if (await panel.getAttribute("open") === null) await panel.locator("summary").click();

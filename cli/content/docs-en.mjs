@@ -44,7 +44,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.12/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.13/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -53,9 +53,9 @@ In \`gitpagedocs/docs/versions/0.0.12/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -213,7 +213,7 @@ Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's \`git
 - 14-provider AI system (OpenAI, Anthropic, Gemini, Ollama, Mistral, DeepSeek, Cohere, Groq, xAI, and more) with streaming
 - AI API keys stored **encrypted at rest** (AES-256-GCM) behind a local password gate — never plaintext
 - In-docs **AI chat drawer** plus a dedicated **\`/ai\` console**
-- 64-theme layout system (dark and light variants); local and GitHub Pages execution modes
+- 124-theme layout system (dark and light variants); local and GitHub Pages execution modes
 `,
     functionalities: `# Functionalities
 
@@ -419,6 +419,16 @@ Important keys:
 - \`ThemeDefault\`
 - \`ThemeModeDefault\`
 - \`ProjectLink\`
+
+## Back to top on long pages
+
+The back-to-top arrow on documentation pages and \`/introduction-guide\` is controlled by \`site.backToTop\` in \`gitpagedocs/config.json\`:
+
+\`\`\`json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+\`\`\`
+
+The default enables the arrow only on a scrollable page whose total height is at least three viewport heights. Set \`enabled: false\` to hide it. \`minPageHeightViewports\` accepts a finite number greater than \`1\`; omitted or invalid values use \`3\`. For example, \`4\` requires a page at least four viewport heights tall. The threshold measures total page height, not distance already scrolled. The same setting controls documentation pages and the introduction guide.
 
 ## Layout source keys
 
@@ -1058,7 +1068,7 @@ The download keeps the Markdown basename from the route's localized \`path\`; if
 
 The dialog has an accessible name, keyboard focus management and a close control. Use Tab to move through controls and Escape to close it. Keep icon-only controls accessible by retaining their translated names. Closing the dialog returns to the documentation view.
 
-Narration is configured separately in Accessibility. Changing the active document or language cancels the previous narration so it cannot continue reading stale content.
+Narration is configured separately in Accessibility. In focus mode, it reads only the section currently displayed. Changing the section, document or language, or entering or leaving focus mode, stops the previous speech; the next reading starts from the visible content. Voice, speed and volume preferences are retained. With \`sectionNavigationEnabled: false\`, the entire document is visible and available for narration. Copy/download still includes the complete original source.
 `,
     accessibility: `# Accessibility and narration
 
@@ -1099,7 +1109,9 @@ Merge the following settings into \`gitpagedocs/config.json\`:
 
 Narration starts only after your action; there is no autoplay. Automatic voice selection follows the document language, while an explicit voice choice uses that voice's language. Narration does not translate the document.
 
-The speech content is readable text extracted from the rendered Markdown. Scripts, styles, SVG content and elements marked hidden for assistive technology are excluded. Long documents are read completely in successive blocks. Changing the document or language, disabling narration or leaving the page cancels the previous speech.
+The speech content is readable text extracted from the rendered Markdown. Scripts, styles, SVG content and elements marked hidden for assistive technology are excluded. Long visible content is read completely in successive blocks. Changing the document or language, disabling narration or leaving the page cancels the previous speech.
+
+In focus mode, narration uses only the displayed section. Changing sections or documents, or entering or leaving focus mode, stops the previous reading. Start again to read the newly visible content. With \`site.focusMode.sectionNavigationEnabled: false\`, the whole document remains visible and narratable. These transitions preserve the selected voice, speed and volume.
 
 The normal view and focus mode share voice, speed and volume preferences while the page remains mounted. These preferences are not stored across reloads. Non-numeric speed or volume settings use \`1\`; numeric settings outside the supported ranges are clamped to their nearest limit.
 

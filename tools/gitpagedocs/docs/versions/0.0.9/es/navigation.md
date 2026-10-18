@@ -15,7 +15,7 @@ Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúra
 
 Cada entrada de `menus-header-md` tiene `id` y objetos `pt`, `en`, `es` con `title` y `path-click` opcional. Añade `submenus` con nuevas entradas para anidar el árbol. El objeto de un idioma también acepta `submenus` localizados con título/ruta. Utiliza una forma de manera consistente para no listar el mismo hijo dos veces.
 
-Los grupos sin `path-click` organizan sus hijos. Para un destino Markdown, utiliza su ruta localizada real de `routes-md[].path`. El alias `page:<id>` lo registran rutas source-viewer, vídeo, audio y PDF; no lo uses en una página que solo contiene Markdown. El ejemplo utiliza la versión `0.0.8`: sustituye ese segmento por la versión editada y crea los tres archivos chapter.
+Los grupos sin `path-click` organizan sus hijos. Para el destino de una ruta Markdown, utiliza su ruta localizada real de `routes-md[].path`. Las rutas source-viewer, vídeo, audio, PDF y las composiciones explícitas de `pages` registran `page:<id>`; una ruta Markdown simple utiliza la ruta del archivo. El ejemplo utiliza la versión `0.0.8`: sustituye ese segmento por la versión editada y crea los tres archivos chapter.
 
 ```json
 {
@@ -83,6 +83,62 @@ Los grupos sin `path-click` organizan sus hijos. Para un destino Markdown, utili
 
 ## Comportamiento del anidamiento
 
+Un padre puede ser documento y grupo a la vez. Conserva su `path-click` localizado junto con `submenus`: el título abre su página Markdown y la flecha separada expande o contrae los hijos. El scaffold incluye resúmenes útiles para los ocho grupos padres. Los antecesores de los breadcrumbs enlazan a esos documentos; el destino actual sigue marcado como actual. Un grupo sin ruta puede organizar hijos, pero no tiene un destino para abrir.
+
+El siguiente fragmento utiliza las rutas Markdown 31, 32 y 13 incluidas en el scaffold. Combínalo con `menus-header-md` y conserva las definiciones correspondientes en `routes-md` y sus archivos:
+
+```json
+{
+  "id": 1000,
+  "en": {
+    "title": "Guides",
+    "path-click": "gitpagedocs/docs/versions/0.0.9/en/guides.md"
+  },
+  "pt": {
+    "title": "Guias",
+    "path-click": "gitpagedocs/docs/versions/0.0.9/pt/guides.md"
+  },
+  "es": {
+    "title": "Guías",
+    "path-click": "gitpagedocs/docs/versions/0.0.9/es/guides.md"
+  },
+  "submenus": [
+    {
+      "id": 1001,
+      "en": {
+        "title": "Configure your site",
+        "path-click": "gitpagedocs/docs/versions/0.0.9/en/configure-your-site.md"
+      },
+      "pt": {
+        "title": "Configure seu site",
+        "path-click": "gitpagedocs/docs/versions/0.0.9/pt/configure-your-site.md"
+      },
+      "es": {
+        "title": "Configura tu sitio",
+        "path-click": "gitpagedocs/docs/versions/0.0.9/es/configure-your-site.md"
+      },
+      "submenus": [
+        {
+          "id": 13,
+          "en": {
+            "title": "Configuration",
+            "path-click": "gitpagedocs/docs/versions/0.0.9/en/configuration.md"
+          },
+          "pt": {
+            "title": "Configuração",
+            "path-click": "gitpagedocs/docs/versions/0.0.9/pt/configuration.md"
+          },
+          "es": {
+            "title": "Configuración",
+            "path-click": "gitpagedocs/docs/versions/0.0.9/es/configuration.md"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
 `site.nestedMenusEnabled: true` muestra menús recursivos expandibles. Puedes añadir `submenus` en cualquier nodo: no existe un límite fijo de profundidad en la aplicación. La configuración debe ser finita y adecuada para la memoria del navegador y la usabilidad. Con `false`, los destinos aparecen en una lista plana; las páginas anidadas no se eliminan.
 
 El árbol sirve para navegación lateral, etiquetas de búsqueda, expansión de padres y rutas de navegación. Mantén IDs estables y sin ambigüedad; los destinos protegidos siguen las reglas de autorización de su página. La misma estructura se aplica a `menus-header-source-viewer`, `menus-header-html`, `menus-header-video`, `menus-header-audio` y `menus-header-pdf`. `hierarchyMenu` ordena las secciones por tipo; `hierarchyPage` ordena los contenedores que comparten el ID de página.
@@ -97,7 +153,7 @@ El árbol sirve para navegación lateral, etiquetas de búsqueda, expansión de 
 
 Las URLs versionadas utilizan `/v/<version>/`; `?lang=pt` elige el idioma y `?id=101` elige la página. `?name=chapter` selecciona el slug del documento. Mantén `VersionControl.versions[].path` apuntando al config de la versión correspondiente. `site.ActiveNavigation` activa la navegación rápida y su atajo Ctrl+K. Los controles anterior/siguiente del pie siguen los destinos disponibles en el menú; la navegación entre documentos en modo foco tiene su propia opción. Consulta Modo foco para controles de sección y documento.
 
-Los botones anterior/siguiente del pie usan `site.icons.DocumentPrevious` (`FiChevronLeft`) y `site.icons.DocumentNext` (`FiChevronRight`) por defecto. Define `reactIcon: false` en cualquier entrada para mostrar su texto traducido; cada entrada también acepta `tag`, `size`, `colorDark` y `colorLight`. La apariencia no cambia la navegación: el pie aparece cuando hay más de un destino disponible en el menú, y la dirección no disponible permanece desactivada en los extremos.
+Los botones anterior/siguiente del pie usan `site.icons.DocumentPrevious` (`LuChevronLeft`) y `site.icons.DocumentNext` (`LuChevronRight`) por defecto. Define `reactIcon: false` en cualquier entrada para mostrar su texto traducido; cada entrada también acepta `tag`, `size`, `colorDark` y `colorLight`. La apariencia no cambia la navegación: el pie aparece cuando hay más de un destino disponible en el menú, y la dirección no disponible permanece desactivada en los extremos.
 
 Prueba un menú nuevo desde la barra lateral, por URL directa y en cada idioma habilitado; confirma que el destino existe y está permitido para el lector actual.
 

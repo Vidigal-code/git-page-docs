@@ -1,4 +1,4 @@
-export type { LanguageCode, ThemeMode, SiteConfig, PdfOptions, FocusModeOptions, AccessibilitySettings, NarrationSettings, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
+export type { LanguageCode, ThemeMode, SiteConfig, PdfOptions, FocusModeOptions, BackToTopOptions, AccessibilitySettings, NarrationSettings, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
 export type { VersionEntry, VersionControlConfig } from "./types/version";
 export type {
   LayoutItem,

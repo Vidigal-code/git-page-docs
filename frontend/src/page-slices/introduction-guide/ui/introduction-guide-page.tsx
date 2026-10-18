@@ -152,7 +152,7 @@ export function IntroductionGuidePage() {
                 </GuideReveal>
               ))}
             </div>
-            <GuideBackToTop label={content.ui.backToTop} targetId={GUIDE_TOP_ID} />
+            <GuideBackToTop label={content.ui.backToTop} targetId={GUIDE_TOP_ID} settings={siteConfig?.backToTop} />
           </div>
         </div>
       </GuideMotionProvider>

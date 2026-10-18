@@ -4,7 +4,7 @@
 
 This file records the public contracts checked by `tools/smoke/` and the current
 viewer tests. Supported compatibility starts at version **0.0.1**; legacy 1.1.x
-formats are outside the supported baseline. Version 0.0.12 adds capabilities
+formats are outside the supported baseline. Version 0.0.13 adds capabilities
 without removing existing 0.0.x routes, configuration or documentation folders.
 
 > Keep the contract checks and this checklist aligned when changing the scaffold.
@@ -43,7 +43,7 @@ Flags include `--build --serve --layoutconfig --layouts-dir --full --push --home
 - `gitpagedocs/config.json` contains `site` and `VersionControl`; language bundles hold generated UI strings, while legacy inline strings remain readable.
 - `site.languages` in `gitpagedocs/config.json` (`{ "en": true, "pt": true, "es": true }`) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
 - `gitpagedocs/icon.svg`.
-- Per version in `DOC_VERSIONS` (`cli/contracts/doc-versions.mjs`; currently `0.0.12`, `0.0.11`, `0.0.10`):
+- Per version in `DOC_VERSIONS` (`cli/contracts/doc-versions.mjs`; currently `0.0.13`, `0.0.12`, `0.0.11`, `0.0.10`, `0.0.9`, newest first):
   `gitpagedocs/docs/versions/<v>/config.json` contains `routes-md`, `routes-html`, `routes-source-viewer`, `routes-video`, `routes-audio`, `routes-pdf` and corresponding `menus-header-*`. `pages[].blocks` adds ordered, repeated MD/HTML/video/audio/PDF references without replacing legacy routes. Localized Markdown and the HTML demo come from `cli/content/`; the included English PDF is copied unchanged.
 - The source-viewer route points at the GitHub tree URL (`source-viewer-path`), so no HTML snapshot is generated any more; the byte-stable contract covers `config.json` + `langs/*.json` only.
 - Deterministic configuration and language bundles are checked against the approved `baseline.snapshot.json`. Intentional default changes require regeneration, review and baseline refresh; existing user-authored documents are preserved by the normal output policy.

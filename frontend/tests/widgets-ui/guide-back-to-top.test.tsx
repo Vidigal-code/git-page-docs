@@ -20,11 +20,14 @@ describe("GuideBackToTop", () => {
         dispatchEvent: vi.fn(),
       })),
     );
-    window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
+    vi.stubGlobal("scrollTo", vi.fn());
+    vi.stubGlobal("innerHeight", 800);
+    vi.spyOn(document.documentElement, "scrollHeight", "get").mockReturnValue(2400);
   });
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
 

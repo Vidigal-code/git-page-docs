@@ -3,6 +3,14 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.13 - 2026-10-18 - reading controls and retained documentation versions
+
+- Narrate only the visible section in focus mode. Stop the previous speech when changing sections or documents and when entering or leaving focus mode, while preserving voice, speed and volume preferences. Disabling section navigation keeps the whole document visible and available for narration.
+- Show a back-to-top arrow on long documentation pages and the introduction guide. Configure visibility with `site.backToTop.enabled` and the minimum page height with `site.backToTop.minPageHeightViewports`, which defaults to three viewport heights.
+- Apply the active theme to the native voice selector and its options while preserving browser keyboard behavior.
+- Register every documentation version from 0.0.9 through 0.0.13 in descending order, with localized configuration and reading guides. Preserve older folders and the existing PDF guide.
+- Correct the project overview to describe the current catalog of 124 themes and synchronize the generated documentation in English, Portuguese and Spanish.
+
 ## 0.0.12 - 2026-10-18 - animated themes and configurable playback controls
 
 - Expand the theme catalog from 64 to 124 entries with 20 standalone animated presets and 20 additional parallax families, each with dark and light variants. Preserve the existing themes and native light/dark pairing.

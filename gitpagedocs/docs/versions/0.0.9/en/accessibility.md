@@ -37,7 +37,9 @@ Merge the following settings into `gitpagedocs/config.json`:
 
 Narration starts only after your action; there is no autoplay. Automatic voice selection follows the document language, while an explicit voice choice uses that voice's language. Narration does not translate the document.
 
-The speech content is readable text extracted from the rendered Markdown. Scripts, styles, SVG content and elements marked hidden for assistive technology are excluded. Long documents are read completely in successive blocks. Changing the document or language, disabling narration or leaving the page cancels the previous speech.
+The speech content is readable text extracted from the rendered Markdown. Scripts, styles, SVG content and elements marked hidden for assistive technology are excluded. Long visible content is read completely in successive blocks. Changing the document or language, disabling narration or leaving the page cancels the previous speech.
+
+In focus mode, narration uses only the displayed section. Changing sections or documents, or entering or leaving focus mode, stops the previous reading. Start again to read the newly visible content. With `site.focusMode.sectionNavigationEnabled: false`, the whole document remains visible and narratable. These transitions preserve the selected voice, speed and volume.
 
 The normal view and focus mode share voice, speed and volume preferences while the page remains mounted. These preferences are not stored across reloads. Non-numeric speed or volume settings use `1`; numeric settings outside the supported ranges are clamped to their nearest limit.
 

@@ -27,11 +27,11 @@ Adicione este bloco dentro de `site` em `gitpagedocs/config.json`:
 
 A precedência das ações é `rota.pdf.<flag>` > `site.pdf.<flag>` > `true`. Um `true` explícito na rota habilita aquela ação mesmo quando o padrão do site é `false`; `site.pdf.enabled: false` continua desabilitando todos os PDFs. Sem caminho para o idioma selecionado, o PDF fica indisponível; não há fallback automático de idioma.
 
-As ações PDF usam ícones por padrão. Configure `site.icons.PdfDownload` (`FiDownload`) e `site.icons.PdfOpenInNewTab` (`FiExternalLink`) individualmente com `reactIcon`, `tag`, `size`, `colorDark` e `colorLight`. Por exemplo, `"PdfDownload": { "reactIcon": false }` exibe texto no download enquanto a nova aba continua com ícone. A aparência não altera as opções de habilitação acima.
+As ações PDF usam ícones por padrão. Configure `site.icons.PdfDownload` (`LuDownload`) e `site.icons.PdfOpenInNewTab` (`LuExternalLink`) individualmente com `reactIcon`, `tag`, `size`, `colorDark` e `colorLight`. Por exemplo, `"PdfDownload": { "reactIcon": false }` exibe texto no download enquanto a nova aba continua com ícone. A aparência não altera as opções de habilitação acima.
 
 ## Exemplo de rota e menu
 
-Em `gitpagedocs/docs/versions/0.0.10/config.json`, mantenha as listas de rotas e menus no nível principal:
+Em `gitpagedocs/docs/versions/0.0.9/config.json`, mantenha as listas de rotas e menus no nível principal:
 
 ```json
 {
@@ -40,9 +40,9 @@ Em `gitpagedocs/docs/versions/0.0.10/config.json`, mantenha as listas de rotas e
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.10/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.9/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,

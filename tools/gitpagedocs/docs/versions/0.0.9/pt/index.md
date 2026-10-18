@@ -36,7 +36,16 @@ O runtime espera esta estrutura:
 - **Referência da CLI**: instalação, todos os comandos e flags de compatibilidade.
 - **Servidor MCP**: cliente, 20 tools, 7 resources e configuração de provedores.
 - **Navegação e submenus**: árvores recursivas, URLs e sobrescritas dos breadcrumbs.
+- **Blocos de conteúdo ordenados**: repita e ordene Markdown, HTML, vídeo, áudio e PDF na mesma página; posicione títulos e descrições configurados independentemente.
 - **Modo foco**: copiar/baixar Markdown e navegar por seção/documento.
 - **Acessibilidade e narração**: vozes do navegador, controles e interação com mídias.
+- **Documentos PDF**: prévia nativa, download/nova aba e o guia incluído em inglês.
+- **Receitas de configuração**: um site multilíngue completo e um menu com seções dentro de seções.
+- **Migração e compatibilidade**: atualizar configurações desde a versão 0.0.1 preservando seu conteúdo.
+- **Solução de problemas**: UTF-8, caminhos locais e do Pages, carregamento de PDF, vozes e inicialização do MCP.
+- **Contribuição e validação**: arquivos fonte, geração, contratos públicos e verificações de publicação.
+- **Containers HTML**: páginas locais e externas, configuração de rotas/menus e o exemplo interativo DOOM.
+
+O menu gerado mantém Primeiros passos e Visão geral do projeto no início. Guias contém Configure seu site, Leia e explore e Automatize e integre; cada categoria contém suas páginas relacionadas. Operação e desenvolvimento agrupa publicação, manutenção e contribuição. Git e GitHub contém os exemplos de repositório. As categorias podem conter outras categorias sem um limite fixo de níveis.
 
 > Versão: 0.0.9

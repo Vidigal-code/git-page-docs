@@ -33,6 +33,8 @@ Cada opção tem padrão `true`; `false` oculta a ação ou o grupo de navegaç�
 
 ## Copiar e baixar
 
+Em uma página composta, o foco lê os blocos Markdown autorizados em ordem, incluindo repetições. Copiar/baixar reúne essas fontes e usa `page-<id>.md`; as ações individuais dos blocos mantêm os nomes originais. Consulte Blocos de conteúdo ordenados para o contrato completo.
+
 Copiar e baixar usam o **Markdown original inteiro no idioma selecionado**, incluindo seções que não estão visíveis no momento. Não exportam o HTML renderizado nem apenas a seção atual.
 
 O download conserva o nome-base Markdown do `path` localizado da rota; quando indisponível, o nome do arquivo é `document.md`. A área de transferência segue as permissões e regras de contexto seguro do navegador. Se a cópia falhar, use o download e confira o erro exibido.
@@ -41,6 +43,6 @@ O download conserva o nome-base Markdown do `path` localizado da rota; quando in
 
 O diálogo possui nome acessível, gerenciamento de foco do teclado e controle de fechar. Use Tab para percorrer controles e Escape para fechar. Controles só com ícone continuam com seus nomes traduzidos acessíveis. Fechar o diálogo retorna à documentação.
 
-A narração é configurada separadamente em Acessibilidade. Trocar documento ou idioma cancela a narração anterior, evitando continuar a leitura de conteúdo antigo.
+A narração é configurada separadamente em Acessibilidade. No modo foco, lê somente a seção exibida. Trocar seção, documento ou idioma, entrar ou sair do modo foco interrompe a fala anterior; a próxima leitura começa no conteúdo visível. As preferências de voz, velocidade e volume são mantidas. Com `sectionNavigationEnabled: false`, o documento inteiro fica visível e disponível para narração. Copiar/baixar continua incluindo a fonte original completa.
 
 > Versão: 0.0.9

@@ -78,9 +78,9 @@ describe("contracts index", () => {
     expect(contracts.layoutsArtifactPaths("themes").config).toBe("themes/layoutsConfig.json");
   });
 
-  it("publishes the current docs while retaining the 0.0.11 and 0.0.10 examples", () => {
+  it("publishes the current docs while retaining every version from 0.0.9 onward", () => {
     expect(PACKAGE_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
-    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.11", "0.0.10"]);
+    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.12", "0.0.11", "0.0.10", "0.0.9"]);
     expect(versionConstants.DOC_VERSIONS).toBe(DOC_VERSIONS);
   });
 

@@ -36,44 +36,58 @@ Principais chaves:
 - `layoutsConfigPath`: fallback remoto para layouts
 - `rendering`: URL canonica publicada
 
+## Voltar ao topo em páginas longas
+
+A seta de voltar ao topo nas páginas de documentação e em `/introduction-guide` é controlada por `site.backToTop` em `gitpagedocs/config.json`:
+
+```json
+{ "site": { "backToTop": { "enabled": true, "minPageHeightViewports": 3 } } }
+```
+
+Por padrão, a seta fica habilitada somente em uma página com rolagem cuja altura total seja pelo menos três vezes a altura da área visível do navegador. Use `enabled: false` para ocultá-la. `minPageHeightViewports` aceita um número finito maior que `1`; valores ausentes ou inválidos usam `3`. Por exemplo, `4` exige uma página com pelo menos quatro alturas da área visível. O limiar mede a altura total da página, não a distância já percorrida. A mesma configuração controla as páginas de documentação e o guia de introdução.
+
 ## Controles de idioma, tema, foco, navegação rápida, PDF e documentos
 
-Em `gitpagedocs/config.json`, estas entradas de `site.icons` configuram idioma, tema, foco, navegação Ctrl+K, ações PDF e navegação no rodapé dos documentos. Os oito controles usam React Icons por padrão:
+Em `gitpagedocs/config.json`, estas entradas de `site.icons` configuram idioma, tema, versão, foco, navegação Ctrl+K, ações PDF e navegação no rodapé dos documentos. Os nove controles usam React Icons por padrão:
 
 ```json
 {
   "site": {
     "icons": {
       "LanguageSelector": {
-        "reactIcon": true, "tag": "FiGlobe", "size": "22px",
+        "reactIcon": true, "tag": "SiGoogletranslate", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "ThemeSelector": {
-        "reactIcon": true, "tag": "BsSunFill", "size": "22px",
+        "reactIcon": true, "tag": "LuPencil", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "MdFullscreen", "size": "22px",
+        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "VersionSelector": {
+        "reactIcon": true, "tag": "LuGitBranch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
-        "reactIcon": true, "tag": "FiSearch", "size": "22px",
+        "reactIcon": true, "tag": "LuSearch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfDownload": {
-        "reactIcon": true, "tag": "FiDownload", "size": "22px",
+        "reactIcon": true, "tag": "LuDownload", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "PdfOpenInNewTab": {
-        "reactIcon": true, "tag": "FiExternalLink", "size": "22px",
+        "reactIcon": true, "tag": "LuExternalLink", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentPrevious": {
-        "reactIcon": true, "tag": "FiChevronLeft", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronLeft", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "DocumentNext": {
-        "reactIcon": true, "tag": "FiChevronRight", "size": "22px",
+        "reactIcon": true, "tag": "LuChevronRight", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       }
     }
@@ -86,6 +100,8 @@ Cada controle é independente: `reactIcon: true` mostra o ícone (padrão); `fal
 Configs compactos podem mover valores comuns para `site.icons.defaults`; campos omitidos herdam esses defaults. Defina `reactIcon: false` em uma entrada específica para substituir o ícone padrão por texto.
 
 ## Seção `VersionControl`
+
+`site.icons.VersionSelector` usa `LuGitBranch` por padrão. Defina `reactIcon: false` para mostrar o texto da versão selecionada; `true` mostra o ícone. Personalize os mesmos campos `tag`, `size`, `colorDark` e `colorLight`. O seletor aparece somente quando há mais de uma versão de documentação, preserva o nome acessível localizado do seletor e mostra a versão selecionada no tooltip.
 
 `VersionControl.versions` define:
 
