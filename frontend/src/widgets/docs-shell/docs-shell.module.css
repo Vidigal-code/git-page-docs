@@ -936,9 +936,38 @@ dialog.contentContainerFullscreen {
 
 .footerActions {
   margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(44px, 1fr) minmax(0, auto) minmax(44px, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.footerActions:empty {
+  display: none;
+}
+
+.footerNavigation {
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
   justify-content: center;
+  min-width: 0;
   gap: 12px;
+}
+
+.footerNavigation .button {
+  min-width: 44px;
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.footerBackToTop {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+  display: flex;
 }
 
 .browseNavBar {
@@ -1629,14 +1658,6 @@ dialog.versionLinksCard {
 
   .headerRight {
     display: none;
-  }
-
-  .footerActions {
-    flex-direction: column;
-  }
-
-  .footerActions .button {
-    width: 100%;
   }
 
   .mobileDrawerOverlay {

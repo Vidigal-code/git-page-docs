@@ -115,22 +115,25 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
           onFullscreenOpen={onFullscreenOpen}
           onFullscreenClose={onFullscreenClose}
         />
-        {linearNavigationEntries.length > 1 && (
-          <div className={styles.footerActions}>
-            <button type="button" className={previousIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious} aria-label={labels.previousLabel} title={labels.previousLabel}>
-              {previousIcon ? <ControlIcon icon={previousIcon} fallback={<FiChevronLeft aria-hidden />} /> : labels.previousLabel}
-            </button>
-            <button type="button" className={nextIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext} aria-label={labels.nextLabel} title={labels.nextLabel}>
-              {nextIcon ? <ControlIcon icon={nextIcon} fallback={<FiChevronRight aria-hidden />} /> : labels.nextLabel}
-            </button>
-          </div>
-        )}
-        <BackToTop
-          label={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "backToTop", "Back to top")}
-          targetId={mainId}
-          enabled={data.config.site.backToTop?.enabled}
-          minPageHeightViewports={data.config.site.backToTop?.minPageHeightViewports}
-        />
+        <div className={styles.footerActions}>
+          {linearNavigationEntries.length > 1 && (
+            <div className={styles.footerNavigation}>
+              <button type="button" className={previousIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious} aria-label={labels.previousLabel} title={labels.previousLabel}>
+                {previousIcon ? <ControlIcon icon={previousIcon} fallback={<FiChevronLeft aria-hidden />} /> : labels.previousLabel}
+              </button>
+              <button type="button" className={nextIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext} aria-label={labels.nextLabel} title={labels.nextLabel}>
+                {nextIcon ? <ControlIcon icon={nextIcon} fallback={<FiChevronRight aria-hidden />} /> : labels.nextLabel}
+              </button>
+            </div>
+          )}
+          <BackToTop
+            label={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "backToTop", "Back to top")}
+            targetId={mainId}
+            enabled={data.config.site.backToTop?.enabled}
+            minPageHeightViewports={data.config.site.backToTop?.minPageHeightViewports}
+            className={styles.footerBackToTop}
+          />
+        </div>
       </main>
       {footerEnabled && (
         <SiteFooter
