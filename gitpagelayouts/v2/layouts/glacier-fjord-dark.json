@@ -1,0 +1,132 @@
+{
+  "id": "glacier-fjord-dark",
+  "name": "Glacier Fjord Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0C2130",
+    "primary": "#A5F3FC",
+    "secondary": "#C7D2FE",
+    "text": "#EAF8FF",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#163547",
+    "cardBorder": "#3B5A70",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 20% 50%, #163547 0%, #0C2130 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.65
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 28,
+        "scroll": 0.045
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "glacier-fjord-waves-1",
+          "kind": "waves",
+          "count": 6,
+          "colors": [
+            "#A5F3FC",
+            "#C7D2FE"
+          ],
+          "opacity": 0.22,
+          "size": {
+            "min": 260,
+            "max": 560
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 14,
+            "y": 6
+          },
+          "position": {
+            "x": 4,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": -10,
+          "depth": 1.2,
+          "seed": 3809
+        },
+        {
+          "id": "glacier-fjord-grid-2",
+          "kind": "grid",
+          "count": 2,
+          "colors": [
+            "#A5F3FC",
+            "#C7D2FE"
+          ],
+          "opacity": 0.09,
+          "size": {
+            "min": 180,
+            "max": 280
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -8,
+            "y": 4
+          },
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 28,
+          "depth": 0.45,
+          "seed": 3828
+        },
+        {
+          "id": "glacier-fjord-stars-3",
+          "kind": "stars",
+          "count": 28,
+          "colors": [
+            "#A5F3FC",
+            "#C7D2FE"
+          ],
+          "opacity": 0.5,
+          "size": {
+            "min": 1,
+            "max": 4
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 12,
+            "y": 95
+          },
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 2,
+          "rotation": 0,
+          "depth": 1.8,
+          "seed": 3847
+        }
+      ]
+    }
+  }
+}

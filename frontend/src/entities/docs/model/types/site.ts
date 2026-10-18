@@ -1,4 +1,5 @@
 import type { IconConfigFields } from "@/shared/lib/icons/icon-config-fields";
+import type { SiteBackgroundEffectsConfig } from "./theme-background";
 
 /**
  * Any language code a site may ship ("pt", "en" and "es" are the bundled ones).
@@ -48,6 +49,7 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
   HideThemeSelector: boolean;
   ThemeDefault: string;
   ThemeModeDefault?: ThemeMode;
+  backgroundEffects?: SiteBackgroundEffectsConfig;
   ProjectLink?: string;
   docsVersion?: string;
   ActiveNavigation?: boolean;
@@ -172,7 +174,10 @@ export type StandardIconName =
   | "PdfDownload"
   | "PdfOpenInNewTab"
   | "DocumentPrevious"
+  | "VersionSelector"
   | "DocumentNext"
+  | "BackgroundAnimationPause"
+  | "BackgroundAnimationResume"
   /** Header brand icon */
   | "ImageMenuHeader"
   /** Project link icon */

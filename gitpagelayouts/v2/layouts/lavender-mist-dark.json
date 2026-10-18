@@ -1,0 +1,132 @@
+{
+  "id": "lavender-mist-dark",
+  "name": "Lavender Mist Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#21192F",
+    "primary": "#D8B4FE",
+    "secondary": "#C4B5FD",
+    "text": "#F5EEFF",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#322540",
+    "cardBorder": "#58446D",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 50% 30%, #322540 0%, #21192F 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8500000000000001
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 16,
+        "scroll": 0.075
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "lavender-mist-orbs-1",
+          "kind": "orbs",
+          "count": 8,
+          "colors": [
+            "#D8B4FE",
+            "#C4B5FD"
+          ],
+          "opacity": 0.17,
+          "size": {
+            "min": 220,
+            "max": 450
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 18,
+            "y": -10
+          },
+          "position": {
+            "x": -8,
+            "y": -3
+          },
+          "blur": 58,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.65,
+          "seed": 4011
+        },
+        {
+          "id": "lavender-mist-waves-2",
+          "kind": "waves",
+          "count": 5,
+          "colors": [
+            "#D8B4FE",
+            "#C4B5FD"
+          ],
+          "opacity": 0.13,
+          "size": {
+            "min": 300,
+            "max": 600
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -16,
+            "y": 5
+          },
+          "position": {
+            "x": -8,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 14,
+          "depth": 1.2,
+          "seed": 4030
+        },
+        {
+          "id": "lavender-mist-stars-3",
+          "kind": "stars",
+          "count": 16,
+          "colors": [
+            "#D8B4FE",
+            "#C4B5FD"
+          ],
+          "opacity": 0.3,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 5,
+            "y": -22
+          },
+          "position": {
+            "x": -8,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 6,
+          "rotation": 0,
+          "depth": 1.6,
+          "seed": 4049
+        }
+      ]
+    }
+  }
+}

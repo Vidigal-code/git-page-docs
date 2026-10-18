@@ -43,6 +43,7 @@ export const RECIPE_ROOT_JSON = JSON.stringify({
       defaults: { reactIcon: true, size: "22px", colorDark: "currentColor", colorLight: "currentColor" },
       LanguageSelector: { tag: "SiGoogletranslate" },
       ThemeSelector: { tag: "LuPencil" },
+      VersionSelector: { tag: "LuGitBranch" },
       FocusMode: { tag: "LuBookOpen" },
       QuickNavigation: { tag: "LuSearch" },
       PdfDownload: { tag: "LuDownload" },

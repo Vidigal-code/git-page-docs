@@ -1,0 +1,190 @@
+{
+  "id": "forest-canopy-dark",
+  "name": "Forest Canopy Dark",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0B1B12",
+    "primary": "#86EFAC",
+    "secondary": "#FDE68A",
+    "text": "#EAF5E9",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#162D1F",
+    "cardBorder": "#375540",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#0B1220",
+      "borderBottom": "1px solid #334155"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#0B1220",
+      "borderTop": "1px solid #334155"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 60px rgba(0, 0, 0, 0.45)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #375540",
+      "hoverGlow": "0 0 0 3px rgba(134, 239, 172, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #375540",
+      "backgroundColor": "#162D1F",
+      "textAlign": "center",
+      "iconColor": "#FDE68A",
+      "hoverBorderColor": "rgba(134, 239, 172, 0.7)",
+      "focusBorderColor": "rgba(134, 239, 172, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(134, 239, 172, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#86EFAC",
+      "borderColor": "#475569",
+      "hoverBorderColor": "rgba(34, 211, 238, 0.75)",
+      "checkMarkColor": "#0B1B12",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": true,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 65% 10%, #162D1F 0%, #0B1B12 78%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.9500000000000001
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 28,
+      "scroll": 0.09
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "forest-canopy-orbs-1",
+        "kind": "orbs",
+        "count": 14,
+        "colors": [
+          "#86EFAC",
+          "#FDE68A"
+        ],
+        "opacity": 0.16,
+        "size": {
+          "min": 90,
+          "max": 230
+        },
+        "duration": {
+          "min": 32,
+          "max": 58
+        },
+        "travel": {
+          "x": 16,
+          "y": 8
+        },
+        "position": {
+          "x": 4,
+          "y": -3
+        },
+        "blur": 24,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 1.1,
+        "seed": 3304
+      },
+      {
+        "id": "forest-canopy-stars-2",
+        "kind": "stars",
+        "count": 22,
+        "colors": [
+          "#86EFAC",
+          "#FDE68A"
+        ],
+        "opacity": 0.34,
+        "size": {
+          "min": 2,
+          "max": 7
+        },
+        "duration": {
+          "min": 37,
+          "max": 65
+        },
+        "travel": {
+          "x": -10,
+          "y": 25
+        },
+        "position": {
+          "x": 4,
+          "y": 0
+        },
+        "blur": 0,
+        "glow": 8,
+        "rotation": 0,
+        "depth": 1.8,
+        "seed": 3323
+      },
+      {
+        "id": "forest-canopy-waves-3",
+        "kind": "waves",
+        "count": 3,
+        "colors": [
+          "#86EFAC",
+          "#FDE68A"
+        ],
+        "opacity": 0.1,
+        "size": {
+          "min": 360,
+          "max": 640
+        },
+        "duration": {
+          "min": 42,
+          "max": 72
+        },
+        "travel": {
+          "x": 6,
+          "y": -4
+        },
+        "position": {
+          "x": 4,
+          "y": 3
+        },
+        "blur": 0,
+        "glow": 0,
+        "rotation": 42,
+        "depth": 0.4,
+        "seed": 3342
+      }
+    ]
+  }
+}

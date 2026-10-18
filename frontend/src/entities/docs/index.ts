@@ -16,6 +16,7 @@ export { hasMarkdownDocument, resolvePageMarkdownHtml, resolvePageMarkdownSource
 export { scopeMarkdownHtml, scopeMarkdownId } from "./lib/markdown/scope-markdown-html";
 export { buildVersionPath } from "./lib/routing/version-path";
 export { resolveThemeByMode } from "./lib/theme/resolve-theme-by-mode";
+export { resolveThemeBackground } from "./lib/theme/resolve-theme-background";
 export { ThemePreloadScript } from "./ui/theme-preload-script/theme-preload-script";
 export {
   SHELL_THEME_CACHE_KEY,

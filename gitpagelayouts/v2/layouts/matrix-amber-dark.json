@@ -1,0 +1,95 @@
+{
+  "id": "matrix-amber-dark",
+  "name": "Matrix Amber",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#140E03",
+    "primary": "#FBBF24",
+    "secondary": "#FDE68A",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#251A07",
+    "cardBorder": "#5C4618",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 35% 0%, #251A07 0%, #140E03 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "matrix-1",
+          "kind": "matrix",
+          "count": 12,
+          "opacity": 0.28,
+          "size": {
+            "min": 13,
+            "max": 17
+          },
+          "duration": {
+            "min": 22,
+            "max": 38
+          },
+          "travel": {
+            "x": 0,
+            "y": 115
+          },
+          "blur": 0,
+          "glow": 2,
+          "rotation": 0,
+          "depth": 0.35,
+          "characters": "0123456789アイウエオカキクケコサシスセソ",
+          "rows": 16,
+          "colors": [
+            "#FBBF24",
+            "#FDE68A"
+          ],
+          "seed": 1958
+        },
+        {
+          "id": "orbs-2",
+          "kind": "orbs",
+          "count": 4,
+          "opacity": 0.18,
+          "size": {
+            "min": 140,
+            "max": 260
+          },
+          "duration": {
+            "min": 28,
+            "max": 52
+          },
+          "travel": {
+            "x": 12,
+            "y": -8
+          },
+          "blur": 36,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.2,
+          "colors": [
+            "#FBBF24",
+            "#FDE68A"
+          ],
+          "seed": 1975
+        }
+      ]
+    }
+  }
+}

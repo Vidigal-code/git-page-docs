@@ -14,7 +14,7 @@ import { GITPAGEDOCS_DOC_SYSTEM_PROMPT } from "../config";
 import { parseAiPages, type AiDocPage } from "./docs-pattern";
 import { writeVersionDocs } from "../infrastructure/version-docs-writer";
 // @ts-expect-error .mjs runtime module is type-less in this package.
-import { DOC_VERSIONS } from "../../contracts/doc-versions.mjs";
+import { PACKAGE_VERSION } from "../../contracts/doc-versions.mjs";
 
 const LANGUAGE_TO_LABEL: Record<string, string> = {
   pt: "Portuguese",
@@ -122,7 +122,7 @@ export async function executeAiRunPlan(
   }
 
   // Wire the AI pages into the latest documentation version (gitpagedocs pattern).
-  const versionId = DOC_VERSIONS[DOC_VERSIONS.length - 1] as string;
+  const versionId = PACKAGE_VERSION as string;
   const result = await writeVersionDocs({ cwd, versionId, pagesByLang });
 
   return {

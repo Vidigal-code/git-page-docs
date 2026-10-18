@@ -5,11 +5,14 @@ const CONTROL_ICON_TAGS = {
   QuickNavigation: "FiSearch",
   LanguageSelector: "FiGlobe",
   ThemeSelector: "BsSunFill",
+  VersionSelector: "FiGitBranch",
   FocusMode: "MdFullscreen",
   PdfDownload: "FiDownload",
   PdfOpenInNewTab: "FiExternalLink",
   DocumentPrevious: "FiChevronLeft",
   DocumentNext: "FiChevronRight",
+  BackgroundAnimationPause: "FiPause",
+  BackgroundAnimationResume: "FiPlay",
 } as const;
 
 export type ControlIconName = keyof typeof CONTROL_ICON_TAGS;

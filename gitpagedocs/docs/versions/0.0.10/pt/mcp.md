@@ -57,7 +57,7 @@ Selecione o provedor com `configure_ai_provider` ou pelo arquivo `.gitpagedocs-m
 | `fireworks` | `FIREWORKS_API_KEY` |
 | `perplexity` | `PERPLEXITY_API_KEY` |
 
-Sem seleção válida, o provedor padrão é OpenAI. Ollama não exige chave de API; o serviço local e o modelo escolhido precisam estar disponíveis. `OLLAMA_BASE_URL` é opcional. A URL base do Azure é a URL completa da operação de chat, incluindo deployment e versão da API quando exigidos. A lista de modelos é um catálogo distribuído, não uma verificação de disponibilidade em tempo real.
+Quando a seleção salva está ausente, ilegível ou contém JSON inválido, o provedor padrão é OpenAI. Um ID de provedor desconhecido em JSON legível gera erro explícito, sem selecionar outro provedor. Ollama não exige chave de API; o serviço local e o modelo escolhido precisam estar disponíveis. `OLLAMA_BASE_URL` é opcional. A URL base do Azure é a URL completa da operação de chat, incluindo deployment e versão da API quando exigidos. A lista de modelos é um catálogo distribuído, não uma verificação de disponibilidade em tempo real.
 
 ## Referência de tools
 
@@ -113,7 +113,7 @@ A etapa de geração envia o conteúdo selecionado do projeto ao provedor config
 
 - Leitura de arquivos: até 512.000 bytes. Listagem: até 2.000 entradas; árvores coletadas do projeto: 400 entradas.
 - Busca: até 5.000 entradas, 200 resultados e 240 caracteres por linha encontrada.
-- Coleta de documentação: primeiros 40 arquivos Markdown entre até 2.000 entradas; arquivos acima de 40.000 bytes são ignorados. O contexto do provedor é limitado a 24.000 caracteres.
+- Coleta de documentação: primeiros 40 arquivos Markdown entre até 2.000 entradas; arquivos acima de 40.000 bytes são ignorados. O contexto coletado de arquivos e Markdown é limitado a 24.000 caracteres. Isso não é um limite global do prompt: árvore/pacote, documento existente e pergunta fornecida podem acrescentar conteúdo conforme a tool escolhida.
 - A listagem ignora pastas de dependências/build como `node_modules`, `.git`, `.next`, `out`, `dist`, `prebuilt`, `.turbo` e `coverage`. Não interpreta `.gitignore`; arquivos como `.env` não são excluídos automaticamente. Execute somente em projeto confiável e selecione o conteúdo que será exposto.
 - A verificação de caminhos é lexical; o processo não é um sandbox do sistema operacional nem garante isolamento de symlinks/junctions. Ler `project://config` pode importar configuração JavaScript/TypeScript.
 - Falhas de tools incluem `isError: true`. Resources ausentes retornam `Unavailable: ...`. Consulte stderr no cliente para falhas de inicialização; stdout é reservado para JSON-RPC.

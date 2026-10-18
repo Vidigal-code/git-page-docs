@@ -4,9 +4,9 @@ This guide builds a small multilingual documentation site with two Markdown page
 
 ## 1. Generate and inspect the scaffold
 
-The scaffold includes versions 0.0.11 and 0.0.10 in the version selector. Both contain the current examples; the package version remains 0.0.11. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
+The scaffold includes versions 0.0.12, 0.0.11 and 0.0.10 in the version selector. All three contain the current examples; the package version is 0.0.12. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
 
-Run `npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY` in a new project directory. In this source repository, `node cli/index.mjs` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
+Run `npx --yes @gitpagedocs/cli@0.0.12 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY` in a new project directory. In this source repository, `node cli/index.mjs` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
 
 Use the following complete JSON as a minimal root-config example in `gitpagedocs/config.json`. For an existing site, merge the relevant fields and preserve its repository identity, deployment settings, themes and other versions.
 
@@ -14,7 +14,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
 {
   "site": {
     "name": "Documentação • Guía • Documentation",
-    "docsVersion": "0.0.11",
+    "docsVersion": "0.0.12",
     "languages": {
       "en": true,
       "pt": true,
@@ -42,6 +42,9 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
       },
       "ThemeSelector": {
         "tag": "LuPencil"
+      },
+      "VersionSelector": {
+        "tag": "LuGitBranch"
       },
       "FocusMode": {
         "tag": "LuBookOpen"
@@ -72,7 +75,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.11",
+        "id": "0.0.12",
         "path": "gitpagedocs/docs/versions/0.0.11/config.json"
       }
     ]
@@ -80,7 +83,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
 }
 ```
 
-The eight entries inherit the common icon presentation from `icons.defaults`. To display text for one action, add `"reactIcon": false` to that entry. Do not change a shared default just to alter one button. Existing flat icon fields win over compact fields, so remove or update an old conflicting field deliberately.
+The nine entries inherit the common icon presentation from `icons.defaults`. To display text for one action, add `"reactIcon": false` to that entry. Do not change a shared default just to alter one button. Existing flat icon fields win over compact fields, so remove or update an old conflicting field deliberately.
 
 ## 2. Create the version configuration
 

@@ -16,8 +16,10 @@ const routeVideo = '[data-testid="route-video"]';
 
 async function startBackgroundRadio(page: Page): Promise<void> {
   await page.locator('[data-testid="audio-player-toggle"]:visible').first().click();
-  const option = page.getByTestId("audio-track-option").first();
-  if (await option.isVisible()) await option.click();
+  const playlist = page.getByRole("dialog", { name: "Choose track", exact: true });
+  await expect(playlist).toBeVisible();
+  await playlist.getByTestId("audio-track-option").first().click();
+  await expect(playlist).toBeHidden();
 }
 
 function youtubePlayer(page: Page): Locator {

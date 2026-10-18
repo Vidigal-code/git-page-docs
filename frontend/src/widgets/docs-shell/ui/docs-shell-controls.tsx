@@ -56,6 +56,7 @@ export function DocsShellControls({
   availableVersions,
   selectedVersionValue,
   versionLabel,
+  versionSelectorIcon,
   isLanguageSelectVisible,
   availableLanguages,
   language,
@@ -144,7 +145,8 @@ export function DocsShellControls({
       {activeNavigation && <QuickNavigationTrigger className={quickNavigationIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} label={quickNavLabel} icon={quickNavigationIcon} onClick={onOpenQuickNavigation} />}
       {showVersionSelector && (
         <VersionSelector
-          className={styles.select}
+          className={versionSelectorIcon ? `${styles.button} ${styles.modeIconButton}` : styles.select}
+          icon={versionSelectorIcon}
           versions={availableVersions}
           value={selectedVersionValue}
           onChange={onVersionChange}

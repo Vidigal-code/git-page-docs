@@ -4,6 +4,7 @@ import { operationsEn } from "./operations-en.mjs";
 import { overviewsEn } from "./overviews-en.mjs";
 import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
 import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
+import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
 
 export const docsEn = {
     ...practicalEn,
@@ -43,7 +44,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.11/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.12/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -52,9 +53,9 @@ In \`gitpagedocs/docs/versions/0.0.11/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -434,7 +435,7 @@ Behavior:
 
 ## Language, theme, focus, quick navigation, PDF and document controls
 
-In \`gitpagedocs/config.json\`, these \`site.icons\` entries configure the language selector, theme selector, focus, Ctrl+K navigation, PDF actions and document-footer navigation. All eight controls use React Icons by default:
+In \`gitpagedocs/config.json\`, these \`site.icons\` entries configure the language selector, theme selector, focus, Ctrl+K navigation, PDF actions and document-footer navigation. All nine controls use React Icons by default:
 
 \`\`\`json
 {
@@ -446,6 +447,10 @@ In \`gitpagedocs/config.json\`, these \`site.icons\` entries configure the langu
       },
       "ThemeSelector": {
         "reactIcon": true, "tag": "LuPencil", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "VersionSelector": {
+        "reactIcon": true, "tag": "LuGitBranch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
@@ -482,6 +487,8 @@ Each control is independent: \`reactIcon: true\` shows its icon (the default); \
 Compact configs may move shared values into \`site.icons.defaults\`; omitted fields inherit those defaults. Set \`reactIcon: false\` on a specific entry to override the default icon presentation with text.
 
 ## \`VersionControl\` section
+
+\`site.icons.VersionSelector\` uses \`LuGitBranch\` by default. Set \`reactIcon: false\` to display the selected version as text; \`true\` displays its icon. Customize the same \`tag\`, \`size\`, \`colorDark\` and \`colorLight\` fields. The selector appears only when more than one documentation version is available, retains the localized accessible name of the selector and shows the selected version in its tooltip.
 
 \`VersionControl.versions\` defines:
 
@@ -699,6 +706,8 @@ Select an installed theme through the theme selector or configure \`site.ThemeDe
 For your own repository, run the CLI with \`--layoutconfig\`, then edit the generated template and keep its ID consistent with \`layoutsConfig.json\`. A route's content and \`site.icons\` remain independent of the theme catalog. Use \`currentColor\` for icons that should inherit the active text color, or configure separate dark/light colors with sufficient contrast.
 
 When contributing to Git Page Docs itself, the authoring source is \`gitpagelayouts/v2/base.json\` plus \`gitpagelayouts/v2/layouts/<id>.json\`. Run \`pnpm layouts:sync\` to regenerate templates and documentation. Direct edits to generated templates can be overwritten by that synchronization.
+
+${THEME_BACKGROUND_DOCS.en}
 `,
     mcp: `# MCP server
 
@@ -759,7 +768,7 @@ Select a provider using \`configure_ai_provider\` or \`.gitpagedocs-mcp.json\` a
 | \`fireworks\` | \`FIREWORKS_API_KEY\` |
 | \`perplexity\` | \`PERPLEXITY_API_KEY\` |
 
-With no valid selection, the default provider is OpenAI. Ollama does not require an API key; its local service and chosen model must be available. \`OLLAMA_BASE_URL\` is optional. Azure's base URL is the complete chat-operation URL, including deployment and API-version query when required. Model listings are the bundled catalog, not a live availability check.
+When the saved selection is absent, unreadable or invalid JSON, the default provider is OpenAI. An unknown provider ID in readable JSON produces an explicit error instead of selecting another provider. Ollama does not require an API key; its local service and chosen model must be available. \`OLLAMA_BASE_URL\` is optional. Azure's base URL is the complete chat-operation URL, including deployment and API-version query when required. Model listings are the bundled catalog, not a live availability check.
 
 ## Tool reference
 
@@ -815,7 +824,7 @@ The generation step sends selected project content to the configured provider.
 
 - File reads: up to 512,000 bytes. Listing: up to 2,000 entries; gathered project trees: 400 entries.
 - Search: up to 5,000 entries, 200 matches, 240 characters per matching line.
-- Documentation gathering: first 40 Markdown files among up to 2,000 entries; files over 40,000 bytes are skipped. Provider context is capped at 24,000 characters.
+- Documentation gathering: first 40 Markdown files among up to 2,000 entries; files over 40,000 bytes are skipped. Gathered file and Markdown context is limited to 24,000 characters. This is not a global prompt limit: tree/package context, an existing document and a caller-supplied question can add content according to the selected tool.
 - Listing skips build/dependency directories such as \`node_modules\`, \`.git\`, \`.next\`, \`out\`, \`dist\`, \`prebuilt\`, \`.turbo\` and \`coverage\`. It does not interpret \`.gitignore\`; files such as \`.env\` are not automatically excluded. Run only in a trusted project and select the content to expose.
 - Path checks use lexical containment; do not treat the process as an operating-system sandbox or assume symlink/junction isolation. Loading \`project://config\` can import JavaScript/TypeScript configuration.
 - Tool failures include \`isError: true\`. Missing resources return \`Unavailable: ...\`. Check the client's stderr log for startup errors; stdout is reserved for JSON-RPC.
@@ -1142,7 +1151,7 @@ Because GitHub Pages build mode enables repository-search home and static-export
 
 ## Why does an icon still show text?
 
-Set \`site.icons.<Control>.reactIcon\` to the boolean \`true\`, with an exact React Icons export name in \`tag\`. LanguageSelector, ThemeSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious and DocumentNext use icons by default; set any entry to \`false\` for text. Flat \`Icon*ReactIcones\` fields take precedence if both formats are present. Check whether the feature itself is disabled, such as \`HideThemeSelector\`, \`FocusMode\` or the PDF action flags.
+Set \`site.icons.<Control>.reactIcon\` to the boolean \`true\`, with an exact React Icons export name in \`tag\`. LanguageSelector, ThemeSelector, VersionSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious and DocumentNext use icons by default; set any entry to \`false\` for text. Flat \`Icon*ReactIcones\` fields take precedence if both formats are present. Check whether the feature itself is disabled, such as \`HideThemeSelector\`, \`FocusMode\` or the PDF action flags.
 
 ## Why do menu children or breadcrumbs differ?
 

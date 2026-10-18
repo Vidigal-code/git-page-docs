@@ -13,6 +13,8 @@
     "footerLabel": "Proyecto",
     "menuOpen": "Menú",
     "menuClose": "Cerrar",
+    "backgroundAnimationPause": "Pausar animación de fondo",
+    "backgroundAnimationResume": "Reanudar animación de fondo",
     "showMenu": "Abrir menú",
     "mdCopyLabel": "Copiar Markdown",
     "mdCopiedLabel": "¡Copiado!",

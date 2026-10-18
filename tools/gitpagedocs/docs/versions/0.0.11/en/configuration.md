@@ -36,7 +36,7 @@ Behavior:
 
 ## Language, theme, focus, quick navigation, PDF and document controls
 
-In `gitpagedocs/config.json`, these `site.icons` entries configure the language selector, theme selector, focus, Ctrl+K navigation, PDF actions and document-footer navigation. All eight controls use React Icons by default:
+In `gitpagedocs/config.json`, these `site.icons` entries configure the language selector, theme selector, focus, Ctrl+K navigation, PDF actions and document-footer navigation. All nine controls use React Icons by default:
 
 ```json
 {
@@ -48,6 +48,10 @@ In `gitpagedocs/config.json`, these `site.icons` entries configure the language 
       },
       "ThemeSelector": {
         "reactIcon": true, "tag": "LuPencil", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "VersionSelector": {
+        "reactIcon": true, "tag": "LuGitBranch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
@@ -84,6 +88,8 @@ Each control is independent: `reactIcon: true` shows its icon (the default); `fa
 Compact configs may move shared values into `site.icons.defaults`; omitted fields inherit those defaults. Set `reactIcon: false` on a specific entry to override the default icon presentation with text.
 
 ## `VersionControl` section
+
+`site.icons.VersionSelector` uses `LuGitBranch` by default. Set `reactIcon: false` to display the selected version as text; `true` displays its icon. Customize the same `tag`, `size`, `colorDark` and `colorLight` fields. The selector appears only when more than one documentation version is available, retains the localized accessible name of the selector and shows the selected version in its tooltip.
 
 `VersionControl.versions` defines:
 

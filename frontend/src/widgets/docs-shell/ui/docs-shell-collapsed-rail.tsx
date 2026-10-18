@@ -12,6 +12,7 @@ export interface CollapsedNavRailProps {
   blockMenuOnNav: boolean;
   setBlockMenuOnNav: (v: boolean) => void;
   navMenuConfig: NavMenuConfig;
+  backgroundControl?: React.ReactNode;
 }
 
 export function CollapsedNavRail({
@@ -20,6 +21,7 @@ export function CollapsedNavRail({
   blockMenuOnNav,
   setBlockMenuOnNav,
   navMenuConfig,
+  backgroundControl,
 }: Readonly<CollapsedNavRailProps>) {
   const expandFallback = <FiChevronsRight aria-hidden />;
 
@@ -34,6 +36,7 @@ export function CollapsedNavRail({
         labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
         className={`${styles.button} ${styles.sidebarRailButton}`}
       />
+      {backgroundControl}
       <button
         className={`${styles.button} ${styles.sidebarRailButton}`}
         onClick={onExpand}

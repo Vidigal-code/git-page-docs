@@ -1,0 +1,132 @@
+{
+  "id": "desert-mirage-light",
+  "name": "Desert Mirage Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFF9EB",
+    "primary": "#92400E",
+    "secondary": "#9A3412",
+    "text": "#4B3922",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E9D6AF",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 35% 10%, #FFFFFF 0%, #FFF9EB 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.75
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 32,
+        "scroll": 0.06
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "desert-mirage-waves-1",
+          "kind": "waves",
+          "count": 8,
+          "colors": [
+            "#92400E",
+            "#9A3412"
+          ],
+          "opacity": 0.144,
+          "size": {
+            "min": 360,
+            "max": 700
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 26,
+            "y": 4
+          },
+          "position": {
+            "x": 8,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": -9,
+          "depth": 1.2,
+          "seed": 3910
+        },
+        {
+          "id": "desert-mirage-orbs-2",
+          "kind": "orbs",
+          "count": 4,
+          "colors": [
+            "#92400E",
+            "#9A3412"
+          ],
+          "opacity": 0.101,
+          "size": {
+            "min": 180,
+            "max": 380
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -15,
+            "y": 8
+          },
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "blur": 48,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.45,
+          "seed": 3929
+        },
+        {
+          "id": "desert-mirage-stars-3",
+          "kind": "stars",
+          "count": 30,
+          "colors": [
+            "#92400E",
+            "#9A3412"
+          ],
+          "opacity": 0.252,
+          "size": {
+            "min": 1,
+            "max": 2
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 115,
+            "y": 16
+          },
+          "position": {
+            "x": 8,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.7,
+          "seed": 3948
+        }
+      ]
+    }
+  }
+}

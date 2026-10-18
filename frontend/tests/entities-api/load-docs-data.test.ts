@@ -30,6 +30,7 @@ beforeEach(() => {
   vi.stubEnv("GITHUB_ACTIONS", "");
   vi.stubEnv("GITPAGEDOCS_REPOSITORY_SEARCH", "");
   vi.stubEnv("GITHUB_REPOSITORY", "");
+  vi.stubEnv("GITPAGEDOCS_LAYOUTS_SOURCE", "");
   workspace = createTempWorkspace();
 });
 
@@ -64,6 +65,49 @@ describe("loadDocsData on a local workspace", () => {
     workspace.write("gitpagelayouts/layoutsConfig.json", LAYOUT_INDEX);
     workspace.write("gitpagelayouts/templates/alpha.json", ALPHA_TEMPLATE);
   }
+
+  function writeOfficialLayoutWorkspace(): ReturnType<typeof vi.fn> {
+    writeVersionedWorkspace();
+    workspace.write("gitpagedocs/config.json", {
+      site: baseSite({ layoutsConfigPathOficial: true }),
+      routes: [],
+    });
+    return stubRepoFetch({
+      "Vidigal-code/git-page-docs/gitpagelayouts/layoutsConfig.json": {
+        layouts: [{ ...LAYOUT_INDEX.layouts[0], id: "published", file: "templates/published.json" }],
+      },
+      "Vidigal-code/git-page-docs/gitpagelayouts/templates/published.json": { ...ALPHA_TEMPLATE, id: "published" },
+    });
+  }
+
+  it("uses the local layout catalog when development explicitly requests a local preview", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("GITPAGEDOCS_LAYOUTS_SOURCE", "local");
+    const fetchSpy = writeOfficialLayoutWorkspace();
+
+    const data = await loadDocsData(undefined);
+
+    expect(data.layoutsConfig.layouts.map(({ id }) => id)).toEqual(["alpha"]);
+    expect(data.themes.alpha).toEqual(ALPHA_TEMPLATE);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(data.config.site.layoutsConfigPathOficial).toBe(true);
+  });
+
+  it.each([
+    { environment: "development", source: "" },
+    { environment: "development", source: "unknown" },
+    { environment: "production", source: "local" },
+    { environment: "test", source: "local" },
+  ])("preserves configured official layouts in $environment with source '$source'", async ({ environment, source }) => {
+    vi.stubEnv("NODE_ENV", environment);
+    vi.stubEnv("GITPAGEDOCS_LAYOUTS_SOURCE", source);
+    const fetchSpy = writeOfficialLayoutWorkspace();
+
+    const data = await loadDocsData(undefined);
+
+    expect(data.layoutsConfig.layouts.map(({ id }) => id)).toEqual(["published"]);
+    expect(fetchSpy).toHaveBeenCalled();
+  });
 
   it("assembles the active version's routes, pages, languages, layouts and defaults", async () => {
     writeVersionedWorkspace();

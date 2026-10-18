@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { buildSourceViewerPath, parseSourceViewerRoute, type SourceViewerRoute } from "@/entities/source-viewer";
 import {
   buildFooterConfigFromData,
@@ -77,8 +77,9 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
     [activeThemeId, activeLayout?.mode, labels.back],
   );
 
-  const header = (
+  const header = (backgroundControl: ReactNode) => (
     <SearchShellHeader
+      additionalControls={backgroundControl}
       languageSelectorIcon={resolveControlIcon(data.config.site, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
       themeSelectorIcon={resolveControlIcon(data.config.site, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
@@ -110,6 +111,9 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
       projectFooterUrl={PROJECT_FOOTER_URL}
       language={language}
       style={cssVars}
+      theme={activeTheme}
+      backgroundEffects={data.config.site.backgroundEffects}
+      siteConfig={data.config.site}
       footerConfig={buildFooterConfigFromData(data, language)}
     >
       {/* A plain wrapper: SearchShellLayout already provides the page's <main>. */}

@@ -32,7 +32,12 @@ const DEFAULT_ICON_TAGS = {
   audioPause: "FaPause",
 } as const;
 
-function getLabel(site: SiteConfig, language: string, key: string, fallback: string): string {
+interface LabelOptions {
+  key: string;
+  fallback: string;
+}
+
+function getLabel(site: SiteConfig, language: string, { key, fallback }: LabelOptions): string {
   return getLangMenuLabelFromMenu(site.langmenu, language, key, fallback);
 }
 
@@ -62,12 +67,13 @@ function getFirstThemeImage(
   return undefined;
 }
 
-function getReactIconStyle(
-  mode: ThemeMode,
-  darkColor: string | undefined,
-  lightColor: string | undefined,
-  size: string | undefined,
-): { color?: string; fontSize?: string } {
+interface IconStyleOptions {
+  darkColor?: string;
+  lightColor?: string;
+  size?: string;
+}
+
+function getReactIconStyle(mode: ThemeMode, { darkColor, lightColor, size }: IconStyleOptions): { color?: string; fontSize?: string } {
   return {
     color: getThemeValue(mode, darkColor, lightColor),
     fontSize: trimToUndefined(size),
@@ -99,9 +105,9 @@ export function useBuildDocsControlsConfig({
   pageHasMarkdown,
 }: UseBuildDocsControlsConfigArgs): DocsShellControlsConfig {
   const versionLinkOptions = useMemo(() => buildVersionLinkOptions(data.activeVersion), [data.activeVersion]);
-  const branchLabel = getLabel(data.config.site, language, "branchLabel", "Branch");
-  const releaseLabel = getLabel(data.config.site, language, "releaseLabel", "Release");
-  const commitLabel = getLabel(data.config.site, language, "commitLabel", "Commit");
+  const branchLabel = getLabel(data.config.site, language, { key: "branchLabel", fallback: "Branch" });
+  const releaseLabel = getLabel(data.config.site, language, { key: "releaseLabel", fallback: "Release" });
+  const commitLabel = getLabel(data.config.site, language, { key: "commitLabel", fallback: "Commit" });
 
   const versionLinkOptionsWithLabels = useMemo(() => {
     const labels = { branch: branchLabel, release: releaseLabel, commit: commitLabel };
@@ -120,25 +126,23 @@ export function useBuildDocsControlsConfig({
   return useMemo(
     () => ({
       fallbackProjectLink: trimToUndefined(data.activeVersion?.ProjectLink) || trimToUndefined(site.ProjectLink),
-      projectLabel: getLabel(site, language, "projectLabel", "Project"),
+      projectLabel: getLabel(site, language, { key: "projectLabel", fallback: "Project" }),
       useReactProjectLinkIcon: Boolean(site.IconProjectLinkReactIcones),
       projectLinkReactIconTag: site.IconProjectLinkReactIconesTag || DEFAULT_ICON_TAGS.projectLink,
-      projectLinkReactIconStyle: getReactIconStyle(
-        mode,
-        site.IconProjectLinkReactIconesTagColorDark,
-        site.IconProjectLinkReactIconesTagColorLight,
-        site.IconProjectLinkReactIconesTagSize,
-      ),
+      projectLinkReactIconStyle: getReactIconStyle(mode, {
+        darkColor: site.IconProjectLinkReactIconesTagColorDark,
+        lightColor: site.IconProjectLinkReactIconesTagColorLight,
+        size: site.IconProjectLinkReactIconesTagSize,
+      }),
       versionLinkOptionsWithLabels,
-      versionLinksLabel: getLabel(site, language, "versionLinksLabel", "Repository links"),
+      versionLinksLabel: getLabel(site, language, { key: "versionLinksLabel", fallback: "Repository links" }),
       useReactVersionLinksIcon: Boolean(site.IconVersionLinksReactIcones),
       versionLinksIconTag: site.IconVersionLinksReactIconesTag || DEFAULT_ICON_TAGS.versionLinks,
-      versionLinksIconStyle: getReactIconStyle(
-        mode,
-        site.IconVersionLinksReactIconesTagColorDark,
-        site.IconVersionLinksReactIconesTagColorLight,
-        site.IconVersionLinksReactIconesTagSize,
-      ),
+      versionLinksIconStyle: getReactIconStyle(mode, {
+        darkColor: site.IconVersionLinksReactIconesTagColorDark,
+        lightColor: site.IconVersionLinksReactIconesTagColorLight,
+        size: site.IconVersionLinksReactIconesTagSize,
+      }),
       versionLinksIconImage: getFirstThemeImage(
         mode,
         [site.IconVersionLinksDarkImg, site.IconVersionLinksHeaderDark],
@@ -152,15 +156,14 @@ export function useBuildDocsControlsConfig({
       previewIconImgHeight: coerceIconSize(site.IconPreviewProjectLinkImgHeight),
       showInfoButton: Boolean(trimToUndefined(data.activeVersion?.UpdateDate)),
       updateDate: trimToUndefined(data.activeVersion?.UpdateDate) ?? "",
-      lastUpdateLabel: getLabel(site, language, "lastUpdateVersionLabel", "Last update version"),
+      lastUpdateLabel: getLabel(site, language, { key: "lastUpdateVersionLabel", fallback: "Last update version" }),
       useReactInfoIcon: Boolean(site.IconInfoHeaderMenuReactIcones),
       infoIconTag: site.IconInfoHeaderMenuReactIconesTag || DEFAULT_ICON_TAGS.info,
-      infoIconStyle: getReactIconStyle(
-        mode,
-        site.IconInfoHeaderMenuReactIconesTagColorDark,
-        site.IconInfoHeaderMenuReactIconesTagColorLight,
-        site.IconInfoHeaderMenuReactIconesTagSize,
-      ),
+      infoIconStyle: getReactIconStyle(mode, {
+        darkColor: site.IconInfoHeaderMenuReactIconesTagColorDark,
+        lightColor: site.IconInfoHeaderMenuReactIconesTagColorLight,
+        size: site.IconInfoHeaderMenuReactIconesTagSize,
+      }),
       infoIconImage: getFirstThemeImage(
         mode,
         [site.IconInfoHeaderMenuDarkImg, site.IconInfoHeaderMenuHeaderDark],
@@ -170,12 +173,11 @@ export function useBuildDocsControlsConfig({
       previewProjectUrl: trimToUndefined(data.activeVersion?.PreviewProject) ?? "",
       useReactPreviewIcon: Boolean(site.IconPreviewProjectLinkReactIcones),
       previewIconTag: site.IconPreviewProjectLinkReactIconesTag || DEFAULT_ICON_TAGS.preview,
-      previewIconStyle: getReactIconStyle(
-        mode,
-        site.IconPreviewProjectLinkReactIconesTagColorDark,
-        site.IconPreviewProjectLinkReactIconesTagColorLight,
-        site.IconPreviewProjectLinkReactIconesTagSize,
-      ),
+      previewIconStyle: getReactIconStyle(mode, {
+        darkColor: site.IconPreviewProjectLinkReactIconesTagColorDark,
+        lightColor: site.IconPreviewProjectLinkReactIconesTagColorLight,
+        size: site.IconPreviewProjectLinkReactIconesTagSize,
+      }),
       previewIconImage: getFirstThemeImage(
         mode,
         [site.IconPreviewProjectLinkDarkImg, site.IconPreviewProjectLinkHeaderDark],
@@ -184,15 +186,16 @@ export function useBuildDocsControlsConfig({
       // Focus mode paginates the page's markdown, so it stays hidden on routes
       // that have none (source-viewer, media-only, untranslated document).
       focusModeEnabled: Boolean(site.FocusMode) && pageHasMarkdown,
-      focusModeLabel: getLabel(site, language, "focusMode", "Focus mode"),
+      focusModeLabel: getLabel(site, language, { key: "focusMode", fallback: "Focus mode" }),
       focusModeIcon: resolveControlIcon(site, { name: "FocusMode", mode }),
       activeNavigation: Boolean(site.ActiveNavigation),
-      quickNavLabel: getLabel(site, language, "quickNavigation", "Ctrl+K"),
+      quickNavLabel: getLabel(site, language, { key: "quickNavigation", fallback: "Ctrl+K" }),
       quickNavigationIcon: resolveControlIcon(site, { name: "QuickNavigation", mode }),
       showVersionSelector: data.availableVersions.length > 1,
       availableVersions: data.availableVersions,
       selectedVersionValue,
-      versionLabel: getLabel(site, language, "versionLabel", "Version"),
+      versionLabel: getLabel(site, language, { key: "versionLabel", fallback: "Version" }),
+      versionSelectorIcon: resolveControlIcon(site, { name: "VersionSelector", mode }),
       isLanguageSelectVisible: data.availableLanguages.length > 1,
       availableLanguages: data.availableLanguages,
       language,
@@ -204,49 +207,47 @@ export function useBuildDocsControlsConfig({
       layouts: data.layoutsConfig.layouts,
       canToggleMode,
       nextModeIsDark,
-      darkModeLabel: getLabel(site, language, "darkMode", "Dark mode"),
-      lightModeLabel: getLabel(site, language, "lightMode", "Light mode"),
+      darkModeLabel: getLabel(site, language, { key: "darkMode", fallback: "Dark mode" }),
+      lightModeLabel: getLabel(site, language, { key: "lightMode", fallback: "Light mode" }),
       showAudioPlayer: Boolean(audioPlayerConfig),
       audioPlayerConfig,
       useReactAudioPlayIcon: Boolean(site.IconAudioPlayReactIcones),
       audioPlayIconTag: site.IconAudioPlayReactIconesTag || DEFAULT_ICON_TAGS.audioPlay,
-      audioPlayIconStyle: getReactIconStyle(
-        mode,
-        site.IconAudioPlayReactIconesTagColorDark,
-        site.IconAudioPlayReactIconesTagColorLight,
-        site.IconAudioPlayReactIconesTagSize,
-      ),
+      audioPlayIconStyle: getReactIconStyle(mode, {
+        darkColor: site.IconAudioPlayReactIconesTagColorDark,
+        lightColor: site.IconAudioPlayReactIconesTagColorLight,
+        size: site.IconAudioPlayReactIconesTagSize,
+      }),
       useReactAudioPauseIcon: Boolean(site.IconAudioPauseReactIcones),
       audioPauseIconTag: site.IconAudioPauseReactIconesTag || DEFAULT_ICON_TAGS.audioPause,
-      audioPauseIconStyle: getReactIconStyle(
-        mode,
-        site.IconAudioPauseReactIconesTagColorDark,
-        site.IconAudioPauseReactIconesTagColorLight,
-        site.IconAudioPauseReactIconesTagSize,
-      ),
-      audioPlayLabel: getLabel(site, language, "audioPlayLabel", "Play background music"),
-      audioPauseLabel: getLabel(site, language, "audioPauseLabel", "Pause background music"),
-      audioPlaylistTitle: getLabel(site, language, "audioPlaylistTitle", "Choose track"),
-      audioPlaylistDescription: getLabel(site, language, "audioPlaylistDescription", "Select a track to play from the playlist."),
-      audioPopoverCloseLabel: getLabel(site, language, "menuClose", "Close"),
+      audioPauseIconStyle: getReactIconStyle(mode, {
+        darkColor: site.IconAudioPauseReactIconesTagColorDark,
+        lightColor: site.IconAudioPauseReactIconesTagColorLight,
+        size: site.IconAudioPauseReactIconesTagSize,
+      }),
+      audioPlayLabel: getLabel(site, language, { key: "audioPlayLabel", fallback: "Play background music" }),
+      audioPauseLabel: getLabel(site, language, { key: "audioPauseLabel", fallback: "Pause background music" }),
+      audioPlaylistTitle: getLabel(site, language, { key: "audioPlaylistTitle", fallback: "Choose track" }),
+      audioPlaylistDescription: getLabel(site, language, { key: "audioPlaylistDescription", fallback: "Select a track to play from the playlist." }),
+      audioPopoverCloseLabel: getLabel(site, language, { key: "menuClose", fallback: "Close" }),
       audioPopoverCloseIcon: resolveAudioPlayerPopoverCloseIconConfig(site, mode, basePath),
       audioPopoverPlayIcon: resolveAudioPlayerPopoverPlayIconConfig(site, mode, basePath),
       audioPopoverPauseIcon: resolveAudioPlayerPopoverPauseIconConfig(site, mode, basePath),
       audioPopoverRestartIcon: resolveAudioPlayerPopoverRestartIconConfig(site, mode, basePath),
       audioPopoverLoopOnIcon: resolveAudioPlayerPopoverLoopOnIconConfig(site, mode, basePath),
       audioPopoverLoopOffIcon: resolveAudioPlayerPopoverLoopOffIconConfig(site, mode, basePath),
-      audioPopoverNowPlayingLabel: getLabel(site, language, "audioPopoverNowPlaying", "Now playing"),
-      audioPopoverRestartLabel: getLabel(site, language, "audioPopoverRestart", "Restart"),
-      audioPopoverLoopOnLabel: getLabel(site, language, "audioPopoverLoopOn", "Loop on"),
-      audioPopoverLoopOffLabel: getLabel(site, language, "audioPopoverLoopOff", "Loop off"),
-      audioPopoverSourceLabel: getLabel(site, language, "audioPopoverSource", "File"),
+      audioPopoverNowPlayingLabel: getLabel(site, language, { key: "audioPopoverNowPlaying", fallback: "Now playing" }),
+      audioPopoverRestartLabel: getLabel(site, language, { key: "audioPopoverRestart", fallback: "Restart" }),
+      audioPopoverLoopOnLabel: getLabel(site, language, { key: "audioPopoverLoopOn", fallback: "Loop on" }),
+      audioPopoverLoopOffLabel: getLabel(site, language, { key: "audioPopoverLoopOff", fallback: "Loop off" }),
+      audioPopoverSourceLabel: getLabel(site, language, { key: "audioPopoverSource", fallback: "File" }),
       audioPopoverHideSource: Boolean(site.audioPopoverHideSource),
       audioPopoverSourceCustomLabel: site.audioPopoverSourceCustomLabel,
       audioPopoverShowMinutes: site.audioPopoverShowMinutes !== false,
-      audioPopoverStatusPlayingLabel: getLabel(site, language, "audioPopoverStatusPlaying", "Playing"),
-      audioPopoverStatusPausedLabel: getLabel(site, language, "audioPopoverStatusPaused", "Paused"),
-      audioPopoverStatusLoopOnLabel: getLabel(site, language, "audioPopoverStatusLoopOn", "Loop on"),
-      audioPopoverStatusLoopOffLabel: getLabel(site, language, "audioPopoverStatusLoopOff", "Loop off"),
+      audioPopoverStatusPlayingLabel: getLabel(site, language, { key: "audioPopoverStatusPlaying", fallback: "Playing" }),
+      audioPopoverStatusPausedLabel: getLabel(site, language, { key: "audioPopoverStatusPaused", fallback: "Paused" }),
+      audioPopoverStatusLoopOnLabel: getLabel(site, language, { key: "audioPopoverStatusLoopOn", fallback: "Loop on" }),
+      audioPopoverStatusLoopOffLabel: getLabel(site, language, { key: "audioPopoverStatusLoopOff", fallback: "Loop off" }),
     }),
     [
       data.activeVersion,

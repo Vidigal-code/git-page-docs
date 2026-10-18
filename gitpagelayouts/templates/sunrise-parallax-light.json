@@ -1,0 +1,151 @@
+{
+  "id": "sunrise-parallax-light",
+  "name": "Sunrise Parallax",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FFF7ED",
+    "primary": "#C2410C",
+    "secondary": "#BE185D",
+    "text": "#17233B",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#FED7AA",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#FFFFFF",
+      "borderBottom": "1px solid #E2E8F0"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#FFFFFF",
+      "borderTop": "1px solid #E2E8F0"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 50px rgba(15, 23, 42, 0.08)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #FED7AA",
+      "hoverGlow": "0 0 0 3px rgba(194, 65, 12, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #FED7AA",
+      "backgroundColor": "#FFFFFF",
+      "textAlign": "center",
+      "iconColor": "#BE185D",
+      "hoverBorderColor": "rgba(194, 65, 12, 0.7)",
+      "focusBorderColor": "rgba(194, 65, 12, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(194, 65, 12, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#C2410C",
+      "borderColor": "#CBD5E1",
+      "hoverBorderColor": "rgba(8, 145, 178, 0.7)",
+      "checkMarkColor": "#FFF7ED",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": false,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 35% 0%, #FFFFFF 0%, #FFF7ED 70%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 1
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 24,
+      "scroll": 0.08
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "waves-1",
+        "kind": "waves",
+        "count": 3,
+        "opacity": 0.10400000000000001,
+        "size": {
+          "min": 180,
+          "max": 300
+        },
+        "duration": {
+          "min": 32,
+          "max": 60
+        },
+        "travel": {
+          "x": 15,
+          "y": 7
+        },
+        "blur": 24,
+        "glow": 0,
+        "rotation": -12,
+        "depth": 1,
+        "colors": [
+          "#C2410C",
+          "#BE185D"
+        ],
+        "seed": 2766
+      },
+      {
+        "id": "orbs-2",
+        "kind": "orbs",
+        "count": 4,
+        "opacity": 0.11699999999999999,
+        "size": {
+          "min": 140,
+          "max": 260
+        },
+        "duration": {
+          "min": 28,
+          "max": 52
+        },
+        "travel": {
+          "x": 12,
+          "y": -8
+        },
+        "blur": 36,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 1.2,
+        "colors": [
+          "#C2410C",
+          "#BE185D"
+        ],
+        "seed": 2783
+      }
+    ]
+  }
+}

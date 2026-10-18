@@ -1,0 +1,133 @@
+{
+  "id": "silver-rain-dark",
+  "name": "Silver Rain Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#101B2B",
+    "primary": "#93C5FD",
+    "secondary": "#CBD5E1",
+    "text": "#ECF2FC",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#1A2B40",
+    "cardBorder": "#3D526D",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 20% 30%, #1A2B40 0%, #101B2B 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.65
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 32,
+        "scroll": 0.045
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "silver-rain-streaks-1",
+          "kind": "streaks",
+          "count": 34,
+          "colors": [
+            "#93C5FD",
+            "#CBD5E1"
+          ],
+          "opacity": 0.42,
+          "size": {
+            "min": 1,
+            "max": 2
+          },
+          "duration": {
+            "min": 10,
+            "max": 20
+          },
+          "travel": {
+            "x": -20,
+            "y": 150
+          },
+          "position": {
+            "x": 8,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 10,
+          "depth": 1.5,
+          "length": 84,
+          "seed": 3405
+        },
+        {
+          "id": "silver-rain-waves-2",
+          "kind": "waves",
+          "count": 5,
+          "colors": [
+            "#93C5FD",
+            "#CBD5E1"
+          ],
+          "opacity": 0.17,
+          "size": {
+            "min": 180,
+            "max": 500
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": 8,
+            "y": 3
+          },
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.6,
+          "seed": 3424
+        },
+        {
+          "id": "silver-rain-orbs-3",
+          "kind": "orbs",
+          "count": 3,
+          "colors": [
+            "#93C5FD",
+            "#CBD5E1"
+          ],
+          "opacity": 0.1,
+          "size": {
+            "min": 280,
+            "max": 500
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": -12,
+            "y": 4
+          },
+          "position": {
+            "x": 8,
+            "y": 3
+          },
+          "blur": 56,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.25,
+          "seed": 3443
+        }
+      ]
+    }
+  }
+}

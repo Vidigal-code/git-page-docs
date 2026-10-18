@@ -1,0 +1,190 @@
+{
+  "id": "cosmic-tide-light",
+  "name": "Cosmic Tide Light",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F3F6FF",
+    "primary": "#4338CA",
+    "secondary": "#A21CAF",
+    "text": "#293657",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#C8D4EF",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#FFFFFF",
+      "borderBottom": "1px solid #E2E8F0"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#FFFFFF",
+      "borderTop": "1px solid #E2E8F0"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 50px rgba(15, 23, 42, 0.08)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #C8D4EF",
+      "hoverGlow": "0 0 0 3px rgba(67, 56, 202, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #C8D4EF",
+      "backgroundColor": "#FFFFFF",
+      "textAlign": "center",
+      "iconColor": "#A21CAF",
+      "hoverBorderColor": "rgba(67, 56, 202, 0.7)",
+      "focusBorderColor": "rgba(67, 56, 202, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(67, 56, 202, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#4338CA",
+      "borderColor": "#CBD5E1",
+      "hoverBorderColor": "rgba(8, 145, 178, 0.7)",
+      "checkMarkColor": "#F3F6FF",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": false,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 50% 10%, #FFFFFF 0%, #F3F6FF 78%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.8500000000000001
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 28,
+      "scroll": 0.075
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "cosmic-tide-waves-1",
+        "kind": "waves",
+        "count": 7,
+        "colors": [
+          "#4338CA",
+          "#A21CAF"
+        ],
+        "opacity": 0.158,
+        "size": {
+          "min": 240,
+          "max": 620
+        },
+        "duration": {
+          "min": 32,
+          "max": 58
+        },
+        "travel": {
+          "x": 18,
+          "y": -12
+        },
+        "position": {
+          "x": 4,
+          "y": -3
+        },
+        "blur": 0,
+        "glow": 3,
+        "rotation": 38,
+        "depth": 1.3,
+        "seed": 4819
+      },
+      {
+        "id": "cosmic-tide-stars-2",
+        "kind": "stars",
+        "count": 38,
+        "colors": [
+          "#4338CA",
+          "#A21CAF"
+        ],
+        "opacity": 0.36,
+        "size": {
+          "min": 1,
+          "max": 3
+        },
+        "duration": {
+          "min": 37,
+          "max": 65
+        },
+        "travel": {
+          "x": -16,
+          "y": 65
+        },
+        "position": {
+          "x": 4,
+          "y": 0
+        },
+        "blur": 0,
+        "glow": 5,
+        "rotation": 0,
+        "depth": 0.4,
+        "seed": 4838
+      },
+      {
+        "id": "cosmic-tide-orbs-3",
+        "kind": "orbs",
+        "count": 4,
+        "colors": [
+          "#4338CA",
+          "#A21CAF"
+        ],
+        "opacity": 0.108,
+        "size": {
+          "min": 160,
+          "max": 340
+        },
+        "duration": {
+          "min": 42,
+          "max": 72
+        },
+        "travel": {
+          "x": 22,
+          "y": 9
+        },
+        "position": {
+          "x": 4,
+          "y": 3
+        },
+        "blur": 42,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 1.8,
+        "seed": 4857
+      }
+    ]
+  }
+}

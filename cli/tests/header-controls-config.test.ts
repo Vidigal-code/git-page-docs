@@ -2,6 +2,17 @@ import { expect, it } from "vitest";
 import { compactSiteIcons, expandSiteIcons } from "@gitpagedocs/tools/config-format";
 import { buildRootConfig } from "../builders/root-config-builder.mjs";
 
+it("enables the menu animation control with configurable icons by default", () => {
+  const site = compactSiteIcons(buildRootConfig().site);
+  expect(site).toMatchObject({
+    backgroundEffects: { enabled: true, overrides: { accessibility: { showPauseButton: true } } },
+    icons: {
+      BackgroundAnimationPause: { tag: "FiPause" },
+      BackgroundAnimationResume: { tag: "FiPlay" },
+    },
+  });
+});
+
 it("generates icons for header controls, PDF actions and document navigation by default", () => {
   const site = compactSiteIcons(buildRootConfig().site);
 
@@ -9,6 +20,7 @@ it("generates icons for header controls, PDF actions and document navigation by 
     IconQuickNavigationReactIcones: true,
     IconLanguageSelectorReactIcones: true,
     IconThemeSelectorReactIcones: true,
+    IconVersionSelectorReactIcones: true,
     IconFocusModeReactIcones: true,
     IconPdfDownloadReactIcones: true,
     IconPdfOpenInNewTabReactIcones: true,
@@ -28,6 +40,9 @@ it("generates icons for header controls, PDF actions and document navigation by 
       },
       ThemeSelector: {
         tag: "LuPencil",
+      },
+      VersionSelector: {
+        tag: "LuGitBranch",
       },
       FocusMode: {
         tag: "LuBookOpen",

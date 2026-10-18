@@ -17,6 +17,7 @@ import type {
   PageCompositionConfig,
   RouteConfig,
   ThemeTemplate,
+  SiteBackgroundEffectsConfig,
   VersionEntry,
 } from "@/entities/docs/model/types";
 import { dedupeVersionEntriesById } from "../lib/dedupe-version-entries";
@@ -110,6 +111,7 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
 }
 
 export interface OfficialSiteConfig extends ControlIconSettings {
+  backgroundEffects?: SiteBackgroundEffectsConfig;
   SiteHeaderName?: string;
   SiteIconPath?: string;
   name?: string;

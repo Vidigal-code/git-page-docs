@@ -1,0 +1,95 @@
+{
+  "id": "matrix-rain-dark",
+  "name": "Matrix Rain",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#020A05",
+    "primary": "#4ADE80",
+    "secondary": "#A3E635",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#06190D",
+    "cardBorder": "#17452B",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 15% 0%, #06190D 0%, #020A05 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 1
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "matrix-1",
+          "kind": "matrix",
+          "count": 14,
+          "opacity": 0.28,
+          "size": {
+            "min": 13,
+            "max": 17
+          },
+          "duration": {
+            "min": 21,
+            "max": 38
+          },
+          "travel": {
+            "x": 0,
+            "y": 115
+          },
+          "blur": 0,
+          "glow": 2,
+          "rotation": 0,
+          "depth": 0.35,
+          "characters": "0123456789アイウエオカキクケコサシスセソ",
+          "rows": 16,
+          "colors": [
+            "#4ADE80",
+            "#A3E635"
+          ],
+          "seed": 1857
+        },
+        {
+          "id": "grid-2",
+          "kind": "grid",
+          "count": 1,
+          "opacity": 0.12,
+          "size": {
+            "min": 48,
+            "max": 64
+          },
+          "duration": {
+            "min": 48,
+            "max": 70
+          },
+          "travel": {
+            "x": 3,
+            "y": 4
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.25,
+          "colors": [
+            "#4ADE80",
+            "#A3E635"
+          ],
+          "seed": 1874
+        }
+      ]
+    }
+  }
+}

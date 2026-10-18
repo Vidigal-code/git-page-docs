@@ -1,0 +1,95 @@
+{
+  "id": "matrix-mint-light",
+  "name": "Matrix Mint",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#EDFCF7",
+    "primary": "#047857",
+    "secondary": "#0F766E",
+    "text": "#17233B",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#C1E8DA",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 35% 0%, #FFFFFF 0%, #EDFCF7 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.9
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "matrix-1",
+          "kind": "matrix",
+          "count": 13,
+          "opacity": 0.18200000000000002,
+          "size": {
+            "min": 13,
+            "max": 17
+          },
+          "duration": {
+            "min": 21,
+            "max": 38
+          },
+          "travel": {
+            "x": 0,
+            "y": 115
+          },
+          "blur": 0,
+          "glow": 2,
+          "rotation": 0,
+          "depth": 0.35,
+          "characters": "0123456789アイウエオカキクケコサシスセソ",
+          "rows": 16,
+          "colors": [
+            "#047857",
+            "#0F766E"
+          ],
+          "seed": 2362
+        },
+        {
+          "id": "waves-2",
+          "kind": "waves",
+          "count": 3,
+          "opacity": 0.10400000000000001,
+          "size": {
+            "min": 180,
+            "max": 300
+          },
+          "duration": {
+            "min": 32,
+            "max": 60
+          },
+          "travel": {
+            "x": 15,
+            "y": 7
+          },
+          "blur": 24,
+          "glow": 0,
+          "rotation": -12,
+          "depth": 1,
+          "colors": [
+            "#047857",
+            "#0F766E"
+          ],
+          "seed": 2379
+        }
+      ]
+    }
+  }
+}

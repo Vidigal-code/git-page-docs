@@ -12,6 +12,7 @@ import {
 import { parseRepoPathFromLocation } from "@/shared/lib/parse-repo-path";
 import { redirectSourceViewerDeepLink } from "@/shared/lib/source-viewer-fallback";
 import type { LoadedDocsData } from "@/widgets/not-found-shell";
+import type { SiteBackgroundEffectsConfig, SiteConfig, ThemeTemplate } from "@/entities/docs";
 import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
 import { getBasePath } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
@@ -21,7 +22,7 @@ import {
   useStandaloneShellConfig,
   useStandaloneShellPreferences,
 } from "@/widgets/search-shell-header";
-import { SearchShellLayout } from "@/widgets/search-shell-layout";
+import { SearchShellLayout, type SearchShellHeaderSlot } from "@/widgets/search-shell-layout";
 import notFoundStyles from "./not-found.module.css";
 import { DocsShell } from "@/widgets/docs-shell";
 import {
@@ -259,8 +260,9 @@ function useNotFoundShell() {
     ? { useReactHeaderIcon: useReactIcon, reactHeaderIconTag: reactIconTag, headerReactIconStyle: reactIconStyle }
     : {};
 
-  const header = (
+  const header = (backgroundControl: ReactNode) => (
     <SearchShellHeader
+      additionalControls={backgroundControl}
       languageSelectorIcon={resolveControlIcon(siteConfig, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
       themeSelectorIcon={resolveControlIcon(siteConfig, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
@@ -283,19 +285,22 @@ function useNotFoundShell() {
     />
   );
 
-  return { lang, header, cssVars, basePath };
+  return { lang, header, cssVars, basePath, theme: activeTheme, backgroundEffects: siteConfig?.backgroundEffects, siteConfig };
 }
 
 interface NotFoundFrameProps {
-  header: ReactNode;
+  header: SearchShellHeaderSlot;
   language: string;
   cssVars: CSSProperties;
   children: ReactNode;
+  theme?: ThemeTemplate;
+  backgroundEffects?: SiteBackgroundEffectsConfig;
+  siteConfig?: Partial<SiteConfig>;
 }
 
-function NotFoundFrame({ header, language, cssVars, children }: Readonly<NotFoundFrameProps>) {
+function NotFoundFrame({ header, language, cssVars, children, theme, backgroundEffects, siteConfig }: Readonly<NotFoundFrameProps>) {
   return (
-    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars}>
+    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars} theme={theme} backgroundEffects={backgroundEffects} siteConfig={siteConfig}>
       <section className={notFoundStyles.section}>{children}</section>
     </SearchShellLayout>
   );
@@ -382,7 +387,7 @@ function RepositorySearchBody({ language, basePath, isRepoPath, repoStatus, path
 }
 
 function NotFoundContent() {
-  const { lang, header, cssVars, basePath } = useNotFoundShell();
+  const { lang, header, cssVars, basePath, theme, backgroundEffects, siteConfig } = useNotFoundShell();
   const safeLang = lang as SupportedLanguage;
 
   const { mounted, path, setPath } = useRepoPathFromLocation();
@@ -424,7 +429,7 @@ function NotFoundContent() {
   }
 
   return (
-    <NotFoundFrame header={header} language={lang} cssVars={cssVars}>
+    <NotFoundFrame header={header} language={lang} cssVars={cssVars} theme={theme} backgroundEffects={backgroundEffects} siteConfig={siteConfig ?? undefined}>
       {body}
     </NotFoundFrame>
   );

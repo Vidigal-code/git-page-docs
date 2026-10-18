@@ -26,7 +26,12 @@ const SERVER_DEFAULTS = {
 
 // Force an empty base path so a local GITPAGEDOCS_PATH override (or the
 // repository-search base path) cannot mount the app under a subpath.
-const serverEnv = (port: number) => ({ ...process.env, PORT: String(port), GITPAGEDOCS_BASE_PATH: "" });
+const serverEnv = (port: number) => ({
+  ...process.env,
+  PORT: String(port),
+  GITPAGEDOCS_BASE_PATH: "",
+  GITPAGEDOCS_LAYOUTS_SOURCE: "local",
+});
 
 export default defineConfig({
   testDir: "./e2e",

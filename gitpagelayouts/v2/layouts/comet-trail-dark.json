@@ -1,0 +1,121 @@
+{
+  "id": "comet-trail-dark",
+  "name": "Comet Trail",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#03171C",
+    "primary": "#2DD4BF",
+    "secondary": "#67E8F9",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#08292F",
+    "cardBorder": "#18505B",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 15% 0%, #08292F 0%, #03171C 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.9
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "streaks-1",
+          "kind": "streaks",
+          "count": 6,
+          "opacity": 0.5,
+          "size": {
+            "min": 1,
+            "max": 2
+          },
+          "duration": {
+            "min": 12,
+            "max": 25
+          },
+          "travel": {
+            "x": -28,
+            "y": 120
+          },
+          "blur": 0,
+          "glow": 5,
+          "rotation": 24,
+          "depth": 1.1,
+          "length": 120,
+          "colors": [
+            "#2DD4BF",
+            "#67E8F9"
+          ],
+          "seed": 1453
+        },
+        {
+          "id": "stars-2",
+          "kind": "stars",
+          "count": 28,
+          "opacity": 0.56,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 24,
+            "max": 48
+          },
+          "travel": {
+            "x": 4,
+            "y": 110
+          },
+          "blur": 0,
+          "glow": 3,
+          "rotation": 0,
+          "depth": 0.7,
+          "colors": [
+            "#2DD4BF",
+            "#67E8F9"
+          ],
+          "seed": 1470
+        },
+        {
+          "id": "grid-3",
+          "kind": "grid",
+          "count": 1,
+          "opacity": 0.12,
+          "size": {
+            "min": 48,
+            "max": 64
+          },
+          "duration": {
+            "min": 48,
+            "max": 70
+          },
+          "travel": {
+            "x": 3,
+            "y": 4
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.25,
+          "colors": [
+            "#2DD4BF",
+            "#67E8F9"
+          ],
+          "seed": 1487
+        }
+      ]
+    }
+  }
+}

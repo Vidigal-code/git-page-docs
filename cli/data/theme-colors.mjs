@@ -1,3 +1,5 @@
+import { ANIMATED_THEME_COLORS } from "./animated-layouts.mjs";
+
 export const THEME_COLORS = {
   "duet-light": {
     background: "#FFFFFF", primary: "#000000", secondary: "#5E5E5E", text: "#000000",
@@ -441,4 +443,5 @@ export const THEME_COLORS = {
   "blush-light": { background: "#FFF5F8", primary: "#DB2777", secondary: "#F472B6", text: "#3D1A29", textSecondary: "#8A5A6E", cardBackground: "#FFFFFF", cardBorder: "#FBD4E2", error: "#E11D48", success: "#10B981" },
   "azure-light": { background: "#F2F8FF", primary: "#2563EB", secondary: "#60A5FA", text: "#11243D", textSecondary: "#4D6488", cardBackground: "#FFFFFF", cardBorder: "#D0E2FB", error: "#E11D48", success: "#059669" },
   "sand-light": { background: "#FBF7F0", primary: "#B45309", secondary: "#D97706", text: "#332814", textSecondary: "#786A4D", cardBackground: "#FFFFFF", cardBorder: "#ECE0C8", error: "#DC2626", success: "#4D7C4F" },
+  ...ANIMATED_THEME_COLORS,
 };

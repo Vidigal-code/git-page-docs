@@ -1,0 +1,24 @@
+.control {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: var(--control-border, 1px solid var(--card-border));
+  border-radius: var(--control-radius, 10px);
+  color: var(--text);
+  background: var(--control-background, var(--card-background));
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.control:hover {
+  color: var(--secondary);
+}
+
+.control:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}

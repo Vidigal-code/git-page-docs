@@ -78,9 +78,9 @@ describe("contracts index", () => {
     expect(contracts.layoutsArtifactPaths("themes").config).toBe("themes/layoutsConfig.json");
   });
 
-  it("publishes the current docs and the editable 0.0.10 example", () => {
+  it("publishes the current docs while retaining the 0.0.11 and 0.0.10 examples", () => {
     expect(PACKAGE_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
-    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.10"]);
+    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.11", "0.0.10"]);
     expect(versionConstants.DOC_VERSIONS).toBe(DOC_VERSIONS);
   });
 

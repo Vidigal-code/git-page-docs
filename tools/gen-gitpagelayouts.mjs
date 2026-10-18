@@ -18,6 +18,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { writeExpandedTemplates } from "./layouts-v2.mjs";
+import { writeAnimatedLayoutData } from "./animated-layout-data.mjs";
 
 const ROOT = process.cwd();
 const LAYOUTS_DIR = path.join(ROOT, "gitpagelayouts");
@@ -49,6 +50,29 @@ function typographySection(typography) {
   ].join("\n");
 }
 
+function inlineCode(value) {
+  return "`" + value + "`";
+}
+
+function backgroundLayerRow(layer) {
+  const colors = layer.colors.map(inlineCode).join(", ");
+  return `| \`${layer.id}\` | \`${layer.kind}\` | ${layer.count} | ${colors} |`;
+}
+
+function backgroundSection(background) {
+  if (!background) return "";
+  const layers = background.layers.map(backgroundLayerRow);
+  return [
+    "", "", "## Animated background", "",
+    "This preset uses Motion for decorative depth and continuous movement. It respects reduced-motion preferences and includes a pause/resume control. Its palette and content remain usable without animation.",
+    "", "| Layer | Kind | Count | Colors |", "| --- | --- | --- | --- |", ...layers,
+    "", "### Editable preset", "",
+    "The following object is the template's top-level `backgroundEffects`. Customize it in your local template, or use `site.backgroundEffects.overrides` and `site.backgroundEffects.themes[themeId]` in `gitpagedocs/config.json`. Nested settings merge; a supplied `layers` array replaces all layers. Set `site.backgroundEffects.enabled` to `false` to disable every background.",
+    "", "```json", JSON.stringify(background, null, 2), "```", "",
+    "`count`, `colors`, `size`, `duration` and `opacity` control density, appearance and timing. `animation.speed` multiplies movement speed; `parallax.pointer` uses pixels and `parallax.scroll` uses a scroll ratio. Set both `animation.enabled` and `parallax.enabled` to `false` for a static composition. Keep the pause button available for moving backgrounds.",
+  ].join("\n");
+}
+
 function layoutDoc(layout, template) {
   const paired = layout.supportsLightAndDarkModesReference
     ? `Paired light/dark group: \`${layout.supportsLightAndDarkModesReference}\``
@@ -71,7 +95,7 @@ ${colorTable(template?.colors)}
 
 ## Typography
 
-${typographySection(template?.typography)}
+${typographySection(template?.typography)}${backgroundSection(template?.backgroundEffects)}
 
 ## Usage
 
@@ -85,10 +109,13 @@ Or preview it on any Git Page Docs site via the URL parameter \`?theme=${layout.
 `;
 }
 
+function readmeRow(layout) {
+  const pair = layout.supportsLightAndDarkModesReference ? inlineCode(layout.supportsLightAndDarkModesReference) : "—";
+  return `| [\`${layout.id}\`](docs/${layout.id}.md) | ${layout.name} | \`${layout.mode}\` | ${pair} | ${layout.preview} |`;
+}
+
 function readmeIndex(layouts) {
-  const rows = layouts
-    .map((layout) => `| [\`${layout.id}\`](docs/${layout.id}.md) | ${layout.name} | \`${layout.mode}\` | ${layout.supportsLightAndDarkModesReference ? `\`${layout.supportsLightAndDarkModesReference}\`` : "—"} | ${layout.preview} |`)
-    .join("\n");
+  const rows = layouts.map(readmeRow).join("\n");
   return `# Git Page Layouts
 
 Canonical home of the official Git Page Docs layout themes. Any repository can
@@ -96,9 +123,10 @@ consume these layouts:
 
 - **Official remote (default):** generated \`gitpagedocs/config.json\` files
   point at this folder's \`layoutsConfig.json\` and \`templates/\`.
-- **Self-hosted:** copy this folder to the root of your repository as
-  \`gitpagelayouts/\` (or generate a local \`gitpagedocs/layouts/\` with
-  \`npx @gitpagedocs/cli --layoutconfig\`) and the viewer resolves it automatically.
+- **Self-hosted:** generate \`gitpagelayouts/\` with
+  \`npx @gitpagedocs/cli --layoutconfig\`, which sets local layout paths and disables
+  the official source in your site config. If copying this folder manually, set
+  \`site.layoutsConfigPathOficial: false\` and the corresponding local paths.
 
 The source of truth is \`v2/\`. \`v2/base.json\` holds every value the layouts share
 (typography, component sizes, dark/light defaults and the rules that derive control
@@ -106,6 +134,37 @@ colors from each palette), and \`v2/layouts/<id>.json\` holds only the layout's
 identity, colors and the few values that differ. \`npm run layouts:sync\` expands
 them into the full \`templates/<id>.json\` files (the format viewers read, unchanged)
 and regenerates this catalog. Edit \`v2/\`, never \`templates/\`.
+
+## Animated presets
+
+The additional animated themes combine stars, meteor streaks, falling Matrix
+characters, orbs, grids and waves. Each preset defines
+\`overrides.backgroundEffects\` in its v2 source; expansion places
+\`backgroundEffects\` at the template root. Synchronization also compiles these
+presets into \`cli/data/animated-layouts.mjs\`, so local CLI generation offers the
+same palettes and backgrounds without reading files outside its package.
+
+Choose a theme with \`site.ThemeDefault\` or the theme selector. Customize speed,
+colors, density and parallax through \`site.backgroundEffects.overrides\` or
+\`site.backgroundEffects.themes[themeId]\` in \`gitpagedocs/config.json\`.
+Resolution order is template, global overrides, then per-theme overrides;
+\`layers\` replaces the full array. The master \`site.backgroundEffects.enabled:
+false\` disables every background. All new presets honor reduced motion and
+include a pause control. Existing themes retain their original appearance.
+
+The catalog combines 64 original themes, 20 standalone animated presets and
+20 additional parallax families with dark and light variants. Paired entries use
+the same \`supportsLightAndDarkModesReference\`, allowing the mode toggle to switch
+within the family. For example, choose \`aurora-borealis-dark\` or
+\`aurora-borealis-light\`; customize either ID independently through \`themes\`.
+
+Pause/resume appears beside the navigation lock in the documentation menu and in
+the search-page header. A manual pause survives menu and theme changes.
+\`site.backgroundEffects.overrides.accessibility.showPauseButton\` defaults to
+\`true\`; \`false\` hides the button without disabling motion. Configure
+\`site.icons.BackgroundAnimationPause\` and \`BackgroundAnimationResume\` with
+\`reactIcon\`, \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`;
+\`reactIcon: false\` shows localized text. Use the master switch to disable effects.
 
 ## Files
 
@@ -142,5 +201,7 @@ function generateDocs() {
 
 const expanded = writeExpandedTemplates(LAYOUTS_DIR);
 console.log(`[gitpagelayouts] expanded ${expanded.length} templates from gitpagelayouts/v2`);
+const animated = writeAnimatedLayoutData(LAYOUTS_DIR, path.join(ROOT, "cli/data/animated-layouts.mjs"));
+console.log(`[gitpagelayouts] compiled ${animated.length} animated layouts for the CLI`);
 const layoutsCount = generateDocs();
 console.log(`[gitpagelayouts] documented ${layoutsCount} layouts in gitpagelayouts/`);

@@ -2,6 +2,8 @@
 
 import type { VersionEntry } from "@/entities/docs";
 import { DropdownSelector } from "@/shared/ui/dropdown-selector";
+import { ControlIcon, type ControlIconConfig } from "@/shared/ui/control-icon";
+import { FiGitBranch } from "@react-icons/all-files/fi/FiGitBranch";
 
 interface VersionSelectorProps {
   versions: VersionEntry[];
@@ -9,6 +11,7 @@ interface VersionSelectorProps {
   onChange: (versionId: string) => void;
   className?: string;
   ariaLabel?: string;
+  icon?: ControlIconConfig;
   /** Theme CSS variables forwarded to the small-screen modal (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
 }
@@ -23,6 +26,7 @@ export function VersionSelector({
   onChange,
   className,
   ariaLabel,
+  icon,
   themeVarsStyle,
 }: Readonly<VersionSelectorProps>) {
   return (
@@ -32,6 +36,7 @@ export function VersionSelector({
       selectedId={value}
       onSelect={onChange}
       className={className}
+      triggerIcon={icon && <ControlIcon icon={icon} fallback={<FiGitBranch aria-hidden />} />}
       themeVarsStyle={themeVarsStyle}
     />
   );

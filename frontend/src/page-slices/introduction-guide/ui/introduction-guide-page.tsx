@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import {
   getLanguageLabelFromMenu,
+  resolveThemeBackground,
   toSearchShellCssVars,
   type LanguageCode,
 } from "@/entities/docs";
@@ -78,6 +79,10 @@ export function IntroductionGuidePage() {
   };
 
   const activeTheme = themes[activeLayout?.id ?? ""];
+  const themeBackground = useMemo(
+    () => resolveThemeBackground({ theme: activeTheme, settings: siteConfig?.backgroundEffects }),
+    [activeTheme, siteConfig?.backgroundEffects],
+  );
   const cssVars = useMemo(() => toSearchShellCssVars(activeTheme), [activeTheme]);
 
   const basePath = getBasePath();
@@ -88,8 +93,9 @@ export function IntroductionGuidePage() {
   );
   const projectUrl = PROJECT_FOOTER_URL;
 
-  const header = (
+  const header = (backgroundControl: ReactNode) => (
     <SearchShellHeader
+      additionalControls={backgroundControl}
       languageSelectorIcon={resolveControlIcon(siteConfig, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
       themeSelectorIcon={resolveControlIcon(siteConfig, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
       themeVarsStyle={cssVars}
@@ -117,10 +123,10 @@ export function IntroductionGuidePage() {
   );
 
   return (
-    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars}>
+    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars} theme={activeTheme} backgroundEffects={siteConfig?.backgroundEffects} siteConfig={siteConfig ?? undefined}>
       <GuideMotionProvider>
         <div className={styles.page}>
-          <GuideParallaxBackdrop />
+          {!themeBackground && <GuideParallaxBackdrop />}
           <GuideHero
             id={GUIDE_TOP_ID}
             hero={content.hero}

@@ -3,12 +3,13 @@ import os from "node:os";
 import path from "node:path";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { executeAiRunPlan } from "../ai/application/run-ai-cli-command";
+import { writeVersionDocs } from "../ai/infrastructure/version-docs-writer";
 import type { AiCliRunPlan } from "../ai/core/models/ai-cli-config";
 import type { ILLMProvider } from "../ai/core/ports/illm-provider";
 // @ts-expect-error .mjs runtime module is type-less in this package.
-import { DOC_VERSIONS } from "../contracts/doc-versions.mjs";
+import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 
-const VERSION_ID = DOC_VERSIONS[DOC_VERSIONS.length - 1] as string;
+const VERSION_ID = PACKAGE_VERSION as string;
 
 /** Deterministic provider speaking the gitpagedocs page protocol. */
 class FakeLlmProvider implements ILLMProvider {
@@ -70,12 +71,13 @@ describe("executeAiRunPlan (full generation pipeline)", () => {
 
   afterEach(() => rmSync(cwd, { recursive: true, force: true }));
 
-  it("scans sources, generates per language, writes docs and wires the version config", async () => {
+  it("scans sources, generates per language and wires the current package version", async () => {
     const summary = await executeAiRunPlan(buildPlan(["en", "pt"]), cwd, () => provider);
 
     expect(summary.scannedFilesCount).toBe(1);
     expect(summary.skippedDirectories).toEqual([]);
     expect(summary.pages).toEqual(["overview", "getting-started"]);
+    expect(summary.outputs).toContain(`gitpagedocs/docs/versions/${VERSION_ID}/en/overview.md`);
     // One generation call per selected language, each with its own language prompt.
     expect(provider.prompts).toHaveLength(2);
     expect(provider.prompts[0]).toContain("English");
@@ -159,5 +161,30 @@ describe("executeAiRunPlan (full generation pipeline)", () => {
     expect(summary.scannedFilesCount).toBe(0);
     expect(summary.outputs).toEqual([]);
     expect(provider.prompts).toHaveLength(0);
+  });
+
+  it("preserves an explicitly selected writer version and the current version config", async () => {
+    const customVersion = "customer-release";
+    const customBase = `gitpagedocs/docs/versions/${customVersion}`;
+    const customConfig = path.join(cwd, customBase, "config.json");
+    const currentConfig = readFileSync(versionConfigPath(), "utf-8");
+    mkdirSync(path.dirname(customConfig), { recursive: true });
+    writeFileSync(customConfig, currentConfig, "utf-8");
+
+    const result = await writeVersionDocs({
+      cwd,
+      versionId: customVersion,
+      pagesByLang: { en: [{ slug: "custom-guide", title: "Custom guide", body: "# Custom guide" }] },
+    });
+
+    expect(result.configPath).toBe(`${customBase}/config.json`);
+    expect(result.files).toEqual([
+      `${customBase}/pt/custom-guide.md`,
+      `${customBase}/en/custom-guide.md`,
+      `${customBase}/es/custom-guide.md`,
+    ]);
+    expect(readFileSync(path.join(cwd, customBase, "en/custom-guide.md"), "utf-8"))
+      .toBe("# Custom guide\n");
+    expect(readFileSync(versionConfigPath(), "utf-8")).toBe(currentConfig);
   });
 });

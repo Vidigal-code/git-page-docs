@@ -1,4 +1,5 @@
 import type { ThemeMode } from "./site";
+import type { ThemeBackgroundConfig } from "./theme-background";
 
 export interface LayoutItem {
   id: string;
@@ -120,4 +121,5 @@ export interface ThemeTemplate {
   typography: ThemeTypography;
   components: ThemeComponents;
   animations: ThemeAnimations;
+  backgroundEffects?: ThemeBackgroundConfig;
 }

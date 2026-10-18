@@ -57,7 +57,7 @@ Select a provider using `configure_ai_provider` or `.gitpagedocs-mcp.json` at th
 | `fireworks` | `FIREWORKS_API_KEY` |
 | `perplexity` | `PERPLEXITY_API_KEY` |
 
-With no valid selection, the default provider is OpenAI. Ollama does not require an API key; its local service and chosen model must be available. `OLLAMA_BASE_URL` is optional. Azure's base URL is the complete chat-operation URL, including deployment and API-version query when required. Model listings are the bundled catalog, not a live availability check.
+When the saved selection is absent, unreadable or invalid JSON, the default provider is OpenAI. An unknown provider ID in readable JSON produces an explicit error instead of selecting another provider. Ollama does not require an API key; its local service and chosen model must be available. `OLLAMA_BASE_URL` is optional. Azure's base URL is the complete chat-operation URL, including deployment and API-version query when required. Model listings are the bundled catalog, not a live availability check.
 
 ## Tool reference
 
@@ -113,7 +113,7 @@ The generation step sends selected project content to the configured provider.
 
 - File reads: up to 512,000 bytes. Listing: up to 2,000 entries; gathered project trees: 400 entries.
 - Search: up to 5,000 entries, 200 matches, 240 characters per matching line.
-- Documentation gathering: first 40 Markdown files among up to 2,000 entries; files over 40,000 bytes are skipped. Provider context is capped at 24,000 characters.
+- Documentation gathering: first 40 Markdown files among up to 2,000 entries; files over 40,000 bytes are skipped. Gathered file and Markdown context is limited to 24,000 characters. This is not a global prompt limit: tree/package context, an existing document and a caller-supplied question can add content according to the selected tool.
 - Listing skips build/dependency directories such as `node_modules`, `.git`, `.next`, `out`, `dist`, `prebuilt`, `.turbo` and `coverage`. It does not interpret `.gitignore`; files such as `.env` are not automatically excluded. Run only in a trusted project and select the content to expose.
 - Path checks use lexical containment; do not treat the process as an operating-system sandbox or assume symlink/junction isolation. Loading `project://config` can import JavaScript/TypeScript configuration.
 - Tool failures include `isError: true`. Missing resources return `Unavailable: ...`. Check the client's stderr log for startup errors; stdout is reserved for JSON-RPC.

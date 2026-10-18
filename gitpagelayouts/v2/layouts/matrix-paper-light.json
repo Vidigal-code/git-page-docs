@@ -1,0 +1,95 @@
+{
+  "id": "matrix-paper-light",
+  "name": "Matrix Paper",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#F6FAF5",
+    "primary": "#166534",
+    "secondary": "#4D7C0F",
+    "text": "#17233B",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D1E3CD",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 15% 0%, #FFFFFF 0%, #F6FAF5 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "matrix-1",
+          "kind": "matrix",
+          "count": 12,
+          "opacity": 0.18200000000000002,
+          "size": {
+            "min": 13,
+            "max": 17
+          },
+          "duration": {
+            "min": 20,
+            "max": 38
+          },
+          "travel": {
+            "x": 0,
+            "y": 115
+          },
+          "blur": 0,
+          "glow": 2,
+          "rotation": 0,
+          "depth": 0.35,
+          "characters": "0123456789アイウエオカキクケコサシスセソ",
+          "rows": 16,
+          "colors": [
+            "#166534",
+            "#4D7C0F"
+          ],
+          "seed": 2261
+        },
+        {
+          "id": "grid-2",
+          "kind": "grid",
+          "count": 1,
+          "opacity": 0.078,
+          "size": {
+            "min": 48,
+            "max": 64
+          },
+          "duration": {
+            "min": 48,
+            "max": 70
+          },
+          "travel": {
+            "x": 3,
+            "y": 4
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.25,
+          "colors": [
+            "#166534",
+            "#4D7C0F"
+          ],
+          "seed": 2278
+        }
+      ]
+    }
+  }
+}

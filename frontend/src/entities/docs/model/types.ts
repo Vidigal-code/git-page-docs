@@ -53,3 +53,13 @@ export type {
   PathToPageEntry,
 } from "./types/content";
 export type { LoadedDocsData } from "./types/docs";
+export type {
+  BackgroundRange,
+  BackgroundVector,
+  ThemeBackgroundKind,
+  ThemeBackgroundLayer,
+  ThemeBackgroundConfig,
+  SiteBackgroundEffectsConfig,
+  ResolvedThemeBackgroundLayer,
+  ResolvedThemeBackground,
+} from "./types/theme-background";

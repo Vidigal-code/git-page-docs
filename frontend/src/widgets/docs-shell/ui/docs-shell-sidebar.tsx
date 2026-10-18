@@ -26,6 +26,7 @@ interface DocsShellSidebarProps {
   blockMenuOnNav: boolean;
   setBlockMenuOnNav: (v: boolean) => void;
   navMenuConfig: NavMenuConfig;
+  backgroundControl?: React.ReactNode;
   onOpenAiChat: () => void;
   aiChatIconConfig?: { open: ResolvedNavMenuIconConfig };
   docsLock?: {
@@ -53,6 +54,7 @@ export function DocsShellSidebar({
   blockMenuOnNav,
   setBlockMenuOnNav,
   navMenuConfig,
+  backgroundControl,
   onOpenAiChat,
   aiChatIconConfig,
   docsLock,
@@ -104,6 +106,7 @@ export function DocsShellSidebar({
           labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
           className={`${styles.button} ${styles.sidebarRailButton}`}
         />
+        {backgroundControl}
         {aiChatIconConfig && (
           <button type="button" data-testid="ai-chat-open" className={`${styles.button} ${styles.sidebarRailButton}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligência Artificial" title="Assistente de IA">
             <ConfiguredIcon icon={aiChatIconConfig.open} fallback={aiChatFallback} reactIconFallback={aiChatFallback} alt="IA" />

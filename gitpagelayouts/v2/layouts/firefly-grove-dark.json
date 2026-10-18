@@ -1,0 +1,132 @@
+{
+  "id": "firefly-grove-dark",
+  "name": "Firefly Grove Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#0A1913",
+    "primary": "#BEF264",
+    "secondary": "#86EFAC",
+    "text": "#EFFAE8",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#14291D",
+    "cardBorder": "#35513C",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 35% 30%, #14291D 0%, #0A1913 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.75
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 20,
+        "scroll": 0.06
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "firefly-grove-stars-1",
+          "kind": "stars",
+          "count": 36,
+          "colors": [
+            "#BEF264",
+            "#86EFAC"
+          ],
+          "opacity": 0.65,
+          "size": {
+            "min": 2,
+            "max": 6
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 12,
+            "y": -24
+          },
+          "position": {
+            "x": -4,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 12,
+          "rotation": 0,
+          "depth": 1.6,
+          "seed": 3102
+        },
+        {
+          "id": "firefly-grove-orbs-2",
+          "kind": "orbs",
+          "count": 5,
+          "colors": [
+            "#BEF264",
+            "#86EFAC"
+          ],
+          "opacity": 0.13,
+          "size": {
+            "min": 90,
+            "max": 210
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -10,
+            "y": 6
+          },
+          "position": {
+            "x": -4,
+            "y": 0
+          },
+          "blur": 34,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.55,
+          "seed": 3121
+        },
+        {
+          "id": "firefly-grove-waves-3",
+          "kind": "waves",
+          "count": 3,
+          "colors": [
+            "#BEF264",
+            "#86EFAC"
+          ],
+          "opacity": 0.09,
+          "size": {
+            "min": 280,
+            "max": 460
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 7,
+            "y": 4
+          },
+          "position": {
+            "x": -4,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 32,
+          "depth": 0.3,
+          "seed": 3140
+        }
+      ]
+    }
+  }
+}

@@ -613,6 +613,586 @@
       "supportsLightAndDarkModes": true,
       "supportsLightAndDarkModesReference": "duet-1",
       "mode": "light"
+    },
+    {
+      "id": "astral-drift-dark",
+      "name": "Astral Drift",
+      "author": "Kauan Vidigal",
+      "file": "templates/astral-drift-dark.json",
+      "preview": "Cyan stars, slow meteors and violet atmospheric depth",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "starfall-cobalt-dark",
+      "name": "Starfall Cobalt",
+      "author": "Kauan Vidigal",
+      "file": "templates/starfall-cobalt-dark.json",
+      "preview": "Silver starfall across a deep cobalt sky",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "lunar-dust-light",
+      "name": "Lunar Dust",
+      "author": "Kauan Vidigal",
+      "file": "templates/lunar-dust-light.json",
+      "preview": "Fine indigo stardust on a pale lunar surface",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "solar-sparks-dark",
+      "name": "Solar Sparks",
+      "author": "Kauan Vidigal",
+      "file": "templates/solar-sparks-dark.json",
+      "preview": "Golden sparks and warm solar halos",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "comet-trail-dark",
+      "name": "Comet Trail",
+      "author": "Kauan Vidigal",
+      "file": "templates/comet-trail-dark.json",
+      "preview": "Turquoise comet trails above a deep teal field",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "celestial-ice-light",
+      "name": "Celestial Ice",
+      "author": "Kauan Vidigal",
+      "file": "templates/celestial-ice-light.json",
+      "preview": "Blue ice crystals and soft celestial ripples",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "nebula-violet-dark",
+      "name": "Nebula Violet",
+      "author": "Kauan Vidigal",
+      "file": "templates/nebula-violet-dark.json",
+      "preview": "Violet nebula clouds with distant starlight",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "meteor-copper-dark",
+      "name": "Meteor Copper",
+      "author": "Kauan Vidigal",
+      "file": "templates/meteor-copper-dark.json",
+      "preview": "Copper meteors crossing a charcoal sky",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "matrix-rain-dark",
+      "name": "Matrix Rain",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-rain-dark.json",
+      "preview": "Green code rain with a restrained terminal grid",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "matrix-amber-dark",
+      "name": "Matrix Amber",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-amber-dark.json",
+      "preview": "Amber terminal characters and a warm phosphor glow",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "matrix-cyan-dark",
+      "name": "Matrix Cyan",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-cyan-dark.json",
+      "preview": "Cyan code streams over a precise blue grid",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "matrix-violet-dark",
+      "name": "Matrix Violet",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-violet-dark.json",
+      "preview": "Lavender code rain with magenta atmospheric light",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "matrix-paper-light",
+      "name": "Matrix Paper",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-paper-light.json",
+      "preview": "Quiet green code on a readable paper canvas",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "matrix-mint-light",
+      "name": "Matrix Mint",
+      "author": "Kauan Vidigal",
+      "file": "templates/matrix-mint-light.json",
+      "preview": "Emerald characters drifting across cool mint",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "prism-depth-dark",
+      "name": "Prism Depth",
+      "author": "Kauan Vidigal",
+      "file": "templates/prism-depth-dark.json",
+      "preview": "Layered violet and rose prisms with pointer depth",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "polaris-parallax-dark",
+      "name": "Polaris Parallax",
+      "author": "Kauan Vidigal",
+      "file": "templates/polaris-parallax-dark.json",
+      "preview": "Polar light ribbons and a sparse distant sky",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "reef-parallax-dark",
+      "name": "Reef Parallax",
+      "author": "Kauan Vidigal",
+      "file": "templates/reef-parallax-dark.json",
+      "preview": "Ocean currents, coral light and layered underwater depth",
+      "supportsLightAndDarkModes": false,
+      "mode": "dark"
+    },
+    {
+      "id": "sunrise-parallax-light",
+      "name": "Sunrise Parallax",
+      "author": "Kauan Vidigal",
+      "file": "templates/sunrise-parallax-light.json",
+      "preview": "Peach sunrise ribbons with gentle warm parallax",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "petal-parallax-light",
+      "name": "Petal Parallax",
+      "author": "Kauan Vidigal",
+      "file": "templates/petal-parallax-light.json",
+      "preview": "Rose and lilac layers floating like soft petals",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "dune-parallax-light",
+      "name": "Dune Parallax",
+      "author": "Kauan Vidigal",
+      "file": "templates/dune-parallax-light.json",
+      "preview": "Sand-colored contour waves with terracotta depth",
+      "supportsLightAndDarkModes": false,
+      "mode": "light"
+    },
+    {
+      "id": "aurora-borealis-dark",
+      "name": "Aurora Borealis Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/aurora-borealis-dark.json",
+      "preview": "Luminous ribbons and distant stars over polar skies (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "aurora-borealis",
+      "mode": "dark"
+    },
+    {
+      "id": "aurora-borealis-light",
+      "name": "Aurora Borealis Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/aurora-borealis-light.json",
+      "preview": "Luminous ribbons and distant stars over polar skies (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "aurora-borealis",
+      "mode": "light"
+    },
+    {
+      "id": "firefly-grove-dark",
+      "name": "Firefly Grove Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/firefly-grove-dark.json",
+      "preview": "Warm fireflies drifting through soft woodland shadows (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "firefly-grove",
+      "mode": "dark"
+    },
+    {
+      "id": "firefly-grove-light",
+      "name": "Firefly Grove Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/firefly-grove-light.json",
+      "preview": "Warm fireflies drifting through soft woodland shadows (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "firefly-grove",
+      "mode": "light"
+    },
+    {
+      "id": "ocean-depths-dark",
+      "name": "Ocean Depths Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/ocean-depths-dark.json",
+      "preview": "Layered ocean currents, rising bubbles and gentle light shafts (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "ocean-depths",
+      "mode": "dark"
+    },
+    {
+      "id": "ocean-depths-light",
+      "name": "Ocean Depths Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/ocean-depths-light.json",
+      "preview": "Layered ocean currents, rising bubbles and gentle light shafts (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "ocean-depths",
+      "mode": "light"
+    },
+    {
+      "id": "forest-canopy-dark",
+      "name": "Forest Canopy Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/forest-canopy-dark.json",
+      "preview": "Soft canopy circles and scattered sunlight between layered leaves (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "forest-canopy",
+      "mode": "dark"
+    },
+    {
+      "id": "forest-canopy-light",
+      "name": "Forest Canopy Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/forest-canopy-light.json",
+      "preview": "Soft canopy circles and scattered sunlight between layered leaves (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "forest-canopy",
+      "mode": "light"
+    },
+    {
+      "id": "silver-rain-dark",
+      "name": "Silver Rain Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/silver-rain-dark.json",
+      "preview": "Slanted silver rainfall, broad ripples and low mist (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "silver-rain",
+      "mode": "dark"
+    },
+    {
+      "id": "silver-rain-light",
+      "name": "Silver Rain Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/silver-rain-light.json",
+      "preview": "Slanted silver rainfall, broad ripples and low mist (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "silver-rain",
+      "mode": "light"
+    },
+    {
+      "id": "cloud-harbor-dark",
+      "name": "Cloud Harbor Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/cloud-harbor-dark.json",
+      "preview": "Slow cloud banks drifting above a calm open horizon (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "cloud-harbor",
+      "mode": "dark"
+    },
+    {
+      "id": "cloud-harbor-light",
+      "name": "Cloud Harbor Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/cloud-harbor-light.json",
+      "preview": "Slow cloud banks drifting above a calm open horizon (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "cloud-harbor",
+      "mode": "light"
+    },
+    {
+      "id": "sakura-breeze-dark",
+      "name": "Sakura Breeze Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/sakura-breeze-dark.json",
+      "preview": "Rose petals and small highlights carried across a spring breeze (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "sakura-breeze",
+      "mode": "dark"
+    },
+    {
+      "id": "sakura-breeze-light",
+      "name": "Sakura Breeze Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/sakura-breeze-light.json",
+      "preview": "Rose petals and small highlights carried across a spring breeze (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "sakura-breeze",
+      "mode": "light"
+    },
+    {
+      "id": "autumn-embers-dark",
+      "name": "Autumn Embers Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/autumn-embers-dark.json",
+      "preview": "Copper embers rising through layers of warm autumn haze (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "autumn-embers",
+      "mode": "dark"
+    },
+    {
+      "id": "autumn-embers-light",
+      "name": "Autumn Embers Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/autumn-embers-light.json",
+      "preview": "Copper embers rising through layers of warm autumn haze (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "autumn-embers",
+      "mode": "light"
+    },
+    {
+      "id": "glacier-fjord-dark",
+      "name": "Glacier Fjord Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/glacier-fjord-dark.json",
+      "preview": "Icy contours, crystalline geometry and sparse drifting snow (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "glacier-fjord",
+      "mode": "dark"
+    },
+    {
+      "id": "glacier-fjord-light",
+      "name": "Glacier Fjord Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/glacier-fjord-light.json",
+      "preview": "Icy contours, crystalline geometry and sparse drifting snow (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "glacier-fjord",
+      "mode": "light"
+    },
+    {
+      "id": "desert-mirage-dark",
+      "name": "Desert Mirage Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/desert-mirage-dark.json",
+      "preview": "Sweeping dune contours and fine sand moving in a warm mirage (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "desert-mirage",
+      "mode": "dark"
+    },
+    {
+      "id": "desert-mirage-light",
+      "name": "Desert Mirage Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/desert-mirage-light.json",
+      "preview": "Sweeping dune contours and fine sand moving in a warm mirage (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "desert-mirage",
+      "mode": "light"
+    },
+    {
+      "id": "lavender-mist-dark",
+      "name": "Lavender Mist Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/lavender-mist-dark.json",
+      "preview": "Lavender fog, quiet contour waves and distant pearl lights (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "lavender-mist",
+      "mode": "dark"
+    },
+    {
+      "id": "lavender-mist-light",
+      "name": "Lavender Mist Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/lavender-mist-light.json",
+      "preview": "Lavender fog, quiet contour waves and distant pearl lights (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "lavender-mist",
+      "mode": "light"
+    },
+    {
+      "id": "coral-lagoon-dark",
+      "name": "Coral Lagoon Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/coral-lagoon-dark.json",
+      "preview": "Turquoise lagoon currents with coral highlights and rising bubbles (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "coral-lagoon",
+      "mode": "dark"
+    },
+    {
+      "id": "coral-lagoon-light",
+      "name": "Coral Lagoon Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/coral-lagoon-light.json",
+      "preview": "Turquoise lagoon currents with coral highlights and rising bubbles (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "coral-lagoon",
+      "mode": "light"
+    },
+    {
+      "id": "bamboo-dawn-dark",
+      "name": "Bamboo Dawn Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/bamboo-dawn-dark.json",
+      "preview": "Slender bamboo-like shafts with warm dawn light and drifting pollen (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "bamboo-dawn",
+      "mode": "dark"
+    },
+    {
+      "id": "bamboo-dawn-light",
+      "name": "Bamboo Dawn Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/bamboo-dawn-light.json",
+      "preview": "Slender bamboo-like shafts with warm dawn light and drifting pollen (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "bamboo-dawn",
+      "mode": "light"
+    },
+    {
+      "id": "thunder-horizon-dark",
+      "name": "Thunder Horizon Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/thunder-horizon-dark.json",
+      "preview": "Slow storm clouds and distant rain without flashing effects (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "thunder-horizon",
+      "mode": "dark"
+    },
+    {
+      "id": "thunder-horizon-light",
+      "name": "Thunder Horizon Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/thunder-horizon-light.json",
+      "preview": "Slow storm clouds and distant rain without flashing effects (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "thunder-horizon",
+      "mode": "light"
+    },
+    {
+      "id": "crystal-cavern-dark",
+      "name": "Crystal Cavern Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/crystal-cavern-dark.json",
+      "preview": "Faceted grids and luminous mineral trails inside a violet cavern (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "crystal-cavern",
+      "mode": "dark"
+    },
+    {
+      "id": "crystal-cavern-light",
+      "name": "Crystal Cavern Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/crystal-cavern-light.json",
+      "preview": "Faceted grids and luminous mineral trails inside a violet cavern (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "crystal-cavern",
+      "mode": "light"
+    },
+    {
+      "id": "lotus-pond-dark",
+      "name": "Lotus Pond Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/lotus-pond-dark.json",
+      "preview": "Layered pond ripples, rose reflections and floating water lights (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "lotus-pond",
+      "mode": "dark"
+    },
+    {
+      "id": "lotus-pond-light",
+      "name": "Lotus Pond Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/lotus-pond-light.json",
+      "preview": "Layered pond ripples, rose reflections and floating water lights (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "lotus-pond",
+      "mode": "light"
+    },
+    {
+      "id": "golden-savanna-dark",
+      "name": "Golden Savanna Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/golden-savanna-dark.json",
+      "preview": "Golden grass-like trails and warm dust drifting across open plains (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "golden-savanna",
+      "mode": "dark"
+    },
+    {
+      "id": "golden-savanna-light",
+      "name": "Golden Savanna Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/golden-savanna-light.json",
+      "preview": "Golden grass-like trails and warm dust drifting across open plains (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "golden-savanna",
+      "mode": "light"
+    },
+    {
+      "id": "alpine-meadow-dark",
+      "name": "Alpine Meadow Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/alpine-meadow-dark.json",
+      "preview": "Fresh meadow light, small floating seeds and cool mountain contours (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "alpine-meadow",
+      "mode": "dark"
+    },
+    {
+      "id": "alpine-meadow-light",
+      "name": "Alpine Meadow Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/alpine-meadow-light.json",
+      "preview": "Fresh meadow light, small floating seeds and cool mountain contours (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "alpine-meadow",
+      "mode": "light"
+    },
+    {
+      "id": "cosmic-tide-dark",
+      "name": "Cosmic Tide Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/cosmic-tide-dark.json",
+      "preview": "Orbital wave fields, fine stars and slow galactic currents (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "cosmic-tide",
+      "mode": "dark"
+    },
+    {
+      "id": "cosmic-tide-light",
+      "name": "Cosmic Tide Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/cosmic-tide-light.json",
+      "preview": "Orbital wave fields, fine stars and slow galactic currents (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "cosmic-tide",
+      "mode": "light"
+    },
+    {
+      "id": "paper-lanterns-dark",
+      "name": "Paper Lanterns Dark",
+      "author": "Kauan Vidigal",
+      "file": "templates/paper-lanterns-dark.json",
+      "preview": "Warm lantern-like lights ascending through a quiet evening haze (dark)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "paper-lanterns",
+      "mode": "dark"
+    },
+    {
+      "id": "paper-lanterns-light",
+      "name": "Paper Lanterns Light",
+      "author": "Kauan Vidigal",
+      "file": "templates/paper-lanterns-light.json",
+      "preview": "Warm lantern-like lights ascending through a quiet evening haze (light)",
+      "supportsLightAndDarkModes": true,
+      "supportsLightAndDarkModesReference": "paper-lanterns",
+      "mode": "light"
     }
   ]
 }

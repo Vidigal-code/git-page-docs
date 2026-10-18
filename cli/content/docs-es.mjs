@@ -3,6 +3,7 @@ import { operationsEs } from "./operations-es.mjs";
 import { overviewsEs } from "./overviews-es.mjs";
 import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
 import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
+import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
 
 export const docsEs = {
     ...practicalEs,
@@ -42,7 +43,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.11/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.12/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -51,9 +52,9 @@ En \`gitpagedocs/docs/versions/0.0.11/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -315,7 +316,7 @@ Claves principales:
 
 ## Controles de idioma, tema, foco, navegación rápida, PDF y documentos
 
-En \`gitpagedocs/config.json\`, estas entradas de \`site.icons\` configuran idioma, tema, foco, navegación Ctrl+K, acciones PDF y navegación al pie de los documentos. Los ocho controles utilizan React Icons por defecto:
+En \`gitpagedocs/config.json\`, estas entradas de \`site.icons\` configuran idioma, tema, versión, foco, navegación Ctrl+K, acciones PDF y navegación al pie de los documentos. Los nueve controles utilizan React Icons por defecto:
 
 \`\`\`json
 {
@@ -331,6 +332,10 @@ En \`gitpagedocs/config.json\`, estas entradas de \`site.icons\` configuran idio
       },
       "FocusMode": {
         "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "colorDark": "currentColor", "colorLight": "currentColor"
+      },
+      "VersionSelector": {
+        "reactIcon": true, "tag": "LuGitBranch", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
@@ -363,6 +368,8 @@ Cada control es independiente: \`reactIcon: true\` muestra el icono (por defecto
 Las configuraciones compactas pueden mover valores comunes a \`site.icons.defaults\`; los campos omitidos heredan esos valores. Define \`reactIcon: false\` en una entrada concreta para sustituir el icono predeterminado por texto.
 
 ## Sección \`VersionControl\`
+
+\`site.icons.VersionSelector\` utiliza \`LuGitBranch\` por defecto. Define \`reactIcon: false\` para mostrar el texto de la versión seleccionada; \`true\` muestra el icono. Personaliza los mismos campos \`tag\`, \`size\`, \`colorDark\` y \`colorLight\`. El selector aparece solo cuando hay más de una versión de documentación; conserva el nombre accesible localizado del selector y muestra la versión seleccionada en el tooltip.
 
 \`VersionControl.versions\` define:
 
@@ -639,7 +646,7 @@ Cada template normalmente incluye:
 - toggle light/dark resuelve tema pareado por referencia
 - variables CSS se generan desde tokens del template
 
-## Buenas practicas
+## Buenas prácticas
 
 - mantener contraste accesible
 - mantener escala consistente de espacios y bordes
@@ -652,6 +659,8 @@ Elige un tema mediante el selector o configura \`site.ThemeDefault\` con su ID e
 En tu repositorio, ejecuta la CLI con \`--layoutconfig\`, edita la plantilla generada y conserva el ID coherente con \`layoutsConfig.json\`. El contenido de ruta y \`site.icons\` son independientes del catálogo de temas. Usa \`currentColor\` para iconos que heredan el color de texto o configura colores claros/oscuros con contraste suficiente.
 
 Al contribuir en Git Page Docs, la fuente es \`gitpagelayouts/v2/base.json\` junto con \`gitpagelayouts/v2/layouts/<id>.json\`. Ejecuta \`pnpm layouts:sync\` para generar plantillas y documentación. La sincronización puede sobrescribir las ediciones directas de plantillas generadas.
+
+${THEME_BACKGROUND_DOCS.es}
 `,
     mcp: `# Servidor MCP
 
@@ -712,7 +721,7 @@ Selecciona el proveedor con \`configure_ai_provider\` o con \`.gitpagedocs-mcp.j
 | \`fireworks\` | \`FIREWORKS_API_KEY\` |
 | \`perplexity\` | \`PERPLEXITY_API_KEY\` |
 
-Sin una selección válida, el proveedor predeterminado es OpenAI. Ollama no requiere clave de API; el servicio local y el modelo elegido deben estar disponibles. \`OLLAMA_BASE_URL\` es opcional. La URL base de Azure es la URL completa de la operación de chat, incluido deployment y versión de API cuando sean necesarios. La lista de modelos es un catálogo distribuido, no una comprobación en tiempo real.
+Cuando la selección guardada está ausente, no se puede leer o contiene JSON inválido, el proveedor predeterminado es OpenAI. Un ID de proveedor desconocido en JSON legible produce un error explícito sin seleccionar otro proveedor. Ollama no requiere clave de API; el servicio local y el modelo elegido deben estar disponibles. \`OLLAMA_BASE_URL\` es opcional. La URL base de Azure es la URL completa de la operación de chat, incluido deployment y versión de API cuando sean necesarios. La lista de modelos es un catálogo distribuido, no una comprobación en tiempo real.
 
 ## Referencia de tools
 
@@ -768,7 +777,7 @@ La generación envía el contenido seleccionado del proyecto al proveedor config
 
 - Lectura de archivos: hasta 512.000 bytes. Listado: hasta 2.000 entradas; árboles recopilados del proyecto: 400 entradas.
 - Búsqueda: hasta 5.000 entradas, 200 resultados y 240 caracteres por línea encontrada.
-- Recopilación de documentación: primeros 40 archivos Markdown entre hasta 2.000 entradas; se omiten archivos superiores a 40.000 bytes. El contexto del proveedor se limita a 24.000 caracteres.
+- Recopilación de documentación: primeros 40 archivos Markdown entre hasta 2.000 entradas; se omiten archivos superiores a 40.000 bytes. El contexto recopilado de archivos y Markdown se limita a 24.000 caracteres. No es un límite global del prompt: árbol/paquete, documento existente y pregunta proporcionada pueden añadir contenido según la tool seleccionada.
 - El listado omite carpetas de dependencias/build como \`node_modules\`, \`.git\`, \`.next\`, \`out\`, \`dist\`, \`prebuilt\`, \`.turbo\` y \`coverage\`. No interpreta \`.gitignore\`; archivos como \`.env\` no se excluyen automáticamente. Ejecuta solo en proyectos de confianza y selecciona el contenido que se expondrá.
 - La verificación de rutas es léxica; el proceso no es un sandbox del sistema operativo ni garantiza aislamiento de symlinks/junctions. Leer \`project://config\` puede importar configuración JavaScript/TypeScript.
 - Los fallos de tools incluyen \`isError: true\`. Los resources ausentes devuelven \`Unavailable: ...\`. Revisa stderr en el cliente para errores de inicio; stdout está reservado para JSON-RPC.
@@ -1095,7 +1104,7 @@ Porque el build de GitHub Pages habilita la página inicial de búsqueda y compo
 
 ## ¿Por qué el icono sigue mostrando texto?
 
-Define \`site.icons.<Control>.reactIcon\` como booleano \`true\`, con el nombre exacto exportado por React Icons en \`tag\`. LanguageSelector, ThemeSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious y DocumentNext usan iconos por defecto; cambia cualquier entrada a \`false\` para mostrar texto. Los campos planos \`Icon*ReactIcones\` tienen prioridad si existen ambos formatos. Comprueba si la propia función está desactivada mediante \`HideThemeSelector\`, \`FocusMode\` o las acciones PDF.
+Define \`site.icons.<Control>.reactIcon\` como booleano \`true\`, con el nombre exacto exportado por React Icons en \`tag\`. LanguageSelector, ThemeSelector, VersionSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious y DocumentNext usan iconos por defecto; cambia cualquier entrada a \`false\` para mostrar texto. Los campos planos \`Icon*ReactIcones\` tienen prioridad si existen ambos formatos. Comprueba si la propia función está desactivada mediante \`HideThemeSelector\`, \`FocusMode\` o las acciones PDF.
 
 ## ¿Por qué los hijos del menú o breadcrumbs son diferentes?
 

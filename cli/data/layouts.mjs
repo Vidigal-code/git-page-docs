@@ -1,3 +1,5 @@
+import { ANIMATED_LAYOUTS } from "./animated-layouts.mjs";
+
 /**
  * 25 modern standalone layouts. Each is a single fixed-aesthetic theme; colors
  * live in cli/data/theme-colors.mjs under the matching id. Defined as data so the
@@ -432,6 +434,7 @@ export const LAYOUTS = [
     mode: "light",
   },
   ...MODERN_LAYOUTS,
+  ...ANIMATED_LAYOUTS,
 ];
 
 export const FALLBACK_LAYOUTS = LAYOUTS.filter((layout) => layout.id === "aurora-dark" || layout.id === "aurora-light");

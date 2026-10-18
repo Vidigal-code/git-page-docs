@@ -35,11 +35,12 @@ This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the publi
 ### User references
 
 The generated documentation includes 32 Markdown pages per language: focused references plus complete configuration recipes, migration/compatibility, troubleshooting, contributing/testing and HTML-container guides. All pages are available in English, Portuguese and Spanish; Markdown filenames stay in English while titles and content preserve UTF-8 accents and special characters.
-The scaffold registers documentation versions 0.0.11 and 0.0.10, both with the current examples; the npm package version is 0.0.11. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
+The scaffold registers documentation versions 0.0.12, 0.0.11 and 0.0.10 with the current examples; the npm package version is 0.0.12. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
 
 The scaffold has real nested sections: Guides → Configure your site / Read and explore / Automate and integrate → documents, plus Operations and development and Git/GitHub groups. Getting Started and Project overview remain the first destinations. Every parent section has its own localized Markdown overview: click its title to read it, or use the separate arrow to expand children. Breadcrumb ancestors such as Guides → Configure your site remain navigable. Recursive `submenus` can extend the hierarchy without a fixed depth limit; `site.nestedMenusEnabled: false` keeps every destination in a flat presentation.
 
-Configure controls through `gitpagedocs/config.json` → `site.icons`. `LanguageSelector`, `ThemeSelector`, `FocusMode`, `QuickNavigation`, `PdfDownload`, `PdfOpenInNewTab`, `DocumentPrevious` and `DocumentNext` use icons by default. Set `reactIcon: false` independently to display text; `true` displays the icon. Customize `tag`, `size`, `colorDark` and `colorLight` per entry. Compact configs inherit omitted values from `icons.defaults`, so an omitted per-control `reactIcon` does not mean text mode. The Ctrl+K shortcut and accessible control names remain available.
+Configure controls through `gitpagedocs/config.json` → `site.icons`. `LanguageSelector`, `ThemeSelector`, `VersionSelector`, `FocusMode`, `QuickNavigation`, `PdfDownload`, `PdfOpenInNewTab`, `DocumentPrevious` and `DocumentNext` use icons by default. Set `reactIcon: false` independently to display text; `true` displays the icon. Customize `tag`, `size`, `colorDark` and `colorLight` per entry. Compact configs inherit omitted values from `icons.defaults`, so an omitted per-control `reactIcon` does not mean text mode. The Ctrl+K shortcut and accessible control names remain available.
+`VersionSelector` uses `LuGitBranch` by default; `reactIcon: false` displays the selected version as text. It appears only when more than one documentation version is available, retains the selector's localized accessible name and shows the selected version in its tooltip.
 
 `site.nestedMenusEnabled` selects recursive or flat navigation. Breadcrumbs use `RouteGuide` with route > version defaults > site precedence. `site.FocusMode` enables reading mode; `site.focusMode` controls copy, download, section navigation and document navigation independently.
 
@@ -51,6 +52,15 @@ Document-footer controls use `DocumentPrevious` (`LuChevronLeft`) and `DocumentN
 
 See [the MCP reference](mcp/README.md) for installation, client configuration, all 20 tools, all 7 resources, provider variables and limits. Start with `gitpagedocs mcp start` from the target project; on a source checkout the direct entry is `node --import tsx mcp/src/bin.ts`.
 
+### Animated themes
+
+The catalog contains 124 themes: 64 original themes, 20 standalone Motion backgrounds and 20 additional parallax families with dark and light variants (40 entries). All 84 earlier themes remain unchanged. Try `aurora-borealis-dark`/`aurora-borealis-light`, `firefly-grove-dark`/`firefly-grove-light`, or `ocean-depths-dark`/`ocean-depths-light`; the existing light/dark control switches within each pair. Each pair shares `supportsLightAndDarkModesReference` in the catalog. All themes are available through the official catalog and local `--layoutconfig` generation. See [the complete catalog](gitpagelayouts/README.md) and the generated Themes and layouts guide in English, Portuguese and Spanish.
+
+Customize `site.backgroundEffects` in `gitpagedocs/config.json`: `enabled: false` disables every background; `overrides` applies common settings; `themes[themeId]` applies theme-specific settings. Templates provide optional top-level `backgroundEffects`. Precedence is template → global overrides → per-theme overrides, while `layers` replaces the complete array. Adjust layer counts/colors, animation speed and pointer/scroll parallax without editing JavaScript. Reduced-motion preferences and a visitor pause control are supported; every new preset retains both protections.
+Pause/resume sits beside the navigation lock in the documentation menu (expanded, collapsed and mobile), or in the search-page header. A manual pause survives menu and theme changes until Resume is selected. `site.backgroundEffects.overrides.accessibility.showPauseButton` defaults to `true`; `false` hides only the control. Configure `site.icons.BackgroundAnimationPause` (`FiPause`) and `BackgroundAnimationResume` (`FiPlay`) with `reactIcon`, `tag`, `size`, `colorDark` and `colorLight`. Defaults are icons, 22px and `currentColor`; `reactIcon: false` shows localized text. Use the background master switch to disable the effect itself.
+
+Preset sources live in `gitpagelayouts/v2/layouts/` as `overrides.backgroundEffects`. `pnpm run layouts:sync` expands templates and compiles the same presets into the CLI package; existing themes do not acquire an animation implicitly.
+
 ### PDF documents
 
 Read or download the [GitPageDocs project guide (PDF, English)](cli/content/assets/gitpagedocs-project-guide.pdf). The CLI includes this real PDF in each generated version under `en/gitpagedocs-project-guide.pdf`; the example route points all three languages to the English document.
@@ -58,7 +68,7 @@ Read or download the [GitPageDocs project guide (PDF, English)](cli/content/asse
 Configure `site.pdf` with `enabled`, `previewEnabled`, `downloadEnabled` and `openInNewTabEnabled` (all default to `true`). The version config uses `routes-pdf`, `pdf.pathPdf` per language and `menus-header-pdf` with `page:23` for the bundled example. Route-level preview/download/new-tab options go inside `pdf`; `hierarchyPage.pdf` and `hierarchyMenu.pdf` order the content and menu sections.
 
 ```json
-{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.11/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
+{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.12/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
 ```
 
 The native browser viewer handles PDF previews and new tabs through validated `application/pdf` Blob URLs. Preview, download and new-tab actions all require CORS permission for external files. Opening a new tab does not navigate to the raw repository URL, so that server's Content-Type/Content-Disposition does not force a download. Browser PDF support and user preferences still apply. With preview disabled, the first download or new-tab action loads the PDF; cached bytes are reused. File/network errors and blocked pop-ups are reported without silently falling back to the raw URL.
@@ -88,13 +98,13 @@ Keep both `routes-html` and `menus-header-html` in the version configuration. Me
     "title": { "en": "DOOM: HTML example", "pt": "DOOM: exemplo HTML", "es": "DOOM: ejemplo HTML" },
     "description": { "en": "Load an interactive HTML demo", "pt": "Carregue uma demonstração HTML interativa", "es": "Carga una demostración HTML interactiva" },
     "titleIsVisible": true, "descriptionIsVisible": true, "container": "full",
-    "path": { "en": "gitpagedocs/docs/versions/0.0.11/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.11/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.11/es/doom.html" }
+    "path": { "en": "gitpagedocs/docs/versions/0.0.12/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.12/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.12/es/doom.html" }
   }],
   "menus-header-html": [{
     "id": 29,
-    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.11/en/doom.html" },
-    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.11/pt/doom.html" },
-    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.11/es/doom.html" }
+    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.12/en/doom.html" },
+    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.12/pt/doom.html" },
+    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.12/es/doom.html" }
   }]
 }
 ```

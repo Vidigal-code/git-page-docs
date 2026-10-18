@@ -47,12 +47,14 @@ export async function loadDocsData(slug: string[] | undefined, selectedVersionId
 
   const merged = mergeVersionConfig(baseConfigForMerge, versionConfig);
   const { effectiveConfig, sortedIds } = buildEffectiveConfig(baseConfig, merged);
+  const previewLocalLayouts = process.env.NODE_ENV === "development"
+    && process.env.GITPAGEDOCS_LAYOUTS_SOURCE === "local";
 
   const { layoutsConfig, themes } = await loadLayoutsAndThemes({
     isLocal: local,
     owner,
     repo,
-    useOfficialLayouts: effectiveConfig.site.layoutsConfigPathOficial === true,
+    useOfficialLayouts: !previewLocalLayouts && effectiveConfig.site.layoutsConfigPathOficial === true,
     officialLayoutsConfigPath: effectiveConfig.site.layoutsConfigPathOficialUrl,
     officialLayoutsTemplatesPath: effectiveConfig.site.layoutsConfigPathTemplatesOficial,
     layoutsConfigPath: effectiveConfig.site.layoutsConfigPath,

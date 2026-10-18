@@ -1,4 +1,5 @@
 import type { IconType } from "react-icons";
+import { SiGoogletranslate } from "@react-icons/all-files/si/SiGoogletranslate";
 
 type IconModule = Record<string, unknown>;
 
@@ -46,7 +47,7 @@ function resolvePrefix(tag: string): string | undefined {
 
 async function loadIconModule(prefix: string): Promise<IconModule> {
   const existing = moduleCache.get(prefix);
-  if (existing) {
+  if (existing !== undefined) {
     return existing;
   }
   const loader = ICON_IMPORTERS[prefix];
@@ -59,6 +60,10 @@ export async function resolveReactIconByTag(tag: string | undefined): Promise<Ic
   const normalizedTag = (tag ?? "").trim();
   if (!normalizedTag) {
     return null;
+  }
+
+  if (normalizedTag === "SiGoogletranslate") {
+    return SiGoogletranslate;
   }
 
   if (iconCache.has(normalizedTag)) {

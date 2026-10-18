@@ -1,0 +1,133 @@
+{
+  "id": "thunder-horizon-light",
+  "name": "Thunder Horizon Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F3F5FF",
+    "primary": "#4338CA",
+    "secondary": "#0369A1",
+    "text": "#2B3350",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#CCD2EB",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 35% 30%, #FFFFFF 0%, #F3F5FF 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.75
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 28,
+        "scroll": 0.06
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "thunder-horizon-orbs-1",
+          "kind": "orbs",
+          "count": 7,
+          "colors": [
+            "#4338CA",
+            "#0369A1"
+          ],
+          "opacity": 0.144,
+          "size": {
+            "min": 260,
+            "max": 520
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": -24,
+            "y": 5
+          },
+          "position": {
+            "x": 4,
+            "y": -3
+          },
+          "blur": 44,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.55,
+          "seed": 4314
+        },
+        {
+          "id": "thunder-horizon-streaks-2",
+          "kind": "streaks",
+          "count": 22,
+          "colors": [
+            "#4338CA",
+            "#0369A1"
+          ],
+          "opacity": 0.216,
+          "size": {
+            "min": 1,
+            "max": 2
+          },
+          "duration": {
+            "min": 14,
+            "max": 24
+          },
+          "travel": {
+            "x": -25,
+            "y": 135
+          },
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 16,
+          "depth": 1.7,
+          "length": 110,
+          "seed": 4333
+        },
+        {
+          "id": "thunder-horizon-waves-3",
+          "kind": "waves",
+          "count": 4,
+          "colors": [
+            "#4338CA",
+            "#0369A1"
+          ],
+          "opacity": 0.101,
+          "size": {
+            "min": 400,
+            "max": 680
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 18,
+            "y": -5
+          },
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.1,
+          "seed": 4352
+        }
+      ]
+    }
+  }
+}

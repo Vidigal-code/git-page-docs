@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaBars, IoMdClose } from "@/shared/ui/fallback-icons";
@@ -70,6 +70,7 @@ interface SearchShellHeaderProps {
   themeSelectorIcon?: ControlIconConfig;
   /** Theme CSS variables forwarded to selector modals (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
+  additionalControls?: ReactNode;
 }
 
 export function SearchShellHeader({
@@ -94,6 +95,7 @@ export function SearchShellHeader({
   languageSelectorIcon,
   themeSelectorIcon,
   themeVarsStyle,
+  additionalControls,
 }: Readonly<SearchShellHeaderProps>) {
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
@@ -121,6 +123,7 @@ export function SearchShellHeader({
 
   const controls = (
     <>
+      {additionalControls}
       {layouts.length > 1 && (
         <ThemeSelector
           className={themeSelectorIcon ? `${styles.modeIconButton} ${styles.selectorIconButton}` : styles.select}

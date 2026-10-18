@@ -1,4 +1,6 @@
 import { BsRobot, FiX } from "@/shared/ui/fallback-icons";
+import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
+import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import type { MenuNode } from "../model/menu-tree";
 import { ConfiguredIcon } from "./docs-shell-icon";
@@ -17,6 +19,10 @@ interface DocsShellMobileDrawerProps {
   isNodeExpanded: (nodeKey: string) => boolean;
   controls: React.ComponentProps<typeof DocsShellControls>;
   navMenuCloseIcon?: ResolvedNavMenuIconConfig;
+  navMenuConfig: NavMenuConfig;
+  blockMenuOnNav: boolean;
+  setBlockMenuOnNav: (value: boolean) => void;
+  backgroundControl?: React.ReactNode;
   onOpenAiChat: () => void;
   aiChatIconConfig?: { open: ResolvedNavMenuIconConfig };
 }
@@ -32,6 +38,10 @@ export function DocsShellMobileDrawer({
   isNodeExpanded,
   controls,
   navMenuCloseIcon,
+  navMenuConfig,
+  blockMenuOnNav,
+  setBlockMenuOnNav,
+  backgroundControl,
   onOpenAiChat,
   aiChatIconConfig,
 }: Readonly<DocsShellMobileDrawerProps>): React.JSX.Element | null {
@@ -63,6 +73,18 @@ export function DocsShellMobileDrawer({
             isNodeExpanded={isNodeExpanded}
           />
         </nav>
+        <div className={styles.mobileMenuActions}>
+          <NavMenuBlockToggle
+            blockMenuOnNav={blockMenuOnNav}
+            onToggle={() => setBlockMenuOnNav(!blockMenuOnNav)}
+            activeIcon={navMenuConfig.navMenuBlockActiveIcon}
+            inactiveIcon={navMenuConfig.navMenuBlockInactiveIcon}
+            labelActive={navMenuConfig.blockMenuOnNavLabelActive}
+            labelInactive={navMenuConfig.blockMenuOnNavLabelInactive}
+            className={`${styles.button} ${styles.sidebarRailButton}`}
+          />
+          {backgroundControl}
+        </div>
         <div className={styles.mobileControls}>
           <DocsShellControls {...controls} />
         </div>

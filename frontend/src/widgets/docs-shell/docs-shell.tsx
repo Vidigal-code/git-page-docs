@@ -1,11 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { BackgroundAnimationControl, useThemeBackgroundPlayback } from "@/features/theme-background";
+import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
 import { useSearchParams } from "next/navigation";
 import {
   hasMarkdownDocument,
+  getLangMenuLabelFromMenu,
   resolvePageMarkdownHtml,
   resolvePageMarkdownSource,
+  resolveThemeBackground,
   toDocsShellCssVars,
   type LoadedDocsData,
   type LoadedPage,
@@ -46,6 +50,11 @@ import type { BrowseNavigationProps } from "./model/content-browse-props";
 import { DocsShellProvider } from "./model/docs-shell-context";
 import { AudioPlayerProvider } from "@/features/audio-player";
 import dynamic from "next/dynamic";
+
+const ThemeBackground = dynamic(
+  () => import("@/features/theme-background/renderer").then((module) => module.ThemeBackground),
+  { ssr: false },
+);
 
 // The AI chat drawer (vault + provider stack) is heavy and only needed after
 // the user opens the chat, so it is code-split and mounted on first open.
@@ -365,6 +374,26 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   }, [pageIndex]);
 
   const activeTheme = data.themes[activeLayout?.id];
+  const background = useMemo(
+    () => resolveThemeBackground({ theme: activeTheme, settings: data.config.site.backgroundEffects }),
+    [activeTheme, data.config.site.backgroundEffects],
+  );
+  const backgroundPlayback = useThemeBackgroundPlayback(background);
+  const backgroundAction = backgroundPlayback.paused ? "Resume" : "Pause";
+  const backgroundIcon = resolveControlIcon(data.config.site, {
+    name: `BackgroundAnimation${backgroundAction}`,
+    mode: activeLayout?.mode === "light" ? "light" : "dark",
+  });
+  const backgroundControl = backgroundPlayback.showControl && (
+    <BackgroundAnimationControl
+      paused={backgroundPlayback.paused}
+      onToggle={backgroundPlayback.toggle}
+      label={getLangMenuLabelFromMenu(data.config.site.langmenu, language,
+        `backgroundAnimation${backgroundAction}`, `${backgroundAction} background animation`)}
+      icon={backgroundIcon}
+      className={`${styles.button} ${styles.backgroundAnimationButton}`}
+    />
+  );
   const cssVars = useMemo(
     () => toDocsShellCssVars(activeTheme, data.config.site),
     [activeTheme, data.config.site],
@@ -562,7 +591,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
         enabled={controlsConfig.showAudioPlayer}
         language={language}
       >
-      <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars}>
+      <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars} data-background-effects={Boolean(background)}>
+        {background && <ThemeBackground key={activeTheme.id} config={background} paused={backgroundPlayback.paused} />}
         <DocsShellSidebar
           siteName={headerName}
           useReactHeaderIcon={useReactHeaderIcon}
@@ -584,6 +614,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           onOpenAiChat={openAiChat}
           aiChatIconConfig={isAiChatEnabledGlobal ? aiChatIconConfig : undefined}
           docsLock={docsLockProps}
+          backgroundControl={backgroundControl}
         />
 
         {!sidebarOpen && (
@@ -593,6 +624,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
             blockMenuOnNav={blockMenuOnNav}
             setBlockMenuOnNav={setBlockMenuOnNav}
             navMenuConfig={navMenuConfig}
+            backgroundControl={backgroundControl}
           />
         )}
 
@@ -629,6 +661,9 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
         />
 
         <DocsShellOverlays
+          blockMenuOnNav={blockMenuOnNav}
+          setBlockMenuOnNav={setBlockMenuOnNav}
+          backgroundControl={backgroundControl}
           menuOpen={menuOpen}
           setMenuOpen={setMenuOpen}
           headerName={headerName}

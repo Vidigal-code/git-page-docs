@@ -1,0 +1,191 @@
+{
+  "id": "silver-rain-light",
+  "name": "Silver Rain Light",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F1F5FA",
+    "primary": "#1D4ED8",
+    "secondary": "#475569",
+    "text": "#24354B",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#CAD5E3",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#FFFFFF",
+      "borderBottom": "1px solid #E2E8F0"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#FFFFFF",
+      "borderTop": "1px solid #E2E8F0"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 50px rgba(15, 23, 42, 0.08)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #CAD5E3",
+      "hoverGlow": "0 0 0 3px rgba(29, 78, 216, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #CAD5E3",
+      "backgroundColor": "#FFFFFF",
+      "textAlign": "center",
+      "iconColor": "#475569",
+      "hoverBorderColor": "rgba(29, 78, 216, 0.7)",
+      "focusBorderColor": "rgba(29, 78, 216, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(29, 78, 216, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#1D4ED8",
+      "borderColor": "#CBD5E1",
+      "hoverBorderColor": "rgba(8, 145, 178, 0.7)",
+      "checkMarkColor": "#F1F5FA",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": false,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 20% 30%, #FFFFFF 0%, #F1F5FA 78%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.65
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 32,
+      "scroll": 0.045
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "silver-rain-streaks-1",
+        "kind": "streaks",
+        "count": 34,
+        "colors": [
+          "#1D4ED8",
+          "#475569"
+        ],
+        "opacity": 0.302,
+        "size": {
+          "min": 1,
+          "max": 2
+        },
+        "duration": {
+          "min": 10,
+          "max": 20
+        },
+        "travel": {
+          "x": -20,
+          "y": 150
+        },
+        "position": {
+          "x": 8,
+          "y": -3
+        },
+        "blur": 0,
+        "glow": 0,
+        "rotation": 10,
+        "depth": 1.5,
+        "length": 84,
+        "seed": 3405
+      },
+      {
+        "id": "silver-rain-waves-2",
+        "kind": "waves",
+        "count": 5,
+        "colors": [
+          "#1D4ED8",
+          "#475569"
+        ],
+        "opacity": 0.122,
+        "size": {
+          "min": 180,
+          "max": 500
+        },
+        "duration": {
+          "min": 37,
+          "max": 65
+        },
+        "travel": {
+          "x": 8,
+          "y": 3
+        },
+        "position": {
+          "x": 8,
+          "y": 0
+        },
+        "blur": 0,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 0.6,
+        "seed": 3424
+      },
+      {
+        "id": "silver-rain-orbs-3",
+        "kind": "orbs",
+        "count": 3,
+        "colors": [
+          "#1D4ED8",
+          "#475569"
+        ],
+        "opacity": 0.072,
+        "size": {
+          "min": 280,
+          "max": 500
+        },
+        "duration": {
+          "min": 42,
+          "max": 72
+        },
+        "travel": {
+          "x": -12,
+          "y": 4
+        },
+        "position": {
+          "x": 8,
+          "y": 3
+        },
+        "blur": 56,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 0.25,
+        "seed": 3443
+      }
+    ]
+  }
+}

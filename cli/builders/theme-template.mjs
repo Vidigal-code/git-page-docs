@@ -2,6 +2,7 @@
 
 import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 import { THEME_COLORS } from "../data/theme-colors.mjs";
+import { ANIMATED_BACKGROUNDS } from "../data/animated-layouts.mjs";
 
 /** `#RRGGBB` (or `#RGB`) to `rgba(r, g, b, alpha)` for palette-derived glows and borders. */
 function rgba(hex, alpha) {
@@ -14,6 +15,7 @@ function rgba(hex, alpha) {
 export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
   const colors = themeColors[layout.id] ?? themeColors.default;
   const dark = layout.mode === "dark";
+  const background = ANIMATED_BACKGROUNDS[layout.id];
   return {
     id: layout.id,
     name: layout.name,
@@ -82,5 +84,6 @@ export function createThemeTemplate(layout, themeColors = THEME_COLORS) {
       enableGlow: dark,
       transitionDuration: "0.22s",
     },
+    ...(background ? { backgroundEffects: structuredClone(background) } : {}),
   };
 }

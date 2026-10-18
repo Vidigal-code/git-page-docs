@@ -29,7 +29,7 @@ describe("gitpagelayouts v2 source", () => {
       expect(layout).not.toHaveProperty("components");
     }
     // Only the two duet layouts carry their own component design.
-    expect(layouts.filter((l: { overrides?: object }) => l.overrides).map((l: { id: string }) => l.id).sort()).toEqual([
+    expect(layouts.filter((l: { overrides?: { components?: object } }) => l.overrides?.components).map((l: { id: string }) => l.id).sort()).toEqual([
       "duet-dark",
       "duet-light",
     ]);

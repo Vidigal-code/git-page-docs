@@ -1,0 +1,120 @@
+{
+  "id": "petal-parallax-light",
+  "name": "Petal Parallax",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FDF2F8",
+    "primary": "#A21CAF",
+    "secondary": "#BE185D",
+    "text": "#17233B",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#F2CBE6",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 55% 0%, #FFFFFF 0%, #FDF2F8 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 24,
+        "scroll": 0.08
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "orbs-1",
+          "kind": "orbs",
+          "count": 4,
+          "opacity": 0.11699999999999999,
+          "size": {
+            "min": 140,
+            "max": 260
+          },
+          "duration": {
+            "min": 28,
+            "max": 52
+          },
+          "travel": {
+            "x": 12,
+            "y": -8
+          },
+          "blur": 36,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.2,
+          "colors": [
+            "#A21CAF",
+            "#BE185D"
+          ],
+          "seed": 2867
+        },
+        {
+          "id": "waves-2",
+          "kind": "waves",
+          "count": 3,
+          "opacity": 0.10400000000000001,
+          "size": {
+            "min": 180,
+            "max": 300
+          },
+          "duration": {
+            "min": 32,
+            "max": 60
+          },
+          "travel": {
+            "x": 15,
+            "y": 7
+          },
+          "blur": 24,
+          "glow": 0,
+          "rotation": -12,
+          "depth": 1,
+          "colors": [
+            "#A21CAF",
+            "#BE185D"
+          ],
+          "seed": 2884
+        },
+        {
+          "id": "stars-3",
+          "kind": "stars",
+          "count": 36,
+          "opacity": 0.36400000000000005,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 24,
+            "max": 48
+          },
+          "travel": {
+            "x": 4,
+            "y": 110
+          },
+          "blur": 0,
+          "glow": 3,
+          "rotation": 0,
+          "depth": 0.7,
+          "colors": [
+            "#A21CAF",
+            "#BE185D"
+          ],
+          "seed": 2901
+        }
+      ]
+    }
+  }
+}

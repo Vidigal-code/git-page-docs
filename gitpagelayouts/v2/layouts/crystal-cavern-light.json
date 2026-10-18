@@ -1,0 +1,133 @@
+{
+  "id": "crystal-cavern-light",
+  "name": "Crystal Cavern Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F7F3FF",
+    "primary": "#6D28D9",
+    "secondary": "#0E7490",
+    "text": "#382D50",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#D7CAEB",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 50% 50%, #FFFFFF 0%, #F7F3FF 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8500000000000001
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 32,
+        "scroll": 0.075
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "crystal-cavern-grid-1",
+          "kind": "grid",
+          "count": 4,
+          "colors": [
+            "#6D28D9",
+            "#0E7490"
+          ],
+          "opacity": 0.094,
+          "size": {
+            "min": 100,
+            "max": 210
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 10,
+            "y": -8
+          },
+          "position": {
+            "x": 8,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 45,
+          "depth": 1.1,
+          "seed": 4415
+        },
+        {
+          "id": "crystal-cavern-streaks-2",
+          "kind": "streaks",
+          "count": 8,
+          "colors": [
+            "#6D28D9",
+            "#0E7490"
+          ],
+          "opacity": 0.202,
+          "size": {
+            "min": 2,
+            "max": 5
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": 12,
+            "y": 45
+          },
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 10,
+          "rotation": -25,
+          "depth": 1.6,
+          "length": 170,
+          "seed": 4434
+        },
+        {
+          "id": "crystal-cavern-stars-3",
+          "kind": "stars",
+          "count": 26,
+          "colors": [
+            "#6D28D9",
+            "#0E7490"
+          ],
+          "opacity": 0.346,
+          "size": {
+            "min": 1,
+            "max": 4
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": -6,
+            "y": -18
+          },
+          "position": {
+            "x": 8,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 7,
+          "rotation": 0,
+          "depth": 0.45,
+          "seed": 4453
+        }
+      ]
+    }
+  }
+}

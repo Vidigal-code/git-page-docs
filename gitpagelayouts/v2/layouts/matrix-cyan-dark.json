@@ -1,0 +1,122 @@
+{
+  "id": "matrix-cyan-dark",
+  "name": "Matrix Cyan",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#03131B",
+    "primary": "#22D3EE",
+    "secondary": "#7DD3FC",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#082331",
+    "cardBorder": "#164B60",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 55% 0%, #082331 0%, #03131B 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.9
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "matrix-1",
+          "kind": "matrix",
+          "count": 13,
+          "opacity": 0.28,
+          "size": {
+            "min": 13,
+            "max": 17
+          },
+          "duration": {
+            "min": 18,
+            "max": 38
+          },
+          "travel": {
+            "x": 0,
+            "y": 115
+          },
+          "blur": 0,
+          "glow": 2,
+          "rotation": 0,
+          "depth": 0.35,
+          "characters": "0123456789アイウエオカキクケコサシスセソ",
+          "rows": 16,
+          "colors": [
+            "#22D3EE",
+            "#7DD3FC"
+          ],
+          "seed": 2059
+        },
+        {
+          "id": "grid-2",
+          "kind": "grid",
+          "count": 1,
+          "opacity": 0.12,
+          "size": {
+            "min": 48,
+            "max": 64
+          },
+          "duration": {
+            "min": 48,
+            "max": 70
+          },
+          "travel": {
+            "x": 3,
+            "y": 4
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.25,
+          "colors": [
+            "#22D3EE",
+            "#7DD3FC"
+          ],
+          "seed": 2076
+        },
+        {
+          "id": "stars-3",
+          "kind": "stars",
+          "count": 36,
+          "opacity": 0.56,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 24,
+            "max": 48
+          },
+          "travel": {
+            "x": 4,
+            "y": 110
+          },
+          "blur": 0,
+          "glow": 3,
+          "rotation": 0,
+          "depth": 0.7,
+          "colors": [
+            "#22D3EE",
+            "#7DD3FC"
+          ],
+          "seed": 2093
+        }
+      ]
+    }
+  }
+}

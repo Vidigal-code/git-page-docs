@@ -1,0 +1,120 @@
+{
+  "id": "nebula-violet-dark",
+  "name": "Nebula Violet",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#12091F",
+    "primary": "#C084FC",
+    "secondary": "#F0ABFC",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#211332",
+    "cardBorder": "#57366E",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 55% 0%, #211332 0%, #12091F 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 10,
+        "scroll": 0.025
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "orbs-1",
+          "kind": "orbs",
+          "count": 4,
+          "opacity": 0.18,
+          "size": {
+            "min": 140,
+            "max": 260
+          },
+          "duration": {
+            "min": 28,
+            "max": 52
+          },
+          "travel": {
+            "x": 12,
+            "y": -8
+          },
+          "blur": 36,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.2,
+          "colors": [
+            "#C084FC",
+            "#F0ABFC"
+          ],
+          "seed": 1655
+        },
+        {
+          "id": "stars-2",
+          "kind": "stars",
+          "count": 36,
+          "opacity": 0.56,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 24,
+            "max": 48
+          },
+          "travel": {
+            "x": 4,
+            "y": 110
+          },
+          "blur": 0,
+          "glow": 3,
+          "rotation": 0,
+          "depth": 0.7,
+          "colors": [
+            "#C084FC",
+            "#F0ABFC"
+          ],
+          "seed": 1672
+        },
+        {
+          "id": "waves-3",
+          "kind": "waves",
+          "count": 3,
+          "opacity": 0.16,
+          "size": {
+            "min": 180,
+            "max": 300
+          },
+          "duration": {
+            "min": 32,
+            "max": 60
+          },
+          "travel": {
+            "x": 15,
+            "y": 7
+          },
+          "blur": 24,
+          "glow": 0,
+          "rotation": -12,
+          "depth": 1,
+          "colors": [
+            "#C084FC",
+            "#F0ABFC"
+          ],
+          "seed": 1689
+        }
+      ]
+    }
+  }
+}

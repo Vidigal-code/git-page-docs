@@ -15,6 +15,11 @@
   overflow-x: clip;
 }
 
+.wrapper[data-background-effects="true"] {
+  position: relative;
+  isolation: isolate;
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -109,6 +114,7 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .menuList {
@@ -990,6 +996,44 @@ dialog.contentContainerFullscreen {
   width: 42px;
   min-width: 42px;
   padding: 0;
+}
+
+.backgroundAnimationButton {
+  min-width: 44px;
+  min-height: 44px;
+  height: auto;
+  max-width: 100%;
+  padding: 8px;
+  white-space: normal;
+}
+
+.backgroundAnimationButton:has(svg) {
+  width: 44px;
+}
+
+.collapsedNavRail .backgroundAnimationButton:not(:has(svg)) {
+  writing-mode: vertical-rl;
+  max-height: 50vh;
+  max-width: none;
+}
+
+.mobileMenuActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: var(--mobile-drawer-content-width);
+  margin-top: 16px;
+}
+
+.mobileMenuActions > button {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.mobileMenuActions .backgroundAnimationButton {
+  flex-shrink: 1;
 }
 
 .mobileMenu {

@@ -1,0 +1,151 @@
+{
+  "id": "reef-parallax-dark",
+  "name": "Reef Parallax",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#031C20",
+    "primary": "#2DD4BF",
+    "secondary": "#FDA4AF",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#0A3035",
+    "cardBorder": "#246069",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#0B1220",
+      "borderBottom": "1px solid #334155"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#0B1220",
+      "borderTop": "1px solid #334155"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 60px rgba(0, 0, 0, 0.45)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #246069",
+      "hoverGlow": "0 0 0 3px rgba(45, 212, 191, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #246069",
+      "backgroundColor": "#0A3035",
+      "textAlign": "center",
+      "iconColor": "#FDA4AF",
+      "hoverBorderColor": "rgba(45, 212, 191, 0.7)",
+      "focusBorderColor": "rgba(45, 212, 191, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(45, 212, 191, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#2DD4BF",
+      "borderColor": "#475569",
+      "hoverBorderColor": "rgba(34, 211, 238, 0.75)",
+      "checkMarkColor": "#031C20",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": true,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 15% 0%, #0A3035 0%, #031C20 70%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.9
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 24,
+      "scroll": 0.08
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "waves-1",
+        "kind": "waves",
+        "count": 3,
+        "opacity": 0.16,
+        "size": {
+          "min": 180,
+          "max": 300
+        },
+        "duration": {
+          "min": 32,
+          "max": 60
+        },
+        "travel": {
+          "x": 15,
+          "y": 7
+        },
+        "blur": 24,
+        "glow": 0,
+        "rotation": -12,
+        "depth": 1,
+        "colors": [
+          "#2DD4BF",
+          "#FDA4AF"
+        ],
+        "seed": 2665
+      },
+      {
+        "id": "orbs-2",
+        "kind": "orbs",
+        "count": 4,
+        "opacity": 0.18,
+        "size": {
+          "min": 140,
+          "max": 260
+        },
+        "duration": {
+          "min": 28,
+          "max": 52
+        },
+        "travel": {
+          "x": 12,
+          "y": -8
+        },
+        "blur": 36,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 1.2,
+        "colors": [
+          "#2DD4BF",
+          "#FDA4AF"
+        ],
+        "seed": 2682
+      }
+    ]
+  }
+}

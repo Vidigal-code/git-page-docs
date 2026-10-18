@@ -1,0 +1,191 @@
+{
+  "id": "golden-savanna-light",
+  "name": "Golden Savanna Light",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFFAEC",
+    "primary": "#854D0E",
+    "secondary": "#9A3412",
+    "text": "#4D3D22",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E8D7B3",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#FFFFFF",
+      "borderBottom": "1px solid #E2E8F0"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#FFFFFF",
+      "borderTop": "1px solid #E2E8F0"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 50px rgba(15, 23, 42, 0.08)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #E8D7B3",
+      "hoverGlow": "0 0 0 3px rgba(133, 77, 14, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #E8D7B3",
+      "backgroundColor": "#FFFFFF",
+      "textAlign": "center",
+      "iconColor": "#9A3412",
+      "hoverBorderColor": "rgba(133, 77, 14, 0.7)",
+      "focusBorderColor": "rgba(133, 77, 14, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(133, 77, 14, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#854D0E",
+      "borderColor": "#CBD5E1",
+      "hoverBorderColor": "rgba(8, 145, 178, 0.7)",
+      "checkMarkColor": "#FFFAEC",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": false,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 20% 30%, #FFFFFF 0%, #FFFAEC 78%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.65
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 20,
+      "scroll": 0.045
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "golden-savanna-streaks-1",
+        "kind": "streaks",
+        "count": 18,
+        "colors": [
+          "#854D0E",
+          "#9A3412"
+        ],
+        "opacity": 0.173,
+        "size": {
+          "min": 2,
+          "max": 5
+        },
+        "duration": {
+          "min": 32,
+          "max": 58
+        },
+        "travel": {
+          "x": 12,
+          "y": 5
+        },
+        "position": {
+          "x": -4,
+          "y": -3
+        },
+        "blur": 0,
+        "glow": 0,
+        "rotation": -24,
+        "depth": 1.5,
+        "length": 150,
+        "seed": 4617
+      },
+      {
+        "id": "golden-savanna-stars-2",
+        "kind": "stars",
+        "count": 28,
+        "colors": [
+          "#854D0E",
+          "#9A3412"
+        ],
+        "opacity": 0.252,
+        "size": {
+          "min": 1,
+          "max": 3
+        },
+        "duration": {
+          "min": 37,
+          "max": 65
+        },
+        "travel": {
+          "x": 80,
+          "y": -18
+        },
+        "position": {
+          "x": -4,
+          "y": 0
+        },
+        "blur": 0,
+        "glow": 4,
+        "rotation": 0,
+        "depth": 0.8,
+        "seed": 4636
+      },
+      {
+        "id": "golden-savanna-orbs-3",
+        "kind": "orbs",
+        "count": 3,
+        "colors": [
+          "#854D0E",
+          "#9A3412"
+        ],
+        "opacity": 0.108,
+        "size": {
+          "min": 240,
+          "max": 440
+        },
+        "duration": {
+          "min": 42,
+          "max": 72
+        },
+        "travel": {
+          "x": -12,
+          "y": 6
+        },
+        "position": {
+          "x": -4,
+          "y": 3
+        },
+        "blur": 50,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 0.3,
+        "seed": 4655
+      }
+    ]
+  }
+}

@@ -13,7 +13,7 @@ Añade esta ruta al array \`routes-html\` existente en la configuración de la v
 ${HTML_ROUTE_JSON}
 \`\`\`
 
-Añade un elemento traducido en \`menus-header-html\`. Cada \`path-click\` debe coincidir con la ruta de su idioma, como \`gitpagedocs/docs/versions/0.0.11/es/doom.html\`; no sustituyas esta ruta HTML local por \`page:29\`. Una etiqueta de menú no crea una ruta. HTML admite la misma estructura recursiva \`submenus\` que los demás menús.
+Añade un elemento traducido en \`menus-header-html\`. Cada \`path-click\` debe coincidir con la ruta de su idioma, como \`gitpagedocs/docs/versions/0.0.12/es/doom.html\`; no sustituyas esta ruta HTML local por \`page:29\`. Una etiqueta de menú no crea una ruta. HTML admite la misma estructura recursiva \`submenus\` que los demás menús.
 
 ## Tamaño, contenido y URLs externas
 
@@ -35,9 +35,9 @@ Esta guía crea un sitio pequeño en tres idiomas, con dos páginas Markdown y u
 
 ## 1. Genera y revisa la estructura
 
-El scaffold incluye las versiones 0.0.11 y 0.0.10 en el selector. Ambas contienen los ejemplos actuales; la versión del paquete sigue siendo 0.0.11. Las rutas y etiquetas se generan para la versión correspondiente de la documentación. No se eliminan las carpetas existentes de versiones anteriores.
+El scaffold incluye las versiones 0.0.12, 0.0.11 y 0.0.10 en el selector. Las tres contienen los ejemplos actuales; la versión del paquete es 0.0.12. Las rutas y etiquetas se generan para la versión correspondiente de la documentación. No se eliminan las carpetas existentes de versiones anteriores.
 
-Ejecuta \`npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO\` en un directorio de proyecto nuevo. En este repositorio de código fuente, \`node cli/index.mjs\` ejecuta la versión del checkout. La generación escribe configuración y documentación; no inicia el visor Next.js.
+Ejecuta \`npx --yes @gitpagedocs/cli@0.0.12 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO\` en un directorio de proyecto nuevo. En este repositorio de código fuente, \`node cli/index.mjs\` ejecuta la versión del checkout. La generación escribe configuración y documentación; no inicia el visor Next.js.
 
 El siguiente JSON completo es un ejemplo mínimo de \`gitpagedocs/config.json\`. Para un sitio existente, combina los campos relevantes y conserva la identidad del repositorio, la publicación, los temas y las demás versiones.
 
@@ -45,7 +45,7 @@ El siguiente JSON completo es un ejemplo mínimo de \`gitpagedocs/config.json\`.
 ${RECIPE_ROOT_JSON}
 \`\`\`
 
-Las ocho entradas heredan la presentación común de \`icons.defaults\`. Para mostrar texto en una acción, añade \`"reactIcon": false\` a esa entrada. No cambies un valor compartido solo para modificar un botón. Los campos planos antiguos tienen prioridad sobre los compactos; elimina o actualiza un campo conflictivo tras confirmar su intención.
+Las nueve entradas heredan la presentación común de \`icons.defaults\`. Para mostrar texto en una acción, añade \`"reactIcon": false\` a esa entrada. No cambies un valor compartido solo para modificar un botón. Los campos planos antiguos tienen prioridad sobre los compactos; elimina o actualiza un campo conflictivo tras confirmar su intención.
 
 ## 2. Crea la configuración de versión
 

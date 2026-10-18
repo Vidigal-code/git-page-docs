@@ -1,0 +1,132 @@
+{
+  "id": "cosmic-tide-dark",
+  "name": "Cosmic Tide Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#111A34",
+    "primary": "#A5B4FC",
+    "secondary": "#F0ABFC",
+    "text": "#EDF0FF",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#202D4B",
+    "cardBorder": "#435779",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 50% 10%, #202D4B 0%, #111A34 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8500000000000001
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 28,
+        "scroll": 0.075
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "cosmic-tide-waves-1",
+          "kind": "waves",
+          "count": 7,
+          "colors": [
+            "#A5B4FC",
+            "#F0ABFC"
+          ],
+          "opacity": 0.22,
+          "size": {
+            "min": 240,
+            "max": 620
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 18,
+            "y": -12
+          },
+          "position": {
+            "x": 4,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 3,
+          "rotation": 38,
+          "depth": 1.3,
+          "seed": 4819
+        },
+        {
+          "id": "cosmic-tide-stars-2",
+          "kind": "stars",
+          "count": 38,
+          "colors": [
+            "#A5B4FC",
+            "#F0ABFC"
+          ],
+          "opacity": 0.5,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -16,
+            "y": 65
+          },
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 5,
+          "rotation": 0,
+          "depth": 0.4,
+          "seed": 4838
+        },
+        {
+          "id": "cosmic-tide-orbs-3",
+          "kind": "orbs",
+          "count": 4,
+          "colors": [
+            "#A5B4FC",
+            "#F0ABFC"
+          ],
+          "opacity": 0.15,
+          "size": {
+            "min": 160,
+            "max": 340
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 22,
+            "y": 9
+          },
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "blur": 42,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.8,
+          "seed": 4857
+        }
+      ]
+    }
+  }
+}

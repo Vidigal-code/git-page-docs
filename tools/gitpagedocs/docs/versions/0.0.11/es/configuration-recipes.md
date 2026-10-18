@@ -4,9 +4,9 @@ Esta guía crea un sitio pequeño en tres idiomas, con dos páginas Markdown y u
 
 ## 1. Genera y revisa la estructura
 
-El scaffold incluye las versiones 0.0.11 y 0.0.10 en el selector. Ambas contienen los ejemplos actuales; la versión del paquete sigue siendo 0.0.11. Las rutas y etiquetas se generan para la versión correspondiente de la documentación. No se eliminan las carpetas existentes de versiones anteriores.
+El scaffold incluye las versiones 0.0.12, 0.0.11 y 0.0.10 en el selector. Las tres contienen los ejemplos actuales; la versión del paquete es 0.0.12. Las rutas y etiquetas se generan para la versión correspondiente de la documentación. No se eliminan las carpetas existentes de versiones anteriores.
 
-Ejecuta `npx --yes @gitpagedocs/cli@0.0.11 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO` en un directorio de proyecto nuevo. En este repositorio de código fuente, `node cli/index.mjs` ejecuta la versión del checkout. La generación escribe configuración y documentación; no inicia el visor Next.js.
+Ejecuta `npx --yes @gitpagedocs/cli@0.0.12 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO` en un directorio de proyecto nuevo. En este repositorio de código fuente, `node cli/index.mjs` ejecuta la versión del checkout. La generación escribe configuración y documentación; no inicia el visor Next.js.
 
 El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. Para un sitio existente, combina los campos relevantes y conserva la identidad del repositorio, la publicación, los temas y las demás versiones.
 
@@ -14,7 +14,7 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
 {
   "site": {
     "name": "Documentação • Guía • Documentation",
-    "docsVersion": "0.0.11",
+    "docsVersion": "0.0.12",
     "languages": {
       "en": true,
       "pt": true,
@@ -42,6 +42,9 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
       },
       "ThemeSelector": {
         "tag": "LuPencil"
+      },
+      "VersionSelector": {
+        "tag": "LuGitBranch"
       },
       "FocusMode": {
         "tag": "LuBookOpen"
@@ -72,7 +75,7 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.11",
+        "id": "0.0.12",
         "path": "gitpagedocs/docs/versions/0.0.11/config.json"
       }
     ]
@@ -80,7 +83,7 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
 }
 ```
 
-Las ocho entradas heredan la presentación común de `icons.defaults`. Para mostrar texto en una acción, añade `"reactIcon": false` a esa entrada. No cambies un valor compartido solo para modificar un botón. Los campos planos antiguos tienen prioridad sobre los compactos; elimina o actualiza un campo conflictivo tras confirmar su intención.
+Las nueve entradas heredan la presentación común de `icons.defaults`. Para mostrar texto en una acción, añade `"reactIcon": false` a esa entrada. No cambies un valor compartido solo para modificar un botón. Los campos planos antiguos tienen prioridad sobre los compactos; elimina o actualiza un campo conflictivo tras confirmar su intención.
 
 ## 2. Crea la configuración de versión
 

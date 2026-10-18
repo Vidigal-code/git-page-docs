@@ -28,13 +28,32 @@ npx @gitpagedocs/cli
 | `gitpagedocs provider [id]` · `models [provider]` | List AI providers / catalog models |
 | `gitpagedocs document[:repo\|:file\|:folder]` | Generate documentation with AI in the gitpagedocs pattern |
 | `gitpagedocs password` | Set a documentation access password (writes the public key to `config.json`, prints the private key) |
-| `gitpagedocs deploy` / `pages [actions\|deploy]` | Configure GitHub Pages via Actions + push |
+| `gitpagedocs deploy` / `pages deploy` | Configure GitHub Pages via Actions, generate, commit and push |
+| `gitpagedocs pages actions` | Switch the repository's Pages source to GitHub Actions; no generation or push |
 | `gitpagedocs docs` | Refresh managed regions of README/CONTRIBUTING/SECURITY |
 | `gitpagedocs config clear` | Delete the stored `.gitpagedocsconfig` **and** the encrypted key vault `.gitpagedocsvault` (wipes saved AI credentials) |
 | `gitpagedocs doctor` · `version` · `update` | Diagnostics / version / registry update check |
 | `gitpagedocs mcp start` | Start the MCP server over stdio |
 
 The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the published package is self-contained).
+
+## Generated documentation and themes
+
+Version 0.0.12 registers documentation versions 0.0.12, 0.0.11 and 0.0.10 with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
+
+The scaffold demonstrates parent Markdown destinations with recursive submenus and navigable breadcrumbs, PDF routes/actions, and a page with ordered, repeated Markdown/HTML/video/audio/PDF blocks. Route titles and descriptions have independent placement settings. Focus mode provides source actions and eight document/section navigation controls; browser narration is configured separately. See the generated configuration, content-blocks, focus, accessibility and HTML/PDF guides for complete examples.
+
+`gitpagedocs --layoutconfig` ships all 124 themes: 64 original themes, 20 standalone animated presets and 20 additional dark/light parallax pairs. New presets originate in `gitpagelayouts/v2/` and are compiled into package-local data by `pnpm run layouts:sync`; a standalone CLI installation does not need the source repository to emit them. Customize backgrounds through `site.backgroundEffects`, including global/per-theme settings, colors, density, speed and parallax. The master switch disables backgrounds; `overrides.accessibility.showPauseButton: false` hides only the pause control.
+
+`site.icons.VersionSelector` and `BackgroundAnimationPause`/`BackgroundAnimationResume` use the same `reactIcon`, `tag`, `size`, `colorDark` and `colorLight` contract as other controls. Pause/resume appears in the navigation menu beside its lock; a manual pause persists across theme and menu changes. `reactIcon: false` selects localized text independently for each control.
+
+The [MCP reference](../mcp/README.md) documents installation, client configuration, all 20 tools and seven resources. MCP runs over stdio and reads provider credentials from its environment; it does not automatically unlock the CLI vault.
+
+## Packaging and release
+
+Root and frontend workspaces are private. The public packages are `@gitpagedocs/tools`, `@gitpagedocs/mcp` and `@gitpagedocs/cli`; their versions, internal ranges and lockfile must agree. The npm workflow checks a new CLI version, installs with a frozen lockfile, runs typecheck and contract self-tests, then publishes the workspaces. GitHub Pages builds the viewer in its separate workflow. Neither workflow creates GitHub release notes or tags automatically.
+
+The package allowlist includes its source, templates, data and assets. `prebuilt/` is optional and is not created by the npm workflow. The config-only command generates repository data without starting a server. Run the full project checks and inspect package contents before publication; verify the published package and deployed site afterward.
 
 # CLI Architecture (Clean Architecture + SOLID)
 
@@ -141,7 +160,7 @@ npx @gitpagedocs/cli ai
 
 ### What it does
 
-- asks provider (`openai`, `claude`, `gemini`, `ollama`)
+- asks for a provider from the shared catalog (14 providers, including OpenAI, Anthropic, Gemini and Ollama)
 - asks API key or Ollama URL
 - asks paths to scan (supports one or many paths, including other repositories)
 - generates documentation in `pt`, `en`, `es` **in the gitpagedocs pattern**
@@ -169,21 +188,22 @@ permissions on POSIX systems:
 - Linux: `$XDG_CONFIG_HOME/gitpagedocs/.gitpagedocsconfig` (or `~/.config/gitpagedocs/.gitpagedocsconfig`)
 
 Set `GITPAGEDOCS_CONFIG_DIR` to override the directory; delete the stored file,
-the vault and their credentials with `gitpagedocs config clear`. You can create/edit
-this file manually and then run `npx @gitpagedocs/cli ai`:
+the vault and their credentials with `gitpagedocs config clear`. This example describes
+a saved configuration whose key already exists in the encrypted vault. Edit its non-secret
+settings and then run `npx @gitpagedocs/cli ai`. For a new installation, run the interactive
+setup first; if no key exists, decline reuse of the configuration and enter the credentials.
 
 ```json
 {
 	"version": 1,
 	"ai": {
 		"provider": "openai",
-		"model": "gpt-4o-mini",
 		"apiKeyEncrypted": true,
 		"paths": ["src", "cli", "../another-repo/src"],
 		"languages": ["pt", "en", "es"],
 		"outputDir": "gitpagedocs/docs",
 		"filePrefix": "ai-generated",
-		"contextPrompt": "Você é um redator técnico sênior..."
+		"contextPrompt": "Write clear technical documentation for this project."
 	}
 }
 ```
@@ -200,7 +220,7 @@ derived from your password with PBKDF2-HMAC-SHA-256, 210k iterations) and the co
 - `GITPAGEDOCS_VAULT_PASSWORD` supplies the password without a prompt (CI, pipes, no TTY);
   on a first run it initializes the vault, otherwise it must match the existing one.
 - A plaintext `"apiKey"` written by 0.0.1 is sealed into the vault and removed from the file
-  the next time the config is read.
+  when `ai` or `chat` reuses that configuration and unlocks it with the vault password.
 - If you hand-write the file, leave the key out: enter it in the `gitpagedocs ai` prompt (it is
   sealed on save). `gitpagedocs chat` can also read the provider's environment variable
   (`gitpagedocs provider <id>` lists it) when no key is stored.

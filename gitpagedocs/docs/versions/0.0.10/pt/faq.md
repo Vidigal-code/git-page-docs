@@ -30,7 +30,7 @@ Porque o build de GitHub Pages habilita página inicial de busca e comportamento
 
 ## Por que o ícone ainda mostra texto?
 
-Defina `site.icons.<Controle>.reactIcon` como booleano `true`, com o nome exato exportado por React Icons em `tag`. LanguageSelector, ThemeSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious e DocumentNext usam ícones por padrão; altere qualquer entrada para `false` para exibir texto. Campos planos `Icon*ReactIcones` prevalecem se os dois formatos existirem. Confira se o próprio recurso está desabilitado por opções como `HideThemeSelector`, `FocusMode` ou as ações PDF.
+Defina `site.icons.<Controle>.reactIcon` como booleano `true`, com o nome exato exportado por React Icons em `tag`. LanguageSelector, ThemeSelector, VersionSelector, FocusMode, QuickNavigation, PdfDownload, PdfOpenInNewTab, DocumentPrevious e DocumentNext usam ícones por padrão; altere qualquer entrada para `false` para exibir texto. Campos planos `Icon*ReactIcones` prevalecem se os dois formatos existirem. Confira se o próprio recurso está desabilitado por opções como `HideThemeSelector`, `FocusMode` ou as ações PDF.
 
 ## Por que filhos de menus ou breadcrumbs aparecem diferentes?
 

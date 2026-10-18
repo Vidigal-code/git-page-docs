@@ -9,6 +9,11 @@
   color: var(--text);
 }
 
+.wrapper[data-background-effects="true"] {
+  position: relative;
+  isolation: isolate;
+}
+
 .main {
   flex: 1;
   display: flex;

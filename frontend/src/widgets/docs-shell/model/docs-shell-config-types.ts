@@ -4,6 +4,7 @@ import type { ControlIconConfig } from "@/shared/ui/control-icon";
 
 /** Version selector and repository links config */
 export interface DocsShellVersionConfig {
+  versionSelectorIcon?: ControlIconConfig;
   versionLinkOptionsWithLabels: { id: "branch" | "release" | "commit"; label: string; url: string }[];
   versionLinksLabel: string;
   useReactVersionLinksIcon: boolean;
@@ -104,6 +105,7 @@ export interface DocsShellThemeNavConfig {
 
 /** Base controls props (header, version, theme, nav) */
 export interface DocsShellControlsBaseProps {
+  versionSelectorIcon?: ControlIconConfig;
   quickNavigationIcon?: ControlIconConfig;
   focusModeIcon?: ControlIconConfig;
   languageSelectorIcon?: ControlIconConfig;

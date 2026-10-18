@@ -1,0 +1,132 @@
+{
+  "id": "sakura-breeze-light",
+  "name": "Sakura Breeze Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#FFF3F8",
+    "primary": "#BE185D",
+    "secondary": "#7E22CE",
+    "text": "#4B263C",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#F0C6D8",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 50% 10%, #FFFFFF 0%, #FFF3F8 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.8500000000000001
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 20,
+        "scroll": 0.075
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "sakura-breeze-orbs-1",
+          "kind": "orbs",
+          "count": 26,
+          "colors": [
+            "#BE185D",
+            "#7E22CE"
+          ],
+          "opacity": 0.288,
+          "size": {
+            "min": 6,
+            "max": 16
+          },
+          "duration": {
+            "min": 22,
+            "max": 44
+          },
+          "travel": {
+            "x": 90,
+            "y": 85
+          },
+          "position": {
+            "x": -4,
+            "y": -3
+          },
+          "blur": 1,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.6,
+          "seed": 3607
+        },
+        {
+          "id": "sakura-breeze-stars-2",
+          "kind": "stars",
+          "count": 14,
+          "colors": [
+            "#BE185D",
+            "#7E22CE"
+          ],
+          "opacity": 0.23,
+          "size": {
+            "min": 2,
+            "max": 4
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": 65,
+            "y": 48
+          },
+          "position": {
+            "x": -4,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 4,
+          "rotation": 0,
+          "depth": 0.7,
+          "seed": 3626
+        },
+        {
+          "id": "sakura-breeze-waves-3",
+          "kind": "waves",
+          "count": 3,
+          "colors": [
+            "#BE185D",
+            "#7E22CE"
+          ],
+          "opacity": 0.072,
+          "size": {
+            "min": 340,
+            "max": 560
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 20,
+            "y": -6
+          },
+          "position": {
+            "x": -4,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 25,
+          "depth": 0.35,
+          "seed": 3645
+        }
+      ]
+    }
+  }
+}

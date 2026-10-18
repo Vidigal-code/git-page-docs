@@ -1,0 +1,179 @@
+{
+  "id": "comet-trail-dark",
+  "name": "Comet Trail",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "dark",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#03171C",
+    "primary": "#2DD4BF",
+    "secondary": "#67E8F9",
+    "text": "#EAF2FF",
+    "textSecondary": "#A7B9CE",
+    "cardBackground": "#08292F",
+    "cardBorder": "#18505B",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#0B1220",
+      "borderBottom": "1px solid #334155"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#0B1220",
+      "borderTop": "1px solid #334155"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 60px rgba(0, 0, 0, 0.45)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #18505B",
+      "hoverGlow": "0 0 0 3px rgba(45, 212, 191, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #18505B",
+      "backgroundColor": "#08292F",
+      "textAlign": "center",
+      "iconColor": "#67E8F9",
+      "hoverBorderColor": "rgba(45, 212, 191, 0.7)",
+      "focusBorderColor": "rgba(45, 212, 191, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(45, 212, 191, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#2DD4BF",
+      "borderColor": "#475569",
+      "hoverBorderColor": "rgba(34, 211, 238, 0.75)",
+      "checkMarkColor": "#03171C",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": true,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 15% 0%, #08292F 0%, #03171C 70%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.9
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 10,
+      "scroll": 0.025
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "streaks-1",
+        "kind": "streaks",
+        "count": 6,
+        "opacity": 0.5,
+        "size": {
+          "min": 1,
+          "max": 2
+        },
+        "duration": {
+          "min": 12,
+          "max": 25
+        },
+        "travel": {
+          "x": -28,
+          "y": 120
+        },
+        "blur": 0,
+        "glow": 5,
+        "rotation": 24,
+        "depth": 1.1,
+        "length": 120,
+        "colors": [
+          "#2DD4BF",
+          "#67E8F9"
+        ],
+        "seed": 1453
+      },
+      {
+        "id": "stars-2",
+        "kind": "stars",
+        "count": 28,
+        "opacity": 0.56,
+        "size": {
+          "min": 1,
+          "max": 3
+        },
+        "duration": {
+          "min": 24,
+          "max": 48
+        },
+        "travel": {
+          "x": 4,
+          "y": 110
+        },
+        "blur": 0,
+        "glow": 3,
+        "rotation": 0,
+        "depth": 0.7,
+        "colors": [
+          "#2DD4BF",
+          "#67E8F9"
+        ],
+        "seed": 1470
+      },
+      {
+        "id": "grid-3",
+        "kind": "grid",
+        "count": 1,
+        "opacity": 0.12,
+        "size": {
+          "min": 48,
+          "max": 64
+        },
+        "duration": {
+          "min": 48,
+          "max": 70
+        },
+        "travel": {
+          "x": 3,
+          "y": 4
+        },
+        "blur": 0,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 0.25,
+        "colors": [
+          "#2DD4BF",
+          "#67E8F9"
+        ],
+        "seed": 1487
+      }
+    ]
+  }
+}

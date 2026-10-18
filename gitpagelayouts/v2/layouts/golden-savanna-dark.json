@@ -1,0 +1,133 @@
+{
+  "id": "golden-savanna-dark",
+  "name": "Golden Savanna Dark",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#292112",
+    "primary": "#FDE68A",
+    "secondary": "#FDBA74",
+    "text": "#FFF5DB",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#3C3120",
+    "cardBorder": "#6C5938",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 20% 30%, #3C3120 0%, #292112 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.65
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 20,
+        "scroll": 0.045
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "golden-savanna-streaks-1",
+          "kind": "streaks",
+          "count": 18,
+          "colors": [
+            "#FDE68A",
+            "#FDBA74"
+          ],
+          "opacity": 0.24,
+          "size": {
+            "min": 2,
+            "max": 5
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 12,
+            "y": 5
+          },
+          "position": {
+            "x": -4,
+            "y": -3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": -24,
+          "depth": 1.5,
+          "length": 150,
+          "seed": 4617
+        },
+        {
+          "id": "golden-savanna-stars-2",
+          "kind": "stars",
+          "count": 28,
+          "colors": [
+            "#FDE68A",
+            "#FDBA74"
+          ],
+          "opacity": 0.35,
+          "size": {
+            "min": 1,
+            "max": 3
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": 80,
+            "y": -18
+          },
+          "position": {
+            "x": -4,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 4,
+          "rotation": 0,
+          "depth": 0.8,
+          "seed": 4636
+        },
+        {
+          "id": "golden-savanna-orbs-3",
+          "kind": "orbs",
+          "count": 3,
+          "colors": [
+            "#FDE68A",
+            "#FDBA74"
+          ],
+          "opacity": 0.15,
+          "size": {
+            "min": 240,
+            "max": 440
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": -12,
+            "y": 6
+          },
+          "position": {
+            "x": -4,
+            "y": 3
+          },
+          "blur": 50,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.3,
+          "seed": 4655
+        }
+      ]
+    }
+  }
+}

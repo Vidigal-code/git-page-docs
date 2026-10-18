@@ -1,0 +1,120 @@
+{
+  "id": "dune-parallax-light",
+  "name": "Dune Parallax",
+  "mode": "light",
+  "supportsLightAndDarkModes": false,
+  "colors": {
+    "background": "#FCF7ED",
+    "primary": "#92400E",
+    "secondary": "#9A3412",
+    "text": "#17233B",
+    "textSecondary": "#475569",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E8D5AF",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 75% 0%, #FFFFFF 0%, #FCF7ED 70%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.9
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 24,
+        "scroll": 0.08
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "waves-1",
+          "kind": "waves",
+          "count": 3,
+          "opacity": 0.10400000000000001,
+          "size": {
+            "min": 180,
+            "max": 300
+          },
+          "duration": {
+            "min": 32,
+            "max": 60
+          },
+          "travel": {
+            "x": 15,
+            "y": 7
+          },
+          "blur": 24,
+          "glow": 0,
+          "rotation": -12,
+          "depth": 1,
+          "colors": [
+            "#92400E",
+            "#9A3412"
+          ],
+          "seed": 2968
+        },
+        {
+          "id": "grid-2",
+          "kind": "grid",
+          "count": 1,
+          "opacity": 0.078,
+          "size": {
+            "min": 48,
+            "max": 64
+          },
+          "duration": {
+            "min": 48,
+            "max": 70
+          },
+          "travel": {
+            "x": 3,
+            "y": 4
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.25,
+          "colors": [
+            "#92400E",
+            "#9A3412"
+          ],
+          "seed": 2985
+        },
+        {
+          "id": "orbs-3",
+          "kind": "orbs",
+          "count": 4,
+          "opacity": 0.11699999999999999,
+          "size": {
+            "min": 140,
+            "max": 260
+          },
+          "duration": {
+            "min": 28,
+            "max": 52
+          },
+          "travel": {
+            "x": 12,
+            "y": -8
+          },
+          "blur": 36,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.2,
+          "colors": [
+            "#92400E",
+            "#9A3412"
+          ],
+          "seed": 3002
+        }
+      ]
+    }
+  }
+}

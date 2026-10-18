@@ -1,24 +1,28 @@
 
 <!-- gitpagedocs:audit -->
-# Legacy Contract Audit — Git Page Docs V2 refactor
+# Current Contract Audit — Git Page Docs
 
-This file is the **regression checklist** for the V2 monorepo refactor. Every item
-below works in `gitpagedocs@1.1.43` and MUST keep working through all phases.
-Automated coverage is noted per item (see `tools/smoke/`).
+This file records the public contracts checked by `tools/smoke/` and the current
+viewer tests. Supported compatibility starts at version **0.0.1**; legacy 1.1.x
+formats are outside the supported baseline. Version 0.0.12 adds capabilities
+without removing existing 0.0.x routes, configuration or documentation folders.
 
-> Generated as Phase 1/3 output. Do not delete generated regions between the
-> `gitpagedocs:*` markers; they are refreshed by tooling.
+> Keep the contract checks and this checklist aligned when changing the scaffold.
+> The markers delimit this audit; the regular `docs` command updates README,
+> CONTRIBUTING and SECURITY regions separately.
 
 ## 1. CLI invocation
 
 - Binary: `bin.gitpagedocs` → `cli/index.mjs` (Node, shebang) → spawns
-  `node --import tsx cli/presentation/index.ts`. Published via `files: ["cli","prebuilt"]`.
+  `node --import tsx cli/presentation/index.ts`. The CLI package allowlist includes
+  its entry points, source layers, contracts, builders, content/assets and data;
+  an optional `prebuilt/` folder is not created by the npm publication workflow.
 - Entry orchestration: `cli/presentation/index.ts` → `resolveOptions()` → `dispatchMode()`.
 - Banner printed before, credits after (`cli/presentation/ui/banner`).
 
 ## 2. Flags → options contract (`cli/presentation/options/parser.ts`)
 
-Known flags: `--build --serve --layoutconfig --full --push --home --search --path --output --interactive -i --ai` plus positional `ai`, and `--owner` / `--repo`.
+Flags include `--build --serve --layoutconfig --layouts-dir --full --push --home --search --path --output --interactive -i --no-interactive --yes -y --pages-actions --ai`, positional commands, and `--owner` / `--repo`. The parser and command registry remain the authoritative inventories.
 
 | Invocation | Resulting mode / key options | Automated by |
 |---|---|---|
@@ -36,13 +40,14 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 
 ## 3. Generated artifacts (config-only — `node cli/index.mjs`)
 
-- `gitpagedocs/config.json` (has `site` + `VersionControl`; no inline UI strings since 1.1.68).
+- `gitpagedocs/config.json` contains `site` and `VersionControl`; language bundles hold generated UI strings, while legacy inline strings remain readable.
 - `site.languages` in `gitpagedocs/config.json` (`{ "en": true, "pt": true, "es": true }`) + `gitpagedocs/langs/<lang>.json` (`langmenu` + `translations` per language; `cli/contracts/languages.mjs`, `cli/contracts/langs-paths.mjs`).
 - `gitpagedocs/icon.svg`.
-- Per version in `DOC_VERSIONS = [PACKAGE_VERSION]` (`cli/contracts/doc-versions.mjs`; currently `["0.0.8"]`):
-  `gitpagedocs/docs/versions/<v>/config.json` with arrays `routes-md`, `routes-html`, `routes-source-viewer`, `routes-video`, `routes-audio` and their `menus-header-*`, plus `<v>/{pt,en,es}/*.md` from `cli/content/docs-{pt,en,es}.mjs`.
+- Per version in `DOC_VERSIONS` (`cli/contracts/doc-versions.mjs`; currently `0.0.12`, `0.0.11`, `0.0.10`):
+  `gitpagedocs/docs/versions/<v>/config.json` contains `routes-md`, `routes-html`, `routes-source-viewer`, `routes-video`, `routes-audio`, `routes-pdf` and corresponding `menus-header-*`. `pages[].blocks` adds ordered, repeated MD/HTML/video/audio/PDF references without replacing legacy routes. Localized Markdown and the HTML demo come from `cli/content/`; the included English PDF is copied unchanged.
 - The source-viewer route points at the GitHub tree URL (`source-viewer-path`), so no HTML snapshot is generated any more; the byte-stable contract covers `config.json` + `langs/*.json` only.
-- **Contract invariant** for the refactor = the `config.json` and `langs/*.json` files stay byte-stable (baseline.snapshot.json). `source-viewer` drift is expected.
+- Deterministic configuration and language bundles are checked against the approved `baseline.snapshot.json`. Intentional default changes require regeneration, review and baseline refresh; existing user-authored documents are preserved by the normal output policy.
+- The catalog contains 124 entries: 64 original themes, 20 standalone animated presets and 20 dark/light parallax pairs. JSON v2 sources expand into official templates and package-local CLI data. Native pairing metadata, background limits, pause controls and icon/text overrides have public tests.
 
 ## 4. Human-facing report lines (`cli/application/report/config-only-reporter.mjs`)
 
@@ -60,17 +65,17 @@ Known flags: `--build --serve --layoutconfig --full --push --home --search --pat
 
 ## 6. `--home` distribution (`cli/application/home/handler.mjs`)
 
-- Builds artifacts into `gitpagedocs/` (ARTIFACTS_DIR), runs `next build` with `GITHUB_ACTIONS=true`, copies static `out/` + artifacts into `<outputDir>/`, writes `.env`, `Dockerfile`, `README.md`, `.nojekyll`. Logs serve/docker hints.
+- Requires a buildable viewer runtime/source checkout. Builds artifacts into `gitpagedocs/` (ARTIFACTS_DIR), runs `next build` with `GITHUB_ACTIONS=true`, copies the static output and artifacts into `<outputDir>/`, and writes `.env`, `Dockerfile`, `README.md` and `.nojekyll`. Logs serve/docker hints.
 - **Not run in automated smoke** (full build/network). Parser contract automated.
 
 ## 7. Config loading contract (frontend — `src/entities/docs/api/io/config-loader.ts`)
 
 - `CONFIG_EXTENSIONS = [".json",".js",".ts"]`, base `gitpagedocs/config`, default `gitpagedocs/config.json`.
-- `.json` via `JSON.parse`; `.js/.ts` via dynamic `import(pathToFileURL)`.
+- JSON preserves UTF-8 and accepts a leading BOM; `.js/.ts` use dynamic `import(pathToFileURL)` where supported by the local loader. Remote/static clients load JSON rather than executing arbitrary configuration modules.
 
 ## 8. Deploy (`.github/workflows/gitpagedocs-pages.yml`)
 
-- Clones runtime, copies user `gitpagedocs/` + `icon.svg`, installs, `next build` with `output:"export"`, relocates `out/` under path segment, generates redirect `index.html` from config default version+language, `.nojekyll`, uploads + deploys Pages.
+- The repository workflow clones the runtime, copies `gitpagedocs/` and `gitpagelayouts/`, installs with a frozen lockfile, builds `frontend/` with the Pages environment, moves `frontend/out` to the artifact folder, adds `.nojekyll`, and uploads/deploys it. Generated target-repository workflows can use their configured project subpath.
 - `next.config.ts` basePath logic (user-page vs project-page, `GITPAGEDOCS_PATH`, `GITPAGEDOCS_BASE_PATH`) must be preserved.
 
 ## 9. Validation commands (the regression wall)

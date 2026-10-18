@@ -1,0 +1,132 @@
+{
+  "id": "forest-canopy-light",
+  "name": "Forest Canopy Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F1F8ED",
+    "primary": "#166534",
+    "secondary": "#92400E",
+    "text": "#253E27",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#C4D8BD",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 65% 10%, #FFFFFF 0%, #F1F8ED 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.9500000000000001
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 28,
+        "scroll": 0.09
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "forest-canopy-orbs-1",
+          "kind": "orbs",
+          "count": 14,
+          "colors": [
+            "#166534",
+            "#92400E"
+          ],
+          "opacity": 0.115,
+          "size": {
+            "min": 90,
+            "max": 230
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 16,
+            "y": 8
+          },
+          "position": {
+            "x": 4,
+            "y": -3
+          },
+          "blur": 24,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 1.1,
+          "seed": 3304
+        },
+        {
+          "id": "forest-canopy-stars-2",
+          "kind": "stars",
+          "count": 22,
+          "colors": [
+            "#166534",
+            "#92400E"
+          ],
+          "opacity": 0.245,
+          "size": {
+            "min": 2,
+            "max": 7
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -10,
+            "y": 25
+          },
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 8,
+          "rotation": 0,
+          "depth": 1.8,
+          "seed": 3323
+        },
+        {
+          "id": "forest-canopy-waves-3",
+          "kind": "waves",
+          "count": 3,
+          "colors": [
+            "#166534",
+            "#92400E"
+          ],
+          "opacity": 0.072,
+          "size": {
+            "min": 360,
+            "max": 640
+          },
+          "duration": {
+            "min": 42,
+            "max": 72
+          },
+          "travel": {
+            "x": 6,
+            "y": -4
+          },
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": 42,
+          "depth": 0.4,
+          "seed": 3342
+        }
+      ]
+    }
+  }
+}

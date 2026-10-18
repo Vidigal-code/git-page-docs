@@ -3,6 +3,58 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.12 - 2026-10-18 - animated themes and configurable playback controls
+
+- Expand the theme catalog from 64 to 124 entries with 20 standalone animated presets and 20 additional parallax families, each with dark and light variants. Preserve the existing themes and native light/dark pairing.
+- Configure layered stars, streaks, Matrix characters, orbs, grids and waves through JSON, including colors, density, timing, opacity and pointer/scroll depth. Compile the same presets into the official catalog and standalone CLI data.
+- Move background pause/resume into the navigation menu beside its lock and into search-page headers. Keep a manual pause across menu and theme changes, respect reduced motion and hidden tabs, and support configurable icon or localized-text controls.
+- Add a configurable version-selector icon with a text override, accessible selector labels and a tooltip showing the selected version.
+- Remove the circular background and shadow from the chat title icon while retaining its configured size and theme color. Load the configured translation icon consistently.
+- Reduce breadcrumb spacing to 4px above and below the trail while preserving responsive alignment and navigable ancestors.
+- Add a development-only local-catalog preview and matching syntax-highlighting themes for all new layouts.
+- Write newly generated CLI documentation to the current package version while preserving explicit version selection in the documentation writer.
+- Refresh English package guides, configuration references and the changelog; keep Portuguese and Spanish documentation synchronized. Clarify MCP credentials, context limits and shared configuration exports.
+- Ship documentation versions 0.0.12, 0.0.11 and 0.0.10 together while retaining older folders and the existing English PDF guide.
+
+## 0.0.11 - 2026-10-17 - composable pages and themed controls
+
+- Open parent menu sections as Markdown documents while keeping their expand/collapse controls separate. Add eight overview pages and navigable breadcrumb ancestors; breadcrumb navigation does not open the sidebar automatically.
+- Compose one page from ordered, repeatable Markdown, HTML, video, audio and PDF blocks. Include a twelve-block example and a complete configuration guide in English, Portuguese and Spanish.
+- Read authorized Markdown blocks together in focus mode, with ordered source copying/downloading and distinct heading anchors.
+- Configure the placement and before/after position of route titles and descriptions independently. Markdown labels stay outside the document.
+- Show the DOOM player's native controls without duplicate introductory content or a custom loading button.
+- Apply consistent theme colors and responsive alignment to selectors, with updated descriptive icons, including translation and pencil controls.
+- Apply configured video audio settings when the player is ready, correcting YouTube's stored mute state once while preserving later user changes.
+- Make the Ctrl+K results list 24 pixels shorter and close selection dialogs with Escape without closing their surrounding panel.
+- Correct Portuguese and Spanish accents in interface labels and documentation, including localized version badges.
+- Ship updated documentation versions 0.0.11 and 0.0.10 together. Preserve older version folders and the existing English PDF guide.
+
+## 0.0.10 - 2026-10-17 - reading controls and HTML examples
+
+- Use React Icons by default for language, theme, focus mode and Ctrl+K controls, with independent text overrides.
+- Customize PDF download and new-tab actions as text or icons through `site.icons.PdfDownload` and `site.icons.PdfOpenInNewTab`.
+- Use configurable left/right arrow icons for document-footer navigation, with independent translated-text overrides.
+- Add first/previous/next/last controls for both documents and sections in focus mode.
+- Keep narration controls synchronized with native pause/resume events and retain keyboard focus while playback changes state.
+- Improve narration controls and focus navigation on narrow screens while keeping the reader's header and navigation visible.
+- Preserve UTF-8 site names, Markdown headings and table-of-contents labels, including JSON and Markdown files with a BOM.
+- Open validated PDF bytes in the browser's native viewer through an `application/pdf` Blob URL. Reuse loaded bytes, load on demand when preview is disabled and report file, network and pop-up errors.
+- Make navigation scrollbars follow the active theme.
+- Update the English project guide and documentation in English, Portuguese and Spanish while retaining versions 0.0.8 and 0.0.9.
+- Organize the generated menu into real nested sections and add complete configuration recipes, migration, troubleshooting and contributing/testing guides in all three languages.
+- Include a localized HTML DOOM example loaded on demand, matching HTML routes and menus, a complete HTML-container guide and an English README configuration example.
+- Publish the CLI, shared tools and MCP packages as 0.0.10.
+
+## 0.0.9 - 2026-10-17 - configurable reading, navigation and PDF docs
+
+- Configure language, theme, focus mode and quick-navigation controls as text or React Icons, with custom icons, sizes and light/dark colors. Existing configurations retain their text controls and keyboard shortcuts.
+- Organize documentation with recursive menus, expandable categories and an optional flat presentation. Configure breadcrumbs at the site, version or Markdown-route level.
+- Copy or download the complete Markdown document from focus mode. Move between sections and accessible documents while keeping the reading dialog open, or disable individual controls. Disabling section navigation displays the full document.
+- Read Markdown aloud with native browser voices, speed and volume controls, and pause, resume and stop actions. Narration shares media playback coordination with audio and video and cancels when the document changes.
+- Add PDF routes and menus with native previews, downloads and new-tab actions configured per site or document. Ship an English project guide with the CLI and publish PDF references in English, Portuguese and Spanish.
+- Expand English, Portuguese and Spanish documentation with dedicated configuration, CLI, MCP, navigation, focus, accessibility, deployment, architecture, themes and troubleshooting pages. The MCP reference covers all 20 tools and 7 resources.
+- Update the CLI, shared tools and MCP packages to 0.0.9 while retaining the existing 0.0.8 documentation files.
+
 ## 0.0.8 - 2026-09-29 - one sound at a time, GitHub test video, docs in sync with the code
 
 ### Media playback

@@ -38,6 +38,9 @@ export interface DocsShellOverlaysProps {
   isNodeExpanded: (key: string) => boolean;
   controlsProps: DocsShellControlsProps;
   navMenuConfig: NavMenuConfig;
+  blockMenuOnNav: boolean;
+  setBlockMenuOnNav: (value: boolean) => void;
+  backgroundControl?: ReactNode;
   controlsConfig: DocsShellOverlaysControlsConfig;
   labels: ContentLabels & Pick<DocsShellLabels, "focusFirstSectionLabel" | "focusLastSectionLabel" | "focusPreviousSectionLabel" | "focusNextSectionLabel" | "focusSectionsLabel" | "focusDocumentsLabel">;
   versionLinksPopupOpen: boolean;
@@ -100,6 +103,10 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         isNodeExpanded={props.isNodeExpanded}
         controls={controlsProps}
         navMenuCloseIcon={props.navMenuConfig.navMenuMobileCloseIcon}
+        navMenuConfig={props.navMenuConfig}
+        blockMenuOnNav={props.blockMenuOnNav}
+        setBlockMenuOnNav={props.setBlockMenuOnNav}
+        backgroundControl={props.backgroundControl}
         onOpenAiChat={props.onOpenAiChat}
         aiChatIconConfig={props.aiChatIconConfig}
       />

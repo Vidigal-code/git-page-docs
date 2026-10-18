@@ -1,0 +1,101 @@
+{
+  "id": "cloud-harbor-light",
+  "name": "Cloud Harbor Light",
+  "mode": "light",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#F3FAFF",
+    "primary": "#0369A1",
+    "secondary": "#92400E",
+    "text": "#213D50",
+    "textSecondary": "#526269",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#C8E0EC",
+    "error": "#B91C1C",
+    "success": "#15803D"
+  },
+  "overrides": {
+    "backgroundEffects": {
+      "enabled": true,
+      "surface": "radial-gradient(ellipse at 35% 50%, #FFFFFF 0%, #F3FAFF 78%)",
+      "opacity": 1,
+      "animation": {
+        "enabled": true,
+        "speed": 0.75
+      },
+      "parallax": {
+        "enabled": true,
+        "pointer": 16,
+        "scroll": 0.06
+      },
+      "accessibility": {
+        "reducedMotion": "static",
+        "showPauseButton": true
+      },
+      "layers": [
+        {
+          "id": "cloud-harbor-orbs-1",
+          "kind": "orbs",
+          "count": 10,
+          "colors": [
+            "#0369A1",
+            "#92400E"
+          ],
+          "opacity": 0.137,
+          "size": {
+            "min": 260,
+            "max": 500
+          },
+          "duration": {
+            "min": 32,
+            "max": 58
+          },
+          "travel": {
+            "x": 34,
+            "y": -3
+          },
+          "position": {
+            "x": -8,
+            "y": -3
+          },
+          "blur": 44,
+          "glow": 0,
+          "rotation": 0,
+          "depth": 0.8,
+          "seed": 3506
+        },
+        {
+          "id": "cloud-harbor-waves-2",
+          "kind": "waves",
+          "count": 4,
+          "colors": [
+            "#0369A1",
+            "#92400E"
+          ],
+          "opacity": 0.094,
+          "size": {
+            "min": 440,
+            "max": 720
+          },
+          "duration": {
+            "min": 37,
+            "max": 65
+          },
+          "travel": {
+            "x": -20,
+            "y": 5
+          },
+          "position": {
+            "x": -8,
+            "y": 0
+          },
+          "blur": 0,
+          "glow": 0,
+          "rotation": -4,
+          "depth": 1.35,
+          "seed": 3525
+        }
+      ]
+    }
+  }
+}

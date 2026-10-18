@@ -11,16 +11,17 @@ The **shared business-logic core** of the [Git Page Docs](../README.md) monorepo
 | `crypto/` | `NodeCryptoService` + `WebCryptoService` (SHA-256, PBKDF2, AES-256-GCM, masking, secure wipe); `deriveDocAccessKeys` / `verifyDocAccess` (double-hash documentation password gate shared by the CLI `password` command and the frontend gate) |
 | `cache/` | `MemoryCache`, `FileCache`, `WebStorageCache` (Strategy over one `Cache` port) |
 | `config/` | `GitPageDocsConfigLoader` (`.json` / `.js` / `.ts`) |
+| `config-format/` | Browser-safe `compactSiteIcons` / `expandSiteIcons` and `applyRouteDefaults` / `factorRouteDefaults` for compact configuration and inherited route values |
 | `logger/` | Level-filtered logger with **secret redaction** |
 | `errors/` | `AppError` + typed subclasses |
-| `filesystem/` | `FileService` (root-bounded list/read/write/search) |
+| `filesystem/` | `FileService` (list/read/write/search with lexical root containment; filesystem symlinks/junctions still require trusted deployment boundaries) |
 | `documentation/` | `DocumentationService`, `patchManagedRegion`, `DocUpdater` |
 | `i18n/` | Language bundles (`site.languages` toggles in `config.json` + `langs/<lang>.json`): `loadConfigLanguageBundles`, `applyLanguageBundles` (fold into `site.langmenu` / `translations`), `filterEnabledLanguages`, `splitLanguageBundles` (generator side); browser-safe |
 | `ports/` | Type-only contracts (logger, cache, crypto, security, config, ai) |
 
 ## Entry points (`exports`)
 
-`.` (full barrel) · `./ai` · `./errors` · `./i18n` · `./ports` · `./crypto/web` · `./security/web` · `./cache/web` — the `web` subpaths and `./i18n` are browser-safe (no `node:` imports) for the Next.js bundle.
+`.` (full barrel) · `./ai` · `./errors` · `./i18n` · `./config-format` · `./ports` · `./crypto/web` · `./security/web` · `./cache/web` — the `web` subpaths, `./i18n` and `./config-format` are browser-safe (no `node:` imports) for the Next.js bundle.
 
 ## Usage
 

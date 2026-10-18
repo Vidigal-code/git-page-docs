@@ -1,0 +1,190 @@
+{
+  "id": "sakura-breeze-dark",
+  "name": "Sakura Breeze Dark",
+  "author": "Kauan Vidigal",
+  "version": "1.0.0",
+  "mode": "dark",
+  "supportsLightAndDarkModes": true,
+  "colors": {
+    "background": "#281420",
+    "primary": "#FDA4AF",
+    "secondary": "#F0ABFC",
+    "text": "#FCEAF3",
+    "textSecondary": "#B9C8CB",
+    "cardBackground": "#3C2132",
+    "cardBorder": "#664056",
+    "error": "#FDA4AF",
+    "success": "#86EFAC"
+  },
+  "typography": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif",
+    "fontSize": {
+      "small": "0.875rem",
+      "base": "1rem",
+      "medium": "1.125rem",
+      "large": "1.25rem",
+      "xlarge": "2rem"
+    }
+  },
+  "components": {
+    "header": {
+      "height": "80px",
+      "backgroundColor": "#0B1220",
+      "borderBottom": "1px solid #334155"
+    },
+    "footer": {
+      "height": "60px",
+      "backgroundColor": "#0B1220",
+      "borderTop": "1px solid #334155"
+    },
+    "card": {
+      "borderRadius": "16px",
+      "padding": "24px",
+      "boxShadow": "0 18px 60px rgba(0, 0, 0, 0.45)"
+    },
+    "button": {
+      "borderRadius": "12px",
+      "padding": "10px 18px",
+      "border": "1px solid #664056",
+      "hoverGlow": "0 0 0 3px rgba(253, 164, 175, 0.18)"
+    },
+    "select": {
+      "borderRadius": "12px",
+      "padding": "10px 40px 10px 16px",
+      "border": "1px solid #664056",
+      "backgroundColor": "#3C2132",
+      "textAlign": "center",
+      "iconColor": "#F0ABFC",
+      "hoverBorderColor": "rgba(253, 164, 175, 0.7)",
+      "focusBorderColor": "rgba(253, 164, 175, 0.85)",
+      "focusGlow": "0 0 0 4px rgba(253, 164, 175, 0.18)"
+    },
+    "checkbox": {
+      "width": "20px",
+      "height": "20px",
+      "accentColor": "#FDA4AF",
+      "borderColor": "#475569",
+      "hoverBorderColor": "rgba(34, 211, 238, 0.75)",
+      "checkMarkColor": "#281420",
+      "borderRadius": "6px"
+    }
+  },
+  "animations": {
+    "enableTypingEffect": false,
+    "enableGlow": true,
+    "transitionDuration": "0.22s"
+  },
+  "backgroundEffects": {
+    "enabled": true,
+    "surface": "radial-gradient(ellipse at 50% 10%, #3C2132 0%, #281420 78%)",
+    "opacity": 1,
+    "animation": {
+      "enabled": true,
+      "speed": 0.8500000000000001
+    },
+    "parallax": {
+      "enabled": true,
+      "pointer": 20,
+      "scroll": 0.075
+    },
+    "accessibility": {
+      "reducedMotion": "static",
+      "showPauseButton": true
+    },
+    "layers": [
+      {
+        "id": "sakura-breeze-orbs-1",
+        "kind": "orbs",
+        "count": 26,
+        "colors": [
+          "#FDA4AF",
+          "#F0ABFC"
+        ],
+        "opacity": 0.4,
+        "size": {
+          "min": 6,
+          "max": 16
+        },
+        "duration": {
+          "min": 22,
+          "max": 44
+        },
+        "travel": {
+          "x": 90,
+          "y": 85
+        },
+        "position": {
+          "x": -4,
+          "y": -3
+        },
+        "blur": 1,
+        "glow": 0,
+        "rotation": 0,
+        "depth": 1.6,
+        "seed": 3607
+      },
+      {
+        "id": "sakura-breeze-stars-2",
+        "kind": "stars",
+        "count": 14,
+        "colors": [
+          "#FDA4AF",
+          "#F0ABFC"
+        ],
+        "opacity": 0.32,
+        "size": {
+          "min": 2,
+          "max": 4
+        },
+        "duration": {
+          "min": 37,
+          "max": 65
+        },
+        "travel": {
+          "x": 65,
+          "y": 48
+        },
+        "position": {
+          "x": -4,
+          "y": 0
+        },
+        "blur": 0,
+        "glow": 4,
+        "rotation": 0,
+        "depth": 0.7,
+        "seed": 3626
+      },
+      {
+        "id": "sakura-breeze-waves-3",
+        "kind": "waves",
+        "count": 3,
+        "colors": [
+          "#FDA4AF",
+          "#F0ABFC"
+        ],
+        "opacity": 0.1,
+        "size": {
+          "min": 340,
+          "max": 560
+        },
+        "duration": {
+          "min": 42,
+          "max": 72
+        },
+        "travel": {
+          "x": 20,
+          "y": -6
+        },
+        "position": {
+          "x": -4,
+          "y": 3
+        },
+        "blur": 0,
+        "glow": 0,
+        "rotation": 25,
+        "depth": 0.35,
+        "seed": 3645
+      }
+    ]
+  }
+}

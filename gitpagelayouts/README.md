@@ -5,9 +5,10 @@ consume these layouts:
 
 - **Official remote (default):** generated `gitpagedocs/config.json` files
   point at this folder's `layoutsConfig.json` and `templates/`.
-- **Self-hosted:** copy this folder to the root of your repository as
-  `gitpagelayouts/` (or generate a local `gitpagedocs/layouts/` with
-  `npx @gitpagedocs/cli --layoutconfig`) and the viewer resolves it automatically.
+- **Self-hosted:** generate `gitpagelayouts/` with
+  `npx @gitpagedocs/cli --layoutconfig`, which sets local layout paths and disables
+  the official source in your site config. If copying this folder manually, set
+  `site.layoutsConfigPathOficial: false` and the corresponding local paths.
 
 The source of truth is `v2/`. `v2/base.json` holds every value the layouts share
 (typography, component sizes, dark/light defaults and the rules that derive control
@@ -15,6 +16,37 @@ colors from each palette), and `v2/layouts/<id>.json` holds only the layout's
 identity, colors and the few values that differ. `npm run layouts:sync` expands
 them into the full `templates/<id>.json` files (the format viewers read, unchanged)
 and regenerates this catalog. Edit `v2/`, never `templates/`.
+
+## Animated presets
+
+The additional animated themes combine stars, meteor streaks, falling Matrix
+characters, orbs, grids and waves. Each preset defines
+`overrides.backgroundEffects` in its v2 source; expansion places
+`backgroundEffects` at the template root. Synchronization also compiles these
+presets into `cli/data/animated-layouts.mjs`, so local CLI generation offers the
+same palettes and backgrounds without reading files outside its package.
+
+Choose a theme with `site.ThemeDefault` or the theme selector. Customize speed,
+colors, density and parallax through `site.backgroundEffects.overrides` or
+`site.backgroundEffects.themes[themeId]` in `gitpagedocs/config.json`.
+Resolution order is template, global overrides, then per-theme overrides;
+`layers` replaces the full array. The master `site.backgroundEffects.enabled:
+false` disables every background. All new presets honor reduced motion and
+include a pause control. Existing themes retain their original appearance.
+
+The catalog combines 64 original themes, 20 standalone animated presets and
+20 additional parallax families with dark and light variants. Paired entries use
+the same `supportsLightAndDarkModesReference`, allowing the mode toggle to switch
+within the family. For example, choose `aurora-borealis-dark` or
+`aurora-borealis-light`; customize either ID independently through `themes`.
+
+Pause/resume appears beside the navigation lock in the documentation menu and in
+the search-page header. A manual pause survives menu and theme changes.
+`site.backgroundEffects.overrides.accessibility.showPauseButton` defaults to
+`true`; `false` hides the button without disabling motion. Configure
+`site.icons.BackgroundAnimationPause` and `BackgroundAnimationResume` with
+`reactIcon`, `tag`, `size`, `colorDark` and `colorLight`;
+`reactIcon: false` shows localized text. Use the master switch to disable effects.
 
 ## Files
 
@@ -25,7 +57,7 @@ and regenerates this catalog. Edit `v2/`, never `templates/`.
 - [`templates/`](templates) — one full JSON theme template per layout (generated from `v2/`).
 - [`docs/`](docs) — one markdown page per layout (generated).
 
-## Layouts (64)
+## Layouts (124)
 
 | Id | Name | Mode | Pair | Description |
 | --- | --- | --- | --- | --- |
@@ -93,3 +125,63 @@ and regenerates this catalog. Edit `v2/`, never `templates/`.
 | [`velvet-dark`](docs/velvet-dark.md) | Velvet | `dark` | — | Royal purple velvet with warm gold accents |
 | [`duet-dark`](docs/duet-dark.md) | Duet Dark | `dark` | `duet-1` | Polarity-flipped ink duet: white pill controls and flat elevated cards on black |
 | [`duet-light`](docs/duet-light.md) | Duet Light | `light` | `duet-1` | Black-and-white editorial duet: pill controls, flat 16px cards, ink footer band |
+| [`astral-drift-dark`](docs/astral-drift-dark.md) | Astral Drift | `dark` | — | Cyan stars, slow meteors and violet atmospheric depth |
+| [`starfall-cobalt-dark`](docs/starfall-cobalt-dark.md) | Starfall Cobalt | `dark` | — | Silver starfall across a deep cobalt sky |
+| [`lunar-dust-light`](docs/lunar-dust-light.md) | Lunar Dust | `light` | — | Fine indigo stardust on a pale lunar surface |
+| [`solar-sparks-dark`](docs/solar-sparks-dark.md) | Solar Sparks | `dark` | — | Golden sparks and warm solar halos |
+| [`comet-trail-dark`](docs/comet-trail-dark.md) | Comet Trail | `dark` | — | Turquoise comet trails above a deep teal field |
+| [`celestial-ice-light`](docs/celestial-ice-light.md) | Celestial Ice | `light` | — | Blue ice crystals and soft celestial ripples |
+| [`nebula-violet-dark`](docs/nebula-violet-dark.md) | Nebula Violet | `dark` | — | Violet nebula clouds with distant starlight |
+| [`meteor-copper-dark`](docs/meteor-copper-dark.md) | Meteor Copper | `dark` | — | Copper meteors crossing a charcoal sky |
+| [`matrix-rain-dark`](docs/matrix-rain-dark.md) | Matrix Rain | `dark` | — | Green code rain with a restrained terminal grid |
+| [`matrix-amber-dark`](docs/matrix-amber-dark.md) | Matrix Amber | `dark` | — | Amber terminal characters and a warm phosphor glow |
+| [`matrix-cyan-dark`](docs/matrix-cyan-dark.md) | Matrix Cyan | `dark` | — | Cyan code streams over a precise blue grid |
+| [`matrix-violet-dark`](docs/matrix-violet-dark.md) | Matrix Violet | `dark` | — | Lavender code rain with magenta atmospheric light |
+| [`matrix-paper-light`](docs/matrix-paper-light.md) | Matrix Paper | `light` | — | Quiet green code on a readable paper canvas |
+| [`matrix-mint-light`](docs/matrix-mint-light.md) | Matrix Mint | `light` | — | Emerald characters drifting across cool mint |
+| [`prism-depth-dark`](docs/prism-depth-dark.md) | Prism Depth | `dark` | — | Layered violet and rose prisms with pointer depth |
+| [`polaris-parallax-dark`](docs/polaris-parallax-dark.md) | Polaris Parallax | `dark` | — | Polar light ribbons and a sparse distant sky |
+| [`reef-parallax-dark`](docs/reef-parallax-dark.md) | Reef Parallax | `dark` | — | Ocean currents, coral light and layered underwater depth |
+| [`sunrise-parallax-light`](docs/sunrise-parallax-light.md) | Sunrise Parallax | `light` | — | Peach sunrise ribbons with gentle warm parallax |
+| [`petal-parallax-light`](docs/petal-parallax-light.md) | Petal Parallax | `light` | — | Rose and lilac layers floating like soft petals |
+| [`dune-parallax-light`](docs/dune-parallax-light.md) | Dune Parallax | `light` | — | Sand-colored contour waves with terracotta depth |
+| [`aurora-borealis-dark`](docs/aurora-borealis-dark.md) | Aurora Borealis Dark | `dark` | `aurora-borealis` | Luminous ribbons and distant stars over polar skies (dark) |
+| [`aurora-borealis-light`](docs/aurora-borealis-light.md) | Aurora Borealis Light | `light` | `aurora-borealis` | Luminous ribbons and distant stars over polar skies (light) |
+| [`firefly-grove-dark`](docs/firefly-grove-dark.md) | Firefly Grove Dark | `dark` | `firefly-grove` | Warm fireflies drifting through soft woodland shadows (dark) |
+| [`firefly-grove-light`](docs/firefly-grove-light.md) | Firefly Grove Light | `light` | `firefly-grove` | Warm fireflies drifting through soft woodland shadows (light) |
+| [`ocean-depths-dark`](docs/ocean-depths-dark.md) | Ocean Depths Dark | `dark` | `ocean-depths` | Layered ocean currents, rising bubbles and gentle light shafts (dark) |
+| [`ocean-depths-light`](docs/ocean-depths-light.md) | Ocean Depths Light | `light` | `ocean-depths` | Layered ocean currents, rising bubbles and gentle light shafts (light) |
+| [`forest-canopy-dark`](docs/forest-canopy-dark.md) | Forest Canopy Dark | `dark` | `forest-canopy` | Soft canopy circles and scattered sunlight between layered leaves (dark) |
+| [`forest-canopy-light`](docs/forest-canopy-light.md) | Forest Canopy Light | `light` | `forest-canopy` | Soft canopy circles and scattered sunlight between layered leaves (light) |
+| [`silver-rain-dark`](docs/silver-rain-dark.md) | Silver Rain Dark | `dark` | `silver-rain` | Slanted silver rainfall, broad ripples and low mist (dark) |
+| [`silver-rain-light`](docs/silver-rain-light.md) | Silver Rain Light | `light` | `silver-rain` | Slanted silver rainfall, broad ripples and low mist (light) |
+| [`cloud-harbor-dark`](docs/cloud-harbor-dark.md) | Cloud Harbor Dark | `dark` | `cloud-harbor` | Slow cloud banks drifting above a calm open horizon (dark) |
+| [`cloud-harbor-light`](docs/cloud-harbor-light.md) | Cloud Harbor Light | `light` | `cloud-harbor` | Slow cloud banks drifting above a calm open horizon (light) |
+| [`sakura-breeze-dark`](docs/sakura-breeze-dark.md) | Sakura Breeze Dark | `dark` | `sakura-breeze` | Rose petals and small highlights carried across a spring breeze (dark) |
+| [`sakura-breeze-light`](docs/sakura-breeze-light.md) | Sakura Breeze Light | `light` | `sakura-breeze` | Rose petals and small highlights carried across a spring breeze (light) |
+| [`autumn-embers-dark`](docs/autumn-embers-dark.md) | Autumn Embers Dark | `dark` | `autumn-embers` | Copper embers rising through layers of warm autumn haze (dark) |
+| [`autumn-embers-light`](docs/autumn-embers-light.md) | Autumn Embers Light | `light` | `autumn-embers` | Copper embers rising through layers of warm autumn haze (light) |
+| [`glacier-fjord-dark`](docs/glacier-fjord-dark.md) | Glacier Fjord Dark | `dark` | `glacier-fjord` | Icy contours, crystalline geometry and sparse drifting snow (dark) |
+| [`glacier-fjord-light`](docs/glacier-fjord-light.md) | Glacier Fjord Light | `light` | `glacier-fjord` | Icy contours, crystalline geometry and sparse drifting snow (light) |
+| [`desert-mirage-dark`](docs/desert-mirage-dark.md) | Desert Mirage Dark | `dark` | `desert-mirage` | Sweeping dune contours and fine sand moving in a warm mirage (dark) |
+| [`desert-mirage-light`](docs/desert-mirage-light.md) | Desert Mirage Light | `light` | `desert-mirage` | Sweeping dune contours and fine sand moving in a warm mirage (light) |
+| [`lavender-mist-dark`](docs/lavender-mist-dark.md) | Lavender Mist Dark | `dark` | `lavender-mist` | Lavender fog, quiet contour waves and distant pearl lights (dark) |
+| [`lavender-mist-light`](docs/lavender-mist-light.md) | Lavender Mist Light | `light` | `lavender-mist` | Lavender fog, quiet contour waves and distant pearl lights (light) |
+| [`coral-lagoon-dark`](docs/coral-lagoon-dark.md) | Coral Lagoon Dark | `dark` | `coral-lagoon` | Turquoise lagoon currents with coral highlights and rising bubbles (dark) |
+| [`coral-lagoon-light`](docs/coral-lagoon-light.md) | Coral Lagoon Light | `light` | `coral-lagoon` | Turquoise lagoon currents with coral highlights and rising bubbles (light) |
+| [`bamboo-dawn-dark`](docs/bamboo-dawn-dark.md) | Bamboo Dawn Dark | `dark` | `bamboo-dawn` | Slender bamboo-like shafts with warm dawn light and drifting pollen (dark) |
+| [`bamboo-dawn-light`](docs/bamboo-dawn-light.md) | Bamboo Dawn Light | `light` | `bamboo-dawn` | Slender bamboo-like shafts with warm dawn light and drifting pollen (light) |
+| [`thunder-horizon-dark`](docs/thunder-horizon-dark.md) | Thunder Horizon Dark | `dark` | `thunder-horizon` | Slow storm clouds and distant rain without flashing effects (dark) |
+| [`thunder-horizon-light`](docs/thunder-horizon-light.md) | Thunder Horizon Light | `light` | `thunder-horizon` | Slow storm clouds and distant rain without flashing effects (light) |
+| [`crystal-cavern-dark`](docs/crystal-cavern-dark.md) | Crystal Cavern Dark | `dark` | `crystal-cavern` | Faceted grids and luminous mineral trails inside a violet cavern (dark) |
+| [`crystal-cavern-light`](docs/crystal-cavern-light.md) | Crystal Cavern Light | `light` | `crystal-cavern` | Faceted grids and luminous mineral trails inside a violet cavern (light) |
+| [`lotus-pond-dark`](docs/lotus-pond-dark.md) | Lotus Pond Dark | `dark` | `lotus-pond` | Layered pond ripples, rose reflections and floating water lights (dark) |
+| [`lotus-pond-light`](docs/lotus-pond-light.md) | Lotus Pond Light | `light` | `lotus-pond` | Layered pond ripples, rose reflections and floating water lights (light) |
+| [`golden-savanna-dark`](docs/golden-savanna-dark.md) | Golden Savanna Dark | `dark` | `golden-savanna` | Golden grass-like trails and warm dust drifting across open plains (dark) |
+| [`golden-savanna-light`](docs/golden-savanna-light.md) | Golden Savanna Light | `light` | `golden-savanna` | Golden grass-like trails and warm dust drifting across open plains (light) |
+| [`alpine-meadow-dark`](docs/alpine-meadow-dark.md) | Alpine Meadow Dark | `dark` | `alpine-meadow` | Fresh meadow light, small floating seeds and cool mountain contours (dark) |
+| [`alpine-meadow-light`](docs/alpine-meadow-light.md) | Alpine Meadow Light | `light` | `alpine-meadow` | Fresh meadow light, small floating seeds and cool mountain contours (light) |
+| [`cosmic-tide-dark`](docs/cosmic-tide-dark.md) | Cosmic Tide Dark | `dark` | `cosmic-tide` | Orbital wave fields, fine stars and slow galactic currents (dark) |
+| [`cosmic-tide-light`](docs/cosmic-tide-light.md) | Cosmic Tide Light | `light` | `cosmic-tide` | Orbital wave fields, fine stars and slow galactic currents (light) |
+| [`paper-lanterns-dark`](docs/paper-lanterns-dark.md) | Paper Lanterns Dark | `dark` | `paper-lanterns` | Warm lantern-like lights ascending through a quiet evening haze (dark) |
+| [`paper-lanterns-light`](docs/paper-lanterns-light.md) | Paper Lanterns Light | `light` | `paper-lanterns` | Warm lantern-like lights ascending through a quiet evening haze (light) |
