@@ -1,5 +1,16 @@
-import type { LoadedDocsData } from "@/entities/docs";
+import type { LoadedDocsData, PaginatedContainer } from "@/entities/docs";
 import type { FullscreenParams } from "./use-docs-shell-url-params.helpers";
+
+export function resolveContainerFullscreenRequest(
+  request: FullscreenParams,
+  container: Pick<PaginatedContainer, "ownerPageId" | "type"> | undefined,
+): FullscreenParams {
+  if (!container || container.type !== request.type) return request;
+  const base = { type: request.type, lang: request.lang };
+  return request.type === "md" || request.type === "html"
+    ? { ...base, file: `page:${container.ownerPageId}` }
+    : { ...base, id: container.ownerPageId };
+}
 
 type MediaContentType = "video" | "audio";
 

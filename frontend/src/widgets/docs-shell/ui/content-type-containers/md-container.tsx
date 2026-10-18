@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, type ReactElement } from "react";
-import { extractHeadingsFromHtml, scopeMarkdownHtml, scopeMarkdownId, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
+import { type ReactElement } from "react";
+import { useMarkdownContent, type MarkdownMarkersOptions, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { resolveContentHeaderText } from "./content-header-text";
 import { DOCUMENT_METADATA_LAYOUT, resolveRouteMetadataLayout, RouteMetadata } from "./route-metadata";
@@ -19,6 +19,7 @@ interface MdContainerProps extends RouteContainerFrameProps {
   html: string;
   instanceId?: string;
   language: LanguageCode;
+  markdownMarkerDefaults?: MarkdownMarkersOptions;
   isDarkMode?: boolean;
   routeGuideEnabled?: boolean;
   breadcrumbTrail?: BreadcrumbItem[];
@@ -47,6 +48,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
     instanceId,
     config,
     language,
+    markdownMarkerDefaults,
     fullscreenEnabled = false,
     isDarkMode = false,
     routeGuideEnabled = true,
@@ -87,16 +89,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
       />
     ) : null;
 
-  const routeguideBrand = config && "RouteguideBrand" in config && config.RouteguideBrand === true;
-  const headings = useMemo(() => {
-    if (!routeguideBrand) return [];
-    const specificIds =
-      config && "RouteGuideSpeciFicbrand" in config ? (config.RouteGuideSpeciFicbrand ?? []) : [];
-    return extractHeadingsFromHtml(html, specificIds).map((heading) => ({
-      ...heading, id: instanceId ? scopeMarkdownId(heading.id, instanceId) : heading.id,
-    }));
-  }, [routeguideBrand, html, config, instanceId]);
-  const renderedHtml = useMemo(() => instanceId ? scopeMarkdownHtml(html, instanceId) : html, [html, instanceId]);
+  const { html: renderedHtml, headings } = useMarkdownContent({ html, config, language, instanceId, defaults: markdownMarkerDefaults });
 
   const fromConfig = config && "RouteguideBrandPosition" in config ? config.RouteguideBrandPosition : undefined;
   const tocPosition: TocPosition =
@@ -136,7 +129,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
   const content = (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
     const contentActions = withSourceActions(fullscreenEnabled ? fullscreenButton : null);
     const hideToc = contentOnly || options?.contentOnly;
-    const showToc = !hideToc && routeguideBrand && headings.length > 0;
+    const showToc = !hideToc && headings.length > 0;
     return showToc ? (
       <TocContainer
         headings={headings}

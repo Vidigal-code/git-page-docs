@@ -21,6 +21,16 @@ Important keys:
 - `ThemeModeDefault`
 - `ProjectLink`
 
+## Document navigation position
+
+Configure the document-footer group in `gitpagedocs/config.json`:
+
+```json
+{ "site": { "documentNavigation": { "position": "center" } } }
+```
+
+`position` accepts `left`, `center` or `right`; the default is `center`. Omitted or invalid values use that default. Previous, Next and Back to top stay together in this order, with the same alignment on desktop and mobile. This setting positions the group; `site.backToTop` still determines whether the top arrow is visible. It does not reposition the introduction-guide arrow.
+
 ## Back to top on long pages
 
 The back-to-top arrow on documentation pages and `/introduction-guide` is controlled by `site.backToTop` in `gitpagedocs/config.json`:
@@ -170,6 +180,8 @@ Per-route options for `routes-md`, `routes-html`, `routes-video`, and `routes-au
 | `ActiveNavigation` | true; quick-navigation control and Ctrl+K shortcut |
 | `FocusMode / focusMode` | Master switch (true) and independent copy, download, section and document controls; see Focus mode |
 | `pdf` | PDF master switch, preview, download and new-tab defaults; all true |
+| `containerPagination` | Enabled; bottom/right, four icon controls and count; see Paginated containers |
+| `markdownMarkers` | Enabled; theme colors for highlighted targets and their index links; see Markdown markers |
 | `nestedMenusEnabled` | true; recursive menu tree, or flat destinations when false |
 | `RouteGuide` | true; breadcrumbs, overridable by version defaults and individual Markdown routes |
 | `accessibility` | Enabled by default; narration settings are explained in Accessibility |

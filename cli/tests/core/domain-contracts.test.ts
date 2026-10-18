@@ -80,7 +80,7 @@ describe("contracts index", () => {
 
   it("publishes the current docs while retaining every version from 0.0.9 onward", () => {
     expect(PACKAGE_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
-    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.12", "0.0.11", "0.0.10", "0.0.9"]);
+    expect(DOC_VERSIONS).toEqual([PACKAGE_VERSION, "0.0.13", "0.0.12", "0.0.11", "0.0.10", "0.0.9"]);
     expect(versionConstants.DOC_VERSIONS).toBe(DOC_VERSIONS);
   });
 
@@ -92,7 +92,7 @@ describe("contracts index", () => {
 
 describe("route data", () => {
   it("maps every markdown route to a file per language", () => {
-    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40]);
+    expect(Object.keys(ROUTE_PATHS).map(Number)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42]);
     for (const paths of Object.values(ROUTE_PATHS)) {
       for (const language of ["pt", "en", "es"] as const) {
         expect(paths[language]).toMatch(/\.md$/);

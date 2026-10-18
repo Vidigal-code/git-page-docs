@@ -9,17 +9,15 @@ function press(key: string, init: KeyboardEventInit = {}): KeyboardEvent {
   return event;
 }
 
-type KeyboardFlags = Pick<Parameters<typeof useDocsShellKeyboard>[0], "activeNavigation" | "quickNavOpen" | "focusModeOpen">;
+type KeyboardFlags = Pick<Parameters<typeof useDocsShellKeyboard>[0], "activeNavigation" | "focusModeOpen">;
 
 function makeOptions(overrides: Partial<KeyboardFlags> = {}) {
   return {
     activeNavigation: true,
-    quickNavOpen: false,
     focusModeOpen: false,
     setMenuOpen: vi.fn(),
     setFocusModeOpen: vi.fn(),
     setQuickNavOpen: vi.fn(),
-    setQuickNavQuery: vi.fn(),
     ...overrides,
   };
 }
@@ -52,16 +50,13 @@ describe("useDocsShellKeyboard", () => {
     const toggle = options.setQuickNavOpen.mock.calls[0][0] as (prev: boolean) => boolean;
     expect(toggle(false)).toBe(true);
     expect(toggle(true)).toBe(false);
-    // Opening from a closed state clears the previous query.
-    expect(options.setQuickNavQuery).toHaveBeenCalledWith("");
   });
 
-  it("accepts Meta+K and keeps the query when quick navigation is already open", () => {
-    const options = makeOptions({ quickNavOpen: true });
+  it("accepts Meta+K to toggle quick navigation", () => {
+    const options = makeOptions();
     renderHook(() => useDocsShellKeyboard(options));
     press("k", { metaKey: true });
     expect(options.setQuickNavOpen).toHaveBeenCalledTimes(1);
-    expect(options.setQuickNavQuery).not.toHaveBeenCalled();
   });
 
   it("does nothing for a plain k or unrelated keys", () => {

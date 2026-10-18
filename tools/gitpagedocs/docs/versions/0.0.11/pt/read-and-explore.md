@@ -8,6 +8,8 @@ Escolha uma forma de leitura adequada ao documento. Markdown oferece títulos, l
 - **Acessibilidade e narração** explica escolha de voz, controles e suporte do navegador.
 - **Documentos PDF** cobre prévia, download, nova aba e exigências de CORS na hospedagem externa.
 - **Containers HTML** explica arquivos locais, páginas hospedadas e o exemplo DOOM.
+- **Containers paginados** explica sequências independentes de arquivos Markdown, HTML, vídeo, áudio e PDF; teste os cinco tipos no exemplo incluído.
+- **Marcadores de Markdown** realça textos ou elementos e acrescenta links ao índice sem mudar o filtro de títulos existente.
 
 ## Controle a reprodução
 

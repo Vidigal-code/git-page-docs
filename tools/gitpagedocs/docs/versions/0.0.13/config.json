@@ -32,8 +32,7 @@
   },
   "routeDefaults": {
     "titleIsVisible": true,
-    "descriptionIsVisible": true,
-    "blockLink": true
+    "descriptionIsVisible": true
   },
   "routes-md": [
     {
@@ -64,6 +63,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -98,6 +98,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -148,6 +149,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -187,6 +189,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -221,6 +224,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -263,6 +267,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -310,6 +315,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -344,6 +350,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -378,6 +385,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -412,6 +420,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -446,6 +455,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -480,6 +490,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -514,6 +525,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -548,6 +560,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -582,6 +595,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -616,6 +630,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -650,6 +665,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -684,6 +700,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -718,6 +735,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -752,6 +770,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -786,6 +805,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -820,6 +840,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -854,6 +875,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -888,6 +910,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -922,6 +945,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -956,6 +980,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -990,6 +1015,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -1024,6 +1050,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -1058,6 +1085,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -1092,6 +1120,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
@@ -1126,11 +1155,149 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 41,
+      "title": {
+        "en": "Paginated containers",
+        "pt": "Containers paginados",
+        "es": "Contenedores paginados"
+      },
+      "description": {
+        "en": "Navigate files independently inside each container",
+        "pt": "Navegue pelos arquivos de cada container de forma independente",
+        "es": "Navega por los archivos de cada contenedor de forma independiente"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.13/pt/container-pagination.md",
+        "en": "gitpagedocs/docs/versions/0.0.13/en/container-pagination.md",
+        "es": "gitpagedocs/docs/versions/0.0.13/es/container-pagination.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 42,
+      "title": {
+        "en": "Markdown markers",
+        "pt": "Marcadores de Markdown",
+        "es": "Marcadores de Markdown"
+      },
+      "description": {
+        "en": "Highlight text and elements with linked index entries",
+        "pt": "Realce textos e elementos com entradas clicáveis no índice",
+        "es": "Resalta textos y elementos con entradas enlazadas en el índice"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.13/pt/markdown-markers.md",
+        "en": "gitpagedocs/docs/versions/0.0.13/en/markdown-markers.md",
+        "es": "gitpagedocs/docs/versions/0.0.13/es/markdown-markers.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 51,
+      "title": {
+        "en": "Paginated Markdown",
+        "pt": "Markdown paginado",
+        "es": "Markdown paginado"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "path": {
+        "en": "gitpagedocs/docs/versions/0.0.13/en/pagination-first.md",
+        "pt": "gitpagedocs/docs/versions/0.0.13/pt/pagination-first.md",
+        "es": "gitpagedocs/docs/versions/0.0.13/es/pagination-first.md"
+      },
+      "RouteguideBrand": true,
+      "markdownMarkers": {
+        "items": [
+          {
+            "id": "reading-target",
+            "text": {
+              "en": "This highlighted sentence is a navigation target.",
+              "pt": "Esta frase realçada é um destino de navegação.",
+              "es": "Esta frase resaltada es un destino de navegación."
+            },
+            "label": {
+              "en": "Highlighted example",
+              "pt": "Exemplo realçado",
+              "es": "Ejemplo resaltado"
+            }
+          }
+        ]
+      },
+      "pagination": {
+        "items": [
+          {
+            "routeId": 51,
+            "title": {
+              "en": "Lesson 1: try the controls",
+              "pt": "Lição 1: experimente os controles",
+              "es": "Lección 1: prueba los controles"
+            },
+            "description": {
+              "en": "Three files in one Markdown container.",
+              "pt": "Três arquivos em um container Markdown.",
+              "es": "Tres archivos en un contenedor Markdown."
+            }
+          },
+          {
+            "routeId": 1,
+            "title": {
+              "en": "Lesson 2: getting started",
+              "pt": "Lição 2: primeiros passos",
+              "es": "Lección 2: primeros pasos"
+            }
+          },
+          {
+            "routeId": 13,
+            "title": {
+              "en": "Lesson 3: configuration",
+              "pt": "Lição 3: configuração",
+              "es": "Lección 3: configuración"
+            }
+          }
+        ]
+      }
     }
   ],
   "routes-source-viewer": [
@@ -1157,6 +1324,7 @@
       "fullscreenEnabled": false,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "RouteguideBrand": false,
       "RouteGuideSpeciFicbrand": [],
@@ -1184,7 +1352,50 @@
         "pt": "gitpagedocs/docs/versions/0.0.13/pt/doom.html",
         "es": "gitpagedocs/docs/versions/0.0.13/es/doom.html"
       },
-      "fullscreenEnabled": true
+      "fullscreenEnabled": true,
+      "blockLink": true
+    },
+    {
+      "id": 52,
+      "title": {
+        "en": "HTML: first file",
+        "pt": "HTML: primeiro arquivo",
+        "es": "HTML: primer archivo"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "path": {
+        "en": "gitpagedocs/docs/versions/0.0.13/en/pagination-first.html",
+        "pt": "gitpagedocs/docs/versions/0.0.13/pt/pagination-first.html",
+        "es": "gitpagedocs/docs/versions/0.0.13/es/pagination-first.html"
+      },
+      "pagination": {
+        "items": [
+          {
+            "routeId": 52
+          },
+          {
+            "routeId": 62
+          }
+        ]
+      }
+    },
+    {
+      "id": 62,
+      "title": {
+        "en": "HTML: second file",
+        "pt": "HTML: segundo arquivo",
+        "es": "HTML: segundo archivo"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "path": {
+        "en": "gitpagedocs/docs/versions/0.0.13/en/pagination-second.html",
+        "pt": "gitpagedocs/docs/versions/0.0.13/pt/pagination-second.html",
+        "es": "gitpagedocs/docs/versions/0.0.13/es/pagination-second.html"
+      }
     }
   ],
   "routes-video": [
@@ -1211,6 +1422,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "video": {
         "videoType": {
@@ -1248,6 +1460,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "video": {
         "videoType": {
@@ -1294,6 +1507,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "video": {
         "videoType": {
@@ -1340,6 +1554,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "video": {
         "videoType": {
@@ -1386,6 +1601,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "video": {
         "videoType": {
@@ -1397,6 +1613,62 @@
           "pt": "r8jQ9hVA2qs",
           "en": "r8jQ9hVA2qs",
           "es": "r8jQ9hVA2qs"
+        }
+      }
+    },
+    {
+      "id": 53,
+      "title": {
+        "en": "Flower video: MP4",
+        "pt": "Vídeo de flores: MP4",
+        "es": "Vídeo de flores: MP4"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "video": {
+        "pathVideo": {
+          "en": "https://developer.mozilla.org/shared-assets/videos/flower.mp4",
+          "pt": "https://developer.mozilla.org/shared-assets/videos/flower.mp4",
+          "es": "https://developer.mozilla.org/shared-assets/videos/flower.mp4"
+        },
+        "videoType": {
+          "en": "mp4",
+          "pt": "mp4",
+          "es": "mp4"
+        }
+      },
+      "pagination": {
+        "items": [
+          {
+            "routeId": 53
+          },
+          {
+            "routeId": 63
+          }
+        ]
+      }
+    },
+    {
+      "id": 63,
+      "title": {
+        "en": "Flower video: WebM",
+        "pt": "Vídeo de flores: WebM",
+        "es": "Vídeo de flores: WebM"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "video": {
+        "pathVideo": {
+          "en": "https://developer.mozilla.org/shared-assets/videos/flower.webm",
+          "pt": "https://developer.mozilla.org/shared-assets/videos/flower.webm",
+          "es": "https://developer.mozilla.org/shared-assets/videos/flower.webm"
+        },
+        "videoType": {
+          "en": "webm",
+          "pt": "webm",
+          "es": "webm"
         }
       }
     }
@@ -1425,6 +1697,7 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "browseAll": false,
       "audio": {
         "audioType": {
@@ -1436,6 +1709,62 @@
           "pt": "0w80F8FffQ4",
           "en": "0w80F8FffQ4",
           "es": "0w80F8FffQ4"
+        }
+      }
+    },
+    {
+      "id": 54,
+      "title": {
+        "en": "Low tone",
+        "pt": "Tom grave",
+        "es": "Tono grave"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "audio": {
+        "pathAudio": {
+          "en": "gitpagedocs/docs/versions/0.0.13/en/pagination-low.wav",
+          "pt": "gitpagedocs/docs/versions/0.0.13/en/pagination-low.wav",
+          "es": "gitpagedocs/docs/versions/0.0.13/en/pagination-low.wav"
+        },
+        "audioType": {
+          "en": "wav",
+          "pt": "wav",
+          "es": "wav"
+        }
+      },
+      "pagination": {
+        "items": [
+          {
+            "routeId": 54
+          },
+          {
+            "routeId": 64
+          }
+        ]
+      }
+    },
+    {
+      "id": 64,
+      "title": {
+        "en": "High tone",
+        "pt": "Tom agudo",
+        "es": "Tono agudo"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "audio": {
+        "pathAudio": {
+          "en": "gitpagedocs/docs/versions/0.0.13/en/pagination-high.wav",
+          "pt": "gitpagedocs/docs/versions/0.0.13/en/pagination-high.wav",
+          "es": "gitpagedocs/docs/versions/0.0.13/en/pagination-high.wav"
+        },
+        "audioType": {
+          "en": "wav",
+          "pt": "wav",
+          "es": "wav"
         }
       }
     }
@@ -1464,12 +1793,51 @@
       "fullscreenEnabled": true,
       "marginTop": "",
       "marginBottom": "",
+      "blockLink": true,
       "pdf": {
         "pathPdf": {
           "pt": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
           "en": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
           "es": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf"
         }
+      }
+    },
+    {
+      "id": 55,
+      "title": {
+        "en": "Pagination quick reference",
+        "pt": "Referência rápida de paginação",
+        "es": "Referencia rápida de paginación"
+      },
+      "titlePosition": "center",
+      "descriptionPosition": "center",
+      "fullscreenEnabled": true,
+      "pdf": {
+        "pathPdf": {
+          "en": "gitpagedocs/docs/versions/0.0.13/en/pagination-reference.pdf",
+          "pt": "gitpagedocs/docs/versions/0.0.13/en/pagination-reference.pdf",
+          "es": "gitpagedocs/docs/versions/0.0.13/en/pagination-reference.pdf"
+        }
+      },
+      "pagination": {
+        "items": [
+          {
+            "routeId": 23,
+            "title": {
+              "en": "Project guide",
+              "pt": "Guia do projeto",
+              "es": "Guía del proyecto"
+            }
+          },
+          {
+            "routeId": 55,
+            "description": {
+              "en": "A second PDF in the same container.",
+              "pt": "Um segundo PDF no mesmo container.",
+              "es": "Un segundo PDF en el mismo contenedor."
+            }
+          }
+        ]
       }
     }
   ],
@@ -1536,6 +1904,36 @@
           "id": "pdf-third",
           "type": "pdf",
           "routeId": 23
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "blocks": [
+        {
+          "id": "lessons",
+          "type": "md",
+          "routeId": 51
+        },
+        {
+          "id": "html-pages",
+          "type": "html",
+          "routeId": 52
+        },
+        {
+          "id": "video-files",
+          "type": "video",
+          "routeId": 53
+        },
+        {
+          "id": "audio-files",
+          "type": "audio",
+          "routeId": 54
+        },
+        {
+          "id": "pdf-files",
+          "type": "pdf",
+          "routeId": 55
         }
       ]
     }
@@ -1754,6 +2152,36 @@
               }
             },
             {
+              "id": 41,
+              "pt": {
+                "title": "Containers paginados",
+                "path-click": "gitpagedocs/docs/versions/0.0.13/pt/container-pagination.md"
+              },
+              "en": {
+                "title": "Paginated containers",
+                "path-click": "gitpagedocs/docs/versions/0.0.13/en/container-pagination.md"
+              },
+              "es": {
+                "title": "Contenedores paginados",
+                "path-click": "gitpagedocs/docs/versions/0.0.13/es/container-pagination.md"
+              }
+            },
+            {
+              "id": 42,
+              "pt": {
+                "title": "Marcadores de Markdown",
+                "path-click": "gitpagedocs/docs/versions/0.0.13/pt/markdown-markers.md"
+              },
+              "en": {
+                "title": "Markdown markers",
+                "path-click": "gitpagedocs/docs/versions/0.0.13/en/markdown-markers.md"
+              },
+              "es": {
+                "title": "Marcadores de Markdown",
+                "path-click": "gitpagedocs/docs/versions/0.0.13/es/markdown-markers.md"
+              }
+            },
+            {
               "id": 39,
               "en": {
                 "title": "Multiple content blocks",
@@ -1766,6 +2194,21 @@
               "es": {
                 "title": "Múltiples bloques de contenido",
                 "path-click": "page:39"
+              }
+            },
+            {
+              "id": 50,
+              "en": {
+                "title": "Paginated containers example",
+                "path-click": "page:50"
+              },
+              "pt": {
+                "title": "Exemplo de containers paginados",
+                "path-click": "page:50"
+              },
+              "es": {
+                "title": "Ejemplo de contenedores paginados",
+                "path-click": "page:50"
               }
             }
           ]

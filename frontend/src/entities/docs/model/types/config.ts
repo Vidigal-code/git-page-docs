@@ -1,5 +1,7 @@
 import type { LanguageCode, SiteConfig, UiTranslationsConfig } from "./site";
 import type { VersionControlConfig } from "./version";
+import type { MarkdownMarkersConfig } from "./markdown-markers";
+import type { ContainerPaginationConfig } from "./container-pagination";
 
 export type ContentType = "md" | "source-viewer" | "html" | "video" | "audio" | "pdf";
 export const CONTENT_TYPES: ContentType[] = ["md", "source-viewer", "html", "video", "audio", "pdf"];
@@ -168,6 +170,8 @@ export interface ContentTypeRouteConfig {
   RouteguideBrand?: boolean;
   /** Specific heading IDs to include in TOC. Empty = all headings. */
   RouteGuideSpeciFicbrand?: string[];
+  markdownMarkers?: MarkdownMarkersConfig;
+  pagination?: ContainerPaginationConfig;
   /** TOC position: "center" | "left" | "right". Desktop only; mobile always center. */
   RouteguideBrandPosition?: "center" | "left" | "right";
   /** If true, TOC on top of content. If false, TOC beside content on desktop. Mobile always on top. */

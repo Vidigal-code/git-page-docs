@@ -190,6 +190,11 @@ describe("buildConfigArtifacts", () => {
 
     expect(config["routes-pdf"]).toEqual([
       expect.objectContaining({ id: 23, pdf: { pathPdf: { en: expectedPath, pt: expectedPath, es: expectedPath } } }),
+      expect.objectContaining({ id: 55, pdf: { pathPdf: {
+        en: `gitpagedocs/docs/versions/${versionId}/en/pagination-reference.pdf`,
+        pt: `gitpagedocs/docs/versions/${versionId}/en/pagination-reference.pdf`,
+        es: `gitpagedocs/docs/versions/${versionId}/en/pagination-reference.pdf`,
+      } } }),
     ]);
     expect(config["menus-header-pdf"]).toEqual([
       expect.objectContaining({ id: 23, en: expect.objectContaining({ "path-click": "page:23" }) }),
@@ -211,7 +216,7 @@ describe("buildConfigArtifacts", () => {
     expect(artifacts.layoutsConfig).toEqual({ layouts: LAYOUTS });
     expect(artifacts.fallbackLayoutsConfig).toEqual({ layouts: FALLBACK_LAYOUTS });
     expect(artifacts.docs).toBe(DOCS);
-    expect(Object.keys(artifacts.docsHtml)).toEqual(["doom"]);
+    expect(Object.keys(artifacts.docsHtml)).toEqual(["doom", "paginationFirst", "paginationSecond"]);
     expect(Object.keys(artifacts.versionConfigs)).toEqual([...DOC_VERSIONS]);
   });
 
@@ -291,10 +296,11 @@ describe("buildVersionConfig", () => {
     const config = buildVersionConfig(versionId);
     const md = config["routes-md"];
 
-    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40]);
+    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 51]);
     for (const route of md) {
       for (const lang of LANGS) {
-        expect(route.path?.[lang]).toBe(`${base}/${lang}/${ROUTE_PATHS[route.id][lang]}`);
+        const filename = route.id === 51 ? "pagination-first.md" : ROUTE_PATHS[route.id][lang];
+        expect(route.path?.[lang]).toBe(`${base}/${lang}/${filename}`);
       }
     }
     expect(md[1].audio).toEqual(PAGE2_AUDIO);
@@ -315,7 +321,7 @@ describe("buildVersionConfig", () => {
     const config = buildVersionConfig(versionId);
 
     const video = config["routes-video"];
-    expect(video.map((route) => route.id)).toEqual([5, 8, 9, 10, 11]);
+    expect(video.map((route) => route.id)).toEqual([5, 8, 9, 10, 11, 53, 63]);
     const videoRoute = (id: number) => {
       const found = video.find((route) => route.id === id);
       if (!found) throw new Error(`missing video route ${id}`);

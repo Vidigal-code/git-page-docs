@@ -7,12 +7,14 @@ import { useSearchParams } from "next/navigation";
 import {
   hasMarkdownDocument,
   getLangMenuLabelFromMenu,
-  resolvePageMarkdownHtml,
+  buildContainerSearchEntries,
+  usePageMarkdownHtml,
   resolvePageMarkdownSource,
   resolveThemeBackground,
   toDocsShellCssVars,
   type LoadedDocsData,
   type LoadedPage,
+  type ContentTypeRouteConfig,
 } from "@/entities/docs";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
@@ -38,7 +40,8 @@ import { useNavMenuBlockPreference } from "@/features/nav-menu-block-preference"
 import { useRouteAuthorization } from "@/features/route-authorization";
 import { useDocsAccess, DocsAccessGate } from "@/features/docs-access";
 import { resolveDocsLockIconConfig } from "@/shared/lib/icons/nav-menu/resolve-nav-menu-icon";
-import { useQuickNavigation } from "./model/use-quick-navigation";
+import { useContainerPagination } from "./model/use-container-pagination";
+import { ContainerPagination } from "./ui/content-type-containers/container-pagination";
 import { useVersionRouting } from "./model/use-version-routing";
 import { CollapsedNavRail } from "./ui/docs-shell-collapsed-rail";
 import { DocsShellMainContent } from "./ui/docs-shell-main-content";
@@ -156,9 +159,12 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
   const safePageIndex = pageIndex >= 0 && pageIndex < (data.pages?.length ?? data.docs.length) ? pageIndex : 0;
   const safeAccessiblePageIndex = isPageAccessible(safePageIndex) ? safePageIndex : firstAccessiblePageIndex;
-  const currentPage = data.pages?.[safeAccessiblePageIndex];
+  const sourceCurrentPage = data.pages?.[safeAccessiblePageIndex];
+  const containerPagination = useContainerPagination({ data, language, canAccess: isRouteAccessible });
+  const selectContainerPage = containerPagination.select;
+  const currentPage = containerPagination.pages[safeAccessiblePageIndex];
   const markdownOptions = { legacyDocs: data.docs, pageIndex: safeAccessiblePageIndex, language, canAccessRoute: isRouteAccessible };
-  const markdownHtml = resolvePageMarkdownHtml(currentPage, markdownOptions);
+  const markdownHtml = usePageMarkdownHtml(currentPage, { ...markdownOptions, markerDefaults: data.config.site.markdownMarkers });
   // Focus mode reads the page's markdown, so routes without one (source-viewer,
   // media-only, untranslated) must not offer it at all.
   const pageHasMarkdown = hasMarkdownDocument(markdownHtml);
@@ -172,22 +178,20 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     canGoNext,
   } = useDocsShellLinearNav(data, language, { pageIndex: safeAccessiblePageIndex, isPathAllowed });
   const displayHeaderMenuTree = useMemo(() => getMenuDisplayNodes(headerMenuTree, data.config.site), [headerMenuTree, data.config.site]);
-  const focusDocuments = useFocusDocuments({ data, entries: headerMenuEntries, language, currentPageIndex: safeAccessiblePageIndex, isPathAllowed, canAccessRoute: isRouteAccessible });
-  const focusDocumentId = `${data.activeVersionId ?? ""}:${language}:${currentPage?.id ?? safeAccessiblePageIndex}`;
+  const focusData = useMemo<LoadedDocsData>(
+    () => data.pages ? { ...data, pages: containerPagination.pages } : data,
+    [data, containerPagination.pages],
+  );
+  const focusDocuments = useFocusDocuments({ data: focusData, entries: headerMenuEntries, language, currentPageIndex: safeAccessiblePageIndex, isPathAllowed, canAccessRoute: isRouteAccessible });
+  const activeContainers = containerPagination.containers.filter((container) => container.ownerPageId === currentPage?.id);
+  const focusPageSignature = activeContainers.filter((container) => container.type === "md").map((container) => `${container.key}:${container.index}`).join(";");
+  const focusDocumentId = `${data.activeVersionId ?? ""}:${language}:${currentPage?.id ?? safeAccessiblePageIndex}:${focusPageSignature}`;
+  const quickNavigationEntries = useMemo(() => [
+    ...headerMenuEntries,
+    ...buildContainerSearchEntries({ containers: containerPagination.containers, menuEntries: headerMenuEntries, language }),
+  ], [containerPagination.containers, headerMenuEntries, language]);
 
-  const {
-    quickNavOpen,
-    setQuickNavOpen,
-    quickNavQuery,
-    setQuickNavQuery,
-    quickNavActiveIndex,
-    setQuickNavActiveIndex,
-    quickNavListRef,
-    quickNavItemRefs,
-    filteredQuickNavEntries,
-    openQuickNavigation: openQuickNavigationInternal,
-    closeQuickNavigation: closeQuickNavigationInternal,
-  } = useQuickNavigation(headerMenuEntries);
+  const [quickNavOpen, setQuickNavOpen] = useState(false);
 
   const {
     focusModeOpen,
@@ -250,12 +254,10 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
   useDocsShellKeyboard({
     activeNavigation: controlsConfig.activeNavigation,
-    quickNavOpen,
     focusModeOpen,
     setMenuOpen,
     setFocusModeOpen,
     setQuickNavOpen,
-    setQuickNavQuery,
   });
 
   const onMenuClick = useCallback(
@@ -273,9 +275,9 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
         }
 
         onMenuClickState(pathClick, ancestorKeys, options);
+        if (options?.containerPage) selectContainerPage(options.containerPage);
         setQuickNavOpen(false);
         if (options?.origin !== "focus") setFocusModeOpen(false);
-        setQuickNavQuery("");
         if (pathClick && typeof window !== "undefined") {
           const params = getUrlParamsForPathClick(data, pathClick, language, getCurrentSearchParams());
           replaceUrlWithoutNavigation(pathname ?? "/", params);
@@ -286,9 +288,9 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
       ensurePathAccess,
       getDeniedMessage,
       onMenuClickState,
+      selectContainerPage,
       setQuickNavOpen,
       setFocusModeOpen,
-      setQuickNavQuery,
       data,
       language,
       pathname,
@@ -342,7 +344,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     setVersionLinksPopupOpen(false);
     setInfoPopupOpen(false);
     setFocusModeOpen(false);
-    openQuickNavigationInternal();
+    setQuickNavOpen(true);
   }
 
   function openVersionLinksPopup() {
@@ -404,9 +406,13 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   useDocumentThemeVars(cssVars);
   const labels = useDocsShellLabels(data, language);
   const focusFileName = getFocusFileName(currentPage, language);
+  const focusContainer = activeContainers.find((container) => container.type === "md");
+  const focusMetadata: ContentTypeRouteConfig | undefined = focusContainer?.items[focusContainer.index]?.block.content.config;
+  const focusTitle = focusMetadata?.title?.[language] ?? focusMetadata?.title?.en;
   const focusDocument = {
     id: focusDocumentId,
-    title: focusDocuments.documents[focusDocuments.currentDocumentIndex]?.title ?? focusFileName,
+    title: focusTitle ?? focusDocuments.documents[focusDocuments.currentDocumentIndex]?.title ?? focusFileName,
+    description: focusMetadata?.description?.[language] ?? focusMetadata?.description?.en,
     source: resolvePageMarkdownSource(currentPage, markdownOptions),
     fileName: focusFileName,
     index: focusDocuments.currentDocumentIndex,
@@ -424,7 +430,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   } = headerIconConfig;
 
   const routeGuideEnabled = data.config.site.RouteGuide !== false;
-  const currentPagePath = getCurrentPagePath(currentPage, language);
+  const currentPagePath = getCurrentPagePath(sourceCurrentPage, language);
   const breadcrumbTrail = useMemo(
     () => (currentPagePath ? getCurrentPageBreadcrumbTrail(headerMenuTree, currentPagePath) : []),
     [currentPagePath, headerMenuTree],
@@ -552,6 +558,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
 
   // Shared by the inline content blocks and the URL fullscreen overlay.
   const navigation: BrowseNavigationProps = {
+    pagination: containerPagination,
     canAccessContent: (config) => isRouteAccessible(config.authorization),
     canAccessPdf: (config) => isRouteAccessible(config.authorization),
     routeGuideEnabled,
@@ -689,19 +696,13 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           setInfoPopupOpen={setInfoPopupOpen}
           quickNavOpen={quickNavOpen}
           quickNavPlaceholder={labels.quickNavPlaceholder}
-          quickNavQuery={quickNavQuery}
-          filteredQuickNavEntries={filteredQuickNavEntries}
-          quickNavActiveIndex={quickNavActiveIndex}
+          quickNavigationEntries={quickNavigationEntries}
           navigateHintLabel={labels.navigateHintLabel}
           selectHintLabel={labels.selectHintLabel}
           escHintLabel={labels.escHintLabel}
           closeHintLabel={labels.closeHintLabel}
           noNavigationResults={labels.noNavigationResults}
-          quickNavListRef={quickNavListRef}
-          quickNavItemRefs={quickNavItemRefs}
-          closeQuickNavigation={closeQuickNavigationInternal}
-          setQuickNavQuery={setQuickNavQuery}
-          setQuickNavActiveIndex={setQuickNavActiveIndex}
+          closeQuickNavigation={() => setQuickNavOpen(false)}
           focusModeOpen={focusModeOpen}
           focusModeLabel={controlsConfig.focusModeLabel}
           focusModeCurrentHtml={focusModeCurrentHtml}
@@ -721,6 +722,12 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           }}
           focusOptions={data.config.site.focusMode}
           focusAccessibilityControls={accessibilityControls}
+          focusContainerPaginationTop={activeContainers.filter((container) => container.type === "md" && ["top", "both"].includes(container.options.placement ?? "bottom")).map((container) => (
+            <ContainerPagination key={container.key} container={container} language={language} onSelect={containerPagination.select} />
+          ))}
+          focusContainerPagination={activeContainers.filter((container) => container.type === "md" && container.options.placement !== "top").map((container) => (
+            <ContainerPagination key={container.key} container={container} language={language} onSelect={containerPagination.select} />
+          ))}
           closeFocusMode={closeFocusModeInternal}
           onFocusModeNavigate={onFocusModeNavigateInternal}
           versionLinksLabel={controlsConfig.versionLinksLabel}

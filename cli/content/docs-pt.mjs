@@ -4,8 +4,13 @@ import { overviewsPt } from "./overviews-pt.mjs";
 import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
 import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
+import { PAGINATION_DOCS, PAGINATION_FIRST_DOCS } from "./container-pagination.mjs";
+import { MARKDOWN_MARKER_DOCS } from "./markdown-markers.mjs";
 
 export const docsPt = {
+    containerPagination: PAGINATION_DOCS.pt,
+    paginationFirst: PAGINATION_FIRST_DOCS.pt,
+    markdownMarkers: MARKDOWN_MARKER_DOCS.pt,
     ...practicalPt,
     ...operationsPt,
     ...overviewsPt,
@@ -43,7 +48,7 @@ As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\
 
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.13/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.14/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -52,9 +57,9 @@ Em \`gitpagedocs/docs/versions/0.0.13/config.json\`, mantenha as listas de rotas
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -76,7 +81,7 @@ As flags opcionais da rota ficam dentro de \`pdf\`. Apresentação compartilhada
 
 ## Arquivos e publicação
 
-Caminhos relativos à raiz do repositório que começam com \`gitpagedocs/\` são copiados para os assets públicos do visualizador ao iniciar ou compilar o Next.js. A URL respeita o subdiretório de publicação no GitHub Pages. Versione o PDF no Git e publique-o junto com a documentação gerada. Arquivos fora de \`gitpagedocs/\` devem estar em \`frontend/public/\` do visualizador ou acessíveis por uma URL HTTP(S).
+PDFs e arquivos nativos de áudio/vídeo suportados dentro de \`gitpagedocs/\` são copiados para os assets públicos do visualizador ao iniciar ou compilar o Next.js. A URL respeita o subdiretório de publicação no GitHub Pages. Versione esses arquivos no Git e publique-os junto com a documentação gerada. Arquivos fora de \`gitpagedocs/\` devem estar em \`frontend/public/\` do visualizador ou acessíveis por uma URL HTTP(S).
 
 Use a URL do PDF binário, não uma página HTML de prévia do repositório. Em repositórios remotos, o caminho configurado é resolvido nesse repositório. Prévia, download e abertura em nova aba buscam os bytes do arquivo, portanto um servidor externo precisa permitir CORS nas três ações. O visualizador valida a assinatura PDF e cria uma URL Blob temporária com tipo \`application/pdf\`. A prévia e a nova aba usam o visualizador nativo de PDF do navegador; a política de incorporação e os cabeçalhos de tipo/disposição do servidor de origem não controlam essa exibição Blob.
 
@@ -314,6 +319,16 @@ Principais chaves:
 - \`layoutsConfigPath\`: fallback remoto para layouts
 - \`rendering\`: URL canonica publicada
 
+## Posição da navegação de documentos
+
+Configure o grupo de botões do rodapé em \`gitpagedocs/config.json\`:
+
+\`\`\`json
+{ "site": { "documentNavigation": { "position": "center" } } }
+\`\`\`
+
+\`position\` aceita \`left\`, \`center\` ou \`right\`; o padrão é \`center\` (centro). Valores ausentes ou inválidos usam esse padrão. Anterior, Próximo e Voltar ao topo permanecem juntos nessa ordem, com o mesmo alinhamento no desktop e no celular. Essa opção posiciona o grupo; \`site.backToTop\` continua determinando quando a seta aparece. Ela não reposiciona a seta do guia de introdução.
+
 ## Voltar ao topo em páginas longas
 
 A seta de voltar ao topo nas páginas de documentação e em \`/introduction-guide\` é controlada por \`site.backToTop\` em \`gitpagedocs/config.json\`:
@@ -447,6 +462,8 @@ Opções por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
 | \`ActiveNavigation\` | true; navegação rápida e atalho Ctrl+K |
 | \`FocusMode / focusMode\` | Habilitação geral (true) e controles independentes de cópia, download, seção e documento; consulte Modo foco |
 | \`pdf\` | Habilitação geral, prévia, download e nova aba; todos true |
+| \`containerPagination\` | Ativo; abaixo/à direita, quatro ícones e contador; consulte Containers paginados |
+| \`markdownMarkers\` | Ativo; cores do tema para alvos realçados e links no índice; consulte Marcadores de Markdown |
 | \`nestedMenusEnabled\` | true; árvore recursiva, ou destinos em lista plana quando false |
 | \`RouteGuide\` | true; breadcrumbs, com sobrescrita por padrão da versão e rota Markdown |
 | \`accessibility\` | Habilitado por padrão; opções de narração na página Acessibilidade |
@@ -963,6 +980,8 @@ ${PARENT_MENU_JSON}
 A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos pais e à trilha de navegação. Mantenha IDs estáveis e sem ambiguidade; destinos protegidos seguem as regras de autorização da página. A mesma estrutura vale para \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\` e \`menus-header-pdf\`. \`hierarchyMenu\` ordena as seções por tipo; \`hierarchyPage\` ordena os containers que compartilham o ID da página.
 
 ## Trilha de navegação: RouteGuide
+
+A trilha de navegação tem 12 px de espaçamento acima e abaixo, separando o caminho do conteúdo ao redor.
 
 \`RouteGuide\` controla os breadcrumbs. A prioridade é \`routes-md[].RouteGuide\` da página, depois \`routeDefaults.RouteGuide\` da versão, depois \`site.RouteGuide\`, usando \`true\` como padrão final. O exemplo desliga a trilha na versão e a liga no capítulo 101. Arquivos existentes da versão \`0.0.8\` aceitam os mesmos campos.
 

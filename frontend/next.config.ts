@@ -4,10 +4,10 @@ import { createRequire } from "node:module";
 
 // Next 15's transpiled config module has no filename for relative resolution.
 const requireConfig = createRequire(__filename);
-const { preparePdfAssets } = requireConfig("./build/prepare-pdf-assets.ts") as typeof import("./build/prepare-pdf-assets");
+const { prepareDocumentAssets } = requireConfig("./build/prepare-document-assets.ts") as typeof import("./build/prepare-document-assets");
 const { trimSlashes } = requireConfig("./src/shared/lib/base-path.ts") as typeof import("./src/shared/lib/base-path");
 
-preparePdfAssets(path.resolve(__dirname, ".."));
+prepareDocumentAssets(path.resolve(__dirname, ".."));
 
 const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
 const repositorySearchEnabledByEnv = process.env.GITPAGEDOCS_REPOSITORY_SEARCH === "true";

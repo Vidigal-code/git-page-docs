@@ -4,9 +4,9 @@ Esta guía crea un sitio pequeño en tres idiomas, con dos páginas Markdown y u
 
 ## 1. Genera y revisa la estructura
 
-El scaffold incluye las versiones 0.0.13, 0.0.12, 0.0.11, 0.0.10 y 0.0.9 en el selector, de la más reciente a la más antigua. Las cinco contienen los ejemplos actuales; la versión del paquete es 0.0.13. Las rutas y etiquetas se generan para la versión correspondiente de la documentación. No se eliminan las carpetas existentes de versiones anteriores.
+El scaffold incluye las versiones 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 y 0.0.9 en el selector, de la más reciente a la más antigua. Las seis contienen los ejemplos actuales; la versión del paquete es 0.0.14. Las rutas y etiquetas se generan para la versión correspondiente de la documentación. No se eliminan las carpetas existentes de versiones anteriores.
 
-Ejecuta `npx --yes @gitpagedocs/cli@0.0.13 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO` en un directorio de proyecto nuevo. En este repositorio de código fuente, `node cli/index.mjs` ejecuta la versión del checkout. La generación escribe configuración y documentación; no inicia el visor Next.js.
+Ejecuta `npx --yes @gitpagedocs/cli@0.0.14 --no-interactive --owner TU_USUARIO --repo TU_REPOSITORIO` en un directorio de proyecto nuevo. En este repositorio de código fuente, `node cli/index.mjs` ejecuta la versión del checkout. La generación escribe configuración y documentación; no inicia el visor Next.js.
 
 El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. Para un sitio existente, combina los campos relevantes y conserva la identidad del repositorio, la publicación, los temas y las demás versiones.
 
@@ -14,7 +14,7 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
 {
   "site": {
     "name": "Documentação • Guía • Documentation",
-    "docsVersion": "0.0.13",
+    "docsVersion": "0.0.14",
     "languages": {
       "en": true,
       "pt": true,
@@ -75,7 +75,7 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
   "VersionControl": {
     "versions": [
       {
-        "id": "0.0.13",
+        "id": "0.0.14",
         "path": "gitpagedocs/docs/versions/0.0.12/config.json"
       }
     ]

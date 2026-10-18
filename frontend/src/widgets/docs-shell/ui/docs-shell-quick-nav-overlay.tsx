@@ -1,50 +1,43 @@
 import { FiX } from "@/shared/ui/fallback-icons";
 import type { MenuEntry } from "../model/menu-tree";
 import type { OnMenuClickOptions } from "../model/use-docs-shell-navigation-state";
+import { filterQuickNavigationEntries, useQuickNavigation } from "../model/use-quick-navigation";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellQuickNavOverlayProps {
-  isOpen: boolean;
   quickNavPlaceholder: string;
   menuCloseLabel: string;
-  quickNavQuery: string;
-  filteredQuickNavEntries: MenuEntry[];
-  quickNavActiveIndex: number;
+  entries: MenuEntry[];
   navigateHintLabel: string;
   selectHintLabel: string;
   escHintLabel: string;
   closeHintLabel: string;
   noNavigationResults: string;
-  quickNavListRef: React.RefObject<HTMLDivElement | null>;
-  quickNavItemRefs: React.RefObject<Array<HTMLButtonElement | null>>;
   onClose: () => void;
-  onQueryChange: (value: string) => void;
-  onActiveIndexChange: (nextIndex: number | ((prev: number) => number)) => void;
   onMenuClick: (pathClick: string, ancestorKeys: string[], options?: OnMenuClickOptions) => void;
 }
 
 export function DocsShellQuickNavOverlay({
-  isOpen,
   quickNavPlaceholder,
   menuCloseLabel,
-  quickNavQuery,
-  filteredQuickNavEntries,
-  quickNavActiveIndex,
+  entries,
   navigateHintLabel,
   selectHintLabel,
   escHintLabel,
   closeHintLabel,
   noNavigationResults,
-  quickNavListRef,
-  quickNavItemRefs,
   onClose,
-  onQueryChange,
-  onActiveIndexChange,
   onMenuClick,
-}: Readonly<DocsShellQuickNavOverlayProps>) {
-  if (!isOpen) {
-    return null;
-  }
+}: Readonly<DocsShellQuickNavOverlayProps>): React.JSX.Element {
+  const {
+    setQuickNavQuery: onQueryChange,
+    quickNavActiveIndex,
+    quickNavActiveIndexRef,
+    setQuickNavActiveIndex: onActiveIndexChange,
+    filteredQuickNavEntries,
+    quickNavListRef,
+    quickNavItemRefs,
+  } = useQuickNavigation(entries);
   return (
     <div className={styles.quickNavOverlay}>
       <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
@@ -59,13 +52,14 @@ export function DocsShellQuickNavOverlay({
           className={styles.quickNavInput}
           placeholder={quickNavPlaceholder}
           autoFocus
-          value={quickNavQuery}
+          defaultValue=""
           onChange={(event) => {
             onQueryChange(event.target.value);
             onActiveIndexChange(0);
           }}
           onKeyDown={(event) => {
-            if (!filteredQuickNavEntries.length) {
+            const currentEntries = filterQuickNavigationEntries(entries, event.currentTarget.value);
+            if (!currentEntries.length) {
               if (event.key === "Escape") {
                 event.preventDefault();
                 onClose();
@@ -74,15 +68,15 @@ export function DocsShellQuickNavOverlay({
             }
             if (event.key === "ArrowDown") {
               event.preventDefault();
-              onActiveIndexChange((prev) => Math.min(prev + 1, filteredQuickNavEntries.length - 1));
+              onActiveIndexChange((prev) => Math.min(prev + 1, currentEntries.length - 1));
             } else if (event.key === "ArrowUp") {
               event.preventDefault();
               onActiveIndexChange((prev) => Math.max(prev - 1, 0));
             } else if (event.key === "Enter") {
               event.preventDefault();
-              const selectedEntry = filteredQuickNavEntries[quickNavActiveIndex];
+              const selectedEntry = currentEntries[quickNavActiveIndexRef.current];
               if (selectedEntry) {
-                onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys, { origin: "quick" });
+                onMenuClick(selectedEntry.pathClick, selectedEntry.ancestorKeys, { origin: "quick", containerPage: selectedEntry.containerPage });
               }
             } else if (event.key === "Escape") {
               event.preventDefault();
@@ -98,7 +92,7 @@ export function DocsShellQuickNavOverlay({
                 quickNavItemRefs.current[index] = element;
               }}
               className={`${styles.menuButton} ${index === quickNavActiveIndex ? styles.quickNavItemActive : ""}`}
-              onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys, { origin: "quick" })}
+              onClick={() => onMenuClick(entry.pathClick, entry.ancestorKeys, { origin: "quick", containerPage: entry.containerPage })}
               onMouseEnter={() => onActiveIndexChange(index)}
             >
               {entry.searchLabel}

@@ -1,0 +1,29 @@
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block: 0.75rem;
+  width: 100%;
+}
+
+.pagination[data-alignment="left"] {
+  justify-content: flex-start;
+}
+
+.pagination[data-alignment="center"] {
+  justify-content: center;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.counter {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}

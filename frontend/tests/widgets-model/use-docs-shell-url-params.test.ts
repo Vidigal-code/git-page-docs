@@ -2,12 +2,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { act, renderHook, cleanup } from "@testing-library/react";
 import { getCurrentHeadingHash, scrollToHeadingId } from "@/features/route-guide";
+import type { LoadedMdContent } from "@/entities/docs";
 import {
   useDocsShellUrlParams,
   type FullscreenParams,
   type UrlParamsAction,
 } from "@/widgets/docs-shell/model/use-docs-shell-url-params";
-import { INTRO, LANDING, PAGE_INDEX, makeDocsData, setWindowUrl } from "./fixtures";
+import { INTRO, LANDING, PAGE_INDEX, makeConfig, makeDocsData, makePages, setWindowUrl } from "./fixtures";
 
 vi.mock("@/features/route-guide", () => ({
   getCurrentHeadingHash: vi.fn(() => ""),
@@ -102,6 +103,31 @@ describe("useDocsShellUrlParams", () => {
     rerender({ page: PAGE_INDEX.guide });
     expect(setPageIndex).toHaveBeenCalledTimes(1);
     expect(onParamsProcessed.mock.calls.at(-1)).toEqual([null]);
+  });
+
+  it("keeps the owner selected by native history while the router query snapshot is still old", () => {
+    const owner: LoadedMdContent = {
+      routeId: 50,
+      config: { id: 50, path: { en: "lessons.md" } },
+      markdownByLanguage: { en: "<h1>Lessons</h1>" },
+    };
+    const data = makeDocsData({
+      pages: [makePages()[0], { id: 50, md: owner }],
+      config: makeConfig({ "routes-md": [owner.config] }),
+      pathToPageMap: { [INTRO]: { pageIndex: 0, contentType: "md" }, "lessons.md": { pageIndex: 1, contentType: "md" } },
+    });
+    const searchParams = new URLSearchParams("menu=en&id=1");
+    const setPageIndex = vi.fn();
+    const expandAncestors = vi.fn();
+    setWindowUrl("/?menu=en&id=1");
+    const { rerender } = renderHook(({ page }) => useDocsShellUrlParams({
+      searchParams, data, language: "en", pageIndex: page, setPageIndex, expandAncestors,
+    }), { initialProps: { page: 0 } });
+    expect(setPageIndex).not.toHaveBeenCalled();
+    setWindowUrl("/?menu=en&id=50");
+    rerender({ page: 1 });
+    expect(new URLSearchParams(window.location.search).get("id")).toBe("50");
+    expect(setPageIndex).not.toHaveBeenCalled();
   });
 
   it("stops before navigating or scrolling when the guard denies the path", () => {

@@ -56,16 +56,16 @@ export function useDocsShellUrlParams({
 
   useEffect(() => {
     const hasWindow = typeof window !== "undefined";
+    const currentParams = hasWindow ? new URLSearchParams(window.location.search) : searchParams;
     if (onFullscreenRequest) {
-      // Fullscreen params come from the live URL: inline fullscreens rewrite it without navigating.
-      const fullscreen = parseFullscreenParams(hasWindow ? new URLSearchParams(window.location.search) : searchParams);
+      const fullscreen = parseFullscreenParams(currentParams);
       if (fullscreen) {
         onFullscreenRequest(fullscreen);
         return;
       }
     }
 
-    const selection = resolveMenuSelection(data, searchParams);
+    const selection = resolveMenuSelection(data, currentParams);
     if (selection && canNavigateToPathClick && !canNavigateToPathClick(selection.pathClick)) {
       onParamsProcessed?.(null);
       return;

@@ -64,7 +64,7 @@ Las opciones de la ruta se colocan dentro de `pdf`. La presentación compartida,
 
 ## Archivos y publicación
 
-Las rutas relativas a la raíz del repositorio que empiezan por `gitpagedocs/` se copian a los assets públicos del visor al iniciar o compilar Next.js. La URL respeta el subdirectorio de publicación de GitHub Pages. Incluye el PDF en Git y publícalo junto con la documentación generada. Los archivos fuera de `gitpagedocs/` deben estar en `frontend/public/` del visor o ser accesibles mediante una URL HTTP(S).
+Los PDF y archivos nativos de audio/vídeo compatibles dentro de `gitpagedocs/` se copian a los assets públicos del visor al iniciar o compilar Next.js. La URL respeta el subdirectorio de publicación de GitHub Pages. Incluye estos archivos en Git y publícalos junto con la documentación generada. Los archivos fuera de `gitpagedocs/` deben estar en `frontend/public/` del visor o ser accesibles mediante una URL HTTP(S).
 
 Usa la URL del PDF binario, no una página HTML de vista previa del repositorio. Para repositorios remotos, la ruta se resuelve dentro de ese repositorio. La vista previa, la descarga y la apertura en una nueva pestaña obtienen los bytes del archivo, por lo que un servidor externo debe permitir CORS para las tres acciones. El visor valida la firma PDF y crea una URL Blob temporal de tipo `application/pdf`. La vista previa y la nueva pestaña utilizan el visor PDF nativo del navegador; la política de incorporación y las cabeceras de tipo/disposición del servidor de origen no controlan esta vista Blob.
 

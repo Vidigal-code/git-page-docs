@@ -64,7 +64,7 @@ The optional route flags live inside `pdf`. Shared presentation, `container`, `R
 
 ## Files and deployment
 
-Repository-root paths beginning with `gitpagedocs/` are copied into the viewer's public assets when Next.js starts or builds. The URL respects the configured deployment subpath on GitHub Pages. Keep the PDF tracked in Git and publish it with the generated documentation. Assets outside `gitpagedocs/` must already be in the viewer's `frontend/public/` directory or be reachable through an HTTP(S) URL.
+PDFs and supported native audio/video files under the repository's `gitpagedocs/` tree are copied into the viewer's public assets when Next.js starts or builds. The URL respects the configured deployment subpath on GitHub Pages. Keep these files tracked in Git and publish them with the generated documentation. Assets outside `gitpagedocs/` must already be in the viewer's `frontend/public/` directory or be reachable through an HTTP(S) URL.
 
 Use the binary PDF URL, not an HTML repository preview URL. For remote repositories, the configured path resolves against that repository. Preview, download and opening a new tab fetch the file bytes, so an external server must allow CORS for all three actions. The viewer validates the PDF signature and creates a temporary `application/pdf` Blob URL. Preview and new-tab viewing use the browser's native PDF viewer; the origin server's framing policy and MIME/disposition headers do not control the Blob view.
 

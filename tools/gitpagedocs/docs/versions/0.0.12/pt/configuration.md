@@ -36,6 +36,16 @@ Principais chaves:
 - `layoutsConfigPath`: fallback remoto para layouts
 - `rendering`: URL canonica publicada
 
+## Posição da navegação de documentos
+
+Configure o grupo de botões do rodapé em `gitpagedocs/config.json`:
+
+```json
+{ "site": { "documentNavigation": { "position": "center" } } }
+```
+
+`position` aceita `left`, `center` ou `right`; o padrão é `center` (centro). Valores ausentes ou inválidos usam esse padrão. Anterior, Próximo e Voltar ao topo permanecem juntos nessa ordem, com o mesmo alinhamento no desktop e no celular. Essa opção posiciona o grupo; `site.backToTop` continua determinando quando a seta aparece. Ela não reposiciona a seta do guia de introdução.
+
 ## Voltar ao topo em páginas longas
 
 A seta de voltar ao topo nas páginas de documentação e em `/introduction-guide` é controlada por `site.backToTop` em `gitpagedocs/config.json`:
@@ -169,6 +179,8 @@ Opções por rota em `routes-md`, `routes-html` e `routes-video`:
 | `ActiveNavigation` | true; navegação rápida e atalho Ctrl+K |
 | `FocusMode / focusMode` | Habilitação geral (true) e controles independentes de cópia, download, seção e documento; consulte Modo foco |
 | `pdf` | Habilitação geral, prévia, download e nova aba; todos true |
+| `containerPagination` | Ativo; abaixo/à direita, quatro ícones e contador; consulte Containers paginados |
+| `markdownMarkers` | Ativo; cores do tema para alvos realçados e links no índice; consulte Marcadores de Markdown |
 | `nestedMenusEnabled` | true; árvore recursiva, ou destinos em lista plana quando false |
 | `RouteGuide` | true; breadcrumbs, com sobrescrita por padrão da versão e rota Markdown |
 | `accessibility` | Habilitado por padrão; opções de narração na página Acessibilidade |

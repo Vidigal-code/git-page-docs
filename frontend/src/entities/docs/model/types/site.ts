@@ -1,5 +1,7 @@
 import type { IconConfigFields } from "@/shared/lib/icons/icon-config-fields";
 import type { SiteBackgroundEffectsConfig } from "./theme-background";
+import type { MarkdownMarkersOptions } from "./markdown-markers";
+import type { ContainerPaginationOptions } from "./container-pagination";
 
 /**
  * Any language code a site may ship ("pt", "en" and "es" are the bundled ones).
@@ -28,6 +30,10 @@ export interface FocusModeOptions {
 export interface BackToTopOptions {
   enabled?: boolean;
   minPageHeightViewports?: number;
+}
+
+export interface DocumentNavigationOptions {
+  position?: "left" | "center" | "right";
 }
 
 export interface NarrationSettings {
@@ -61,6 +67,9 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
   FocusMode?: boolean;
   focusMode?: FocusModeOptions;
   backToTop?: BackToTopOptions;
+  documentNavigation?: DocumentNavigationOptions;
+  markdownMarkers?: MarkdownMarkersOptions;
+  containerPagination?: ContainerPaginationOptions;
   pdf?: PdfOptions;
   nestedMenusEnabled?: boolean;
   accessibility?: AccessibilitySettings;

@@ -37,6 +37,15 @@ const cache = {
 };
 
 describe("ThemePreloadScript", () => {
+  it("applies the cached light color scheme before hydration", () => {
+    visit("theme=cosmic-tide-light&modetheme=light", { themes: {
+      "cosmic-tide-light": { mode: "light", colors: { background: "#F3F6FF", text: "#293657" } },
+    } });
+    document.documentElement.style.setProperty("--color-scheme", "dark");
+    runPreload();
+    expect(document.documentElement.style.getPropertyValue("--color-scheme")).toBe("light");
+  });
+
   it("applies the cached palette of the theme named in the url before paint", () => {
     visit("theme=aurora", cache);
     expect(runPreload()).toEqual([

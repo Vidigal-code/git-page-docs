@@ -53,6 +53,8 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     audio,
     authorization,
     hierarchyPage,
+    pagination,
+    markdownMarkers,
   } = options;
   const out = {
     id: routeId,
@@ -68,7 +70,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     RouteguideBrandPosition,
     RouteguideBrandContainerTop,
   };
-  return assignDefined(out, { container, audio, authorization, hierarchyPage });
+  return assignDefined(out, { container, audio, authorization, hierarchyPage, pagination, markdownMarkers });
 }
 
 export function buildHtmlRoute(versionId, routeId, pathByLang, titles, descriptions, options = {}) {
@@ -77,7 +79,7 @@ export function buildHtmlRoute(versionId, routeId, pathByLang, titles, descripti
 }
 
 export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles, descriptions, options = {}) {
-  const { container, browseAll = false, authorization } = options;
+  const { container, browseAll = false, authorization, pagination } = options;
   const obj = {
     id: routeId,
     title: titles ?? { pt: "Vídeo", en: "Video", es: "Vídeo" },
@@ -87,7 +89,7 @@ export function buildVideoRoute(versionId, routeId, videoType, pathVideo, titles
     browseAll,
     video: { videoType: perLanguage(videoType), pathVideo: perLanguage(pathVideo) },
   };
-  return assignDefined(obj, { container, authorization });
+  return assignDefined(obj, { container, authorization, pagination });
 }
 
 export function buildAudioRoute(versionId, routeId, audioType, pathAudio, titles, descriptions, options = {}) {
@@ -100,7 +102,7 @@ export function buildAudioRoute(versionId, routeId, audioType, pathAudio, titles
 }
 
 export function buildPdfRoute(meta, pathPdf, options = {}) {
-  const { container, authorization, pdf } = options;
+  const { container, authorization, pdf, pagination } = options;
   const route = {
     id: meta.id,
     title: meta.titles,
@@ -109,7 +111,7 @@ export function buildPdfRoute(meta, pathPdf, options = {}) {
     ...withDefaults(ROUTE_FRAME_DEFAULTS, options),
     pdf: { pathPdf: perLanguage(pathPdf), ...pdf },
   };
-  return assignDefined(route, { container, authorization });
+  return assignDefined(route, { container, authorization, pagination });
 }
 
 export function buildSourceViewerRoute(routeId, sourceViewerPath, titles, descriptions, options = {}) {

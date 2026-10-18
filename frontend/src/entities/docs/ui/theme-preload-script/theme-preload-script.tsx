@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { THEME_URL_PARAM } from "@/shared/config/constants";
 import { THEME_CSS_VAR_BY_COLOR } from "../../lib/theme/to-css-vars";
 import { SHELL_THEME_CACHE_KEY } from "../../lib/theme/theme-cache";
@@ -15,7 +16,7 @@ import { SHELL_THEME_CACHE_KEY } from "../../lib/theme/theme-cache";
  * Failures are swallowed on purpose: the page must render with the :root
  * defaults if storage is unavailable or the cache is unusable.
  */
-export function ThemePreloadScript() {
+export function ThemePreloadScript(): ReactElement {
   const source = `(function(){try{
 var id=new URLSearchParams(location.search).get(${JSON.stringify(THEME_URL_PARAM)});
 if(!id)return;
@@ -25,6 +26,7 @@ var theme=(JSON.parse(raw)||{}).themes[id];
 if(!theme||!theme.colors)return;
 var map=${JSON.stringify(THEME_CSS_VAR_BY_COLOR)};
 var root=document.documentElement;
+if(theme.mode==="light"||theme.mode==="dark")root.style.setProperty("--color-scheme",theme.mode);
 for(var key in map){var value=theme.colors[key];if(value)root.style.setProperty(map[key],value);}
 var header=(theme.components||{}).header||{};
 var headerBackground=header.backgroundColor||theme.colors.cardBackground;

@@ -64,7 +64,7 @@ As flags opcionais da rota ficam dentro de `pdf`. Apresentação compartilhada, 
 
 ## Arquivos e publicação
 
-Caminhos relativos à raiz do repositório que começam com `gitpagedocs/` são copiados para os assets públicos do visualizador ao iniciar ou compilar o Next.js. A URL respeita o subdiretório de publicação no GitHub Pages. Versione o PDF no Git e publique-o junto com a documentação gerada. Arquivos fora de `gitpagedocs/` devem estar em `frontend/public/` do visualizador ou acessíveis por uma URL HTTP(S).
+PDFs e arquivos nativos de áudio/vídeo suportados dentro de `gitpagedocs/` são copiados para os assets públicos do visualizador ao iniciar ou compilar o Next.js. A URL respeita o subdiretório de publicação no GitHub Pages. Versione esses arquivos no Git e publique-os junto com a documentação gerada. Arquivos fora de `gitpagedocs/` devem estar em `frontend/public/` do visualizador ou acessíveis por uma URL HTTP(S).
 
 Use a URL do PDF binário, não uma página HTML de prévia do repositório. Em repositórios remotos, o caminho configurado é resolvido nesse repositório. Prévia, download e abertura em nova aba buscam os bytes do arquivo, portanto um servidor externo precisa permitir CORS nas três ações. O visualizador valida a assinatura PDF e cria uma URL Blob temporária com tipo `application/pdf`. A prévia e a nova aba usam o visualizador nativo de PDF do navegador; a política de incorporação e os cabeçalhos de tipo/disposição do servidor de origem não controlam essa exibição Blob.
 

@@ -39,6 +39,14 @@ export const ROUTE_META_ID6 = {
 };
 
 export const REFERENCE_ROUTE_METAS = {
+  41: {
+    titles: { en: "Paginated containers", pt: "Containers paginados", es: "Contenedores paginados" },
+    descriptions: { en: "Navigate files independently inside each container", pt: "Navegue pelos arquivos de cada container de forma independente", es: "Navega por los archivos de cada contenedor de forma independiente" },
+  },
+  42: {
+    titles: { en: "Markdown markers", pt: "Marcadores de Markdown", es: "Marcadores de Markdown" },
+    descriptions: { en: "Highlight text and elements with linked index entries", pt: "Realce textos e elementos com entradas clicáveis no índice", es: "Resalta textos y elementos con entradas enlazadas en el índice" },
+  },
   40: {
     titles: { en: "Ordered content blocks", pt: "Blocos de conteúdo ordenados", es: "Bloques de contenido ordenados" },
     descriptions: { en: "Combine and repeat content in one page", pt: "Combine e repita conteúdos na mesma página", es: "Combina y repite contenidos en una página" },

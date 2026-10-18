@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type {
   BrowseItem,
+  ContainerPageSelection,
   LanguageCode,
   LoadedAudioContent,
   LoadedDocsData,
@@ -46,6 +47,7 @@ function getBrowseIndexForPage<T>(items: BrowseItem<T>[], pageIndex: number): nu
 }
 
 export interface OnMenuClickOptions {
+  containerPage?: ContainerPageSelection;
   origin?: "menu" | "linear" | "quick" | "focus" | "breadcrumb";
 }
 

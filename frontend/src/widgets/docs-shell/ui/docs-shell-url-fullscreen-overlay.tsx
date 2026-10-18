@@ -64,7 +64,8 @@ export function DocsShellUrlFullscreenOverlay({
 
   const overlayLanguage = params.lang ?? language;
   const pageIndex = resolveFullscreenPageIndex(data, params);
-  const currentPage = data.pages?.[pageIndex] ?? data.pages?.[0];
+  const pages = navigation.pagination?.pages ?? data.pages;
+  const currentPage = pages?.[pageIndex] ?? pages?.[0];
   const innerClassName = getFullscreenInnerClassName(getFullscreenAlign(params.type));
 
   return (

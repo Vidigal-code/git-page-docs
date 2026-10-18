@@ -196,6 +196,28 @@ describe("toDocsShellCssVars", () => {
 });
 
 describe("toSearchShellCssVars", () => {
+  it("gives the loading shell its own controls instead of inheriting the previous documentation theme", () => {
+    const theme: ThemeTemplate = {
+      id: "dark-controls", name: "Dark controls", author: "Project", version: "1",
+      mode: "dark", supportsLightAndDarkModes: false,
+      colors: { background: "#070A14", text: "#E5E7EB", cardBackground: "#14213D" },
+      typography: { fontFamily: "sans-serif", fontSize: {} }, animations: {},
+      components: {
+        button: { borderRadius: "8px", border: "1px solid #345678" },
+        select: { borderRadius: "6px", border: "2px solid #456789", backgroundColor: "#14213D" },
+      },
+    };
+    expect(toSearchShellCssVars(theme)).toMatchObject({
+      "--control-background": "#14213D",
+      "--control-radius": "8px",
+      "--control-border": "1px solid #345678",
+      "--select-radius": "6px",
+      "--select-border": "2px solid #456789",
+      "--button-radius": "8px",
+      "--button-border": "1px solid #345678",
+    });
+  });
+
   it("emits nothing without a theme", () => {
     expect(toSearchShellCssVars(undefined)).toEqual({});
   });

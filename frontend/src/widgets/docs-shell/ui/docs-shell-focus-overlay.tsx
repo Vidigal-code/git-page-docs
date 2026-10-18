@@ -1,4 +1,5 @@
-import { useEffect, useRef, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
+import { TocTree, TocScrollContainerProvider } from "@/features/route-guide";
 import { FiChevronRight, FiChevronsLeft, FiChevronsRight, FiX } from "@/shared/ui/fallback-icons";
 import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
 import type { FocusModeOptions } from "@/entities/docs";
@@ -10,6 +11,7 @@ import styles from "../docs-shell.module.css";
 export interface FocusDocumentView {
   id: string;
   title: string;
+  description?: string;
   source?: string;
   fileName: string;
   index: number;
@@ -46,6 +48,8 @@ interface DocsShellFocusOverlayProps {
   sourceActionLabels: MdSourceActionLabels;
   options?: FocusModeOptions;
   accessibilityControls?: ReactNode;
+  containerPagination?: ReactNode;
+  containerPaginationTop?: ReactNode;
   onClose: () => void;
   onNavigate: (target: FocusNavigationTarget) => void;
 }
@@ -53,10 +57,18 @@ interface DocsShellFocusOverlayProps {
 export function DocsShellFocusOverlay({
   isOpen, focusModeLabel, menuCloseLabel, firstLabel, lastLabel, previousLabel, nextLabel, sectionsLabel, documentsLabel,
   focusModeCurrentHtml, sectionIndex, sectionCount,
-  document: focusDocument, documentNavigation, sourceActionLabels, options, accessibilityControls, onClose, onNavigate,
+  document: focusDocument, documentNavigation, sourceActionLabels, options, accessibilityControls, containerPagination, containerPaginationTop, onClose, onNavigate,
 }: Readonly<DocsShellFocusOverlayProps>) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const markers = useMemo(() => {
+    if (!isOpen || typeof document === "undefined") return [];
+    const template = document.createElement("template");
+    template.innerHTML = focusModeCurrentHtml;
+    return [...template.content.querySelectorAll<HTMLElement>("[data-markdown-marker-label][id]")].map((element) => ({
+      id: element.id, text: element.dataset.markdownMarkerLabel ?? "", level: 2,
+    }));
+  }, [isOpen, focusModeCurrentHtml]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -90,6 +102,7 @@ export function DocsShellFocusOverlay({
           <div className={styles.focusModeTitle}>
             <span>{focusModeLabel}</span>
             <strong>{focusDocument.title}</strong>
+            {focusDocument.description && <p>{focusDocument.description}</p>}
           </div>
           {focusDocument.source !== undefined && <MdSourceActions key={focusDocument.id}
             source={focusDocument.source} fileName={focusDocument.fileName} labels={sourceActionLabels}
@@ -100,9 +113,12 @@ export function DocsShellFocusOverlay({
         </div>
         <div ref={bodyRef} className={styles.focusModeBody}>
           {accessibilityControls}
+          {containerPaginationTop}
+          {markers.length > 0 && <TocScrollContainerProvider scrollContainerRef={bodyRef}><TocTree headings={markers} /></TocScrollContainerProvider>}
           <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: focusModeCurrentHtml }} />
         </div>
         <div className={`${styles.focusModeFooter} ${styles.focusModeNavigation}`}>
+          {containerPagination}
           {options?.documentNavigationEnabled !== false && <FocusNavigationGroup
             label={documentsLabel} index={focusDocument.index} count={focusDocument.count}
             labels={{ first: documentNavigation.firstLabel, previous: documentNavigation.previousLabel, next: documentNavigation.nextLabel, last: documentNavigation.lastLabel }}

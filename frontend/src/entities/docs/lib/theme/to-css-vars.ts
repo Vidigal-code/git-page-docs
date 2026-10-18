@@ -150,23 +150,12 @@ export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSPropert
   return vars as CSSProperties;
 }
 
-export function toDocsShellCssVars(
-  theme: ThemeTemplate | undefined,
-  site?: SiteConfig,
-): CSSProperties {
-  const base = toBaseThemeCssVars(theme);
-  const components = theme?.components ?? {};
+function toControlCssVars(components: ThemeTemplate["components"]): CSSProperties {
   const button = components.button ?? DEFAULT_BUTTON;
   const select = components.select ?? DEFAULT_SELECT;
-  const card = components.card ?? DEFAULT_CARD;
   const headerControls = components.headerControls?.common;
 
   return {
-    ...base,
-    ["--header-background" as string]: components.header?.backgroundColor ?? DEFAULT_HEADER.backgroundColor,
-    ["--header-border" as string]: components.header?.borderBottom ?? DEFAULT_HEADER.borderBottom,
-    ["--card-shadow" as string]: card.boxShadow,
-    ["--card-radius" as string]: card.borderRadius,
     ["--control-radius" as string]: headerControls?.borderRadius ?? button.borderRadius ?? "10px",
     ["--control-border" as string]: headerControls?.border ?? button.border ?? PALETTE_CONTROL_BORDER,
     ["--control-background" as string]:
@@ -176,6 +165,24 @@ export function toDocsShellCssVars(
     ["--button-radius" as string]: button.borderRadius ?? "10px",
     ["--button-border" as string]: button.border ?? PALETTE_CONTROL_BORDER,
     ["--button-glow" as string]: button.hoverGlow ?? "0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent)",
+  };
+}
+
+export function toDocsShellCssVars(
+  theme: ThemeTemplate | undefined,
+  site?: SiteConfig,
+): CSSProperties {
+  const base = toBaseThemeCssVars(theme);
+  const components = theme?.components ?? {};
+  const card = components.card ?? DEFAULT_CARD;
+
+  return {
+    ...base,
+    ...toControlCssVars(components),
+    ["--header-background" as string]: components.header?.backgroundColor ?? DEFAULT_HEADER.backgroundColor,
+    ["--header-border" as string]: components.header?.borderBottom ?? DEFAULT_HEADER.borderBottom,
+    ["--card-shadow" as string]: card.boxShadow,
+    ["--card-radius" as string]: card.borderRadius,
     ["--toc-scroll-max-height-desktop" as string]:
       site?.TocScrollMaxHeightDesktop ?? TOC_SCROLL_MAX_HEIGHT_DESKTOP_DEFAULT,
     ["--toc-scroll-max-height-mobile" as string]:
@@ -192,6 +199,7 @@ export function toSearchShellCssVars(theme: ThemeTemplate | undefined): CSSPrope
   const header = theme.components.header ?? {};
   return {
     ...base,
+    ...toControlCssVars(theme.components),
     ["--header-background" as string]: header.backgroundColor ?? colors.cardBackground ?? DEFAULT_COLORS.cardBackground,
     ["--header-border" as string]: header.borderBottom ?? `1px solid ${colors.cardBorder ?? DEFAULT_COLORS.cardBorder}`,
   };

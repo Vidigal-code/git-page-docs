@@ -60,8 +60,11 @@ describe("buildStoryChapters", () => {
 });
 
 describe("chapterWindow", () => {
-  it("splits the scroll into equal chapter slices that fade in, hold and fade out", () => {
-    expect(chapterWindow(1, 4)).toEqual({ start: 0.25, enter: 0.3, exit: 0.45, end: 0.5 });
+  it("overlaps adjacent chapter windows so the stage stays visible at their boundary", () => {
+    expect(chapterWindow(1, 4)).toEqual({ start: 0.2, enter: 0.3, exit: 0.45, end: 0.55 });
+    const previous = chapterWindow(0, 4);
+    expect(previous.exit).toBe(0.2);
+    expect(previous.end).toBe(0.3);
   });
 
   it("keeps the first chapter visible at the top and the last one at the bottom", () => {
@@ -77,15 +80,15 @@ describe("chapterWindow", () => {
 describe("chapterTimeline", () => {
   it("fades a middle chapter in, holds it and fades it out while its layers drift", () => {
     expect(chapterTimeline(1, 4)).toEqual({
-      input: [0.25, 0.3, 0.45, 0.5],
+      input: [0.2, 0.3, 0.45, 0.55],
       opacity: [0, 1, 1, 0],
       shift: [1, 0, 0, -1],
     });
   });
 
   it("starts the first chapter fully shown and ends the last one fully shown", () => {
-    expect(chapterTimeline(0, 4)).toEqual({ input: [0, 0.2, 0.25], opacity: [1, 1, 0], shift: [0, 0, -1] });
-    expect(chapterTimeline(3, 4)).toEqual({ input: [0.75, 0.8, 1], opacity: [0, 1, 1], shift: [1, 0, 0] });
+    expect(chapterTimeline(0, 4)).toEqual({ input: [0, 0.2, 0.3], opacity: [1, 1, 0], shift: [0, 0, -1] });
+    expect(chapterTimeline(3, 4)).toEqual({ input: [0.7, 0.8, 1], opacity: [0, 1, 1], shift: [1, 0, 0] });
   });
 
   it("keeps strictly increasing keyframes for a single chapter", () => {

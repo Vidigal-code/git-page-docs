@@ -36,6 +36,16 @@ Claves principales:
 - `layoutsConfigPath`: fallback remoto de layouts
 - `rendering`: URL canónica publicada
 
+## Posición de la navegación de documentos
+
+Configura el grupo de botones al pie del documento en `gitpagedocs/config.json`:
+
+```json
+{ "site": { "documentNavigation": { "position": "center" } } }
+```
+
+`position` admite `left`, `center` o `right`; el valor por defecto es `center` (centro). Los valores ausentes o no válidos usan ese valor. Anterior, Siguiente y Volver arriba permanecen juntos en este orden, con la misma alineación en escritorio y móvil. Esta opción posiciona el grupo; `site.backToTop` sigue determinando cuándo aparece la flecha. No cambia la posición de la flecha de la guía de introducción.
+
 ## Volver arriba en páginas largas
 
 La flecha para volver arriba en las páginas de documentación y en `/introduction-guide` se controla mediante `site.backToTop` en `gitpagedocs/config.json`:
@@ -169,6 +179,8 @@ Opciones por ruta en `routes-md`, `routes-html` y `routes-video`:
 | `ActiveNavigation` | true; navegación rápida y atajo Ctrl+K |
 | `FocusMode / focusMode` | Activación general (true) y controles independientes de copia, descarga, sección y documento; consulta Modo foco |
 | `pdf` | Activación general, vista previa, descarga y nueva pestaña; todos true |
+| `containerPagination` | Activo; abajo/a la derecha, cuatro iconos y contador; consulta Contenedores paginados |
+| `markdownMarkers` | Activo; colores del tema para destinos resaltados y enlaces del índice; consulta Marcadores de Markdown |
 | `nestedMenusEnabled` | true; árbol recursivo, o destinos planos con false |
 | `RouteGuide` | true; breadcrumbs, con prioridad para valores de versión y ruta Markdown |
 | `accessibility` | Activado por defecto; opciones de narración en Accesibilidad |

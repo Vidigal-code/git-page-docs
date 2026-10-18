@@ -1,4 +1,5 @@
 import { COMPOSED_PAGE_MENU } from "./composed-pages.mjs";
+import { PAGINATED_PAGE_MENU } from "./paginated-pages.mjs";
 
 export const MARKDOWN_MENU_SECTIONS = [
   1,
@@ -18,7 +19,7 @@ export const MARKDOWN_MENU_SECTIONS = [
         id: 1002,
         routeId: 33,
         titles: { en: "Read and explore", pt: "Leia e explore", es: "Lee y explora" },
-        submenus: [22, 21, 24, 30, 40, COMPOSED_PAGE_MENU],
+        submenus: [22, 21, 24, 30, 40, 41, 42, COMPOSED_PAGE_MENU, PAGINATED_PAGE_MENU],
       },
       {
         id: 1003,

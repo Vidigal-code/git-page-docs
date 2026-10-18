@@ -19,7 +19,8 @@ import { readLocalText } from "../io/file-reader";
 import { readRemoteText } from "../io/remote-fetcher";
 import { markdownToHtml } from "../utils/markdown";
 import { hasPath, hasVideo, hasAudio } from "../utils/route-utils";
-import { resolvePdfUrl } from "../../lib/pdf/resolve-pdf-url";
+import { resolveDocumentUrl } from "../../lib/media/resolve-document-url";
+import { resolveMediaPaths } from "../../lib/media/resolve-media-paths";
 import { isPdfRoute } from "../../lib/pdf/validate-pdf-route";
 import { composePages } from "../../model/compose-pages";
 
@@ -184,20 +185,22 @@ async function loadHtmlContent(route: ContentTypeRouteConfig, context: PageLoadC
 
 function buildVideoContent(route: VideoRoute, context: PageLoadContext, index: PageIndex): LoadedVideoContent {
   const videoTypeByLanguage = localizeRecord(route.video.videoType, context.languages, "youtube");
-  const pathVideoByLanguage = localizeRecord(route.video.pathVideo, context.languages, "");
-  registerPaths(index, "video", [`page:${route.id}`, ...context.languages.map((language) => pathVideoByLanguage[language])]);
+  const paths = localizeRecord(route.video.pathVideo, context.languages, "");
+  const pathVideoByLanguage = resolveMediaPaths(paths, videoTypeByLanguage, context);
+  registerPaths(index, "video", [`page:${route.id}`, ...Object.values(paths), ...Object.values(pathVideoByLanguage)]);
   return { routeId: route.id, config: route, videoTypeByLanguage, pathVideoByLanguage, fullscreenEnabled: route.fullscreenEnabled ?? true };
 }
 
 function buildAudioContent(route: AudioRoute, context: PageLoadContext, index: PageIndex): LoadedAudioContent {
   const audioTypeByLanguage = localizeRecord(route.audio.audioType, context.languages, "youtube");
-  const pathAudioByLanguage = localizeRecord(route.audio.pathAudio, context.languages, "");
-  registerPaths(index, "audio", [`page:${route.id}`, ...context.languages.map((language) => pathAudioByLanguage[language])]);
+  const paths = localizeRecord(route.audio.pathAudio, context.languages, "");
+  const pathAudioByLanguage = resolveMediaPaths(paths, audioTypeByLanguage, context);
+  registerPaths(index, "audio", [`page:${route.id}`, ...Object.values(paths), ...Object.values(pathAudioByLanguage)]);
   return { routeId: route.id, config: route, audioTypeByLanguage, pathAudioByLanguage, fullscreenEnabled: route.fullscreenEnabled ?? true };
 }
 
 function buildPdfContent(route: ContentTypeRouteConfig, context: PageLoadContext, index: PageIndex): LoadedPdfContent {
-  const pathPdfByLanguage = Object.fromEntries(context.languages.map((language) => [language, resolvePdfUrl(route.pdf?.pathPdf[language], context)]));
+  const pathPdfByLanguage = Object.fromEntries(context.languages.map((language) => [language, resolveDocumentUrl(route.pdf?.pathPdf[language], context)]));
   registerPaths(index, "pdf", [`page:${route.id}`, ...Object.values(route.pdf?.pathPdf ?? {}), ...Object.values(pathPdfByLanguage)]);
   return { routeId: route.id, config: route, pathPdfByLanguage, fullscreenEnabled: route.fullscreenEnabled ?? false };
 }

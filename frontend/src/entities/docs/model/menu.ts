@@ -1,6 +1,8 @@
 /** Menu and breadcrumb domain types (FSD: entities layer) */
+import type { ContainerPageSelection } from "./types/container-pagination";
 
 export interface MenuEntry {
+  containerPage?: ContainerPageSelection;
   key: string;
   id: number;
   title: string;

@@ -118,13 +118,13 @@ export function useStandaloneShellPreferences({
     setLanguageRestored(true);
   }, [safeSearchParams, availableLanguages, languageStorageKey, languageRestored]);
 
-  // Restore theme from URL (theme param) → localStorage (once layouts are available).
+  // Follow explicit URL themes while restoring storage only once layouts are available.
   // Standalone pages load `layouts` asynchronously; without the length guard the
   // effect would "restore" against an empty array and lock onto layouts[0].
   // This runs before paint so that when the layouts arrive from cache, the
   // requested theme is already active in the first painted frame.
   useIsomorphicLayoutEffect(() => {
-    if (themeRestored || layouts.length === 0) return;
+    if (layouts.length === 0) return;
     const urlThemeId = safeSearchParams.get(THEME_URL_PARAM);
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
     if (layoutFromUrl) {
@@ -133,6 +133,8 @@ export function useStandaloneShellPreferences({
       setThemeRestored(true);
       return;
     }
+    // A cached catalogue can precede a newly published theme; keep its URL intact.
+    if (urlThemeId || themeRestored) return;
     const urlMode = toThemeMode(safeSearchParams.get("modetheme"));
     try {
       // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo

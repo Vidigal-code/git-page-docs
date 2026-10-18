@@ -3,21 +3,17 @@ import type { Dispatch, SetStateAction } from "react";
 
 export function useDocsShellKeyboard(options: {
   activeNavigation: boolean;
-  quickNavOpen: boolean;
   focusModeOpen: boolean;
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
   setFocusModeOpen: (value: boolean) => void;
   setQuickNavOpen: Dispatch<SetStateAction<boolean>>;
-  setQuickNavQuery: (value: string) => void;
 }) {
   const {
     activeNavigation,
-    quickNavOpen,
     focusModeOpen,
     setMenuOpen,
     setFocusModeOpen,
     setQuickNavOpen,
-    setQuickNavQuery,
   } = options;
 
   useEffect(() => {
@@ -29,9 +25,6 @@ export function useDocsShellKeyboard(options: {
         setMenuOpen(false);
         setFocusModeOpen(false);
         setQuickNavOpen((prev) => !prev);
-        if (!quickNavOpen) {
-          setQuickNavQuery("");
-        }
       }
 
       if (event.key === "Escape" && focusModeOpen) {
@@ -44,11 +37,9 @@ export function useDocsShellKeyboard(options: {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [
     activeNavigation,
-    quickNavOpen,
     focusModeOpen,
     setMenuOpen,
     setFocusModeOpen,
     setQuickNavOpen,
-    setQuickNavQuery,
   ]);
 }

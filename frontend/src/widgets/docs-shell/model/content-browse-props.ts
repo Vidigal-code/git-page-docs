@@ -13,6 +13,7 @@ import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-ass
 // Type-only (erased at runtime): the audio route controls config is shaped by its UI component.
 import type { AudioRouteControlsConfig } from "../ui/content-type-containers/audio-route-controls";
 import type { DocsShellLabels } from "./use-docs-shell-labels";
+import type { ContainerPaginationState } from "./use-container-pagination";
 
 /** Setter of a browse-all index (a React state setter). */
 export type BrowseIndexSetter = Dispatch<SetStateAction<number>>;
@@ -46,6 +47,7 @@ export interface BrowseState {
  * resolves once per render.
  */
 export interface BrowseNavigationProps {
+  pagination?: ContainerPaginationState;
   canAccessContent?: (config: ContentTypeRouteConfig) => boolean;
   canAccessPdf?: (config: ContentTypeRouteConfig) => boolean;
   routeGuideEnabled: boolean;

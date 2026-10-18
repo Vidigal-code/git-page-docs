@@ -4,8 +4,13 @@ import { overviewsEs } from "./overviews-es.mjs";
 import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
 import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
+import { PAGINATION_DOCS, PAGINATION_FIRST_DOCS } from "./container-pagination.mjs";
+import { MARKDOWN_MARKER_DOCS } from "./markdown-markers.mjs";
 
 export const docsEs = {
+    containerPagination: PAGINATION_DOCS.es,
+    paginationFirst: PAGINATION_FIRST_DOCS.es,
+    markdownMarkers: MARKDOWN_MARKER_DOCS.es,
     ...practicalEs,
     ...operationsEs,
     ...overviewsEs,
@@ -43,7 +48,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.13/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.14/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -52,9 +57,9 @@ En \`gitpagedocs/docs/versions/0.0.13/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -76,7 +81,7 @@ Las opciones de la ruta se colocan dentro de \`pdf\`. La presentación compartid
 
 ## Archivos y publicación
 
-Las rutas relativas a la raíz del repositorio que empiezan por \`gitpagedocs/\` se copian a los assets públicos del visor al iniciar o compilar Next.js. La URL respeta el subdirectorio de publicación de GitHub Pages. Incluye el PDF en Git y publícalo junto con la documentación generada. Los archivos fuera de \`gitpagedocs/\` deben estar en \`frontend/public/\` del visor o ser accesibles mediante una URL HTTP(S).
+Los PDF y archivos nativos de audio/vídeo compatibles dentro de \`gitpagedocs/\` se copian a los assets públicos del visor al iniciar o compilar Next.js. La URL respeta el subdirectorio de publicación de GitHub Pages. Incluye estos archivos en Git y publícalos junto con la documentación generada. Los archivos fuera de \`gitpagedocs/\` deben estar en \`frontend/public/\` del visor o ser accesibles mediante una URL HTTP(S).
 
 Usa la URL del PDF binario, no una página HTML de vista previa del repositorio. Para repositorios remotos, la ruta se resuelve dentro de ese repositorio. La vista previa, la descarga y la apertura en una nueva pestaña obtienen los bytes del archivo, por lo que un servidor externo debe permitir CORS para las tres acciones. El visor valida la firma PDF y crea una URL Blob temporal de tipo \`application/pdf\`. La vista previa y la nueva pestaña utilizan el visor PDF nativo del navegador; la política de incorporación y las cabeceras de tipo/disposición del servidor de origen no controlan esta vista Blob.
 
@@ -314,6 +319,16 @@ Claves principales:
 - \`layoutsConfigPath\`: fallback remoto de layouts
 - \`rendering\`: URL canónica publicada
 
+## Posición de la navegación de documentos
+
+Configura el grupo de botones al pie del documento en \`gitpagedocs/config.json\`:
+
+\`\`\`json
+{ "site": { "documentNavigation": { "position": "center" } } }
+\`\`\`
+
+\`position\` admite \`left\`, \`center\` o \`right\`; el valor por defecto es \`center\` (centro). Los valores ausentes o no válidos usan ese valor. Anterior, Siguiente y Volver arriba permanecen juntos en este orden, con la misma alineación en escritorio y móvil. Esta opción posiciona el grupo; \`site.backToTop\` sigue determinando cuándo aparece la flecha. No cambia la posición de la flecha de la guía de introducción.
+
 ## Volver arriba en páginas largas
 
 La flecha para volver arriba en las páginas de documentación y en \`/introduction-guide\` se controla mediante \`site.backToTop\` en \`gitpagedocs/config.json\`:
@@ -447,6 +462,8 @@ Opciones por ruta en \`routes-md\`, \`routes-html\` y \`routes-video\`:
 | \`ActiveNavigation\` | true; navegación rápida y atajo Ctrl+K |
 | \`FocusMode / focusMode\` | Activación general (true) y controles independientes de copia, descarga, sección y documento; consulta Modo foco |
 | \`pdf\` | Activación general, vista previa, descarga y nueva pestaña; todos true |
+| \`containerPagination\` | Activo; abajo/a la derecha, cuatro iconos y contador; consulta Contenedores paginados |
+| \`markdownMarkers\` | Activo; colores del tema para destinos resaltados y enlaces del índice; consulta Marcadores de Markdown |
 | \`nestedMenusEnabled\` | true; árbol recursivo, o destinos planos con false |
 | \`RouteGuide\` | true; breadcrumbs, con prioridad para valores de versión y ruta Markdown |
 | \`accessibility\` | Activado por defecto; opciones de narración en Accesibilidad |
@@ -963,6 +980,8 @@ ${PARENT_MENU_JSON}
 El árbol sirve para navegación lateral, etiquetas de búsqueda, expansión de padres y rutas de navegación. Mantén IDs estables y sin ambigüedad; los destinos protegidos siguen las reglas de autorización de su página. La misma estructura se aplica a \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\`, \`menus-header-audio\` y \`menus-header-pdf\`. \`hierarchyMenu\` ordena las secciones por tipo; \`hierarchyPage\` ordena los contenedores que comparten el ID de página.
 
 ## Ruta de navegación: RouteGuide
+
+La ruta de navegación tiene 12 px de espacio arriba y abajo, separando el camino del contenido que la rodea.
 
 \`RouteGuide\` controla los breadcrumbs. La prioridad es \`routes-md[].RouteGuide\` de la página, después \`routeDefaults.RouteGuide\` de la versión, después \`site.RouteGuide\`, con \`true\` como valor final por defecto. El ejemplo desactiva la ruta de navegación para la versión y la activa en el capítulo 101. Los archivos existentes de la versión \`0.0.8\` aceptan los mismos campos.
 

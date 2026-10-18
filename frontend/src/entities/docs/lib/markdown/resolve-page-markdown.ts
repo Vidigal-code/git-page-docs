@@ -1,11 +1,18 @@
 import type { ContentTypeRouteConfig, DocsContent, LanguageCode, LoadedMdContent, LoadedPage, RouteAuthorizationConfig } from "../../model/types";
 import { scopeMarkdownHtml } from "./scope-markdown-html";
 
-interface MarkdownResolutionOptions {
+export interface MarkdownRenderInput {
+  html: string;
+  config: ContentTypeRouteConfig;
+  instanceId?: string;
+}
+
+export interface MarkdownResolutionOptions {
   legacyDocs: readonly DocsContent[] | undefined;
   pageIndex: number;
   language: LanguageCode;
   canAccessRoute?: (authorization: RouteAuthorizationConfig | undefined) => boolean;
+  render?: (input: MarkdownRenderInput) => string;
 }
 
 function canReadRoute(authorization: RouteAuthorizationConfig | undefined, options: MarkdownResolutionOptions): boolean {
@@ -55,6 +62,7 @@ export function resolvePageMarkdownHtml(
   if (!page) return legacyDocs?.[pageIndex]?.markdownByLanguage[language] ?? "";
   return readableMarkdownParts(page, options).map(({ content, instanceId }) => {
     const html = translatedMarkdown(content, language);
+    if (options.render && hasMarkdownDocument(html)) return options.render({ html, config: content.config, instanceId });
     return instanceId ? scopeMarkdownHtml(html, instanceId) : html;
   }).filter(hasMarkdownDocument).join("\n");
 }

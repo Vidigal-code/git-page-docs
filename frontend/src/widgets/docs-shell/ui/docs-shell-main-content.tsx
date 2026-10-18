@@ -115,7 +115,7 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
           onFullscreenOpen={onFullscreenOpen}
           onFullscreenClose={onFullscreenClose}
         />
-        <div className={styles.footerActions}>
+        <div className={styles.footerActions} data-position={data.config.site.documentNavigation?.position}>
           {linearNavigationEntries.length > 1 && (
             <div className={styles.footerNavigation}>
               <button type="button" className={previousIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious} aria-label={labels.previousLabel} title={labels.previousLabel}>

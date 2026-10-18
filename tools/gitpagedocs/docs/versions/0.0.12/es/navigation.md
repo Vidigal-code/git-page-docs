@@ -145,6 +145,8 @@ El árbol sirve para navegación lateral, etiquetas de búsqueda, expansión de 
 
 ## Ruta de navegación: RouteGuide
 
+La ruta de navegación tiene 12 px de espacio arriba y abajo, separando el camino del contenido que la rodea.
+
 `RouteGuide` controla los breadcrumbs. La prioridad es `routes-md[].RouteGuide` de la página, después `routeDefaults.RouteGuide` de la versión, después `site.RouteGuide`, con `true` como valor final por defecto. El ejemplo desactiva la ruta de navegación para la versión y la activa en el capítulo 101. Los archivos existentes de la versión `0.0.8` aceptan los mismos campos.
 
 `RouteguideBrand` y `RouteguideBrandPosition` son opciones separadas del índice de títulos del documento; no controlan los breadcrumbs.

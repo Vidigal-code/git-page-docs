@@ -136,6 +136,24 @@ async function visibleChapters(page: Page): Promise<string[]> {
 }
 
 test.describe("introduction guide scroll story", () => {
+  test("keeps content visible at every chapter transition and responds to wheel input", async ({ page }) => {
+    await openGuide(page, THEMES[0]);
+    const chapters = page.locator("[data-story-chapter]");
+    const total = await chapters.count();
+    const minTransitionOpacity = 0.45;
+    for (let boundary = 1; boundary < total; boundary += 1) {
+      await scrollStoryTo(page, boundary / total);
+      await expect.poll(() => chapters.evaluateAll((elements, index) =>
+        Math.min(...[elements[index - 1], elements[index]].map(element => Number(getComputedStyle(element).opacity))),
+      boundary)).toBeGreaterThanOrEqual(minTransitionOpacity);
+    }
+    const scrollBeforeWheel = await page.evaluate(() => window.scrollY);
+    const wheelDistance = 120;
+    await page.mouse.wheel(0, wheelDistance);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(scrollBeforeWheel);
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
+  });
+
   for (const theme of THEMES) {
     test(`plays one chapter at a time while the page scrolls (${theme})`, async ({ page }) => {
       const errors = await openGuide(page, theme);

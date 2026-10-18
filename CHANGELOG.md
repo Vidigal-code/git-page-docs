@@ -3,6 +3,20 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.14 - 2026-10-18 - paginated containers and Markdown markers
+
+- Paginate Markdown, HTML, video, audio and PDF files inside individual containers with ordered route references and localized titles/descriptions. Configure shared defaults through `site.containerPagination` and override them per route; the default is four icon controls and a page counter below the content, aligned right.
+- Keep each container's selection independent. Switch Markdown files in focus mode without closing it, reset to the first section, update source actions and find available files through Ctrl+K. Preserve route access checks and exclusive media playback.
+- Keep Ctrl+K input and keyboard selection responsive while the documentation page renders, so pressing Enter immediately after typing opens the filtered result.
+- Add `markdownMarkers` for text phrases or Markdown elements, with localized labels, repeated-match selection, theme colors and enablement controls. Every valid marker highlights its target and adds a scrolling index link; `RouteGuideSpeciFicbrand` remains the separate heading filter, including all headings when empty.
+- Preserve Unicode text, unique targets across repeated Markdown blocks, focus-mode highlights and the original source used by copy/download. Report invalid marker settings without adding broken index links.
+- Preserve the selected theme and control colors across language/version changes, loading states and refreshed catalogs. Apply the correct light/dark color scheme before hydration.
+- Group Previous, Next and Back to top in that order with matching alignment and 12px gaps. Configure `site.documentNavigation.position` as `left`, `center` or `right`, defaulting to `center`; keep the existing conditional back-to-top visibility. Set breadcrumb spacing to 12px above and below.
+- Overlap introduction-guide chapter transitions to prevent empty stages between chapters while preserving native scrolling.
+- Stage supported native audio/video files alongside PDFs during development and builds. Resolve local assets under deployment subpaths and remote media through repository raw-file URLs.
+- Include a five-type pagination example with localized HTML, local WAV tracks and a PDF reference. Add complete pagination and Markdown-marker guides in English, Portuguese and Spanish, with 35 Markdown pages per language.
+- Update the CLI, shared tools and MCP packages to 0.0.14. Register documentation versions 0.0.14 through 0.0.9, preserve older folders and synchronize generated configuration and package references.
+
 ## 0.0.13 - 2026-10-18 - reading controls and retained documentation versions
 
 - Narrate only the visible section in focus mode. Stop the previous speech when changing sections or documents and when entering or leaving focus mode, while preserving voice, speed and volume preferences. Disabling section navigation keeps the whole document visible and available for narration.

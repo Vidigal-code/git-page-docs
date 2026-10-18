@@ -49,19 +49,13 @@ export interface DocsShellOverlaysProps {
   setInfoPopupOpen: (v: boolean) => void;
   quickNavOpen: boolean;
   quickNavPlaceholder: string;
-  quickNavQuery: string;
-  filteredQuickNavEntries: MenuEntry[];
-  quickNavActiveIndex: number;
+  quickNavigationEntries: MenuEntry[];
   navigateHintLabel: string;
   selectHintLabel: string;
   escHintLabel: string;
   closeHintLabel: string;
   noNavigationResults: string;
-  quickNavListRef: React.RefObject<HTMLDivElement | null>;
-  quickNavItemRefs: React.RefObject<Array<HTMLButtonElement | null>>;
   closeQuickNavigation: () => void;
-  setQuickNavQuery: (q: string) => void;
-  setQuickNavActiveIndex: (nextIndex: number | ((prev: number) => number)) => void;
   focusModeOpen: boolean;
   focusModeLabel: string;
   focusModeCurrentHtml: string;
@@ -71,6 +65,8 @@ export interface DocsShellOverlaysProps {
   focusDocumentNavigation: FocusDocumentNavigation;
   focusOptions?: FocusModeOptions;
   focusAccessibilityControls?: ReactNode;
+  focusContainerPagination?: ReactNode;
+  focusContainerPaginationTop?: ReactNode;
   closeFocusMode: () => void;
   onFocusModeNavigate: (target: FocusNavigationTarget) => void;
   versionLinksLabel: string;
@@ -110,25 +106,18 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         onOpenAiChat={props.onOpenAiChat}
         aiChatIconConfig={props.aiChatIconConfig}
       />
-      <DocsShellQuickNavOverlay
-        isOpen={controlsConfig.activeNavigation && props.quickNavOpen}
+      {controlsConfig.activeNavigation && props.quickNavOpen && <DocsShellQuickNavOverlay
         quickNavPlaceholder={props.quickNavPlaceholder}
         menuCloseLabel={labels.menuCloseLabel}
-        quickNavQuery={props.quickNavQuery}
-        filteredQuickNavEntries={props.filteredQuickNavEntries}
-        quickNavActiveIndex={props.quickNavActiveIndex}
+        entries={props.quickNavigationEntries}
         navigateHintLabel={props.navigateHintLabel}
         selectHintLabel={props.selectHintLabel}
         escHintLabel={props.escHintLabel}
         closeHintLabel={props.closeHintLabel}
         noNavigationResults={props.noNavigationResults}
-        quickNavListRef={props.quickNavListRef}
-        quickNavItemRefs={props.quickNavItemRefs}
         onClose={props.closeQuickNavigation}
-        onQueryChange={props.setQuickNavQuery}
-        onActiveIndexChange={props.setQuickNavActiveIndex}
         onMenuClick={props.onMenuClick}
-      />
+      />}
       <DocsShellFocusOverlay
         isOpen={controlsConfig.focusModeEnabled && props.focusModeOpen}
         focusModeLabel={props.focusModeLabel}
@@ -145,6 +134,8 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         documentNavigation={props.focusDocumentNavigation}
         options={props.focusOptions}
         accessibilityControls={props.focusAccessibilityControls}
+        containerPagination={props.focusContainerPagination}
+        containerPaginationTop={props.focusContainerPaginationTop}
         sourceActionLabels={{ copy: labels.mdCopyLabel, copied: labels.mdCopiedLabel, copyError: labels.mdCopyErrorLabel, download: labels.mdDownloadLabel }}
         focusModeCurrentHtml={props.focusModeCurrentHtml}
         onClose={props.closeFocusMode}

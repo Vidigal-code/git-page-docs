@@ -19,6 +19,9 @@ import { evaluateRouteAccess } from "@/features/route-authorization";
 import { SourceBrowserSkeleton } from "@/widgets/repository-source-browser/ui/source-browser-skeleton";
 import { isBrowseAllEnabled, buildBrowseNavConfig } from "./page-content-browse-nav";
 import { HtmlContainer, MdContainer, VideoContainer, AudioContainer, PdfContainer } from "./content-type-containers";
+import { ContainerPagination } from "./content-type-containers/container-pagination";
+import type { ContainerPaginationSlot } from "./content-type-containers/container-wrapper-props";
+import { resolveContainerFullscreenRequest } from "../model/use-docs-shell-fullscreen.helpers";
 import { markdownFileName } from "./content-type-containers/md-source-actions";
 import styles from "../docs-shell.module.css";
 
@@ -157,33 +160,39 @@ function LegacyPageContentArea({
     ? resolveBrowseContent(currentPage, currentPage.pdf, { enabled: pdfBrowseAll, items: pdfBrowse.items, index: pdfBrowse.index })
     : undefined;
 
+  const openFullscreen = useCallback((request: FullscreenParams) => {
+    const key = instanceId ?? `page-${currentPage?.id}-${request.type}`;
+    const container = navigation.pagination?.containers.find(item => item.key === key && item.type === request.type);
+    onFullscreenOpen?.(resolveContainerFullscreenRequest(request, container));
+  }, [currentPage?.id, instanceId, navigation.pagination, onFullscreenOpen]);
+
   const mdFullscreenOpen = useCallback(() => {
     if (!currentMd || isUrlFullscreen) return;
     const pathRec = (currentMd.config as { path?: Record<string, string> })?.path;
     const file = pathRec?.[language];
-    if (file) onFullscreenOpen?.({ type: "md", lang: language, file });
-  }, [currentMd, language, isUrlFullscreen, onFullscreenOpen]);
+    if (file) openFullscreen({ type: "md", lang: language, file });
+  }, [currentMd, language, isUrlFullscreen, openFullscreen]);
 
   const htmlFullscreenOpen = useCallback(() => {
     if (!currentHtml || isUrlFullscreen) return;
     const cfg = currentHtml.config as { path?: Record<string, string>; url?: Record<string, string> };
     const file = cfg?.path?.[language] ?? cfg?.url?.[language];
-    if (file) onFullscreenOpen?.({ type: "html", lang: language, file });
-  }, [currentHtml, language, isUrlFullscreen, onFullscreenOpen]);
+    if (file) openFullscreen({ type: "html", lang: language, file });
+  }, [currentHtml, language, isUrlFullscreen, openFullscreen]);
 
   const videoFullscreenOpen = useCallback(() => {
     if (!currentVideo || isUrlFullscreen) return;
     const cfg = currentVideo.config as ContentTypeRouteConfig;
     const slug = cfg?.videoSlug?.[language];
-    onFullscreenOpen?.({ type: "video", lang: language, id: currentVideo.routeId, slug });
-  }, [currentVideo, language, isUrlFullscreen, onFullscreenOpen]);
+    openFullscreen({ type: "video", lang: language, id: currentVideo.routeId, slug });
+  }, [currentVideo, language, isUrlFullscreen, openFullscreen]);
 
   const audioFullscreenOpen = useCallback(() => {
     if (!currentAudio || isUrlFullscreen) return;
     const cfg = currentAudio.config as ContentTypeRouteConfig;
     const slug = cfg?.audioSlug?.[language];
-    onFullscreenOpen?.({ type: "audio", lang: language, id: currentAudio.routeId, slug });
-  }, [currentAudio, language, isUrlFullscreen, onFullscreenOpen]);
+    openFullscreen({ type: "audio", lang: language, id: currentAudio.routeId, slug });
+  }, [currentAudio, language, isUrlFullscreen, openFullscreen]);
 
   if (!currentPage) {
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
@@ -237,12 +246,24 @@ function LegacyPageContentArea({
 
   // One block per content type; the page hierarchy decides which render, in
   // which order. Types whose content is missing render nothing.
+  const containerFor = (type: ContentType) => {
+    const key = instanceId ?? `page-${currentPage.id}-${type}`;
+    return navigation.pagination?.containers.find((item) => item.key === key && item.type === type);
+  };
+  const paginationFor = (type: ContentType): ContainerPaginationSlot | undefined => {
+    const pagination = navigation.pagination;
+    const container = containerFor(type);
+    if (!container || !pagination) return undefined;
+    return { placement: container.options.placement, content: <ContainerPagination container={container} language={language} onSelect={pagination.select} /> };
+  };
   const blocks: Record<ContentType, React.ReactNode> = {
     md: currentMd ? (
       <MdContainer
         key="md"
+        pagination={paginationFor("md")}
         instanceId={instanceId}
         html={currentMd.markdownByLanguage[language] ?? ""}
+        markdownMarkerDefaults={data.config.site.markdownMarkers}
         config={currentMd.config}
         language={language}
         isDarkMode={isDarkMode}
@@ -285,6 +306,7 @@ function LegacyPageContentArea({
     html: currentHtml ? (
       <HtmlContainer
         key="html"
+        pagination={paginationFor("html")}
         html={currentHtml.htmlByLanguage[language] ?? ""}
         url={currentHtml.config.url?.[language] ?? currentHtml.config.url?.en}
         config={currentHtml.config}
@@ -301,6 +323,7 @@ function LegacyPageContentArea({
     video: currentVideo ? (
       <VideoContainer
         key="video"
+        pagination={paginationFor("video")}
         videoType={currentVideo.videoTypeByLanguage[language] ?? "youtube"}
         pathVideo={currentVideo.pathVideoByLanguage[language] ?? ""}
         language={language}
@@ -318,6 +341,7 @@ function LegacyPageContentArea({
     audio: currentAudio ? (
       <AudioContainer
         key="audio"
+        pagination={paginationFor("audio")}
         audioType={currentAudio.audioTypeByLanguage[language] ?? "youtube"}
         pathAudio={currentAudio.pathAudioByLanguage[language] ?? ""}
         language={language}
@@ -334,6 +358,7 @@ function LegacyPageContentArea({
     pdf: currentPdf ? (
       <PdfContainer
         key="pdf"
+        pagination={paginationFor("pdf")}
         pathPdf={currentPdf.pathPdfByLanguage[language] ?? ""}
         language={language}
         config={currentPdf.config}

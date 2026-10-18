@@ -14,6 +14,64 @@
       "enabled": true,
       "minPageHeightViewports": 3
     },
+    "documentNavigation": {
+      "position": "center"
+    },
+    "containerPagination": {
+      "enabled": true,
+      "alignment": "right",
+      "placement": "bottom",
+      "display": "icon",
+      "showCount": true,
+      "controls": {
+        "first": true,
+        "previous": true,
+        "next": true,
+        "last": true
+      },
+      "icons": {
+        "first": "FiSkipBack",
+        "previous": "FiChevronLeft",
+        "next": "FiChevronRight",
+        "last": "FiSkipForward"
+      },
+      "iconSize": "20px",
+      "labels": {
+        "pages": {
+          "en": "Pages",
+          "pt": "Páginas",
+          "es": "Páginas"
+        },
+        "first": {
+          "en": "First page",
+          "pt": "Primeira página",
+          "es": "Primera página"
+        },
+        "previous": {
+          "en": "Previous page",
+          "pt": "Página anterior",
+          "es": "Página anterior"
+        },
+        "next": {
+          "en": "Next page",
+          "pt": "Próxima página",
+          "es": "Página siguiente"
+        },
+        "last": {
+          "en": "Last page",
+          "pt": "Última página",
+          "es": "Última página"
+        }
+      }
+    },
+    "markdownMarkers": {
+      "enabled": true,
+      "style": {
+        "background": "color-mix(in srgb, var(--primary) 24%, transparent)",
+        "color": "var(--text)",
+        "outlineColor": "var(--primary)"
+      }
+    },
     "backgroundEffects": {
       "enabled": true,
       "overrides": {
@@ -296,6 +354,19 @@
   },
   "VersionControl": {
     "versions": [
+      {
+        "id": "0.0.14",
+        "path": "gitpagedocs/docs/versions/0.0.14/config.json",
+        "ProjectLink": "https://github.com/Vidigal-code/git-page-docs",
+        "PathConfig": "gitpagedocs/docs/versions/0.0.14/config.json",
+        "PreviewProject": "",
+        "UpdateDate": "",
+        "branch": "",
+        "release": "",
+        "commit": "",
+        "source-viewer": true,
+        "source-viewer-path": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+      },
       {
         "id": "0.0.13",
         "path": "gitpagedocs/docs/versions/0.0.13/config.json",

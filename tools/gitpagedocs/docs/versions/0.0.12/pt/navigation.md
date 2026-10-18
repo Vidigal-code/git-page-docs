@@ -145,6 +145,8 @@ A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos
 
 ## Trilha de navegação: RouteGuide
 
+A trilha de navegação tem 12 px de espaçamento acima e abaixo, separando o caminho do conteúdo ao redor.
+
 `RouteGuide` controla os breadcrumbs. A prioridade é `routes-md[].RouteGuide` da página, depois `routeDefaults.RouteGuide` da versão, depois `site.RouteGuide`, usando `true` como padrão final. O exemplo desliga a trilha na versão e a liga no capítulo 101. Arquivos existentes da versão `0.0.8` aceitam os mesmos campos.
 
 `RouteguideBrand` e `RouteguideBrandPosition` são configurações separadas do sumário de títulos do documento; não controlam os breadcrumbs.

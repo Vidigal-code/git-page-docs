@@ -32,7 +32,7 @@ export interface ChapterTimeline {
 }
 
 export const STORY_HIGHLIGHT_LIMIT = 4;
-/** Share of a chapter's scroll slice spent fading in, and again fading out. */
+/** Half-width of the crossfade around each chapter boundary. */
 const CHAPTER_FADE_SHARE = 0.2;
 const ORDINAL_DIGITS = 2;
 const PROGRESS_PRECISION = 1e4;
@@ -78,19 +78,19 @@ export function buildStoryChapters(sections: readonly GuideSection[]): StoryChap
   }));
 }
 
-/** Equal scroll slices per chapter; the first is already in at 0 and the last stays in at 1. */
+/** Adjacent chapters overlap so scrolling never leaves the stage empty. */
 export function chapterWindow(index: number, total: number): ChapterWindow {
   const slice = 1 / total;
-  const start = round(index * slice);
-  const end = round((index + 1) * slice);
+  const boundaryStart = index * slice;
+  const boundaryEnd = (index + 1) * slice;
   const fade = slice * CHAPTER_FADE_SHARE;
   const isFirst = index === 0;
   const isLast = index === total - 1;
   return {
-    start,
-    enter: isFirst ? start : round(start + fade),
-    exit: isLast ? end : round(end - fade),
-    end,
+    start: isFirst ? 0 : round(boundaryStart - fade),
+    enter: isFirst ? 0 : round(boundaryStart + fade),
+    exit: isLast ? 1 : round(boundaryEnd - fade),
+    end: isLast ? 1 : round(boundaryEnd + fade),
   };
 }
 

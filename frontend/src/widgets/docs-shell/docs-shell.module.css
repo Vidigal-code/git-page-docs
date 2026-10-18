@@ -936,10 +936,18 @@ dialog.contentContainerFullscreen {
 
 .footerActions {
   margin-top: 18px;
-  display: grid;
-  grid-template-columns: minmax(44px, 1fr) minmax(0, auto) minmax(44px, 1fr);
+  display: flex;
+  justify-content: center;
   align-items: center;
   gap: 12px;
+}
+
+.footerActions[data-position="left"] {
+  justify-content: flex-start;
+}
+
+.footerActions[data-position="right"] {
+  justify-content: flex-end;
 }
 
 .footerActions:empty {
@@ -947,8 +955,6 @@ dialog.contentContainerFullscreen {
 }
 
 .footerNavigation {
-  grid-column: 2;
-  grid-row: 1;
   display: flex;
   justify-content: center;
   min-width: 0;
@@ -964,10 +970,8 @@ dialog.contentContainerFullscreen {
 }
 
 .footerBackToTop {
-  grid-column: 3;
-  grid-row: 1;
-  justify-self: end;
   display: flex;
+  flex: 0 0 auto;
 }
 
 .browseNavBar {
@@ -1991,4 +1995,16 @@ dialog.versionLinksCard {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+.markdown [data-markdown-marker] {
+  background-color: var(--markdown-marker-background, color-mix(in srgb, var(--primary) 24%, transparent));
+  color: var(--markdown-marker-color, var(--text));
+  outline: 1px solid var(--markdown-marker-outline, var(--primary));
+  border-radius: 0.15em;
+  box-decoration-break: clone;
+  scroll-margin-block-start: 5rem;
+}
+
+.markdown [data-markdown-marker]:target {
+  outline-width: 2px;
 }

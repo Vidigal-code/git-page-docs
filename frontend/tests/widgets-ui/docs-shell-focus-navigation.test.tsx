@@ -14,11 +14,52 @@ vi.mock("next/navigation", () => ({
 
 beforeEach(() => {
   localStorage.clear();
+  window.history.replaceState({}, "", "/");
   vi.stubGlobal("scrollTo", vi.fn());
   vi.stubGlobal("matchMedia", (query: string) => ({ matches: false, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
   Element.prototype.scrollIntoView = vi.fn();
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+
+it("counts the active translated pagination file in focus document navigation", async () => {
+  const owner: LoadedMdContent = {
+    routeId: 1,
+    config: { id: 1, path: { pt: "owner.pt.md" }, pagination: { items: [{ routeId: 2 }] } },
+    markdownByLanguage: { pt: "<h1>Original</h1>" },
+  };
+  const translated: LoadedMdContent = {
+    routeId: 2,
+    config: { id: 2, path: { en: "translated.md" } },
+    markdownByLanguage: { en: "<h1>Translated lesson</h1>" },
+  };
+  const next: LoadedMdContent = {
+    routeId: 3,
+    config: { id: 3, path: { en: "next.md" } },
+    markdownByLanguage: { en: "<h1>Next document content</h1>" },
+  };
+  const data = makeDocsData({
+    pages: [{ id: 1, md: owner }, { id: 2, md: translated }, { id: 3, md: next }],
+    pathToPageMap: { "page:1": { pageIndex: 0, contentType: "md" }, "page:3": { pageIndex: 2, contentType: "md" } },
+    config: makeConfig({
+      site: makeSite({ FocusMode: true, AiChatEnabled: false }),
+      "routes-md": [owner.config, translated.config, next.config],
+      "menus-header-html": [],
+      "menus-header-md": [
+        { id: 1, en: { title: "Localized container", "path-click": "page:1" } },
+        { id: 3, en: { title: "Next document", "path-click": "page:3" } },
+      ],
+    }),
+  });
+  render(<DocsShell data={data} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Focus mode" }));
+  const dialog = screen.getByRole("dialog", { name: "Focus mode" });
+  const documents = within(dialog).getByRole("navigation", { name: "Documents" });
+  expect(within(dialog).getByRole("heading", { name: "Translated lesson" })).toBeTruthy();
+  expect(documents.textContent).toContain("1 / 2");
+  fireEvent.click(within(documents).getByRole("button", { name: "Next document" }));
+  await waitFor(() => expect(within(dialog).getByRole("heading", { name: "Next document content" })).toBeTruthy());
+  expect(screen.getByRole("dialog", { name: "Focus mode" })).toBe(dialog);
+});
 
 it("copies the authorized Markdown composition in focus and downloads it with the page filename", async () => {
   const copy = vi.fn().mockResolvedValue(undefined);

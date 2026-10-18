@@ -6,6 +6,7 @@ import { TocScrollContainerProvider } from "@/features/route-guide";
 import { PageContentBrowseNav, type BrowseNavConfig } from "../page-content-browse-nav";
 import { getFullscreenInnerClassName, type FullscreenAlign } from "./fullscreen-alignment";
 import styles from "../../docs-shell.module.css";
+import type { ContainerPaginationSlot } from "./container-wrapper-props";
 
 const DEFAULT_CONTAINER_MARGIN = "0";
 
@@ -19,6 +20,7 @@ export type ContentContainerChildren =
   | ((fullscreenButton: React.ReactNode, options?: ResolveChildrenOptions) => React.ReactNode);
 
 interface ContentContainerWrapperProps {
+  pagination?: ContainerPaginationSlot;
   header?: React.ReactNode;
   footer?: React.ReactNode;
   children: ContentContainerChildren;
@@ -38,6 +40,7 @@ interface ContentContainerWrapperProps {
 }
 
 export function ContentContainerWrapper({
+  pagination,
   header,
   footer,
   children,
@@ -63,6 +66,8 @@ export function ContentContainerWrapper({
   };
 
   const showTopNav = browseNav && (browseNavPosition === "top" || browseNavPosition === "both");
+  const paginationTop = pagination?.placement === "top" || pagination?.placement === "both" ? pagination.content : null;
+  const paginationBottom = pagination?.placement !== "top" ? pagination?.content : null;
 
   const resolveChildren = (btn: React.ReactNode | null, options?: ResolveChildrenOptions) =>
     typeof children === "function"
@@ -73,9 +78,11 @@ export function ContentContainerWrapper({
     return (
       <div className={styles.contentContainerWrapper} style={wrapperStyle}>
         {header}
+        {paginationTop}
         {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
         <div className={styles.contentContainerWithButton}>{resolveChildren(null)}</div>
         {footer}
+        {paginationBottom}
       </div>
     );
   }
@@ -108,9 +115,11 @@ export function ContentContainerWrapper({
   return (
     <div className={styles.contentContainerWrapper} style={wrapperStyle}>
       {header}
+      {paginationTop}
       {showTopNav && browseNav && <PageContentBrowseNav browseNav={browseNav} />}
       <div className={styles.contentContainerWithButton}>{resolvedChildren}</div>
       {footer}
+      {paginationBottom}
       {isFullscreen && (
         <dialog
           open
@@ -132,7 +141,9 @@ export function ContentContainerWrapper({
           </button>
           <div ref={fullscreenInnerRef} className={getFullscreenInnerClassName(fullscreenAlign)}>
             <TocScrollContainerProvider scrollContainerRef={fullscreenInnerRef}>
+              {paginationTop}
               {resolveChildren(null, { contentOnly: true })}
+              {paginationBottom}
             </TocScrollContainerProvider>
           </div>
         </dialog>

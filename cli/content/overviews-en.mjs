@@ -38,6 +38,8 @@ Choose a reading surface that matches the document. Markdown supports headings, 
 - **Accessibility and narration** explains voice selection, playback controls and browser support.
 - **PDF documents** covers previews, downloads, opening a new tab and external-host CORS requirements.
 - **HTML containers** explains local files, hosted pages and the DOOM example.
+- **Paginated containers** explains independent file sequences for Markdown, HTML, video, audio and PDF; try all five in the bundled example.
+- **Markdown markers** highlights selected text or elements and adds index links without changing the existing heading filter.
 
 ## Keep control of playback
 

@@ -5,8 +5,13 @@ import { overviewsEn } from "./overviews-en.mjs";
 import { CONTENT_BLOCKS_DOCS } from "./content-blocks.mjs";
 import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
+import { PAGINATION_DOCS, PAGINATION_FIRST_DOCS } from "./container-pagination.mjs";
+import { MARKDOWN_MARKER_DOCS } from "./markdown-markers.mjs";
 
 export const docsEn = {
+    containerPagination: PAGINATION_DOCS.en,
+    paginationFirst: PAGINATION_FIRST_DOCS.en,
+    markdownMarkers: MARKDOWN_MARKER_DOCS.en,
     ...practicalEn,
     ...operationsEn,
     ...overviewsEn,
@@ -44,7 +49,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.13/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.14/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -53,9 +58,9 @@ In \`gitpagedocs/docs/versions/0.0.13/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.13/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -77,7 +82,7 @@ The optional route flags live inside \`pdf\`. Shared presentation, \`container\`
 
 ## Files and deployment
 
-Repository-root paths beginning with \`gitpagedocs/\` are copied into the viewer's public assets when Next.js starts or builds. The URL respects the configured deployment subpath on GitHub Pages. Keep the PDF tracked in Git and publish it with the generated documentation. Assets outside \`gitpagedocs/\` must already be in the viewer's \`frontend/public/\` directory or be reachable through an HTTP(S) URL.
+PDFs and supported native audio/video files under the repository's \`gitpagedocs/\` tree are copied into the viewer's public assets when Next.js starts or builds. The URL respects the configured deployment subpath on GitHub Pages. Keep these files tracked in Git and publish them with the generated documentation. Assets outside \`gitpagedocs/\` must already be in the viewer's \`frontend/public/\` directory or be reachable through an HTTP(S) URL.
 
 Use the binary PDF URL, not an HTML repository preview URL. For remote repositories, the configured path resolves against that repository. Preview, download and opening a new tab fetch the file bytes, so an external server must allow CORS for all three actions. The viewer validates the PDF signature and creates a temporary \`application/pdf\` Blob URL. Preview and new-tab viewing use the browser's native PDF viewer; the origin server's framing policy and MIME/disposition headers do not control the Blob view.
 
@@ -420,6 +425,16 @@ Important keys:
 - \`ThemeModeDefault\`
 - \`ProjectLink\`
 
+## Document navigation position
+
+Configure the document-footer group in \`gitpagedocs/config.json\`:
+
+\`\`\`json
+{ "site": { "documentNavigation": { "position": "center" } } }
+\`\`\`
+
+\`position\` accepts \`left\`, \`center\` or \`right\`; the default is \`center\`. Omitted or invalid values use that default. Previous, Next and Back to top stay together in this order, with the same alignment on desktop and mobile. This setting positions the group; \`site.backToTop\` still determines whether the top arrow is visible. It does not reposition the introduction-guide arrow.
+
 ## Back to top on long pages
 
 The back-to-top arrow on documentation pages and \`/introduction-guide\` is controlled by \`site.backToTop\` in \`gitpagedocs/config.json\`:
@@ -569,6 +584,8 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 | \`ActiveNavigation\` | true; quick-navigation control and Ctrl+K shortcut |
 | \`FocusMode / focusMode\` | Master switch (true) and independent copy, download, section and document controls; see Focus mode |
 | \`pdf\` | PDF master switch, preview, download and new-tab defaults; all true |
+| \`containerPagination\` | Enabled; bottom/right, four icon controls and count; see Paginated containers |
+| \`markdownMarkers\` | Enabled; theme colors for highlighted targets and their index links; see Markdown markers |
 | \`nestedMenusEnabled\` | true; recursive menu tree, or flat destinations when false |
 | \`RouteGuide\` | true; breadcrumbs, overridable by version defaults and individual Markdown routes |
 | \`accessibility\` | Enabled by default; narration settings are explained in Accessibility |
@@ -1010,6 +1027,8 @@ ${PARENT_MENU_JSON}
 The tree supplies sidebar navigation, search labels, parent expansion and breadcrumb trails. Keep IDs stable and unambiguous; nodes pointing at a protected page follow its authorization rules. Apply the same structure to \`menus-header-source-viewer\`, \`menus-header-html\`, \`menus-header-video\` , \`menus-header-audio\` and \`menus-header-pdf\`. \`hierarchyMenu\` orders the type sections; \`hierarchyPage\` orders content containers that share a page ID.
 
 ## Breadcrumbs: RouteGuide
+
+The breadcrumb trail has 12 px of spacing above and below it, separating the navigation path from the surrounding content.
 
 \`RouteGuide\` controls the breadcrumb trail. Resolution order is the page's \`routes-md[].RouteGuide\`, then the version's \`routeDefaults.RouteGuide\`, then \`site.RouteGuide\`, with \`true\` as the fallback. The example disables breadcrumbs for the version and enables them for chapter 101. Existing version \`0.0.8\` files can use the same fields.
 

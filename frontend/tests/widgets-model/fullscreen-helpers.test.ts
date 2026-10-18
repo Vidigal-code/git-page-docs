@@ -5,6 +5,7 @@ import {
   findMediaPathClickBySlug,
   resolveFullscreenPageIndex,
   resolveFullscreenPathClick,
+  resolveContainerFullscreenRequest,
   stripFullscreenParams,
 } from "@/widgets/docs-shell/model/use-docs-shell-fullscreen.helpers";
 import {
@@ -20,6 +21,13 @@ import {
 } from "./fixtures";
 
 const data = makeDocsData();
+
+it("keeps fullscreen navigation attached to the container owner when its selected file changes", () => {
+  expect(resolveContainerFullscreenRequest({ type: "md", lang: "en", file: "docs/second.md" }, { ownerPageId: 41, type: "md" }))
+    .toEqual({ type: "md", lang: "en", file: "page:41" });
+  expect(resolveContainerFullscreenRequest({ type: "video", lang: "en", id: 49, slug: "second" }, { ownerPageId: 50, type: "video" }))
+    .toEqual({ type: "video", lang: "en", id: 50 });
+});
 
 describe("findMediaPathClickBySlug", () => {
   it("matches a key of the requested media type containing the slug, ignoring case", () => {

@@ -12,6 +12,7 @@ import { layoutsArtifactPaths } from "../contracts/layouts-paths.mjs";
 import { languageArtifactPaths } from "../contracts/langs-paths.mjs";
 import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
 import { PDF_GUIDE_FILENAME } from "../data/path-mappings.mjs";
+import { PAGINATION_ASSETS } from "../data/paginated-pages.mjs";
 import { compactSiteIcons, factorRouteDefaults } from "@gitpagedocs/tools/config-format";
 
 const DEFAULT_ICON_SVG = `<?xml version="1.0" encoding="utf-8"?>
@@ -161,18 +162,20 @@ export async function writeConfigOnlyOutput(options) {
 
 
   await writeVersionedDocs(root, outputDir, artifacts);
-  await writePdfArtifacts(options);
+  await writeBundledMediaArtifacts(options);
 }
 
-async function writePdfArtifacts({ root, pkgRoot, outputDir, artifacts }) {
-  const source = path.join(pkgRoot, "content", "assets", PDF_GUIDE_FILENAME);
+async function writeBundledMediaArtifacts({ root, pkgRoot, outputDir, artifacts }) {
   for (const [versionId, versionConfig] of Object.entries(artifacts.versionConfigs)) {
-    const bundledPath = `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`;
-    const routes = versionConfig["routes-pdf"] ?? [];
-    const usesBundledGuide = routes.some((route) => Object.values(route.pdf?.pathPdf ?? {}).includes(bundledPath));
-    if (!usesBundledGuide) continue;
-    const destination = path.join(root, normalizeToOutputPath(outputDir, bundledPath));
-    await mkdir(path.dirname(destination), { recursive: true });
-    await copyFile(source, destination);
+    const routes = [...(versionConfig["routes-pdf"] ?? []), ...(versionConfig["routes-audio"] ?? [])];
+    const mediaPaths = new Set(routes.flatMap(route => Object.values(route.pdf?.pathPdf ?? route.audio?.pathAudio ?? {})));
+    for (const fileName of [PDF_GUIDE_FILENAME, ...PAGINATION_ASSETS]) {
+      const bundledPath = `gitpagedocs/docs/versions/${versionId}/en/${fileName}`;
+      if (!mediaPaths.has(bundledPath)) continue;
+      const source = path.join(pkgRoot, "content", "assets", fileName);
+      const destination = path.join(root, normalizeToOutputPath(outputDir, bundledPath));
+      await mkdir(path.dirname(destination), { recursive: true });
+      await copyFile(source, destination);
+    }
   }
 }

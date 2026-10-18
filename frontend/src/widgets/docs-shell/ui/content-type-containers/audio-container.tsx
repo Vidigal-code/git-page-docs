@@ -27,6 +27,7 @@ export function AudioContainer(props: Readonly<AudioContainerProps>) {
     >
       {controlsConfig && (
         <AudioRouteControls
+          key={`${audioType}:${pathAudio}`}
           audioType={audioType}
           pathAudio={pathAudio}
           language={language}

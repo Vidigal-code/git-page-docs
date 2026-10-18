@@ -12,9 +12,8 @@ const ENTRIES = [
 afterEach(cleanup);
 
 describe("useQuickNavigation", () => {
-  it("starts closed with the full entry list", () => {
+  it("starts with an empty query and the full entry list", () => {
     const { result } = renderHook(() => useQuickNavigation(ENTRIES));
-    expect(result.current.quickNavOpen).toBe(false);
     expect(result.current.quickNavQuery).toBe("");
     expect(result.current.quickNavActiveIndex).toBe(0);
     expect(result.current.filteredQuickNavEntries).toBe(ENTRIES);
@@ -35,29 +34,21 @@ describe("useQuickNavigation", () => {
     expect(result.current.filteredQuickNavEntries).toEqual([]);
   });
 
-  it("resets the query and active index when opening and closing", () => {
-    const { result } = renderHook(() => useQuickNavigation(ENTRIES));
+  it("starts a new mounted search without the previous query or active index", () => {
+    const { result, unmount } = renderHook(() => useQuickNavigation(ENTRIES));
     act(() => {
       result.current.setQuickNavQuery("api");
       result.current.setQuickNavActiveIndex(2);
     });
 
-    act(() => result.current.openQuickNavigation());
-    expect(result.current.quickNavOpen).toBe(true);
-    expect(result.current.quickNavQuery).toBe("");
-    expect(result.current.quickNavActiveIndex).toBe(0);
-
-    act(() => {
-      result.current.setQuickNavQuery("api");
-      result.current.setQuickNavActiveIndex(1);
-    });
-    act(() => result.current.closeQuickNavigation());
-    expect(result.current.quickNavOpen).toBe(false);
-    expect(result.current.quickNavQuery).toBe("");
-    expect(result.current.quickNavActiveIndex).toBe(0);
+    unmount();
+    const reopened = renderHook(() => useQuickNavigation(ENTRIES));
+    expect(reopened.result.current.quickNavQuery).toBe("");
+    expect(reopened.result.current.quickNavActiveIndex).toBe(0);
+    expect(reopened.result.current.filteredQuickNavEntries).toBe(ENTRIES);
   });
 
-  it("scrolls the active item into view and the list to the top while open", () => {
+  it("scrolls the active item into view and the list to the top when filtering", () => {
     const { result } = renderHook(() => useQuickNavigation(ENTRIES));
     const list = document.createElement("div");
     const scrollTo = vi.fn();
@@ -71,7 +62,7 @@ describe("useQuickNavigation", () => {
     result.current.quickNavListRef.current = list;
     result.current.quickNavItemRefs.current = [first, second];
 
-    act(() => result.current.setQuickNavOpen(true));
+    act(() => result.current.setQuickNavQuery("getting"));
     expect(scrollFirst).toHaveBeenCalledWith({ block: "nearest" });
     expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "auto" });
 
@@ -83,18 +74,14 @@ describe("useQuickNavigation", () => {
     expect(scrollSecond).toHaveBeenCalledTimes(1);
   });
 
-  it("does not touch the DOM while closed or when the list ref is unset", () => {
+  it("does not scroll an item when the list ref is unset", () => {
     const { result } = renderHook(() => useQuickNavigation(ENTRIES));
     const button = document.createElement("button");
     const scrollIntoView = vi.fn();
     Object.defineProperty(button, "scrollIntoView", { value: scrollIntoView });
     result.current.quickNavItemRefs.current = [button];
 
-    act(() => result.current.setQuickNavActiveIndex(0));
-    expect(scrollIntoView).not.toHaveBeenCalled();
-
-    // Open with no list element: the effect bails out before scrolling.
-    act(() => result.current.setQuickNavOpen(true));
+    act(() => result.current.setQuickNavQuery("getting"));
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });

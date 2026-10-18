@@ -3,6 +3,9 @@
 import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 
 const DOC_FILE_KEYS = new Map([
+  ["container-pagination.md", "containerPagination"],
+  ["pagination-first.md", "paginationFirst"],
+  ["markdown-markers.md", "markdownMarkers"],
   ["content-blocks.md", "contentBlocks"],
   ["index.md", "index"],
   ["getting-started.md", "gettingStarted"],
@@ -45,6 +48,8 @@ export function parseHtmlFileToKey(fileName) {
   const base = fileName.replace(/\.html$/, "");
   if (base === "source-viewer") return "sourceViewer";
   if (base === "doom") return "doom";
+  if (base === "pagination-first") return "paginationFirst";
+  if (base === "pagination-second") return "paginationSecond";
   return undefined;
 }
 

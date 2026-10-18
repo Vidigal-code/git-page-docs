@@ -51,3 +51,15 @@ it("lets each focus toolbar feature be disabled without hiding the reading surfa
   expect(screen.queryByRole("navigation")).toBeNull();
   expect(screen.getByText("First section.")).toBeTruthy();
 });
+
+it("places configured container navigation above and below the focused document", () => {
+  render(<DocsShellFocusOverlay {...overlayProps()}
+    containerPaginationTop={<nav aria-label="Top pages">1 / 2</nav>}
+    containerPagination={<nav aria-label="Bottom pages">1 / 2</nav>}
+  />);
+  const text = screen.getByText("First section.");
+  const top = screen.getByRole("navigation", { name: "Top pages" });
+  const bottom = screen.getByRole("navigation", { name: "Bottom pages" });
+  expect(top.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(text.compareDocumentPosition(bottom) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+});

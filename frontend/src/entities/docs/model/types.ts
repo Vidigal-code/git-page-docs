@@ -1,4 +1,4 @@
-export type { LanguageCode, ThemeMode, SiteConfig, PdfOptions, FocusModeOptions, BackToTopOptions, AccessibilitySettings, NarrationSettings, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
+export type { LanguageCode, ThemeMode, SiteConfig, PdfOptions, FocusModeOptions, BackToTopOptions, DocumentNavigationOptions, AccessibilitySettings, NarrationSettings, UiTranslationEntry, UiTranslationsConfig } from "./types/site";
 export type { VersionEntry, VersionControlConfig } from "./types/version";
 export type {
   LayoutItem,
@@ -53,6 +53,8 @@ export type {
   PathToPageEntry,
 } from "./types/content";
 export type { LoadedDocsData } from "./types/docs";
+export type { MarkdownMarker, MarkdownMarkerText, MarkdownMarkerStyle, MarkdownMarkersConfig, MarkdownMarkersOptions } from "./types/markdown-markers";
+export type { ContainerPageAction, ContainerPageSelection, ContainerPaginationConfig, ContainerPaginationItem, ContainerPaginationOptions } from "./types/container-pagination";
 export type {
   BackgroundRange,
   BackgroundVector,

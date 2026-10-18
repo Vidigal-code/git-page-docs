@@ -71,12 +71,12 @@ it("preserves each Markdown destination once when organizing nested categories",
   const config = buildVersionConfig("0.0.10", { githubOwner: "acme", githubRepo: "docs" });
   const leaves = menuLeaves(config["menus-header-md"] as MenuNode[]);
   expect(leaves.map((item) => item.id).sort((left, right) => left - right)).toEqual([
-    1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 39, 40,
+    1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 39, 40, 41, 42, 50,
   ]);
   for (const language of ["en", "pt", "es"] as const) {
     const paths = leaves.map((item) => item[language]["path-click"]);
-    expect(new Set(paths).size).toBe(24);
-    expect(paths.every((value) => value === "page:39" || (value?.includes(`/${language}/`) && value.endsWith(".md")))).toBe(true);
+    expect(new Set(paths).size).toBe(27);
+    expect(paths.every((value) => ["page:39", "page:50"].includes(value ?? "") || (value?.includes(`/${language}/`) && value.endsWith(".md")))).toBe(true);
   }
 });
 

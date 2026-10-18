@@ -151,6 +151,9 @@ describe("writeConfigOnlyOutput with the real artifacts", { timeout: 30_000 }, (
     const sourcePath = at(pkgRoot, `content/assets/${filename}`);
     mkdirSync(path.dirname(sourcePath), { recursive: true });
     writeFileSync(sourcePath, source);
+    for (const asset of ["pagination-low.wav", "pagination-high.wav", "pagination-reference.pdf"]) {
+      writeFileSync(at(pkgRoot, `content/assets/${asset}`), readFileSync(at(PACKAGE_ROOT, `content/assets/${asset}`)));
+    }
     const artifacts = buildConfigArtifacts();
     const [versionId] = DOC_VERSIONS;
 

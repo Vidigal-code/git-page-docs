@@ -1,8 +1,15 @@
 import type { ContentTypeRouteConfig } from "@/entities/docs";
 import type { BrowseNavConfig } from "../page-content-browse-nav";
+import type { ReactNode } from "react";
+
+export interface ContainerPaginationSlot {
+  content: ReactNode;
+  placement?: "top" | "bottom" | "both";
+}
 
 /** Props every route content container (markdown, HTML, video, audio) takes for its frame. */
 export interface RouteContainerFrameProps {
+  pagination?: ContainerPaginationSlot;
   config?: ContentTypeRouteConfig;
   fullscreenEnabled?: boolean;
   fullscreenCloseLabel: string;
@@ -15,6 +22,7 @@ export interface RouteContainerFrameProps {
 }
 
 export interface ContainerWrapperFrameProps {
+  pagination?: ContainerPaginationSlot;
   fullscreenEnabled: boolean;
   fullscreenCloseLabel: string;
   fullscreenExpandLabel: string;
@@ -28,6 +36,7 @@ export interface ContainerWrapperFrameProps {
 /** Maps a container's frame props onto `ContentContainerWrapper`. */
 export function toContainerWrapperProps(props: RouteContainerFrameProps): ContainerWrapperFrameProps {
   return {
+    pagination: props.pagination,
     fullscreenEnabled: props.fullscreenEnabled ?? false,
     fullscreenCloseLabel: props.fullscreenCloseLabel,
     fullscreenExpandLabel: props.fullscreenExpandLabel,

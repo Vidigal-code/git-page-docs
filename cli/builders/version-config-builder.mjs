@@ -32,6 +32,7 @@ import { resolveSourceViewerPath } from "./project-links.mjs";
 import { MARKDOWN_MENU_SECTIONS } from "../data/menu-sections.mjs";
 import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
 import { COMPOSED_PAGES } from "../data/composed-pages.mjs";
+import { buildPaginatedRoutes, PAGINATED_PAGE } from "../data/paginated-pages.mjs";
 
 /** Demo route protections showcasing the "Authorized Routes" feature. They are
  * applied only to the official (non-parameterized) scaffold — user sites
@@ -245,6 +246,7 @@ function buildVersionMenus(versionId) {
 export function buildVersionConfig(versionId, options = {}) {
   const includeDemoAuthorization = !options.githubOwner && !options.githubRepo;
   const menus = buildVersionMenus(versionId);
+  const paginated = buildPaginatedRoutes(versionId);
 
   return {
     auth: {
@@ -259,13 +261,13 @@ export function buildVersionConfig(versionId, options = {}) {
         { type: "jwt", enabled: true, tokenStorageKey: "git-page-docs:jwt-token", rolesClaimPath: "roles" },
       ],
     },
-    "routes-md": buildVersionMdRoutes(versionId, includeDemoAuthorization),
+    "routes-md": [...buildVersionMdRoutes(versionId, includeDemoAuthorization), ...paginated["routes-md"]],
     "routes-source-viewer": buildVersionSourceViewerRoutes(options),
-    "routes-html": buildVersionHtmlRoutes(versionId),
-    "routes-video": buildVersionVideoRoutes(versionId, includeDemoAuthorization),
-    "routes-audio": buildVersionAudioRoutes(versionId),
-    "routes-pdf": [buildPdfRoute(PDF_GUIDE_META, `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`)],
-    pages: structuredClone(COMPOSED_PAGES),
+    "routes-html": [...buildVersionHtmlRoutes(versionId), ...paginated["routes-html"]],
+    "routes-video": [...buildVersionVideoRoutes(versionId, includeDemoAuthorization), ...paginated["routes-video"]],
+    "routes-audio": [...buildVersionAudioRoutes(versionId), ...paginated["routes-audio"]],
+    "routes-pdf": [buildPdfRoute(PDF_GUIDE_META, `gitpagedocs/docs/versions/${versionId}/en/${PDF_GUIDE_FILENAME}`), ...paginated["routes-pdf"]],
+    pages: structuredClone([...COMPOSED_PAGES, PAGINATED_PAGE]),
     "menus-header-md": menus.md,
     "menus-header-source-viewer": menus.sourceViewer,
     "menus-header-html": menus.html,

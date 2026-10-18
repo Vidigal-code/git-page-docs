@@ -145,6 +145,8 @@ The tree supplies sidebar navigation, search labels, parent expansion and breadc
 
 ## Breadcrumbs: RouteGuide
 
+The breadcrumb trail has 12 px of spacing above and below it, separating the navigation path from the surrounding content.
+
 `RouteGuide` controls the breadcrumb trail. Resolution order is the page's `routes-md[].RouteGuide`, then the version's `routeDefaults.RouteGuide`, then `site.RouteGuide`, with `true` as the fallback. The example disables breadcrumbs for the version and enables them for chapter 101. Existing version `0.0.8` files can use the same fields.
 
 `RouteguideBrand` and `RouteguideBrandPosition` are separate settings for the document's heading outline/table of contents; they do not control breadcrumbs.

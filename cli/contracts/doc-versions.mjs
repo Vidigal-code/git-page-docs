@@ -1,3 +1,3 @@
-export const PACKAGE_VERSION = "0.0.13";
+export const PACKAGE_VERSION = "0.0.14";
 
-export const DOC_VERSIONS = [PACKAGE_VERSION, "0.0.12", "0.0.11", "0.0.10", "0.0.9"];
+export const DOC_VERSIONS = [PACKAGE_VERSION, "0.0.13", "0.0.12", "0.0.11", "0.0.10", "0.0.9"];

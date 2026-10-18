@@ -3,6 +3,7 @@
 import { LAYOUTS, FALLBACK_LAYOUTS } from "../data/layouts.mjs";
 import { DOCS } from "../content/docs.mjs";
 import { HTML_DOOM } from "../content/html-doom.mjs";
+import { PAGINATION_HTML } from "../content/pagination-html.mjs";
 import { DOC_VERSIONS } from "../data/version-constants.mjs";
 import { buildRootConfig } from "./root-config-builder.mjs";
 import { buildVersionConfig } from "./version-config-builder.mjs";
@@ -30,7 +31,7 @@ export function buildConfigArtifacts(options = {}) {
     layoutsConfig,
     fallbackLayoutsConfig,
     docs: DOCS,
-    docsHtml: { doom: HTML_DOOM },
+    docsHtml: { doom: HTML_DOOM, ...PAGINATION_HTML },
     versionConfigs,
   };
 }

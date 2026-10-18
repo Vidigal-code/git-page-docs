@@ -41,7 +41,8 @@ import { expandVersionConfig } from "../lib/expand-version-config";
 import { localizeConfig } from "./config/localize-config";
 import { applyLanguageToggles } from "./utils/route-utils";
 import { markdownToHtml } from "./utils/markdown";
-import { resolvePdfUrl } from "../lib/pdf/resolve-pdf-url";
+import { resolveDocumentUrl } from "../lib/media/resolve-document-url";
+import { resolveMediaPaths } from "../lib/media/resolve-media-paths";
 import { getPdfRoutes, isPdfRoute } from "../lib/pdf/validate-pdf-route";
 import { composePages } from "../model/compose-pages";
 
@@ -720,16 +721,18 @@ async function loadHtmlSection(
 function resolveVideoSection(
   ctx: PageBuildContext,
   routesVideo: ContentTypeRouteConfig[],
-  id: number,
-  pageIndex: number,
+  selection: { id: number; pageIndex: number },
 ): LoadedPage["video"] {
+  const { id, pageIndex } = selection;
   const videoRoute = routesVideo.find((route) => route.id === id && routeHasVideo(route));
   if (!videoRoute || !routeHasVideo(videoRoute)) {
     return undefined;
   }
   const videoTypeByLanguage = localizeByLanguage(videoRoute.video.videoType, ctx.availableLanguages, "youtube");
-  const pathVideoByLanguage = localizeByLanguage(videoRoute.video.pathVideo, ctx.availableLanguages, "");
+  const paths = localizeByLanguage(videoRoute.video.pathVideo, ctx.availableLanguages, "");
+  const pathVideoByLanguage = resolveMediaPaths(paths, videoTypeByLanguage, { source: "remote", owner: ctx.owner, repo: ctx.repo });
   ctx.pathToPageMap[`page:${id}`] = { pageIndex, contentType: "video" };
+  registerLanguagePaths(ctx, paths, pageIndex, "video");
   registerLanguagePaths(ctx, pathVideoByLanguage, pageIndex, "video");
   return {
     routeId: id,
@@ -743,16 +746,18 @@ function resolveVideoSection(
 function resolveAudioSection(
   ctx: PageBuildContext,
   routesAudio: ContentTypeRouteConfig[],
-  id: number,
-  pageIndex: number,
+  selection: { id: number; pageIndex: number },
 ): LoadedPage["audio"] {
+  const { id, pageIndex } = selection;
   const audioRoute = routesAudio.find((route) => route.id === id && routeHasAudio(route));
   if (!audioRoute || !routeHasAudio(audioRoute)) {
     return undefined;
   }
   const audioTypeByLanguage = localizeByLanguage(audioRoute.audio.audioType, ctx.availableLanguages, "youtube");
-  const pathAudioByLanguage = localizeByLanguage(audioRoute.audio.pathAudio, ctx.availableLanguages, "");
+  const paths = localizeByLanguage(audioRoute.audio.pathAudio, ctx.availableLanguages, "");
+  const pathAudioByLanguage = resolveMediaPaths(paths, audioTypeByLanguage, { source: "remote", owner: ctx.owner, repo: ctx.repo });
   ctx.pathToPageMap[`page:${id}`] = { pageIndex, contentType: "audio" };
+  registerLanguagePaths(ctx, paths, pageIndex, "audio");
   registerLanguagePaths(ctx, pathAudioByLanguage, pageIndex, "audio");
   return {
     routeId: id,
@@ -768,7 +773,7 @@ function resolvePdfSection(ctx: PageBuildContext, route: ContentTypeRouteConfig 
   const pathPdfByLanguage: Record<LanguageCode, string> = {};
   for (const language of ctx.availableLanguages) {
     const raw = route.pdf.pathPdf[language];
-    const url = resolvePdfUrl(raw, { source: "remote", owner: ctx.owner, repo: ctx.repo });
+    const url = resolveDocumentUrl(raw, { source: "remote", owner: ctx.owner, repo: ctx.repo });
     pathPdfByLanguage[language] = url;
     if (url) {
       ctx.pathToPageMap[raw] = { pageIndex, contentType: "pdf" };
@@ -789,9 +794,9 @@ async function buildPage(ctx: PageBuildContext, sections: ContentSections, selec
   if (sourceViewer) page.sourceViewer = sourceViewer;
   const html = await loadHtmlSection(ctx, sections.routesHtml, id, pageIndex);
   if (html) page.html = html;
-  const video = resolveVideoSection(ctx, sections.routesVideo, id, pageIndex);
+  const video = resolveVideoSection(ctx, sections.routesVideo, selection);
   if (video) page.video = video;
-  const audio = resolveAudioSection(ctx, sections.routesAudio, id, pageIndex);
+  const audio = resolveAudioSection(ctx, sections.routesAudio, selection);
   if (audio) page.audio = audio;
   const pdf = resolvePdfSection(ctx, sections.routesPdf.find((route) => route.id === id), pageIndex);
   if (pdf) page.pdf = pdf;
