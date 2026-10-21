@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { DocumentationService, patchManagedRegion, type DocKind, type AiProviderId } from "@gitpagedocs/tools";
+import { DocumentationService, RepositoryError, patchManagedRegion, type DocKind, type AiProviderId } from "@gitpagedocs/tools";
 import type { ServerContext } from "../context";
 import { text, safe } from "../result";
 import { repoListing, fileContext, packageContext, gitLog, docsContext } from "../gather";
@@ -18,6 +18,11 @@ async function generate(
 }
 
 const providerOpt = z.string().optional().describe("Override the configured AI provider id.");
+
+function isMissingFile(error: unknown): boolean {
+  const cause = error instanceof RepositoryError ? error.cause : undefined;
+  return typeof cause === "object" && cause !== null && "code" in cause && cause.code === "ENOENT";
+}
 
 /** Documentation generators and analyzers (AI-backed, delegating to tools). */
 export function registerDocsTools(server: McpServer, ctx: ServerContext): void {
@@ -81,8 +86,8 @@ export function registerDocsTools(server: McpServer, ctx: ServerContext): void {
       let existing = "";
       try {
         existing = await ctx.files.read(path);
-      } catch {
-        existing = "";
+      } catch (error) {
+        if (!isMissingFile(error)) throw error;
       }
       const generated = await generate(
         ctx,

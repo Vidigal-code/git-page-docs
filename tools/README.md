@@ -14,7 +14,7 @@ The **shared business-logic core** of the [Git Page Docs](../README.md) monorepo
 | `config-format/` | Browser-safe `compactSiteIcons` / `expandSiteIcons` and `applyRouteDefaults` / `factorRouteDefaults` for compact configuration and inherited route values |
 | `logger/` | Level-filtered logger with **secret redaction** |
 | `errors/` | `AppError` + typed subclasses |
-| `filesystem/` | `FileService` (list/read/write/search with lexical root containment; filesystem symlinks/junctions still require trusted deployment boundaries) |
+| `filesystem/` | `FileService` (list/read/write/search with lexical and canonical root containment; validates existing parents before creating files and rejects destination symlinks on writes; concurrent path replacement still requires trusted filesystem boundaries) |
 | `documentation/` | `DocumentationService`, `patchManagedRegion`, `DocUpdater` |
 | `i18n/` | Language bundles (`site.languages` toggles in `config.json` + `langs/<lang>.json`): `loadConfigLanguageBundles`, `applyLanguageBundles` (fold into `site.langmenu` / `translations`), `filterEnabledLanguages`, `splitLanguageBundles` (generator side); browser-safe |
 | `ports/` | Type-only contracts (logger, cache, crypto, security, config, ai) |

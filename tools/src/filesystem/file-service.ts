@@ -1,5 +1,6 @@
 import path from "node:path";
-import { readFile, writeFile, mkdir, readdir, stat } from "node:fs/promises";
+import type { Stats } from "node:fs";
+import { readFile, writeFile, mkdir, readdir, stat, realpath, lstat } from "node:fs/promises";
 import { RepositoryError, ValidationError } from "../errors/app-error";
 
 const DEFAULT_IGNORE = new Set([
@@ -60,24 +61,80 @@ function compareCodeUnits(a: string, b: string): number {
   return 0;
 }
 
+async function inspectExistingPath(absolute: string): Promise<Stats | undefined> {
+  try {
+    return await lstat(absolute);
+  } catch (cause) {
+    if (cause instanceof Error && "code" in cause && cause.code === "ENOENT") return undefined;
+    throw cause;
+  }
+}
+
+function assertContained(root: string, absolute: string, requestedPath: string): void {
+  const relative = path.relative(root, absolute);
+  if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new ValidationError(`Path escapes the project root: ${requestedPath}`);
+  }
+}
+
+interface ResolvedPath {
+  absolute: string;
+  symbolicLink: boolean;
+}
+
 /**
  * Root-bounded filesystem service. All paths are resolved relative to `root`
  * and may not escape it — the single safe FS surface for the CLI and MCP.
  */
 export class FileService {
-  constructor(private readonly root: string) {}
+  private readonly root: string;
+
+  constructor(root: string) {
+    this.root = path.resolve(root);
+  }
 
   private resolveInside(relativePath: string): string {
     const abs = path.resolve(this.root, relativePath);
-    const rel = path.relative(this.root, abs);
-    if (rel.startsWith("..") || path.isAbsolute(rel)) {
-      throw new ValidationError(`Path escapes the project root: ${relativePath}`);
-    }
+    assertContained(this.root, abs, relativePath);
     return abs;
   }
 
   private toRel(abs: string): string {
     return path.relative(this.root, abs).split(path.sep).join("/");
+  }
+
+  private async resolvePhysicalPath(relativePath: string): Promise<ResolvedPath> {
+    const requested = this.resolveInside(relativePath);
+    try {
+      const root = await realpath(this.root);
+      let ancestor = requested;
+      const missing: string[] = [];
+      let existing = await inspectExistingPath(ancestor);
+      while (!existing) {
+        const parent = path.dirname(ancestor);
+        if (parent === ancestor) throw new RepositoryError(`Cannot resolve path: ${relativePath}`);
+        missing.unshift(path.basename(ancestor));
+        ancestor = parent;
+        existing = await inspectExistingPath(ancestor);
+      }
+      const resolved = await realpath(ancestor).catch((cause) => {
+        if (existing.isSymbolicLink()) {
+          throw new ValidationError(`Cannot resolve symbolic link: ${relativePath}`, { cause });
+        }
+        throw cause;
+      });
+      assertContained(root, resolved, relativePath);
+      return { absolute: path.join(resolved, ...missing), symbolicLink: missing.length === 0 && existing.isSymbolicLink() };
+    } catch (cause) {
+      if (cause instanceof ValidationError || cause instanceof RepositoryError) throw cause;
+      throw new RepositoryError(`Cannot resolve path: ${relativePath}`, { cause });
+    }
+  }
+
+  private async resolveWritablePath(relativePath: string): Promise<string> {
+    const resolved = await this.resolvePhysicalPath(relativePath);
+    if (resolved.symbolicLink) throw new ValidationError(`Cannot write through a symbolic link: ${relativePath}`);
+    return resolved.absolute;
   }
 
   async list(relativeDir = ".", options: ListOptions = {}): Promise<string[]> {
@@ -87,9 +144,10 @@ export class FileService {
 
     const walk = async (dir: string): Promise<void> => {
       if (out.length >= maxEntries) return;
+      const resolved = await this.resolvePhysicalPath(this.toRel(dir));
       let entries: import("node:fs").Dirent[];
       try {
-        entries = await readdir(dir, { withFileTypes: true });
+        entries = await readdir(resolved.absolute, { withFileTypes: true });
       } catch (cause) {
         throw new RepositoryError(`Cannot read directory: ${this.toRel(dir)}`, { cause });
       }
@@ -107,7 +165,7 @@ export class FileService {
   }
 
   async read(relativePath: string, maxBytes = 512_000): Promise<string> {
-    const abs = this.resolveInside(relativePath);
+    const { absolute: abs } = await this.resolvePhysicalPath(relativePath);
     const info = await stat(abs).catch((cause) => {
       throw new RepositoryError(`File not found: ${relativePath}`, { cause });
     });
@@ -118,10 +176,11 @@ export class FileService {
   }
 
   async write(relativePath: string, content: string): Promise<string> {
-    const abs = this.resolveInside(relativePath);
+    const abs = await this.resolveWritablePath(relativePath);
     await mkdir(path.dirname(abs), { recursive: true });
-    await writeFile(abs, content, "utf8");
-    return this.toRel(abs);
+    const target = await this.resolveWritablePath(relativePath);
+    await writeFile(target, content, "utf8");
+    return this.toRel(this.resolveInside(relativePath));
   }
 
   /** Directories are skipped; an explicit extension filter replaces the text-extension default. */
