@@ -48,7 +48,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.14/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.15/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -57,9 +57,9 @@ En \`gitpagedocs/docs/versions/0.0.14/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -806,7 +806,8 @@ La generación envía el contenido seleccionado del proyecto al proveedor config
 - Búsqueda: hasta 5.000 entradas, 200 resultados y 240 caracteres por línea encontrada.
 - Recopilación de documentación: primeros 40 archivos Markdown entre hasta 2.000 entradas; se omiten archivos superiores a 40.000 bytes. El contexto recopilado de archivos y Markdown se limita a 24.000 caracteres. No es un límite global del prompt: árbol/paquete, documento existente y pregunta proporcionada pueden añadir contenido según la tool seleccionada.
 - El listado omite carpetas de dependencias/build como \`node_modules\`, \`.git\`, \`.next\`, \`out\`, \`dist\`, \`prebuilt\`, \`.turbo\` y \`coverage\`. No interpreta \`.gitignore\`; archivos como \`.env\` no se excluyen automáticamente. Ejecuta solo en proyectos de confianza y selecciona el contenido que se expondrá.
-- La verificación de rutas es léxica; el proceso no es un sandbox del sistema operativo ni garantiza aislamiento de symlinks/junctions. Leer \`project://config\` puede importar configuración JavaScript/TypeScript.
+- A partir de la versión 0.0.15 de los paquetes, las herramientas de archivos comprueban tanto las rutas léxicas como las rutas canónicas del sistema de archivos. Las lecturas y las listas de directorios rechazan enlaces simbólicos/junctions que apuntan fuera de la raíz del proyecto. Las escrituras también validan el ancestro existente más cercano antes de crear directorios y rechazan enlaces simbólicos en el destino, incluidos los enlaces a archivos internos. La búsqueda omite archivos enlazados cuyo contenido no se puede leer de forma segura.
+- Estas comprobaciones protegen contra enlaces presentes cuando se procesa una solicitud; no constituyen un sandbox del sistema operativo contra la sustitución concurrente de rutas por otro proceso. Ejecuta el servidor en un proyecto de confianza con los permisos adecuados del sistema de archivos. La carga de configuración y la persistencia de la selección del proveedor usan rutas separadas; leer \`project://config\` puede importar configuración JavaScript/TypeScript.
 - Los fallos de tools incluyen \`isError: true\`. Los resources ausentes devuelven \`Unavailable: ...\`. Revisa stderr en el cliente para errores de inicio; stdout está reservado para JSON-RPC.
 - Si las tools funcionan pero la generación falla, comprueba selección del proveedor, credenciales del entorno, modelo y conectividad.
 `,

@@ -60,7 +60,7 @@ export function extractLanguageFromPath(docPath) {
 
 export function withVersionBadge(content, versionId, language) {
   const normalized = typeof content === "string"
-    ? content.replaceAll(`/versions/${PACKAGE_VERSION}/`, `/versions/${versionId}/`)
+    ? withDocumentVersion(content, versionId)
     : "";
   if (!normalized.trim()) {
     return normalized;
@@ -79,6 +79,17 @@ export function withVersionBadge(content, versionId, language) {
   const label = `> ${versionLabelPrefix(language)}: ${versionId}`;
 
   return `${normalized.trimEnd()}\n\n${label}\n`;
+}
+
+function withDocumentVersion(content, versionId) {
+  const replaceVersionField = (field, currentVersion) => currentVersion === PACKAGE_VERSION
+    ? field.replace(`"${currentVersion}"`, `"${versionId}"`)
+    : field;
+
+  return content
+    .replaceAll(/"docsVersion"\s*:\s*"([^"\r\n]+)"/g, replaceVersionField)
+    .replaceAll(/"id"\s*:\s*"([^"\r\n]+)"(?=\s*,\s*"path"\s*:\s*"gitpagedocs\/docs\/versions\/\1\/config\.json")/g, replaceVersionField)
+    .replaceAll(`/versions/${PACKAGE_VERSION}/`, `/versions/${versionId}/`);
 }
 
 /** Badge wording per language; every other language reads the English form. */

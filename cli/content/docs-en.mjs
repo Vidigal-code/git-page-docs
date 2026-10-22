@@ -49,7 +49,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.14/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.15/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -58,9 +58,9 @@ In \`gitpagedocs/docs/versions/0.0.14/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.14/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -853,7 +853,8 @@ The generation step sends selected project content to the configured provider.
 - Search: up to 5,000 entries, 200 matches, 240 characters per matching line.
 - Documentation gathering: first 40 Markdown files among up to 2,000 entries; files over 40,000 bytes are skipped. Gathered file and Markdown context is limited to 24,000 characters. This is not a global prompt limit: tree/package context, an existing document and a caller-supplied question can add content according to the selected tool.
 - Listing skips build/dependency directories such as \`node_modules\`, \`.git\`, \`.next\`, \`out\`, \`dist\`, \`prebuilt\`, \`.turbo\` and \`coverage\`. It does not interpret \`.gitignore\`; files such as \`.env\` are not automatically excluded. Run only in a trusted project and select the content to expose.
-- Path checks use lexical containment; do not treat the process as an operating-system sandbox or assume symlink/junction isolation. Loading \`project://config\` can import JavaScript/TypeScript configuration.
+- Starting with package version 0.0.15, filesystem tools check both lexical paths and canonical filesystem paths. Reads and directory listings reject symlinks/junctions that resolve outside the project root. Writes also validate the nearest existing parent before creating directories and reject symbolic links at the destination, including links to internal files. Search skips linked files whose contents cannot be read safely.
+- These checks protect against links already present when a request is handled; they are not an operating-system sandbox against concurrent path replacement by another process. Run the server in a trusted project with appropriate filesystem permissions. Configuration loading and provider-selection persistence use separate filesystem paths; loading \`project://config\` can import JavaScript/TypeScript configuration.
 - Tool failures include \`isError: true\`. Missing resources return \`Unavailable: ...\`. Check the client's stderr log for startup errors; stdout is reserved for JSON-RPC.
 - If tools work but generation fails, verify provider selection, environment credentials, model availability and service connectivity.
 `,

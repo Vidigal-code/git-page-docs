@@ -3,6 +3,15 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.15 - 2026-10-22 - filesystem containment security fix
+
+- Check both lexical and canonical filesystem paths before reading, listing or writing project files. Reject existing symlinks and junctions that resolve outside the project root, and skip unsafe linked files during search.
+- Validate the nearest existing parent before creating directories and reject symbolic links at write destinations, including internal and dangling links. Preserve supported internal directory aliases, project-root aliases and ordinary filenames beginning with two dots.
+- Make `update_documentation` create a new document only when the existing file is missing. Propagate containment and access errors before calling a provider or writing output.
+- Add filesystem and MCP regression coverage for linked paths, directory creation, aliases and error handling. Document the boundary against concurrent path replacement and the separate configuration and provider-selection paths.
+- Update the CLI, shared tools and MCP packages to 0.0.15. Register documentation versions 0.0.15 through 0.0.9, preserve older folders and synchronize the English, Portuguese and Spanish guides.
+- Keep configuration recipe IDs, documentation versions and paths consistent with each retained documentation folder while preserving package installation commands and the version history.
+
 ## 0.0.14 - 2026-10-18 - paginated containers and Markdown markers
 
 - Paginate Markdown, HTML, video, audio and PDF files inside individual containers with ordered route references and localized titles/descriptions. Configure shared defaults through `site.containerPagination` and override them per route; the default is four icon controls and a page counter below the content, aligned right.
