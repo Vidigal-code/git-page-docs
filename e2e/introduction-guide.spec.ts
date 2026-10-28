@@ -115,13 +115,90 @@ test.describe("introduction guide motion", () => {
 
 /** A chapter above this opacity counts as the one on stage. */
 const VISIBLE_CHAPTER_OPACITY = 0.5;
+const PAINTED_TEXT_OPACITY = 0.05;
+const TRANSITION_SAMPLE_OFFSETS = [-0.05, 0, 0.05] as const;
+const TRANSITION_THEME = "neon-noir-dark";
+const WHEEL_DISTANCE_PX = 120;
+const ORDINAL_DIGITS = 2;
+
+interface PaintedStoryText {
+  chapterIndex: number;
+  tag: string;
+  text: string;
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
 
 /** Scrolls to a share (0..1) of the story's scrollable distance. */
 async function scrollStoryTo(page: Page, fraction: number): Promise<void> {
-  await page.getByTestId("guide-story").evaluate((story, share) => {
-    const top = story.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo(0, top + (story.offsetHeight - window.innerHeight) * share);
+  const destination = await page.getByTestId("guide-story").evaluate((story, share) => {
+    const bounds = story.getBoundingClientRect();
+    const top = bounds.top + window.scrollY;
+    const target = Math.round(top + (bounds.height - window.innerHeight) * share);
+    window.scrollTo({ top: target, behavior: "instant" });
+    return target;
   }, fraction);
+  await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(destination);
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  }));
+}
+
+async function paintedStoryText(page: Page): Promise<PaintedStoryText[]> {
+  return page.getByTestId("guide-story").evaluate((story, opacityThreshold) => {
+    const chapterText = (chapter: Element, chapterIndex: number): PaintedStoryText[] => {
+      const style = getComputedStyle(chapter);
+      if (Number(style.opacity) <= opacityThreshold || style.visibility === "hidden" || style.display === "none") return [];
+      const chapterBounds = chapter.getBoundingClientRect();
+      return [...chapter.querySelectorAll("h2, p, li")].flatMap((element) => {
+        const bounds = element.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        return [...range.getClientRects()].flatMap((rect) => {
+          const left = Math.max(rect.left, bounds.left, chapterBounds.left, 0);
+          const right = Math.min(rect.right, bounds.right, chapterBounds.right, innerWidth);
+          const top = Math.max(rect.top, bounds.top, chapterBounds.top, 0);
+          const bottom = Math.min(rect.bottom, bounds.bottom, chapterBounds.bottom, innerHeight);
+          if (right <= left || bottom <= top) return [];
+          return [{ chapterIndex, tag: element.tagName, text: element.textContent?.trim() ?? "", left, right, top, bottom }];
+        });
+      });
+    };
+    return [...story.querySelectorAll("[data-story-chapter]")].flatMap(chapterText);
+  }, PAINTED_TEXT_OPACITY);
+}
+
+function overlappingStoryText(painted: readonly PaintedStoryText[]): string[] {
+  const overlaps: string[] = [];
+  for (let index = 0; index < painted.length; index += 1) {
+    const first = painted[index];
+    for (const second of painted.slice(index + 1)) {
+      if (first.chapterIndex === second.chapterIndex) continue;
+      const width = Math.min(first.right, second.right) - Math.max(first.left, second.left);
+      const height = Math.min(first.bottom, second.bottom) - Math.max(first.top, second.top);
+      if (width > 0 && height > 0) overlaps.push(`${first.text} overlaps ${second.text}`);
+    }
+  }
+  return overlaps;
+}
+
+async function expectReadableStory(page: Page, total: number): Promise<void> {
+  const painted = await paintedStoryText(page);
+  expect(overlappingStoryText(painted)).toEqual([]);
+  const headings = new Map<number, string>();
+  for (const text of painted) {
+    if (text.tag === "H2") headings.set(text.chapterIndex, text.text);
+  }
+  expect(headings.size).toBe(1);
+  const [[chapterIndex, title]] = [...headings];
+  const current = page.getByTestId("guide-story").locator('button[aria-current="step"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveText(title);
+  const ordinal = String(chapterIndex + 1).padStart(ORDINAL_DIGITS, "0");
+  const count = String(total).padStart(ORDINAL_DIGITS, "0");
+  await expect(page.getByTestId("guide-story-counter")).toHaveText(`${ordinal} / ${count}`);
 }
 
 /** Ids of the chapters currently shown on the stage. */
@@ -136,23 +213,29 @@ async function visibleChapters(page: Page): Promise<string[]> {
 }
 
 test.describe("introduction guide scroll story", () => {
-  test("keeps content visible at every chapter transition and responds to wheel input", async ({ page }) => {
-    await openGuide(page, THEMES[0]);
-    const chapters = page.locator("[data-story-chapter]");
-    const total = await chapters.count();
-    const minTransitionOpacity = 0.45;
-    for (let boundary = 1; boundary < total; boundary += 1) {
-      await scrollStoryTo(page, boundary / total);
-      await expect.poll(() => chapters.evaluateAll((elements, index) =>
-        Math.min(...[elements[index - 1], elements[index]].map(element => Number(getComputedStyle(element).opacity))),
-      boundary)).toBeGreaterThanOrEqual(minTransitionOpacity);
-    }
-    const scrollBeforeWheel = await page.evaluate(() => window.scrollY);
-    const wheelDistance = 120;
-    await page.mouse.wheel(0, wheelDistance);
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(scrollBeforeWheel);
-    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
-  });
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    test(`keeps paused chapter transitions readable in both scroll directions (${reducedMotion})`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion });
+      const errors = await openGuide(page, TRANSITION_THEME);
+      const total = await page.locator("[data-story-chapter]").count();
+      expect(total).toBeGreaterThan(1);
+      const stops = Array.from({ length: total - 1 }, (_, index) => index + 1)
+        .flatMap((boundary) => TRANSITION_SAMPLE_OFFSETS.map((offset) => (boundary + offset) / total));
+      for (const direction of [stops, [...stops].reverse()]) {
+        for (const fraction of direction) {
+          await test.step(`pause at ${fraction}`, async () => {
+            await scrollStoryTo(page, fraction);
+            await expectReadableStory(page, total);
+          });
+        }
+      }
+      const scrollBeforeWheel = await page.evaluate(() => window.scrollY);
+      await page.mouse.wheel(0, WHEEL_DISTANCE_PX);
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(scrollBeforeWheel);
+      expect(await horizontalOverflow(page)).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
+      expect(errors, errors.join("\n")).toHaveLength(0);
+    });
+  }
 
   for (const theme of THEMES) {
     test(`plays one chapter at a time while the page scrolls (${theme})`, async ({ page }) => {
@@ -194,7 +277,7 @@ test.describe("introduction guide scroll story", () => {
     await expect(page).toHaveURL(/#guide-body$/);
   });
 
-  test("crossfades chapters without moving anything when the visitor prefers reduced motion", async ({ page }) => {
+  test("switches chapters without moving anything when the visitor prefers reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = await openGuide(page, THEMES[0]);
     const chapters = page.locator("[data-story-chapter]");

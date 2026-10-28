@@ -11,6 +11,10 @@ Routes define page content; menus define how readers reach it. Configure them in
 }
 ```
 
+## Introduction guide
+
+The `/introduction-guide` route is available in repository-search builds. Its chapter tour follows native page scrolling. Starting with viewer version 0.0.16, stopping at a chapter transition keeps the text readable without adjacent chapters overlapping. Parallax effects, reduced-motion preferences and the stacked layout for short landscape viewports remain supported.
+
 ## Build a menu tree
 
 Each `menus-header-md` entry has an `id` and localized `pt`, `en`, `es` objects with `title` and optional `path-click`. Add `submenus` containing more entries to nest the tree. A language object may also contain localized `submenus` with the same title/path structure. Use one form consistently to avoid listing the same child twice.

@@ -15,7 +15,7 @@ export interface StoryChapter {
   highlights: string[];
 }
 
-/** Scroll progress (0..1) at which a chapter starts, is fully in, starts leaving and is gone. */
+/** Scroll progress (0..1) at which a chapter's parallax enters, rests and leaves. */
 export interface ChapterWindow {
   start: number;
   enter: number;
@@ -26,14 +26,13 @@ export interface ChapterWindow {
 /** Keyframes for one chapter: strictly increasing inputs and the matching outputs. */
 export interface ChapterTimeline {
   input: number[];
-  opacity: number[];
   /** -1..1: 1 = still below (entering), 0 = in place, -1 = above (leaving). */
   shift: number[];
 }
 
 export const STORY_HIGHLIGHT_LIMIT = 4;
-/** Half-width of the crossfade around each chapter boundary. */
-const CHAPTER_FADE_SHARE = 0.2;
+/** Half-width of the parallax movement around each chapter boundary. */
+const CHAPTER_DRIFT_SHARE = 0.2;
 const ORDINAL_DIGITS = 2;
 const PROGRESS_PRECISION = 1e4;
 const CODE_COMMENT_PREFIX = "#";
@@ -78,19 +77,19 @@ export function buildStoryChapters(sections: readonly GuideSection[]): StoryChap
   }));
 }
 
-/** Adjacent chapters overlap so scrolling never leaves the stage empty. */
+/** Adjacent parallax windows overlap while chapterAt selects the visible chapter. */
 export function chapterWindow(index: number, total: number): ChapterWindow {
   const slice = 1 / total;
   const boundaryStart = index * slice;
   const boundaryEnd = (index + 1) * slice;
-  const fade = slice * CHAPTER_FADE_SHARE;
+  const drift = slice * CHAPTER_DRIFT_SHARE;
   const isFirst = index === 0;
   const isLast = index === total - 1;
   return {
-    start: isFirst ? 0 : round(boundaryStart - fade),
-    enter: isFirst ? 0 : round(boundaryStart + fade),
-    exit: isLast ? 1 : round(boundaryEnd - fade),
-    end: isLast ? 1 : round(boundaryEnd + fade),
+    start: isFirst ? 0 : round(boundaryStart - drift),
+    enter: isFirst ? 0 : round(boundaryStart + drift),
+    exit: isLast ? 1 : round(boundaryEnd - drift),
+    end: isLast ? 1 : round(boundaryEnd + drift),
   };
 }
 
@@ -99,15 +98,14 @@ export function chapterTimeline(index: number, total: number): ChapterTimeline {
   const slice = chapterWindow(index, total);
   const isFirst = index === 0;
   const isLast = index === total - 1;
-  const points: Array<[number, number, number]> = [];
-  if (!isFirst) points.push([slice.start, 0, 1]);
-  points.push([slice.enter, 1, 0], [slice.exit, 1, 0]);
-  if (!isLast) points.push([slice.end, 0, -1]);
+  const points: Array<[number, number]> = [];
+  if (!isFirst) points.push([slice.start, 1]);
+  points.push([slice.enter, 0], [slice.exit, 0]);
+  if (!isLast) points.push([slice.end, -1]);
   const unique = points.filter((point, i) => i === 0 || point[0] > points[i - 1][0]);
   return {
     input: unique.map(([input]) => input),
-    opacity: unique.map(([, opacity]) => opacity),
-    shift: unique.map(([, , shift]) => shift),
+    shift: unique.map(([, shift]) => shift),
   };
 }
 

@@ -11,6 +11,10 @@ Rotas definem o conteúdo; menus definem como o leitor o encontra. Configure-os 
 }
 ```
 
+## Guia de introdução
+
+A rota `/introduction-guide` está disponível nos builds com busca de repositórios. Seu tour de capítulos acompanha a rolagem nativa da página. A partir da versão 0.0.16 do visualizador, parar em uma transição mantém o texto legível, sem sobreposição entre capítulos adjacentes. Os efeitos de parallax, a preferência por movimento reduzido e o layout em lista para telas baixas em orientação paisagem continuam disponíveis.
+
 ## Montar a árvore de menus
 
 Cada entrada de `menus-header-md` tem `id` e objetos `pt`, `en`, `es` com `title` e `path-click` opcional. Adicione `submenus` com novas entradas para aninhar a árvore. O objeto de um idioma também aceita `submenus` localizados com título/caminho. Use uma forma de maneira consistente para não listar o mesmo filho duas vezes.

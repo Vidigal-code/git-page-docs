@@ -5,6 +5,7 @@ import { interpolate, m, useTransform, type MotionValue } from "motion/react";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import { STORY_DEPTH } from "../../model/motion-config";
 import {
+  chapterAt,
   chapterTimeline,
   highlightDepth,
   type ChapterTimeline,
@@ -62,7 +63,7 @@ export function StoryChapter({ chapter, index, total, progress }: Readonly<Story
     () => timeline.shift.map((shift) => 1 + shift * (STORY_DEPTH.numeralScaleFrom - 1)),
     [timeline],
   );
-  const opacity = useKeyframedValue(progress, timeline.input, timeline.opacity);
+  const opacity = useTransform(() => Number(chapterAt(progress.get(), total) === index));
   const numeralScale = useKeyframedValue(progress, timeline.input, numeralScaleOutput);
   const numeralY = useDepth(progress, timeline, STORY_DEPTH.numeralPx);
   const titleY = useDepth(progress, timeline, STORY_DEPTH.titlePx);

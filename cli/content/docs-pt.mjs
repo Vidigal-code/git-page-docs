@@ -48,7 +48,7 @@ As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\
 
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.15/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.16/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -57,9 +57,9 @@ Em \`gitpagedocs/docs/versions/0.0.15/config.json\`, mantenha as listas de rotas
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -895,6 +895,10 @@ Rotas definem o conteúdo; menus definem como o leitor o encontra. Configure-os 
   }
 }
 \`\`\`
+
+## Guia de introdução
+
+A rota \`/introduction-guide\` está disponível nos builds com busca de repositórios. Seu tour de capítulos acompanha a rolagem nativa da página. A partir da versão 0.0.16 do visualizador, parar em uma transição mantém o texto legível, sem sobreposição entre capítulos adjacentes. Os efeitos de parallax, a preferência por movimento reduzido e o layout em lista para telas baixas em orientação paisagem continuam disponíveis.
 
 ## Montar a árvore de menus
 

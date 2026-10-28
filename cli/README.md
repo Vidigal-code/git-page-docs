@@ -39,7 +39,7 @@ The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the
 
 ## Generated documentation and themes
 
-Version 0.0.15 registers documentation versions 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9, newest first, with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
+Version 0.0.16 registers documentation versions 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9, newest first, with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
 
 The scaffold includes independent file pagination for Markdown, HTML, video, audio and PDF in page 50, with two localized HTML samples, local WAV tracks and a PDF reference. Configure shared controls in `site.containerPagination` and each sequence in its route's `pagination.items`. The generated pagination and Markdown markers guides explain defaults, route overrides, focus/search integration and theme-aware highlights linked from the document index. `RouteGuideSpeciFicbrand` keeps its existing heading-filter behavior.
 

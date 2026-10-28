@@ -49,7 +49,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.15/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.16/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -58,9 +58,9 @@ In \`gitpagedocs/docs/versions/0.0.15/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -942,6 +942,10 @@ Routes define page content; menus define how readers reach it. Configure them in
   }
 }
 \`\`\`
+
+## Introduction guide
+
+The \`/introduction-guide\` route is available in repository-search builds. Its chapter tour follows native page scrolling. Starting with viewer version 0.0.16, stopping at a chapter transition keeps the text readable without adjacent chapters overlapping. Parallax effects, reduced-motion preferences and the stacked layout for short landscape viewports remain supported.
 
 ## Build a menu tree
 

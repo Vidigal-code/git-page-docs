@@ -424,8 +424,8 @@
 }
 
 /* ---- Reduced motion and the stacked list: nothing travels, zooms or bounces
-   (Motion writes the depth inline, hence the override). Under reduced motion the
-   tour still crossfades chapter to chapter, since a fade is not motion. ---- */
+   (Motion writes the depth inline, hence the override). Scrolling still selects
+   one chapter at a time when the visitor prefers reduced motion. ---- */
 @media (prefers-reduced-motion: reduce), (max-height: 520px) {
   .numeral,
   .headline,

@@ -3,6 +3,12 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.16 - 2026-10-27 - readable introduction-guide transitions
+
+- Keep introduction-guide text readable when scrolling stops between chapters, without overlapping adjacent chapter content.
+- Preserve native page scrolling, parallax effects, reduced-motion preferences and the stacked layout for short landscape viewports.
+- Update the CLI, shared tools and MCP packages to 0.0.16. Register all eight documentation versions from 0.0.16 through 0.0.9, preserve older folders and refresh the English, Portuguese and Spanish guides.
+
 ## 0.0.15 - 2026-10-22 - filesystem containment security fix
 
 - Check both lexical and canonical filesystem paths before reading, listing or writing project files. Reject existing symlinks and junctions that resolve outside the project root, and skip unsafe linked files during search.

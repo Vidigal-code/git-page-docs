@@ -11,6 +11,10 @@ Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúra
 }
 ```
 
+## Guía de introducción
+
+La ruta `/introduction-guide` está disponible en los builds con búsqueda de repositorios. Su recorrido por capítulos sigue el desplazamiento nativo de la página. A partir de la versión 0.0.16 del visor, detenerse en una transición mantiene el texto legible, sin superposición entre capítulos adyacentes. Se conservan los efectos de parallax, la preferencia de movimiento reducido y el diseño en lista para ventanas de poca altura en orientación horizontal.
+
 ## Crear el árbol de menús
 
 Cada entrada de `menus-header-md` tiene `id` y objetos `pt`, `en`, `es` con `title` y `path-click` opcional. Añade `submenus` con nuevas entradas para anidar el árbol. El objeto de un idioma también acepta `submenus` localizados con título/ruta. Utiliza una forma de manera consistente para no listar el mismo hijo dos veces.

@@ -48,7 +48,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.15/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.16/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -57,9 +57,9 @@ En \`gitpagedocs/docs/versions/0.0.15/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.15/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -895,6 +895,10 @@ Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúra
   }
 }
 \`\`\`
+
+## Guía de introducción
+
+La ruta \`/introduction-guide\` está disponible en los builds con búsqueda de repositorios. Su recorrido por capítulos sigue el desplazamiento nativo de la página. A partir de la versión 0.0.16 del visor, detenerse en una transición mantiene el texto legible, sin superposición entre capítulos adyacentes. Se conservan los efectos de parallax, la preferencia de movimiento reducido y el diseño en lista para ventanas de poca altura en orientación horizontal.
 
 ## Crear el árbol de menús
 
