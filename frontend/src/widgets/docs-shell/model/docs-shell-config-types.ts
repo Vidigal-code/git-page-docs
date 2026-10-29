@@ -5,7 +5,7 @@ import type { ControlIconConfig } from "@/shared/ui/control-icon";
 /** Version selector and repository links config */
 export interface DocsShellVersionConfig {
   versionSelectorIcon?: ControlIconConfig;
-  versionLinkOptionsWithLabels: { id: "branch" | "release" | "commit"; label: string; url: string }[];
+  versionLinkOptionsWithLabels: VersionLinkOption[];
   versionLinksLabel: string;
   useReactVersionLinksIcon: boolean;
   versionLinksIconTag: string | undefined;

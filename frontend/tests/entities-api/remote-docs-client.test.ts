@@ -8,6 +8,7 @@ import {
   parseSupportedLanguage,
 } from "@/entities/docs/api/load-remote-docs-data-client";
 import type { GitPageDocsConfig } from "@/entities/docs/model/types";
+import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
 import { minimalConfig, requestedUrls, stubFetch, stubRepoFetch } from "./test-helpers";
 
 const FALLBACK_ID = "gitpagedocs-fallback-dark";
@@ -301,6 +302,31 @@ describe("loadRemoteDocsData", () => {
   it("is null for a repository without gitpagedocs", async () => {
     stubRepoFetch({});
     await expect(loadRemoteDocsData("o", "r")).resolves.toBeNull();
+  });
+
+  it("preserves named and legacy repository links from a remote version config", async () => {
+    const activeVersion = {
+      id: "v1",
+      path: "docs/v1/config.json",
+      branch: "/o/r/tree/main",
+      release: [{ name: "Stable release", url: "https://github.com/o/r/releases/tag/v1" }],
+      commit: [{ name: "Fix scrolling", url: "https://github.com/o/r/commit/abc" }],
+    };
+    stubRepoFetch({
+      "o/r/gitpagedocs/config.json": minimalConfig({ VersionControl: { versions: [activeVersion] } }),
+      "o/r/docs/v1/config.json": { "routes-md": [{ id: 1, path: { en: "docs/en/start.md" } }] },
+      "o/r/docs/en/start.md": "# Start",
+    });
+
+    const data = await loadRemoteDocsData("o", "r");
+
+    expect(data?.activeVersion).toEqual(activeVersion);
+    expect(data?.pages[0].md?.sourceByLanguage?.en).toBe("# Start");
+    expect(buildVersionLinkOptions(data?.activeVersion)).toEqual([
+      { id: "branch", label: "Branch", url: "/o/r/tree/main" },
+      { id: "release", label: "Release", name: "Stable release", url: "https://github.com/o/r/releases/tag/v1" },
+      { id: "commit", label: "Commit", name: "Fix scrolling", url: "https://github.com/o/r/commit/abc" },
+    ]);
   });
 
   it("assembles every content type of the default version in the selected language", async () => {

@@ -147,7 +147,6 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         menuCloseLabel={labels.menuCloseLabel}
         options={props.versionLinkOptionsWithLabels}
         onClose={() => props.setVersionLinksPopupOpen(false)}
-        onOpenVersionLink={(url) => window.open(url, "_blank", "noreferrer")}
       />
       <DocsShellInfoOverlay
         isOpen={props.infoPopupOpen}

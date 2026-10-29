@@ -39,7 +39,7 @@ The AI-CLI implementation lives in `cli/ai/` (relocated from the frontend so the
 
 ## Generated documentation and themes
 
-Version 0.0.16 registers documentation versions 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9, newest first, with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
+Version 0.0.17 registers documentation versions 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9, newest first, with English, Portuguese and Spanish pages. Existing older folders are preserved. Source content lives in `content/`; defaults and UI labels live in `data/`; edit these sources before regeneration. The published package includes the English PDF guide and the local HTML integration for the externally hosted DOOM player.
 
 The scaffold includes independent file pagination for Markdown, HTML, video, audio and PDF in page 50, with two localized HTML samples, local WAV tracks and a PDF reference. Configure shared controls in `site.containerPagination` and each sequence in its route's `pagination.items`. The generated pagination and Markdown markers guides explain defaults, route overrides, focus/search integration and theme-aware highlights linked from the document index. `RouteGuideSpeciFicbrand` keeps its existing heading-filter behavior.
 
@@ -50,6 +50,12 @@ The scaffold demonstrates parent Markdown destinations with recursive submenus a
 `site.icons.VersionSelector` and `BackgroundAnimationPause`/`BackgroundAnimationResume` use the same `reactIcon`, `tag`, `size`, `colorDark` and `colorLight` contract as other controls. Pause/resume appears in the navigation menu beside its lock; a manual pause persists across theme and menu changes. `reactIcon: false` selects localized text independently for each control.
 
 The [MCP reference](../mcp/README.md) documents installation, client configuration, all 20 tools and seven resources. MCP runs over stdio and reads provider credentials from its environment; it does not automatically unlock the CLI vault.
+
+## Version repository links
+
+Each `VersionControl.versions` entry accepts `branch`, `release` and `commit` arrays of `{ name, url }`. Names support Unicode, preserve their configured order and remain unchanged when the interface language changes. Legacy URL strings use translated category labels; empty categories are hidden. HTTP(S) and safe relative URLs are supported, unsupported schemes and invalid entries are omitted, and exact duplicates within a category appear once. The responsive version-links dialog groups links by category, scrolls long lists internally, follows theme tokens and supports keyboard navigation and Escape. Native links open a new tab with `noopener noreferrer`; `site.icons.VersionLinks` configures the trigger appearance. See Configuration for the historical 0.0.16 example and complete behavior.
+
+Configure these arrays in `gitpagedocs/config.json`, independently for each documentation version. Merge entries with your existing catalog; do not replace other versions. See the [named-link example](../README.md#named-links-for-documentation-versions) for multiple branches, published releases and real commit URLs. The example's `develop` branch and owner/repository placeholders must be replaced with an existing branch in your repository. These fields link to existing resources; the CLI does not create those branches, commits or releases.
 
 ## Packaging and release
 

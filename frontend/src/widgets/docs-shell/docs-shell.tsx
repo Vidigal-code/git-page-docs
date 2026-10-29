@@ -348,7 +348,6 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   }
 
   function openVersionLinksPopup() {
-    setMenuOpen(false);
     setQuickNavOpen(false);
     setFocusModeOpen(false);
     setInfoPopupOpen(false);

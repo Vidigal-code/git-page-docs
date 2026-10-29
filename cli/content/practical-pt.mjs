@@ -13,7 +13,7 @@ Adicione esta rota ao array \`routes-html\` existente na configuração da vers�
 ${HTML_ROUTE_JSON}
 \`\`\`
 
-Adicione um item traduzido em \`menus-header-html\`. Cada \`path-click\` deve corresponder ao caminho da rota no mesmo idioma, como \`gitpagedocs/docs/versions/0.0.16/pt/doom.html\`; não substitua esse caminho HTML local por \`page:29\`. Um rótulo de menu não cria uma rota. HTML aceita a mesma estrutura recursiva \`submenus\` dos outros menus.
+Adicione um item traduzido em \`menus-header-html\`. Cada \`path-click\` deve corresponder ao caminho da rota no mesmo idioma, como \`gitpagedocs/docs/versions/0.0.17/pt/doom.html\`; não substitua esse caminho HTML local por \`page:29\`. Um rótulo de menu não cria uma rota. HTML aceita a mesma estrutura recursiva \`submenus\` dos outros menus.
 
 ## Dimensões, conteúdo e URLs externas
 
@@ -35,9 +35,9 @@ Este guia monta um site pequeno em três idiomas, com duas páginas Markdown e m
 
 ## 1. Gere e confira a estrutura
 
-O scaffold inclui as versões 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 e 0.0.9 no seletor, da mais recente para a mais antiga. As oito contêm os exemplos atuais; a versão do pacote é 0.0.16. Caminhos e rótulos de versão são gerados para a versão correspondente da documentação. Pastas existentes de versões anteriores não são apagadas.
+O scaffold inclui as versões 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 e 0.0.9 no seletor, da mais recente para a mais antiga. As nove contêm os exemplos atuais; a versão do pacote é 0.0.17. Caminhos e rótulos de versão são gerados para a versão correspondente da documentação. Pastas existentes de versões anteriores não são apagadas.
 
-Execute \`npx --yes @gitpagedocs/cli@0.0.16 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO\` em um diretório de projeto novo. Neste repositório de código-fonte, \`node cli/index.mjs\` executa a versão do checkout. A geração grava configuração e documentação; ela não inicia o visualizador Next.js.
+Execute \`npx --yes @gitpagedocs/cli@0.0.17 --no-interactive --owner SEU_USUARIO --repo SEU_REPOSITORIO\` em um diretório de projeto novo. Neste repositório de código-fonte, \`node cli/index.mjs\` executa a versão do checkout. A geração grava configuração e documentação; ela não inicia o visualizador Next.js.
 
 O JSON completo abaixo é um exemplo mínimo de \`gitpagedocs/config.json\`. Em um site existente, mescle os campos relevantes e preserve a identidade do repositório, opções de publicação, temas e demais versões.
 

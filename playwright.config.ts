@@ -1,4 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
+import path from "node:path";
+import { prepareRepositoryLinksFixture } from "./e2e/fixtures/repository-links-config";
 
 /**
  * Frontend E2E. Starts two `next dev` servers and runs specs in a desktop and a
@@ -12,6 +14,8 @@ const GUIDE_PORT = PORT + 1;
 const BASE_URL = `http://localhost:${PORT}`;
 const GUIDE_BASE_URL = `http://localhost:${GUIDE_PORT}`;
 const GUIDE_SPEC = /introduction-guide\.spec\.ts/;
+const DOCS_FIXTURE_DIRECTORY = prepareRepositoryLinksFixture();
+const NEXT_COMMAND = `node "${path.resolve("node_modules/next/dist/bin/next")}" dev "${path.resolve("frontend")}"`;
 
 const DESKTOP = devices["Desktop Chrome"];
 const MOBILE = devices["Pixel 5"];
@@ -53,7 +57,13 @@ export default defineConfig({
     { name: "guide-mobile", testMatch: GUIDE_SPEC, use: { ...MOBILE, baseURL: GUIDE_BASE_URL } },
   ],
   webServer: [
-    { ...SERVER_DEFAULTS, command: "pnpm dev:e2e", url: BASE_URL, env: serverEnv(PORT) },
+    {
+      ...SERVER_DEFAULTS,
+      command: NEXT_COMMAND,
+      cwd: DOCS_FIXTURE_DIRECTORY,
+      url: BASE_URL,
+      env: { ...serverEnv(PORT), GITPAGEDOCS_REPOSITORY_SEARCH: "false" },
+    },
     // Waiting on the guide route itself compiles it before the first test starts.
     {
       ...SERVER_DEFAULTS,

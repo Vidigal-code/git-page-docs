@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadDocsData } from "@/entities/docs/api/load-docs-data";
+import { buildVersionLinkOptions } from "@/entities/docs/lib/version-links";
 import { createTempWorkspace, requestedUrls, stubRepoFetch, type TempWorkspace } from "./test-helpers";
 
 const FALLBACK_ID = "gitpagedocs-fallback-dark";
@@ -147,6 +148,33 @@ describe("loadDocsData on a local workspace", () => {
     expect(data.docs[0].markdownByLanguage.en).toBe('<h1 id="root">Root</h1>\n');
     expect(data.config["menus-header"]?.[0]?.id).toBe(1);
     expect(data.availableLanguages).toEqual(["en"]);
+  });
+
+  it("preserves named and legacy repository links while loading a local version", async () => {
+    const activeVersion = {
+      id: "v1",
+      path: "docs/v1/config.json",
+      branch: [{ name: "Main branch", url: "https://github.com/demo/docs/tree/main" }],
+      release: [],
+      commit: "/demo/docs/commit/abc",
+    };
+    workspace.write("gitpagedocs/config.json", {
+      site: baseSite({ docsVersion: "v1" }),
+      routes: [],
+      VersionControl: { versions: [activeVersion] },
+    });
+    workspace.write("docs/v1/config.json", { "routes-md": [{ id: 1, path: { en: "docs/en/start.md" } }] });
+    workspace.write("docs/en/start.md", "# Start");
+    stubRepoFetch({});
+
+    const data = await loadDocsData(undefined);
+
+    expect(data.activeVersion).toEqual(activeVersion);
+    expect(data.pages[0].md?.sourceByLanguage?.en).toBe("# Start");
+    expect(buildVersionLinkOptions(data.activeVersion)).toEqual([
+      { id: "branch", label: "Branch", name: "Main branch", url: "https://github.com/demo/docs/tree/main" },
+      { id: "commit", label: "Commit", url: "/demo/docs/commit/abc" },
+    ]);
   });
 
   it("falls back to the configured docsVersion for an unknown selection", async () => {

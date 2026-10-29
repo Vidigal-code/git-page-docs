@@ -43,4 +43,64 @@ describe("buildVersionLinkOptions", () => {
     ]);
     expect(buildVersionLinkOptions({ ...version("1"), release: "https://r" })).toEqual([{ id: "release", label: "Release", url: "https://r" }]);
   });
+
+  it("keeps named repository links in category and configured order", () => {
+    const activeVersion: VersionEntry = {
+      id: "0.0.16", path: "docs/0.0.16/config.json",
+      branch: [
+        { name: " Main ", url: " https://github.com/demo/docs/tree/main " },
+        { name: "Correções 日本", url: "/demo/docs/tree/fixes" },
+      ],
+      release: [{ name: "v0.0.16", url: "https://github.com/demo/docs/releases/tag/v0.0.16" }],
+      commit: [{ name: "Fix scrolling", url: "https://github.com/demo/docs/commit/abc" }],
+    };
+
+    expect(buildVersionLinkOptions(activeVersion)).toEqual([
+      { id: "branch", label: "Branch", name: "Main", url: "https://github.com/demo/docs/tree/main" },
+      { id: "branch", label: "Branch", name: "Correções 日本", url: "/demo/docs/tree/fixes" },
+      { id: "release", label: "Release", name: "v0.0.16", url: "https://github.com/demo/docs/releases/tag/v0.0.16" },
+      { id: "commit", label: "Commit", name: "Fix scrolling", url: "https://github.com/demo/docs/commit/abc" },
+    ]);
+  });
+
+  it("omits executable or malformed URLs while preserving safe relative legacy links", () => {
+    expect(buildVersionLinkOptions({
+      id: "0.0.16", path: "docs/config.json", branch: "javascript:alert(1)",
+      release: [
+        { name: "Bad scheme", url: "data:text/html,unsafe" },
+        { name: "Invalid host", url: "https://[invalid" },
+        { name: "Obfuscated scheme", url: "java\nscript:alert(1)" },
+        { name: "Release", url: "../releases/v0.0.16" },
+        { name: "HTTP", url: "http://example.com/release" },
+      ],
+      commit: " #commit-abc ",
+    })).toEqual([
+      { id: "release", label: "Release", name: "Release", url: "../releases/v0.0.16" },
+      { id: "release", label: "Release", name: "HTTP", url: "http://example.com/release" },
+      { id: "commit", label: "Commit", url: "#commit-abc" },
+    ]);
+  });
+
+  it("ignores malformed JSON entries and removes only identical named links", () => {
+    const activeVersion: VersionEntry = JSON.parse(`{
+      "id":"0.0.16", "path":"docs/config.json", "release":false,
+      "branch":[null,[],42,"https://example.com",{},
+        {"name":42,"url":"https://example.com"},
+        {"name":"Missing URL"},{"name":"Blank","url":" "},
+        {"name":" ","url":"https://example.com"},
+        {"name":"Wrong URL","url":[]},
+        {"name":"Main","url":"https://example.com/main"},
+        {"name":" Main ","url":" https://example.com/main "},
+        {"name":"Mirror","url":"https://example.com/main"},
+        {"name":"Main","url":"https://mirror.example.com/main"}],
+      "commit":"/commits/abc"
+    }`);
+
+    expect(buildVersionLinkOptions(activeVersion)).toEqual([
+      { id: "branch", label: "Branch", name: "Main", url: "https://example.com/main" },
+      { id: "branch", label: "Branch", name: "Mirror", url: "https://example.com/main" },
+      { id: "branch", label: "Branch", name: "Main", url: "https://mirror.example.com/main" },
+      { id: "commit", label: "Commit", url: "/commits/abc" },
+    ]);
+  });
 });

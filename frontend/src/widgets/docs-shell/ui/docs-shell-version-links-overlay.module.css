@@ -1,0 +1,177 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  color-scheme: var(--color-scheme);
+}
+
+.overlay[open] {
+  display: grid;
+  place-items: center;
+}
+
+.overlay::backdrop {
+  background: color-mix(in srgb, var(--background) 78%, transparent);
+  backdrop-filter: blur(5px);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(720px, 100%);
+  max-height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: min(var(--card-radius, 16px), 20px);
+  box-shadow: var(--card-shadow);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.title {
+  margin: 0;
+  min-width: 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.closeButton {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--button-radius, 10px);
+  background: var(--control-background, var(--card-background));
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 16px;
+}
+
+.link {
+  display: block;
+  min-width: 0;
+  min-height: 44px;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--card-border);
+  border-radius: var(--button-radius, 10px);
+  background: var(--control-background, var(--card-background));
+  color: var(--text);
+  text-align: start;
+  text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.count {
+  flex-shrink: 0;
+  min-width: 24px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--text);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linkHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.externalIcon {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--primary);
+}
+
+.linkUrl {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.link:hover,
+.closeButton:hover {
+  background: color-mix(in srgb, var(--primary) 12%, var(--card-background));
+  border-color: var(--primary);
+}
+
+.link:focus-visible,
+.closeButton:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -3px;
+}

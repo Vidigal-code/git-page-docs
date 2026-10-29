@@ -118,6 +118,55 @@ Compact configs may move shared values into `site.icons.defaults`; omitted field
 - optional metadata links (`ProjectLink`, `branch`, `release`, `commit`)
 - optional source viewer metadata (`source-viewer`, `source-viewer-path`)
 
+### Named repository links
+
+Each version entry can define `branch`, `release` and `commit` as arrays of `{ "name": "Display name", "url": "https://..." }`. Add as many links as needed to each category. `name` is the displayed text, including Unicode characters and accents, and the configured order is preserved. `ProjectLink` remains a single repository URL.
+
+Merge the following historical `0.0.16` entry into `VersionControl.versions` in `gitpagedocs/config.json`; retain your other versions and fields. The release and commit URLs refer to published project history. `develop` is only an example: replace `YOUR_OWNER`/`YOUR_REPOSITORY` and create or select that branch in your own repository before using its URL.
+
+```json
+{
+  "id": "0.0.16",
+  "path": "gitpagedocs/docs/versions/0.0.16/config.json",
+  "branch": [
+    {
+      "name": "main",
+      "url": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+    },
+    {
+      "name": "develop (example)",
+      "url": "https://github.com/YOUR_OWNER/YOUR_REPOSITORY/tree/develop"
+    }
+  ],
+  "release": [
+    {
+      "name": "v0.0.16",
+      "url": "https://github.com/Vidigal-code/git-page-docs/releases/tag/v0.0.16"
+    },
+    {
+      "name": "v0.0.15",
+      "url": "https://github.com/Vidigal-code/git-page-docs/releases/tag/v0.0.15"
+    }
+  ],
+  "commit": [
+    {
+      "name": "Guide • cd34292",
+      "url": "https://github.com/Vidigal-code/git-page-docs/commit/cd342928a6650a664d27d68a0c7184557a9291fd"
+    },
+    {
+      "name": "Filesystem • db0d756",
+      "url": "https://github.com/Vidigal-code/git-page-docs/commit/db0d75677b81e965c03f8c6d9b4881fb1b7d96fa"
+    }
+  ]
+}
+```
+
+An empty array hides that category. Legacy single URL strings still work, such as `"branch": "https://github.com/Vidigal-code/git-page-docs/tree/main"`; they use the translated category label. Named entries keep the author's label when the interface language changes. Leading/trailing whitespace is trimmed; blank names/URLs and malformed entries are ignored. Exact duplicate links within a category are shown once, preserving the first occurrence.
+
+Use HTTP(S) URLs, preferably absolute URLs for external repositories. Safe relative links remain supported and resolve against the viewer's current page URL, not the Git repository root. Unsupported schemes such as `javascript:` or `data:` are omitted. Link validation does not check whether a branch, release or commit exists; keep those destinations current.
+
+The version-links button opens a responsive dialog for the active documentation version, grouped into Branch, Release and Commit. Empty groups are omitted; when all three groups are empty there is no links button. Long lists scroll inside the dialog, and colors, borders and surfaces follow the selected theme. Use Tab/Shift+Tab and Enter to navigate links, or Escape/the close button to dismiss the dialog. Links are native anchors that open a new tab with `noopener noreferrer`; they do not change the selected documentation version. Configure the trigger's icon or image (reactIcon: false uses a configured image; without one, the icon remains) through `site.icons.VersionLinks`, using the same appearance fields as the other header controls.
+
 ## Navigation
 
 - `routes`: markdown paths per language (legacy)

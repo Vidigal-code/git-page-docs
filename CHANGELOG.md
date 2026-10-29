@@ -3,6 +3,12 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.17 - 2026-10-29 - named links for documentation versions
+
+- Allow each documentation version to configure multiple named branch, release and commit links. Preserve Unicode names and configured order while keeping legacy single-URL strings compatible.
+- Present version links in a responsive, theme-aware dialog with grouped categories, internal scrolling, native new-tab links and keyboard controls. Hide empty groups and reject unsupported link schemes.
+- Update the CLI, shared tools and MCP packages to 0.0.17. Register all nine documentation versions from 0.0.17 through 0.0.9 and document configuration, compatibility and examples in English, Portuguese and Spanish.
+
 ## 0.0.16 - 2026-10-27 - readable introduction-guide transitions
 
 - Keep introduction-guide text readable when scrolling stops between chapters, without overlapping adjacent chapter content.

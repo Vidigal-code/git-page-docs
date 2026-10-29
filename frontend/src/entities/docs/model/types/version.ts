@@ -1,3 +1,8 @@
+export interface VersionRepositoryLink {
+  name: string;
+  url: string;
+}
+
 export interface VersionEntry {
   id: string;
   path: string;
@@ -5,9 +10,9 @@ export interface VersionEntry {
   ProjectLink?: string;
   PreviewProject?: string;
   UpdateDate?: string;
-  branch?: string;
-  release?: string;
-  commit?: string;
+  branch?: string | VersionRepositoryLink[];
+  release?: string | VersionRepositoryLink[];
+  commit?: string | VersionRepositoryLink[];
   "source-viewer"?: boolean;
   "source-viewer-path"?: string;
 }

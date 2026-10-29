@@ -48,7 +48,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.16/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.17/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -57,9 +57,9 @@ En \`gitpagedocs/docs/versions/0.0.16/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.16/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.17/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.17/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.17/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -402,6 +402,55 @@ Las configuraciones compactas pueden mover valores comunes a \`site.icons.defaul
 - \`path\`: ruta de config de versión
 - links opcionales (\`ProjectLink\`, \`branch\`, \`release\`, \`commit\`)
 - metadatos opcionales del source viewer (\`source-viewer\`, \`source-viewer-path\`)
+
+### Enlaces con nombre del repositorio
+
+Cada entrada de versión puede definir \`branch\`, \`release\` y \`commit\` como listas de \`{ "name": "Nombre visible", "url": "https://..." }\`. Añade tantos enlaces como necesites en cada categoría. \`name\` es el texto visible, incluidos los caracteres Unicode y los acentos, y se conserva el orden configurado. \`ProjectLink\` sigue siendo una única URL del repositorio.
+
+Combina la siguiente entrada histórica \`0.0.16\` con \`VersionControl.versions\` en \`gitpagedocs/config.json\`; conserva las demás versiones y campos. Las URLs de releases y commits corresponden al historial publicado del proyecto. \`develop\` es solo un ejemplo: sustituye \`YOUR_OWNER\`/\`YOUR_REPOSITORY\` y crea o elige esa rama en tu repositorio antes de utilizar su URL.
+
+\`\`\`json
+{
+  "id": "0.0.16",
+  "path": "gitpagedocs/docs/versions/0.0.16/config.json",
+  "branch": [
+    {
+      "name": "main",
+      "url": "https://github.com/Vidigal-code/git-page-docs/tree/main"
+    },
+    {
+      "name": "develop (example)",
+      "url": "https://github.com/YOUR_OWNER/YOUR_REPOSITORY/tree/develop"
+    }
+  ],
+  "release": [
+    {
+      "name": "v0.0.16",
+      "url": "https://github.com/Vidigal-code/git-page-docs/releases/tag/v0.0.16"
+    },
+    {
+      "name": "v0.0.15",
+      "url": "https://github.com/Vidigal-code/git-page-docs/releases/tag/v0.0.15"
+    }
+  ],
+  "commit": [
+    {
+      "name": "Guide • cd34292",
+      "url": "https://github.com/Vidigal-code/git-page-docs/commit/cd342928a6650a664d27d68a0c7184557a9291fd"
+    },
+    {
+      "name": "Filesystem • db0d756",
+      "url": "https://github.com/Vidigal-code/git-page-docs/commit/db0d75677b81e965c03f8c6d9b4881fb1b7d96fa"
+    }
+  ]
+}
+\`\`\`
+
+Una lista vacía oculta la categoría. Las cadenas antiguas con una única URL siguen funcionando, como \`"branch": "https://github.com/Vidigal-code/git-page-docs/tree/main"\`; utilizan la etiqueta traducida de la categoría. Las entradas con nombre conservan la etiqueta del autor cuando cambia el idioma de la interfaz. Se eliminan los espacios de los extremos; se ignoran los nombres/URLs vacíos y las entradas malformadas. Los enlaces exactamente duplicados de una categoría aparecen una sola vez, conservando la primera aparición.
+
+Utiliza URLs HTTP(S), preferiblemente absolutas para repositorios externos. Los enlaces relativos seguros siguen siendo compatibles y se resuelven desde la URL actual de la página del visor, no desde la raíz del repositorio Git. Se omiten esquemas no admitidos como \`javascript:\` y \`data:\`. La validación del enlace no comprueba si la rama, release o commit existe; mantén los destinos actualizados.
+
+El botón de enlaces de versión abre un diálogo adaptable para la versión activa de la documentación, agrupado en Branch, Release y Commit. Se omiten los grupos vacíos; cuando los tres están vacíos, el botón de enlaces no aparece. Las listas largas se desplazan dentro del diálogo, y los colores, bordes y superficies siguen el tema seleccionado. Usa Tab/Shift+Tab y Enter para recorrer los enlaces, o Escape/el botón de cierre para salir. Los enlaces son anclas nativas que abren otra pestaña con \`noopener noreferrer\`; no cambian la versión seleccionada de la documentación. Configura el icono o imagen del botón (reactIcon: false utiliza una imagen configurada; sin ella, se mantiene el icono) en \`site.icons.VersionLinks\`, con los mismos campos de apariencia que los demás controles de la cabecera.
 
 ## Navegación y rutas
 
