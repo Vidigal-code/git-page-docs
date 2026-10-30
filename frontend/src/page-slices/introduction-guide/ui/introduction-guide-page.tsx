@@ -23,14 +23,20 @@ import { useActiveSection, scrollToSection } from "../model/use-active-section";
 import { GuideHero } from "./guide-hero";
 import { GuideSidebar } from "./guide-sidebar";
 import { GuideSection } from "./guide-section";
-import { GuideMotionProvider } from "./motion/guide-motion-provider";
+import { GuideMotionProvider, useGuideMotion } from "./motion/guide-motion-provider";
 import { GuideParallaxBackdrop } from "./motion/guide-parallax-backdrop";
 import { GuideReveal } from "./motion/guide-reveal";
 import { GuideStory } from "./story/guide-story";
 import { GuideBackToTop } from "./guide-back-to-top";
 import styles from "./introduction-guide-page.module.css";
+import motionStyles from "./motion/guide-motion.module.css";
 
 const GUIDE_LANGUAGES: LanguageCode[] = ["en", "pt", "es"];
+const GUIDE_ANIMATION_LABELS: Record<string, { pause: string; resume: string; reduced: string }> = {
+  en: { pause: "Pause guide animations", resume: "Resume guide animations", reduced: "Animations reduced by your system" },
+  pt: { pause: "Pausar animações do guia", resume: "Retomar animações do guia", reduced: "Animações reduzidas pelo sistema" },
+  es: { pause: "Pausar animaciones de la guía", resume: "Reanudar animaciones de la guía", reduced: "Animaciones reducidas por el sistema" },
+};
 /** Anchor of the full guide: the story's skip link lands here. */
 const GUIDE_BODY_ID = "guide-body";
 /** Anchor of the hero: "back to top" scrolls here and moves focus to it. */
@@ -43,6 +49,11 @@ const FALLBACK_LANGMENU = {
 
 /** Standalone documentation guide. Self-loads theme/layout config like the not-found shell. */
 export function IntroductionGuidePage() {
+  return <GuideMotionProvider><GuidePageContent /></GuideMotionProvider>;
+}
+
+function GuidePageContent() {
+  const { enabled, reducedMotion, toggle } = useGuideMotion();
   const { config: standaloneConfig } = useStandaloneShellConfig();
   const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
   const themes = standaloneConfig?.themes ?? {};
@@ -69,6 +80,9 @@ export function IntroductionGuidePage() {
   });
 
   const content = useMemo(() => getGuideContent(language), [language]);
+  const animationLabels = GUIDE_ANIMATION_LABELS[language] ?? GUIDE_ANIMATION_LABELS.en;
+  const playbackLabel = animationLabels[enabled ? "pause" : "resume"];
+  const animationLabel = reducedMotion ? animationLabels.reduced : playbackLabel;
   const { query, setQuery, results } = useGuideSearch(content.sections);
   const sectionIds = useMemo(() => content.sections.map((section) => section.id), [content.sections]);
   const { activeId, setActiveId } = useActiveSection(sectionIds);
@@ -123,9 +137,9 @@ export function IntroductionGuidePage() {
   );
 
   return (
-    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars} theme={activeTheme} backgroundEffects={siteConfig?.backgroundEffects} siteConfig={siteConfig ?? undefined}>
-      <GuideMotionProvider>
-        <div className={styles.page}>
+    <SearchShellLayout header={header} footerEnabled projectFooterUrl={PROJECT_FOOTER_URL} language={language} style={cssVars} theme={activeTheme} backgroundEffects={siteConfig?.backgroundEffects} siteConfig={siteConfig ?? undefined}
+      playbackControl={{ paused: !enabled, toggle, label: animationLabel, disabled: reducedMotion }}>
+        <div className={`${styles.page} ${motionStyles.motionRoot} ${enabled ? "" : motionStyles.staticEffects}`} data-guide-motion={enabled ? "enabled" : "disabled"}>
           {!themeBackground && <GuideParallaxBackdrop />}
           <GuideHero
             id={GUIDE_TOP_ID}
@@ -155,7 +169,6 @@ export function IntroductionGuidePage() {
             <GuideBackToTop label={content.ui.backToTop} targetId={GUIDE_TOP_ID} settings={siteConfig?.backToTop} />
           </div>
         </div>
-      </GuideMotionProvider>
     </SearchShellLayout>
   );
 }

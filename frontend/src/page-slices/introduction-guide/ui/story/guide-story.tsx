@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useMemo, useRef, useState, type CSSProperties } from "react";
 import { m, useMotionValueEvent, useScroll } from "motion/react";
 import { buildStoryChapters, chapterAt, formatOrdinal } from "../../model/story";
+import { useStoryNavigation } from "../../model/use-story-navigation";
 import type { GuideSection, GuideUi } from "../../model/types";
 import { StoryChapter } from "./story-chapter";
 import styles from "./guide-story.module.css";
@@ -15,9 +16,8 @@ interface GuideStoryProps {
 }
 
 /**
- * Scroll-driven tour of the guide. The section is as tall as its chapters; a
- * stage pinned to the viewport plays one chapter per slice of the scroll, so the
- * page's own scrolling (wheel, touch, keyboard, scrollbar) drives the animation.
+ * A pinned tour with complete, stationary chapters. Scroll position selects the
+ * chapter; wheel gestures advance one step instead of traversing its contents.
  * Every chapter stays in the document for readers and search, and a skip link
  * jumps straight to the full guide.
  */
@@ -30,14 +30,16 @@ export function GuideStory({ sections, ui, skipTargetId }: Readonly<GuideStoryPr
 
   useMotionValueEvent(scrollYProgress, "change", (value) => setActiveIndex(chapterAt(value, total)));
 
-  const goToChapter = (index: number) => {
+  const goToChapter = useCallback((index: number) => {
     const story = storyRef.current;
     if (!story) return;
     const scrollable = story.offsetHeight - window.innerHeight;
     const top = story.getBoundingClientRect().top + window.scrollY;
     // Aim at the middle of the chapter's slice so it lands fully in.
-    window.scrollTo({ top: top + (scrollable * (index + 0.5)) / total, behavior: "smooth" });
-  };
+    window.scrollTo({ top: top + (scrollable * (index + 0.5)) / total, behavior: "instant" });
+  }, [total]);
+
+  useStoryNavigation({ storyRef, total, goToChapter });
 
   if (total === 0) return null;
 
@@ -76,7 +78,7 @@ export function GuideStory({ sections, ui, skipTargetId }: Readonly<GuideStoryPr
         </nav>
         <div className={styles.scenes}>
           {chapters.map((chapter, index) => (
-            <StoryChapter key={chapter.id} chapter={chapter} index={index} total={total} progress={scrollYProgress} />
+            <StoryChapter key={chapter.id} chapter={chapter} active={index === activeIndex} />
           ))}
         </div>
         <p className={styles.hint} aria-hidden="true">

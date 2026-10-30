@@ -90,7 +90,7 @@ export function VideoContainer(props: Readonly<VideoContainerProps>) {
   const header = resolveContentHeaderText(hideTitleDescription ? undefined : config, language, isDarkMode);
 
   return (
-    <MediaCard frame={props} header={header}>
+    <MediaCard frame={props} header={header} fullscreenContent="persistent">
       <div className={styles.videoWrapper}>
         <MediaElement
           type={type}

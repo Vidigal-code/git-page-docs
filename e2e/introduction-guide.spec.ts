@@ -5,8 +5,8 @@ const THEMES = ["aurora-dark", "emerald-light", "carbon-dark"] as const;
 const MAX_OVERFLOW_PX = 2;
 /** WCAG AA contrast for normal-size text (button labels are 0.95rem, below the "large text" size). */
 const MIN_TEXT_CONTRAST = 4.5;
-/** Hydration plus the hero entrance; generous because the dev server compiles on demand. */
-const ENTRANCE_SETTLE_TIMEOUT_MS = 15_000;
+/** Client controls may arrive after the dev server compiles the guide. */
+const CLIENT_READY_TIMEOUT_MS = 15_000;
 /** A pinned chapter should use at least this share of the stage height (no empty half). */
 const MIN_CHAPTER_HEIGHT_SHARE = 0.55;
 /** A landscape phone: short enough for the tour's stacked-list fallback. */
@@ -49,13 +49,9 @@ async function openGuide(page: Page, theme: string): Promise<string[]> {
   const response = await page.goto(`/introduction-guide?theme=${theme}`);
   expect(response?.ok()).toBe(true);
   await expect(page.getByTestId("guide-parallax-backdrop")).toBeAttached();
-  // The static HTML ships the hero hidden until the client runs its entrance: once
-  // the last row is fully shown the page is hydrated and settled.
-  await expect
-    .poll(() => page.locator("[data-hero-row]").last().evaluate((row) => getComputedStyle(row).opacity), {
-      timeout: ENTRANCE_SETTLE_TIMEOUT_MS,
-    })
-    .toBe("1");
+  // The footer control mounts in a client effect; the hero is already visible in server markup.
+  await expect(page.getByTestId("guide-back-to-top").getByRole("button")).toBeAttached({ timeout: CLIENT_READY_TIMEOUT_MS });
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
   return errors;
 }
 
@@ -353,7 +349,7 @@ test.describe("introduction guide hero", () => {
     await expect(skip).toBeInViewport();
   });
 
-  test("reads the animated title as one heading", async ({ page }) => {
+  test("reads the title as one heading", async ({ page }) => {
     await openGuide(page, THEMES[0]);
     const heading = page.getByRole("heading", { level: 1 });
     await expect(heading).toHaveAccessibleName(/\S/);
@@ -386,14 +382,17 @@ test.describe("introduction guide layout", () => {
     expect(share).toBeGreaterThanOrEqual(MIN_CHAPTER_HEIGHT_SHARE);
   });
 
-  test("takes the reader from the end of the guide back to the top", async ({ page }) => {
+  test("returns to the top on the first rendered frame and restores keyboard focus", async ({ page }) => {
     await openGuide(page, THEMES[0]);
     const backToTop = page.getByRole("button", { name: /top|topo|arriba/i });
     await backToTop.scrollIntoViewIfNeeded();
     await expect(backToTop).toBeInViewport();
 
-    await backToTop.click();
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    const firstFrame = backToTop.evaluate((button) => new Promise<number>((resolve) => {
+      button.addEventListener("click", () => requestAnimationFrame(() => resolve(window.scrollY)), { once: true });
+    }));
+    const [scrollY] = await Promise.all([firstFrame, backToTop.click()]);
+    expect(scrollY).toBe(0);
     await expect(page.locator("#guide-top")).toBeFocused();
   });
 
@@ -439,3 +438,249 @@ test.describe("introduction guide layout", () => {
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(MAX_OVERFLOW_PX);
   });
 });
+
+const QUIET_WINDOW_MS = 250;
+const SETTLE_TIMEOUT_MS = 5000;
+const POSITION_TOLERANCE_PX = 2;
+const GESTURES = [
+  { name: "small", deltas: [40] },
+  { name: "medium", deltas: [300] },
+  { name: "burst", deltas: [2400, 2400, 2400] },
+] as const;
+const DIRECTIONS = [
+  { name: "forward", start: 1, destination: 2, sign: 1 },
+  { name: "reverse", start: 2, destination: 1, sign: -1 },
+] as const;
+
+interface RestingChapter {
+  scrollY: number;
+  chapterOffset: number;
+  headingTop: number;
+  title: string;
+  counter: string;
+}
+
+async function restingChapter(page: Page): Promise<RestingChapter> {
+  return page.evaluate(({ quiet, timeout }) => new Promise<RestingChapter>((resolve, reject) => {
+    const started = performance.now();
+    let lastChange = started;
+    let previous = "";
+    const sample = (now: number): void => {
+      const active = [...document.querySelectorAll("[data-story-chapter]")].find((chapter) => Number(getComputedStyle(chapter).opacity) > 0.5);
+      const heading = active?.querySelector("h2");
+      const state = {
+        scrollY: window.scrollY,
+        chapterOffset: -(document.querySelector('[data-testid="guide-story"]')?.getBoundingClientRect().top ?? 0),
+        headingTop: heading?.getBoundingClientRect().top ?? 0,
+        title: heading?.textContent?.trim() ?? "",
+        counter: document.querySelector('[data-testid="guide-story-counter"]')?.textContent?.trim() ?? "",
+      };
+      const signature = JSON.stringify(state);
+      if (signature !== previous) lastChange = now;
+      previous = signature;
+      if (state.title && now - lastChange >= quiet) resolve(state);
+      else if (now - started >= timeout) reject(new Error("The chapter did not reach a stable reading position"));
+      else requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  }), { quiet: QUIET_WINDOW_MS, timeout: SETTLE_TIMEOUT_MS });
+}
+
+async function prepareChapter(page: Page, index: number): Promise<RestingChapter> {
+  const railButton = page.getByTestId("guide-story").getByRole("navigation").getByRole("button").nth(index);
+  if (await railButton.isVisible()) {
+    await railButton.click();
+  } else {
+    const total = await page.locator("[data-story-chapter]").count();
+    await scrollStoryTo(page, (index + 0.5) / total);
+  }
+  const state = await restingChapter(page);
+  expect(state.counter).toMatch(new RegExp("^" + String(index + 1).padStart(ORDINAL_DIGITS, "0") + " / "));
+  return state;
+}
+
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  test("completes exactly one chapter per wheel gesture in both directions (" + reducedMotion + ")", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    await openGuide(page, TRANSITION_THEME);
+    const reference = new Map<number, RestingChapter>();
+    for (const index of [1, 2]) reference.set(index, await prepareChapter(page, index));
+
+    for (const direction of DIRECTIONS) {
+      for (const gesture of GESTURES) {
+        await test.step(direction.name + " " + gesture.name, async () => {
+          await prepareChapter(page, direction.start);
+          const viewport = page.viewportSize();
+          expect(viewport).not.toBeNull();
+          await page.mouse.move((viewport?.width ?? 0) / 2, (viewport?.height ?? 0) / 2);
+          await Promise.all(gesture.deltas.map((delta) => page.mouse.wheel(0, delta * direction.sign)));
+          const resting = await restingChapter(page);
+          const expected = reference.get(direction.destination);
+          expect(expected).toBeDefined();
+          expect(resting.counter).toBe(expected?.counter);
+          expect(resting.title).toBe(expected?.title);
+          expect(Math.abs(resting.chapterOffset - (expected?.chapterOffset ?? 0))).toBeLessThanOrEqual(POSITION_TOLERANCE_PX);
+          expect(Math.abs(resting.headingTop - (expected?.headingTop ?? 0))).toBeLessThanOrEqual(POSITION_TOLERANCE_PX);
+        });
+      }
+    }
+  });
+}
+
+const KEYBOARD_STEPS = [
+  { key: "ArrowDown", start: 1, destination: 2 },
+  { key: "PageDown", start: 1, destination: 2 },
+  { key: "ArrowUp", start: 2, destination: 1 },
+  { key: "PageUp", start: 2, destination: 1 },
+] as const;
+
+for (const step of KEYBOARD_STEPS) {
+  test("completes one full chapter with " + step.key, async ({ page }) => {
+    await openGuide(page, TRANSITION_THEME);
+    const expected = await prepareChapter(page, step.destination);
+    await prepareChapter(page, step.start);
+    const viewport = page.viewportSize();
+    if (!viewport) throw new Error("The browser viewport is required");
+    await page.mouse.click(viewport.width * 0.9, viewport.height * 0.85);
+    await page.keyboard.press(step.key);
+    const resting = await restingChapter(page);
+    expect(resting.counter).toBe(expected.counter);
+    expect(Math.abs(resting.chapterOffset - expected.chapterOffset)).toBeLessThanOrEqual(POSITION_TOLERANCE_PX);
+  });
+}
+
+test("completes one full chapter after a native touch swipe", async ({ page, hasTouch }) => {
+  test.skip(!hasTouch, "The gesture requires a touch-enabled browser");
+  await openGuide(page, TRANSITION_THEME);
+  const expected = await prepareChapter(page, 2);
+  await prepareChapter(page, 1);
+  const viewport = page.viewportSize();
+  if (!viewport) throw new Error("The browser viewport is required");
+  const client = await page.context().newCDPSession(page);
+  const x = viewport.width / 2;
+  const startY = viewport.height * 0.7;
+  const swipeOffsetsPx = [8, 16, 24, 120];
+  try {
+    await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y: startY }] });
+    for (const offset of swipeOffsetsPx) {
+      await client.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [{ x, y: startY - offset }],
+      });
+      await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+    }
+    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  } finally {
+    await client.detach();
+  }
+  const resting = await restingChapter(page);
+  expect(resting.counter).toBe(expected.counter);
+  expect(Math.abs(resting.chapterOffset - expected.chapterOffset)).toBeLessThanOrEqual(POSITION_TOLERANCE_PX);
+});
+
+interface ChapterLayerPosition {
+  text: string;
+  top: number;
+  width: number;
+}
+
+test("keeps a chapter in a complete reading position between scroll stops", async ({ page }) => {
+  await openGuide(page, TRANSITION_THEME);
+  const total = await page.locator("[data-story-chapter]").count();
+  const positions: ChapterLayerPosition[][] = [];
+  for (const offset of [0.1, 0.9]) {
+    await page.getByTestId("guide-story").evaluate((story, fraction) => {
+      const bounds = story.getBoundingClientRect();
+      window.scrollTo({ top: bounds.top + window.scrollY + (bounds.height - innerHeight) * fraction, behavior: "instant" });
+    }, (1 + offset) / total);
+    await restingChapter(page);
+    const layers = await page.locator("[data-story-chapter]").evaluateAll((chapters) => {
+      const chapter = chapters.find((element) => Number(getComputedStyle(element).opacity) > 0.5);
+      if (!chapter) throw new Error("No visible chapter");
+      return [...chapter.querySelectorAll("h2, p, :scope > span")].map((element) => {
+        const bounds = element.getBoundingClientRect();
+        return { text: element.textContent?.trim() ?? "", top: bounds.top, width: bounds.width };
+      });
+    });
+    positions.push(layers);
+  }
+  expect(positions[0].length).toBeGreaterThan(0);
+  expect(positions[1].map((layer) => layer.text)).toEqual(positions[0].map((layer) => layer.text));
+  for (const [index, layer] of positions[0].entries()) {
+    expect(Math.abs(positions[1][index].top - layer.top)).toBeLessThanOrEqual(POSITION_TOLERANCE_PX);
+    expect(Math.abs(positions[1][index].width - layer.width)).toBeLessThanOrEqual(POSITION_TOLERANCE_PX);
+  }
+});
+
+
+test("allows native scrolling out of both ends of the tour", async ({ page }) => {
+  await openGuide(page, TRANSITION_THEME);
+  const total = await page.locator("[data-story-chapter]").count();
+  const viewport = page.viewportSize();
+  if (!viewport) throw new Error("The browser viewport is required");
+  for (const edge of [
+    { index: 0, delta: -viewport.height * 2, key: "ArrowUp" },
+    { index: total - 1, delta: viewport.height * 2, key: "ArrowDown" },
+  ]) {
+    for (const input of ["wheel", "keyboard"]) {
+      await prepareChapter(page, edge.index);
+      await page.mouse.click(viewport.width * 0.9, viewport.height * 0.85);
+      if (input === "wheel") {
+        const wheelDeltaPx = 60;
+        const wheelEvents = 12;
+        await Promise.all(Array.from({ length: wheelEvents }, () => page.mouse.wheel(0, Math.sign(edge.delta) * wheelDeltaPx)));
+      }
+      else {
+        const repeats = 12;
+        try {
+          for (let repetition = 0; repetition < repeats; repetition += 1) {
+            await page.keyboard.down(edge.key);
+            await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+          }
+        } finally {
+          await page.keyboard.up(edge.key);
+        }
+      }
+      await expect.poll(() => page.getByTestId("guide-story").evaluate((story) => {
+        const bounds = story.getBoundingClientRect();
+        return bounds.top > 0 || bounds.bottom < innerHeight;
+      })).toBe(true);
+    }
+  }
+});
+
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  test("pauses guide effects without resetting the selected chapter (" + reducedMotion + ")", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    const errors = await openGuide(page, TRANSITION_THEME);
+    await prepareChapter(page, 1);
+    const menu = page.getByRole("button", { name: "Open menu", exact: true });
+    if (await menu.isVisible()) await menu.click();
+    const before = await restingChapter(page);
+    const heading = await page.getByTestId("guide-story").getByRole("heading", { name: before.title, exact: true }).elementHandle();
+    const motionRoot = page.locator("[data-guide-motion]");
+    if (reducedMotion === "no-preference") {
+      const pause = page.getByRole("button", { name: "Pause guide animations", exact: true });
+      await expect(pause).toHaveCount(1);
+      await expect(pause).toHaveAttribute("aria-pressed", "false");
+      await pause.click();
+    }
+    const resume = page.getByRole("button", {
+      name: reducedMotion === "reduce" ? "Animations reduced by your system" : "Resume guide animations",
+      exact: true,
+    });
+    await expect(resume).toHaveAttribute("aria-pressed", "true");
+    await expect(motionRoot).toHaveAttribute("data-guide-motion", "disabled");
+    await expect(page.getByTestId("guide-story-counter")).toHaveText(before.counter);
+    expect(await heading?.evaluate((element) => element.isConnected)).toBe(true);
+    expect(await page.evaluate(() => window.scrollY)).toBe(before.scrollY);
+    const pausedTransforms = await page.locator("[data-parallax-layer]").evaluateAll((layers) => layers.map((layer) => getComputedStyle(layer).transform));
+    expect(new Set(pausedTransforms)).toEqual(new Set(["none"]));
+    if (reducedMotion === "reduce") await expect(resume).toBeDisabled();
+    else await resume.click();
+    await expect(motionRoot).toHaveAttribute("data-guide-motion", reducedMotion === "reduce" ? "disabled" : "enabled");
+    await expect(page.getByTestId("guide-story-counter")).toHaveText(before.counter);
+    expect(await heading?.evaluate((element) => element.isConnected)).toBe(true);
+    expect(errors).toEqual([]);
+  });
+}

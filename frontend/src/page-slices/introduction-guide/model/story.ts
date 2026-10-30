@@ -1,5 +1,4 @@
 import type { GuideBlock, GuideSection } from "./types";
-import { STORY_DEPTH } from "./motion-config";
 
 /** One scene of the scroll story, derived from a guide section. */
 export interface StoryChapter {
@@ -15,31 +14,9 @@ export interface StoryChapter {
   highlights: string[];
 }
 
-/** Scroll progress (0..1) at which a chapter's parallax enters, rests and leaves. */
-export interface ChapterWindow {
-  start: number;
-  enter: number;
-  exit: number;
-  end: number;
-}
-
-/** Keyframes for one chapter: strictly increasing inputs and the matching outputs. */
-export interface ChapterTimeline {
-  input: number[];
-  /** -1..1: 1 = still below (entering), 0 = in place, -1 = above (leaving). */
-  shift: number[];
-}
-
 export const STORY_HIGHLIGHT_LIMIT = 4;
-/** Half-width of the parallax movement around each chapter boundary. */
-const CHAPTER_DRIFT_SHARE = 0.2;
 const ORDINAL_DIGITS = 2;
-const PROGRESS_PRECISION = 1e4;
 const CODE_COMMENT_PREFIX = "#";
-
-function round(value: number): number {
-  return Math.round(value * PROGRESS_PRECISION) / PROGRESS_PRECISION;
-}
 
 export function formatOrdinal(position: number): string {
   return String(position).padStart(ORDINAL_DIGITS, "0");
@@ -77,44 +54,7 @@ export function buildStoryChapters(sections: readonly GuideSection[]): StoryChap
   }));
 }
 
-/** Adjacent parallax windows overlap while chapterAt selects the visible chapter. */
-export function chapterWindow(index: number, total: number): ChapterWindow {
-  const slice = 1 / total;
-  const boundaryStart = index * slice;
-  const boundaryEnd = (index + 1) * slice;
-  const drift = slice * CHAPTER_DRIFT_SHARE;
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
-  return {
-    start: isFirst ? 0 : round(boundaryStart - drift),
-    enter: isFirst ? 0 : round(boundaryStart + drift),
-    exit: isLast ? 1 : round(boundaryEnd - drift),
-    end: isLast ? 1 : round(boundaryEnd + drift),
-  };
-}
-
-/** Motion keyframes for a chapter; duplicate inputs (first/last chapter) are dropped. */
-export function chapterTimeline(index: number, total: number): ChapterTimeline {
-  const slice = chapterWindow(index, total);
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
-  const points: Array<[number, number]> = [];
-  if (!isFirst) points.push([slice.start, 1]);
-  points.push([slice.enter, 0], [slice.exit, 0]);
-  if (!isLast) points.push([slice.end, -1]);
-  const unique = points.filter((point, i) => i === 0 || point[0] > points[i - 1][0]);
-  return {
-    input: unique.map(([input]) => input),
-    shift: unique.map(([, shift]) => shift),
-  };
-}
-
 /** Index of the chapter that owns a scroll progress value. */
 export function chapterAt(progress: number, total: number): number {
   return Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
-}
-
-/** Parallax travel (px) of the highlight at `index`: later items sit deeper, so the list cascades in. */
-export function highlightDepth(index: number): number {
-  return STORY_DEPTH.detailsPx * (1 + index * STORY_DEPTH.highlightStepShare);
 }

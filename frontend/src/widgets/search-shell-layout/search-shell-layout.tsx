@@ -47,6 +47,13 @@ function resolveBackgroundControl({ siteConfig, language, paused, mode }: Backgr
 export type { FooterConfig };
 export type SearchShellHeaderSlot = ReactNode | ((backgroundControl: ReactNode) => ReactNode);
 
+interface SearchShellPlaybackControl {
+  readonly paused: boolean;
+  readonly toggle: () => void;
+  readonly label: string;
+  readonly disabled?: boolean;
+}
+
 interface SearchShellLayoutProps {
   children: ReactNode;
   header: SearchShellHeaderSlot;
@@ -58,6 +65,7 @@ interface SearchShellLayoutProps {
   theme?: ThemeTemplate;
   backgroundEffects?: SiteBackgroundEffectsConfig;
   siteConfig?: Partial<SiteConfig>;
+  playbackControl?: SearchShellPlaybackControl;
 }
 
 export function SearchShellLayout({
@@ -71,15 +79,18 @@ export function SearchShellLayout({
   theme,
   backgroundEffects,
   siteConfig,
+  playbackControl,
 }: Readonly<SearchShellLayoutProps>) {
   const background = useMemo(
     () => resolveThemeBackground({ theme, settings: backgroundEffects }),
     [theme, backgroundEffects],
   );
   const playback = useThemeBackgroundPlayback(background);
-  const backgroundControl = playback.showControl ? (
-    <BackgroundAnimationControl paused={playback.paused} onToggle={playback.toggle}
-      {...resolveBackgroundControl({ siteConfig, language, paused: playback.paused, mode: theme?.mode === "light" ? "light" : "dark" })} />
+  const paused = playbackControl?.paused ?? playback.paused;
+  const appearance = resolveBackgroundControl({ siteConfig, language, paused, mode: theme?.mode === "light" ? "light" : "dark" });
+  const backgroundControl = playbackControl || playback.showControl ? (
+    <BackgroundAnimationControl paused={paused} onToggle={playbackControl?.toggle ?? playback.toggle}
+      {...appearance} label={playbackControl?.label ?? appearance.label} disabled={playbackControl?.disabled} />
   ) : null;
   // Keeps the window scrollbar (owned by <html>, outside this wrapper) on the
   // active palette across live theme switches.
@@ -94,7 +105,7 @@ export function SearchShellLayout({
 
   return (
     <div className={styles.wrapper} style={style} data-background-effects={Boolean(background)}>
-      {background && <ThemeBackground key={theme?.id} config={background} paused={playback.paused} />}
+      {background && <ThemeBackground key={theme?.id} config={background} paused={paused} />}
       {typeof header === "function" ? header(backgroundControl) : header}
       <main className={styles.main}>{children}</main>
       {footerEnabled && (

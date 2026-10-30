@@ -162,6 +162,8 @@
    width, so the chapter fills the screen instead of leaving an empty half. */
 .chapter {
   position: absolute;
+  opacity: 0;
+  pointer-events: none;
   inset: 0;
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -172,6 +174,11 @@
   column-gap: clamp(32px, 5vw, 72px);
   row-gap: clamp(12px, 2.5svh, 28px);
   padding: var(--story-content-gap) 0 var(--story-bottom-gap) calc(var(--story-rail-width) + 24px);
+}
+
+.chapter[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .numeral {
@@ -303,19 +310,6 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  animation: storyHint 2.2s ease-in-out infinite;
-}
-
-@keyframes storyHint {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: translate(-50%, 0);
-  }
-  50% {
-    opacity: 0.9;
-    transform: translate(-50%, 6px);
-  }
 }
 
 /* ---- Narrow screens: one column, no rail ---- */
@@ -418,35 +412,7 @@
     position: relative;
     inset: auto;
     padding: 0;
-    /* Scroll-driven opacity is written inline by Motion. */
-    opacity: 1 !important;
-  }
-}
-
-/* ---- Reduced motion and the stacked list: nothing travels, zooms or bounces
-   (Motion writes the depth inline, hence the override). Scrolling still selects
-   one chapter at a time when the visitor prefers reduced motion. ---- */
-@media (prefers-reduced-motion: reduce), (max-height: 520px) {
-  .numeral,
-  .headline,
-  .body,
-  .highlight {
-    transform: none !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hint {
-    animation-name: storyHintFade;
-  }
-}
-
-@keyframes storyHintFade {
-  0%,
-  100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 0.9;
+    opacity: 1;
+    pointer-events: auto;
   }
 }

@@ -15,6 +15,12 @@ Routes define page content; menus define how readers reach it. Configure them in
 
 The `/introduction-guide` route is available in repository-search builds. Its chapter tour follows native page scrolling. Starting with viewer version 0.0.16, stopping at a chapter transition keeps the text readable without adjacent chapters overlapping. Parallax effects, reduced-motion preferences and the stacked layout for short landscape viewports remain supported.
 
+Viewer version 0.0.18 advances or returns one chapter per wheel/trackpad gesture, keyboard step or vertical swipe. Chapter changes and chapter-rail selections are immediate, so text does not stop between scenes. Back to top also jumps immediately and focuses the hero. Short landscape viewports retain the stacked reading layout.
+
+One play/pause button in the header controls the guide effects and the selected theme's animated background together, including the fallback backdrop for legacy themes. Effects start enabled; pausing preserves the current chapter and content. The operating system's reduced-motion preference always takes precedence; the disabled control explains when the system has reduced animations. The title is visible from the first render without animated blur or per-character stagger; optional parallax uses small offsets and section reveals are brief. The controls do not alter existing theme palettes.
+
+Expanding video, audio or HTML preserves the selected file and the same player or iframe instance when opening and closing. The viewer requests native fullscreen when available; Escape or browser controls close it and synchronize the URL. If fullscreen is unavailable or denied, the same content expands inside the page without a modal, with a close button and Escape handling within the expanded region. Markdown and PDF keep their existing viewing behavior.
+
 ## Build a menu tree
 
 Each `menus-header-md` entry has an `id` and localized `pt`, `en`, `es` objects with `title` and optional `path-click`. Add `submenus` containing more entries to nest the tree. A language object may also contain localized `submenus` with the same title/path structure. Use one form consistently to avoid listing the same child twice.

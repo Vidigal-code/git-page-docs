@@ -22,6 +22,7 @@ export function AudioContainer(props: Readonly<AudioContainerProps>) {
   return (
     <MediaCard
       frame={props}
+      fullscreenContent="persistent"
       header={resolveContentHeaderText(config, language, isDarkMode)}
       fullscreenAlign={getFullscreenAlign("audio")}
     >

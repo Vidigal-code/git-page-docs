@@ -170,7 +170,7 @@ for (const container of [
   test(`${container.type} fullscreen keeps its owner and remains open while changing container pages`, async ({ page }) => {
     const main = await openPaginatedPage(page);
     await main.getByRole("button", { name: "Show menu", exact: true }).nth(container.index).click();
-    const fullscreen = page.getByRole("dialog", { name: "Close", exact: true });
+    const fullscreen = page.getByRole(container.type === "HTML" ? "region" : "dialog", { name: "Close", exact: true });
     await expect(fullscreen).toHaveCount(1);
     const pages = fullscreen.getByRole("navigation", { name: "Pages", exact: true });
     await expect(pages.getByRole("status")).toHaveText(`Pages 1 / ${container.count}`);

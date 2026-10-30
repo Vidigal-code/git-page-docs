@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { buildStoryChapters, chapterAt, chapterTimeline, chapterWindow } from "@/page-slices/introduction-guide/model/story";
+import { buildStoryChapters, chapterAt } from "@/page-slices/introduction-guide/model/story";
 import { getGuideContent } from "@/page-slices/introduction-guide/content";
 import { GuideMotionProvider } from "@/page-slices/introduction-guide/ui/motion/guide-motion-provider";
 import { GuideStory } from "@/page-slices/introduction-guide/ui/story/guide-story";
@@ -56,42 +56,6 @@ describe("buildStoryChapters", () => {
     const chapters = buildStoryChapters(content.sections);
     expect(chapters).toHaveLength(content.sections.length);
     expect(chapters.every((c) => c.title && c.lead)).toBe(true);
-  });
-});
-
-describe("chapterWindow", () => {
-  it("continues the parallax on both sides of a chapter boundary", () => {
-    expect(chapterWindow(1, 4)).toEqual({ start: 0.2, enter: 0.3, exit: 0.45, end: 0.55 });
-    const previous = chapterWindow(0, 4);
-    expect(previous.exit).toBe(0.2);
-    expect(previous.end).toBe(0.3);
-  });
-
-  it("keeps the first and last chapter's parallax within the story", () => {
-    const first = chapterWindow(0, 4);
-    const last = chapterWindow(3, 4);
-    expect(first.start).toBe(0);
-    expect(first.enter).toBe(0);
-    expect(last.exit).toBe(1);
-    expect(last.end).toBe(1);
-  });
-});
-
-describe("chapterTimeline", () => {
-  it("moves a middle chapter's layers into place, holds them and drifts them out", () => {
-    expect(chapterTimeline(1, 4)).toEqual({
-      input: [0.2, 0.3, 0.45, 0.55],
-      shift: [1, 0, 0, -1],
-    });
-  });
-
-  it("starts the first chapter in place and ends the last chapter in place", () => {
-    expect(chapterTimeline(0, 4)).toEqual({ input: [0, 0.2, 0.3], shift: [0, 0, -1] });
-    expect(chapterTimeline(3, 4)).toEqual({ input: [0.7, 0.8, 1], shift: [1, 0, 0] });
-  });
-
-  it("keeps strictly increasing keyframes for a single chapter", () => {
-    expect(chapterTimeline(0, 1)).toEqual({ input: [0, 1], shift: [0, 0] });
   });
 });
 

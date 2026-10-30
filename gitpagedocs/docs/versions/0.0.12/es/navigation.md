@@ -15,6 +15,12 @@ Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúra
 
 La ruta `/introduction-guide` está disponible en los builds con búsqueda de repositorios. Su recorrido por capítulos sigue el desplazamiento nativo de la página. A partir de la versión 0.0.16 del visor, detenerse en una transición mantiene el texto legible, sin superposición entre capítulos adyacentes. Se conservan los efectos de parallax, la preferencia de movimiento reducido y el diseño en lista para ventanas de poca altura en orientación horizontal.
 
+En la versión 0.0.18 del visor, cada gesto de rueda/trackpad, paso con el teclado o deslizamiento vertical avanza o retrocede un capítulo. Los cambios de capítulo y las selecciones en la lista lateral son inmediatos, sin dejar el texto detenido entre escenas. Volver arriba también salta inmediatamente y enfoca la presentación inicial. Las ventanas de poca altura en orientación horizontal conservan el diseño de lectura en lista.
+
+Un único botón de reproducir/pausar en la cabecera controla los efectos de la guía y el fondo animado del tema seleccionado, incluido el fondo alternativo de los temas antiguos. Los efectos empiezan activos; pausarlos conserva el capítulo y el contenido actuales. La preferencia de movimiento reducido del sistema operativo siempre prevalece; el control deshabilitado explica cuándo el sistema ha reducido las animaciones. El título es visible desde el primer renderizado, sin desenfoque animado ni entrada escalonada por carácter; el parallax opcional utiliza desplazamientos pequeños y las apariciones de las secciones son breves. Los controles no modifican las paletas de los temas existentes.
+
+Expandir vídeo, audio o HTML conserva el archivo seleccionado y la misma instancia del reproductor o iframe al abrir y cerrar. El visor solicita pantalla completa nativa cuando está disponible; Escape o los controles del navegador cierran la expansión y sincronizan la URL. Si la pantalla completa no está disponible o se rechaza, el mismo contenido se expande dentro de la página, sin un modal, con un botón de cierre y Escape dentro de la región expandida. Markdown y PDF mantienen su comportamiento de visualización existente.
+
 ## Crear el árbol de menús
 
 Cada entrada de `menus-header-md` tiene `id` y objetos `pt`, `en`, `es` con `title` y `path-click` opcional. Añade `submenus` con nuevas entradas para anidar el árbol. El objeto de un idioma también acepta `submenus` localizados con título/ruta. Utiliza una forma de manera consistente para no listar el mismo hijo dos veces.

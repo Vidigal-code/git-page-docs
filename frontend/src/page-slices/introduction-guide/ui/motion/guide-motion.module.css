@@ -1,3 +1,37 @@
+.staticEffects,
+.staticEffects *,
+.staticEffects *::before,
+.staticEffects *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.staticEffects [data-guide-back-link] {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motionRoot,
+  .motionRoot *,
+  .motionRoot *::before,
+  .motionRoot *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .motionRoot [data-guide-back-link],
+  .motionRoot [data-parallax-layer],
+  .motionRoot [data-hero-row],
+  .motionRoot [data-guide-reveal] {
+    transform: none !important;
+  }
+
+  .motionRoot [data-guide-reveal],
+  .motionRoot [data-guide-hero-stage] {
+    opacity: 1 !important;
+  }
+}
+
 /* Decorative parallax backdrop of the introduction guide. Colours come from
    the active theme tokens, so every layout (light or dark) gets matching glows. */
 .backdrop {
@@ -24,7 +58,9 @@
 .layer {
   position: absolute;
   border-radius: 50%;
-  filter: blur(72px);
+}
+
+.backdrop[data-motion="enabled"] .layer {
   will-change: transform;
 }
 
@@ -55,10 +91,4 @@
   right: -10%;
   width: min(48vw, 460px);
   aspect-ratio: 1;
-}
-
-@media (max-width: 640px) {
-  .layer {
-    filter: blur(56px);
-  }
 }

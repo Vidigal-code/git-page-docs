@@ -15,6 +15,12 @@ Rotas definem o conteúdo; menus definem como o leitor o encontra. Configure-os 
 
 A rota `/introduction-guide` está disponível nos builds com busca de repositórios. Seu tour de capítulos acompanha a rolagem nativa da página. A partir da versão 0.0.16 do visualizador, parar em uma transição mantém o texto legível, sem sobreposição entre capítulos adjacentes. Os efeitos de parallax, a preferência por movimento reduzido e o layout em lista para telas baixas em orientação paisagem continuam disponíveis.
 
+Na versão 0.0.18 do visualizador, cada gesto da roda do mouse/trackpad, passo pelo teclado ou deslize vertical avança ou retorna um capítulo. A troca de capítulo e a seleção na lista lateral são imediatas, sem deixar o texto parado entre cenas. Voltar ao topo também salta imediatamente e coloca o foco na apresentação inicial. Telas baixas em orientação paisagem mantêm o layout de leitura em lista.
+
+Um único botão de reproduzir/pausar no cabeçalho controla os efeitos do guia e o fundo animado do tema selecionado, incluindo o fundo alternativo dos temas antigos. Os efeitos começam ativos; pausar preserva o capítulo e o conteúdo atuais. A preferência do sistema operacional por movimento reduzido sempre prevalece; o controle desabilitado explica quando o sistema reduziu as animações. O título fica visível desde a primeira renderização, sem blur animado ou entrada escalonada por caractere; o parallax opcional usa deslocamentos pequenos e as aparições das seções são breves. Os controles não alteram as paletas dos temas existentes.
+
+Expandir vídeo, áudio ou HTML preserva o arquivo selecionado e a mesma instância do player ou iframe ao abrir e fechar. O visualizador solicita tela cheia nativa quando disponível; Escape ou os controles do navegador fecham a expansão e sincronizam a URL. Se a tela cheia não estiver disponível ou for negada, o mesmo conteúdo se expande dentro da página, sem modal, com botão de fechar e Escape dentro da região expandida. Markdown e PDF mantêm o comportamento de visualização existente.
+
 ## Montar a árvore de menus
 
 Cada entrada de `menus-header-md` tem `id` e objetos `pt`, `en`, `es` com `title` e `path-click` opcional. Adicione `submenus` com novas entradas para aninhar a árvore. O objeto de um idioma também aceita `submenus` localizados com título/caminho. Use uma forma de maneira consistente para não listar o mesmo filho duas vezes.

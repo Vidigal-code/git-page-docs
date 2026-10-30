@@ -139,7 +139,7 @@ export function HtmlContainer(props: Readonly<HtmlContainerProps>) {
   );
 
   return (
-    <RouteContentFrame frame={props}
+    <RouteContentFrame frame={props} fullscreenContent="persistent"
       header={metadata({ placement: "outside", position: "before" })}
       footer={metadata({ placement: "outside", position: "after" })}>
       {content}

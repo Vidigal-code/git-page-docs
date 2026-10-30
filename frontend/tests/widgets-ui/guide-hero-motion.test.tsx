@@ -2,8 +2,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { splitGlyphs, splitWords } from "@/page-slices/introduction-guide/model/hero-motion";
-import { highlightDepth } from "@/page-slices/introduction-guide/model/story";
-import { STORY_DEPTH } from "@/page-slices/introduction-guide/model/motion-config";
 import { getGuideContent } from "@/page-slices/introduction-guide/content";
 import { GuideMotionProvider } from "@/page-slices/introduction-guide/ui/motion/guide-motion-provider";
 import { GuideHero } from "@/page-slices/introduction-guide/ui/guide-hero";
@@ -22,14 +20,6 @@ describe("splitWords", () => {
     const words = splitWords("Git  Page Docs");
     expect(words.map((w) => w.glyphs.map((g) => g.char).join(""))).toEqual(["Git", "Page", "Docs"]);
     expect(new Set(words.map((w) => w.key)).size).toBe(3);
-  });
-});
-
-describe("highlightDepth", () => {
-  it("pushes each later highlight a little deeper than the details column", () => {
-    expect(highlightDepth(0)).toBe(STORY_DEPTH.detailsPx);
-    expect(highlightDepth(1)).toBeGreaterThan(highlightDepth(0));
-    expect(highlightDepth(3)).toBeGreaterThan(highlightDepth(2));
   });
 });
 
@@ -55,7 +45,7 @@ describe("GuideHero", () => {
     vi.unstubAllGlobals();
   });
 
-  it("names the heading with the whole title while its letters animate separately", () => {
+  it("names the heading with the whole title while keeping its glyphs static", () => {
     const { hero } = getGuideContent("pt");
     render(
       <GuideMotionProvider>

@@ -16,13 +16,14 @@ interface GuideBackToTopProps {
  * Closing icon button (an up arrow, named by `label` for assistive tech and as
  * a tooltip): scrolls back to the top of the guide and moves
  * keyboard focus there, so the next Tab continues from the top instead of the
- * footer. The scroll is smooth unless the visitor asks for reduced motion.
+ * footer. The guide returns instantly without animating through its chapters.
  */
 export function GuideBackToTop({ label, targetId, settings }: Readonly<GuideBackToTopProps>) {
   return (
     <BackToTop
       label={label}
       targetId={targetId}
+      scrollBehavior="instant"
       enabled={settings?.enabled}
       minPageHeightViewports={settings?.minPageHeightViewports}
       className={styles.backToTop}

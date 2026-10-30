@@ -43,3 +43,12 @@ it("preserves the original guide backdrop for a legacy theme", async () => {
   expect(screen.getByTestId("guide-parallax-backdrop")).toBeTruthy();
   expect(document.querySelector('[data-background-effects="true"]')).toBeNull();
 });
+
+it("explains when the system controls guide animations", async () => {
+  serveTheme();
+  render(<IntroductionGuidePage />);
+  await screen.findByRole("link", { name: "Test docs" });
+  const control = screen.getByRole("button", { name: "Animations reduced by your system" });
+  expect(control.hasAttribute("disabled")).toBe(true);
+  expect(control.getAttribute("aria-pressed")).toBe("true");
+});

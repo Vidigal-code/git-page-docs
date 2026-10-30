@@ -1,14 +1,13 @@
 "use client";
 
-import { m, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { m, useScroll, useTransform, type MotionValue } from "motion/react";
 import { PARALLAX_LAYERS, type ParallaxLayerSpec } from "../../model/motion-config";
+import { useGuideMotion } from "./guide-motion-provider";
 import styles from "./guide-motion.module.css";
 
 interface ParallaxLayerProps {
   readonly spec: ParallaxLayerSpec;
   readonly progress: MotionValue<number>;
-  /** Travel actually applied: the configured one, or 0 for reduced motion. */
-  readonly travelPx: number;
 }
 
 function layerClassName(spec: ParallaxLayerSpec): string {
@@ -17,9 +16,10 @@ function layerClassName(spec: ParallaxLayerSpec): string {
   return [styles.layer, positionClass, tintClass].join(" ");
 }
 
-function ParallaxLayer({ spec, progress, travelPx }: Readonly<ParallaxLayerProps>) {
-  const y = useTransform(progress, [0, 1], [0, travelPx]);
-  return <m.div data-parallax-layer={spec.id} className={layerClassName(spec)} style={{ y }} />;
+function ParallaxLayer({ spec, progress }: Readonly<ParallaxLayerProps>) {
+  const { enabled } = useGuideMotion();
+  const y = useTransform(progress, [0, 1], [0, spec.travelPx]);
+  return <m.div data-parallax-layer={spec.id} className={layerClassName(spec)} style={{ y: enabled ? y : 0 }} />;
 }
 
 /**
@@ -30,11 +30,11 @@ function ParallaxLayer({ spec, progress, travelPx }: Readonly<ParallaxLayerProps
  */
 export function GuideParallaxBackdrop() {
   const { scrollYProgress } = useScroll();
-  const reduceMotion = useReducedMotion();
+  const { enabled } = useGuideMotion();
   return (
-    <div className={styles.backdrop} aria-hidden="true" data-testid="guide-parallax-backdrop">
+    <div className={styles.backdrop} aria-hidden="true" data-testid="guide-parallax-backdrop" data-motion={enabled ? "enabled" : "disabled"}>
       {PARALLAX_LAYERS.map((spec) => (
-        <ParallaxLayer key={spec.id} spec={spec} progress={scrollYProgress} travelPx={reduceMotion ? 0 : spec.travelPx} />
+        <ParallaxLayer key={spec.id} spec={spec} progress={scrollYProgress} />
       ))}
     </div>
   );

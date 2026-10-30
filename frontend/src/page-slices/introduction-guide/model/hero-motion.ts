@@ -1,4 +1,4 @@
-/** One rendered character of an animated title, with a key that stays stable across renders. */
+/** One rendered character of a title, with a key that stays stable across renders. */
 export interface Glyph {
   readonly key: string;
   readonly char: string;
@@ -6,7 +6,7 @@ export interface Glyph {
 
 /**
  * Splits text into user-perceived characters (grapheme clusters), so accented
- * letters and emoji animate as one glyph instead of breaking apart.
+ * letters and emoji stay together instead of breaking apart.
  */
 export function splitGlyphs(text: string): Glyph[] {
   const chars =
@@ -16,7 +16,7 @@ export function splitGlyphs(text: string): Glyph[] {
   return chars.map((char, index) => ({ key: `${index}-${char}`, char }));
 }
 
-/** A word of an animated title: its glyphs animate one by one, but the word never breaks across lines. */
+/** A word whose glyphs stay together across line breaks. */
 export interface GlyphWord {
   readonly key: string;
   readonly glyphs: Glyph[];

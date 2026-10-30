@@ -3,6 +3,14 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.18 - 2026-10-30 - immediate guide navigation and optional effects
+
+- Advance or return one introduction-guide chapter per wheel/trackpad gesture, keyboard step or vertical swipe. Change chapters immediately, preserve readable scenes and make chapter-rail selections and back to top immediate.
+- Add one header play/pause control for guide effects and the theme background without resetting the selected chapter. Respect reduced-motion preferences and hydrate the control consistently with the server-rendered page.
+- Render the hero immediately, remove animated blur and per-character stagger, reduce parallax offsets and shorten section reveals. Preserve existing theme palettes and the stacked layout for short landscape viewports.
+- Preserve the selected video, audio or HTML file and its player/iframe instance when expanding and closing. Use native fullscreen when available, with inline expansion when unavailable or denied, and synchronize Escape/browser exits with the URL.
+- Update the CLI, shared tools and MCP packages to 0.0.18. Register all ten documentation versions from 0.0.18 through 0.0.9 and refresh the English, Portuguese and Spanish references.
+
 ## 0.0.17 - 2026-10-29 - named links for documentation versions
 
 - Allow each documentation version to configure multiple named branch, release and commit links. Preserve Unicode names and configured order while keeping legacy single-URL strings compatible.

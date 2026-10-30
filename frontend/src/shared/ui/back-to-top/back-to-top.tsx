@@ -8,6 +8,7 @@ import styles from "./back-to-top.module.css";
 interface BackToTopProps {
   label: string;
   targetId: string;
+  scrollBehavior?: ScrollBehavior;
   enabled?: boolean;
   minPageHeightViewports?: number;
   className?: string;
@@ -48,7 +49,7 @@ export function BackToTop(props: Readonly<BackToTopProps>): ReactElement | null 
   const returnToTop = () => {
     const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     document.getElementById(props.targetId)?.focus({ preventScroll: true });
-    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    window.scrollTo({ top: 0, behavior: props.scrollBehavior ?? (reduceMotion ? "auto" : "smooth") });
   };
 
   if (!enabled || !isLongPage) return null;

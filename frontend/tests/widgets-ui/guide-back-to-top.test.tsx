@@ -42,19 +42,19 @@ describe("GuideBackToTop", () => {
     expect(screen.getByRole("button", { name: ui.backToTop })).toBeTruthy();
   });
 
-  it("scrolls to the top smoothly and moves focus to the top of the page", () => {
-    const target = document.createElement("header");
-    target.id = "guide-top";
-    target.tabIndex = -1;
-    document.body.append(target);
+  it.each([false, true])("returns to the guide top instantly with reduced motion %s", (reducedMotion) => {
+    vi.mocked(window.matchMedia).mockReturnValue({
+      ...window.matchMedia("(prefers-reduced-motion: reduce)"),
+      matches: reducedMotion,
+    });
     render(
-      <GuideMotionProvider>
+      <>
+        <header id="guide-top" tabIndex={-1}>Guide</header>
         <GuideBackToTop label="Back to top" targetId="guide-top" />
-      </GuideMotionProvider>,
+      </>,
     );
     fireEvent.click(screen.getByRole("button", { name: "Back to top" }));
-    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
-    expect(document.activeElement).toBe(target);
-    target.remove();
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
+    expect(document.activeElement).toBe(screen.getByRole("banner"));
   });
 });
