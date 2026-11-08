@@ -76,4 +76,6 @@ Os controles de idioma, tema e animação usam os ícones oficiais padrão enqua
 
 A trilha de navegação tem `1rem` de espaço acima e abaixo (16 pixels CSS no tamanho padrão da fonte raiz). Os seletores móveis preenchem as linhas do menu com ícones centralizados; os seletores do cabeçalho desktop mantêm dimensões compactas.
 
+Desde a 0.0.22, os controles do cabeçalho da documentação exibem um ícone padrão enquanto o ícone configurado carrega, evitando controles vazios. O ícone configurado substitui esse padrão quando está pronto; uma preferência explícita por texto continua como texto. Em telas estreitas, os controles de ações Markdown reservam espaço próprio antes do título do documento, sem cobri-lo.
+
 > Versão: 0.0.14

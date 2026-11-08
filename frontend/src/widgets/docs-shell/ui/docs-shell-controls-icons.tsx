@@ -1,5 +1,10 @@
 import Image from "next/image";
+import type { ReactElement, ReactNode } from "react";
+import { FaGithubAlt } from "@react-icons/all-files/fa/FaGithubAlt";
+import { FaCodeBranch } from "@react-icons/all-files/fa/FaCodeBranch";
+import { BsInfoSquareFill } from "@react-icons/all-files/bs/BsInfoSquareFill";
 import type { VersionLinkOption } from "@/entities/docs";
+import { FiExternalLink } from "@/shared/ui/fallback-icons";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import styles from "../docs-shell.module.css";
 
@@ -44,14 +49,15 @@ interface ControlIconSource {
   image: string | undefined;
   imgWidth: number;
   imgHeight: number;
+  fallback: ReactNode;
 }
 
 /** The configured image when no react icon is requested, else the react icon slot (which also renders the default tag). */
-function renderControlIcon({ useReactIcon, tag, style, image, imgWidth, imgHeight }: ControlIconSource) {
+function renderControlIcon({ useReactIcon, tag, style, image, imgWidth, imgHeight, fallback }: ControlIconSource) {
   if (!useReactIcon && image) {
     return <Image src={image} alt="" width={imgWidth} height={imgHeight} className={styles.headerIcon} unoptimized />;
   }
-  return <ReactIconByTag tag={tag} style={style} />;
+  return <ReactIconByTag tag={tag} style={style} fallback={fallback} />;
 }
 
 export function DocsShellControlsIcons({
@@ -86,7 +92,7 @@ export function DocsShellControlsIcons({
   previewIconImage,
   onOpenVersionLinksPopup,
   onOpenInfoPopup,
-}: Readonly<DocsShellControlsIconsProps>) {
+}: Readonly<DocsShellControlsIconsProps>): ReactElement {
   return (
     <>
       {fallbackProjectLink && (
@@ -99,7 +105,11 @@ export function DocsShellControlsIcons({
           title={projectLabel}
         >
           {useReactProjectLinkIcon ? (
-            <ReactIconByTag tag={projectLinkReactIconTag} style={projectLinkReactIconStyle} />
+            <ReactIconByTag
+              tag={projectLinkReactIconTag}
+              style={projectLinkReactIconStyle}
+              fallback={<FaGithubAlt aria-hidden style={projectLinkReactIconStyle} />}
+            />
           ) : (
             <svg viewBox="0 0 24 24" aria-hidden className={styles.githubIcon}>
               <path
@@ -119,6 +129,7 @@ export function DocsShellControlsIcons({
             image: versionLinksIconImage,
             imgWidth: versionLinksIconImgWidth,
             imgHeight: versionLinksIconImgHeight,
+            fallback: <FaCodeBranch aria-hidden style={versionLinksIconStyle} />,
           })}
         </button>
       )}
@@ -131,6 +142,7 @@ export function DocsShellControlsIcons({
             image: infoIconImage,
             imgWidth: infoIconImgWidth,
             imgHeight: infoIconImgHeight,
+            fallback: <BsInfoSquareFill aria-hidden style={infoIconStyle} />,
           })}
         </button>
       )}
@@ -150,6 +162,7 @@ export function DocsShellControlsIcons({
             image: previewIconImage,
             imgWidth: previewIconImgWidth,
             imgHeight: previewIconImgHeight,
+            fallback: <FiExternalLink aria-hidden style={previewIconStyle} />,
           })}
         </a>
       )}

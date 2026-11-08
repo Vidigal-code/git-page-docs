@@ -1,4 +1,5 @@
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import type { ReactElement } from "react";
+import { FiSearch } from "@/shared/ui/fallback-icons";
 import styles from "./guide-sidebar.module.css";
 
 /** Controlled search input. Presentational only — state lives in the parent (useGuideSearch). */
@@ -10,11 +11,11 @@ export function GuideSearch({
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
-}>) {
+}>): ReactElement {
   return (
     <label className={styles.search}>
       <span className={styles.searchIcon} aria-hidden>
-        <ReactIconByTag tag="FiSearch" />
+        <FiSearch aria-hidden />
       </span>
       <input
         type="search"

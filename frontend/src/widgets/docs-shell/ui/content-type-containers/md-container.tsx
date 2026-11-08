@@ -102,12 +102,9 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
     (VALID_TOC_POSITIONS.has(tocPositionDefault) ? tocPositionDefault : "center");
 
   const markdownContent = (
-    <article className={styles.card}>
-      <HighlightedMarkdown className={styles.markdown} style={containerStyle} html={renderedHtml} theme={{ id: activeThemeId, mode: activeThemeMode ?? (isDarkMode ? "dark" : "light") }} />
-    </article>
+    <HighlightedMarkdown className={styles.markdown} style={containerStyle} html={renderedHtml} theme={{ id: activeThemeId, mode: activeThemeMode ?? (isDarkMode ? "dark" : "light") }} />
   );
 
-  // Copy / download sit beside the fullscreen button (to its left when it is shown).
   const withSourceActions = (fullscreenButton: React.ReactNode) => {
     if (!markdownSource || !sourceActionLabels) return fullscreenButton;
     return (
@@ -116,7 +113,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
           source={markdownSource}
           fileName={markdownFileName}
           labels={sourceActionLabels}
-          besideFullscreen={Boolean(fullscreenButton)}
+          placement="inline"
         />
         {fullscreenButton}
       </>
@@ -130,25 +127,26 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
     </>
   );
 
-  // Without fullscreen the wrapper's button is left out, so only the source actions sit beside the content.
   const content = (fullscreenButton: React.ReactNode, options?: { contentOnly?: boolean }) => {
     const contentActions = withSourceActions(fullscreenEnabled ? fullscreenButton : null);
+    const documentCard = (
+      <article className={styles.card}>
+        {contentActions && <div className={styles.markdownActions}>{contentActions}</div>}
+        {markdownContent}
+      </article>
+    );
     const hideToc = contentOnly || options?.contentOnly;
     const showToc = !hideToc && headings.length > 0;
     return showToc ? (
       <TocContainer
         headings={headings}
         position={tocPosition}
-        markdownContent={markdownContent}
+        markdownContent={documentCard}
         useDefaultScrollBehavior={useDefaultScrollBehavior}
-        contentActions={contentActions}
         containerTop={config?.RouteguideBrandContainerTop ?? tocContainerTopDefault ?? false}
       />
     ) : (
-      <div style={{ position: "relative" }}>
-        {markdownContent}
-        {contentActions}
-      </div>
+      documentCard
     );
   };
 

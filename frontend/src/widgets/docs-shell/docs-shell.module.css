@@ -1938,6 +1938,21 @@ dialog.versionLinksCard {
   position: static;
 }
 
+.markdownActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 12px;
+  min-width: 0;
+}
+
+.markdownActions > .fullscreenButtonInside {
+  position: static;
+  flex-shrink: 0;
+}
+
 .mdSourceActionDone,
 .mdSourceActionDone:hover {
   border-color: var(--primary);

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useRef, type ReactNode } from "react";
+import { useMemo, useRef, type ReactElement, type ReactNode } from "react";
 import { interpolate, m, useScroll, useTransform, type MotionValue } from "motion/react";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import { FaGithubAlt } from "@react-icons/all-files/fa/FaGithubAlt";
+import { FiArrowLeft } from "@/shared/ui/fallback-icons";
 import { splitWords } from "../model/hero-motion";
 import { HERO_ACTION_FEEDBACK, HERO_PARALLAX, type HeroRow as HeroRowName } from "../model/motion-config";
 import type { GuideHero as GuideHeroModel } from "../model/types";
@@ -61,7 +62,7 @@ function HeroTitle({ text }: Readonly<{ text: string }>) {
 }
 
 /** Content is visible from first paint; optional depth follows the native scroll position. */
-export function GuideHero({ id, hero, projectUrl, backToSearchHref, backToSearchLabel, onPrimary }: Readonly<GuideHeroProps>) {
+export function GuideHero({ id, hero, projectUrl, backToSearchHref, backToSearchLabel, onPrimary }: Readonly<GuideHeroProps>): ReactElement {
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: [...HERO_PARALLAX.offset] });
   const { enabled } = useGuideMotion();
@@ -77,7 +78,7 @@ export function GuideHero({ id, hero, projectUrl, backToSearchHref, backToSearch
     <header ref={heroRef} id={id} className={styles.hero} tabIndex={-1}>
       <a className={styles.backLink} href={backToSearchHref} data-guide-back-link>
         <span className={styles.backIcon} aria-hidden>
-          <ReactIconByTag tag="FiArrowLeft" />
+          <FiArrowLeft aria-hidden />
         </span>
         {backToSearchLabel}
       </a>
@@ -117,7 +118,7 @@ export function GuideHero({ id, hero, projectUrl, backToSearchHref, backToSearch
               {...actionFeedback}
             >
               <span className={styles.buttonIcon} aria-hidden>
-                <ReactIconByTag tag="FaGithubAlt" />
+                <FaGithubAlt aria-hidden />
               </span>
               {hero.ctaSecondary}
             </m.a>

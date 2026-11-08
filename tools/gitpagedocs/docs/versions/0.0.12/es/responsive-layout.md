@@ -76,4 +76,6 @@ Los controles de idioma, tema y animación usan los iconos oficiales predetermin
 
 Los breadcrumbs tienen `1rem` de espacio arriba y abajo (16 píxeles CSS con el tamaño raíz predeterminado). Los selectores móviles llenan las filas del menú con iconos centrados; los del encabezado de escritorio conservan dimensiones compactas.
 
+Desde 0.0.22, los controles del encabezado de la documentación muestran un icono predeterminado mientras carga el icono configurado, evitando controles vacíos. El icono configurado sustituye ese valor cuando está listo; una preferencia explícita por texto conserva el texto. En pantallas estrechas, los controles de acciones Markdown reservan su propio espacio antes del título del documento, sin cubrirlo.
+
 > Versión: 0.0.12

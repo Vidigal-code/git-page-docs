@@ -1,15 +1,17 @@
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import type { ReactElement } from "react";
+import { FiFile } from "@/shared/ui/fallback-icons";
 import type { GuideSection as GuideSectionModel } from "../model/types";
 import { GuideBlock } from "./guide-block";
 import styles from "./guide-content.module.css";
 
 /** Renders one documentation section: an anchored header plus its content blocks. */
-export function GuideSection({ section }: Readonly<{ section: GuideSectionModel }>) {
+export function GuideSection({ section }: Readonly<{ section: GuideSectionModel }>): ReactElement {
   return (
     <section id={section.id} className={styles.section}>
       <header className={styles.sectionHeader}>
         <span className={styles.sectionIcon} aria-hidden>
-          <ReactIconByTag tag={section.icon} />
+          <ReactIconByTag tag={section.icon} fallback={<FiFile aria-hidden />} />
         </span>
         <div>
           <h2 className={styles.sectionTitle}>{section.title}</h2>

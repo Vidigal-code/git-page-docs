@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { FaGithubSquare } from "@react-icons/all-files/fa/FaGithubSquare";
 import { FaBars, IoMdClose } from "@/shared/ui/fallback-icons";
 import { LanguageSelector } from "@/features/language-selector";
 import { ThemeModeToggle } from "@/features/theme-switcher";
@@ -29,11 +30,11 @@ function SearchShellBrandIcon({
   iconImage,
   iconImgWidth,
   iconImgHeight,
-}: Readonly<SearchShellBrandIconProps>) {
+}: Readonly<SearchShellBrandIconProps>): ReactElement {
   if (useReactHeaderIcon && reactHeaderIconTag) {
     return (
       <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-        <ReactIconByTag tag={reactHeaderIconTag} />
+        <ReactIconByTag tag={reactHeaderIconTag} fallback={<FaGithubSquare aria-hidden />} />
       </span>
     );
   }
@@ -42,7 +43,7 @@ function SearchShellBrandIcon({
   }
   return (
     <span className={styles.brandReactIcon} style={headerReactIconStyle}>
-      <ReactIconByTag tag="FaGithubSquare" />
+      <FaGithubSquare aria-hidden />
     </span>
   );
 }
@@ -96,7 +97,7 @@ export function SearchShellHeader({
   themeSelectorIcon,
   themeVarsStyle,
   additionalControls,
-}: Readonly<SearchShellHeaderProps>) {
+}: Readonly<SearchShellHeaderProps>): ReactElement {
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
 

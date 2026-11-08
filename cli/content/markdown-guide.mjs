@@ -337,6 +337,8 @@ Manual menu scrolling is preserved between page changes. Resizing or unfolding t
 Language, theme and animation controls use the official icon defaults while standalone shell settings load or cannot be retrieved. Repository search, documentation loading, repository opening, the introduction guide, source viewer and not-found views keep accessible button names. An explicit \`reactIcon: false\` remains a valid preference for localized text after the configuration loads; icon defaults do not override it.
 
 The breadcrumb trail has \`1rem\` of space above and below (16 CSS pixels at the default root font size). Mobile selectors fill their menu rows with centered icons; desktop header selectors retain their compact dimensions.
+
+Since 0.0.22, documentation header controls show a built-in fallback while a configured icon loads, so the control does not appear empty. The configured icon replaces that fallback when ready; an explicit text preference remains text. On narrow screens, Markdown action controls reserve their own space before the document heading instead of covering it.
 `,
   pt: `# Telas estreitas e dobráveis
 
@@ -415,6 +417,8 @@ A rolagem manual do menu permanece entre mudanças de página. Redimensionar ou 
 Os controles de idioma, tema e animação usam os ícones oficiais padrão enquanto a configuração do shell independente carrega ou não pode ser obtida. Busca de repositórios, carregamento da documentação, abertura de repositório, guia introdutório, visualizador de código e páginas não encontradas mantêm nomes acessíveis nos botões. A opção explícita \`reactIcon: false\` continua válida para texto localizado depois que a configuração carrega; os padrões de ícone não a substituem.
 
 A trilha de navegação tem \`1rem\` de espaço acima e abaixo (16 pixels CSS no tamanho padrão da fonte raiz). Os seletores móveis preenchem as linhas do menu com ícones centralizados; os seletores do cabeçalho desktop mantêm dimensões compactas.
+
+Desde a 0.0.22, os controles do cabeçalho da documentação exibem um ícone padrão enquanto o ícone configurado carrega, evitando controles vazios. O ícone configurado substitui esse padrão quando está pronto; uma preferência explícita por texto continua como texto. Em telas estreitas, os controles de ações Markdown reservam espaço próprio antes do título do documento, sem cobri-lo.
 `,
   es: `# Pantallas estrechas y plegables
 
@@ -493,5 +497,7 @@ El desplazamiento manual del menú se conserva entre cambios de página. Redimen
 Los controles de idioma, tema y animación usan los iconos oficiales predeterminados mientras la configuración del shell independiente carga o no está disponible. La búsqueda de repositorios, la carga de documentación, la apertura del repositorio, la guía introductoria, el visor de código y las páginas no encontradas conservan nombres accesibles en los botones. La opción explícita \`reactIcon: false\` sigue siendo válida para texto localizado al cargar la configuración; los valores de iconos predeterminados no la reemplazan.
 
 Los breadcrumbs tienen \`1rem\` de espacio arriba y abajo (16 píxeles CSS con el tamaño raíz predeterminado). Los selectores móviles llenan las filas del menú con iconos centrados; los del encabezado de escritorio conservan dimensiones compactas.
+
+Desde 0.0.22, los controles del encabezado de la documentación muestran un icono predeterminado mientras carga el icono configurado, evitando controles vacíos. El icono configurado sustituye ese valor cuando está listo; una preferencia explícita por texto conserva el texto. En pantallas estrechas, los controles de acciones Markdown reservan su propio espacio antes del título del documento, sin cubrirlo.
 `,
 };

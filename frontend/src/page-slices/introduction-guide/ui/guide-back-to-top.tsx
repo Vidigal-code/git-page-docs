@@ -1,8 +1,9 @@
 "use client";
 
+import { FiArrowUp } from "@react-icons/all-files/fi/FiArrowUp";
+import type { ReactElement } from "react";
 import type { BackToTopOptions } from "@/entities/docs";
 import { BackToTop } from "@/shared/ui/back-to-top";
-import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
 import styles from "./introduction-guide-page.module.css";
 
 interface GuideBackToTopProps {
@@ -18,7 +19,7 @@ interface GuideBackToTopProps {
  * keyboard focus there, so the next Tab continues from the top instead of the
  * footer. The guide returns instantly without animating through its chapters.
  */
-export function GuideBackToTop({ label, targetId, settings }: Readonly<GuideBackToTopProps>) {
+export function GuideBackToTop({ label, targetId, settings }: Readonly<GuideBackToTopProps>): ReactElement {
   return (
     <BackToTop
       label={label}
@@ -31,7 +32,7 @@ export function GuideBackToTop({ label, targetId, settings }: Readonly<GuideBack
       testId="guide-back-to-top"
     >
       <span className={styles.buttonIcon} aria-hidden>
-        <ReactIconByTag tag="FiArrowUp" />
+        <FiArrowUp aria-hidden />
       </span>
     </BackToTop>
   );

@@ -1,4 +1,6 @@
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import type { ReactElement } from "react";
+import { FiFile } from "@/shared/ui/fallback-icons";
 import type { StoryChapter as StoryChapterModel } from "../../model/story";
 import styles from "./guide-story.module.css";
 
@@ -8,7 +10,7 @@ interface StoryChapterProps {
 }
 
 /** A complete, stationary chapter; selecting another chapter swaps the whole scene. */
-export function StoryChapter({ chapter, active }: Readonly<StoryChapterProps>) {
+export function StoryChapter({ chapter, active }: Readonly<StoryChapterProps>): ReactElement {
   const headingId = `story-${chapter.id}-title`;
 
   return (
@@ -16,7 +18,7 @@ export function StoryChapter({ chapter, active }: Readonly<StoryChapterProps>) {
       <span className={styles.numeral} aria-hidden="true">{chapter.number}</span>
       <header className={styles.headline}>
         <span className={styles.eyebrowIcon} aria-hidden="true">
-          <ReactIconByTag tag={chapter.icon} />
+          <ReactIconByTag tag={chapter.icon} fallback={<FiFile aria-hidden />} />
         </span>
         <h2 id={headingId} className={styles.title}>{chapter.title}</h2>
         <p className={styles.lead}>{chapter.lead}</p>

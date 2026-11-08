@@ -1,4 +1,6 @@
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
+import type { ReactElement } from "react";
+import { FiFile } from "@/shared/ui/fallback-icons";
 import type { GuideSection, GuideUi } from "../model/types";
 import { GuideSearch } from "./guide-search";
 import styles from "./guide-sidebar.module.css";
@@ -18,7 +20,7 @@ export function GuideSidebar({
   onQueryChange: (value: string) => void;
   activeId: string;
   onSelect: (id: string) => void;
-}>) {
+}>): ReactElement {
   return (
     <aside className={styles.sidebar}>
       <GuideSearch value={query} placeholder={ui.searchPlaceholder} onChange={onQueryChange} />
@@ -35,7 +37,7 @@ export function GuideSidebar({
               onClick={() => onSelect(section.id)}
             >
               <span className={styles.navIcon} aria-hidden>
-                <ReactIconByTag tag={section.icon} />
+                <ReactIconByTag tag={section.icon} fallback={<FiFile aria-hidden />} />
               </span>
               <span className={styles.navText}>
                 <span className={styles.navTitle}>{section.title}</span>

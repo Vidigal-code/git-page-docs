@@ -3,6 +3,12 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.22 - 2026-11-08 - mobile reading controls and immediate icons
+
+- Keep Markdown action controls above the document without overlapping its first heading on narrow screens.
+- Show immediate icon fallbacks across loading, repository search, documentation, introduction, audio and navigation controls while configured icons load. Preserve configured images and explicit text preferences.
+- Update the workspace packages and current documentation to 0.0.22 while retaining documentation versions from 0.0.21 through 0.0.9.
+
 ## 0.0.21 - 2026-11-08 - configurable document guides and clearer reading controls
 
 - Select automatic Markdown guide entries with `RouteGuideTags`. Official pages index h1, h2 and h3; other sanitized element types can be selected per route. Preserve legacy heading levels when omitted, explicit markers, ID filters and original Markdown sources. Generate unique destinations and reveal collapsed details before scrolling.

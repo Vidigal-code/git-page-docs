@@ -1,7 +1,8 @@
 "use client";
 
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
-import type { CSSProperties } from "react";
+import { CiPlay1, FaPause } from "@/shared/ui/fallback-icons";
+import type { CSSProperties, ReactElement } from "react";
 
 interface AudioPlayerButtonProps {
   isPlaying: boolean;
@@ -23,9 +24,10 @@ export function AudioPlayerButton({
   playLabel,
   pauseLabel,
   className,
-}: Readonly<AudioPlayerButtonProps>) {
+}: Readonly<AudioPlayerButtonProps>): ReactElement {
   const label = isPlaying ? pauseLabel : playLabel;
   const iconTag = isPlaying ? pauseIconTag : playIconTag;
+  const FallbackIcon = isPlaying ? FaPause : CiPlay1;
 
   return (
     <button
@@ -36,7 +38,7 @@ export function AudioPlayerButton({
       title={label}
       data-testid="audio-player-toggle"
     >
-      <ReactIconByTag tag={iconTag} style={iconStyle} />
+      <ReactIconByTag tag={iconTag} style={iconStyle} fallback={<FallbackIcon aria-hidden style={iconStyle} />} />
     </button>
   );
 }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { BsMoonStarsFill, BsSunFill } from "@/shared/ui/fallback-icons";
 import type { ResolvedNavMenuIconConfig } from "@/shared/lib/resolve-nav-menu-icon";
 import { ReactIconByTag } from "@/shared/ui/react-icon-by-tag";
@@ -9,7 +9,7 @@ interface ConfiguredIconProps {
   icon: ResolvedNavMenuIconConfig | undefined;
   /** Rendered when the config carries neither a react icon nor an image. */
   fallback: ReactNode;
-  /** Shown by the react icon slot until (or unless) its tag resolves. */
+  /** Defaults to `fallback` while the tag resolves; explicit `null` leaves the slot empty. */
   reactIconFallback?: ReactNode;
   /** Tag used when the config's react icon tag is empty. */
   defaultTag?: string;
@@ -24,11 +24,11 @@ interface ConfiguredIconProps {
 export function ConfiguredIcon({
   icon,
   fallback,
-  reactIconFallback,
+  reactIconFallback = fallback,
   defaultTag,
   alt = "",
   imageClassName,
-}: Readonly<ConfiguredIconProps>) {
+}: Readonly<ConfiguredIconProps>): ReactElement {
   if (icon?.useReactIcon) {
     const tag = defaultTag && !icon.reactIconTag ? defaultTag : icon.reactIconTag;
     return (

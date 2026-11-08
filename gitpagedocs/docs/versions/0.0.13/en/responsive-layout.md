@@ -76,4 +76,6 @@ Language, theme and animation controls use the official icon defaults while stan
 
 The breadcrumb trail has `1rem` of space above and below (16 CSS pixels at the default root font size). Mobile selectors fill their menu rows with centered icons; desktop header selectors retain their compact dimensions.
 
+Since 0.0.22, documentation header controls show a built-in fallback while a configured icon loads, so the control does not appear empty. The configured icon replaces that fallback when ready; an explicit text preference remains text. On narrow screens, Markdown action controls reserve their own space before the document heading instead of covering it.
+
 > Version: 0.0.13
