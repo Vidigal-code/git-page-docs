@@ -37,26 +37,30 @@ function findScrollContainer(element: HTMLElement, preferredContainer?: HTMLElem
 function scrollElementInsideContainer(
   element: HTMLElement,
   container: HTMLElement,
-  behavior: ScrollBehavior,
-  scrollPadding: number,
+  options: Required<Pick<ScrollToHeadingOptions, "behavior" | "scrollPadding">>,
 ): void {
   const elementTop = element.getBoundingClientRect().top;
   const containerTop = container.getBoundingClientRect().top;
-  const nextTop = elementTop - containerTop + container.scrollTop - scrollPadding;
+  const nextTop = elementTop - containerTop + container.scrollTop - options.scrollPadding;
 
   container.scrollTo({
     top: Math.max(0, nextTop),
-    behavior,
+    behavior: options.behavior,
   });
 }
 
 export function scrollToHeadingElement(element: HTMLElement, options: ScrollToHeadingOptions = {}): void {
+  let ancestor: HTMLElement | null = element;
+  while (ancestor) {
+    if (ancestor instanceof HTMLDetailsElement) ancestor.open = true;
+    ancestor = ancestor.parentElement;
+  }
   const behavior = options.behavior ?? "smooth";
   const scrollPadding = options.scrollPadding ?? DEFAULT_SCROLL_PADDING;
   const container = findScrollContainer(element, options.preferredContainer);
 
   if (container) {
-    scrollElementInsideContainer(element, container, behavior, scrollPadding);
+    scrollElementInsideContainer(element, container, { behavior, scrollPadding });
     return;
   }
 

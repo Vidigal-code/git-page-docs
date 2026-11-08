@@ -15,6 +15,8 @@ interface ThemeBackgroundProps {
 export function ThemeBackground({ config, paused }: Readonly<ThemeBackgroundProps>) {
   const environment = useBackgroundEnvironment();
   const running = environment.ready && !environment.reduced && !environment.hidden && !paused;
+  const adaptiveDensity = environment.compact || !environment.ready ? "compact" : "balanced";
+  const density = config.performance?.mode === "auto" ? adaptiveDensity : "full";
   const parallax = useBackgroundParallax({ config: config.parallax, running });
   return (
     <LazyMotion features={domAnimation} strict>
@@ -23,7 +25,7 @@ export function ThemeBackground({ config, paused }: Readonly<ThemeBackgroundProp
       style={{ background: config.surface, opacity: config.opacity }}>
       {config.layers.map((layer) => (
         <BackgroundLayer key={layer.id} layer={layer} parallax={parallax}
-          running={running && config.animation.enabled} speed={config.animation.speed} />
+          running={running && config.animation.enabled} speed={config.animation.speed} density={density} />
       ))}
     </div>
     </LazyMotion>

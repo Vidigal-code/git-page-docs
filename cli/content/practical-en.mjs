@@ -13,7 +13,7 @@ Add this route to the version configuration's existing \`routes-html\` array. Ke
 ${HTML_ROUTE_JSON}
 \`\`\`
 
-Add a localized item in \`menus-header-html\`. Each \`path-click\` must match its language's route path, such as \`gitpagedocs/docs/versions/0.0.20/en/doom.html\`; do not substitute \`page:29\` for this local HTML path. Menu labels do not create routes. HTML uses the same recursive \`submenus\` structure as other menus.
+Add a localized item in \`menus-header-html\`. Each \`path-click\` must match its language's route path, such as \`gitpagedocs/docs/versions/0.0.21/en/doom.html\`; do not substitute \`page:29\` for this local HTML path. Menu labels do not create routes. HTML uses the same recursive \`submenus\` structure as other menus.
 
 ## Size, content and external URLs
 
@@ -35,9 +35,9 @@ This guide builds a small multilingual documentation site with two Markdown page
 
 ## 1. Generate and inspect the scaffold
 
-The scaffold includes versions 0.0.20, 0.0.19, 0.0.18, 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in the version selector, newest first. All twelve contain the current examples; the package version is 0.0.20. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
+The scaffold includes versions 0.0.21, 0.0.20, 0.0.19, 0.0.18, 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in the version selector, newest first. All thirteen contain the current examples; the package version is 0.0.21. Their paths and version badges are generated for the selected documentation version. Older existing version folders are not deleted.
 
-Run \`npx --yes @gitpagedocs/cli@0.0.20 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY\` in a new project directory. In this source repository, \`node cli/index.mjs\` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
+Run \`npx --yes @gitpagedocs/cli@0.0.21 --no-interactive --owner YOUR_USER --repo YOUR_REPOSITORY\` in a new project directory. In this source repository, \`node cli/index.mjs\` runs the checked-out version. Generation writes configuration and documentation; it does not start the Next.js viewer.
 
 Use the following complete JSON as a minimal root-config example in \`gitpagedocs/config.json\`. For an existing site, merge the relevant fields and preserve its repository identity, deployment settings, themes and other versions.
 
@@ -61,7 +61,7 @@ Create \`start.md\` and \`next-steps.md\` in each of the version's \`en\`, \`pt\
 
 With \`nestedMenusEnabled: true\`, readers expand Guides → Getting started → page. Setting it to \`false\` exposes the same destinations as a flat menu. Add further \`submenus\` recursively when the content justifies it; there is no fixed configured depth limit. Keep sibling identities distinct and avoid repeating the same destination merely to make the tree deeper.
 
-Breadcrumbs use \`site.RouteGuide\`, then version \`routeDefaults.RouteGuide\`, then the individual route. The most specific explicit value wins. \`RouteguideBrand\` is the separate heading outline. Footer previous/next arrows follow available menu destinations; \`ActiveNavigation\` controls quick navigation and Ctrl+K.
+Breadcrumbs use \`site.RouteGuide\`, then version \`routeDefaults.RouteGuide\`, then the individual route. The most specific explicit value wins. The separate outline uses \`RouteguideBrand\` and \`RouteGuideTags\`; set \`["h1", "h2", "h3"]\` on a Markdown route to index its first three heading levels, as in the official documentation. See [Configure the document guide](route-guide.md) for other tags and explicit markers. Footer previous/next arrows follow available menu destinations and center the active item in an unlocked desktop or mobile menu; \`ActiveNavigation\` controls quick navigation and Ctrl+K.
 
 ## 4. Add media and verify the result
 

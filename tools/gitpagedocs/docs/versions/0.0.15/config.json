@@ -67,6 +67,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -102,6 +107,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false,
       "audio": {
@@ -153,6 +163,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false,
       "authorization": {
@@ -193,6 +208,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -228,6 +248,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false,
       "hierarchyPage": {
@@ -271,6 +296,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false,
       "authorization": {
@@ -319,6 +349,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -354,6 +389,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -389,6 +429,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -424,6 +469,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -459,6 +509,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -494,6 +549,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -529,6 +589,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -564,6 +629,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -599,6 +669,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -634,6 +709,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -669,6 +749,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -704,6 +789,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -739,6 +829,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -774,6 +869,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -809,6 +909,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -844,6 +949,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -879,6 +989,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -914,6 +1029,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -949,6 +1069,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -984,6 +1109,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1019,6 +1149,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1054,6 +1189,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1089,6 +1229,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1124,6 +1269,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1159,6 +1309,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1194,6 +1349,11 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1229,6 +1389,91 @@
       "browseAll": false,
       "RouteguideBrand": true,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 43,
+      "title": {
+        "en": "Configure the document guide",
+        "pt": "Configure o guia do documento",
+        "es": "Configura la guía del documento"
+      },
+      "description": {
+        "en": "Select Markdown tags, filter targets and keep explicit markers",
+        "pt": "Selecione tags Markdown, filtre destinos e mantenha marcadores explícitos",
+        "es": "Selecciona etiquetas Markdown, filtra destinos y conserva marcadores explícitos"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.15/pt/route-guide.md",
+        "en": "gitpagedocs/docs/versions/0.0.15/en/route-guide.md",
+        "es": "gitpagedocs/docs/versions/0.0.15/es/route-guide.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
+      "RouteguideBrandPosition": "center",
+      "RouteguideBrandContainerTop": false
+    },
+    {
+      "id": 44,
+      "title": {
+        "en": "Narrow and foldable screens",
+        "pt": "Telas estreitas e dobráveis",
+        "es": "Pantallas estrechas y plegables"
+      },
+      "description": {
+        "en": "Configure navigation and verify mobile and foldable layouts",
+        "pt": "Configure a navegação e verifique layouts móveis e dobráveis",
+        "es": "Configura la navegación y comprueba diseños móviles y plegables"
+      },
+      "titleCss": "font-size: 1.85rem; font-weight: 700;",
+      "titleDarkCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titleLightCss": "font-size: 1.85rem; font-weight: 700; color: var(--text);",
+      "titlePosition": "center",
+      "descriptionCss": "font-size: 1.2rem; font-weight: 500;",
+      "descriptionDarkCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionLightCss": "font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);",
+      "descriptionPosition": "center",
+      "path": {
+        "pt": "gitpagedocs/docs/versions/0.0.15/pt/responsive-layout.md",
+        "en": "gitpagedocs/docs/versions/0.0.15/en/responsive-layout.md",
+        "es": "gitpagedocs/docs/versions/0.0.15/es/responsive-layout.md"
+      },
+      "fullscreenEnabled": true,
+      "marginTop": "",
+      "marginBottom": "",
+      "blockLink": true,
+      "browseAll": false,
+      "RouteguideBrand": true,
+      "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false
     },
@@ -1248,6 +1493,11 @@
         "es": "gitpagedocs/docs/versions/0.0.15/es/pagination-first.md"
       },
       "RouteguideBrand": true,
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "markdownMarkers": {
         "items": [
           {
@@ -1328,6 +1578,11 @@
       "browseAll": false,
       "RouteguideBrand": false,
       "RouteGuideSpeciFicbrand": [],
+      "RouteGuideTags": [
+        "h1",
+        "h2",
+        "h3"
+      ],
       "RouteguideBrandPosition": "center",
       "RouteguideBrandContainerTop": false,
       "source-viewer": true,
@@ -2057,6 +2312,36 @@
               "es": {
                 "title": "Navegación y submenús",
                 "path-click": "gitpagedocs/docs/versions/0.0.15/es/navigation.md"
+              }
+            },
+            {
+              "id": 43,
+              "pt": {
+                "title": "Configure o guia do documento",
+                "path-click": "gitpagedocs/docs/versions/0.0.15/pt/route-guide.md"
+              },
+              "en": {
+                "title": "Configure the document guide",
+                "path-click": "gitpagedocs/docs/versions/0.0.15/en/route-guide.md"
+              },
+              "es": {
+                "title": "Configura la guía del documento",
+                "path-click": "gitpagedocs/docs/versions/0.0.15/es/route-guide.md"
+              }
+            },
+            {
+              "id": 44,
+              "pt": {
+                "title": "Telas estreitas e dobráveis",
+                "path-click": "gitpagedocs/docs/versions/0.0.15/pt/responsive-layout.md"
+              },
+              "en": {
+                "title": "Narrow and foldable screens",
+                "path-click": "gitpagedocs/docs/versions/0.0.15/en/responsive-layout.md"
+              },
+              "es": {
+                "title": "Pantallas estrechas y plegables",
+                "path-click": "gitpagedocs/docs/versions/0.0.15/es/responsive-layout.md"
               }
             }
           ]

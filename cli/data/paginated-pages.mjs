@@ -1,4 +1,5 @@
 import { SUPPORTED_LANGUAGES } from "../contracts/languages.mjs";
+import { DEFAULT_MARKDOWN_GUIDE_TAGS } from "./markdown-guide.mjs";
 
 export const PAGINATED_PAGE_MENU = {
   id: 50,
@@ -42,6 +43,7 @@ export function buildPaginatedRoutes(versionId) {
       ...frame(51, { en: "Paginated Markdown", pt: "Markdown paginado", es: "Markdown paginado" }),
       path: localizedPath(base, "pagination-first.md"),
       RouteguideBrand: true,
+      RouteGuideTags: [...DEFAULT_MARKDOWN_GUIDE_TAGS],
       markdownMarkers: { items: [{
         id: "reading-target",
         text: { en: "This highlighted sentence is a navigation target.", pt: "Esta frase realçada é um destino de navegação.", es: "Esta frase resaltada es un destino de navegación." },

@@ -2,6 +2,9 @@
   --narration-control-height: 2.75rem;
   --narration-control-radius: 0.6rem;
   --narration-control-gap: 0.75rem;
+  --narration-track-height: 0.375rem;
+  --narration-thumb-size: 1.5rem;
+  --narration-thumb-border: 0.1875rem solid var(--background);
 
   box-sizing: border-box;
   container-type: inline-size;
@@ -60,7 +63,51 @@
   border-radius: var(--narration-control-radius);
 }
 
-.settings input { width: 100%; min-width: 0; margin: 0; accent-color: var(--primary); cursor: pointer; }
+.settings input {
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  height: var(--narration-control-height);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.settings input::-webkit-slider-runnable-track {
+  height: var(--narration-track-height);
+  border-radius: 1rem;
+  background: var(--text-secondary);
+}
+
+.settings input::-moz-range-track, .settings input::-moz-range-progress {
+  height: var(--narration-track-height);
+  border-radius: 1rem;
+  background: var(--text-secondary);
+}
+
+.settings input::-webkit-slider-thumb {
+  appearance: none;
+  box-sizing: border-box;
+  width: var(--narration-thumb-size);
+  height: var(--narration-thumb-size);
+  margin-top: calc((var(--narration-track-height) - var(--narration-thumb-size)) / 2);
+  border: var(--narration-thumb-border);
+  border-radius: 50%;
+  background: var(--text);
+}
+
+.settings input::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--narration-thumb-size);
+  height: var(--narration-thumb-size);
+  border: var(--narration-thumb-border);
+  border-radius: 50%;
+  background: var(--text);
+}
+
+.settings input:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 .settings:disabled { opacity: 0.6; }
 .settings :disabled { cursor: default; }
 .hint, .status { color: var(--text-secondary); font-size: 0.8rem; }
@@ -90,4 +137,10 @@
 @container (max-width: 24rem) {
   .actions button { flex: 1 0 100%; overflow-wrap: normal; }
   .status { flex-basis: 100%; margin-inline-start: 0; }
+}
+
+@media (forced-colors: active) {
+  .settings input { appearance: auto; accent-color: auto; }
+  .settings input::-webkit-slider-runnable-track, .settings input::-webkit-slider-thumb { all: revert; }
+  .settings input::-moz-range-track, .settings input::-moz-range-progress, .settings input::-moz-range-thumb { all: revert; }
 }

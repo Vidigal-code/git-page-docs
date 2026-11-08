@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { DocsShellSidebar } from "@/widgets/docs-shell/ui/docs-shell-sidebar";
 import { useBuildNavMenuConfig } from "@/widgets/docs-shell/model/use-build-nav-menu-config";
 import type { MenuNode } from "@/widgets/docs-shell/model/menu-tree";
@@ -11,6 +11,8 @@ const SIDEBAR_WIDTH = 280;
 const MENU_ITEM_HEIGHT = 44;
 const ITEM_TOP = { Introduction: 40, Reference: 600 };
 const noAction = () => undefined;
+let sidebarHeight = SIDEBAR_HEIGHT;
+const resizeCallbacks = new Set<() => void>();
 
 function menuNodes(activeTitle: string): MenuNode[] {
   return Object.keys(ITEM_TOP).map((title, id) => ({
@@ -46,8 +48,15 @@ function Sidebar({ activeTitle, blockMenuOnNav = false, sidebarOpen = true }: Re
 }
 
 beforeEach(() => {
+  sidebarHeight = SIDEBAR_HEIGHT;
+  resizeCallbacks.clear();
+  vi.stubGlobal("ResizeObserver", class {
+    constructor(private readonly callback: () => void) { resizeCallbacks.add(callback); }
+    observe(): void {}
+    disconnect(): void { resizeCallbacks.delete(this.callback); }
+  });
   vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockImplementation(function (this: HTMLElement) {
-    return this.tagName === "ASIDE" ? SIDEBAR_HEIGHT : 0;
+    return this.tagName === "ASIDE" ? sidebarHeight : 0;
   });
   vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
     if (this.tagName === "ASIDE") return new DOMRect(0, 0, SIDEBAR_WIDTH, SIDEBAR_HEIGHT);
@@ -55,16 +64,16 @@ beforeEach(() => {
     return new DOMRect(0, top - (this.closest("aside")?.scrollTop ?? 0), SIDEBAR_WIDTH, MENU_ITEM_HEIGHT);
   });
 });
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
-it("follows the current menu item down and up when navigation is unlocked", () => {
+it("centers the current menu item down and up when navigation is unlocked", () => {
   const { rerender } = render(<Sidebar activeTitle="Introduction" />);
   const sidebar = screen.getByRole("complementary");
   expect(sidebar.scrollTop).toBe(0);
   rerender(<Sidebar activeTitle="Reference" />);
-  expect(sidebar.scrollTop).toBe(344);
+  expect(sidebar.scrollTop).toBe(472);
   rerender(<Sidebar activeTitle="Introduction" />);
-  expect(sidebar.scrollTop).toBe(40);
+  expect(sidebar.scrollTop).toBe(0);
 });
 
 it("preserves the menu position while locked and reveals the current item after unlocking", () => {
@@ -73,7 +82,7 @@ it("preserves the menu position while locked and reveals the current item after 
   rerender(<Sidebar activeTitle="Reference" blockMenuOnNav />);
   expect(sidebar.scrollTop).toBe(0);
   rerender(<Sidebar activeTitle="Reference" />);
-  expect(sidebar.scrollTop).toBe(344);
+  expect(sidebar.scrollTop).toBe(472);
 });
 
 it("keeps a visible current item in place", () => {
@@ -82,6 +91,34 @@ it("keeps a visible current item in place", () => {
   sidebar.scrollTop = 20;
   rerender(<Sidebar activeTitle="Introduction" />);
   expect(sidebar.scrollTop).toBe(20);
+});
+
+it("preserves manual scrolling on unrelated renders until the document changes", () => {
+  const { rerender } = render(<Sidebar activeTitle="Reference" />);
+  const sidebar = screen.getByRole("complementary");
+  sidebar.scrollTop = 20;
+  rerender(<Sidebar activeTitle="Reference" />);
+  expect(sidebar.scrollTop).toBe(20);
+  rerender(<Sidebar activeTitle="Introduction" />);
+  expect(sidebar.scrollTop).toBe(0);
+});
+
+it("recenters the current item after the navigation viewport shrinks", () => {
+  render(<Sidebar activeTitle="Reference" />);
+  const sidebar = screen.getByRole("complementary");
+  sidebarHeight = 180;
+  act(() => { resizeCallbacks.forEach((callback) => callback()); });
+  expect(sidebar.scrollTop).toBe(532);
+});
+
+it("keeps manual position across resize while locked", () => {
+  const { rerender } = render(<Sidebar activeTitle="Reference" />);
+  const sidebar = screen.getByRole("complementary");
+  rerender(<Sidebar activeTitle="Reference" blockMenuOnNav />);
+  sidebar.scrollTop = 80;
+  sidebarHeight = 180;
+  act(() => { resizeCallbacks.forEach((callback) => callback()); });
+  expect(sidebar.scrollTop).toBe(80);
 });
 
 it("does not scroll a hidden desktop sidebar", () => {
@@ -95,7 +132,7 @@ it("reveals the current item when the sidebar opens", () => {
   const sidebar = screen.getByRole("complementary");
   expect(sidebar.scrollTop).toBe(0);
   rerender(<Sidebar activeTitle="Reference" />);
-  expect(sidebar.scrollTop).toBe(344);
+  expect(sidebar.scrollTop).toBe(472);
 });
 
 it("leaves the menu position unchanged when no current item exists", () => {

@@ -215,10 +215,9 @@ function useLoaderDots(isResolving: boolean): number {
 
 /** Standalone shell chrome (theme, language, header) shared by every 404 view. */
 function useNotFoundShell() {
-  const { config: standaloneConfig } = useStandaloneShellConfig();
+  const { config: standaloneConfig, siteConfig } = useStandaloneShellConfig();
   const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
   const themes = standaloneConfig?.themes ?? {};
-  const siteConfig = standaloneConfig?.siteConfig;
   const siteName = siteConfig?.name ?? "GitPageDocs";
   const initialThemeBaseId = layouts.find((l) => l.id === "aurora-dark")?.id ?? layouts[0]?.id;
 
@@ -255,11 +254,6 @@ function useNotFoundShell() {
   const { iconImage, headerName, useReactIcon, reactIconTag, reactIconStyle, iconImgWidth, iconImgHeight } =
     headerIconConfig;
 
-  // The React header icon is only wired once the standalone config resolved.
-  const reactIconProps = standaloneConfig
-    ? { useReactHeaderIcon: useReactIcon, reactHeaderIconTag: reactIconTag, headerReactIconStyle: reactIconStyle }
-    : {};
-
   const header = (backgroundControl: ReactNode) => (
     <SearchShellHeader
       additionalControls={backgroundControl}
@@ -281,7 +275,9 @@ function useNotFoundShell() {
       iconImgWidth={iconImgWidth}
       iconImgHeight={iconImgHeight}
       getLanguageLabel={getLanguageLabel}
-      {...reactIconProps}
+      useReactHeaderIcon={useReactIcon}
+      reactHeaderIconTag={reactIconTag}
+      headerReactIconStyle={reactIconStyle}
     />
   );
 

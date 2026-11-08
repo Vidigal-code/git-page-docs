@@ -4,6 +4,7 @@ const defaults = JSON.stringify({ site: { markdownMarkers: getDefaultSiteConfig(
 const example = JSON.stringify({
   id: 51,
   RouteguideBrand: true,
+  RouteGuideTags: ["h1", "h2", "h3"],
   RouteGuideSpeciFicbrand: [],
   markdownMarkers: {
     enabled: true,
@@ -21,7 +22,7 @@ A marker highlights a text phrase or an HTML element inside rendered Markdown an
 
 ## Keep the heading outline
 
-\`RouteguideBrand\` enables the existing heading outline. \`RouteGuideSpeciFicbrand\` remains a list of heading IDs to include: an empty array includes every heading. Markers are configured separately in \`routes-md[].markdownMarkers\`; they do not change that filter. Marker entries can appear even when \`RouteguideBrand: false\`. The index follows document order and reuses an existing target ID when available.
+\`RouteguideBrand\` enables automatic outline entries. \`RouteGuideTags\` selects safe HTML element types after Markdown rendering; official pages use \`["h1", "h2", "h3"]\`, omission preserves headings h1–h6, and \`[]\` disables automatic entries. \`RouteGuideSpeciFicbrand\` filters eligible entries by ID; an empty array does not narrow the selected tags. Markers are configured separately in \`routes-md[].markdownMarkers\` and remain available with an empty tag list or \`RouteguideBrand: false\`. See [Configure the document guide](route-guide.md). The index follows document order and reuses an existing target ID when available; when an automatic entry and a marker share a target, its explicit marker label wins.
 
 ## Site defaults
 
@@ -66,7 +67,7 @@ Um marcador realça uma frase ou um elemento HTML dentro do Markdown renderizado
 
 ## Preserve o sumário de títulos
 
-\`RouteguideBrand\` ativa o sumário existente. \`RouteGuideSpeciFicbrand\` continua sendo a lista de IDs dos títulos incluídos: um array vazio inclui todos. Os marcadores são configurados separadamente em \`routes-md[].markdownMarkers\` e não mudam esse filtro. As entradas dos marcadores podem aparecer mesmo com \`RouteguideBrand: false\`. O índice acompanha a ordem do documento e reutiliza o ID existente do alvo quando disponível.
+\`RouteguideBrand\` ativa entradas automáticas no sumário. \`RouteGuideTags\` seleciona tipos de elementos HTML seguros após a renderização do Markdown; páginas oficiais usam \`["h1", "h2", "h3"]\`, a omissão preserva títulos h1–h6 e \`[]\` desativa entradas automáticas. \`RouteGuideSpeciFicbrand\` filtra as entradas elegíveis por ID; um array vazio não restringe as tags selecionadas. Marcadores são configurados separadamente em \`routes-md[].markdownMarkers\` e permanecem disponíveis com uma lista de tags vazia ou \`RouteguideBrand: false\`. Veja [Configure o guia do documento](route-guide.md). O índice acompanha a ordem do documento e reutiliza o ID existente do alvo; quando uma entrada automática e um marcador compartilham o destino, prevalece o rótulo explícito do marcador.
 
 ## Padrões do site
 
@@ -111,7 +112,7 @@ Un marcador resalta una frase o un elemento HTML dentro del Markdown renderizado
 
 ## Conserva el índice de títulos
 
-\`RouteguideBrand\` activa el índice existente. \`RouteGuideSpeciFicbrand\` sigue siendo una lista de IDs de títulos: un array vacío incluye todos. Los marcadores se configuran por separado en \`routes-md[].markdownMarkers\` y no cambian ese filtro. Sus entradas pueden aparecer incluso con \`RouteguideBrand: false\`. El índice sigue el orden del documento y reutiliza el ID del destino cuando existe.
+\`RouteguideBrand\` activa entradas automáticas del índice. \`RouteGuideTags\` selecciona tipos de elementos HTML seguros después de renderizar Markdown; las páginas oficiales usan \`["h1", "h2", "h3"]\`, omitirlo conserva títulos h1–h6 y \`[]\` desactiva las entradas automáticas. \`RouteGuideSpeciFicbrand\` filtra entradas elegibles por ID; un array vacío no limita las etiquetas seleccionadas. Los marcadores se configuran por separado en \`routes-md[].markdownMarkers\` y siguen disponibles con una lista vacía o \`RouteguideBrand: false\`. Consulta [Configura la guía del documento](route-guide.md). El índice sigue el orden del documento y reutiliza el ID del destino; cuando una entrada automática y un marcador comparten destino, prevalece el rótulo explícito del marcador.
 
 ## Valores del sitio
 

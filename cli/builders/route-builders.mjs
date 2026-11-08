@@ -1,4 +1,5 @@
 /** Build route objects for md, html, and video content types */
+import { DEFAULT_MARKDOWN_GUIDE_TAGS } from "../data/markdown-guide.mjs";
 
 /** Title/description styling every content route starts from (key order is part of the output). */
 const ROUTE_TEXT_DEFAULTS = {
@@ -48,6 +49,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     browseAll = false,
     RouteguideBrand = true,
     RouteGuideSpeciFicbrand = [],
+    RouteGuideTags = [...DEFAULT_MARKDOWN_GUIDE_TAGS],
     RouteguideBrandPosition = "center",
     RouteguideBrandContainerTop = false,
     audio,
@@ -67,6 +69,7 @@ export function buildMdRoute(versionId, routeId, pathByLang, titles, description
     browseAll,
     RouteguideBrand,
     RouteGuideSpeciFicbrand,
+    RouteGuideTags,
     RouteguideBrandPosition,
     RouteguideBrandContainerTop,
   };

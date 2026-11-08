@@ -7,11 +7,14 @@ import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
 import { PAGINATION_DOCS, PAGINATION_FIRST_DOCS } from "./container-pagination.mjs";
 import { MARKDOWN_MARKER_DOCS } from "./markdown-markers.mjs";
+import { MARKDOWN_GUIDE_DOCS, RESPONSIVE_LAYOUT_DOCS } from "./markdown-guide.mjs";
 
 export const docsEn = {
     containerPagination: PAGINATION_DOCS.en,
     paginationFirst: PAGINATION_FIRST_DOCS.en,
     markdownMarkers: MARKDOWN_MARKER_DOCS.en,
+    routeGuide: MARKDOWN_GUIDE_DOCS.en,
+    responsiveLayout: RESPONSIVE_LAYOUT_DOCS.en,
     ...practicalEn,
     ...operationsEn,
     ...overviewsEn,
@@ -49,7 +52,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.20/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.21/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -58,9 +61,9 @@ In \`gitpagedocs/docs/versions/0.0.20/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.21/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.21/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.21/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -991,7 +994,11 @@ Site display settings are in \`gitpagedocs/config.json\`. The interactive genera
 
 On small screens, the theme and language icon buttons fill the mobile menu row and keep their icons centered. The same controls remain compact in the desktop header.
 
-With the navigation padlock unlocked, the desktop menu scrolls its current item into view when moving forward or backward. Opening or unlocking the menu also reveals the current item. The menu scroll is independent of the document; a locked menu keeps its scroll position.
+With the navigation padlock unlocked, Previous and Next center the current destination inside the desktop sidebar or mobile drawer. Opening, unlocking or resizing the menu also centers it, within the available scroll range. Manual menu scrolling is preserved between page changes; a locked menu keeps its position. This scroll is independent of the document.
+
+The official icon defaults apply from the first render, including loading, repository-opening and unavailable-configuration states. An explicit \`reactIcon: false\` still selects localized text after settings load. See [Narrow and foldable screens](responsive-layout.md) for widths from 280 to 768 CSS pixels and folding/orientation checks.
+
+The document outline is configured separately with \`routes-md[].RouteGuideTags\`. The official pages select \`["h1", "h2", "h3"]\`; omitted lists retain all six heading levels, and \`[]\` leaves only explicit Markdown markers. See [Configure the document guide](route-guide.md) for safe element tags, ID filters and labels.
 
 Routes define page content; menus define how readers reach it. Configure them in \`gitpagedocs/docs/versions/<version>/config.json\`. Site-wide presentation options belong to \`gitpagedocs/config.json\`.
 
@@ -1100,7 +1107,7 @@ The tree supplies sidebar navigation, search labels, parent expansion and breadc
 
 ## Breadcrumbs: RouteGuide
 
-The breadcrumb trail has 12 px of spacing above and below it, separating the navigation path from the surrounding content.
+The breadcrumb trail has 1rem of spacing above and below (16 CSS pixels at the default root font size), separating the navigation path from the surrounding content.
 
 \`RouteGuide\` controls the breadcrumb trail. Resolution order is the page's \`routes-md[].RouteGuide\`, then the version's \`routeDefaults.RouteGuide\`, then \`site.RouteGuide\`, with \`true\` as the fallback. The example disables breadcrumbs for the version and enables them for chapter 101. Existing version \`0.0.8\` files can use the same fields.
 

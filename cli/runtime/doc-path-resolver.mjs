@@ -3,6 +3,8 @@
 import { PACKAGE_VERSION } from "../contracts/doc-versions.mjs";
 
 const DOC_FILE_KEYS = new Map([
+  ["route-guide.md", "routeGuide"],
+  ["responsive-layout.md", "responsiveLayout"],
   ["container-pagination.md", "containerPagination"],
   ["pagination-first.md", "paginationFirst"],
   ["markdown-markers.md", "markdownMarkers"],

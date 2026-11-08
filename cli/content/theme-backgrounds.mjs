@@ -39,7 +39,7 @@ const CATALOG_ROWS = catalogRows();
 export const THEME_BACKGROUND_DOCS = {
   en: `## Animated backgrounds and 20 paired parallax families
 
-The catalog contains 124 themes: 64 original themes, 20 standalone animated presets and 20 additional families with dark and light variants (40 entries). All 84 earlier themes retain their palettes, components and behavior. Existing Matrix Dark and Matrix Light remain unchanged; select **Matrix Rain** for falling characters. The 60 animated presets use the existing Motion renderer, with no extra runtime dependency.
+The catalog contains 124 themes: 64 original themes, 20 standalone animated presets and 20 additional families with dark and light variants (40 entries). Earlier themes retain their palettes and components. Existing Matrix Dark and Matrix Light remain unchanged; select **Matrix Rain** for falling characters. The 60 animated presets use native Web Animations for particles and Motion for layer parallax, with no extra runtime dependency.
 
 | ID | Name | Mode | Layers |
 | --- | --- | --- | --- |
@@ -67,6 +67,14 @@ Resolution order is template → \`site.backgroundEffects.overrides\` → \`site
 - Change \`count\`, \`colors\`, \`size\`, \`duration\` and \`opacity\` inside a layer to adjust density, palette, scale, timing and visibility. A count of zero removes that layer.
 - Themes without \`backgroundEffects\` remain static unless you explicitly supply an enabled background and valid layers through these settings.
 
+### Control density on narrow screens
+
+\`backgroundEffects.performance.mode\` accepts \`auto\` or \`full\`, with the same template → global overrides → theme overrides precedence. Presets default to \`auto\`: each layer displays three of every four particles at widths of at least 768 CSS pixels, or one of every two below 768; the first particle is always retained. \`full\` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
+
+For example, add \`"performance": { "mode": "full" }\` inside \`site.backgroundEffects.overrides\` to keep full density everywhere, or inside \`site.backgroundEffects.themes[themeId]\` for one theme. An explicit \`layers\` override without a performance mode preserves its configured counts with \`full\`; choose \`auto\` explicitly to reduce custom layers too. The 12-character Matrix layer above therefore retains its full count.
+
+Particles omitted by \`auto\` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
+
 ### Pause from the navigation menu
 
 The pause/resume control sits beside the navigation lock in the documentation menu, including the collapsed sidebar and mobile menu. Search pages expose it in their header. A manual pause remains active when opening or closing menus and when changing themes; use Resume to continue. Reduced-motion and hidden-tab protections still take precedence.
@@ -79,6 +87,7 @@ The pause/resume control sits beside the navigation lock in the documentation me
 | --- | --- |
 | \`enabled\`, \`surface\`, \`opacity\` | Enable the background, choose its CSS color/gradient, and set total opacity from 0 to 1 |
 | \`animation.enabled\`, \`animation.speed\` | Enable automatic movement; speed multiplier from 0.05 to 4 |
+| \`performance.mode\` | \`auto\` adapts visible density to the viewport; \`full\` preserves every configured particle |
 | \`parallax.enabled\` | Enable pointer/scroll depth independently of automatic movement |
 | \`parallax.pointer\`, \`parallax.scroll\` | Pointer displacement from 0 to 80 px; scroll ratio from 0 to 0.3 |
 | \`accessibility.reducedMotion\` | \`static\` retains a still composition; \`hide\` hides it when reduced motion is requested |
@@ -106,7 +115,7 @@ For an unpublished source-checkout preview, set \`GITPAGEDOCS_LAYOUTS_SOURCE=loc
 `,
   pt: `## Fundos animados e 20 famílias com paralaxe em dois modos
 
-O catálogo contém 124 temas: 64 originais, 20 presets animados independentes e mais 20 famílias com versões escura e clara (40 entradas). Todos os 84 temas anteriores preservam suas paletas, componentes e comportamento. Matrix Dark e Matrix Light continuam iguais; escolha **Matrix Rain** para letras caindo. Os 60 presets animados utilizam o renderer Motion existente, sem dependência adicional em tempo de execução.
+O catálogo contém 124 temas: 64 originais, 20 presets animados independentes e mais 20 famílias com versões escura e clara (40 entradas). Os temas anteriores preservam suas paletas e componentes. Matrix Dark e Matrix Light continuam iguais; escolha **Matrix Rain** para letras caindo. Os 60 presets animados usam Web Animations nativo nas partículas e Motion na paralaxe das camadas, sem dependência adicional em tempo de execução.
 
 | ID | Nome | Modo | Camadas |
 | --- | --- | --- | --- |
@@ -134,6 +143,14 @@ A precedência é template → \`site.backgroundEffects.overrides\` → \`site.b
 - Altere \`count\`, \`colors\`, \`size\`, \`duration\` e \`opacity\` de cada camada para ajustar densidade, paleta, tamanho, tempo e visibilidade. Contagem zero remove a camada.
 - Temas sem \`backgroundEffects\` permanecem estáticos, a menos que você forneça explicitamente um fundo habilitado com camadas válidas nessas opções.
 
+### Controle a densidade em telas estreitas
+
+\`backgroundEffects.performance.mode\` aceita \`auto\` ou \`full\`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam \`auto\` por padrão: cada camada exibe três de cada quatro partículas a partir de 768 pixels CSS de largura, ou uma de cada duas abaixo de 768; a primeira partícula sempre permanece. \`full\` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
+
+Por exemplo, adicione \`"performance": { "mode": "full" }\` dentro de \`site.backgroundEffects.overrides\` para manter a densidade total em todos os temas, ou dentro de \`site.backgroundEffects.themes[themeId]\` para um tema. Um ajuste explícito de \`layers\` sem modo de performance preserva suas contagens com \`full\`; escolha \`auto\` explicitamente para reduzir camadas personalizadas também. Assim, a camada Matrix de 12 caracteres do exemplo mantém a contagem total.
+
+Partículas omitidas por \`auto\` permanecem montadas, mas ocultas e pausadas, para retomar sua fase após redimensionamento. A regra altera a densidade visível, não a velocidade do movimento. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
+
 ### Pausar pelo menu de navegação
 
 O controle de pausar/retomar fica junto do cadeado de navegação no menu da documentação, inclusive na barra lateral recolhida e no menu móvel. Nas páginas de busca, ele aparece no cabeçalho. A pausa manual permanece ao abrir ou fechar menus e ao trocar de tema; use Retomar para continuar. As proteções de movimento reduzido e aba oculta continuam tendo prioridade.
@@ -146,6 +163,7 @@ O controle de pausar/retomar fica junto do cadeado de navegação no menu da doc
 | --- | --- |
 | \`enabled\`, \`surface\`, \`opacity\` | Habilita o fundo, define sua cor/gradiente CSS e a opacidade total de 0 a 1 |
 | \`animation.enabled\`, \`animation.speed\` | Movimento automático; multiplicador de velocidade de 0,05 a 4 |
+| \`performance.mode\` | \`auto\` adapta a densidade visível ao viewport; \`full\` preserva todas as partículas configuradas |
 | \`parallax.enabled\` | Profundidade pelo ponteiro/rolagem, independente do movimento automático |
 | \`parallax.pointer\`, \`parallax.scroll\` | Deslocamento pelo ponteiro de 0 a 80 px; razão da rolagem de 0 a 0,3 |
 | \`accessibility.reducedMotion\` | \`static\` mantém a composição parada; \`hide\` oculta o fundo quando o usuário pede movimento reduzido |
@@ -173,7 +191,7 @@ Para visualizar alterações ainda não publicadas neste checkout, defina \`GITP
 `,
   es: `## Fondos animados y 20 familias con paralaje en dos modos
 
-El catálogo contiene 124 temas: 64 originales, 20 presets animados independientes y otras 20 familias con versiones oscura y clara (40 entradas). Los 84 temas anteriores conservan sus paletas, componentes y comportamiento. Matrix Dark y Matrix Light no cambian; elige **Matrix Rain** para caracteres que caen. Los 60 presets animados utilizan el renderer Motion existente, sin otra dependencia en tiempo de ejecución.
+El catálogo contiene 124 temas: 64 originales, 20 presets animados independientes y otras 20 familias con versiones oscura y clara (40 entradas). Los temas anteriores conservan sus paletas y componentes. Matrix Dark y Matrix Light no cambian; elige **Matrix Rain** para caracteres que caen. Los 60 presets animados usan Web Animations nativo para las partículas y Motion para el paralaje de las capas, sin otra dependencia en tiempo de ejecución.
 
 | ID | Nombre | Modo | Capas |
 | --- | --- | --- | --- |
@@ -201,6 +219,14 @@ La precedencia es plantilla → \`site.backgroundEffects.overrides\` → \`site.
 - Cambia \`count\`, \`colors\`, \`size\`, \`duration\` y \`opacity\` por capa para ajustar densidad, paleta, tamaño, tiempo y visibilidad. Una cantidad de cero elimina la capa.
 - Los temas sin \`backgroundEffects\` permanecen estáticos, salvo que añadas explícitamente un fondo habilitado con capas válidas mediante estas opciones.
 
+### Controla la densidad en pantallas estrechas
+
+\`backgroundEffects.performance.mode\` acepta \`auto\` o \`full\`, con la misma precedencia plantilla → ajustes globales → ajustes por tema. Los presets usan \`auto\` por defecto: cada capa muestra tres de cada cuatro partículas a partir de 768 píxeles CSS de ancho, o una de cada dos por debajo de 768; la primera partícula siempre permanece. \`full\` muestra todas las partículas configuradas. Los colores, formas, trayectorias, desenfoque/brillo, velocidad y semillas deterministas no cambian.
+
+Por ejemplo, añade \`"performance": { "mode": "full" }\` dentro de \`site.backgroundEffects.overrides\` para conservar toda la densidad en todos los temas, o dentro de \`site.backgroundEffects.themes[themeId]\` para un tema. Un ajuste explícito de \`layers\` sin modo de rendimiento conserva sus cantidades con \`full\`; elige \`auto\` explícitamente para reducir también capas personalizadas. La capa Matrix de 12 caracteres del ejemplo conserva así su cantidad completa.
+
+Las partículas omitidas por \`auto\` permanecen montadas, pero ocultas y pausadas, para reanudar su fase después de redimensionar. La regla cambia la densidad visible, no la velocidad del movimiento. Pausa, movimiento reducido y pestaña oculta siguen funcionando en ambos modos. Prueba animación y desplazamiento con el viewport previsto; la opción no promete una tasa de fotogramas específica en todos los dispositivos.
+
 ### Pausar desde el menú de navegación
 
 El control de pausa/reanudación aparece junto al candado de navegación en el menú de documentación, incluida la barra lateral contraída y el menú móvil. Las páginas de búsqueda lo muestran en su cabecera. La pausa manual se conserva al abrir o cerrar menús y al cambiar de tema; utiliza Reanudar para continuar. Las protecciones de movimiento reducido y pestaña oculta siguen teniendo prioridad.
@@ -213,6 +239,7 @@ El control de pausa/reanudación aparece junto al candado de navegación en el m
 | --- | --- |
 | \`enabled\`, \`surface\`, \`opacity\` | Habilita el fondo, define su color/degradado CSS y la opacidad total de 0 a 1 |
 | \`animation.enabled\`, \`animation.speed\` | Movimiento automático; multiplicador de velocidad entre 0,05 y 4 |
+| \`performance.mode\` | \`auto\` adapta la densidad visible al viewport; \`full\` conserva todas las partículas configuradas |
 | \`parallax.enabled\` | Profundidad con el puntero/desplazamiento, independiente del movimiento automático |
 | \`parallax.pointer\`, \`parallax.scroll\` | Desplazamiento del puntero de 0 a 80 px; proporción de desplazamiento de 0 a 0,3 |
 | \`accessibility.reducedMotion\` | \`static\` mantiene una composición inmóvil; \`hide\` la oculta cuando se solicita movimiento reducido |

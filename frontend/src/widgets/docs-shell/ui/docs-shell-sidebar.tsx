@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { BsRobot, FiChevronsLeft } from "@/shared/ui/fallback-icons";
 import { NavMenuBlockToggle } from "@/features/nav-menu-block-preference";
 import { DocsLockButton, type DocsLockTexts } from "@/features/docs-access";
@@ -7,6 +6,7 @@ import type { NavMenuConfig } from "../model/use-docs-shell-config";
 import type { MenuNode } from "../model/menu-tree";
 import { ConfiguredIcon, DocsShellBrandIcon } from "./docs-shell-icon";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
+import { useActiveMenuScroll } from "../model/use-active-menu-scroll";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellSidebarProps {
@@ -62,24 +62,9 @@ export function DocsShellSidebar({
   aiChatIconConfig,
   docsLock,
 }: Readonly<DocsShellSidebarProps>): React.JSX.Element {
-  const sidebarRef = useRef<HTMLElement>(null);
+  const sidebarRef = useActiveMenuScroll(sidebarOpen && !blockMenuOnNav ? menuNodes : []);
   const aiChatFallback = <BsRobot aria-hidden />;
   const collapseFallback = <FiChevronsLeft aria-hidden />;
-
-  useEffect(() => {
-    const sidebar = sidebarRef.current;
-    if (blockMenuOnNav || !sidebarOpen || !sidebar || sidebar.clientHeight === 0) return;
-    const activeItem = sidebar.querySelector<HTMLElement>('nav [aria-current="page"]');
-    if (!activeItem) return;
-    const visibleTop = sidebar.getBoundingClientRect().top + sidebar.clientTop;
-    const visibleBottom = visibleTop + sidebar.clientHeight;
-    const itemBounds = activeItem.getBoundingClientRect();
-    if (itemBounds.top < visibleTop) {
-      sidebar.scrollTop += itemBounds.top - visibleTop;
-    } else if (itemBounds.bottom > visibleBottom) {
-      sidebar.scrollTop += itemBounds.bottom - visibleBottom;
-    }
-  }, [blockMenuOnNav, menuNodes, sidebarOpen]);
 
   return (
     <aside ref={sidebarRef} className={styles.sidebar}>

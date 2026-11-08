@@ -1,8 +1,9 @@
 import { decodeHTMLAttribute } from "entities/decode";
 import { escapeAttribute } from "entities/escape";
 
-const HEADING_TAG = /<h[1-6]\b[^>]*>/gi;
-const LINK_TAG = /<a\b[^>]*>/gi;
+const ELEMENT_TAG = /<[a-z][a-z0-9]*\b(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
+const HEADING_TAG = /^<h[1-6]\b/i;
+const LINK_TAG = /<a\b(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
 const ID_ATTRIBUTE = /\sid\s*=\s*(["'])([^"']*)\1/i;
 const HREF_ATTRIBUTE = /\shref\s*=\s*(["'])([^"']*)\1/i;
 
@@ -19,13 +20,15 @@ function fragmentId(href: string): string | undefined {
   }
 }
 
-/** Scopes generated heading anchors without changing Markdown sources or external links. */
-export function scopeMarkdownHtml(html: string, instanceId: string): string {
+/** Scopes headings and selected guide targets without changing Markdown sources or external links. */
+export function scopeMarkdownHtml(html: string, instanceId: string, guideIds: readonly string[] = []): string {
+  const targets = new Set(guideIds);
   const headingIds = new Map<string, string>();
-  const scoped = html.replace(HEADING_TAG, (tag) => {
+  const scoped = html.replace(ELEMENT_TAG, (tag) => {
     const attribute = ID_ATTRIBUTE.exec(tag);
     if (!attribute) return tag;
     const id = decodeHTMLAttribute(attribute[2]);
+    if (!HEADING_TAG.test(tag) && !targets.has(id)) return tag;
     const scopedId = scopeMarkdownId(id, instanceId);
     headingIds.set(id, scopedId);
     return tag.replace(attribute[0], ` id="${escapeAttribute(scopedId)}"`);

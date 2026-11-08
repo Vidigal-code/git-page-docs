@@ -36,6 +36,7 @@ export interface ThemeBackgroundConfig {
   opacity?: number;
   animation?: { enabled?: boolean; speed?: number };
   parallax?: { enabled?: boolean; pointer?: number; scroll?: number };
+  performance?: { mode?: "auto" | "full" };
   accessibility?: { reducedMotion?: "static" | "hide"; showPauseButton?: boolean };
   layers?: ThemeBackgroundLayer[];
 }
@@ -59,6 +60,7 @@ export interface ResolvedThemeBackground {
   opacity: number;
   animation: { enabled: boolean; speed: number };
   parallax: { enabled: boolean; pointer: number; scroll: number };
+  performance?: { mode: "auto" | "full" };
   accessibility: { reducedMotion: "static" | "hide"; showPauseButton: boolean };
   layers: ResolvedThemeBackgroundLayer[];
 }

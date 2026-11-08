@@ -164,3 +164,30 @@ test("all six primitives retain their configured paths, rotation and opacity", a
     expect(position.duration).toBe(20_000);
   }
 });
+
+test("auto density pauses surplus particles and resumes their phase when a foldable opens", async ({ page }) => {
+  const unfolded = { width: 1280, height: 882 };
+  const folded = { ...unfolded, width: 344 };
+  await page.setViewportSize(unfolded);
+  const particles = await openBackground(page);
+  await expect(particles.filter({ visible: true })).toHaveCount(38);
+  const returning = particles.nth(1);
+  const animation = await returning.evaluateHandle(element => element.getAnimations()[0]);
+  await page.setViewportSize(folded);
+  await expect(particles.filter({ visible: true })).toHaveCount(25);
+  await expect.poll(() => animation.evaluate(value => value.playState)).toBe("paused");
+  const pausedTime = await animation.evaluate(async value => { await value.ready; return value.currentTime; });
+  await returning.evaluate(async (_element, duration) => {
+    await new Promise(resolve => setTimeout(resolve, duration));
+  }, SAMPLE_DURATION_MS);
+  expect(await animation.evaluate(value => value.currentTime)).toBe(pausedTime);
+  await page.setViewportSize(unfolded);
+  await expect(particles.filter({ visible: true })).toHaveCount(38);
+  await expect.poll(() => animation.evaluate(value => value.playState)).toBe("running");
+  expect(await animation.evaluate(value => Number(value.currentTime))).toBeGreaterThanOrEqual(Number(pausedTime));
+  await clickGuideControl(page, "Pause guide animations");
+  await page.setViewportSize(folded);
+  await page.setViewportSize(unfolded);
+  await expectStationary(particles);
+  await animation.dispose();
+});

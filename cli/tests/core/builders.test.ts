@@ -296,7 +296,7 @@ describe("buildVersionConfig", () => {
     const config = buildVersionConfig(versionId);
     const md = config["routes-md"];
 
-    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 51]);
+    expect(md.map((route) => route.id)).toEqual([1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 44, 51]);
     for (const route of md) {
       for (const lang of LANGS) {
         const filename = route.id === 51 ? "pagination-first.md" : ROUTE_PATHS[route.id][lang];
@@ -398,6 +398,7 @@ describe("route builders", () => {
     expect(route.titlePosition).toBe("center");
     expect(route.RouteguideBrand).toBe(true);
     expect(route.RouteGuideSpeciFicbrand).toEqual([]);
+    expect(route.RouteGuideTags).toEqual(["h1", "h2", "h3"]);
     expect(route).not.toHaveProperty("audio");
     expect(route).not.toHaveProperty("authorization");
     expect(route.container).toBeUndefined();

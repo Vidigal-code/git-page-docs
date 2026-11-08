@@ -1,7 +1,8 @@
 import type { ContentTypeRouteConfig } from "../../model/types/config";
 import type { LanguageCode } from "../../model/types/site";
 import type { MarkdownMarker, MarkdownMarkerStyle, MarkdownMarkerText, MarkdownMarkersOptions } from "../../model/types/markdown-markers";
-import { extractHeadingsFromHtml, type HeadingItem } from "./extract-headings";
+import type { HeadingItem } from "./extract-headings";
+import { prepareMarkdownGuide } from "./prepare-markdown-guide";
 import { scopeMarkdownHtml, scopeMarkdownId } from "./scope-markdown-html";
 
 const EXCLUDED_CONTENT = 'script,style,template,noscript,iframe,object,embed,head,meta,link,[hidden],[aria-hidden="true"]';
@@ -24,11 +25,11 @@ export interface PreparedMarkdownContent {
 
 export function unmarkedMarkdownContent(options: MarkdownContentOptions): PreparedMarkdownContent {
   const { html, config, instanceId } = options;
-  const headings = config?.RouteguideBrand === true ? extractHeadingsFromHtml(html, config.RouteGuideSpeciFicbrand ?? []) : [];
+  const guide = prepareMarkdownGuide(html, config);
   return {
-    html: instanceId ? scopeMarkdownHtml(html, instanceId) : html,
-    headings: headings.map((heading) => ({ ...heading, id: instanceId ? scopeMarkdownId(heading.id, instanceId) : heading.id })),
-    issues: [],
+    html: instanceId ? scopeMarkdownHtml(guide.html, instanceId, guide.headings.map(heading => heading.id)) : guide.html,
+    headings: guide.headings.map((heading) => ({ ...heading, id: instanceId ? scopeMarkdownId(heading.id, instanceId) : heading.id })),
+    issues: guide.issues,
   };
 }
 
@@ -203,20 +204,23 @@ export function prepareMarkdownContent(options: MarkdownContentOptions): Prepare
   const { html, config, instanceId } = options;
   const items = config?.markdownMarkers?.items;
   if ((config?.markdownMarkers?.enabled ?? options.defaults?.enabled) === false || items === undefined) return unmarkedMarkdownContent(options);
-  if (!Array.isArray(items)) return { ...unmarkedMarkdownContent(options), issues: ["items must be an array"] };
+  if (!Array.isArray(items)) {
+    const unmarked = unmarkedMarkdownContent(options);
+    return { ...unmarked, issues: [...unmarked.issues, "items must be an array"] };
+  }
   if (items.length === 0) return unmarkedMarkdownContent(options);
+  const guide = prepareMarkdownGuide(html, config);
   const template = document.createElement("template");
-  template.innerHTML = html;
-  const originalHeadings = config?.RouteguideBrand === true ? extractHeadingsFromHtml(html, config.RouteGuideSpeciFicbrand ?? []) : [];
+  template.innerHTML = guide.html;
   const results = applyMarkers(template.content, items, options);
   const markedHeadings = results.flatMap((result) => result.heading ? [result.heading] : []);
-  const headings = [...new Map([...originalHeadings, ...markedHeadings].map((heading) => [heading.id, heading])).values()];
+  const headings = [...new Map([...guide.headings, ...markedHeadings].map((heading) => [heading.id, heading])).values()];
   const positions = new Map([...template.content.querySelectorAll("[id]")].map((element, index) => [element.id, index]));
   headings.sort((left, right) => (positions.get(left.id) ?? 0) - (positions.get(right.id) ?? 0));
   if (instanceId) scopeTargets(template.content, instanceId);
   return {
     html: template.innerHTML,
     headings: headings.map((heading) => ({ ...heading, id: instanceId ? scopeMarkdownId(heading.id, instanceId) : heading.id })),
-    issues: results.flatMap((result) => result.issues),
+    issues: [...guide.issues, ...results.flatMap((result) => result.issues)],
   };
 }

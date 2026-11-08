@@ -6,6 +6,7 @@ import type { MenuNode } from "../model/menu-tree";
 import { ConfiguredIcon } from "./docs-shell-icon";
 import { DocsShellControls } from "./docs-shell-controls";
 import { DocsShellMenuTree } from "./docs-shell-menu-tree";
+import { useActiveMenuScroll } from "../model/use-active-menu-scroll";
 import styles from "../docs-shell.module.css";
 
 interface DocsShellMobileDrawerProps {
@@ -45,6 +46,7 @@ export function DocsShellMobileDrawer({
   onOpenAiChat,
   aiChatIconConfig,
 }: Readonly<DocsShellMobileDrawerProps>): React.JSX.Element | null {
+  const drawerRef = useActiveMenuScroll(isOpen && !blockMenuOnNav ? menuNodes : []);
   if (!isOpen) {
     return null;
   }
@@ -52,7 +54,7 @@ export function DocsShellMobileDrawer({
   return (
     <div className={styles.mobileDrawerOverlay}>
       <button type="button" className={styles.overlayBackdrop} onClick={onClose} aria-label={menuCloseLabel} tabIndex={-1} />
-      <aside className={styles.mobileDrawer}>
+      <aside ref={drawerRef} className={styles.mobileDrawer}>
         <div className={styles.mobileDrawerHeader}>
           {aiChatIconConfig && (
             <button type="button" data-testid="ai-chat-open" className={`${styles.button} ${styles.mobileDrawerClose}`} onClick={onOpenAiChat} aria-label="Abrir Chat Inteligencia Artificial" title="Assistente de IA">

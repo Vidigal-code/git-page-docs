@@ -4,7 +4,7 @@ Un marcador resalta una frase o un elemento HTML dentro del Markdown renderizado
 
 ## Conserva el índice de títulos
 
-`RouteguideBrand` activa el índice existente. `RouteGuideSpeciFicbrand` sigue siendo una lista de IDs de títulos: un array vacío incluye todos. Los marcadores se configuran por separado en `routes-md[].markdownMarkers` y no cambian ese filtro. Sus entradas pueden aparecer incluso con `RouteguideBrand: false`. El índice sigue el orden del documento y reutiliza el ID del destino cuando existe.
+`RouteguideBrand` activa entradas automáticas del índice. `RouteGuideTags` selecciona tipos de elementos HTML seguros después de renderizar Markdown; las páginas oficiales usan `["h1", "h2", "h3"]`, omitirlo conserva títulos h1–h6 y `[]` desactiva las entradas automáticas. `RouteGuideSpeciFicbrand` filtra entradas elegibles por ID; un array vacío no limita las etiquetas seleccionadas. Los marcadores se configuran por separado en `routes-md[].markdownMarkers` y siguen disponibles con una lista vacía o `RouteguideBrand: false`. Consulta [Configura la guía del documento](route-guide.md). El índice sigue el orden del documento y reutiliza el ID del destino; cuando una entrada automática y un marcador comparten destino, prevalece el rótulo explícito del marcador.
 
 ## Valores del sitio
 
@@ -35,6 +35,11 @@ Añade estos campos a una ruta Markdown existente en la configuración de la ver
 {
   "id": 51,
   "RouteguideBrand": true,
+  "RouteGuideTags": [
+    "h1",
+    "h2",
+    "h3"
+  ],
   "RouteGuideSpeciFicbrand": [],
   "markdownMarkers": {
     "enabled": true,

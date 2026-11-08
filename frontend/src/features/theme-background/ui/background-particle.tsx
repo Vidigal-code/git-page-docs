@@ -10,11 +10,12 @@ interface BackgroundParticleProps {
   running: boolean;
   speed: number;
   keyframes: Keyframe[];
+  visible: boolean;
 }
 
 const MILLISECONDS_PER_SECOND = 1000;
 
-export function BackgroundParticle({ particle, layer, running, speed, keyframes }: Readonly<BackgroundParticleProps>) {
+export function BackgroundParticle({ particle, layer, running, speed, keyframes, visible }: Readonly<BackgroundParticleProps>) {
   const elementRef = useRef<HTMLSpanElement>(null);
   const animationRef = useRef<Animation | null>(null);
   const { duration: durationSeconds, phase } = particle;
@@ -46,7 +47,7 @@ export function BackgroundParticle({ particle, layer, running, speed, keyframes 
   }, [running, speed, durationSeconds, phase]);
 
   return (
-    <span ref={elementRef} data-background-particle={layer.kind} className={styles.particle}
+    <span ref={elementRef} hidden={!visible} data-background-particle={layer.kind} className={styles.particle}
       style={particleStyle(particle, layer)}>
       {layer.kind === "matrix" ? particle.text : null}
     </span>

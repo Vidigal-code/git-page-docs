@@ -166,9 +166,11 @@ export interface ContentTypeRouteConfig {
   browseAll?: boolean;
   /** Overrides the site's breadcrumb visibility for this document. */
   RouteGuide?: boolean;
-  /** If true, show TOC tree of headings (#h1-#h6). If false, hide (for large MD). */
+  /** Enables automatic document-guide entries. Explicit Markdown markers remain independent. */
   RouteguideBrand?: boolean;
-  /** Specific heading IDs to include in TOC. Empty = all headings. */
+  /** HTML element names included in the Markdown guide. Omitted preserves h1-h6; an empty array disables automatic entries. */
+  RouteGuideTags?: string[];
+  /** Element IDs to retain among eligible automatic guide entries. An empty list does not filter them. */
   RouteGuideSpeciFicbrand?: string[];
   markdownMarkers?: MarkdownMarkersConfig;
   pagination?: ContainerPaginationConfig;

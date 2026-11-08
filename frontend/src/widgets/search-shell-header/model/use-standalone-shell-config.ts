@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   fetchOfficialSiteConfig,
+  SITE_CONFIG_DEFAULTS,
   loadStandaloneLayoutsAndThemes,
   readCachedShellThemes,
   writeCachedShellThemes,
@@ -20,10 +21,19 @@ export interface StandaloneShellConfig {
 
 export function useStandaloneShellConfig(): {
   config: StandaloneShellConfig | null;
+  siteConfig: OfficialSiteConfig;
   isLoading: boolean;
 } {
   const [config, setConfig] = useState<StandaloneShellConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const siteConfig = useMemo<OfficialSiteConfig>(() => {
+    const official = config?.siteConfig;
+    return {
+      ...SITE_CONFIG_DEFAULTS,
+      ...official,
+      SiteHeaderName: official?.SiteHeaderName ?? official?.name ?? SITE_CONFIG_DEFAULTS.SiteHeaderName,
+    };
+  }, [config?.siteConfig]);
 
   // Adopt the cached catalogue before the browser paints, so a page opened on
   // an explicit `?theme=` renders that theme in its first painted frame instead
@@ -61,5 +71,5 @@ export function useStandaloneShellConfig(): {
     };
   }, []);
 
-  return { config, isLoading };
+  return { config, siteConfig, isLoading };
 }

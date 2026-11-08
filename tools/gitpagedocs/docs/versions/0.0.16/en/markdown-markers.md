@@ -4,7 +4,7 @@ A marker highlights a text phrase or an HTML element inside rendered Markdown an
 
 ## Keep the heading outline
 
-`RouteguideBrand` enables the existing heading outline. `RouteGuideSpeciFicbrand` remains a list of heading IDs to include: an empty array includes every heading. Markers are configured separately in `routes-md[].markdownMarkers`; they do not change that filter. Marker entries can appear even when `RouteguideBrand: false`. The index follows document order and reuses an existing target ID when available.
+`RouteguideBrand` enables automatic outline entries. `RouteGuideTags` selects safe HTML element types after Markdown rendering; official pages use `["h1", "h2", "h3"]`, omission preserves headings h1–h6, and `[]` disables automatic entries. `RouteGuideSpeciFicbrand` filters eligible entries by ID; an empty array does not narrow the selected tags. Markers are configured separately in `routes-md[].markdownMarkers` and remain available with an empty tag list or `RouteguideBrand: false`. See [Configure the document guide](route-guide.md). The index follows document order and reuses an existing target ID when available; when an automatic entry and a marker share a target, its explicit marker label wins.
 
 ## Site defaults
 
@@ -35,6 +35,11 @@ Merge these fields into an existing Markdown route in the version configuration.
 {
   "id": 51,
   "RouteguideBrand": true,
+  "RouteGuideTags": [
+    "h1",
+    "h2",
+    "h3"
+  ],
   "RouteGuideSpeciFicbrand": [],
   "markdownMarkers": {
     "enabled": true,

@@ -3,6 +3,15 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.21 - 2026-11-08 - configurable document guides and clearer reading controls
+
+- Select automatic Markdown guide entries with `RouteGuideTags`. Official pages index h1, h2 and h3; other sanitized element types can be selected per route. Preserve legacy heading levels when omitted, explicit markers, ID filters and original Markdown sources. Generate unique destinations and reveal collapsed details before scrolling.
+- Center the active document in unlocked desktop and mobile menus after navigation and viewport changes. Preserve manual scrolling between navigations and the locked menu behavior.
+- Render the configured header icons immediately across loading, search, documentation, source and introduction pages. Honor explicit text controls after configuration loads.
+- Give narration speed and volume controls distinct theme colors, larger touch targets and visible keyboard focus, with native controls in forced colors. Increase breadcrumb spacing to 1rem above and below.
+- Reduce active background particles automatically on desktop and narrow screens while preserving animation phase when resizing. Allow full density and preserve explicit custom layer counts.
+- Add detailed document-guide and foldable-layout references in English, Portuguese and Spanish. Update the CLI, tools and MCP packages to 0.0.21 and retain documentation versions through 0.0.9.
+
 ## 0.0.20 - 2026-11-08 - readable Markdown and lighter guide effects
 
 - Highlight fenced Markdown code blocks, including JSON, with the existing Shiki integration. Follow the active theme and keep token colors readable in documentation, focus mode, fullscreen and source-viewer previews. Preserve plain-text fallback for unsupported or unspecified languages and the original Markdown for copy/download.

@@ -4,6 +4,15 @@ import { prepareMarkdownContent } from "@/entities/docs/lib/markdown/prepare-mar
 import type { MarkdownContentOptions } from "@/entities/docs/lib/markdown/prepare-markdown-content";
 import { markdownToHtml } from "@/entities/docs/api/utils/markdown";
 
+it("preserves guide diagnostics when explicit marker configuration is malformed", () => {
+  const result = prepareMarkdownContent({
+    html: "<h1>Overview</h1>",
+    language: "en",
+    config: JSON.parse('{"id":1,"RouteguideBrand":true,"RouteGuideTags":["script"],"markdownMarkers":{"items":{}}}') as MarkdownContentOptions["config"],
+  });
+  expect(result.issues).toEqual(["RouteGuideTags: unsupported tag script", "items must be an array"]);
+});
+
 it("highlights a localized phrase across inline formatting and adds its navigation target", () => {
   const result = prepareMarkdownContent({
     html: '<h2 id="setup">Setup</h2><p>Leia a <strong>configuração</strong> completa.</p>',

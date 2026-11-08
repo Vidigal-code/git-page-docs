@@ -4,6 +4,8 @@ export const PDF_GUIDE_FILENAME = "gitpagedocs-project-guide.pdf";
 export const HTML_DOOM_FILENAME = "doom.html";
 
 export const ROUTE_PATHS = {
+  43: { en: "route-guide.md", pt: "route-guide.md", es: "route-guide.md" },
+  44: { en: "responsive-layout.md", pt: "responsive-layout.md", es: "responsive-layout.md" },
   41: { en: "container-pagination.md", pt: "container-pagination.md", es: "container-pagination.md" },
   42: { en: "markdown-markers.md", pt: "markdown-markers.md", es: "markdown-markers.md" },
   40: { en: "content-blocks.md", pt: "content-blocks.md", es: "content-blocks.md" },

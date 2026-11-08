@@ -39,6 +39,14 @@ export const ROUTE_META_ID6 = {
 };
 
 export const REFERENCE_ROUTE_METAS = {
+  43: {
+    titles: { en: "Configure the document guide", pt: "Configure o guia do documento", es: "Configura la guía del documento" },
+    descriptions: { en: "Select Markdown tags, filter targets and keep explicit markers", pt: "Selecione tags Markdown, filtre destinos e mantenha marcadores explícitos", es: "Selecciona etiquetas Markdown, filtra destinos y conserva marcadores explícitos" },
+  },
+  44: {
+    titles: { en: "Narrow and foldable screens", pt: "Telas estreitas e dobráveis", es: "Pantallas estrechas y plegables" },
+    descriptions: { en: "Configure navigation and verify mobile and foldable layouts", pt: "Configure a navegação e verifique layouts móveis e dobráveis", es: "Configura la navegación y comprueba diseños móviles y plegables" },
+  },
   41: {
     titles: { en: "Paginated containers", pt: "Containers paginados", es: "Contenedores paginados" },
     descriptions: { en: "Navigate files independently inside each container", pt: "Navegue pelos arquivos de cada container de forma independente", es: "Navega por los archivos de cada contenedor de forma independiente" },

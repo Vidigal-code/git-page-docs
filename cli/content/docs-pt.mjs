@@ -6,11 +6,14 @@ import { PARENT_MENU_JSON } from "./configuration-examples.mjs";
 import { THEME_BACKGROUND_DOCS } from "./theme-backgrounds.mjs";
 import { PAGINATION_DOCS, PAGINATION_FIRST_DOCS } from "./container-pagination.mjs";
 import { MARKDOWN_MARKER_DOCS } from "./markdown-markers.mjs";
+import { MARKDOWN_GUIDE_DOCS, RESPONSIVE_LAYOUT_DOCS } from "./markdown-guide.mjs";
 
 export const docsPt = {
     containerPagination: PAGINATION_DOCS.pt,
     paginationFirst: PAGINATION_FIRST_DOCS.pt,
     markdownMarkers: MARKDOWN_MARKER_DOCS.pt,
+    routeGuide: MARKDOWN_GUIDE_DOCS.pt,
+    responsiveLayout: RESPONSIVE_LAYOUT_DOCS.pt,
     ...practicalPt,
     ...operationsPt,
     ...overviewsPt,
@@ -48,7 +51,7 @@ As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\
 
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.20/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.21/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -57,9 +60,9 @@ Em \`gitpagedocs/docs/versions/0.0.20/config.json\`, mantenha as listas de rotas
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.21/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.21/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.21/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -944,7 +947,11 @@ As opções visuais ficam em \`gitpagedocs/config.json\`. O gerador interativo/c
 
 Em telas pequenas, os botões com ícones de tema e idioma ocupam a largura da linha do menu mobile e mantêm os ícones centralizados. Os mesmos controles continuam compactos no cabeçalho desktop.
 
-Com o cadeado de navegação destravado, o menu desktop rola até deixar o item atual visível ao avançar ou voltar. Abrir ou destravar o menu também revela o item atual. A rolagem do menu é independente da documentação; o menu travado mantém sua posição de rolagem.
+Com o cadeado de navegação destravado, Anterior e Próximo centralizam o destino atual na barra lateral desktop ou na gaveta móvel. Abrir, destravar ou redimensionar o menu também o centraliza, dentro do limite de rolagem disponível. A rolagem manual permanece entre mudanças de página; o menu travado mantém sua posição. Essa rolagem é independente do documento.
+
+Os ícones oficiais padrão são usados desde a primeira renderização, inclusive no carregamento, na abertura do repositório e quando a configuração está indisponível. A opção explícita \`reactIcon: false\` continua selecionando texto localizado após o carregamento das configurações. Veja [Telas estreitas e dobráveis](responsive-layout.md) para larguras de 280 a 768 pixels CSS e verificações de dobra e orientação.
+
+O índice do documento é configurado separadamente em \`routes-md[].RouteGuideTags\`. As páginas oficiais selecionam \`["h1", "h2", "h3"]\`; listas omitidas preservam os seis níveis de títulos, e \`[]\` deixa somente marcadores Markdown explícitos. Veja [Configure o guia do documento](route-guide.md) para tags seguras, filtros por ID e rótulos.
 
 Rotas definem o conteúdo; menus definem como o leitor o encontra. Configure-os em \`gitpagedocs/docs/versions/<version>/config.json\`. Opções visuais globais ficam em \`gitpagedocs/config.json\`.
 
@@ -1053,7 +1060,7 @@ A árvore atende à navegação lateral, aos rótulos de busca, à expansão dos
 
 ## Trilha de navegação: RouteGuide
 
-A trilha de navegação tem 12 px de espaçamento acima e abaixo, separando o caminho do conteúdo ao redor.
+A trilha de navegação tem 1rem de espaçamento acima e abaixo (16 pixels CSS no tamanho padrão da fonte raiz), separando o caminho do conteúdo ao redor.
 
 \`RouteGuide\` controla os breadcrumbs. A prioridade é \`routes-md[].RouteGuide\` da página, depois \`routeDefaults.RouteGuide\` da versão, depois \`site.RouteGuide\`, usando \`true\` como padrão final. O exemplo desliga a trilha na versão e a liga no capítulo 101. Arquivos existentes da versão \`0.0.8\` aceitam os mesmos campos.
 

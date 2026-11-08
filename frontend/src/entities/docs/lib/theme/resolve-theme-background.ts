@@ -20,6 +20,7 @@ function mergeBackgroundConfig(baseValue: unknown, overrideValue: unknown): Reco
     ...override,
     animation: { ...backgroundRecord(base.animation), ...backgroundRecord(override.animation) },
     parallax: { ...backgroundRecord(base.parallax), ...backgroundRecord(override.parallax) },
+    performance: { ...backgroundRecord(base.performance), ...backgroundRecord(override.performance) },
     accessibility: { ...backgroundRecord(base.accessibility), ...backgroundRecord(override.accessibility) },
   };
 }
@@ -36,10 +37,21 @@ export function resolveThemeBackground({ theme, settings }: ResolveThemeBackgrou
   const animation = backgroundRecord(config.animation);
   const parallax = backgroundRecord(config.parallax);
   const accessibility = backgroundRecord(config.accessibility);
+  const performance = backgroundRecord(config.performance);
+  const globalOverride = backgroundRecord(siteSettings.overrides);
+  const themeOverride = backgroundRecord(themeOverrides[theme.id]);
+  const customLayers = Array.isArray(globalOverride.layers) || Array.isArray(themeOverride.layers);
+  const performanceOverride = {
+    ...backgroundRecord(globalOverride.performance), ...backgroundRecord(themeOverride.performance),
+  };
+  const requestedMode = customLayers ? performanceOverride.mode : performance.mode;
+  const fallbackMode = customLayers ? "full" : "auto";
+  const performanceMode = requestedMode === "auto" || requestedMode === "full" ? requestedMode : fallbackMode;
   return {
     enabled: true,
     surface: backgroundText(config.surface, "transparent"),
     opacity: backgroundNumber(config.opacity, OPACITY_BOUNDS),
+    performance: { mode: performanceMode },
     animation: { enabled: animation.enabled !== false, speed: backgroundNumber(animation.speed, SPEED_BOUNDS) },
     parallax: {
       enabled: parallax.enabled !== false,

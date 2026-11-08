@@ -43,7 +43,7 @@ Al contribuir en Git Page Docs, la fuente es `gitpagelayouts/v2/base.json` junto
 
 ## Fondos animados y 20 familias con paralaje en dos modos
 
-El catálogo contiene 124 temas: 64 originales, 20 presets animados independientes y otras 20 familias con versiones oscura y clara (40 entradas). Los 84 temas anteriores conservan sus paletas, componentes y comportamiento. Matrix Dark y Matrix Light no cambian; elige **Matrix Rain** para caracteres que caen. Los 60 presets animados utilizan el renderer Motion existente, sin otra dependencia en tiempo de ejecución.
+El catálogo contiene 124 temas: 64 originales, 20 presets animados independientes y otras 20 familias con versiones oscura y clara (40 entradas). Los temas anteriores conservan sus paletas y componentes. Matrix Dark y Matrix Light no cambian; elige **Matrix Rain** para caracteres que caen. Los 60 presets animados usan Web Animations nativo para las partículas y Motion para el paralaje de las capas, sin otra dependencia en tiempo de ejecución.
 
 | ID | Nombre | Modo | Capas |
 | --- | --- | --- | --- |
@@ -195,6 +195,14 @@ La precedencia es plantilla → `site.backgroundEffects.overrides` → `site.bac
 - Cambia `count`, `colors`, `size`, `duration` y `opacity` por capa para ajustar densidad, paleta, tamaño, tiempo y visibilidad. Una cantidad de cero elimina la capa.
 - Los temas sin `backgroundEffects` permanecen estáticos, salvo que añadas explícitamente un fondo habilitado con capas válidas mediante estas opciones.
 
+### Controla la densidad en pantallas estrechas
+
+`backgroundEffects.performance.mode` acepta `auto` o `full`, con la misma precedencia plantilla → ajustes globales → ajustes por tema. Los presets usan `auto` por defecto: cada capa muestra tres de cada cuatro partículas a partir de 768 píxeles CSS de ancho, o una de cada dos por debajo de 768; la primera partícula siempre permanece. `full` muestra todas las partículas configuradas. Los colores, formas, trayectorias, desenfoque/brillo, velocidad y semillas deterministas no cambian.
+
+Por ejemplo, añade `"performance": { "mode": "full" }` dentro de `site.backgroundEffects.overrides` para conservar toda la densidad en todos los temas, o dentro de `site.backgroundEffects.themes[themeId]` para un tema. Un ajuste explícito de `layers` sin modo de rendimiento conserva sus cantidades con `full`; elige `auto` explícitamente para reducir también capas personalizadas. La capa Matrix de 12 caracteres del ejemplo conserva así su cantidad completa.
+
+Las partículas omitidas por `auto` permanecen montadas, pero ocultas y pausadas, para reanudar su fase después de redimensionar. La regla cambia la densidad visible, no la velocidad del movimiento. Pausa, movimiento reducido y pestaña oculta siguen funcionando en ambos modos. Prueba animación y desplazamiento con el viewport previsto; la opción no promete una tasa de fotogramas específica en todos los dispositivos.
+
 ### Pausar desde el menú de navegación
 
 El control de pausa/reanudación aparece junto al candado de navegación en el menú de documentación, incluida la barra lateral contraída y el menú móvil. Las páginas de búsqueda lo muestran en su cabecera. La pausa manual se conserva al abrir o cerrar menús y al cambiar de tema; utiliza Reanudar para continuar. Las protecciones de movimiento reducido y pestaña oculta siguen teniendo prioridad.
@@ -207,6 +215,7 @@ El control de pausa/reanudación aparece junto al candado de navegación en el m
 | --- | --- |
 | `enabled`, `surface`, `opacity` | Habilita el fondo, define su color/degradado CSS y la opacidad total de 0 a 1 |
 | `animation.enabled`, `animation.speed` | Movimiento automático; multiplicador de velocidad entre 0,05 y 4 |
+| `performance.mode` | `auto` adapta la densidad visible al viewport; `full` conserva todas las partículas configuradas |
 | `parallax.enabled` | Profundidad con el puntero/desplazamiento, independiente del movimiento automático |
 | `parallax.pointer`, `parallax.scroll` | Desplazamiento del puntero de 0 a 80 px; proporción de desplazamiento de 0 a 0,3 |
 | `accessibility.reducedMotion` | `static` mantiene una composición inmóvil; `hide` la oculta cuando se solicita movimiento reducido |

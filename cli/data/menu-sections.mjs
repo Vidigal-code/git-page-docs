@@ -13,7 +13,7 @@ export const MARKDOWN_MENU_SECTIONS = [
         id: 1001,
         routeId: 32,
         titles: { en: "Configure your site", pt: "Configure seu site", es: "Configura tu sitio" },
-        submenus: [13, 25, 16, 20],
+        submenus: [13, 25, 16, 20, 43, 44],
       },
       {
         id: 1002,

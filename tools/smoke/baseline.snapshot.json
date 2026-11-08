@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-11-08T09:34:24.128Z",
+  "generatedAt": "2026-11-08T12:50:51.800Z",
   "targets": [
     "gitpagedocs/config.json",
     "gitpagedocs/langs/en.json",
     "gitpagedocs/langs/pt.json",
     "gitpagedocs/langs/es.json",
+    "gitpagedocs/docs/versions/0.0.21/config.json",
     "gitpagedocs/docs/versions/0.0.20/config.json",
     "gitpagedocs/docs/versions/0.0.19/config.json",
     "gitpagedocs/docs/versions/0.0.18/config.json",
@@ -19,21 +20,22 @@
     "gitpagedocs/docs/versions/0.0.9/config.json"
   ],
   "hashes": {
-    "gitpagedocs/config.json": "5cafc984a87036d11001505177dcc27500e86af5e905e054c74013a0933cfee4",
+    "gitpagedocs/config.json": "6506a9f0caa70a490c46f5e3f8240f59b6775d95faaeabee78563f5681eccc4d",
     "gitpagedocs/langs/en.json": "91ebfd4d4ccbf33d98f48146cf7afae9e4564c8a2d144eefffbbbb82bc699fbf",
     "gitpagedocs/langs/pt.json": "3988cb2903645ec2ca2b73a6cc33d21dcacf668c5038e6253def50f2344d2676",
     "gitpagedocs/langs/es.json": "7ecba7b5887e0f429844fb44a628b2a16d6b911d317d305cdb5f79a1514e8599",
-    "gitpagedocs/docs/versions/0.0.20/config.json": "85cec8298ceb8a0d92ebacb520086dbc25367f3d32c13fe16de0fed5c44bd249",
-    "gitpagedocs/docs/versions/0.0.19/config.json": "43031aeecb1e37b2ce80b42fd06de0a3d37c07f69d4b010e4df6adc0605b85d2",
-    "gitpagedocs/docs/versions/0.0.18/config.json": "b83cac4b3eccc8a58df880a61fb78f454947023d8325cbe93b2018817a5f3a73",
-    "gitpagedocs/docs/versions/0.0.17/config.json": "a2ee9a88964568768e950b60f6dce711dedbd5c2a034dbb6add709ba9ab2a764",
-    "gitpagedocs/docs/versions/0.0.16/config.json": "7a73d8fb4f2cb12f93b01c6f637ef6af58dd258fb1eeec3bdf8cf587d846d96a",
-    "gitpagedocs/docs/versions/0.0.15/config.json": "5bb3b9e3b716926475cbb996e47bfda6737ccde9b5d4944e36a46a6b463ab73f",
-    "gitpagedocs/docs/versions/0.0.14/config.json": "a06dba1408f2a37247f232358711394550a0d5564cece3b415414e4006c58633",
-    "gitpagedocs/docs/versions/0.0.13/config.json": "679b2be8c5146176d5011fa810e8f786a839b604ce66bb74ffd7999fdc1cc7c8",
-    "gitpagedocs/docs/versions/0.0.12/config.json": "c9b2686c65341f8696c61a1c61029e8aefcf93ba2a90d977be63491be3cd1a28",
-    "gitpagedocs/docs/versions/0.0.11/config.json": "19dd8b92017ccae72a359185a0b69640a8cb6f0e0a7504c274601ce558159df1",
-    "gitpagedocs/docs/versions/0.0.10/config.json": "37ff339be140374e51a2893209e05d0e439a126be709963daf35b666ac03e2a6",
-    "gitpagedocs/docs/versions/0.0.9/config.json": "66c4eb94a144689979b5cdf709298b7e2c0288d7596e0bc06e9809cbcb6e8988"
+    "gitpagedocs/docs/versions/0.0.21/config.json": "44d7bea91ceeea840a06edf996d349c6070df35872cd6864c6ba381c38f9a53e",
+    "gitpagedocs/docs/versions/0.0.20/config.json": "01465a6593c7069915961470efddf297397733245fb8db3d0c51ad807670f409",
+    "gitpagedocs/docs/versions/0.0.19/config.json": "42dd0264127238d0873b9789082876a7659ca780656e12c9e5726634a771146b",
+    "gitpagedocs/docs/versions/0.0.18/config.json": "751b2da890f05c6bfa5abda042833eeab346321493c83877f8be7a63676cdcf0",
+    "gitpagedocs/docs/versions/0.0.17/config.json": "c03b99fca2a241accc2dd864baa094e07379ff00e57f9ec523b8206c7fa6c2ae",
+    "gitpagedocs/docs/versions/0.0.16/config.json": "5c606c1cb1803a63713758dfe6191dfb0a281e64538a0fef8ae28ee8b1532fb9",
+    "gitpagedocs/docs/versions/0.0.15/config.json": "6924279d035a60ff79951a2c28d18f4ac8e79bc7914c1cdf66848144cc814c66",
+    "gitpagedocs/docs/versions/0.0.14/config.json": "bb83d4b749022e798d7e900986e179ae9a14a95c72344b37727f6299980152e8",
+    "gitpagedocs/docs/versions/0.0.13/config.json": "0619c435fa033c6cc4ab488d3d6345d58caec31a584c7763f52d1c2beeaac09e",
+    "gitpagedocs/docs/versions/0.0.12/config.json": "fff7cf9d3867765b409ffbd27314c998b3e0b48da9509a9e8e252b005ea83842",
+    "gitpagedocs/docs/versions/0.0.11/config.json": "1cef0f88d3b3b676dba17cea1150fb2b9f9e7dc2ea7e73252124a8c25b530578",
+    "gitpagedocs/docs/versions/0.0.10/config.json": "e2397f27a81fa19585cc633b31452f8888878a44cef9291c4b17ee8b4429ff5e",
+    "gitpagedocs/docs/versions/0.0.9/config.json": "f3fc7941f9874edf1d18ce8d7bf58951488987033796edff7e1cd41249bd1377"
   }
 }

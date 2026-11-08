@@ -43,7 +43,7 @@ When contributing to Git Page Docs itself, the authoring source is `gitpagelayou
 
 ## Animated backgrounds and 20 paired parallax families
 
-The catalog contains 124 themes: 64 original themes, 20 standalone animated presets and 20 additional families with dark and light variants (40 entries). All 84 earlier themes retain their palettes, components and behavior. Existing Matrix Dark and Matrix Light remain unchanged; select **Matrix Rain** for falling characters. The 60 animated presets use the existing Motion renderer, with no extra runtime dependency.
+The catalog contains 124 themes: 64 original themes, 20 standalone animated presets and 20 additional families with dark and light variants (40 entries). Earlier themes retain their palettes and components. Existing Matrix Dark and Matrix Light remain unchanged; select **Matrix Rain** for falling characters. The 60 animated presets use native Web Animations for particles and Motion for layer parallax, with no extra runtime dependency.
 
 | ID | Name | Mode | Layers |
 | --- | --- | --- | --- |
@@ -195,6 +195,14 @@ Resolution order is template → `site.backgroundEffects.overrides` → `site.ba
 - Change `count`, `colors`, `size`, `duration` and `opacity` inside a layer to adjust density, palette, scale, timing and visibility. A count of zero removes that layer.
 - Themes without `backgroundEffects` remain static unless you explicitly supply an enabled background and valid layers through these settings.
 
+### Control density on narrow screens
+
+`backgroundEffects.performance.mode` accepts `auto` or `full`, with the same template → global overrides → theme overrides precedence. Presets default to `auto`: each layer displays three of every four particles at widths of at least 768 CSS pixels, or one of every two below 768; the first particle is always retained. `full` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
+
+For example, add `"performance": { "mode": "full" }` inside `site.backgroundEffects.overrides` to keep full density everywhere, or inside `site.backgroundEffects.themes[themeId]` for one theme. An explicit `layers` override without a performance mode preserves its configured counts with `full`; choose `auto` explicitly to reduce custom layers too. The 12-character Matrix layer above therefore retains its full count.
+
+Particles omitted by `auto` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
+
 ### Pause from the navigation menu
 
 The pause/resume control sits beside the navigation lock in the documentation menu, including the collapsed sidebar and mobile menu. Search pages expose it in their header. A manual pause remains active when opening or closing menus and when changing themes; use Resume to continue. Reduced-motion and hidden-tab protections still take precedence.
@@ -207,6 +215,7 @@ The pause/resume control sits beside the navigation lock in the documentation me
 | --- | --- |
 | `enabled`, `surface`, `opacity` | Enable the background, choose its CSS color/gradient, and set total opacity from 0 to 1 |
 | `animation.enabled`, `animation.speed` | Enable automatic movement; speed multiplier from 0.05 to 4 |
+| `performance.mode` | `auto` adapts visible density to the viewport; `full` preserves every configured particle |
 | `parallax.enabled` | Enable pointer/scroll depth independently of automatic movement |
 | `parallax.pointer`, `parallax.scroll` | Pointer displacement from 0 to 80 px; scroll ratio from 0 to 0.3 |
 | `accessibility.reducedMotion` | `static` retains a still composition; `hide` hides it when reduced motion is requested |

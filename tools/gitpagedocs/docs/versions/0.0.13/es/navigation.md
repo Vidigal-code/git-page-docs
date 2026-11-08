@@ -2,7 +2,11 @@
 
 En pantallas pequeñas, los botones con iconos de tema e idioma ocupan todo el ancho de la fila del menú móvil y mantienen los iconos centrados. Los mismos controles siguen siendo compactos en la cabecera de escritorio.
 
-Con el candado de navegación desbloqueado, el menú de escritorio desplaza su contenido para mostrar el elemento actual al avanzar o retroceder. Abrir o desbloquear el menú también muestra el elemento actual. El desplazamiento del menú es independiente del documento; un menú bloqueado conserva su posición.
+Con el candado de navegación desbloqueado, Anterior y Siguiente centran el destino actual en la barra lateral de escritorio o el panel móvil. Abrir, desbloquear o redimensionar el menú también lo centra, dentro del rango disponible. El desplazamiento manual se conserva entre cambios de página; un menú bloqueado mantiene su posición. Este desplazamiento es independiente del documento.
+
+Los iconos oficiales predeterminados se aplican desde el primer renderizado, incluso durante la carga, la apertura del repositorio o cuando la configuración no está disponible. La opción explícita `reactIcon: false` sigue seleccionando texto localizado al cargar la configuración. Consulta [Pantallas estrechas y plegables](responsive-layout.md) para anchos de 280 a 768 píxeles CSS y comprobaciones de plegado y orientación.
+
+El índice del documento se configura por separado con `routes-md[].RouteGuideTags`. Las páginas oficiales seleccionan `["h1", "h2", "h3"]`; omitir la lista conserva los seis niveles de títulos, y `[]` deja solo marcadores Markdown explícitos. Consulta [Configura la guía del documento](route-guide.md) para etiquetas seguras, filtros de ID y rótulos.
 
 Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúralos en `gitpagedocs/docs/versions/<version>/config.json`. Las opciones visuales globales están en `gitpagedocs/config.json`.
 
@@ -159,7 +163,7 @@ El árbol sirve para navegación lateral, etiquetas de búsqueda, expansión de 
 
 ## Ruta de navegación: RouteGuide
 
-La ruta de navegación tiene 12 px de espacio arriba y abajo, separando el camino del contenido que la rodea.
+La ruta de navegación tiene 1rem de espacio arriba y abajo (16 píxeles CSS con el tamaño raíz predeterminado), separando el camino del contenido que la rodea.
 
 `RouteGuide` controla los breadcrumbs. La prioridad es `routes-md[].RouteGuide` de la página, después `routeDefaults.RouteGuide` de la versión, después `site.RouteGuide`, con `true` como valor final por defecto. El ejemplo desactiva la ruta de navegación para la versión y la activa en el capítulo 101. Los archivos existentes de la versión `0.0.8` aceptan los mismos campos.
 
