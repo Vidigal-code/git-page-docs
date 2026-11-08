@@ -13,7 +13,7 @@ Git Page Docs é um monorepo pnpm + turborepo que transforma a pasta `gitpagedoc
 ## Stack
 
 - Next.js 15 (App Router) + React 19 + TypeScript; exportação estática para GitHub Pages
-- gray-matter + marked para Markdown; react-icons
+- gray-matter + marked + hast-util-sanitize para Markdown; react-icons
 - pnpm workspaces + turborepo; Vitest + Playwright; ESLint
 
 ## Destaques

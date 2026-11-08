@@ -39,7 +39,7 @@ describe("markdownToHtml", () => {
       { id: "hello-world", text: "Hello World!", level: 2 },
     ]);
     expect(html).toContain('<h1 id="configuração-ação">Configuração &amp; ação</h1>');
-    expect(html).toContain('<h2 id="olá-mundo-">Olá <em>mundo</em> &copy; &#x1F680;</h2>');
+    expect(html).toContain('<h2 id="olá-mundo-">Olá <em>mundo</em> © 🚀</h2>');
     expect(html).not.toContain("Metadados");
   });
 

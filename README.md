@@ -127,7 +127,7 @@ Generate docs, configure GitHub Pages URL, create workflow, and push:
 npx @gitpagedocs/cli --push --owner your-user --repo your-repository
 ```
 
-Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/0.0.18/?lang=en`.
+Docs deploy at the repository root, e.g. `https://your-user.github.io/your-repository/v/0.0.19/?lang=en`.
 
 Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 
@@ -135,7 +135,7 @@ Optional `--path` to serve docs in a subpath (e.g. `docs` or `git-page-docs`):
 npx @gitpagedocs/cli --push --owner your-user --repo your-repository --path docs
 ```
 
-Then docs are at `https://your-user.github.io/your-repository/docs/v/0.0.18/?lang=en`.
+Then docs are at `https://your-user.github.io/your-repository/docs/v/0.0.19/?lang=en`.
 
 Shortcut syntax also supported:
 
@@ -271,10 +271,10 @@ gitpagedocs/
   icon.svg
   docs/
     versions/
-      0.0.18/config.json
-      0.0.18/{en,pt,es}/*.md
-      0.0.18/{en,pt,es}/doom.html
-      0.0.18/en/gitpagedocs-project-guide.pdf
+      0.0.19/config.json
+      0.0.19/{en,pt,es}/*.md
+      0.0.19/{en,pt,es}/doom.html
+      0.0.19/en/gitpagedocs-project-guide.pdf
       0.0.17/             # also scaffolded
       0.0.16/             # also scaffolded
       0.0.15/             # also scaffolded
@@ -452,7 +452,7 @@ All routes for accessing documentation files on the official site or self-hosted
 | `lang` | `en`, `pt`, `es` | UI and content language |
 | `theme` | layout id (e.g. `aurora-dark`, `aurora-light`) | Active theme; always reflected in URL |
 | `modetheme` | `dark`, `light` | Theme mode (legacy; `theme` takes precedence) |
-| `version` | e.g. `0.0.18` | Version (alternative to path) |
+| `version` | e.g. `0.0.19` | Version (alternative to path) |
 | `menu` | `en`, `pt`, `es` | Language for path resolution (use with `id` or `name`) |
 | `id` | route id (e.g. `1`, `2`) | Navigate to page by route id |
 | `name` | slug (e.g. `getting-started`) | Navigate to page by filename slug |
@@ -479,46 +479,46 @@ https://vidigal-code.github.io/git-page-docs
 - Repository default version:
   https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en
 - Repository pinned version:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en
 - Project version path without owner/repo:
-  https://vidigal-code.github.io/git-page-docs/v/0.0.18/?lang=en
+  https://vidigal-code.github.io/git-page-docs/v/0.0.19/?lang=en
 - Version through query parameter:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=0.0.18
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/?lang=en&version=0.0.19
 
 **Markdown pages by route id**
 
 - Getting Started (`id=1`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=1
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=1
 - Project overview (`id=2`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=2
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=2
 - Functionalities (`id=3`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=3
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=3
 - GitHub issues and projects (`id=4`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=4
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=4
 - Introduction to Git (`id=5`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=5
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=5
 - Authorized routes (`id=6`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=6
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=6
 
 **Markdown pages by slug (`name`)**
 
 - Getting Started:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&name=getting-started
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&name=getting-started
 - Project overview:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&name=project-overview
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&name=project-overview
 - Functionalities:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&name=functionalities
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&name=functionalities
 - GitHub issues and projects:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&name=github-issues-projects
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&name=github-issues-projects
 - Introduction to Git:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&name=git-introduction
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&name=git-introduction
 - Authorized routes:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&name=authorized-routes
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&name=authorized-routes
 
 **Source viewer**
 
 - Source viewer page inside the docs shell (`id=7`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=7
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=7
 - Standalone source viewer root:
   https://vidigal-code.github.io/git-page-docs/source-viewer
 - Standalone source viewer for this repository:
@@ -530,42 +530,42 @@ https://vidigal-code.github.io/git-page-docs
 **Video pages** (`id=8` to `id=10` require sign-in; `id=11` is open to every visitor, see [Video routes](#video-routes))
 
 - Interactive vs non-interactive modes (`id=8`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=8
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=8
 - GitHub issues and projects video (`id=9`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=9
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=9
 - Python tutor video (`id=10`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=10
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=10
 - Git introduction video (`id=11`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=11
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=11
 
 **Audio pages**
 
 - Audio track (`id=12`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=12
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=12
 
 **Fullscreen modes**
 
 - Markdown fullscreen:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?mdfull=en&file=gitpagedocs/docs/versions/0.0.18/en/getting-started.md
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?mdfull=en&file=gitpagedocs/docs/versions/0.0.19/en/getting-started.md
 - Video fullscreen by route id:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?videofull=en&id=8
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?videofull=en&id=8
 - Video fullscreen by slug:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?videofull=en&slug=bdIJkGr2NV0
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?videofull=en&slug=bdIJkGr2NV0
 - Audio fullscreen by route id:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?audiofull=en&id=12
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?audiofull=en&id=12
 - Audio fullscreen by slug:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?audiofull=en&slug=0w80F8FffQ4
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?audiofull=en&slug=0w80F8FffQ4
 
 **Theme and heading selection**
 
 - aurora-dark theme:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&theme=aurora-dark
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&theme=aurora-dark
 - aurora-light theme:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&theme=aurora-light
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&theme=aurora-light
 - Legacy mode parameter:
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&modetheme=dark
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&modetheme=dark
 - Scroll to a Markdown heading (`## Prerequisites` of Getting Started; the anchor is the lower-cased heading with spaces as `-`):
-  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=1#prerequisites
+  https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=1#prerequisites
 
 **Standalone app routes**
 
@@ -607,11 +607,11 @@ Test video (GitHub channel, *A brief introduction to Git for beginners*):
 [![A brief introduction to Git for beginners | GitHub](https://img.youtube.com/vi/r8jQ9hVA2qs/hqdefault.jpg)](https://www.youtube.com/watch?v=r8jQ9hVA2qs)
 
 - Watch on YouTube: https://www.youtube.com/watch?v=r8jQ9hVA2qs
-- Video route: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=11
-- Introduction to Git page (video above the markdown): https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?lang=en&menu=en&id=5
-- Fullscreen: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.18/?videofull=en&slug=r8jQ9hVA2qs
+- Video route: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=11
+- Introduction to Git page (video above the markdown): https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?lang=en&menu=en&id=5
+- Fullscreen: https://vidigal-code.github.io/git-page-docs/Vidigal-code/git-page-docs/v/0.0.19/?videofull=en&slug=r8jQ9hVA2qs
 
-Route definition in `gitpagedocs/docs/versions/0.0.18/config.json`:
+Route definition in `gitpagedocs/docs/versions/0.0.19/config.json`:
 
 ```json
 {
@@ -706,9 +706,9 @@ Example:
     {
       "id": 6,
       "path": {
-        "en": "gitpagedocs/docs/versions/0.0.18/en/authorized-routes.md",
-        "pt": "gitpagedocs/docs/versions/0.0.18/pt/authorized-routes.md",
-        "es": "gitpagedocs/docs/versions/0.0.18/es/authorized-routes.md"
+        "en": "gitpagedocs/docs/versions/0.0.19/en/authorized-routes.md",
+        "pt": "gitpagedocs/docs/versions/0.0.19/pt/authorized-routes.md",
+        "es": "gitpagedocs/docs/versions/0.0.19/es/authorized-routes.md"
       },
       "authorization": {
         "accessKeyId": "docs-key",
@@ -963,9 +963,13 @@ ISC. See [repository](https://github.com/Vidigal-code/git-page-docs) for details
 ### User references
 
 The generated documentation includes 35 Markdown pages per language: focused references plus complete configuration recipes, migration/compatibility, troubleshooting, contributing/testing and HTML-container guides. All pages are available in English, Portuguese and Spanish; Markdown filenames stay in English while titles and content preserve UTF-8 accents and special characters.
-The scaffold registers documentation versions 0.0.18, 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in descending order with the current examples; the npm package version is 0.0.18. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
+The scaffold registers documentation versions 0.0.19, 0.0.18, 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in descending order with the current examples; the npm package version is 0.0.19. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
 
 The scaffold has real nested sections: Guides → Configure your site / Read and explore / Automate and integrate → documents, plus Operations and development and Git/GitHub groups. Getting Started and Project overview remain the first destinations. Every parent section has its own localized Markdown overview: click its title to read it, or use the separate arrow to expand children. Breadcrumb ancestors such as Guides → Configure your site remain navigable. Recursive `submenus` can extend the hierarchy without a fixed depth limit; `site.nestedMenusEnabled: false` keeps every destination in a flat presentation.
+With the navigation padlock unlocked, the desktop menu scrolls internally to reveal the current destination when moving forward or backward, opening the menu or unlocking it. A locked menu preserves its scroll position. Theme and language icon buttons fill mobile-menu rows with centered icons; desktop-header controls remain compact.
+Repository search carries the selected theme and light/dark mode to the destination documentation when its catalog contains that theme. Otherwise the destination's configured default theme and mode apply.
+Markdown supports GitHub-flavored tables, task lists, strikethrough and autolinks. Rendered HTML is sanitized before display to remove scripts, unsafe link schemes and executable attributes. Tables and code blocks scroll inside narrow containers; text, links, borders and surfaces use the selected theme.
+Documentation Markdown and source-viewer previews use solid card backgrounds. Their text, links, muted text and inline code derive colors with at least 4.5:1 contrast across the 124 shipped themes.
 
 Configure controls through `gitpagedocs/config.json` → `site.icons`. `LanguageSelector`, `ThemeSelector`, `VersionSelector`, `FocusMode`, `QuickNavigation`, `PdfDownload`, `PdfOpenInNewTab`, `DocumentPrevious` and `DocumentNext` use icons by default. Set `reactIcon: false` independently to display text; `true` displays the icon. Customize `tag`, `size`, `colorDark` and `colorLight` per entry. Compact configs inherit omitted values from `icons.defaults`, so an omitted per-control `reactIcon` does not mean text mode. The Ctrl+K shortcut and accessible control names remain available.
 `VersionSelector` uses `LuGitBranch` by default; `reactIcon: false` displays the selected version as text. It appears only when more than one documentation version is available, retains the selector's localized accessible name and shows the selected version in its tooltip.
@@ -1003,7 +1007,7 @@ Read or download the [GitPageDocs project guide (PDF, English)](cli/content/asse
 Configure `site.pdf` with `enabled`, `previewEnabled`, `downloadEnabled` and `openInNewTabEnabled` (all default to `true`). The version config uses `routes-pdf`, `pdf.pathPdf` per language and `menus-header-pdf` with `page:23` for the bundled example. Route-level preview/download/new-tab options go inside `pdf`; `hierarchyPage.pdf` and `hierarchyMenu.pdf` order the content and menu sections.
 
 ```json
-{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
+{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
 ```
 
 The native browser viewer handles PDF previews and new tabs through validated `application/pdf` Blob URLs. Preview, download and new-tab actions all require CORS permission for external files. Opening a new tab does not navigate to the raw repository URL, so that server's Content-Type/Content-Disposition does not force a download. Browser PDF support and user preferences still apply. With preview disabled, the first download or new-tab action loads the PDF; cached bytes are reused. File/network errors and blocked pop-ups are reported without silently falling back to the raw URL.
@@ -1041,13 +1045,13 @@ Keep both `routes-html` and `menus-header-html` in the version configuration. Me
     "title": { "en": "DOOM: HTML example", "pt": "DOOM: exemplo HTML", "es": "DOOM: ejemplo HTML" },
     "description": { "en": "Load an interactive HTML demo", "pt": "Carregue uma demonstração HTML interativa", "es": "Carga una demostración HTML interactiva" },
     "titleIsVisible": true, "descriptionIsVisible": true, "container": "full",
-    "path": { "en": "gitpagedocs/docs/versions/0.0.18/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.18/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.18/es/doom.html" }
+    "path": { "en": "gitpagedocs/docs/versions/0.0.19/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.19/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.19/es/doom.html" }
   }],
   "menus-header-html": [{
     "id": 29,
-    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.18/en/doom.html" },
-    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.18/pt/doom.html" },
-    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.18/es/doom.html" }
+    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.19/en/doom.html" },
+    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.19/pt/doom.html" },
+    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.19/es/doom.html" }
   }]
 }
 ```

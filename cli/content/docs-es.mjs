@@ -48,7 +48,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.18/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.19/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -57,9 +57,9 @@ En \`gitpagedocs/docs/versions/0.0.18/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -208,7 +208,7 @@ Git Page Docs es un monorepo pnpm + turborepo que convierte la carpeta \`gitpage
 ## Stack
 
 - Next.js 15 (App Router) + React 19 + TypeScript; exportación estática para GitHub Pages
-- gray-matter + marked para Markdown; react-icons
+- gray-matter + marked + hast-util-sanitize para Markdown; react-icons
 - pnpm workspaces + turborepo; Vitest + Playwright; ESLint
 
 ## Destacados
@@ -220,6 +220,10 @@ Git Page Docs es un monorepo pnpm + turborepo que convierte la carpeta \`gitpage
 - Sistema de 124 temas (variantes oscuras y claras); ejecución local y en GitHub Pages
 `,
     functionalities: `# Funcionalidades
+
+La renderización Markdown admite tablas, listas de tareas, texto tachado y enlaces automáticos de GitHub-flavored Markdown. El HTML renderizado se sanea antes de mostrarse; se eliminan scripts, esquemas de enlaces inseguros y atributos ejecutables. Las tablas y los bloques de código se desplazan dentro de contenedores estrechos, mientras que texto, enlaces, bordes y superficies siguen el tema seleccionado.
+
+El Markdown de la documentación y las vistas previas del código usan fondos sólidos de tarjeta. El texto, los enlaces, el texto secundario y el código en línea derivan colores con un contraste mínimo de 4,5:1 en los 124 temas incluidos.
 
 Referencia completa de opciones CLI, claves de configuración y funciones del runtime.
 
@@ -697,6 +701,8 @@ Adaptadores soportados:
 `,
     themes: `# Temas y layouts
 
+La búsqueda de repositorios lleva el tema y el modo claro/oscuro seleccionados a la documentación de destino. Si el tema existe en el catálogo de destino, permanece seleccionado. En caso contrario, el visor usa el tema y el modo predeterminados configurados en esa documentación.
+
 Los temas son templates JSON mapeados por \`layoutsConfig.json\`.
 
 ## Archivos
@@ -933,6 +939,10 @@ Las opciones visuales están en \`gitpagedocs/config.json\`. El generador intera
 \`gitpagedocs docs\` actualiza solo regiones delimitadas por marcadores en README.md, CONTRIBUTING.md y SECURITY.md, conservando el texto alrededor. \`password\` configura el par de claves de acceso a la documentación; los controles de presentación del cliente no vuelven confidenciales los archivos de un repositorio público.
 `,
     navigation: `# Navegación y submenús
+
+En pantallas pequeñas, los botones con iconos de tema e idioma ocupan todo el ancho de la fila del menú móvil y mantienen los iconos centrados. Los mismos controles siguen siendo compactos en la cabecera de escritorio.
+
+Con el candado de navegación desbloqueado, el menú de escritorio desplaza su contenido para mostrar el elemento actual al avanzar o retroceder. Abrir o desbloquear el menú también muestra el elemento actual. El desplazamiento del menú es independiente del documento; un menú bloqueado conserva su posición.
 
 Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúralos en \`gitpagedocs/docs/versions/<version>/config.json\`. Las opciones visuales globales están en \`gitpagedocs/config.json\`.
 

@@ -1,5 +1,7 @@
 # Temas y layouts
 
+La búsqueda de repositorios lleva el tema y el modo claro/oscuro seleccionados a la documentación de destino. Si el tema existe en el catálogo de destino, permanece seleccionado. En caso contrario, el visor usa el tema y el modo predeterminados configurados en esa documentación.
+
 Los temas son templates JSON mapeados por `layoutsConfig.json`.
 
 ## Archivos

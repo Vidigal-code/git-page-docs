@@ -66,6 +66,9 @@ const LIGHT_FOREGROUND = "#ffffff";
 const CONTRAST_FLARE = 0.05;
 /** Backgrounds brighter than this belong to a light scheme. */
 const LIGHT_SCHEME_LUMINANCE = 0.4;
+const MINIMUM_TEXT_CONTRAST = 4.5;
+const COLOR_ADJUSTMENT_STEPS = 100;
+const CODE_SURFACE_TINT = 0.06;
 
 function parseHexColor(value: string | undefined): [number, number, number] | undefined {
   const hex = value?.trim().replace(/^#/, "");
@@ -80,7 +83,7 @@ function parseHexColor(value: string | undefined): [number, number, number] | un
 export function relativeLuminance(value: string | undefined): number | undefined {
   const rgb = parseHexColor(value);
   if (!rgb) return undefined;
-  const linear = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const linear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
   const [r, g, b] = rgb;
   return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
 }
@@ -103,6 +106,43 @@ export function contrastForeground(color: string | undefined): string {
   return onDark > onLight ? DARK_FOREGROUND : LIGHT_FOREGROUND;
 }
 
+function mixHexColors(base: string, tint: string, weight: number): string {
+  const baseChannels = parseHexColor(base);
+  const tintChannels = parseHexColor(tint);
+  if (!baseChannels || !tintChannels) return base;
+  return `#${baseChannels.map((channel, index) =>
+    Math.round((channel * (1 - weight) + tintChannels[index] * weight) * 255).toString(16).padStart(2, "0"),
+  ).join("")}`;
+}
+
+function readableMarkdownColor(color: string, background: string): string {
+  const surfaceLuminance = relativeLuminance(background);
+  const textLuminance = relativeLuminance(color);
+  if (surfaceLuminance === undefined || textLuminance === undefined) return color;
+  if (contrastRatio(textLuminance, surfaceLuminance) >= MINIMUM_TEXT_CONTRAST) return color;
+  const target = contrastRatio(0, surfaceLuminance) > contrastRatio(1, surfaceLuminance) ? "#000000" : LIGHT_FOREGROUND;
+  for (let step = 1; step <= COLOR_ADJUSTMENT_STEPS; step += 1) {
+    const adjusted = mixHexColors(color, target, step / COLOR_ADJUSTMENT_STEPS);
+    const luminance = relativeLuminance(adjusted) ?? textLuminance;
+    if (contrastRatio(luminance, surfaceLuminance) >= MINIMUM_TEXT_CONTRAST) return adjusted;
+  }
+  return target;
+}
+
+function toMarkdownCssVars(colors: ThemeTemplate["colors"]): Record<string, string> {
+  const background = colors.cardBackground ?? DEFAULT_COLORS.cardBackground;
+  const text = readableMarkdownColor(colors.text ?? DEFAULT_COLORS.text, background);
+  const codeBackground = mixHexColors(background, text, CODE_SURFACE_TINT);
+  return {
+    "--markdown-background": background,
+    "--markdown-text": text,
+    "--markdown-link": readableMarkdownColor(colors.primary ?? DEFAULT_COLORS.primary, background),
+    "--markdown-muted": readableMarkdownColor(colors.textSecondary ?? DEFAULT_COLORS.textSecondary, background),
+    "--markdown-code-background": codeBackground,
+    "--markdown-code-text": readableMarkdownColor(text, codeBackground),
+  };
+}
+
 /** `color-scheme` for native controls (select popups, scrollbars): the declared mode, else read off the background. */
 export function resolveColorScheme(theme: Pick<ThemeTemplate, "mode" | "colors">): "dark" | "light" {
   if (theme.mode === "light" || theme.mode === "dark") return theme.mode;
@@ -121,7 +161,7 @@ export function toBaseThemeCssVars(theme: ThemeTemplate | undefined): CSSPropert
   const colors = theme.colors ?? {};
   // Colours the theme does not define are left out so the :root defaults apply,
   // which keeps one canonical default palette instead of a second copy here.
-  const vars: Record<string, string> = {};
+  const vars: Record<string, string> = toMarkdownCssVars(colors);
   for (const [colorKey, cssVar] of Object.entries(THEME_CSS_VAR_BY_COLOR)) {
     const value = colors[colorKey as keyof typeof THEME_CSS_VAR_BY_COLOR];
     if (value) {

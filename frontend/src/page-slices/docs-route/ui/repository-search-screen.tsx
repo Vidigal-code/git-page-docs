@@ -19,7 +19,7 @@ import {
 } from "@/entities/source-viewer";
 import { SearchShellHeader, useStandaloneShellPreferences } from "@/widgets/search-shell-header";
 import { SearchShellLayout } from "@/widgets/search-shell-layout";
-import { PROJECT_FOOTER_URL } from "@/shared/config/constants";
+import { PROJECT_FOOTER_URL, THEME_URL_PARAM } from "@/shared/config/constants";
 import { getBasePath, trimSlashes } from "@/shared/lib/base-path";
 import { resolveHeaderIconConfig } from "@/shared/lib/resolve-site-assets";
 import { resolveControlIcon } from "@/shared/lib/icons/resolve-control-icon";
@@ -141,7 +141,13 @@ export function RepositorySearchScreen({
       return;
     }
     const targetPath = `/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/`;
-    router.push(targetPath);
+    const params = new URLSearchParams();
+    if (activeLayout) {
+      params.set(THEME_URL_PARAM, activeLayout.id);
+      if (activeLayout.mode) params.set("modetheme", activeLayout.mode);
+    }
+    const query = params.toString();
+    router.push(query ? `${targetPath}?${query}` : targetPath);
   }
 
   const header = (backgroundControl: ReactNode) => (

@@ -48,9 +48,9 @@ export function useDocsShellThemeState({
     try {
       const urlThemeId = searchParams.get(THEME_URL_PARAM);
       const layoutFromUrl = urlThemeId ? layouts.find((layout) => layout.id === urlThemeId) : null;
-      if (layoutFromUrl) {
+      if (urlThemeId) {
         queueMicrotask(() => {
-          setActiveThemeId(layoutFromUrl.id);
+          setActiveThemeId(layoutFromUrl?.id ?? initialThemeId);
           setThemeModeRestored(true);
         });
         return;
@@ -83,7 +83,7 @@ export function useDocsShellThemeState({
       // Ignore localStorage errors.
     }
     setThemeModeRestored(true);
-  }, [themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, layouts, initialThemeBaseId, searchParams, themeModeRestored]);
+  }, [themeModeStorageKey, themeLayoutStorageKey, configuredDefaultMode, layouts, initialThemeBaseId, initialThemeId, searchParams, themeModeRestored]);
 
   useEffect(() => {
     if (!themeModeRestored || !activeLayout?.mode) {

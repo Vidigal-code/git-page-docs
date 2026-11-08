@@ -1,8 +1,25 @@
 import matter from "gray-matter";
 import { Marked } from "marked";
+import { fromHtml } from "hast-util-from-html";
+import { defaultSchema, sanitize, type Schema } from "hast-util-sanitize";
+import { toHtml } from "hast-util-to-html";
 import { createHeadingSlug, getHeadingText } from "../../lib/markdown/heading-content";
 
+const markdownSchema: Schema = {
+  ...defaultSchema,
+  clobber: defaultSchema.clobber?.filter((attribute) => attribute !== "id"),
+  strip: [...(defaultSchema.strip ?? []), "style", "iframe", "object", "embed", "textarea", "xmp"],
+  attributes: {
+    ...defaultSchema.attributes,
+    "*": ["align", "alt", "checked", "colSpan", "dir", "height", "id", "lang", "open", "rowSpan", "start", "title", "width"],
+    h2: [],
+    code: [["className", /^language-[\w-]+$/]],
+  },
+};
+
 const markdownParser = new Marked({
+  gfm: true,
+  breaks: false,
   renderer: {
     heading({ tokens, depth }) {
       const content = this.parser.parseInline(tokens);
@@ -33,5 +50,6 @@ function addHeadingIds(html: string): string {
 export function markdownToHtml(markdown: string): string {
   const parsed = matter(markdown.replace(/^\uFEFF/, ""));
   const html = markdownParser.parse(parsed.content, { async: false });
-  return addHeadingIds(html);
+  const tree = fromHtml(addHeadingIds(html), { fragment: true });
+  return toHtml(sanitize(tree, markdownSchema), { characterReferences: { useNamedReferences: true } });
 }

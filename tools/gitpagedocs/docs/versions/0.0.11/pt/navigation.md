@@ -1,5 +1,9 @@
 # Navegação e submenus
 
+Em telas pequenas, os botões com ícones de tema e idioma ocupam a largura da linha do menu mobile e mantêm os ícones centralizados. Os mesmos controles continuam compactos no cabeçalho desktop.
+
+Com o cadeado de navegação destravado, o menu desktop rola até deixar o item atual visível ao avançar ou voltar. Abrir ou destravar o menu também revela o item atual. A rolagem do menu é independente da documentação; o menu travado mantém sua posição de rolagem.
+
 Rotas definem o conteúdo; menus definem como o leitor o encontra. Configure-os em `gitpagedocs/docs/versions/<version>/config.json`. Opções visuais globais ficam em `gitpagedocs/config.json`.
 
 ```json

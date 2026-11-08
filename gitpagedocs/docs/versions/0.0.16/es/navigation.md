@@ -1,5 +1,9 @@
 # Navegación y submenús
 
+En pantallas pequeñas, los botones con iconos de tema e idioma ocupan todo el ancho de la fila del menú móvil y mantienen los iconos centrados. Los mismos controles siguen siendo compactos en la cabecera de escritorio.
+
+Con el candado de navegación desbloqueado, el menú de escritorio desplaza su contenido para mostrar el elemento actual al avanzar o retroceder. Abrir o desbloquear el menú también muestra el elemento actual. El desplazamiento del menú es independiente del documento; un menú bloqueado conserva su posición.
+
 Las rutas definen el contenido; los menús definen cómo encontrarlo. Configúralos en `gitpagedocs/docs/versions/<version>/config.json`. Las opciones visuales globales están en `gitpagedocs/config.json`.
 
 ```json

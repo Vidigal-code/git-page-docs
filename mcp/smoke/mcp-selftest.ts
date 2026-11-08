@@ -15,7 +15,7 @@ import path from "node:path";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import type { AIProvider, AiProviderId, ProviderConfig } from "@gitpagedocs/tools";
+import type { AIProvider, AiProviderId, ProviderConfig, SearchMatch } from "@gitpagedocs/tools";
 import { createServer } from "../src/server";
 import { ServerContext, PROVIDER_ENV_KEYS } from "../src/context";
 
@@ -126,12 +126,6 @@ async function testDiscoveryAndKeyFreeSurface(root: string): Promise<void> {
   const files = await client.callTool({ name: "list_files", arguments: { path: "tools/src", recursive: false } });
   check("list_files returns entries", textOf(files as ToolResult).includes("ai/"));
 
-  const search = await client.callTool({
-    name: "search_project",
-    arguments: { query: "PROVIDER_CATALOG", extension: ".ts" },
-  });
-  check("search_project finds matches", textOf(search as ToolResult).includes("catalog.ts"));
-
   console.log("[smoke:mcp] structured errors without API keys");
   const ask = await client.callTool({ name: "ask_ai", arguments: { prompt: "hi", provider: "openai" } });
   check("ask_ai without key returns isError", (ask as ToolResult).isError === true);
@@ -161,6 +155,11 @@ async function testFullAiSurfaceWithFakeProvider(): Promise<void> {
     check("read_file round-trips content", textOf(readBack as ToolResult) === "- item\n");
     const escape = await client.callTool({ name: "read_file", arguments: { path: "../outside.txt" } });
     check("read_file blocks path traversal", (escape as ToolResult).isError === true);
+
+    const search = await client.callTool({ name: "search_project", arguments: { query: "answer", extension: ".ts" } });
+    const matches = JSON.parse(textOf(search as ToolResult)) as SearchMatch[];
+    check("search_project finds the fixture file and line", matches.length === 1 &&
+      matches[0].file === "src/sample.ts" && matches[0].line === 1 && matches[0].text === "export const answer = 42;");
 
     console.log("[smoke:mcp] provider selection round-trip");
     const configured = await client.callTool({

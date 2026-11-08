@@ -1,6 +1,6 @@
 {
   "name": "@gitpagedocs/frontend",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "private": true,
   "description": "Next.js 15 documentation viewer for Git Page Docs (static export).",
   "scripts": {
@@ -12,6 +12,9 @@
     "@react-icons/all-files": "^4.1.0",
     "entities": "6.0.1",
     "gray-matter": "^4.0.3",
+    "hast-util-from-html": "2.1.0",
+    "hast-util-sanitize": "5.0.2",
+    "hast-util-to-html": "9.0.6",
     "marked": "^15.0.7",
     "motion": "^13.4.4",
     "next": "^15.1.7",

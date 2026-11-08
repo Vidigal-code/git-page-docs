@@ -3,6 +3,15 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.19 - 2026-11-08 - consistent themes and responsive documentation navigation
+
+- Extend theme and language icon buttons across mobile-menu rows and center their icons on narrow screens, including folded displays. Preserve compact desktop-header controls.
+- Preserve the selected theme and light/dark mode when opening documentation through repository search if the destination supports that theme. Otherwise use the destination's configured default theme and mode.
+- Keep the current destination visible inside an unlocked desktop menu while navigating forward or backward, opening the menu or unlocking it. Preserve the menu position while locked and keep document scrolling independent.
+- Preserve GitHub-flavored Markdown tables, task lists, strikethrough and autolinks through HTML sanitization. Remove scripts, unsafe links and executable attributes; improve themed Markdown surfaces and narrow-screen tables/code blocks.
+- Derive Markdown text, link, muted-text and inline-code colors with at least 4.5:1 contrast against solid card backgrounds across the 124 shipped themes, including documentation and source-viewer previews.
+- Update the CLI, shared tools and MCP packages to 0.0.19. Register all eleven documentation versions from 0.0.19 through 0.0.9 and refresh the English, Portuguese and Spanish references.
+
 ## 0.0.18 - 2026-10-30 - immediate guide navigation and optional effects
 
 - Advance or return one introduction-guide chapter per wheel/trackpad gesture, keyboard step or vertical swipe. Change chapters immediately, preserve readable scenes and make chapter-rail selections and back to top immediate.

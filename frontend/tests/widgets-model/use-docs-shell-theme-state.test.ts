@@ -77,6 +77,18 @@ describe("useDocsShellThemeState", () => {
     expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
   });
 
+  it.each(["?theme=vscode-dark&modetheme=dark", "?theme=vscode-dark"])(
+    "uses the destination default when the requested theme is unavailable (%s)",
+    async (search) => {
+      window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
+      window.localStorage.setItem(STORAGE_KEYS.mode, "dark");
+      const { result, replaceUrlWithoutNavigation } = setup(search, { configuredDefaultMode: "light" });
+      await restore();
+      expect(result.current.activeThemeId).toBe("aurora-light");
+      expect(lastUrlSync(replaceUrlWithoutNavigation)).toBe("theme=aurora-light&modetheme=light");
+    },
+  );
+
   it("resolves modetheme from the URL over a saved theme and writes the theme back", async () => {
     window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
     const { result, replaceUrlWithoutNavigation } = setup("?modetheme=light&x=1");

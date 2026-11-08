@@ -154,6 +154,12 @@
   color: var(--secondary);
 }
 
+.modeIconButton > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .mobileToggle {
   display: none;
   width: 42px;
@@ -239,10 +245,6 @@
 
 .mobileControls .modeIconButton {
   margin: 0;
-}
-
-.mobileControls .selectorIconButton {
-  width: max-content;
 }
 
 @media (max-width: 980px) and (min-width: 769px) {

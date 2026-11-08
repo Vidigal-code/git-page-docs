@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { marked } from "marked";
+import { markdownToHtml } from "@/entities/docs";
 import { FiAlertCircle, FiArrowLeft, FiExternalLink, FiFile, FiFolder, FiRefreshCw, FiSearch, FiX } from "@/shared/ui/fallback-icons";
 import { trimSlashes } from "@/shared/lib/base-path";
 import {
@@ -263,7 +263,7 @@ const CodeViewer = memo(function CodeViewer({ content, filePath, themeId, themeM
 });
 
 const MarkdownPreview = memo(function MarkdownPreview({ content }: Readonly<{ content: string }>) {
-  const html = useMemo(() => marked.parse(content) as string, [content]);
+  const html = useMemo(() => markdownToHtml(content), [content]);
   return <div className={styles.markdownPreview} dangerouslySetInnerHTML={{ __html: html }} />;
 });
 

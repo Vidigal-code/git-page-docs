@@ -523,52 +523,7 @@
 }
 
 .markdown {
-  width: 100%;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.markdown :global(h1),
-.markdown :global(h2),
-.markdown :global(h3),
-.markdown :global(h4),
-.markdown :global(h5),
-.markdown :global(h6) {
-  color: var(--text);
-  scroll-margin-top: 5rem;
-}
-
-.markdown :global(a) {
-  color: var(--primary);
-}
-
-.markdown :global(code) {
-  background: color-mix(in srgb, var(--card-border) 35%, transparent);
-  border-radius: 6px;
-  padding: 2px 5px;
-  white-space: break-spaces;
-  overflow-wrap: anywhere;
-}
-
-.markdown :global(pre) {
-  max-width: 100%;
-  overflow-x: auto;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--card-border) 22%, transparent);
-}
-
-.markdown :global(pre code) {
-  white-space: pre;
-  overflow-wrap: normal;
-  word-break: normal;
-}
-
-.markdown :global(img),
-.markdown :global(video),
-.markdown :global(iframe),
-.markdown :global(table) {
-  max-width: 100%;
+  composes: content from "../../shared/ui/markdown/markdown.module.css";
 }
 
 .contentBlocksStack {

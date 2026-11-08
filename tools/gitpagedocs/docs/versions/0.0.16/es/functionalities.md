@@ -1,5 +1,9 @@
 # Funcionalidades
 
+La renderización Markdown admite tablas, listas de tareas, texto tachado y enlaces automáticos de GitHub-flavored Markdown. El HTML renderizado se sanea antes de mostrarse; se eliminan scripts, esquemas de enlaces inseguros y atributos ejecutables. Las tablas y los bloques de código se desplazan dentro de contenedores estrechos, mientras que texto, enlaces, bordes y superficies siguen el tema seleccionado.
+
+El Markdown de la documentación y las vistas previas del código usan fondos sólidos de tarjeta. El texto, los enlaces, el texto secundario y el código en línea derivan colores con un contraste mínimo de 4,5:1 en los 124 temas incluidos.
+
 Referencia completa de opciones CLI, claves de configuración y funciones del runtime.
 
 ## Línea de comandos

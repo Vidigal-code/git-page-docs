@@ -1,5 +1,9 @@
 # Navigation and nested menus
 
+On small screens, the theme and language icon buttons fill the mobile menu row and keep their icons centered. The same controls remain compact in the desktop header.
+
+With the navigation padlock unlocked, the desktop menu scrolls its current item into view when moving forward or backward. Opening or unlocking the menu also reveals the current item. The menu scroll is independent of the document; a locked menu keeps its scroll position.
+
 Routes define page content; menus define how readers reach it. Configure them in `gitpagedocs/docs/versions/<version>/config.json`. Site-wide presentation options belong to `gitpagedocs/config.json`.
 
 ```json

@@ -126,7 +126,7 @@ export function SearchShellHeader({
       {additionalControls}
       {layouts.length > 1 && (
         <ThemeSelector
-          className={themeSelectorIcon ? `${styles.modeIconButton} ${styles.selectorIconButton}` : styles.select}
+          className={themeSelectorIcon ? styles.modeIconButton : styles.select}
           layouts={layouts}
           value={activeThemeId}
           onChange={onThemeChange}
@@ -146,7 +146,7 @@ export function SearchShellHeader({
 
       {languages.length > 1 && (
         <LanguageSelector
-          className={languageSelectorIcon ? `${styles.modeIconButton} ${styles.selectorIconButton}` : styles.select}
+          className={languageSelectorIcon ? styles.modeIconButton : styles.select}
           languages={languages}
           value={language}
           onChange={onLanguageChange}

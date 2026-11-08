@@ -1,5 +1,7 @@
 # Themes and Layouts
 
+Repository search carries the selected theme and light/dark mode into the destination documentation. If that theme is available in the destination catalog, it remains selected. Otherwise the viewer uses the destination documentation's configured default theme and mode.
+
 Themes are JSON templates mapped by `layoutsConfig.json`.
 
 ## Strategy options

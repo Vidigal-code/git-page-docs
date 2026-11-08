@@ -600,6 +600,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
       <div className={`${styles.wrapper} ${!sidebarOpen ? styles.wrapperCollapsed : ""}`} style={cssVars} data-background-effects={Boolean(background)}>
         {background && <ThemeBackground key={activeTheme.id} config={background} paused={backgroundPlayback.paused} />}
         <DocsShellSidebar
+          sidebarOpen={sidebarOpen}
           siteName={headerName}
           useReactHeaderIcon={useReactHeaderIcon}
           reactHeaderIconTag={reactHeaderIconTag}

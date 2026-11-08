@@ -49,7 +49,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.18/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.19/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -58,9 +58,9 @@ In \`gitpagedocs/docs/versions/0.0.18/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.18/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -209,7 +209,7 @@ Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's \`git
 ## Stack
 
 - Next.js 15 (App Router) + React 19 + TypeScript; static export for GitHub Pages
-- gray-matter + marked for Markdown; react-icons
+- gray-matter + marked + hast-util-sanitize for Markdown; react-icons
 - pnpm workspaces + turborepo; Vitest + Playwright; ESLint
 
 ## Highlights
@@ -221,6 +221,10 @@ Git Page Docs is a **pnpm + turborepo monorepo** that turns a repository's \`git
 - 124-theme layout system (dark and light variants); local and GitHub Pages execution modes
 `,
     functionalities: `# Functionalities
+
+Markdown rendering supports GitHub-flavored tables, task lists, strikethrough and autolinks. Rendered HTML is sanitized before display; scripts, unsafe link schemes and executable attributes are removed. Tables and code blocks scroll within narrow containers, while text, links, borders and surfaces follow the selected theme.
+
+Documentation Markdown and source-viewer previews use solid card backgrounds. Text, links, muted text and inline code derive colors with at least 4.5:1 contrast across the 124 shipped themes.
 
 Complete reference of CLI options, configuration keys, and runtime features.
 
@@ -744,6 +748,8 @@ The \`/ai\` console and the chat drawer gate access behind a local password that
 `,
     themes: `# Themes and Layouts
 
+Repository search carries the selected theme and light/dark mode into the destination documentation. If that theme is available in the destination catalog, it remains selected. Otherwise the viewer uses the destination documentation's configured default theme and mode.
+
 Themes are JSON templates mapped by \`layoutsConfig.json\`.
 
 ## Strategy options
@@ -980,6 +986,10 @@ Site display settings are in \`gitpagedocs/config.json\`. The interactive genera
 \`gitpagedocs docs\` updates only marker-bounded regions of README.md, CONTRIBUTING.md and SECURITY.md, preserving surrounding prose. \`password\` configures the documentation access key pair; client-side presentation controls do not make public repository files confidential.
 `,
     navigation: `# Navigation and nested menus
+
+On small screens, the theme and language icon buttons fill the mobile menu row and keep their icons centered. The same controls remain compact in the desktop header.
+
+With the navigation padlock unlocked, the desktop menu scrolls its current item into view when moving forward or backward. Opening or unlocking the menu also reveals the current item. The menu scroll is independent of the document; a locked menu keeps its scroll position.
 
 Routes define page content; menus define how readers reach it. Configure them in \`gitpagedocs/docs/versions/<version>/config.json\`. Site-wide presentation options belong to \`gitpagedocs/config.json\`.
 

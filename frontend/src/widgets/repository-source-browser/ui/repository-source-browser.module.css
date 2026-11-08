@@ -411,48 +411,15 @@
 }
 
 .markdownPreview {
+  composes: content from "../../../shared/ui/markdown/markdown.module.css";
   min-height: 0;
   flex: 1;
   padding: 18px;
-  line-height: 1.65;
   overflow-x: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--source-browser-editor);
-  color: var(--text);
   scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
-.markdownPreview :where(h1, h2, h3, h4, h5, h6, p, li, blockquote, td, th) {
-  color: inherit;
-}
-
-.markdownPreview code {
-  border: 1px solid var(--source-browser-line);
-  border-radius: 6px;
-  background: var(--source-browser-editor-rail);
-  color: var(--text);
-  padding: 0.12rem 0.28rem;
-}
-
-.markdownPreview pre {
-  overflow-x: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  border: 1px solid var(--source-browser-line);
-  border-radius: 6px;
-  background: var(--source-browser-editor-rail);
-  color: var(--text);
-  padding: 12px;
-  scrollbar-gutter: stable both-edges;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
-.markdownPreview pre code {
-  border: 0;
-  background: transparent;
-  padding: 0;
 }
 
 .state {

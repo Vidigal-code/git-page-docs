@@ -1,6 +1,7 @@
 import { cpSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { VersionEntry, VersionRepositoryLink } from "../../frontend/src/entities/docs/model/types/version";
+import { prepareMarkdownFixture } from "./markdown-site-config";
 
 const REPOSITORY_ROOT = path.resolve(__dirname, "../..");
 const FIXTURE_DIRECTORY = path.join(REPOSITORY_ROOT, "node_modules/.cache/repository-links-site");
@@ -51,5 +52,6 @@ export function prepareRepositoryLinksFixture(): string {
   Object.assign(currentVersion, NAMED_REPOSITORY_LINKS);
   Object.assign(legacyVersion, LEGACY_REPOSITORY_LINKS);
   writeFileSync(configPath, JSON.stringify(config, null, 2));
+  prepareMarkdownFixture(FIXTURE_DIRECTORY, currentVersion.path);
   return FIXTURE_DIRECTORY;
 }

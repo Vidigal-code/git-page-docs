@@ -9,7 +9,7 @@ afterEach(cleanup);
 const noAction = () => undefined;
 function SidebarWithoutChat(): React.JSX.Element {
   const navMenuConfig = useBuildNavMenuConfig(makeConfig(), "dark", "en");
-  return <DocsShellSidebar siteName="Documentation" useReactHeaderIcon={false} reactHeaderIconTag={undefined} headerReactIconStyle={{}} activeLayoutMode="dark" iconImage={undefined} iconImgWidth={24} iconImgHeight={24} menuNodes={[]} menuCloseLabel="Close navigation" onMenuClick={noAction} onToggleNode={noAction} isNodeExpanded={() => false} onCollapseSidebar={noAction} blockMenuOnNav={false} setBlockMenuOnNav={noAction} navMenuConfig={navMenuConfig} onOpenAiChat={noAction} aiChatIconConfig={undefined} />;
+  return <DocsShellSidebar sidebarOpen siteName="Documentation" useReactHeaderIcon={false} reactHeaderIconTag={undefined} headerReactIconStyle={{}} activeLayoutMode="dark" iconImage={undefined} iconImgWidth={24} iconImgHeight={24} menuNodes={[]} menuCloseLabel="Close navigation" onMenuClick={noAction} onToggleNode={noAction} isNodeExpanded={() => false} onCollapseSidebar={noAction} blockMenuOnNav={false} setBlockMenuOnNav={noAction} navMenuConfig={navMenuConfig} onOpenAiChat={noAction} aiChatIconConfig={undefined} />;
 }
 it("renders navigation without a chat launcher when chat is disabled", () => {
   render(<SidebarWithoutChat />);

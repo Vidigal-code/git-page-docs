@@ -1,0 +1,182 @@
+.content {
+  width: 100%;
+  min-width: 0;
+  color: var(--markdown-text, var(--text));
+  background: var(--markdown-background, var(--card-background));
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child {
+  margin-bottom: 0;
+}
+
+.content :is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  color: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  scroll-margin-top: 5rem;
+}
+
+.content :is(h1, h2) {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.content h1 { font-size: 2em; }
+.content h2 { font-size: 1.5em; }
+.content h3 { font-size: 1.25em; }
+.content h4 { font-size: 1em; }
+.content h5 { font-size: 0.875em; }
+.content h6 { font-size: 0.85em; color: var(--markdown-muted, var(--text-secondary)); }
+
+.content :is(p, blockquote, ul, ol, dl, table, pre, details) {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.content a {
+  color: var(--markdown-link, var(--text));
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.content a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.content :is(strong, b) {
+  font-weight: 600;
+}
+
+.content :is(ul, ol) {
+  padding-left: 2em;
+}
+
+.content :is(ul, ol) :is(ul, ol) {
+  margin-bottom: 0;
+}
+
+.content li + li {
+  margin-top: 0.25em;
+}
+
+.content li > p {
+  margin-top: 16px;
+}
+
+.content li:has(> input[type="checkbox"]) {
+  list-style-type: none;
+}
+
+.content input[type="checkbox"] {
+  margin: 0 0.5em 0 -1.4em;
+  vertical-align: middle;
+}
+
+.content dt {
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+.content dd {
+  margin-left: 0;
+  padding-left: 2em;
+}
+
+.content blockquote {
+  padding: 0 1em;
+  border-left: 0.25em solid var(--card-border);
+  color: var(--markdown-muted, var(--text-secondary));
+}
+
+.content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.content hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  border: 0;
+  background: var(--card-border);
+}
+
+.content :is(code, kbd, samp, pre) {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.content :is(code, kbd, samp) {
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  background: var(--markdown-code-background, var(--card-background));
+  color: var(--markdown-code-text, var(--text));
+  font-size: 85%;
+  white-space: break-spaces;
+}
+
+.content pre {
+  max-width: 100%;
+  overflow: auto;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--markdown-code-background, var(--card-background));
+  color: var(--markdown-code-text, var(--text));
+  font-size: 85%;
+  line-height: 1.45;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.content pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 100%;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.content kbd {
+  border: 1px solid var(--card-border);
+  border-bottom-width: 2px;
+}
+
+.content table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.content :is(th, td) {
+  padding: 6px 13px;
+  border: 1px solid var(--card-border);
+}
+
+.content th:not([align]) {
+  text-align: left;
+}
+
+.content :is(img, video, iframe) {
+  max-width: 100%;
+}
+
+.content img {
+  height: auto;
+}
+
+.content summary {
+  cursor: pointer;
+}
