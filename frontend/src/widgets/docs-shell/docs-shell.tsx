@@ -15,6 +15,7 @@ import {
   type LoadedDocsData,
   type LoadedPage,
   type ContentTypeRouteConfig,
+  type ThemeMode,
 } from "@/entities/docs";
 import { useDocsPreferences } from "./model/use-docs-preferences";
 import { useDocsShellConfig } from "./model/use-docs-shell-config";
@@ -605,7 +606,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           useReactHeaderIcon={useReactHeaderIcon}
           reactHeaderIconTag={reactHeaderIconTag}
           headerReactIconStyle={headerReactIconStyle}
-          activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
+          activeLayoutMode={activeLayout?.mode as ThemeMode | undefined}
           iconImage={iconImage}
           iconImgWidth={iconImageMenuHeaderImgWidth}
           iconImgHeight={iconImageMenuHeaderImgHeight}
@@ -647,7 +648,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           menuOpen={menuOpen}
           menuOpenLabel={labels.menuOpenLabel}
           onToggleMenu={() => setMenuOpen((v) => !v)}
-          activeLayoutMode={activeLayout?.mode as "light" | "dark" | undefined}
+          activeLayoutMode={activeLayout?.mode as ThemeMode | undefined}
           controlsProps={controlsProps}
           navMenuConfig={navMenuConfig}
           currentPage={currentPage}
@@ -668,6 +669,7 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
         />
 
         <DocsShellOverlays
+          activeLayoutMode={activeLayout?.mode as ThemeMode | undefined}
           blockMenuOnNav={blockMenuOnNav}
           setBlockMenuOnNav={setBlockMenuOnNav}
           backgroundControl={backgroundControl}

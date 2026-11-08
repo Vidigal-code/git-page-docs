@@ -13,7 +13,6 @@ const markdownSchema: Schema = {
     ...defaultSchema.attributes,
     "*": ["align", "alt", "checked", "colSpan", "dir", "height", "id", "lang", "open", "rowSpan", "start", "title", "width"],
     h2: [],
-    code: [["className", /^language-[\w-]+$/]],
   },
 };
 

@@ -48,7 +48,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.19/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.20/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -57,9 +57,9 @@ En \`gitpagedocs/docs/versions/0.0.19/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.19/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.20/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -223,7 +223,9 @@ Git Page Docs es un monorepo pnpm + turborepo que convierte la carpeta \`gitpage
 
 La renderización Markdown admite tablas, listas de tareas, texto tachado y enlaces automáticos de GitHub-flavored Markdown. El HTML renderizado se sanea antes de mostrarse; se eliminan scripts, esquemas de enlaces inseguros y atributos ejecutables. Las tablas y los bloques de código se desplazan dentro de contenedores estrechos, mientras que texto, enlaces, bordes y superficies siguen el tema seleccionado.
 
-El Markdown de la documentación y las vistas previas del código usan fondos sólidos de tarjeta. El texto, los enlaces, el texto secundario y el código en línea derivan colores con un contraste mínimo de 4,5:1 en los 124 temas incluidos.
+Markdown usa una superficie de lectura consistente con la tarjeta que lo rodea en la documentación, el modo foco, la pantalla completa y las vistas previas del código. El texto, los enlaces, el texto secundario y el código en línea derivan colores con un contraste mínimo de 4,5:1 en los 124 temas incluidos.
+
+Los bloques de código cercados con un lenguaje compatible, como JSON, usan resaltado de sintaxis con Shiki. Los colores de los tokens siguen el tema activo y se mantienen legibles sobre la superficie del código. Los bloques sin lenguaje o con un lenguaje no compatible permanecen como texto simple legible; los bloques muy grandes también pueden conservar el texto simple para mantener la lectura fluida. Copiar y descargar conservan el Markdown original.
 
 Referencia completa de opciones CLI, claves de configuración y funciones del runtime.
 

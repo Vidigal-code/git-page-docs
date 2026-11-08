@@ -3,6 +3,7 @@
 import { useMemo, type ReactNode } from "react";
 import {
   getLanguageLabelFromMenu,
+  SITE_CONFIG_DEFAULTS,
   resolveThemeBackground,
   toSearchShellCssVars,
   type LanguageCode,
@@ -57,7 +58,7 @@ function GuidePageContent() {
   const { config: standaloneConfig } = useStandaloneShellConfig();
   const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
   const themes = standaloneConfig?.themes ?? {};
-  const siteConfig = standaloneConfig?.siteConfig;
+  const siteConfig = standaloneConfig?.siteConfig ?? SITE_CONFIG_DEFAULTS;
   const siteName = siteConfig?.name ?? "GitPageDocs";
   const initialThemeBaseId = layouts.find((layout) => layout.id === "aurora-dark")?.id ?? layouts[0]?.id;
 

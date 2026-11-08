@@ -24,15 +24,15 @@ afterEach(cleanup);
 
 describe("useHighlightedLines", () => {
   it("returns null without loading Shiki for files with no grammar hint", async () => {
-    const { result } = renderHook(() => useHighlightedLines("plain text", "LICENSE", undefined, "dark"));
+    const { result } = renderHook(() => useHighlightedLines("plain text", "LICENSE", { mode: "dark" }));
     await act(async () => {});
     expect(result.current).toBeNull();
     expect(codeToTokens).not.toHaveBeenCalled();
   });
 
   it("skips empty and oversized content", async () => {
-    const empty = renderHook(() => useHighlightedLines("", "index.ts", undefined, "dark"));
-    const huge = renderHook(() => useHighlightedLines("a".repeat(400_001), "index.ts", undefined, "dark"));
+    const empty = renderHook(() => useHighlightedLines("", "index.ts", { mode: "dark" }));
+    const huge = renderHook(() => useHighlightedLines("a".repeat(400_001), "index.ts", { mode: "dark" }));
     await act(async () => {});
     expect(empty.result.current).toBeNull();
     expect(huge.result.current).toBeNull();
@@ -40,14 +40,14 @@ describe("useHighlightedLines", () => {
   });
 
   it("skips grammars Shiki does not bundle", async () => {
-    const { result } = renderHook(() => useHighlightedLines("print(1)", "script.lua", undefined, "dark"));
+    const { result } = renderHook(() => useHighlightedLines("print(1)", "script.lua", { mode: "dark" }));
     await act(async () => {});
     expect(result.current).toBeNull();
     expect(codeToTokens).not.toHaveBeenCalled();
   });
 
   it("tokenizes with the layout-matched theme and exposes the editor colors", async () => {
-    const { result } = renderHook(() => useHighlightedLines("const a = 1;", "src/index.ts", "nord-dark", "dark"));
+    const { result } = renderHook(() => useHighlightedLines("const a = 1;", "src/index.ts", { id: "nord-dark", mode: "dark" }));
     await waitFor(() => expect(result.current).not.toBeNull());
     expect(codeToTokens).toHaveBeenCalledWith("const a = 1;", { lang: "typescript", theme: "nord" });
     expect(result.current).toEqual({
@@ -58,14 +58,14 @@ describe("useHighlightedLines", () => {
   });
 
   it("accepts grammar aliases and falls back to the VS Code palette for unknown layouts", async () => {
-    const { result } = renderHook(() => useHighlightedLines("export {}", "lib/app.mjs", "custom-layout", "light"));
+    const { result } = renderHook(() => useHighlightedLines("export {}", "lib/app.mjs", { id: "custom-layout", mode: "light" }));
     await waitFor(() => expect(result.current).not.toBeNull());
     expect(codeToTokens).toHaveBeenCalledWith("export {}", { lang: "javascript", theme: "light-plus" });
   });
 
   it("degrades to plain text when tokenization fails", async () => {
     codeToTokens.mockRejectedValue(new Error("grammar failed to load"));
-    const { result } = renderHook(() => useHighlightedLines("a {}", "site.css", undefined, "dark"));
+    const { result } = renderHook(() => useHighlightedLines("a {}", "site.css", { mode: "dark" }));
     await act(async () => {});
     await act(async () => {});
     expect(codeToTokens).toHaveBeenCalledTimes(1);
@@ -80,7 +80,7 @@ describe("useHighlightedLines", () => {
           resolveFirst = resolve;
         }),
     );
-    const { result, rerender } = renderHook(({ code }) => useHighlightedLines(code, "index.ts", undefined, "dark"), {
+    const { result, rerender } = renderHook(({ code }) => useHighlightedLines(code, "index.ts", { mode: "dark" }), {
       initialProps: { code: "first" },
     });
     await act(async () => {});
@@ -103,7 +103,7 @@ describe("useHighlightedLines", () => {
           resolveLate = resolve;
         }),
     );
-    const { unmount } = renderHook(() => useHighlightedLines("x", "index.ts", undefined, "dark"));
+    const { unmount } = renderHook(() => useHighlightedLines("x", "index.ts", { mode: "dark" }));
     await act(async () => {});
     unmount();
     await expect(

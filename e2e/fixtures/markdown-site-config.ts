@@ -21,6 +21,7 @@ export function prepareMarkdownFixture(root: string, versionConfigPath: string):
     path: localizedPath,
     title: { en: title, pt: title, es: title },
     container: "full",
+    fullscreenEnabled: true,
     RouteguideBrand: false,
   });
   const menu = { title, "path-click": markdownPath };

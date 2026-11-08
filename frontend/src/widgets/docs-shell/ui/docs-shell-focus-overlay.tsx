@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
+import { HighlightedMarkdown, type MarkdownHighlightTheme } from "@/features/source-code-highlight";
 import { TocTree, TocScrollContainerProvider } from "@/features/route-guide";
 import { FiChevronRight, FiChevronsLeft, FiChevronsRight, FiX } from "@/shared/ui/fallback-icons";
 import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
@@ -41,6 +42,7 @@ interface DocsShellFocusOverlayProps {
   sectionsLabel: string;
   documentsLabel: string;
   focusModeCurrentHtml: string;
+  theme?: MarkdownHighlightTheme;
   sectionIndex: number;
   sectionCount: number;
   document: FocusDocumentView;
@@ -56,7 +58,7 @@ interface DocsShellFocusOverlayProps {
 
 export function DocsShellFocusOverlay({
   isOpen, focusModeLabel, menuCloseLabel, firstLabel, lastLabel, previousLabel, nextLabel, sectionsLabel, documentsLabel,
-  focusModeCurrentHtml, sectionIndex, sectionCount,
+  focusModeCurrentHtml, theme = { mode: "light" }, sectionIndex, sectionCount,
   document: focusDocument, documentNavigation, sourceActionLabels, options, accessibilityControls, containerPagination, containerPaginationTop, onClose, onNavigate,
 }: Readonly<DocsShellFocusOverlayProps>) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -115,7 +117,7 @@ export function DocsShellFocusOverlay({
           {accessibilityControls}
           {containerPaginationTop}
           {markers.length > 0 && <TocScrollContainerProvider scrollContainerRef={bodyRef}><TocTree headings={markers} /></TocScrollContainerProvider>}
-          <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: focusModeCurrentHtml }} />
+          <HighlightedMarkdown className={styles.markdown} html={focusModeCurrentHtml} theme={theme} />
         </div>
         <div className={`${styles.focusModeFooter} ${styles.focusModeNavigation}`}>
           {containerPagination}

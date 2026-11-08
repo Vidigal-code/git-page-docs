@@ -42,15 +42,16 @@ function mountSections(entries: Array<[id: string, top: number]>) {
   for (const [id, top] of entries) {
     const element = document.createElement("section");
     element.id = id;
-    element.getBoundingClientRect = () => ({ top: tops.get(id) ?? 0 }) as DOMRect;
+    element.getBoundingClientRect = () => ({ top: (tops.get(id) ?? 0) - window.scrollY }) as DOMRect;
+    Object.defineProperty(element, "offsetTop", { get: () => tops.get(id) ?? 0 });
     document.body.appendChild(element);
     tops.set(id, top);
   }
 }
 
-function scrollTo(next: Array<[id: string, top: number]>) {
+function scrollTo(next: number) {
   act(() => {
-    for (const [id, top] of next) tops.set(id, top);
+    vi.stubGlobal("scrollY", next);
     window.dispatchEvent(new Event("scroll"));
   });
 }
@@ -60,6 +61,7 @@ const IDS = ["overview", "quickstart", "cli"];
 beforeEach(() => {
   FakeIntersectionObserver.instances = [];
   vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
+  vi.stubGlobal("scrollY", 0);
 });
 
 afterEach(() => {
@@ -77,18 +79,14 @@ describe("useActiveSection", () => {
     const { result } = renderHook(() => useActiveSection(IDS));
     expect(result.current.activeId).toBe("overview");
 
-    scrollTo([
-      ["overview", -500],
-      ["quickstart", HEADER_OFFSET + 1],
-      ["cli", 700],
-    ]);
+    scrollTo(600 - HEADER_OFFSET - 1);
     expect(result.current.activeId).toBe("quickstart");
 
-    scrollTo([["cli", HEADER_OFFSET - 10]]);
+    scrollTo(1200 - HEADER_OFFSET + 10);
     expect(result.current.activeId).toBe("cli");
 
     act(() => {
-      tops.set("cli", 900);
+      tops.set("cli", window.scrollY + 900);
       window.dispatchEvent(new Event("resize"));
     });
     expect(result.current.activeId).toBe("quickstart");
@@ -158,7 +156,7 @@ describe("useActiveSection", () => {
     const [observer] = FakeIntersectionObserver.instances;
     unmount();
     expect(observer.disconnect).toHaveBeenCalledTimes(1);
-    scrollTo([["quickstart", 0]]);
+    scrollTo(600);
     expect(result.current.activeId).toBe("overview");
   });
 });

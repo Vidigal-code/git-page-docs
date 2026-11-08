@@ -1,6 +1,6 @@
 ﻿// @vitest-environment jsdom
 import { afterEach, expect, it } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { MdContainer } from "@/widgets/docs-shell/ui/content-type-containers/md-container";
 import { resolveRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import type { ComponentProps } from "react";
@@ -8,6 +8,18 @@ import type { ContentTypeRouteConfig } from "@/entities/docs";
 import { expandVersionConfig } from "@/entities/docs/lib/expand-version-config";
 
 afterEach(cleanup);
+
+it("uses the active custom theme mode for code rather than the header mode flag", async () => {
+  const { container } = render(<MdContainer
+    html={'<pre><code class="language-json">{ "name": "site" }</code></pre>'}
+    language="en" activeThemeId="custom-theme" activeThemeMode="dark" isDarkMode={false}
+    fullscreenCloseLabel="Close" fullscreenExpandLabel="Expand"
+  />);
+  await waitFor(() => {
+    const token = [...container.querySelectorAll<HTMLElement>("code span")].find(span => span.textContent === '"name"');
+    expect(token?.style.color).toBe("rgb(156, 220, 254)");
+  });
+});
 const breadcrumbProps: ComponentProps<typeof MdContainer> = {
   html: "<h1>Install</h1>",
   language: "en",

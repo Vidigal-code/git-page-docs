@@ -17,6 +17,7 @@ import {
 } from "@/entities/source-viewer";
 import { SourceViewerSearchForm } from "@/features/source-viewer-search";
 import {
+  HighlightedMarkdown,
   toTokenStyle,
   useHighlightedLines,
   type HighlightedCode,
@@ -242,7 +243,7 @@ const CodeViewer = memo(function CodeViewer({ content, filePath, themeId, themeM
   );
   // VS Code-grade tokens (Shiki); null while loading or unsupported, in which
   // case each row falls back to the plain text it already renders today.
-  const highlighted = useHighlightedLines(normalizedContent, filePath, themeId, themeMode);
+  const highlighted = useHighlightedLines(normalizedContent, filePath, { id: themeId, mode: themeMode });
   return (
     <div className={styles.codeScroll} style={buildEditorSurfaceStyle(highlighted)}>
       <table className={styles.codeTable}>
@@ -262,9 +263,9 @@ const CodeViewer = memo(function CodeViewer({ content, filePath, themeId, themeM
   );
 });
 
-const MarkdownPreview = memo(function MarkdownPreview({ content }: Readonly<{ content: string }>) {
+const MarkdownPreview = memo(function MarkdownPreview({ content, themeId, themeMode }: Readonly<Omit<CodeViewerProps, "filePath">>) {
   const html = useMemo(() => markdownToHtml(content), [content]);
-  return <div className={styles.markdownPreview} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <HighlightedMarkdown className={styles.markdownPreview} html={html} theme={{ id: themeId, mode: themeMode }} />;
 });
 
 interface DirectoryListingProps {
@@ -366,7 +367,7 @@ function SelectedFileViewer({
         </div>
       ) : null}
       {isLoadingFile ? <div className={styles.state}>{labels.loadingFile}</div> : null}
-      {showPreview ? <MarkdownPreview content={selectedFile.content} /> : null}
+      {showPreview ? <MarkdownPreview content={selectedFile.content} themeId={themeId} themeMode={themeMode} /> : null}
       {showCode ? (
         <CodeViewer content={selectedFile.content} filePath={selectedFile.path} themeId={themeId} themeMode={themeMode} />
       ) : null}

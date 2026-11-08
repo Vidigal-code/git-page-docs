@@ -15,6 +15,7 @@ interface SourceViewerContainerProps {
   isDarkMode?: boolean;
   /** Active site layout id: picks the matching VS Code token palette. */
   activeThemeId?: string;
+  activeThemeMode?: "light" | "dark";
 }
 
 function resolveInitialRoute(sourceViewerPath: string) {
@@ -35,6 +36,7 @@ export function SourceViewerContainer({
   language,
   isDarkMode = false,
   activeThemeId,
+  activeThemeMode,
 }: Readonly<SourceViewerContainerProps>) {
   const header = <ContentHeaderBlock config={config} language={language} isDarkMode={isDarkMode} />;
 
@@ -53,7 +55,7 @@ export function SourceViewerContainer({
           labels={buildSourceViewerLabels(site.langmenu, language)}
           showSearchForm={false}
           themeId={activeThemeId}
-          themeMode={isDarkMode ? "dark" : "light"}
+          themeMode={activeThemeMode ?? (isDarkMode ? "dark" : "light")}
         />
       </article>
     </ContentContainerWrapper>

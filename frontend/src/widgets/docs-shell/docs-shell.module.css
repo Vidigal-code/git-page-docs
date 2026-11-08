@@ -526,6 +526,10 @@
   composes: content from "../../shared/ui/markdown/markdown.module.css";
 }
 
+.card:has(> .markdown) {
+  background: var(--markdown-background, var(--card-background));
+}
+
 .contentBlocksStack {
   display: flex;
   flex-direction: column;
@@ -1507,7 +1511,7 @@ dialog.versionLinksCard {
   overflow-y: auto;
   min-height: 0;
   max-height: min(64vh, calc(100dvh - 220px));
-  background: color-mix(in srgb, var(--background) 86%, transparent);
+  background: var(--markdown-background, var(--card-background));
   overflow-wrap: anywhere;
   min-width: 0;
 }

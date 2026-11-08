@@ -4,6 +4,7 @@
   color: var(--markdown-text, var(--text));
   background: var(--markdown-background, var(--card-background));
   line-height: 1.6;
+  text-align: start;
   overflow-wrap: anywhere;
 }
 

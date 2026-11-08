@@ -2,7 +2,9 @@
 
 Markdown rendering supports GitHub-flavored tables, task lists, strikethrough and autolinks. Rendered HTML is sanitized before display; scripts, unsafe link schemes and executable attributes are removed. Tables and code blocks scroll within narrow containers, while text, links, borders and surfaces follow the selected theme.
 
-Documentation Markdown and source-viewer previews use solid card backgrounds. Text, links, muted text and inline code derive colors with at least 4.5:1 contrast across the 124 shipped themes.
+Markdown uses a reading surface consistent with its surrounding card in documentation, focus mode, fullscreen and source-viewer previews. Text, links, muted text and inline code derive colors with at least 4.5:1 contrast across the 124 shipped themes.
+
+Fenced code blocks with a supported language, such as JSON, use Shiki syntax highlighting. Token colors follow the active theme and remain readable against the code surface. Blocks without a language or with an unsupported language remain readable plain text; very large blocks may also remain plain text to keep the reader responsive. Copy and download keep the original Markdown.
 
 Complete reference of CLI options, configuration keys, and runtime features.
 

@@ -13,7 +13,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const GUIDE_PORT = PORT + 1;
 const BASE_URL = `http://localhost:${PORT}`;
 const GUIDE_BASE_URL = `http://localhost:${GUIDE_PORT}`;
-const GUIDE_SPEC = /(?:introduction-guide|search-shell-mobile-controls)\.spec\.ts/;
+const GUIDE_SPEC = /(?:introduction-guide(?:-numerals)?|search-shell-mobile-controls|markdown-source-preview|theme-background-performance)\.spec\.ts/;
 const DOCS_FIXTURE_DIRECTORY = prepareRepositoryLinksFixture();
 const NEXT_COMMAND = `node "${path.resolve("node_modules/next/dist/bin/next")}" dev "${path.resolve("frontend")}"`;
 

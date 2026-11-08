@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import dynamic from "next/dynamic";
+import { HighlightedMarkdown } from "@/features/source-code-highlight";
 import {
   getLangMenuLabelFromMenu,
   resolvePageHierarchy,
@@ -79,6 +80,7 @@ interface PageContentAreaProps {
   isDarkMode?: boolean;
   /** Active site layout id: picks the source viewer's matching token palette. */
   activeThemeId?: string;
+  activeThemeMode?: "light" | "dark";
   /** When set, only render this content type (used for URL fullscreen mdfull/htmlfull/videofull/audiofull) */
   contentTypeFilter?: ContentType;
   /** When true, content is inside URL fullscreen overlay - hide expand button, overlay provides close */
@@ -118,6 +120,7 @@ function LegacyPageContentArea({
   language,
   isDarkMode = false,
   activeThemeId,
+  activeThemeMode,
   labels,
   browse,
   navigation,
@@ -198,7 +201,7 @@ function LegacyPageContentArea({
     const fallbackHtml = data.docs?.[0]?.markdownByLanguage[language] ?? "<p>Document not found.</p>";
     return (
       <article className={styles.card}>
-        <div className={styles.markdown} dangerouslySetInnerHTML={{ __html: fallbackHtml }} />
+        <HighlightedMarkdown className={styles.markdown} html={fallbackHtml} theme={{ id: activeThemeId, mode: activeThemeMode ?? (isDarkMode ? "dark" : "light") }} />
       </article>
     );
   }
@@ -267,6 +270,8 @@ function LegacyPageContentArea({
         config={currentMd.config}
         language={language}
         isDarkMode={isDarkMode}
+        activeThemeId={activeThemeId}
+        activeThemeMode={activeThemeMode}
         fullscreenEnabled={resolveInlineFullscreen({ isUrlFullscreen, enabled: currentMd.fullscreenEnabled })}
         {...fullscreenLabels}
         useDefaultScrollBehavior={isUrlFullscreen}
@@ -301,6 +306,7 @@ function LegacyPageContentArea({
         language={language}
         isDarkMode={isDarkMode}
         activeThemeId={activeThemeId}
+        activeThemeMode={activeThemeMode}
       />
     ) : null,
     html: currentHtml ? (

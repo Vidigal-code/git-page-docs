@@ -44,21 +44,13 @@ it("renders the configured decorative particles without exposing them to assisti
   expect(screen.queryByRole("button")).toBeNull();
 });
 
-it("pauses and resumes movement from the accessible control", async () => {
+it("toggles playback from the accessible control", () => {
   render(<ThemeBackground config={{ ...config, animation: { enabled: true, speed: 1 } }} />);
-  const pause = screen.getByRole("button", { name: "Pause background animation" });
-  const particle = screen.getByTestId("theme-background").querySelector<HTMLElement>("[data-background-particle]")!;
-  const initialTransform = particle.style.transform;
-  await waitFor(() => expect(particle.style.transform).not.toBe(initialTransform));
-  fireEvent.click(pause);
+  fireEvent.click(screen.getByRole("button", { name: "Pause background animation" }));
   const resume = screen.getByRole("button", { name: "Resume background animation" });
   expect(resume.getAttribute("aria-pressed")).toBe("true");
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  const pausedTransform = particle.style.transform;
-  await new Promise((resolve) => setTimeout(resolve, 70));
-  expect(particle.style.transform).toBe(pausedTransform);
   fireEvent.click(resume);
-  await waitFor(() => expect(particle.style.transform).not.toBe(pausedTransform));
+  expect(screen.getByRole("button", { name: "Pause background animation" }).getAttribute("aria-pressed")).toBe("false");
 });
 
 it("renders each primitive with deterministic positions and configured matrix text", () => {
@@ -87,7 +79,7 @@ it("applies pointer parallax and freezes it while paused", async () => {
   expect(layer.style.transform).toBe(pausedTransform);
 });
 
-it("stops opacity and transforms when the system requests reduced motion and hides when configured", async () => {
+it("honors the reduced-motion control and visibility settings", () => {
   let reduced = false;
   const media = new EventTarget();
   vi.stubGlobal("matchMedia", () => ({
@@ -98,35 +90,11 @@ it("stops opacity and transforms when the system requests reduced motion and hid
   const animated = { ...config, animation: { enabled: true, speed: 1 } };
   const { rerender } = render(<ThemeBackground config={animated} />);
   const background = screen.getByTestId("theme-background");
-  const particle = background.querySelector<HTMLElement>("[data-background-particle]")!;
   act(() => { reduced = true; media.dispatchEvent(new Event("change")); });
   expect(screen.queryByRole("button")).toBeNull();
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  const pausedStyle = particle.getAttribute("style");
-  await new Promise((resolve) => setTimeout(resolve, 70));
-  expect(particle.getAttribute("style")).toBe(pausedStyle);
   expect(background.hidden).toBe(false);
   rerender(<ThemeBackground config={{ ...animated, accessibility: { ...config.accessibility, reducedMotion: "hide" } }} />);
   expect(background.hidden).toBe(true);
-});
-
-it("pauses in a hidden tab and resumes only when visible and not manually paused", async () => {
-  const hidden = vi.spyOn(document, "hidden", "get").mockReturnValue(false);
-  render(<ThemeBackground config={{ ...config, animation: { enabled: true, speed: 1 } }} />);
-  const particle = screen.getByTestId("theme-background").querySelector<HTMLElement>("[data-background-particle]")!;
-  hidden.mockReturnValue(true);
-  fireEvent(document, new Event("visibilitychange"));
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  const hiddenStyle = particle.getAttribute("style");
-  await new Promise((resolve) => setTimeout(resolve, 70));
-  expect(particle.getAttribute("style")).toBe(hiddenStyle);
-  fireEvent.click(screen.getByRole("button", { name: "Pause background animation" }));
-  hidden.mockReturnValue(false);
-  fireEvent(document, new Event("visibilitychange"));
-  await new Promise((resolve) => setTimeout(resolve, 70));
-  expect(particle.getAttribute("style")).toBe(hiddenStyle);
-  fireEvent.click(screen.getByRole("button", { name: "Resume background animation" }));
-  await waitFor(() => expect(particle.getAttribute("style")).not.toBe(hiddenStyle));
 });
 
 it("cleans up browser subscriptions and clamps long-document scroll parallax", async () => {
@@ -171,26 +139,19 @@ it("can hide the control while preserving the configured background surface", ()
   expect(screen.queryByRole("button")).toBeNull();
 });
 
-it("keeps a controlled paused background stationary without rendering its own control", async () => {
+it("renders a controlled paused background without its own control", () => {
   render(<BackgroundRenderer config={{ ...config, animation: { enabled: true, speed: 1 } }} paused />);
   expect(screen.queryByRole("button")).toBeNull();
-  const particle = screen.getByTestId("theme-background").querySelector<HTMLElement>("[data-background-particle]")!;
-  const initialStyle = particle.getAttribute("style");
-  await new Promise((resolve) => setTimeout(resolve, 80));
-  expect(particle.getAttribute("style")).toBe(initialStyle);
+  expect(screen.getByTestId("theme-background").querySelectorAll("[data-background-particle]")).toHaveLength(3);
 });
 
-it("preserves a manual pause while switching themes and resumes from the external control", async () => {
+it("preserves the manual pause control while switching themes", () => {
   const animated = { ...config, animation: { enabled: true, speed: 1 } };
   const { rerender } = render(<ThemeBackground config={animated} />);
   fireEvent.click(screen.getByRole("button", { name: "Pause background animation" }));
   rerender(<ThemeBackground config={{ ...animated, surface: "#000000" }} />);
-  expect(screen.getByRole("button", { name: "Resume background animation" }).getAttribute("aria-pressed")).toBe("true");
-  const particle = screen.getByTestId("theme-background").querySelector<HTMLElement>("[data-background-particle]")!;
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  const pausedStyle = particle.getAttribute("style");
-  await new Promise((resolve) => setTimeout(resolve, 80));
-  expect(particle.getAttribute("style")).toBe(pausedStyle);
-  fireEvent.click(screen.getByRole("button", { name: "Resume background animation" }));
-  await waitFor(() => expect(particle.getAttribute("style")).not.toBe(pausedStyle));
+  const resume = screen.getByRole("button", { name: "Resume background animation" });
+  expect(resume.getAttribute("aria-pressed")).toBe("true");
+  fireEvent.click(resume);
+  expect(screen.getByRole("button", { name: "Pause background animation" }).getAttribute("aria-pressed")).toBe("false");
 });

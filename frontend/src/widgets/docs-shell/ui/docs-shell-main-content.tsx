@@ -109,6 +109,7 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
           language={language}
           isDarkMode={nextMode === "dark"}
           activeThemeId={controlsProps.activeThemeId}
+          activeThemeMode={activeLayoutMode}
           labels={labels}
           browse={browse}
           navigation={navigation}

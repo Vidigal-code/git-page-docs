@@ -645,6 +645,7 @@ test("allows native scrolling out of both ends of the tour", async ({ page }) =>
         const bounds = story.getBoundingClientRect();
         return bounds.top > 0 || bounds.bottom < innerHeight;
       })).toBe(true);
+      await restingChapter(page);
     }
   }
 });

@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 import type { ResolvedThemeBackgroundLayer } from "@/entities/docs";
 import type { BackgroundParticle } from "./particles";
 
+const KEYFRAME_SEGMENTS = 128;
+
 export function particleStyle(particle: BackgroundParticle, layer: ResolvedThemeBackgroundLayer): CSSProperties {
   const { size, color } = particle;
   const shapes: Record<ResolvedThemeBackgroundLayer["kind"], CSSProperties> = {
@@ -23,10 +25,22 @@ export function particleStyle(particle: BackgroundParticle, layer: ResolvedTheme
     left: `${particle.x}%`, top: `${particle.y}%`, width: size, height: size, color,
     filter: `blur(${layer.blur}px) drop-shadow(0 0 ${layer.glow}px ${color})`,
     ...shapes[layer.kind],
+    ...particleFrame(particle.phase, layer),
   };
 }
 
-export function particleTravel(value: number, kind: ResolvedThemeBackgroundLayer["kind"]): number {
-  if (kind === "orbs" || kind === "grid" || kind === "waves") return Math.sin(value * Math.PI * 2) / 2;
-  return (value % 1) - 0.5;
+function particleFrame(progress: number, layer: ResolvedThemeBackgroundLayer): { transform: string; opacity: number } {
+  const oscillating = layer.kind === "orbs" || layer.kind === "grid" || layer.kind === "waves";
+  const travel = oscillating ? Math.sin(progress * Math.PI * 2) / 2 : progress - 0.5;
+  return {
+    transform: `translate(${travel * layer.travel.x}vw, ${travel * layer.travel.y}vh) rotate(${layer.rotation}deg)`,
+    opacity: layer.opacity * Math.sin(progress * Math.PI) ** 2,
+  };
+}
+
+export function particleKeyframes(layer: ResolvedThemeBackgroundLayer): Keyframe[] {
+  return Array.from({ length: KEYFRAME_SEGMENTS + 1 }, (_, index) => {
+    const offset = index / KEYFRAME_SEGMENTS;
+    return { offset, ...particleFrame(offset, layer) };
+  });
 }

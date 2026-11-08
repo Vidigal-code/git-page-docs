@@ -77,6 +77,7 @@ export interface DocsShellOverlaysProps {
   data: LoadedDocsData;
   language: string;
   nextMode: string;
+  activeLayoutMode?: "light" | "dark";
   browse: BrowseState;
   navigation: BrowseNavigationProps;
   closeUrlFullscreen: () => void;
@@ -119,6 +120,7 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         onMenuClick={props.onMenuClick}
       />}
       <DocsShellFocusOverlay
+        theme={{ id: controlsProps.activeThemeId, mode: props.activeLayoutMode ?? "dark" }}
         isOpen={controlsConfig.focusModeEnabled && props.focusModeOpen}
         focusModeLabel={props.focusModeLabel}
         menuCloseLabel={labels.menuCloseLabel}
@@ -156,6 +158,8 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         onClose={() => props.setInfoPopupOpen(false)}
       />
       <DocsShellUrlFullscreenOverlay
+        activeThemeId={controlsProps.activeThemeId}
+        activeThemeMode={props.activeLayoutMode}
         isOpen={Boolean(props.urlFullscreenParams)}
         params={props.urlFullscreenParams}
         data={props.data}

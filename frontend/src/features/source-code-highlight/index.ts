@@ -6,3 +6,4 @@ export {
 export { toTokenStyle } from "./lib/token-style";
 export { resolveShikiLanguage } from "./lib/resolve-shiki-language";
 export { resolveShikiTheme, SHIKI_THEME_BY_LAYOUT_ID } from "./lib/resolve-shiki-theme";
+export { HighlightedMarkdown, type MarkdownHighlightTheme } from "./ui/highlighted-markdown";

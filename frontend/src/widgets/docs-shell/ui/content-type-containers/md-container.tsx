@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactElement } from "react";
+import { HighlightedMarkdown } from "@/features/source-code-highlight";
 import { useMarkdownContent, type MarkdownMarkersOptions, type BreadcrumbItem, type LanguageCode } from "@/entities/docs";
 import type { ResolvedRouteGuideIconConfig } from "@/shared/lib/resolve-site-assets";
 import { resolveContentHeaderText } from "./content-header-text";
@@ -21,6 +22,8 @@ interface MdContainerProps extends RouteContainerFrameProps {
   language: LanguageCode;
   markdownMarkerDefaults?: MarkdownMarkersOptions;
   isDarkMode?: boolean;
+  activeThemeId?: string;
+  activeThemeMode?: "light" | "dark";
   routeGuideEnabled?: boolean;
   breadcrumbTrail?: BreadcrumbItem[];
   onBreadcrumbClick?: (pathClick: string, ancestorKeys: string[]) => void;
@@ -51,6 +54,8 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
     markdownMarkerDefaults,
     fullscreenEnabled = false,
     isDarkMode = false,
+    activeThemeId,
+    activeThemeMode,
     routeGuideEnabled = true,
     breadcrumbTrail = [],
     onBreadcrumbClick,
@@ -98,7 +103,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
 
   const markdownContent = (
     <article className={styles.card}>
-      <div className={styles.markdown} style={containerStyle} dangerouslySetInnerHTML={{ __html: renderedHtml }} />
+      <HighlightedMarkdown className={styles.markdown} style={containerStyle} html={renderedHtml} theme={{ id: activeThemeId, mode: activeThemeMode ?? (isDarkMode ? "dark" : "light") }} />
     </article>
   );
 

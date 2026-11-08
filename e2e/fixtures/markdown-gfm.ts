@@ -1,5 +1,11 @@
+export const MARKDOWN_JSON_CODE = '{\n  "site": {\n    "name": "Documentation",\n    "enabled": true,\n    "count": 42\n  }\n}';
+
 export const MARKDOWN_GFM_FIXTURE = [
   "# Markdown rendering",
+  "",
+  "```json",
+  MARKDOWN_JSON_CODE,
+  "```",
   "",
   "## Second level",
   "",

@@ -3,6 +3,15 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.20 - 2026-11-08 - readable Markdown and lighter guide effects
+
+- Highlight fenced Markdown code blocks, including JSON, with the existing Shiki integration. Follow the active theme and keep token colors readable in documentation, focus mode, fullscreen and source-viewer previews. Preserve plain-text fallback for unsupported or unspecified languages and the original Markdown for copy/download.
+- Keep the Markdown reading surface consistent with its surrounding card across all 124 themes, removing the contrasting inner panel while preserving readable text, links and inline code.
+- Separate the introduction-guide chapter digits on narrow and wide screens. Show the canonical header icons while remote settings load or fail, and honor explicit settings after loading.
+- Cache section positions between layout changes and reuse corrected syntax colors within each Markdown document to reduce repeated work while scrolling and highlighting code.
+- Animate theme particles through the native Web Animations API instead of updating their styles in JavaScript every frame. Preserve phase, speed, pause/resume, reduced-motion preferences and hidden-tab suspension.
+- Update the CLI, shared tools and MCP packages to 0.0.20. Register all twelve documentation versions from 0.0.20 through 0.0.9 and refresh the English, Portuguese and Spanish references.
+
 ## 0.0.19 - 2026-11-08 - consistent themes and responsive documentation navigation
 
 - Extend theme and language icon buttons across mobile-menu rows and center their icons on narrow screens, including folded displays. Preserve compact desktop-header controls.

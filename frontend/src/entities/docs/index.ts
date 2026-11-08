@@ -10,6 +10,7 @@ export {
 
 export { buildFooterConfigFromData } from "./lib/footer/build-footer-config";
 export { markdownToHtml } from "./api/utils/markdown";
+export { SITE_CONFIG_DEFAULTS } from "./lib/with-config-defaults";
 export { getLanguageLabelFromMenu, getLangMenuLabelFromMenu } from "./lib/i18n/lang-menu";
 export { resolveTranslation } from "./lib/i18n/resolve-translation";
 export { extractHeadingsFromHtml, type HeadingItem } from "./lib/markdown/extract-headings";

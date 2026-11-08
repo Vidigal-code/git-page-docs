@@ -17,6 +17,8 @@ interface DocsShellUrlFullscreenOverlayProps {
   data: LoadedDocsData;
   language: string;
   isDarkMode: boolean;
+  activeThemeId?: string;
+  activeThemeMode?: "light" | "dark";
   labels: ContentLabels;
   browse: BrowseState;
   navigation: BrowseNavigationProps;
@@ -29,6 +31,8 @@ export function DocsShellUrlFullscreenOverlay({
   data,
   language,
   isDarkMode,
+  activeThemeId,
+  activeThemeMode,
   labels,
   browse,
   navigation,
@@ -95,6 +99,8 @@ export function DocsShellUrlFullscreenOverlay({
             data={data}
             language={overlayLanguage}
             isDarkMode={isDarkMode}
+            activeThemeId={activeThemeId}
+            activeThemeMode={activeThemeMode}
             contentTypeFilter={params.type ?? undefined}
             isUrlFullscreen={true}
             labels={labels}

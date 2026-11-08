@@ -53,7 +53,7 @@ it("renders nested lists, ordered starts, disabled task boxes and block quotatio
 it("renders fenced, indented and inline code as literal text", () => {
   const element = renderFixture();
   expect(element.querySelector("pre code.language-typescript")?.textContent).toBe('const greeting = "Hello <world>";\nconsole.log(greeting);\n');
-  expect([...element.querySelectorAll("pre code")].at(1)?.textContent).toBe("Indented code <example>\n");
+  expect(element.querySelector("pre code:not([class])")?.textContent).toBe("Indented code <example>\n");
   expect(element.querySelector("p code")?.textContent).toBe("inline <code>");
   expect(element.querySelector("pre world, pre example, p code code")).toBeNull();
 });
