@@ -52,7 +52,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.24/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.25/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -61,9 +61,9 @@ In \`gitpagedocs/docs/versions/0.0.24/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -666,7 +666,8 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 | \`AiChatEnabled / AiChatAutoLockSeconds\` | true / 30; show the chat and lock after inactivity (0 disables the timer) |
 | \`docsAccess\` | enabled and publicKey configure the documentation gate; public files remain public |
 | \`RouteguideBrandPositionDefault / RouteguideBrandContainerTopDefault\` | center / false; heading-outline layout, distinct from breadcrumbs |
-| \`TocScrollMaxHeightDesktop / TocScrollMaxHeightMobile\` | Heading-outline scroll limits; CSS lengths such as min(65vh, 400px) |
+| \`TocScrollMaxHeightDesktop\` | min(65vh, 400px); configured outline scroll limit. Since 0.0.25, side guides on screens wider than 1024 CSS pixels use the available viewport height instead; other layouts keep their previous sizing rules |
+| \`TocScrollMaxHeightMobile\` | min(45vh, 280px); mobile outline scroll limit, unchanged by the desktop side-guide rule |
 
 ## Adding a version or document
 

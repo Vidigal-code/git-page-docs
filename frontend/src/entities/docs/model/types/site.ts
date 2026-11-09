@@ -158,7 +158,7 @@ export interface SiteConfig extends IconConfigFields<StandardIconName> {
   audioPopoverSourceCustomLabel?: Record<string, string>;
   /** If true, show elapsed time / duration (minutes:seconds) for native tracks */
   audioPopoverShowMinutes?: boolean;
-  /** TOC scroll max-height desktop, e.g. "min(65vh, 400px)" */
+  /** Configured TOC scroll cap, e.g. "min(65vh, 400px)". Since 0.0.25, side guides on screens wider than 1024 CSS pixels use available viewport height instead. */
   TocScrollMaxHeightDesktop?: string;
   /** TOC scroll max-height mobile, e.g. "220px" */
   TocScrollMaxHeightMobile?: string;

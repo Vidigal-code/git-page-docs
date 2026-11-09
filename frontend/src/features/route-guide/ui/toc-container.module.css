@@ -123,8 +123,11 @@
     max-height: calc(100dvh - 6rem);
   }
 
+  .positionLeft .tocScroll,
+  .positionRight .tocScroll,
   .wrapper[data-container-top="false"] .tocScroll {
-    max-height: var(--toc-scroll-max-height-desktop, min(65vh, 400px));
+    max-height: none;
+    min-height: 0;
   }
 
   .tocScroll > nav {

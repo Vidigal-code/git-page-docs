@@ -2,7 +2,7 @@
 
 O guia do documento é o índice do Markdown atual. Ele é separado do menu do site, dos breadcrumbs e do guia introdutório do GitPageDocs. Configure-o no item correspondente de `routes-md`, na configuração da versão.
 
-Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua. Em larguras de até 1024 pixels, o guia mantém suas dimensões e aparência atuais.
+Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Desde a 0.0.25, ele pode crescer até a altura disponível da janela abaixo do cabeçalho antes de precisar de rolagem interna. Esse layout lateral tem prioridade sobre `TocScrollMaxHeightDesktop`; o guia centralizado acima do conteúdo e os layouts de até 1024 pixels mantêm suas regras anteriores de dimensionamento. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua.
 
 ## Selecione os elementos indexados
 

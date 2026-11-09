@@ -3,7 +3,7 @@ export const MARKDOWN_GUIDE_DOCS = {
 
 The document guide is the outline of the current Markdown document. It is separate from the site menu, breadcrumbs and the introductory GitPageDocs guide. Configure it on the corresponding item in \`routes-md\` inside the version configuration.
 
-On desktop screens wider than 1024 CSS pixels, the side guide ends after its last entry instead of stretching to the article height. A small bar in the active entry's theme color follows the section marked while scrolling. The indicator uses the existing section tracking without continuous animation. Layouts at 1024 pixels and below retain their current guide dimensions and appearance.
+On desktop screens wider than 1024 CSS pixels, the side guide ends after its last entry instead of stretching to the article height. Since 0.0.25, it can grow to the available viewport height below the header before its entries need internal scrolling. This side layout takes precedence over \`TocScrollMaxHeightDesktop\`; centered guides above the content and layouts at 1024 pixels and below retain their previous sizing rules. A small bar in the active entry's theme color follows the section marked while scrolling. The indicator uses the existing section tracking without continuous animation.
 
 ## Select the indexed elements
 
@@ -91,7 +91,7 @@ Selecting both a container and its children can create several entries for the s
 
 O guia do documento é o índice do Markdown atual. Ele é separado do menu do site, dos breadcrumbs e do guia introdutório do GitPageDocs. Configure-o no item correspondente de \`routes-md\`, na configuração da versão.
 
-Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua. Em larguras de até 1024 pixels, o guia mantém suas dimensões e aparência atuais.
+Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Desde a 0.0.25, ele pode crescer até a altura disponível da janela abaixo do cabeçalho antes de precisar de rolagem interna. Esse layout lateral tem prioridade sobre \`TocScrollMaxHeightDesktop\`; o guia centralizado acima do conteúdo e os layouts de até 1024 pixels mantêm suas regras anteriores de dimensionamento. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua.
 
 ## Selecione os elementos indexados
 
@@ -179,7 +179,7 @@ Selecionar um contêiner e seus filhos pode criar várias entradas para o mesmo 
 
 La guía del documento es el índice del Markdown actual. Es independiente del menú del sitio, de las rutas de navegación y de la guía introductoria de GitPageDocs. Configúrala en el elemento correspondiente de \`routes-md\`, dentro de la configuración de la versión.
 
-En pantallas de escritorio con más de 1024 píxeles CSS, la guía lateral termina después de su última entrada, sin extenderse hasta el final del artículo. Una pequeña barra con el color de la entrada activa sigue la sección marcada al desplazarse. El indicador utiliza el seguimiento de secciones existente, sin animación continua. En anchos de hasta 1024 píxeles, la guía conserva sus dimensiones y apariencia actuales.
+En pantallas de escritorio con más de 1024 píxeles CSS, la guía lateral termina después de su última entrada, sin extenderse hasta el final del artículo. Desde 0.0.25, puede crecer hasta la altura disponible de la ventana debajo de la cabecera antes de necesitar desplazamiento interno. Este diseño lateral tiene prioridad sobre \`TocScrollMaxHeightDesktop\`; la guía centrada encima del contenido y los diseños de hasta 1024 píxeles mantienen sus reglas de tamaño anteriores. Una pequeña barra con el color de la entrada activa sigue la sección marcada al desplazarse. El indicador utiliza el seguimiento de secciones existente, sin animación continua.
 
 ## Selecciona los elementos indexados
 

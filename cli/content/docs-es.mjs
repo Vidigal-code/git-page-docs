@@ -51,7 +51,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.24/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.25/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -60,9 +60,9 @@ En \`gitpagedocs/docs/versions/0.0.24/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -543,7 +543,8 @@ Opciones por ruta en \`routes-md\`, \`routes-html\` y \`routes-video\`:
 | \`AiChatEnabled / AiChatAutoLockSeconds\` | true / 30; muestra chat y bloquea por inactividad (0 desactiva el temporizador) |
 | \`docsAccess\` | enabled y publicKey configuran el acceso a documentación; los archivos públicos siguen siendo públicos |
 | \`RouteguideBrandPositionDefault / RouteguideBrandContainerTopDefault\` | center / false; posición del índice de títulos, separado de breadcrumbs |
-| \`TocScrollMaxHeightDesktop / TocScrollMaxHeightMobile\` | Límites de desplazamiento del índice; longitudes CSS como min(65vh, 400px) |
+| \`TocScrollMaxHeightDesktop\` | min(65vh, 400px); límite configurado de desplazamiento del índice. Desde 0.0.25, las guías laterales en pantallas de más de 1024 píxeles CSS usan la altura disponible de la ventana; los demás diseños mantienen sus reglas anteriores |
+| \`TocScrollMaxHeightMobile\` | min(45vh, 280px); límite de desplazamiento del índice móvil, sin cambios por la regla de la guía lateral de escritorio |
 
 ## Añadir una versión o documento
 

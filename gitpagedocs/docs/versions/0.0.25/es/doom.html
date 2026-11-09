@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Juega a DOOM en el reproductor js-dos integrado.">
+  <title>DOOM en un contenedor HTML</title>
+  <style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body, #doom-example, #doom-player { width: 100%; height: 100%; margin: 0; }
+  body { background: #000; color: #f4f4f7; }
+  #doom-example { position: relative; font-family: system-ui, sans-serif; }
+  #doom-player { min-height: 360px; }
+  #doom-status { position: absolute; inset: 0; z-index: 1; padding: 24px; background: #101018; line-height: 1.6; }
+  #doom-example :focus-visible { outline: 3px solid #b8caff; outline-offset: 4px; }
+  #doom-example [hidden] { display: none; }
+</style>
+</head>
+<body>
+  <main id="doom-example">
+    <output id="doom-status" data-error="No se pudo cargar el reproductor. Comprueba tu conexión y recarga esta página para intentarlo de nuevo." hidden></output>
+    <div id="doom-player" tabindex="-1" aria-label="Área del juego DOOM"></div>
+  </main>
+  <script>
+(() => {
+  const status = document.getElementById("doom-status");
+  const player = document.getElementById("doom-player");
+  const baseUrl = "https://v8.js-dos.com/latest/";
+  const bundleUrl = "https://v8.js-dos.com/bundles/doom.jsdos";
+  let game;
+
+  function loadResource(element) {
+    return new Promise((resolve, reject) => {
+      element.addEventListener("load", resolve, { once: true });
+      element.addEventListener("error", () => reject(new Error("Player resource could not load")), { once: true });
+      document.head.append(element);
+    });
+  }
+
+  async function loadPlayer() {
+    const stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = baseUrl + "js-dos.css";
+    const script = document.createElement("script");
+    script.src = baseUrl + "js-dos.js";
+    try {
+      await Promise.all([loadResource(stylesheet), loadResource(script)]);
+      if (typeof window.Dos !== "function") throw new Error("Player API is unavailable");
+      game = window.Dos(player, {
+        url: bundleUrl,
+        pathPrefix: baseUrl + "emulators/",
+        autoStart: false,
+        kiosk: true,
+        mouseCapture: false,
+        theme: "dark",
+        lang: "en",
+      });
+      game.setNoCloud(true);
+    } catch (error) {
+      stylesheet.remove();
+      script.remove();
+      status.textContent = status.dataset.error;
+      status.hidden = false;
+      console.error("DOOM player failed to load", error);
+    }
+  }
+
+  void loadPlayer();
+  window.addEventListener("pagehide", () => {
+    game?.stop().catch((error) => console.error("DOOM player failed to stop", error));
+  }, { once: true });
+})();
+</script>
+</body>
+</html>

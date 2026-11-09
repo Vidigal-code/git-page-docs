@@ -249,7 +249,8 @@ Opções por rota em `routes-md`, `routes-html` e `routes-video`:
 | `AiChatEnabled / AiChatAutoLockSeconds` | true / 30; exibe chat e bloqueia por inatividade (0 desativa temporizador) |
 | `docsAccess` | enabled e publicKey configuram o bloqueio da documentação; arquivos públicos continuam públicos |
 | `RouteguideBrandPositionDefault / RouteguideBrandContainerTopDefault` | center / false; posição do sumário de títulos, separado dos breadcrumbs |
-| `TocScrollMaxHeightDesktop / TocScrollMaxHeightMobile` | Limites de rolagem do sumário; comprimentos CSS como min(65vh, 400px) |
+| `TocScrollMaxHeightDesktop` | min(65vh, 400px); limite configurado de rolagem do sumário. Desde a 0.0.25, guias laterais em telas com mais de 1024 pixels CSS usam a altura disponível da janela; os demais layouts mantêm suas regras anteriores |
+| `TocScrollMaxHeightMobile` | min(45vh, 280px); limite de rolagem do sumário móvel, sem alteração pela regra do guia lateral desktop |
 
 ## Adicionar versão ou documento
 

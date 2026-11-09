@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const VIEWPORT_HEIGHT = 900;
+const TALL_VIEWPORT_HEIGHT = 1200;
 const GEOMETRY_TOLERANCE_PX = 1;
 const DESKTOP_WIDTH = 1280;
 const DESKTOP_BREAKPOINT = 1025;
@@ -9,6 +10,7 @@ const READING_BAND_TOP = 100;
 const SHORT_VIEWPORT_HEIGHT = 480;
 const LONG_DOCUMENT_ID = 13;
 const CONFIGURED_GUIDE_HEIGHT_PX = 500;
+const PREVIOUS_GUIDE_HEIGHT_LIMIT_PX = 400;
 const MINIMUM_LONG_GUIDE_LINKS = 12;
 const ACTIVE_GUIDE_READING_BAND_TOP = 84;
 const MANUAL_GUIDE_SCROLL_PX = 80;
@@ -116,53 +118,65 @@ test("desktop table of contents marks the section reached by document scrolling"
   expect(activeBounds!.y + activeBounds!.height).toBeLessThanOrEqual(VIEWPORT_HEIGHT);
 });
 
-test("long desktop guide respects its configured height and fits below the header in short viewports", async ({ page }, testInfo) => {
-  await page.setViewportSize({ width: DESKTOP_WIDTH, height: VIEWPORT_HEIGHT });
+test("long desktop guide fills its content and scrolls only when the viewport is shorter", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: DESKTOP_WIDTH, height: TALL_VIEWPORT_HEIGHT });
   await page.goto("/?lang=en&menu=en&id=" + LONG_DOCUMENT_ID, { waitUntil: "domcontentloaded" });
   const aside = page.getByRole("complementary", { name: "Table of contents", exact: true });
   const guide = aside.getByRole("navigation", { name: "Table of contents", exact: true });
   await expect(aside).toBeVisible();
   await expect.poll(() => guide.getByRole("link").count()).toBeGreaterThan(MINIMUM_LONG_GUIDE_LINKS);
-  await page.getByRole("main").evaluate((main, height) => {
-    main.style.setProperty("--toc-scroll-max-height-desktop", height + "px");
-  }, CONFIGURED_GUIDE_HEIGHT_PX);
   await page.evaluate(() => document.fonts.ready);
   const measurements = [];
-  for (const height of [VIEWPORT_HEIGHT, SHORT_VIEWPORT_HEIGHT]) {
+  for (const height of [TALL_VIEWPORT_HEIGHT, SHORT_VIEWPORT_HEIGHT]) {
     await page.setViewportSize({ width: DESKTOP_WIDTH, height });
     await page.getByRole("main").locator("article h2").nth(3).evaluate((heading, top) => {
       window.scrollBy({ top: heading.getBoundingClientRect().top - top, behavior: "instant" });
     }, READING_BAND_TOP);
-    const geometry = await guide.evaluate(navigation => {
-      const scrollport = navigation.parentElement!;
-      const aside = scrollport.parentElement!;
-      const asideBox = aside.getBoundingClientRect();
+    const geometry = await aside.evaluate((element, tolerance) => {
+      const navigation = element.querySelector<HTMLElement>("nav");
+      if (!navigation?.parentElement) throw new Error("Expected the rendered guide navigation");
+      const scrollport = navigation.parentElement;
+      const asideBox = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const navStyle = getComputedStyle(navigation);
+      const intrinsicAsideHeight = navigation.getBoundingClientRect().height
+        + Number.parseFloat(navStyle.marginTop) + Number.parseFloat(navStyle.marginBottom)
+        + Number.parseFloat(style.paddingTop) + Number.parseFloat(style.paddingBottom)
+        + Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth);
       const header = document.querySelector("header");
       if (!header) throw new Error("Expected the documentation header");
       return {
         viewportHeight: window.innerHeight,
+        asideHeight: asideBox.height,
         asideTop: asideBox.top,
         asideBottom: asideBox.bottom,
+        intrinsicAsideHeight,
         headerBottom: header.getBoundingClientRect().bottom,
         scrollportHeight: scrollport.clientHeight,
         scrollportContentHeight: scrollport.scrollHeight,
-        verticalScrollports: [scrollport, navigation].filter(element => {
-          const roundingTolerance = 1;
-          return element.scrollHeight > element.clientHeight + roundingTolerance
-            && ["auto", "scroll"].includes(getComputedStyle(element).overflowY);
-        }).length,
+        verticalScrollports: [element, ...element.querySelectorAll<HTMLElement>("*")].filter(candidate =>
+          candidate.scrollHeight > candidate.clientHeight + tolerance
+          && ["auto", "scroll"].includes(getComputedStyle(candidate).overflowY)
+        ).length,
         documentOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       };
-    });
+    }, GEOMETRY_TOLERANCE_PX);
     measurements.push(geometry);
     await testInfo.attach("long-guide-" + height, { body: JSON.stringify(geometry), contentType: "application/json" });
     await page.screenshot({ path: testInfo.outputPath("long-guide-" + height + ".png") });
     expect(geometry.asideTop).toBeGreaterThanOrEqual(geometry.headerBottom - GEOMETRY_TOLERANCE_PX);
     expect(geometry.asideBottom).toBeLessThanOrEqual(height + GEOMETRY_TOLERANCE_PX);
-    expect(geometry.scrollportHeight).toBeLessThanOrEqual(CONFIGURED_GUIDE_HEIGHT_PX);
-    expect(geometry.scrollportContentHeight).toBeGreaterThan(geometry.scrollportHeight);
     expect(geometry.documentOverflow).toBeLessThanOrEqual(GEOMETRY_TOLERANCE_PX);
-    expect(geometry.verticalScrollports).toBe(1);
+    if (height === TALL_VIEWPORT_HEIGHT) {
+      expect(geometry.intrinsicAsideHeight).toBeGreaterThan(PREVIOUS_GUIDE_HEIGHT_LIMIT_PX);
+      expect(geometry.intrinsicAsideHeight).toBeLessThanOrEqual(height - geometry.asideTop);
+      expect(geometry.verticalScrollports).toBe(0);
+      expect(geometry.scrollportHeight).toBeGreaterThan(PREVIOUS_GUIDE_HEIGHT_LIMIT_PX);
+      expect(Math.abs(geometry.asideHeight - geometry.intrinsicAsideHeight)).toBeLessThanOrEqual(GEOMETRY_TOLERANCE_PX);
+    } else {
+      expect(geometry.scrollportContentHeight).toBeGreaterThan(geometry.scrollportHeight);
+      expect(geometry.verticalScrollports).toBe(1);
+    }
     const lastLink = guide.getByRole("link").last();
     await lastLink.scrollIntoViewIfNeeded();
     await expect(lastLink).toBeInViewport();
