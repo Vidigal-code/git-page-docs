@@ -22,7 +22,7 @@ it("keeps every layer visible with a lighter particle budget on narrow screens",
   render(<ThemeBackground config={config} paused={false} />);
   const particles = [...screen.getByTestId("theme-background").querySelectorAll<HTMLElement>("[data-background-particle]")];
   expect(particles).toHaveLength(35);
-  expect(particles.filter(particle => !particle.hidden)).toHaveLength(18);
+  expect(particles.filter(particle => !particle.hidden)).toHaveLength(10);
   expect(particles.find(particle => particle.dataset.backgroundParticle === "grid")?.hidden).toBe(false);
 });
 
@@ -40,9 +40,9 @@ it("keeps particle nodes and restores the desktop budget when a foldable opens",
   if (!config) throw new Error("Expected background configuration");
   render(<ThemeBackground config={config} paused={false} />);
   const particles = [...screen.getByTestId("theme-background").querySelectorAll<HTMLElement>("[data-background-particle]")];
-  expect(particles.filter(particle => !particle.hidden)).toHaveLength(4);
+  expect(particles.filter(particle => !particle.hidden)).toHaveLength(2);
   act(() => { compact = false; viewport.dispatchEvent(new Event("change")); });
-  expect(particles.filter(particle => !particle.hidden)).toHaveLength(6);
+  expect(particles.filter(particle => !particle.hidden)).toHaveLength(4);
   expect([...screen.getByTestId("theme-background").querySelectorAll("[data-background-particle]")]).toEqual(particles);
 });
 

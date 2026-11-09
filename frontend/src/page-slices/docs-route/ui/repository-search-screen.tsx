@@ -52,6 +52,7 @@ export function RepositorySearchScreen({
     defaultLanguage,
     availableLanguages: repositoryNotUsingGitPageDocs ? (["en", "pt", "es"] as LanguageCode[]) : data.availableLanguages,
     layouts: data.layoutsConfig.layouts,
+    themeSelectionMode: data.config.site.HideThemeSelector ? "fixed" : "selectable",
     configuredDefaultMode,
     initialThemeBaseId,
   });
@@ -155,6 +156,7 @@ export function RepositorySearchScreen({
       additionalControls={backgroundControl}
       languageSelectorIcon={resolveControlIcon(data.config.site, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
       themeSelectorIcon={resolveControlIcon(data.config.site, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
+      hideThemeSelector={data.config.site.HideThemeSelector}
       themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}

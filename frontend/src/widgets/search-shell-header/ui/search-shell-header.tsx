@@ -69,6 +69,7 @@ interface SearchShellHeaderProps {
   getLanguageLabel: (lang: LanguageCode) => string;
   languageSelectorIcon?: ControlIconConfig;
   themeSelectorIcon?: ControlIconConfig;
+  hideThemeSelector?: boolean;
   /** Theme CSS variables forwarded to selector modals (portaled to <body>). */
   themeVarsStyle?: React.CSSProperties;
   additionalControls?: ReactNode;
@@ -95,6 +96,7 @@ export function SearchShellHeader({
   getLanguageLabel,
   languageSelectorIcon,
   themeSelectorIcon,
+  hideThemeSelector = false,
   themeVarsStyle,
   additionalControls,
 }: Readonly<SearchShellHeaderProps>): ReactElement {
@@ -125,7 +127,7 @@ export function SearchShellHeader({
   const controls = (
     <>
       {additionalControls}
-      {layouts.length > 1 && (
+      {!hideThemeSelector && layouts.length > 1 && (
         <ThemeSelector
           className={themeSelectorIcon ? styles.modeIconButton : styles.select}
           layouts={layouts}

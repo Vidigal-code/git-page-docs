@@ -26,6 +26,7 @@ export function useDocsShellState(
 
   const themeState = useDocsShellThemeState({
     layouts: data.layoutsConfig.layouts,
+    themeSelectionMode: data.config.site.HideThemeSelector ? "fixed" : "selectable",
     configuredDefaultMode,
     initialThemeBaseId,
     searchParams: opts.searchParams,

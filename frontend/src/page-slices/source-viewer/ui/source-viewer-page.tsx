@@ -59,6 +59,7 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
     defaultLanguage,
     availableLanguages: data.availableLanguages,
     layouts: data.layoutsConfig.layouts,
+    themeSelectionMode: data.config.site.HideThemeSelector ? "fixed" : "selectable",
     configuredDefaultMode,
     initialThemeBaseId,
   });
@@ -82,6 +83,7 @@ export function SourceViewerPage({ data, initialRoute }: Readonly<SourceViewerPa
       additionalControls={backgroundControl}
       languageSelectorIcon={resolveControlIcon(data.config.site, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
       themeSelectorIcon={resolveControlIcon(data.config.site, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
+      hideThemeSelector={data.config.site.HideThemeSelector}
       themeVarsStyle={cssVars}
       siteName={headerIconConfig.headerName}
       basePath={basePath}

@@ -3,7 +3,7 @@ import { MARKDOWN_GUIDE_ROUTE_ID } from "./fixtures/markdown-site-config";
 
 const VIEWPORT_HEIGHT = 860;
 const MAX_OVERFLOW_PX = 1;
-const BREADCRUMB_SPACING = "16px";
+const BREADCRUMB_SPACING = "24px";
 
 for (const width of [280, 320, 344, 390, 768, 1280]) {
   test(`configured Markdown targets remain navigable without overflow at ${width}px`, async ({ page }) => {

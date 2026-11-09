@@ -25,6 +25,7 @@ export interface UseStandaloneShellPreferencesArgs {
   defaultLanguage: LanguageCode;
   availableLanguages: LanguageCode[];
   layouts: LayoutItem[];
+  themeSelectionMode?: "fixed" | "selectable";
   configuredDefaultMode: "light" | "dark";
   initialThemeBaseId: string | undefined;
   /** Optional: use for pathname when window is not available (SSR) */
@@ -36,6 +37,7 @@ export function useStandaloneShellPreferences({
   defaultLanguage,
   availableLanguages,
   layouts,
+  themeSelectionMode = "selectable",
   configuredDefaultMode,
   initialThemeBaseId,
   fallbackPathname = "/",
@@ -60,7 +62,8 @@ export function useStandaloneShellPreferences({
     ? resolveThemeByMode(layouts, initialThemeBase, configuredDefaultMode).id
     : layouts[0]?.id ?? "";
 
-  const [activeThemeId, setActiveThemeId] = useState(initialThemeId);
+  const [preferredThemeId, setActiveThemeId] = useState(initialThemeId);
+  const activeThemeId = themeSelectionMode === "fixed" ? initialThemeId : preferredThemeId;
   const [themeRestored, setThemeRestored] = useState(false);
   // True only when the theme came from the URL or a user action. The internal
   // default must never be written back to the URL: standalone wrappers mount
@@ -124,7 +127,7 @@ export function useStandaloneShellPreferences({
   // This runs before paint so that when the layouts arrive from cache, the
   // requested theme is already active in the first painted frame.
   useIsomorphicLayoutEffect(() => {
-    if (layouts.length === 0) return;
+    if (themeSelectionMode === "fixed" || layouts.length === 0) return;
     const urlThemeId = safeSearchParams.get(THEME_URL_PARAM);
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
     if (layoutFromUrl) {
@@ -163,7 +166,7 @@ export function useStandaloneShellPreferences({
       /* ignore */
     }
     setThemeRestored(true);
-  }, [safeSearchParams, configuredDefaultMode, layouts, initialThemeBaseId, themeModeStorageKey, themeLayoutStorageKey]);
+  }, [themeSelectionMode, safeSearchParams, configuredDefaultMode, layouts, initialThemeBaseId, themeModeStorageKey, themeLayoutStorageKey]);
 
   // Persist language when changed
   useEffect(() => {
@@ -177,7 +180,7 @@ export function useStandaloneShellPreferences({
 
   // Persist theme mode and layout when changed
   useEffect(() => {
-    if (!themeRestored) return;
+    if (themeSelectionMode === "fixed" || !themeRestored) return;
     const activeLayout = layouts.find((l) => l.id === activeThemeId);
     if (activeLayout?.mode) {
       try {
@@ -187,12 +190,12 @@ export function useStandaloneShellPreferences({
         /* ignore */
       }
     }
-  }, [themeRestored, activeThemeId, layouts, themeModeStorageKey, themeLayoutStorageKey]);
+  }, [themeSelectionMode, themeRestored, activeThemeId, layouts, themeModeStorageKey, themeLayoutStorageKey]);
 
   // Reflect the theme in the URL only when it was explicitly chosen (URL param
   // or user action) — never for the internal default (see themeExplicit).
   useEffect(() => {
-    if (!themeRestored || !themeExplicit || !activeThemeId) return;
+    if (themeSelectionMode === "fixed" || !themeRestored || !themeExplicit || !activeThemeId) return;
     const activeLayout = layouts.find((l) => l.id === activeThemeId);
     if (!activeLayout?.mode) return;
     const params = getCurrentSearchParams();
@@ -202,7 +205,7 @@ export function useStandaloneShellPreferences({
       replaceUrl(getCurrentPathname(), params);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync once when restored
-  }, [themeRestored, themeExplicit, activeThemeId]);
+  }, [themeSelectionMode, themeRestored, themeExplicit, activeThemeId]);
 
   function onLanguageChange(newLang: LanguageCode) {
     setLanguage(newLang);
@@ -219,6 +222,8 @@ export function useStandaloneShellPreferences({
   }
 
   function onThemeChange(themeId: string) {
+    if (themeSelectionMode === "fixed") return;
+
     setThemeExplicit(true);
     setActiveThemeId(themeId);
     const layout = layouts.find((l) => l.id === themeId);
@@ -226,6 +231,8 @@ export function useStandaloneShellPreferences({
   }
 
   function onToggleMode() {
+    if (themeSelectionMode === "fixed") return;
+
     const activeLayout = layouts.find((l) => l.id === activeThemeId);
     if (!activeLayout?.supportsLightAndDarkModes) return;
     const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
@@ -237,7 +244,7 @@ export function useStandaloneShellPreferences({
 
   const activeLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
   const nextModeIsDark = activeLayout?.mode === "dark";
-  const canToggleMode = Boolean(activeLayout?.supportsLightAndDarkModes);
+  const canToggleMode = themeSelectionMode !== "fixed" && Boolean(activeLayout?.supportsLightAndDarkModes);
 
   return {
     language,

@@ -69,11 +69,11 @@ Resolution order is template → \`site.backgroundEffects.overrides\` → \`site
 
 ### Control density on narrow screens
 
-\`backgroundEffects.performance.mode\` accepts \`auto\` or \`full\`, with the same template → global overrides → theme overrides precedence. Presets default to \`auto\`: each layer displays three of every four particles at widths of at least 768 CSS pixels, or one of every two below 768; the first particle is always retained. \`full\` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
+\`backgroundEffects.performance.mode\` accepts \`auto\` or \`full\`, with the same template → global overrides → theme overrides precedence. Presets default to \`auto\`: each layer displays one of every two particles at widths of at least 768 CSS pixels, or one of every four below 768; the first particle is always retained. \`full\` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
 
 For example, add \`"performance": { "mode": "full" }\` inside \`site.backgroundEffects.overrides\` to keep full density everywhere, or inside \`site.backgroundEffects.themes[themeId]\` for one theme. An explicit \`layers\` override without a performance mode preserves its configured counts with \`full\`; choose \`auto\` explicitly to reduce custom layers too. The 12-character Matrix layer above therefore retains its full count.
 
-Particles omitted by \`auto\` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
+Particles omitted by \`auto\` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pointer, scroll and resize events share at most one pending animation-frame update for parallax; idle input does not start a continuous polling loop. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
 
 ### Pause from the navigation menu
 
@@ -145,11 +145,11 @@ A precedência é template → \`site.backgroundEffects.overrides\` → \`site.b
 
 ### Controle a densidade em telas estreitas
 
-\`backgroundEffects.performance.mode\` aceita \`auto\` ou \`full\`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam \`auto\` por padrão: cada camada exibe três de cada quatro partículas a partir de 768 pixels CSS de largura, ou uma de cada duas abaixo de 768; a primeira partícula sempre permanece. \`full\` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
+\`backgroundEffects.performance.mode\` aceita \`auto\` ou \`full\`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam \`auto\` por padrão: cada camada exibe uma de cada duas partículas a partir de 768 pixels CSS de largura, ou uma de cada quatro abaixo de 768; a primeira partícula sempre permanece. \`full\` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
 
 Por exemplo, adicione \`"performance": { "mode": "full" }\` dentro de \`site.backgroundEffects.overrides\` para manter a densidade total em todos os temas, ou dentro de \`site.backgroundEffects.themes[themeId]\` para um tema. Um ajuste explícito de \`layers\` sem modo de performance preserva suas contagens com \`full\`; escolha \`auto\` explicitamente para reduzir camadas personalizadas também. Assim, a camada Matrix de 12 caracteres do exemplo mantém a contagem total.
 
-Partículas omitidas por \`auto\` permanecem montadas, mas ocultas e pausadas, para retomar sua fase após redimensionamento. A regra altera a densidade visível, não a velocidade do movimento. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
+Partículas omitidas por \`auto\` permanecem montadas, mas ocultas e pausadas, para retomar sua fase após redimensionamento. A regra altera a densidade visível, não a velocidade do movimento. Eventos de ponteiro, rolagem e redimensionamento compartilham no máximo uma atualização pendente por quadro de animação para a paralaxe; sem eventos não há um ciclo contínuo de consulta. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
 
 ### Pausar pelo menu de navegação
 
@@ -221,11 +221,11 @@ La precedencia es plantilla → \`site.backgroundEffects.overrides\` → \`site.
 
 ### Controla la densidad en pantallas estrechas
 
-\`backgroundEffects.performance.mode\` acepta \`auto\` o \`full\`, con la misma precedencia plantilla → ajustes globales → ajustes por tema. Los presets usan \`auto\` por defecto: cada capa muestra tres de cada cuatro partículas a partir de 768 píxeles CSS de ancho, o una de cada dos por debajo de 768; la primera partícula siempre permanece. \`full\` muestra todas las partículas configuradas. Los colores, formas, trayectorias, desenfoque/brillo, velocidad y semillas deterministas no cambian.
+\`backgroundEffects.performance.mode\` acepta \`auto\` o \`full\`, con la misma precedencia plantilla → ajustes globales → ajustes por tema. Los presets usan \`auto\` por defecto: cada capa muestra una de cada dos partículas a partir de 768 píxeles CSS de ancho, o una de cada cuatro por debajo de 768; la primera partícula siempre permanece. \`full\` muestra todas las partículas configuradas. Los colores, formas, trayectorias, desenfoque/brillo, velocidad y semillas deterministas no cambian.
 
 Por ejemplo, añade \`"performance": { "mode": "full" }\` dentro de \`site.backgroundEffects.overrides\` para conservar toda la densidad en todos los temas, o dentro de \`site.backgroundEffects.themes[themeId]\` para un tema. Un ajuste explícito de \`layers\` sin modo de rendimiento conserva sus cantidades con \`full\`; elige \`auto\` explícitamente para reducir también capas personalizadas. La capa Matrix de 12 caracteres del ejemplo conserva así su cantidad completa.
 
-Las partículas omitidas por \`auto\` permanecen montadas, pero ocultas y pausadas, para reanudar su fase después de redimensionar. La regla cambia la densidad visible, no la velocidad del movimiento. Pausa, movimiento reducido y pestaña oculta siguen funcionando en ambos modos. Prueba animación y desplazamiento con el viewport previsto; la opción no promete una tasa de fotogramas específica en todos los dispositivos.
+Las partículas omitidas por \`auto\` permanecen montadas, pero ocultas y pausadas, para reanudar su fase después de redimensionar. La regla cambia la densidad visible, no la velocidad del movimiento. Los eventos de puntero, desplazamiento y redimensionamiento comparten como máximo una actualización pendiente por cuadro de animación para el paralaje; sin eventos no hay un ciclo continuo de consulta. Pausa, movimiento reducido y pestaña oculta siguen funcionando en ambos modos. Prueba animación y desplazamiento con el viewport previsto; la opción no promete una tasa de fotogramas específica en todos los dispositivos.
 
 ### Pausar desde el menú de navegación
 

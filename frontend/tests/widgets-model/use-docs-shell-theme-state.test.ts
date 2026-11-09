@@ -77,6 +77,71 @@ describe("useDocsShellThemeState", () => {
     expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
   });
 
+  it("keeps fixed themes independent from saved preferences and URL overrides", async () => {
+    window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
+    window.localStorage.setItem(STORAGE_KEYS.mode, "light");
+    const { result, replaceUrlWithoutNavigation } = setup("?theme=mono-dark&modetheme=light", {
+      themeSelectionMode: "fixed",
+    });
+    await restore();
+
+    expect(result.current.activeThemeId).toBe("aurora-dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
+    expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
+  });
+
+  it("keeps fixed mode unchanged through controls and cross-tab storage events", async () => {
+    const { result, replaceUrlWithoutNavigation } = setup("?theme=mono-dark&modetheme=dark", {
+      themeSelectionMode: "fixed",
+      configuredDefaultMode: "light",
+    });
+    await restore();
+    window.localStorage.setItem(STORAGE_KEYS.mode, "dark");
+
+    act(() => {
+      result.current.onThemeChange("mono-dark");
+      result.current.onToggleMode();
+      window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEYS.mode }));
+      window.dispatchEvent(new Event("focus"));
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    expect(result.current.activeThemeId).toBe("aurora-light");
+    expect(result.current.activeLayout?.mode).toBe("light");
+    expect(result.current.canToggleMode).toBe(false);
+    expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("dark");
+  });
+
+  it("applies newly loaded fixed configuration without rewriting the previous preference", async () => {
+    const options: Partial<Args> = { themeSelectionMode: "selectable" };
+    const { result, rerender, replaceUrlWithoutNavigation } = setup("?theme=mono-dark", options);
+    await restore();
+    expect(result.current.activeThemeId).toBe("mono-dark");
+
+    options.themeSelectionMode = "fixed";
+    options.configuredDefaultMode = "light";
+    rerender();
+
+    expect(result.current.activeThemeId).toBe("aurora-light");
+    expect(result.current.canToggleMode).toBe(false);
+    expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
+    expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { initialThemeBaseId: "missing", expected: "aurora-light" },
+    { initialThemeBaseId: "mono-dark", expected: "mono-dark" },
+  ])("preserves catalogue fallbacks for a fixed $initialThemeBaseId theme", async ({ initialThemeBaseId, expected }) => {
+    const { result } = setup("?theme=aurora-dark", {
+      themeSelectionMode: "fixed", configuredDefaultMode: "light", initialThemeBaseId,
+    });
+    await restore();
+    expect(result.current.activeThemeId).toBe(expected);
+    expect(result.current.canToggleMode).toBe(false);
+  });
+
   it.each(["?theme=vscode-dark&modetheme=dark", "?theme=vscode-dark"])(
     "uses the destination default when the requested theme is unavailable (%s)",
     async (search) => {

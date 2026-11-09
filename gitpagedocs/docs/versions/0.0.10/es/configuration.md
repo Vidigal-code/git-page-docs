@@ -15,7 +15,7 @@ Claves principales:
 
 - `name`: título del proyecto en UI
 - `defaultLanguage`: idioma por defecto
-- `HideThemeSelector`: ocultar/mostrar selector de tema
+- `HideThemeSelector`: oculta los controles y fija el tema y modo configurados
 - `ThemeDefault`: id del tema inicial
 - `ThemeModeDefault`: modo inicial (`light` o `dark`)
 - `ProjectLink`: URL de repositorio para acciones de cabecera
@@ -233,7 +233,7 @@ Opciones por ruta en `routes-md`, `routes-html` y `routes-video`:
 | `nestedMenusEnabled` | true; árbol recursivo, o destinos planos con false |
 | `RouteGuide` | true; breadcrumbs, con prioridad para valores de versión y ruta Markdown |
 | `accessibility` | Activado por defecto; opciones de narración en Accesibilidad |
-| `HideThemeSelector` | false; true oculta el selector de tema |
+| `HideThemeSelector` | false; true oculta los controles de tema y fija ThemeDefault/ThemeModeDefault, ignorando preferencias de URL/storage |
 | `FooterEnabled` | true; muestra el pie de página |
 | `FooterLinkName / FooterLinkUrl` | Texto y destino del enlace del pie |
 | `FooterDateMode / FooterDateCustom` | browser, year o custom; custom utiliza el texto configurado |

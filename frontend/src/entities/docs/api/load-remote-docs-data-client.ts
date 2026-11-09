@@ -113,6 +113,9 @@ export async function loadStandaloneLayoutsAndThemes(): Promise<{
 }
 
 export interface OfficialSiteConfig extends ControlIconSettings {
+  HideThemeSelector?: boolean;
+  ThemeDefault?: string;
+  ThemeModeDefault?: "light" | "dark";
   backToTop?: BackToTopOptions;
   backgroundEffects?: SiteBackgroundEffectsConfig;
   SiteHeaderName?: string;

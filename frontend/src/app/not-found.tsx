@@ -219,7 +219,8 @@ function useNotFoundShell() {
   const layouts = useMemo(() => standaloneConfig?.layoutsConfig?.layouts ?? [], [standaloneConfig]);
   const themes = standaloneConfig?.themes ?? {};
   const siteName = siteConfig?.name ?? "GitPageDocs";
-  const initialThemeBaseId = layouts.find((l) => l.id === "aurora-dark")?.id ?? layouts[0]?.id;
+  const initialThemeBaseId = (siteConfig.HideThemeSelector ? siteConfig.ThemeDefault : undefined)
+    || layouts.find((layout) => layout.id === "aurora-dark")?.id || layouts[0]?.id;
 
   const {
     language: lang,
@@ -235,7 +236,8 @@ function useNotFoundShell() {
     defaultLanguage: "en",
     availableLanguages: SEARCH_LANGUAGES,
     layouts,
-    configuredDefaultMode: "dark",
+    themeSelectionMode: siteConfig.HideThemeSelector ? "fixed" : "selectable",
+    configuredDefaultMode: siteConfig.HideThemeSelector && siteConfig.ThemeModeDefault === "light" ? "light" : "dark",
     initialThemeBaseId,
   });
 
@@ -259,6 +261,7 @@ function useNotFoundShell() {
       additionalControls={backgroundControl}
       languageSelectorIcon={resolveControlIcon(siteConfig, { name: "LanguageSelector", mode: activeLayout?.mode ?? "dark" })}
       themeSelectorIcon={resolveControlIcon(siteConfig, { name: "ThemeSelector", mode: activeLayout?.mode ?? "dark" })}
+      hideThemeSelector={siteConfig.HideThemeSelector}
       themeVarsStyle={cssVars}
       siteName={headerName}
       basePath={basePath}

@@ -35,7 +35,11 @@ Each template usually includes:
 
 ## Choose and customize
 
-Select an installed theme through the theme selector or configure `site.ThemeDefault` with its exact ID. `ThemeModeDefault` sets the initial light/dark mode. `HideThemeSelector` hides the selector; the selected theme still applies.
+Select an installed theme through the theme selector or configure `site.ThemeDefault` with its exact ID. `ThemeModeDefault` sets the initial light/dark mode.
+
+With `HideThemeSelector: true`, `ThemeDefault` and `ThemeModeDefault` define a fixed appearance: theme selection and light/dark switching are unavailable. Theme and mode from URL parameters, saved storage and other tabs do not override that configuration. With `false` or the option omitted, the existing theme-selection and URL/storage preferences remain available.
+
+Use an installed theme ID and a supported light/dark pair. An absent or invalid default still falls back to the first available theme; a theme without a supported matching pair keeps its available mode.
 
 For your own repository, run the CLI with `--layoutconfig`, then edit the generated template and keep its ID consistent with `layoutsConfig.json`. A route's content and `site.icons` remain independent of the theme catalog. Use `currentColor` for icons that should inherit the active text color, or configure separate dark/light colors with sufficient contrast.
 
@@ -197,11 +201,11 @@ Resolution order is template → `site.backgroundEffects.overrides` → `site.ba
 
 ### Control density on narrow screens
 
-`backgroundEffects.performance.mode` accepts `auto` or `full`, with the same template → global overrides → theme overrides precedence. Presets default to `auto`: each layer displays three of every four particles at widths of at least 768 CSS pixels, or one of every two below 768; the first particle is always retained. `full` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
+`backgroundEffects.performance.mode` accepts `auto` or `full`, with the same template → global overrides → theme overrides precedence. Presets default to `auto`: each layer displays one of every two particles at widths of at least 768 CSS pixels, or one of every four below 768; the first particle is always retained. `full` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
 
 For example, add `"performance": { "mode": "full" }` inside `site.backgroundEffects.overrides` to keep full density everywhere, or inside `site.backgroundEffects.themes[themeId]` for one theme. An explicit `layers` override without a performance mode preserves its configured counts with `full`; choose `auto` explicitly to reduce custom layers too. The 12-character Matrix layer above therefore retains its full count.
 
-Particles omitted by `auto` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
+Particles omitted by `auto` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pointer, scroll and resize events share at most one pending animation-frame update for parallax; idle input does not start a continuous polling loop. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
 
 ### Pause from the navigation menu
 

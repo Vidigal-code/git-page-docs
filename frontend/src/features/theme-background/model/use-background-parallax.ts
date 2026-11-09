@@ -22,22 +22,37 @@ export function useBackgroundParallax({ config, running }: ParallaxOptions): Bac
 
   useEffect(() => {
     if (!running || !config.enabled) return;
-    const updatePointer = (event: PointerEvent) => {
-      pointerX.set((event.clientX / window.innerWidth * 2 - 1) * config.pointer);
-      pointerY.set((event.clientY / window.innerHeight * 2 - 1) * config.pointer);
-    };
+    let pendingFrame: number | null = null;
+    let latestPointer: { x: number; y: number } | null = null;
     const updateScroll = () => {
       const limit = window.innerHeight * VIEWPORT_SCROLL_LIMIT;
       scrollY.set(Math.max(-limit, Math.min(limit, window.scrollY * config.scroll)));
     };
+    const updateFrame = () => {
+      pendingFrame = null;
+      if (latestPointer) {
+        pointerX.set((latestPointer.x / window.innerWidth * 2 - 1) * config.pointer);
+        pointerY.set((latestPointer.y / window.innerHeight * 2 - 1) * config.pointer);
+        latestPointer = null;
+      }
+      updateScroll();
+    };
+    const scheduleFrame = () => {
+      pendingFrame ??= window.requestAnimationFrame(updateFrame);
+    };
+    const updatePointer = (event: PointerEvent) => {
+      latestPointer = { x: event.clientX, y: event.clientY };
+      scheduleFrame();
+    };
     updateScroll();
     window.addEventListener("pointermove", updatePointer, { passive: true });
-    window.addEventListener("scroll", updateScroll, { passive: true });
-    window.addEventListener("resize", updateScroll, { passive: true });
+    window.addEventListener("scroll", scheduleFrame, { passive: true });
+    window.addEventListener("resize", scheduleFrame, { passive: true });
     return () => {
+      if (pendingFrame !== null) window.cancelAnimationFrame(pendingFrame);
       window.removeEventListener("pointermove", updatePointer);
-      window.removeEventListener("scroll", updateScroll);
-      window.removeEventListener("resize", updateScroll);
+      window.removeEventListener("scroll", scheduleFrame);
+      window.removeEventListener("resize", scheduleFrame);
     };
   }, [config.enabled, config.pointer, config.scroll, running, pointerX, pointerY, scrollY]);
 

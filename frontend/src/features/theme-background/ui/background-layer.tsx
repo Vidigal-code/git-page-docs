@@ -15,8 +15,8 @@ interface BackgroundLayerProps {
   density: "full" | "balanced" | "compact";
 }
 
-const COMPACT_PARTICLE_INTERVAL = 2;
-const BALANCED_PARTICLE_INTERVAL = 4;
+const COMPACT_PARTICLE_INTERVAL = 4;
+const BALANCED_PARTICLE_INTERVAL = 2;
 
 export function BackgroundLayer({ layer, parallax, running, speed, density }: Readonly<BackgroundLayerProps>) {
   const particles = useMemo(() => createParticles(layer), [layer]);
@@ -28,7 +28,7 @@ export function BackgroundLayer({ layer, parallax, running, speed, density }: Re
       {particles.map((particle, index) => {
         const visible = density === "full" || (density === "compact"
           ? index % COMPACT_PARTICLE_INTERVAL === 0
-          : index % BALANCED_PARTICLE_INTERVAL !== BALANCED_PARTICLE_INTERVAL - 1);
+          : index % BALANCED_PARTICLE_INTERVAL === 0);
         return <BackgroundParticle key={particle.id} particle={particle} layer={layer}
           running={running && visible} visible={visible} speed={speed} keyframes={keyframes} />;
       })}

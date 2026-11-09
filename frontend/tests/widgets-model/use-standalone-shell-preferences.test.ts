@@ -72,6 +72,44 @@ describe("useStandaloneShellPreferences", () => {
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("aurora-dark");
   });
 
+  it("resolves a fixed theme when layouts arrive without adopting external preferences", () => {
+    window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
+    window.localStorage.setItem(STORAGE_KEYS.mode, "dark");
+    const search = "?theme=mono-dark&modetheme=dark&lang=pt";
+    const { result, rerender } = setup(search, {
+      themeSelectionMode: "fixed",
+      configuredDefaultMode: "light",
+    }, []);
+
+    rerender({ layouts: makeLayouts() });
+
+    expect(result.current.activeThemeId).toBe("aurora-light");
+    expect(result.current.activeLayout?.mode).toBe("light");
+    expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("dark");
+    expect(window.location.search).toBe(search);
+  });
+
+  it("locks controls immediately when a fixed configuration replaces selectable preferences", () => {
+    const options: Partial<Args> = { themeSelectionMode: "selectable" };
+    const search = "?theme=mono-dark&modetheme=dark";
+    const { result, rerender } = setup(search, options);
+    expect(result.current.activeThemeId).toBe("mono-dark");
+
+    options.themeSelectionMode = "fixed";
+    options.configuredDefaultMode = "light";
+    rerender({ layouts: makeLayouts() });
+    act(() => {
+      result.current.onThemeChange("mono-dark");
+      result.current.onToggleMode();
+    });
+
+    expect(result.current.activeThemeId).toBe("aurora-light");
+    expect(result.current.canToggleMode).toBe(false);
+    expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
+    expect(window.location.search).toBe(search);
+  });
+
   it("waits for the layouts before restoring the theme requested in the URL", () => {
     const { result, rerender } = setup("?theme=mono-dark", {}, []);
     expect(result.current.activeThemeId).toBe("");

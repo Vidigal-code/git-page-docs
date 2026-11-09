@@ -51,7 +51,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.22/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.23/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -60,9 +60,9 @@ En \`gitpagedocs/docs/versions/0.0.22/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.22/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.22/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.22/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -307,7 +307,7 @@ Claves principales:
 
 - \`name\`: título del proyecto en UI
 - \`defaultLanguage\`: idioma por defecto
-- \`HideThemeSelector\`: ocultar/mostrar selector de tema
+- \`HideThemeSelector\`: oculta los controles y fija el tema y modo configurados
 - \`ThemeDefault\`: id del tema inicial
 - \`ThemeModeDefault\`: modo inicial (\`light\` o \`dark\`)
 - \`ProjectLink\`: URL de repositorio para acciones de cabecera
@@ -525,7 +525,7 @@ Opciones por ruta en \`routes-md\`, \`routes-html\` y \`routes-video\`:
 | \`nestedMenusEnabled\` | true; árbol recursivo, o destinos planos con false |
 | \`RouteGuide\` | true; breadcrumbs, con prioridad para valores de versión y ruta Markdown |
 | \`accessibility\` | Activado por defecto; opciones de narración en Accesibilidad |
-| \`HideThemeSelector\` | false; true oculta el selector de tema |
+| \`HideThemeSelector\` | false; true oculta los controles de tema y fija ThemeDefault/ThemeModeDefault, ignorando preferencias de URL/storage |
 | \`FooterEnabled\` | true; muestra el pie de página |
 | \`FooterLinkName / FooterLinkUrl\` | Texto y destino del enlace del pie |
 | \`FooterDateMode / FooterDateCustom\` | browser, year o custom; custom utiliza el texto configurado |
@@ -741,7 +741,11 @@ Cada template normalmente incluye:
 
 ## Elegir y personalizar
 
-Elige un tema mediante el selector o configura \`site.ThemeDefault\` con su ID exacto. \`ThemeModeDefault\` define el modo inicial claro/oscuro. \`HideThemeSelector\` oculta el selector; el tema seleccionado sigue aplicado.
+Elige un tema mediante el selector o configura \`site.ThemeDefault\` con su ID exacto. \`ThemeModeDefault\` define el modo inicial claro/oscuro.
+
+Con \`HideThemeSelector: true\`, \`ThemeDefault\` y \`ThemeModeDefault\` definen una apariencia fija: la selección de tema y el cambio claro/oscuro no están disponibles. El tema y modo de los parámetros de URL, el almacenamiento guardado y otras pestañas no sustituyen esa configuración. Con \`false\` o la opción omitida, la selección de tema y las preferencias existentes de URL/storage siguen disponibles.
+
+Usa un ID de tema instalado y un par claro/oscuro compatible. Un valor predeterminado ausente o inválido sigue usando el primer tema disponible; un tema sin par compatible conserva su modo disponible.
 
 En tu repositorio, ejecuta la CLI con \`--layoutconfig\`, edita la plantilla generada y conserva el ID coherente con \`layoutsConfig.json\`. El contenido de ruta y \`site.icons\` son independientes del catálogo de temas. Usa \`currentColor\` para iconos que heredan el color de texto o configura colores claros/oscuros con contraste suficiente.
 

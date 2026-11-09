@@ -74,7 +74,7 @@ El desplazamiento manual del menú se conserva entre cambios de página. Redimen
 
 Los controles de idioma, tema y animación usan los iconos oficiales predeterminados mientras la configuración del shell independiente carga o no está disponible. La búsqueda de repositorios, la carga de documentación, la apertura del repositorio, la guía introductoria, el visor de código y las páginas no encontradas conservan nombres accesibles en los botones. La opción explícita `reactIcon: false` sigue siendo válida para texto localizado al cargar la configuración; los valores de iconos predeterminados no la reemplazan.
 
-Los breadcrumbs tienen `1rem` de espacio arriba y abajo (16 píxeles CSS con el tamaño raíz predeterminado). Los selectores móviles llenan las filas del menú con iconos centrados; los del encabezado de escritorio conservan dimensiones compactas.
+Los breadcrumbs tienen `1.5rem` de espacio arriba y abajo (24 píxeles CSS con el tamaño raíz predeterminado). Los selectores móviles llenan las filas del menú con iconos centrados; los del encabezado de escritorio conservan dimensiones compactas.
 
 Desde 0.0.22, los controles del encabezado de la documentación muestran un icono predeterminado mientras carga el icono configurado, evitando controles vacíos. El icono configurado sustituye ese valor cuando está listo; una preferencia explícita por texto conserva el texto. En pantallas estrechas, los controles de acciones Markdown reservan su propio espacio antes del título del documento, sin cubrirlo.
 

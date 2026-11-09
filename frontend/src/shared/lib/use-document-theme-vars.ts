@@ -9,11 +9,11 @@
  */
 "use client";
 
-import { useEffect } from "react";
 import type { CSSProperties } from "react";
+import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
 export function useDocumentThemeVars(themeVars: CSSProperties | undefined): void {
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!themeVars) return;
     const rootStyle = document.documentElement.style;
     for (const [name, value] of Object.entries(themeVars)) {

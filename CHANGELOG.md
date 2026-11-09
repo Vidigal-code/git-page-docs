@@ -3,6 +3,13 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.23 - 2026-11-08 - fixed theme preferences and lighter backgrounds
+
+- Increase breadcrumb spacing to 1.5rem above and below, equivalent to 24px at the default root font size.
+- Make `HideThemeSelector: true` enforce the configured `ThemeDefault` and `ThemeModeDefault`, disable theme/mode changes and ignore URL, saved-storage and cross-tab theme overrides. Preserve existing selection behavior when the option is false or omitted, including supported theme-pair and missing-default fallbacks.
+- Reduce automatic background density to one of every two particles per layer on desktop and one of every four below 768 CSS pixels, retaining the first. Preserve full density and explicit custom layer settings. Group pointer, scroll and resize parallax events into at most one pending animation-frame update while retaining pause, reduced-motion and hidden-tab behavior.
+- Update workspace packages and current documentation to 0.0.23 while retaining documentation versions from 0.0.22 through 0.0.9.
+
 ## 0.0.22 - 2026-11-08 - mobile reading controls and immediate icons
 
 - Keep Markdown action controls above the document without overlapping its first heading on narrow screens.

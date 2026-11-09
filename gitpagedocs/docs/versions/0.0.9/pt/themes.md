@@ -35,7 +35,11 @@ Cada template normalmente contém:
 
 ## Escolher e personalizar
 
-Escolha um tema pelo seletor ou configure `site.ThemeDefault` com seu ID exato. `ThemeModeDefault` define o modo inicial claro/escuro. `HideThemeSelector` esconde o seletor; o tema selecionado continua aplicado.
+Escolha um tema pelo seletor ou configure `site.ThemeDefault` com seu ID exato. `ThemeModeDefault` define o modo inicial claro/escuro.
+
+Com `HideThemeSelector: true`, `ThemeDefault` e `ThemeModeDefault` definem uma aparência fixa: a seleção de tema e a troca claro/escuro ficam indisponíveis. Tema e modo vindos dos parâmetros da URL, do armazenamento salvo e de outras abas não substituem essa configuração. Com `false` ou a opção ausente, a seleção de tema e as preferências existentes de URL/storage continuam disponíveis.
+
+Use o ID de um tema instalado e um par claro/escuro compatível. Um padrão ausente ou inválido continua usando o primeiro tema disponível; um tema sem par compatível mantém seu modo disponível.
 
 No seu repositório, execute a CLI com `--layoutconfig`, edite o template gerado e mantenha o ID coerente com `layoutsConfig.json`. O conteúdo da rota e `site.icons` são independentes do catálogo de temas. Use `currentColor` para ícones que herdam a cor do texto ou configure cores claras/escuras com contraste suficiente.
 
@@ -197,11 +201,11 @@ A precedência é template → `site.backgroundEffects.overrides` → `site.back
 
 ### Controle a densidade em telas estreitas
 
-`backgroundEffects.performance.mode` aceita `auto` ou `full`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam `auto` por padrão: cada camada exibe três de cada quatro partículas a partir de 768 pixels CSS de largura, ou uma de cada duas abaixo de 768; a primeira partícula sempre permanece. `full` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
+`backgroundEffects.performance.mode` aceita `auto` ou `full`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam `auto` por padrão: cada camada exibe uma de cada duas partículas a partir de 768 pixels CSS de largura, ou uma de cada quatro abaixo de 768; a primeira partícula sempre permanece. `full` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
 
 Por exemplo, adicione `"performance": { "mode": "full" }` dentro de `site.backgroundEffects.overrides` para manter a densidade total em todos os temas, ou dentro de `site.backgroundEffects.themes[themeId]` para um tema. Um ajuste explícito de `layers` sem modo de performance preserva suas contagens com `full`; escolha `auto` explicitamente para reduzir camadas personalizadas também. Assim, a camada Matrix de 12 caracteres do exemplo mantém a contagem total.
 
-Partículas omitidas por `auto` permanecem montadas, mas ocultas e pausadas, para retomar sua fase após redimensionamento. A regra altera a densidade visível, não a velocidade do movimento. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
+Partículas omitidas por `auto` permanecem montadas, mas ocultas e pausadas, para retomar sua fase após redimensionamento. A regra altera a densidade visível, não a velocidade do movimento. Eventos de ponteiro, rolagem e redimensionamento compartilham no máximo uma atualização pendente por quadro de animação para a paralaxe; sem eventos não há um ciclo contínuo de consulta. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
 
 ### Pausar pelo menu de navegação
 

@@ -5,6 +5,7 @@ import NotFound from "@/app/not-found";
 import { RepositorySearchScreen } from "@/page-slices/docs-route/ui/repository-search-screen";
 import { SourceViewerPage } from "@/page-slices/source-viewer";
 import { DocsShell } from "@/widgets/docs-shell";
+import { IntroductionGuidePage } from "@/page-slices/introduction-guide/ui/introduction-guide-page";
 import { SHELL_THEME_CACHE_KEY, type LayoutItem, type ThemeTemplate } from "@/entities/docs";
 import { withConfigDefaults } from "@/entities/docs/lib/with-config-defaults";
 import { makeConfig, makeDocsData, makeSite } from "../widgets-model/fixtures";
@@ -13,7 +14,7 @@ const navigation = vi.hoisted(() => ({ params: new URLSearchParams("theme=motion
 vi.mock("next/navigation", () => ({ useSearchParams: () => navigation.params, usePathname: () => "/owner/repo/", useRouter: () => navigation.router }));
 const THEMES = Object.fromEntries(["motion-dark", "motion-light"].map((id): [string, ThemeTemplate] => [id, {
   id, name: id, author: "Tests", version: "1", mode: id.endsWith("light") ? "light" : "dark",
-  supportsLightAndDarkModes: false, colors: {}, typography: { fontFamily: "sans-serif", fontSize: {} }, components: {}, animations: {},
+  supportsLightAndDarkModes: false, colors: { background: id.endsWith("light") ? "#eceff4" : "#102030" }, typography: { fontFamily: "sans-serif", fontSize: {} }, components: {}, animations: {},
   backgroundEffects: { enabled: true, layers: [{ id: "stars", kind: "stars", count: 1 }] },
 }]));
 const LAYOUTS: LayoutItem[] = Object.values(THEMES).map(theme => ({ id: theme.id, name: theme.name, author: theme.author, mode: theme.mode, file: `templates/${theme.id}.json`, preview: "", supportsLightAndDarkModes: false }));
@@ -108,3 +109,36 @@ it.each(["search", "uninstalled repository", "source viewer", "documentation"] a
   }
   expectIconControls();
 });
+
+it.each(["search", "source viewer", "documentation", "not found", "introduction guide"] as const)(
+  "honors the fixed configured palette and hides theme controls in %s",
+  async (page) => {
+    document.documentElement.style.setProperty("--background", "#000000");
+    vi.stubGlobal("IntersectionObserver", class { observe = vi.fn(); unobserve = vi.fn(); disconnect = vi.fn(); });
+    const site = makeSite({
+      name: "Fixed documentation", HideThemeSelector: true,
+      ThemeDefault: "motion-light", ThemeModeDefault: "light",
+    });
+    serveOfficialSite({ ...site });
+    const data = makeDocsData({
+      config: withConfigDefaults(makeConfig({ site })),
+      layoutsConfig: { layouts: LAYOUTS }, themes: THEMES,
+    });
+    if (page === "source viewer") {
+      render(<SourceViewerPage data={data} initialRoute={{ owner: "owner", repo: "repo", branch: "main", path: "" }} />);
+    } else if (page === "documentation") {
+      render(<DocsShell data={data} />);
+    } else if (page === "introduction guide") {
+      render(<IntroductionGuidePage />);
+    } else if (page === "not found") {
+      window.history.replaceState({}, "", "/missing/?theme=motion-dark");
+      render(<NotFound />);
+    } else {
+      render(<RepositorySearchScreen data={data} repositoryNotUsingGitPageDocs={false} />);
+    }
+
+    await waitFor(() => expect(document.documentElement.style.getPropertyValue("--background")).toBe("#eceff4"));
+    expect(screen.queryByRole("button", { name: "Theme selector" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^(Dark|Light) mode$/ })).toBeNull();
+  },
+);

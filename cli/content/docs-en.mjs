@@ -52,7 +52,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.22/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.23/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -61,9 +61,9 @@ In \`gitpagedocs/docs/versions/0.0.22/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.22/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.22/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.22/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -430,6 +430,7 @@ Important keys:
 - \`defaultLanguage\`
 - \`docsVersion\`
 - \`rendering\`
+- \`HideThemeSelector\`: hide theme controls and fix the configured theme and mode
 - \`ThemeDefault\`
 - \`ThemeModeDefault\`
 - \`ProjectLink\`
@@ -647,7 +648,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 | \`nestedMenusEnabled\` | true; recursive menu tree, or flat destinations when false |
 | \`RouteGuide\` | true; breadcrumbs, overridable by version defaults and individual Markdown routes |
 | \`accessibility\` | Enabled by default; narration settings are explained in Accessibility |
-| \`HideThemeSelector\` | false; true hides the theme selector |
+| \`HideThemeSelector\` | false; true hides theme controls and fixes ThemeDefault/ThemeModeDefault, ignoring URL/storage preferences |
 | \`FooterEnabled\` | true; show the footer |
 | \`FooterLinkName / FooterLinkUrl\` | Footer link label and destination |
 | \`FooterDateMode / FooterDateCustom\` | browser, year or custom; custom uses the configured text |
@@ -788,7 +789,11 @@ Each template usually includes:
 
 ## Choose and customize
 
-Select an installed theme through the theme selector or configure \`site.ThemeDefault\` with its exact ID. \`ThemeModeDefault\` sets the initial light/dark mode. \`HideThemeSelector\` hides the selector; the selected theme still applies.
+Select an installed theme through the theme selector or configure \`site.ThemeDefault\` with its exact ID. \`ThemeModeDefault\` sets the initial light/dark mode.
+
+With \`HideThemeSelector: true\`, \`ThemeDefault\` and \`ThemeModeDefault\` define a fixed appearance: theme selection and light/dark switching are unavailable. Theme and mode from URL parameters, saved storage and other tabs do not override that configuration. With \`false\` or the option omitted, the existing theme-selection and URL/storage preferences remain available.
+
+Use an installed theme ID and a supported light/dark pair. An absent or invalid default still falls back to the first available theme; a theme without a supported matching pair keeps its available mode.
 
 For your own repository, run the CLI with \`--layoutconfig\`, then edit the generated template and keep its ID consistent with \`layoutsConfig.json\`. A route's content and \`site.icons\` remain independent of the theme catalog. Use \`currentColor\` for icons that should inherit the active text color, or configure separate dark/light colors with sufficient contrast.
 
