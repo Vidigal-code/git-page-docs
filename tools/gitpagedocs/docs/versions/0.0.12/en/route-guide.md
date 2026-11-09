@@ -2,6 +2,8 @@
 
 The document guide is the outline of the current Markdown document. It is separate from the site menu, breadcrumbs and the introductory GitPageDocs guide. Configure it on the corresponding item in `routes-md` inside the version configuration.
 
+On desktop screens wider than 1024 CSS pixels, the side guide ends after its last entry instead of stretching to the article height. A small bar in the active entry's theme color follows the section marked while scrolling. The indicator uses the existing section tracking without continuous animation. Layouts at 1024 pixels and below retain their current guide dimensions and appearance.
+
 ## Select the indexed elements
 
 Starting with 0.0.21, `RouteGuideTags` chooses which HTML element types become automatic guide entries after Markdown is rendered. This site explicitly uses `h1`, `h2` and `h3` to keep long reference pages navigable. The original spelling and capitalization of each JSON field matter.

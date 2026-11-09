@@ -438,8 +438,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
   const homePathClick = linearNavigationEntries[0]?.pathClick;
   const homeAncestorKeys = linearNavigationEntries[0]?.ancestorKeys ?? [];
   const routeGuideIconConfig = useMemo(
-    () => resolveRouteGuideIconConfig(data.config.site, nextMode === "dark", getBasePath()),
-    [data.config.site, nextMode],
+    () => resolveRouteGuideIconConfig(data.config.site, activeLayout?.mode === "dark", getBasePath()),
+    [data.config.site, activeLayout?.mode],
   );
 
   const docsAccess = useDocsAccess(data.config.site.docsAccess, data.config.site.name);
@@ -456,8 +456,8 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
     <NarrationPanel controller={narration} labels={resolveNarrationLabels(data.config.site.langmenu, language)} />
   ) : undefined;
   const docsLockIconConfig = useMemo(
-    () => resolveDocsLockIconConfig(data.config.site, nextMode === "dark" ? "dark" : "light", getBasePath()),
-    [data.config.site, nextMode],
+    () => resolveDocsLockIconConfig(data.config.site, activeLayout?.mode ?? "dark", getBasePath()),
+    [data.config.site, activeLayout?.mode],
   );
   const docsLockProps = docsAccess.enabled
     ? {
@@ -654,7 +654,6 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           currentPage={currentPage}
           data={data}
           language={language}
-          nextMode={nextMode}
           labels={labels}
           browse={browse}
           navigation={navigation}
@@ -739,7 +738,6 @@ export function DocsShell({ data }: Readonly<{ data: LoadedDocsData }>) {
           urlFullscreenParams={urlFullscreenParams}
           data={data}
           language={language}
-          nextMode={nextMode}
           browse={browse}
           navigation={navigation}
           closeUrlFullscreen={closeUrlFullscreen}

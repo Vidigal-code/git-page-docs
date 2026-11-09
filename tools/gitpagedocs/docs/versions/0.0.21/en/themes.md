@@ -37,7 +37,7 @@ Each template usually includes:
 
 Select an installed theme through the theme selector or configure `site.ThemeDefault` with its exact ID. `ThemeModeDefault` sets the initial light/dark mode.
 
-With `HideThemeSelector: true`, `ThemeDefault` and `ThemeModeDefault` define a fixed appearance: theme selection and light/dark switching are unavailable. Theme and mode from URL parameters, saved storage and other tabs do not override that configuration. With `false` or the option omitted, the existing theme-selection and URL/storage preferences remain available.
+With `HideThemeSelector: true`, `ThemeDefault` fixes the theme family and the theme selector stays hidden. A different theme from the URL, saved storage or another tab cannot replace that family. The light/dark button remains available when the catalog contains a compatible pair. `ThemeModeDefault` is the initial fallback; a valid URL mode, saved mode or button selection can choose either supported variant. Mode changes survive navigation and reload. With `false` or the option omitted, readers can also choose another theme family.
 
 Use an installed theme ID and a supported light/dark pair. An absent or invalid default still falls back to the first available theme; a theme without a supported matching pair keeps its available mode.
 
@@ -201,11 +201,11 @@ Resolution order is template → `site.backgroundEffects.overrides` → `site.ba
 
 ### Control density on narrow screens
 
-`backgroundEffects.performance.mode` accepts `auto` or `full`, with the same template → global overrides → theme overrides precedence. Presets default to `auto`: each layer displays one of every two particles at widths of at least 768 CSS pixels, or one of every four below 768; the first particle is always retained. `full` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
+`backgroundEffects.performance.mode` accepts `auto` or `full`, with the same template → global overrides → theme overrides precedence. Presets default to `auto`: the whole background shares a budget of 8 particles at widths of at least 768 CSS pixels, or 4 below 768. Every nonempty layer retains at least one particle, so a custom background with more layers than the budget keeps that minimum. The remaining budget is distributed deterministically according to layer counts. `full` displays every configured particle. Colors, shapes, trajectories, blur/glow, speed and deterministic seeds are unchanged.
 
 For example, add `"performance": { "mode": "full" }` inside `site.backgroundEffects.overrides` to keep full density everywhere, or inside `site.backgroundEffects.themes[themeId]` for one theme. An explicit `layers` override without a performance mode preserves its configured counts with `full`; choose `auto` explicitly to reduce custom layers too. The 12-character Matrix layer above therefore retains its full count.
 
-Particles omitted by `auto` remain mounted but hidden and paused, allowing them to resume their phase after resizing. The rule changes visible density rather than movement speed. Pointer, scroll and resize events share at most one pending animation-frame update for parallax; idle input does not start a continuous polling loop. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
+Particles omitted by `auto` remain mounted but hidden. Their native animation is created only when they first become visible; previously initialized animations pause and retain their phase after resizing. This reduces startup work as well as visible density, without changing movement speed. Pointer, scroll and resize events share at most one pending animation-frame update for parallax; idle input does not start a continuous polling loop. Pause, reduced-motion and hidden-tab protections remain effective in both modes. Test animation and scrolling at the intended viewport; the setting does not promise a specific frame rate on every device.
 
 ### Pause from the navigation menu
 

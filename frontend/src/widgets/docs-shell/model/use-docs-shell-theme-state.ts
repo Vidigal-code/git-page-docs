@@ -1,13 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { resolveThemeByMode, type LayoutItem } from "@/entities/docs";
 import { THEME_URL_PARAM } from "@/shared/config/constants";
+import { parseThemeMode, useFixedFamilyMode } from "@/features/theme-switcher";
 
 type ThemeMode = "light" | "dark";
-
-/** The value as a theme mode, or null for anything else (missing param, stale storage). */
-function toThemeMode(value: string | null): ThemeMode | null {
-  return value === "dark" || value === "light" ? value : null;
-}
 
 interface UseDocsShellThemeStateArgs {
   layouts: LayoutItem[];
@@ -37,12 +33,19 @@ export function useDocsShellThemeState({
   const initialThemeBase = layouts.find((layout) => layout.id === initialThemeBaseId) ?? layouts[0];
   const initialThemeId = initialThemeBase ? resolveThemeByMode(layouts, initialThemeBase, configuredDefaultMode).id : "";
   const [preferredThemeId, setActiveThemeId] = useState(initialThemeId);
-  const activeThemeId = themeSelectionMode === "fixed" ? initialThemeId : preferredThemeId;
+  const { mode: fixedFamilyMode, selectMode: setFixedFamilyMode } = useFixedFamilyMode({
+    selectionMode: themeSelectionMode, defaultMode: configuredDefaultMode,
+    storageKey: themeModeStorageKey, requestedMode: parseThemeMode(searchParams.get("modetheme")),
+  });
+  const fixedThemeId = initialThemeBase
+    ? resolveThemeByMode(layouts, initialThemeBase, fixedFamilyMode).id : "";
+  const activeThemeId = themeSelectionMode === "fixed" ? fixedThemeId : preferredThemeId;
   const [themeModeRestored, setThemeModeRestored] = useState(false);
 
   const activeLayout = useMemo(() => layouts.find((layout) => layout.id === activeThemeId) ?? layouts[0], [layouts, activeThemeId]);
   const nextMode = activeLayout?.mode === "dark" ? "light" : "dark";
-  const canToggleMode = themeSelectionMode !== "fixed" && Boolean(activeLayout?.supportsLightAndDarkModes);
+  const pairedLayout = activeLayout ? resolveThemeByMode(layouts, activeLayout, nextMode) : undefined;
+  const canToggleMode = Boolean(pairedLayout && pairedLayout.id !== activeLayout?.id);
 
   useEffect(() => {
     if (themeSelectionMode === "fixed" || themeModeRestored) {
@@ -58,7 +61,7 @@ export function useDocsShellThemeState({
         });
         return;
       }
-      const urlMode = toThemeMode(searchParams.get("modetheme"));
+      const urlMode = parseThemeMode(searchParams.get("modetheme"));
       // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo default.
       if (!urlMode) {
         const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
@@ -71,7 +74,7 @@ export function useDocsShellThemeState({
           return;
         }
       }
-      const savedMode = toThemeMode(window.localStorage.getItem(themeModeStorageKey));
+      const savedMode = parseThemeMode(window.localStorage.getItem(themeModeStorageKey));
       const targetMode = urlMode ?? savedMode ?? configuredDefaultMode;
       const baseLayout = layouts.find((layout) => layout.id === initialThemeBaseId) ?? layouts[0];
       if (baseLayout) {
@@ -124,12 +127,14 @@ export function useDocsShellThemeState({
   }, [themeSelectionMode, themeModeRestored, activeThemeId, activeLayout?.mode, pathname, getCurrentSearchParams, replaceUrlWithoutNavigation]);
 
   useEffect(() => {
-    if (themeSelectionMode === "fixed") return;
-
     function syncThemeFromStorage() {
       try {
         const savedMode = window.localStorage.getItem(themeModeStorageKey);
         const targetMode = savedMode === "light" || savedMode === "dark" ? savedMode : configuredDefaultMode;
+        if (themeSelectionMode === "fixed") {
+          setFixedFamilyMode(targetMode);
+          return;
+        }
         const currentBase = layouts.find((layout) => layout.id === activeThemeId) ?? layouts[0];
         if (!currentBase) {
           return;
@@ -163,7 +168,7 @@ export function useDocsShellThemeState({
       window.removeEventListener("focus", syncThemeFromStorage);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [themeSelectionMode, themeModeStorageKey, configuredDefaultMode, layouts, activeThemeId]);
+  }, [themeSelectionMode, themeModeStorageKey, configuredDefaultMode, layouts, activeThemeId, setFixedFamilyMode]);
 
   function syncThemeToUrl(themeId: string, mode?: "dark" | "light") {
     const params = getCurrentSearchParams();
@@ -181,12 +186,12 @@ export function useDocsShellThemeState({
   }
 
   function onToggleMode() {
-    if (themeSelectionMode === "fixed" || !activeLayout) {
+    if (!canToggleMode || !pairedLayout) {
       return;
     }
-    const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
-    setActiveThemeId(paired.id);
-    syncThemeToUrl(paired.id, paired.mode === "dark" || paired.mode === "light" ? paired.mode : undefined);
+    if (themeSelectionMode === "fixed") setFixedFamilyMode(nextMode);
+    else setActiveThemeId(pairedLayout.id);
+    syncThemeToUrl(pairedLayout.id, nextMode);
   }
 
   return { activeThemeId, activeLayout, nextMode, canToggleMode, onThemeChange, onToggleMode };

@@ -3,6 +3,16 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.24 - 2026-11-09 - repository browsing, restored color modes and lighter backgrounds
+
+- Keep the light/dark control available when the configured theme family has a compatible pair, including sites with `HideThemeSelector: true`. Continue blocking changes to the configured family.
+- Preserve valid mode preferences across navigation and reload, using `ThemeModeDefault` as the initial fallback. Label the control with its destination mode on documentation and standalone pages.
+- Apply configured icons, images, title and description colors for the active mode, including fullscreen. Keep URL-driven fullscreen callbacks stable to prevent repeated openings. Add a little more space around accessibility, breadcrumbs and document headings.
+- Limit automatic backgrounds to 8 particles on desktop and 4 below 768 CSS pixels, with a minimum of one per nonempty layer. Initialize hidden particle animations only when first shown, retaining existing animation phase on resize and preserving explicit full-density settings.
+- Restyle the source viewer around GitHub repository browsing: directory tables, path navigation, expandable folders and a responsive file panel, preserving Markdown preview and theme-aware syntax highlighting.
+- Fit the desktop document guide to its entries and mark the active section with a subtle theme-colored bar as the reader scrolls. Preserve the guide layout at widths up to 1024px.
+- Update the workspace packages and documentation to 0.0.24 while retaining earlier documentation versions.
+
 ## 0.0.23 - 2026-11-08 - fixed theme preferences and lighter backgrounds
 
 - Increase breadcrumb spacing to 1.5rem above and below, equivalent to 24px at the default root font size.

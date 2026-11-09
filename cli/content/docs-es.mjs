@@ -51,7 +51,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.23/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.24/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -60,9 +60,9 @@ En \`gitpagedocs/docs/versions/0.0.23/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -257,6 +257,8 @@ El config de versión puede renderizar un contenedor **Código fuente** vía \`r
 - Alternancia vista previa/código para Markdown, incluido \`README.md\`
 - Carpetas colapsables en la barra lateral
 
+El navegador utiliza cabecera del repositorio, branch, ruta de navegación y tabla de directorios al estilo GitHub, con carpetas antes que archivos y los tamaños disponibles. Abre una carpeta o utiliza la fila de la carpeta superior para navegar; al seleccionar un archivo, su contenido ocupa el panel principal. El README inicial permanece debajo del listado raíz. La barra lateral tiene carpetas expandibles y se puede plegar en pantallas estrechas. El código conserva su propio desplazamiento horizontal y la página se adapta al móvil. El tema claro u oscuro activo se aplica al navegador y al resaltado de sintaxis. El listado reutiliza el árbol del repositorio sin solicitar metadatos por cada fila.
+
 ## Claves de config (site)
 
 - \`name\`, \`defaultLanguage\`
@@ -307,7 +309,7 @@ Claves principales:
 
 - \`name\`: título del proyecto en UI
 - \`defaultLanguage\`: idioma por defecto
-- \`HideThemeSelector\`: oculta los controles y fija el tema y modo configurados
+- \`HideThemeSelector\`: oculta el selector y fija la familia del tema; el cambio claro/oscuro sigue disponible cuando es compatible
 - \`ThemeDefault\`: id del tema inicial
 - \`ThemeModeDefault\`: modo inicial (\`light\` o \`dark\`)
 - \`ProjectLink\`: URL de repositorio para acciones de cabecera
@@ -525,7 +527,7 @@ Opciones por ruta en \`routes-md\`, \`routes-html\` y \`routes-video\`:
 | \`nestedMenusEnabled\` | true; árbol recursivo, o destinos planos con false |
 | \`RouteGuide\` | true; breadcrumbs, con prioridad para valores de versión y ruta Markdown |
 | \`accessibility\` | Activado por defecto; opciones de narración en Accesibilidad |
-| \`HideThemeSelector\` | false; true oculta los controles de tema y fija ThemeDefault/ThemeModeDefault, ignorando preferencias de URL/storage |
+| \`HideThemeSelector\` | false; true fija la familia de ThemeDefault y oculta su selector, manteniendo los modos claro/oscuro compatibles |
 | \`FooterEnabled\` | true; muestra el pie de página |
 | \`FooterLinkName / FooterLinkUrl\` | Texto y destino del enlace del pie |
 | \`FooterDateMode / FooterDateCustom\` | browser, year o custom; custom utiliza el texto configurado |
@@ -743,7 +745,7 @@ Cada template normalmente incluye:
 
 Elige un tema mediante el selector o configura \`site.ThemeDefault\` con su ID exacto. \`ThemeModeDefault\` define el modo inicial claro/oscuro.
 
-Con \`HideThemeSelector: true\`, \`ThemeDefault\` y \`ThemeModeDefault\` definen una apariencia fija: la selección de tema y el cambio claro/oscuro no están disponibles. El tema y modo de los parámetros de URL, el almacenamiento guardado y otras pestañas no sustituyen esa configuración. Con \`false\` o la opción omitida, la selección de tema y las preferencias existentes de URL/storage siguen disponibles.
+Con \`HideThemeSelector: true\`, \`ThemeDefault\` fija la familia del tema y el selector permanece oculto. Otro tema de la URL, del almacenamiento o de otra pestaña no puede sustituir esa familia. El botón claro/oscuro sigue disponible cuando el catálogo contiene un par compatible. \`ThemeModeDefault\` es el valor inicial; un modo válido de la URL, del almacenamiento o elegido mediante el botón puede seleccionar una variante compatible. La elección del modo persiste al navegar y recargar. Con \`false\` o la opción omitida, el lector también puede elegir otra familia de tema.
 
 Usa un ID de tema instalado y un par claro/oscuro compatible. Un valor predeterminado ausente o inválido sigue usando el primer tema disponible; un tema sin par compatible conserva su modo disponible.
 

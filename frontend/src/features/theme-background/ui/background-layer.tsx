@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type ReactElement } from "react";
 import { m, useTransform } from "motion/react";
 import type { ResolvedThemeBackgroundLayer } from "@/entities/docs";
 import { createParticles } from "../model/particles";
@@ -12,13 +12,10 @@ interface BackgroundLayerProps {
   parallax: BackgroundParallax;
   running: boolean;
   speed: number;
-  density: "full" | "balanced" | "compact";
+  visibleCount: number;
 }
 
-const COMPACT_PARTICLE_INTERVAL = 4;
-const BALANCED_PARTICLE_INTERVAL = 2;
-
-export function BackgroundLayer({ layer, parallax, running, speed, density }: Readonly<BackgroundLayerProps>) {
+export function BackgroundLayer({ layer, parallax, running, speed, visibleCount }: Readonly<BackgroundLayerProps>): ReactElement {
   const particles = useMemo(() => createParticles(layer), [layer]);
   const keyframes = useMemo(() => particleKeyframes(layer), [layer]);
   const x = useTransform(() => parallax.pointerX.get() * layer.depth);
@@ -26,9 +23,7 @@ export function BackgroundLayer({ layer, parallax, running, speed, density }: Re
   return (
     <m.div className={styles.layer} data-background-layer={layer.id} style={{ x, y }}>
       {particles.map((particle, index) => {
-        const visible = density === "full" || (density === "compact"
-          ? index % COMPACT_PARTICLE_INTERVAL === 0
-          : index % BALANCED_PARTICLE_INTERVAL === 0);
+        const visible = index < visibleCount;
         return <BackgroundParticle key={particle.id} particle={particle} layer={layer}
           running={running && visible} visible={visible} speed={speed} keyframes={keyframes} />;
       })}

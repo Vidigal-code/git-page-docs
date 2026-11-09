@@ -248,7 +248,7 @@ function useNotFoundShell() {
     getLanguageLabelFromMenu(siteConfig?.langmenu ?? FALLBACK_LANGMENU, lang, targetLang);
 
   const basePath = getBasePath();
-  const mode: "dark" | "light" = nextModeIsDark ? "dark" : "light";
+  const mode = activeLayout?.mode ?? "dark";
   const headerIconConfig = useMemo(
     () => resolveHeaderIconConfig(siteConfig ?? undefined, mode, basePath),
     [siteConfig, mode, basePath],

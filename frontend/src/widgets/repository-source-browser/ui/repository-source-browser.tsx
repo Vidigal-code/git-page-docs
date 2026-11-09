@@ -1,9 +1,9 @@
 "use client";
 
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useId, useMemo, useRef, useState, type ReactElement } from "react";
 import Link from "next/link";
 import { markdownToHtml } from "@/entities/docs";
-import { FiAlertCircle, FiArrowLeft, FiExternalLink, FiFile, FiFolder, FiRefreshCw, FiSearch, FiX } from "@/shared/ui/fallback-icons";
+import { FiAlertCircle, FiArrowLeft, FiChevronDown, FiChevronRight, FiCode, FiExternalLink, FiFile, FiFolder, FiRefreshCw, FiX } from "@/shared/ui/fallback-icons";
 import { trimSlashes } from "@/shared/lib/base-path";
 import {
   buildGithubTreeUrl,
@@ -31,7 +31,7 @@ type ViewMode = "code" | "preview";
 type LineTokens = HighlightedCode["lines"][number];
 
 interface SourceSelection {
-  directoryPath: string;
+  path: string;
   file: SourceTreeEntry | undefined;
 }
 
@@ -68,6 +68,8 @@ interface RepositorySourceBrowserProps {
 
 /** Sidebar placeholder line widths while the tree loads (mimics a file tree). */
 const SKELETON_ROW_WIDTHS = ["72%", "58%", "84%", "64%", "48%", "76%"];
+const TREE_BASE_PADDING = 8;
+const TREE_LEVEL_INDENT = 16;
 
 function normalizeInput(value: string): string {
   return trimSlashes(value.trim());
@@ -152,7 +154,7 @@ function buildTree(entries: SourceTreeEntry[]): TreeNode[] {
 }
 
 function formatBytes(value: number | undefined): string {
-  if (!value) return "";
+  if (value === undefined) return "";
   if (value < 1024) return `${value} B`;
   if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
   return `${(value / (1024 * 1024)).toFixed(1)} MB`;
@@ -160,15 +162,15 @@ function formatBytes(value: number | undefined): string {
 
 function findInitialSelection(entries: SourceTreeEntry[], requestedPath: string): SourceSelection {
   const exact = entries.find((entry) => entry.path === requestedPath);
-  if (exact?.type === "tree") return { directoryPath: exact.path, file: undefined };
-  if (exact?.type === "blob") return { directoryPath: getParentPath(exact.path), file: exact };
-  const file = entries.find((entry) => entry.type === "blob" && entry.path.toLowerCase() === "readme.md") ?? entries.find((entry) => entry.type === "blob");
-  return { directoryPath: file ? getParentPath(file.path) : requestedPath, file };
+  if (exact?.type === "tree") return { path: exact.path, file: undefined };
+  if (exact?.type === "blob") return { path: exact.path, file: exact };
+  const readme = entries.find((entry) => entry.type === "blob" && entry.path.toLowerCase() === "readme.md");
+  return { path: "", file: readme };
 }
 
-function buildCrumbs(path: string): Array<{ label: string; path: string }> {
+function buildCrumbs(path: string, repositoryName: string): Array<{ label: string; path: string }> {
   const parts = path.split("/").filter(Boolean);
-  const crumbs = [{ label: "root", path: "" }];
+  const crumbs = [{ label: repositoryName, path: "" }];
   let current = "";
   for (const part of parts) {
     current = current ? `${current}/${part}` : part;
@@ -270,6 +272,7 @@ const MarkdownPreview = memo(function MarkdownPreview({ content, themeId, themeM
 
 interface DirectoryListingProps {
   entries: SourceTreeEntry[];
+  currentDirectory: string;
   labels: SourceViewerLabels;
   treeQuery: string;
   onClearQuery: () => void;
@@ -280,13 +283,14 @@ interface DirectoryListingProps {
 /** Rows of the current directory, or the empty-state card (with a clear-filter action while a filter is on). */
 function DirectoryListing({
   entries,
+  currentDirectory,
   labels,
   treeQuery,
   onClearQuery,
   onSelectDirectory,
   onSelectFile,
-}: Readonly<DirectoryListingProps>) {
-  if (entries.length === 0) {
+}: Readonly<DirectoryListingProps>): ReactElement {
+  if (entries.length === 0 && !currentDirectory) {
     return (
       <div className={`${styles.state} ${styles.stateCard}`}>
         <FiFolder aria-hidden className={styles.stateIcon} />
@@ -299,18 +303,31 @@ function DirectoryListing({
       </div>
     );
   }
-  return entries.map((entry) => (
-    <button
-      key={entry.path}
-      type="button"
-      className={styles.fileRow}
-      onClick={() => (entry.type === "tree" ? onSelectDirectory(entry.path) : onSelectFile(entry))}
-    >
-      {entry.type === "tree" ? <FiFolder aria-hidden /> : <FiFile aria-hidden />}
-      <span className={styles.fileName}>{entry.name}</span>
-      <span className={styles.fileMeta}>{entry.type === "blob" ? formatBytes(entry.size) : ""}</span>
-    </button>
-  ));
+  return (
+    <table className={styles.fileTable} aria-label={labels.files}>
+      <thead><tr><th scope="col">{labels.name}</th><th scope="col">{labels.size}</th></tr></thead>
+      <tbody>
+        {currentDirectory ? (
+          <tr><td colSpan={2}>
+            <button type="button" className={styles.fileRow} aria-label={labels.parent} onClick={() => onSelectDirectory(getParentPath(currentDirectory))}>
+              <FiArrowLeft aria-hidden /><span>..</span>
+            </button>
+          </td></tr>
+        ) : null}
+        {entries.map((entry) => (
+          <tr key={entry.path}>
+            <td>
+              <button type="button" className={styles.fileRow} onClick={() => (entry.type === "tree" ? onSelectDirectory(entry.path) : onSelectFile(entry))}>
+                {entry.type === "tree" ? <FiFolder className={styles.folderIcon} aria-hidden /> : <FiFile aria-hidden />}
+                <span className={styles.fileName}>{entry.name}</span>
+              </button>
+            </td>
+            <td className={styles.fileMeta}>{entry.type === "blob" ? formatBytes(entry.size) : ""}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 interface SelectedFileViewerProps {
@@ -384,7 +401,7 @@ export function RepositorySourceBrowser({
   themeMode = "dark",
   onRouteChange,
   backLink,
-}: Readonly<RepositorySourceBrowserProps>) {
+}: Readonly<RepositorySourceBrowserProps>): ReactElement {
   const [route, setRoute] = useState(initialRoute);
   const [ownerInput, setOwnerInput] = useState(initialRoute.owner);
   const [repoInput, setRepoInput] = useState(initialRoute.repo);
@@ -392,7 +409,9 @@ export function RepositorySourceBrowser({
   const [treeQuery, setTreeQuery] = useState("");
   const [repository, setRepository] = useState<SourceViewerRepository | null>(null);
   const [selectedFile, setSelectedFile] = useState<SourceFileContent | null>(null);
-  const [currentDirectory, setCurrentDirectory] = useState(initialRoute.path);
+  const [activePath, setActivePath] = useState(initialRoute.path);
+  const [isTreeOpen, setIsTreeOpen] = useState(false);
+  const treeId = useId();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [viewMode, setViewMode] = useState<ViewMode>("code");
   const [isLoadingTree, setIsLoadingTree] = useState(true);
@@ -406,6 +425,9 @@ export function RepositorySourceBrowser({
 
   const filteredEntries = useMemo(() => filterEntries(repository?.entries ?? [], treeQuery), [repository?.entries, treeQuery]);
   const treeNodes = useMemo(() => buildTree(repository?.entries ?? []), [repository?.entries]);
+  const activeEntry = useMemo(() => repository?.entries.find((entry) => entry.path === activePath), [repository?.entries, activePath]);
+  const isFileView = activeEntry?.type === "blob";
+  const currentDirectory = isFileView ? getParentPath(activePath) : activePath;
   const directoryEntries = useMemo(() => getDirectoryEntries(repository?.entries ?? [], currentDirectory), [repository?.entries, currentDirectory]);
   const selectedIsMarkdown = Boolean(selectedFile && isMarkdownFile(selectedFile.path));
 
@@ -439,7 +461,7 @@ export function RepositorySourceBrowser({
         }
         setRepository(resolved.repository);
         const initialSelection = findInitialSelection(resolved.repository.entries, resolved.effectivePath);
-        setCurrentDirectory(initialSelection.directoryPath);
+        setActivePath(initialSelection.path);
         setExpanded({});
         if (initialSelection.file) {
           setIsLoadingFile(true);
@@ -479,7 +501,7 @@ export function RepositorySourceBrowser({
     try {
       const file = await loadSourceFile(route.owner, route.repo, route.branch, entry.path);
       setSelectedFile(file);
-      setCurrentDirectory(getParentPath(entry.path));
+      setActivePath(entry.path);
       setViewMode(defaultViewMode(entry.path));
       onRouteChange?.({ ...route, path: entry.path });
     } catch {
@@ -490,7 +512,7 @@ export function RepositorySourceBrowser({
   }
 
   function selectDirectory(path: string) {
-    setCurrentDirectory(path);
+    setActivePath(path);
     setSelectedFile(null);
     setExpanded((prev) => ({ ...prev, [path]: true }));
     onRouteChange?.({ ...route, path });
@@ -513,24 +535,29 @@ export function RepositorySourceBrowser({
   }
 
   function selectTreeDirectory(path: string) {
-    setCurrentDirectory(path);
+    const isOpen = expanded[path] ?? (activePath === path || activePath.startsWith(`${path}/`));
+    setActivePath(path);
     setSelectedFile(null);
-    setExpanded((prev) => ({ ...prev, [path]: !(prev[path] ?? true) }));
+    setExpanded((prev) => ({ ...prev, [path]: !isOpen }));
     onRouteChange?.({ ...route, path });
   }
 
   function renderNode(node: TreeNode): React.ReactNode {
     const isDirectory = node.entry.type === "tree";
-    const isOpen = expanded[node.entry.path] ?? true;
+    const isOpen = expanded[node.entry.path] ?? (activePath === node.entry.path || activePath.startsWith(`${node.entry.path}/`));
+    const directoryChevron = isOpen ? <FiChevronDown aria-hidden /> : <FiChevronRight aria-hidden />;
     return (
       <div key={node.entry.path}>
         <button
           type="button"
           className={`${styles.treeItem} ${selectedFile?.path === node.entry.path ? styles.treeItemActive : ""}`}
-          style={{ paddingLeft: `${8 + Math.max(0, getEntryDepth(node.entry.path)) * 12}px` }}
+          aria-expanded={isDirectory ? isOpen : undefined}
+          aria-current={activePath === node.entry.path ? "page" : undefined}
+          style={{ paddingLeft: `${TREE_BASE_PADDING + Math.max(0, getEntryDepth(node.entry.path)) * TREE_LEVEL_INDENT}px` }}
           onClick={() => (isDirectory ? selectTreeDirectory(node.entry.path) : selectFile(node.entry))}
         >
-          {isDirectory ? <FiFolder aria-hidden /> : <FiFile aria-hidden />}
+          <span className={styles.treeChevron}>{isDirectory ? directoryChevron : null}</span>
+          {isDirectory ? <FiFolder className={styles.folderIcon} aria-hidden /> : <FiFile aria-hidden />}
           <span className={styles.fileName}>{node.entry.name}</span>
         </button>
         {isDirectory && isOpen ? node.children.map(renderNode) : null}
@@ -557,10 +584,11 @@ export function RepositorySourceBrowser({
           key={entry.path}
           type="button"
           className={`${styles.treeItem} ${selectedFile?.path === entry.path ? styles.treeItemActive : ""}`}
-          style={{ paddingLeft: `${8 + Math.max(0, getEntryDepth(entry.path)) * 12}px` }}
+          aria-current={activePath === entry.path ? "page" : undefined}
           onClick={() => (entry.type === "tree" ? selectTreeDirectory(entry.path) : selectFile(entry))}
         >
-          {entry.type === "tree" ? <FiFolder aria-hidden /> : <FiFile aria-hidden />}
+          <span className={styles.treeChevron} />
+          {entry.type === "tree" ? <FiFolder className={styles.folderIcon} aria-hidden /> : <FiFile aria-hidden />}
           <span className={styles.fileName}>{entry.path}</span>
         </button>
       ));
@@ -573,7 +601,7 @@ export function RepositorySourceBrowser({
       <section className={styles.toolbar}>
         <div className={styles.titleRow}>
           <h2 className={styles.title}>
-            {route.owner}/{route.repo}
+            <FiCode aria-hidden /><span>{route.owner}<span className={styles.pathSeparator}> / </span><strong>{route.repo}</strong></span>
           </h2>
           <div className={styles.titleActions}>
             {backLink && (
@@ -581,7 +609,7 @@ export function RepositorySourceBrowser({
                 <FiArrowLeft aria-hidden /> {backLink.label}
               </Link>
             )}
-            <a className={styles.externalLink} href={buildGithubTreeUrl(route)} target="_blank" rel="noreferrer">
+            <a className={styles.externalLink} href={buildGithubTreeUrl({ ...route, path: activePath })} target="_blank" rel="noreferrer">
               <FiExternalLink aria-hidden /> GitHub
             </a>
           </div>
@@ -604,60 +632,44 @@ export function RepositorySourceBrowser({
         ) : null}
       </section>
 
+      <div className={styles.repositoryBar}>
+        <button type="button" className={styles.filesToggle} aria-expanded={isTreeOpen} aria-controls={treeId} onClick={() => setIsTreeOpen((previous) => !previous)}>
+          <FiFolder aria-hidden />{labels.files}<FiChevronDown aria-hidden />
+        </button>
+        <span className={styles.branchBadge}><FiCode aria-hidden /><span>{labels.branch}: <strong>{route.branch}</strong></span></span>
+        <nav className={styles.breadcrumb} aria-label={labels.path}>
+          {buildCrumbs(activePath, route.repo).map((crumb, index, crumbs) => (
+            <span key={crumb.path || "root"}>
+              {isFileView && index === crumbs.length - 1 ? <span aria-current="page">{crumb.label}</span> : (
+                <button type="button" className={styles.breadcrumbButton} aria-current={crumb.path === activePath ? "page" : undefined} onClick={() => selectDirectory(crumb.path)}>{crumb.label}</button>
+              )}
+              {index < crumbs.length - 1 ? <span className={styles.pathSeparator}>/</span> : null}
+            </span>
+          ))}
+        </nav>
+      </div>
       <section className={styles.layout}>
-        <aside className={styles.sidebar}>
+        <aside id={treeId} className={`${styles.sidebar} ${isTreeOpen ? styles.sidebarOpen : ""}`} aria-label={labels.files}>
           <div className={styles.sidebarHeader}>
-            <input
-              className={styles.input}
-              value={treeQuery}
-              onChange={(event) => setTreeQuery(event.target.value)}
-              placeholder={labels.filter}
-              aria-label={labels.filter}
-            />
-            <button type="button" className={styles.treeButton} onClick={() => setTreeQuery("")}>
-              <FiSearch aria-hidden /> {labels.clear}
-            </button>
+            <strong className={styles.sidebarTitle}>{labels.files}</strong>
+            <div className={styles.filterRow}>
+              <input className={styles.input} value={treeQuery} onChange={(event) => setTreeQuery(event.target.value)} placeholder={labels.filter} aria-label={labels.filter} />
+              <button type="button" className={styles.treeButton} aria-label={labels.clear} title={labels.clear} onClick={() => setTreeQuery("")}><FiX aria-hidden /></button>
+            </div>
           </div>
           <div className={styles.tree}>{renderTreeContent()}</div>
         </aside>
-
         <div className={styles.main}>
-          <section className={styles.panel}>
-            <nav className={styles.breadcrumb} aria-label="Source path">
-              {buildCrumbs(currentDirectory).map((crumb, index, crumbs) => (
-                <span key={crumb.path || "root"}>
-                  <button type="button" className={styles.breadcrumbButton} onClick={() => selectDirectory(crumb.path)}>
-                    {crumb.label}
-                  </button>
-                  {index < crumbs.length - 1 ? <span>/</span> : null}
-                </span>
-              ))}
-            </nav>
-
-            <div className={styles.fileList}>
-              <DirectoryListing
-                entries={directoryEntries}
-                labels={labels}
-                treeQuery={treeQuery}
-                onClearQuery={() => setTreeQuery("")}
-                onSelectDirectory={selectDirectory}
-                onSelectFile={selectFile}
-              />
-            </div>
-          </section>
-
-          <SelectedFileViewer
-            selectedFile={selectedFile}
-            selectedIsMarkdown={selectedIsMarkdown}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-            error={error}
-            isLoadingFile={isLoadingFile}
-            labels={labels}
-            onRetry={retryLoad}
-            themeId={themeId}
-            themeMode={themeMode}
-          />
+          {!isFileView && !isLoadingTree && repository ? (
+            <section className={styles.panel}>
+              <div className={styles.fileList}>
+                <DirectoryListing entries={directoryEntries} currentDirectory={currentDirectory} labels={labels} treeQuery={treeQuery} onClearQuery={() => setTreeQuery("")} onSelectDirectory={selectDirectory} onSelectFile={selectFile} />
+              </div>
+            </section>
+          ) : null}
+          {selectedFile || isLoadingFile || isLoadingTree || error ? (
+            <SelectedFileViewer selectedFile={selectedFile} selectedIsMarkdown={selectedIsMarkdown} viewMode={viewMode} onViewModeChange={setViewMode} error={error} isLoadingFile={isLoadingFile || isLoadingTree} labels={labels} onRetry={retryLoad} themeId={themeId} themeMode={themeMode} />
+          ) : null}
         </div>
       </section>
     </div>

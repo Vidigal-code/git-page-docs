@@ -77,7 +77,16 @@ describe("useDocsShellThemeState", () => {
     expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
   });
 
-  it("keeps fixed themes independent from saved preferences and URL overrides", async () => {
+  it("lets a fixed family switch to its light counterpart", async () => {
+    const { result } = setup("?theme=mono-dark&modetheme=dark", { themeSelectionMode: "fixed" });
+    await restore();
+    expect(result.current.canToggleMode).toBe(true);
+    act(() => result.current.onToggleMode());
+    expect(result.current.activeThemeId).toBe("aurora-light");
+    expect(result.current.nextMode).toBe("dark");
+  });
+
+  it("uses the URL mode while keeping the configured family independent from saved themes", async () => {
     window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
     window.localStorage.setItem(STORAGE_KEYS.mode, "light");
     const { result, replaceUrlWithoutNavigation } = setup("?theme=mono-dark&modetheme=light", {
@@ -85,23 +94,57 @@ describe("useDocsShellThemeState", () => {
     });
     await restore();
 
-    expect(result.current.activeThemeId).toBe("aurora-dark");
+    expect(result.current.activeThemeId).toBe("aurora-light");
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
     expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
     expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
   });
 
-  it("keeps fixed mode unchanged through controls and cross-tab storage events", async () => {
+  it("restores the chosen mode on a new visit without replacing the saved theme family", async () => {
+    window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
+    const firstVisit = setup("", { themeSelectionMode: "fixed" });
+    await restore();
+    act(() => firstVisit.result.current.onToggleMode());
+    firstVisit.unmount();
+    const nextVisit = setup("", { themeSelectionMode: "fixed" });
+    await restore();
+    expect(nextVisit.result.current.activeThemeId).toBe("aurora-light");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
+    expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
+  });
+
+  it("does not offer a mode whose matching template disables paired modes", async () => {
+    const layouts = makeLayouts().map(layout => layout.id === "aurora-light"
+      ? { ...layout, supportsLightAndDarkModes: false } : layout);
+    const { result } = setup("", { layouts, themeSelectionMode: "fixed" });
+    await restore();
+    expect(result.current.canToggleMode).toBe(false);
+    act(() => result.current.onToggleMode());
+    expect(result.current.activeThemeId).toBe("aurora-dark");
+  });
+
+  it("keeps a saved light preference until its catalogue arrives", async () => {
+    window.localStorage.setItem(STORAGE_KEYS.mode, "light");
+    const options: Partial<Args> = { themeSelectionMode: "fixed", layouts: [] };
+    const { result, rerender } = setup("?theme=mono-dark", options);
+    await restore();
+    expect(result.current.canToggleMode).toBe(false);
+    options.layouts = makeLayouts();
+    rerender();
+    expect(result.current.activeThemeId).toBe("aurora-light");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
+  });
+
+  it("follows saved mode changes without allowing another theme family", async () => {
     const { result, replaceUrlWithoutNavigation } = setup("?theme=mono-dark&modetheme=dark", {
       themeSelectionMode: "fixed",
       configuredDefaultMode: "light",
     });
     await restore();
-    window.localStorage.setItem(STORAGE_KEYS.mode, "dark");
+    window.localStorage.setItem(STORAGE_KEYS.mode, "light");
 
     act(() => {
       result.current.onThemeChange("mono-dark");
-      result.current.onToggleMode();
       window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEYS.mode }));
       window.dispatchEvent(new Event("focus"));
       document.dispatchEvent(new Event("visibilitychange"));
@@ -109,12 +152,12 @@ describe("useDocsShellThemeState", () => {
 
     expect(result.current.activeThemeId).toBe("aurora-light");
     expect(result.current.activeLayout?.mode).toBe("light");
-    expect(result.current.canToggleMode).toBe(false);
+    expect(result.current.canToggleMode).toBe(true);
     expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
-    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
   });
 
-  it("applies newly loaded fixed configuration without rewriting the previous preference", async () => {
+  it("applies a newly fixed family while retaining the previously selected mode", async () => {
     const options: Partial<Args> = { themeSelectionMode: "selectable" };
     const { result, rerender, replaceUrlWithoutNavigation } = setup("?theme=mono-dark", options);
     await restore();
@@ -124,22 +167,22 @@ describe("useDocsShellThemeState", () => {
     options.configuredDefaultMode = "light";
     rerender();
 
-    expect(result.current.activeThemeId).toBe("aurora-light");
-    expect(result.current.canToggleMode).toBe(false);
+    expect(result.current.activeThemeId).toBe("aurora-dark");
+    expect(result.current.canToggleMode).toBe(true);
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
     expect(replaceUrlWithoutNavigation).not.toHaveBeenCalled();
   });
 
   it.each([
-    { initialThemeBaseId: "missing", expected: "aurora-light" },
-    { initialThemeBaseId: "mono-dark", expected: "mono-dark" },
-  ])("preserves catalogue fallbacks for a fixed $initialThemeBaseId theme", async ({ initialThemeBaseId, expected }) => {
+    { initialThemeBaseId: "missing", expected: "aurora-light", canToggle: true },
+    { initialThemeBaseId: "mono-dark", expected: "mono-dark", canToggle: false },
+  ])("preserves catalogue fallbacks for a fixed $initialThemeBaseId theme", async ({ initialThemeBaseId, expected, canToggle }) => {
     const { result } = setup("?theme=aurora-dark", {
       themeSelectionMode: "fixed", configuredDefaultMode: "light", initialThemeBaseId,
     });
     await restore();
     expect(result.current.activeThemeId).toBe(expected);
-    expect(result.current.canToggleMode).toBe(false);
+    expect(result.current.canToggleMode).toBe(canToggle);
   });
 
   it.each(["?theme=vscode-dark&modetheme=dark", "?theme=vscode-dark"])(

@@ -37,7 +37,7 @@ Cada template normalmente contém:
 
 Escolha um tema pelo seletor ou configure `site.ThemeDefault` com seu ID exato. `ThemeModeDefault` define o modo inicial claro/escuro.
 
-Com `HideThemeSelector: true`, `ThemeDefault` e `ThemeModeDefault` definem uma aparência fixa: a seleção de tema e a troca claro/escuro ficam indisponíveis. Tema e modo vindos dos parâmetros da URL, do armazenamento salvo e de outras abas não substituem essa configuração. Com `false` ou a opção ausente, a seleção de tema e as preferências existentes de URL/storage continuam disponíveis.
+Com `HideThemeSelector: true`, `ThemeDefault` fixa a família do tema e o seletor permanece oculto. Outro tema vindo da URL, do armazenamento salvo ou de outra aba não pode substituir essa família. O botão claro/escuro continua disponível quando o catálogo contém um par compatível. `ThemeModeDefault` é o padrão inicial; um modo válido da URL, do armazenamento ou escolhido pelo botão pode selecionar uma das variantes suportadas. A escolha do modo permanece ao navegar e recarregar. Com `false` ou a opção ausente, o leitor também pode escolher outra família de tema.
 
 Use o ID de um tema instalado e um par claro/escuro compatível. Um padrão ausente ou inválido continua usando o primeiro tema disponível; um tema sem par compatível mantém seu modo disponível.
 
@@ -201,11 +201,11 @@ A precedência é template → `site.backgroundEffects.overrides` → `site.back
 
 ### Controle a densidade em telas estreitas
 
-`backgroundEffects.performance.mode` aceita `auto` ou `full`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam `auto` por padrão: cada camada exibe uma de cada duas partículas a partir de 768 pixels CSS de largura, ou uma de cada quatro abaixo de 768; a primeira partícula sempre permanece. `full` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
+`backgroundEffects.performance.mode` aceita `auto` ou `full`, com a mesma precedência template → ajustes globais → ajustes por tema. Os presets usam `auto` por padrão: o fundo inteiro compartilha um limite de 8 partículas a partir de 768 pixels CSS de largura, ou 4 abaixo de 768. Cada camada não vazia mantém pelo menos uma partícula; um fundo personalizado com mais camadas que o limite preserva esse mínimo. O restante é distribuído de forma determinística conforme a contagem das camadas. `full` exibe todas as partículas configuradas. Cores, formas, trajetórias, desfoque/brilho, velocidade e sementes determinísticas não mudam.
 
 Por exemplo, adicione `"performance": { "mode": "full" }` dentro de `site.backgroundEffects.overrides` para manter a densidade total em todos os temas, ou dentro de `site.backgroundEffects.themes[themeId]` para um tema. Um ajuste explícito de `layers` sem modo de performance preserva suas contagens com `full`; escolha `auto` explicitamente para reduzir camadas personalizadas também. Assim, a camada Matrix de 12 caracteres do exemplo mantém a contagem total.
 
-Partículas omitidas por `auto` permanecem montadas, mas ocultas e pausadas, para retomar sua fase após redimensionamento. A regra altera a densidade visível, não a velocidade do movimento. Eventos de ponteiro, rolagem e redimensionamento compartilham no máximo uma atualização pendente por quadro de animação para a paralaxe; sem eventos não há um ciclo contínuo de consulta. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
+Partículas omitidas por `auto` permanecem montadas, mas ocultas. A animação nativa só é criada quando aparecem pela primeira vez; animações já inicializadas são pausadas e preservam sua fase após redimensionamento. Isso reduz o trabalho inicial e a densidade visível, sem alterar a velocidade do movimento. Eventos de ponteiro, rolagem e redimensionamento compartilham no máximo uma atualização pendente por quadro de animação para a paralaxe; sem eventos não há um ciclo contínuo de consulta. Pausa, movimento reduzido e aba oculta continuam funcionando nos dois modos. Teste animação e rolagem no viewport desejado; a opção não promete uma taxa de quadros específica em todo dispositivo.
 
 ### Pausar pelo menu de navegação
 

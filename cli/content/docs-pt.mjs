@@ -51,7 +51,7 @@ As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\
 
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.23/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.24/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -60,9 +60,9 @@ Em \`gitpagedocs/docs/versions/0.0.23/config.json\`, mantenha as listas de rotas
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -257,6 +257,8 @@ O config da versão pode renderizar um container **Código fonte** via \`routes-
 - Alternância preview/código para Markdown, incluindo \`README.md\`
 - Pastas recolhiveis na lateral
 
+O navegador usa cabeçalho do repositório, branch, trilha do caminho e tabela de diretórios no estilo GitHub, com pastas antes dos arquivos e os tamanhos disponíveis. Abra uma pasta ou use a linha da pasta anterior para navegar; ao selecionar um arquivo, seu conteúdo ocupa o painel principal. O README inicial permanece abaixo da listagem da raiz. A lateral tem pastas expansíveis e pode ser recolhida em telas estreitas. O código mantém sua própria rolagem horizontal, enquanto a página se adapta ao celular. O tema claro ou escuro ativo é aplicado ao navegador e ao realce de sintaxe. A listagem reutiliza a árvore do repositório, sem buscar metadados para cada linha.
+
 ## Chaves de config (site)
 
 - \`name\`, \`defaultLanguage\`
@@ -307,7 +309,7 @@ Principais chaves:
 
 - \`name\`: título do projeto no UI
 - \`defaultLanguage\`: idioma padrão
-- \`HideThemeSelector\`: oculta os controles e fixa o tema e modo configurados
+- \`HideThemeSelector\`: oculta o seletor e fixa a família do tema; a troca claro/escuro continua disponível quando suportada
 - \`ThemeDefault\`: id do tema inicial
 - \`ThemeModeDefault\`: modo inicial (\`light\` ou \`dark\`)
 - \`ProjectLink\`: URL de repositório para acoes no cabeçalho
@@ -525,7 +527,7 @@ Opções por rota em \`routes-md\`, \`routes-html\` e \`routes-video\`:
 | \`nestedMenusEnabled\` | true; árvore recursiva, ou destinos em lista plana quando false |
 | \`RouteGuide\` | true; breadcrumbs, com sobrescrita por padrão da versão e rota Markdown |
 | \`accessibility\` | Habilitado por padrão; opções de narração na página Acessibilidade |
-| \`HideThemeSelector\` | false; true oculta os controles de tema e fixa ThemeDefault/ThemeModeDefault, ignorando preferências da URL/storage |
+| \`HideThemeSelector\` | false; true fixa a família de ThemeDefault e oculta seu seletor, mantendo os modos claro/escuro suportados |
 | \`FooterEnabled\` | true; exibe o rodapé |
 | \`FooterLinkName / FooterLinkUrl\` | Texto e destino do link do rodapé |
 | \`FooterDateMode / FooterDateCustom\` | browser, year ou custom; custom usa o texto configurado |
@@ -743,7 +745,7 @@ Cada template normalmente contém:
 
 Escolha um tema pelo seletor ou configure \`site.ThemeDefault\` com seu ID exato. \`ThemeModeDefault\` define o modo inicial claro/escuro.
 
-Com \`HideThemeSelector: true\`, \`ThemeDefault\` e \`ThemeModeDefault\` definem uma aparência fixa: a seleção de tema e a troca claro/escuro ficam indisponíveis. Tema e modo vindos dos parâmetros da URL, do armazenamento salvo e de outras abas não substituem essa configuração. Com \`false\` ou a opção ausente, a seleção de tema e as preferências existentes de URL/storage continuam disponíveis.
+Com \`HideThemeSelector: true\`, \`ThemeDefault\` fixa a família do tema e o seletor permanece oculto. Outro tema vindo da URL, do armazenamento salvo ou de outra aba não pode substituir essa família. O botão claro/escuro continua disponível quando o catálogo contém um par compatível. \`ThemeModeDefault\` é o padrão inicial; um modo válido da URL, do armazenamento ou escolhido pelo botão pode selecionar uma das variantes suportadas. A escolha do modo permanece ao navegar e recarregar. Com \`false\` ou a opção ausente, o leitor também pode escolher outra família de tema.
 
 Use o ID de um tema instalado e um par claro/escuro compatível. Um padrão ausente ou inválido continua usando o primeiro tema disponível; um tema sem par compatível mantém seu modo disponível.
 

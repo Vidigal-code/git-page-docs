@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactElement } from "react";
 import type { ResolvedThemeBackgroundLayer } from "@/entities/docs";
 import type { BackgroundParticle as Particle } from "../model/particles";
 import { particleStyle } from "../model/particle-style";
@@ -15,36 +15,34 @@ interface BackgroundParticleProps {
 
 const MILLISECONDS_PER_SECOND = 1000;
 
-export function BackgroundParticle({ particle, layer, running, speed, keyframes, visible }: Readonly<BackgroundParticleProps>) {
+export function BackgroundParticle({ particle, layer, running, speed, keyframes, visible }: Readonly<BackgroundParticleProps>): ReactElement {
   const elementRef = useRef<HTMLSpanElement>(null);
   const animationRef = useRef<Animation | null>(null);
   const { duration: durationSeconds, phase } = particle;
-  useEffect(() => {
-    const element = elementRef.current;
-    if (!element?.animate) return;
-    const duration = durationSeconds * MILLISECONDS_PER_SECOND;
-    const animation = element.animate([], { duration, iterations: Infinity, easing: "linear" });
-    animation.pause();
-    animation.currentTime = phase * duration;
-    animationRef.current = animation;
-    return () => {
-      animation.cancel();
-      animationRef.current = null;
-    };
+  useEffect(() => () => {
+    animationRef.current?.cancel();
+    animationRef.current = null;
   }, [durationSeconds, phase]);
 
   useEffect(() => {
-    const effect = animationRef.current?.effect as KeyframeEffect | undefined;
-    effect?.setKeyframes(keyframes);
-  }, [keyframes, durationSeconds, phase]);
-
-  useEffect(() => {
-    const animation = animationRef.current;
-    if (!animation) return;
+    const element = elementRef.current;
+    if (!element?.animate) return;
+    let animation = animationRef.current;
+    if (!animation) {
+      if (!visible) return;
+      const duration = durationSeconds * MILLISECONDS_PER_SECOND;
+      animation = element.animate(keyframes, { duration, iterations: Infinity, easing: "linear" });
+      animation.pause();
+      animation.currentTime = phase * duration;
+      animationRef.current = animation;
+    } else {
+      const effect = animation.effect as KeyframeEffect | null;
+      effect?.setKeyframes(keyframes);
+    }
     animation.updatePlaybackRate(speed);
     if (running) animation.play();
     else animation.pause();
-  }, [running, speed, durationSeconds, phase]);
+  }, [running, speed, durationSeconds, phase, keyframes, visible]);
 
   return (
     <span ref={elementRef} hidden={!visible} data-background-particle={layer.kind} className={styles.particle}

@@ -103,8 +103,8 @@ function GuidePageContent() {
   const basePath = getBasePath();
   const backToSearchHref = basePath ? `${basePath}/` : "/";
   const headerIconConfig = useMemo(
-    () => resolveHeaderIconConfig(siteConfig ?? undefined, nextModeIsDark ? "dark" : "light", basePath),
-    [siteConfig, nextModeIsDark, basePath],
+    () => resolveHeaderIconConfig(siteConfig ?? undefined, activeLayout?.mode ?? "dark", basePath),
+    [siteConfig, activeLayout?.mode, basePath],
   );
   const projectUrl = PROJECT_FOOTER_URL;
 

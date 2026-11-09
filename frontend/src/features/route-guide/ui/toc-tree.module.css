@@ -80,6 +80,24 @@
   font-weight: 600;
 }
 
+@media (min-width: 1025px) {
+  .link {
+    position: relative;
+    padding-inline-start: 0.75rem;
+  }
+
+  .link.active::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block: 0.35rem;
+    width: 3px;
+    border-radius: 2px;
+    background: currentColor;
+    pointer-events: none;
+  }
+}
+
 @media (max-width: 767px) {
   .list {
     display: flex;

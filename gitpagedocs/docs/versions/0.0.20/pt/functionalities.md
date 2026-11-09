@@ -33,6 +33,8 @@ O config da versão pode renderizar um container **Código fonte** via `routes-s
 - Alternância preview/código para Markdown, incluindo `README.md`
 - Pastas recolhiveis na lateral
 
+O navegador usa cabeçalho do repositório, branch, trilha do caminho e tabela de diretórios no estilo GitHub, com pastas antes dos arquivos e os tamanhos disponíveis. Abra uma pasta ou use a linha da pasta anterior para navegar; ao selecionar um arquivo, seu conteúdo ocupa o painel principal. O README inicial permanece abaixo da listagem da raiz. A lateral tem pastas expansíveis e pode ser recolhida em telas estreitas. O código mantém sua própria rolagem horizontal, enquanto a página se adapta ao celular. O tema claro ou escuro ativo é aplicado ao navegador e ao realce de sintaxe. A listagem reutiliza a árvore do repositório, sem buscar metadados para cada linha.
+
 ## Chaves de config (site)
 
 - `name`, `defaultLanguage`

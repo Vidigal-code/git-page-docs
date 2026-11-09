@@ -74,7 +74,7 @@ Manual menu scrolling is preserved between page changes. Resizing or unfolding t
 
 Language, theme and animation controls use the official icon defaults while standalone shell settings load or cannot be retrieved. Repository search, documentation loading, repository opening, the introduction guide, source viewer and not-found views keep accessible button names. An explicit `reactIcon: false` remains a valid preference for localized text after the configuration loads; icon defaults do not override it.
 
-The breadcrumb trail has `1.5rem` of space above and below (24 CSS pixels at the default root font size). Mobile selectors fill their menu rows with centered icons; desktop header selectors retain their compact dimensions.
+The breadcrumb trail has `1.75rem` of space above and below (28 CSS pixels at the default root font size). Mobile selectors fill their menu rows with centered icons; desktop header selectors retain their compact dimensions.
 
 Since 0.0.22, documentation header controls show a built-in fallback while a configured icon loads, so the control does not appear empty. The configured icon replaces that fallback when ready; an explicit text preference remains text. On narrow screens, Markdown action controls reserve their own space before the document heading instead of covering it.
 

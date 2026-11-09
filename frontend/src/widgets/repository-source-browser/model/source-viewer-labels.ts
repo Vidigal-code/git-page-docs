@@ -2,6 +2,11 @@ import { getLangMenuLabelFromMenu } from "@/entities/docs";
 import type { LanguageCode, SiteConfig } from "@/entities/docs";
 
 export interface SourceViewerLabels {
+  files: string;
+  path: string;
+  name: string;
+  size: string;
+  parent: string;
   owner: string;
   repo: string;
   branch: string;
@@ -21,6 +26,12 @@ export interface SourceViewerLabels {
   back: string;
 }
 
+const NAVIGATION_LABELS: Readonly<Record<LanguageCode, Pick<SourceViewerLabels, "files" | "path" | "name" | "size" | "parent">>> = {
+  en: { files: "Files", path: "Repository path", name: "Name", size: "Size", parent: "Parent directory" },
+  pt: { files: "Arquivos", path: "Caminho do repositório", name: "Nome", size: "Tamanho", parent: "Pasta anterior" },
+  es: { files: "Archivos", path: "Ruta del repositorio", name: "Nombre", size: "Tamaño", parent: "Carpeta superior" },
+} as const;
+
 /** Single source for the source-viewer copy (langmenu-overridable, shared by
  * the standalone page and the docs-shell container). */
 export function buildSourceViewerLabels(
@@ -29,7 +40,13 @@ export function buildSourceViewerLabels(
 ): SourceViewerLabels {
   const label = (key: string, fallback: string) =>
     getLangMenuLabelFromMenu(langmenu, language, key, fallback);
+  const navigation = NAVIGATION_LABELS[language] ?? NAVIGATION_LABELS.en;
   return {
+    files: label("sourceViewerFilesLabel", navigation.files),
+    path: label("sourceViewerPathLabel", navigation.path),
+    name: label("sourceViewerNameLabel", navigation.name),
+    size: label("sourceViewerSizeLabel", navigation.size),
+    parent: label("sourceViewerParentLabel", navigation.parent),
     owner: label("searchOwnerLabel", "Owner"),
     repo: label("searchRepoLabel", "Repository"),
     branch: label("sourceViewerBranchLabel", "Branch"),

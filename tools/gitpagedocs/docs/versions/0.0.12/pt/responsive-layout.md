@@ -74,7 +74,7 @@ A rolagem manual do menu permanece entre mudanças de página. Redimensionar ou 
 
 Os controles de idioma, tema e animação usam os ícones oficiais padrão enquanto a configuração do shell independente carrega ou não pode ser obtida. Busca de repositórios, carregamento da documentação, abertura de repositório, guia introdutório, visualizador de código e páginas não encontradas mantêm nomes acessíveis nos botões. A opção explícita `reactIcon: false` continua válida para texto localizado depois que a configuração carrega; os padrões de ícone não a substituem.
 
-A trilha de navegação tem `1.5rem` de espaço acima e abaixo (24 pixels CSS no tamanho padrão da fonte raiz). Os seletores móveis preenchem as linhas do menu com ícones centralizados; os seletores do cabeçalho desktop mantêm dimensões compactas.
+A trilha de navegação tem `1.75rem` de espaço acima e abaixo (28 pixels CSS no tamanho padrão da fonte raiz). Os seletores móveis preenchem as linhas do menu com ícones centralizados; os seletores do cabeçalho desktop mantêm dimensões compactas.
 
 Desde a 0.0.22, os controles do cabeçalho da documentação exibem um ícone padrão enquanto o ícone configurado carrega, evitando controles vazios. O ícone configurado substitui esse padrão quando está pronto; uma preferência explícita por texto continua como texto. Em telas estreitas, os controles de ações Markdown reservam espaço próprio antes do título do documento, sem cobri-lo.
 

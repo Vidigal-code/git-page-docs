@@ -40,18 +40,20 @@ it("carries the theme selected after the search screen opened", () => {
   expect(navigation.router.push).toHaveBeenCalledWith("/owner/docs/?theme=aurora-light&modetheme=light");
 });
 
-it("uses the configured fixed theme for repository navigation and hides theme controls", () => {
+it("keeps the configured family for repository navigation while allowing a mode choice", () => {
   const data = makeDocsData({ activeRepository: { source: "remote", owner: "owner", repo: "docs" } });
   data.config.site.HideThemeSelector = true;
   data.config.site.ThemeDefault = "aurora-dark";
   data.config.site.ThemeModeDefault = "light";
   render(<RepositorySearchScreen data={data} repositoryNotUsingGitPageDocs={false} />);
 
+  expect(screen.queryByRole("button", { name: "Theme selector" })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Light mode" }));
   fireEvent.click(screen.getByRole("button", { name: "Search" }));
 
   expect(navigation.router.push).toHaveBeenCalledWith("/owner/docs/?theme=aurora-light&modetheme=light");
   expect(screen.queryByRole("button", { name: "Theme selector" })).toBeNull();
-  expect(screen.queryByRole("button", { name: /^(Dark|Light) mode$/ })).toBeNull();
+  expect(screen.getByRole("button", { name: "Dark mode" })).toBeTruthy();
 });
 
 it("opens the repository without theme parameters when the catalogue is empty", () => {

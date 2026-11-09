@@ -17,7 +17,7 @@ Important keys:
 - `defaultLanguage`
 - `docsVersion`
 - `rendering`
-- `HideThemeSelector`: hide theme controls and fix the configured theme and mode
+- `HideThemeSelector`: hide the theme selector and keep the configured theme family; supported light/dark switching remains available
 - `ThemeDefault`
 - `ThemeModeDefault`
 - `ProjectLink`
@@ -235,7 +235,7 @@ Per-route options for `routes-md`, `routes-html`, `routes-video`, and `routes-au
 | `nestedMenusEnabled` | true; recursive menu tree, or flat destinations when false |
 | `RouteGuide` | true; breadcrumbs, overridable by version defaults and individual Markdown routes |
 | `accessibility` | Enabled by default; narration settings are explained in Accessibility |
-| `HideThemeSelector` | false; true hides theme controls and fixes ThemeDefault/ThemeModeDefault, ignoring URL/storage preferences |
+| `HideThemeSelector` | false; true fixes the ThemeDefault family and hides its selector, while supported light/dark modes remain available |
 | `FooterEnabled` | true; show the footer |
 | `FooterLinkName / FooterLinkUrl` | Footer link label and destination |
 | `FooterDateMode / FooterDateCustom` | browser, year or custom; custom uses the configured text |

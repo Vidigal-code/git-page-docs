@@ -5,7 +5,8 @@ export function resolveThemeByMode(layouts: LayoutItem[], active: LayoutItem, mo
     return active;
   }
   const maybePair = layouts.find(
-    (item) => item.supportsLightAndDarkModesReference === active.supportsLightAndDarkModesReference && item.mode === mode,
+    (item) => item.supportsLightAndDarkModes
+      && item.supportsLightAndDarkModesReference === active.supportsLightAndDarkModesReference && item.mode === mode,
   );
   return maybePair ?? active;
 }

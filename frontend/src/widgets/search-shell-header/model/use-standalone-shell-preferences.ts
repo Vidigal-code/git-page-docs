@@ -6,18 +6,12 @@ import { resolveThemeByMode, type LanguageCode, type LayoutItem } from "@/entiti
 import { THEME_URL_PARAM } from "@/shared/config/constants";
 import { toFullPath } from "@/shared/lib/base-path";
 import { useIsomorphicLayoutEffect } from "@/shared/lib/use-isomorphic-layout-effect";
+import { parseThemeMode, useFixedFamilyMode } from "@/features/theme-switcher";
 
 const STORAGE_KEY_PREFIX = "git-page-docs";
 
-type ThemeMode = "light" | "dark";
-
 function buildStorageKey(prefix: string, siteName: string): string {
   return `${STORAGE_KEY_PREFIX}:${prefix}:${siteName.toLowerCase().replaceAll(" ", "-")}`;
-}
-
-/** The value as a theme mode, or null for anything else (missing param, stale storage). */
-function toThemeMode(value: string | null): ThemeMode | null {
-  return value === "dark" || value === "light" ? value : null;
 }
 
 export interface UseStandaloneShellPreferencesArgs {
@@ -63,7 +57,12 @@ export function useStandaloneShellPreferences({
     : layouts[0]?.id ?? "";
 
   const [preferredThemeId, setActiveThemeId] = useState(initialThemeId);
-  const activeThemeId = themeSelectionMode === "fixed" ? initialThemeId : preferredThemeId;
+  const { mode: fixedFamilyMode, selectMode: setFixedFamilyMode } = useFixedFamilyMode({
+    selectionMode: themeSelectionMode, defaultMode: configuredDefaultMode,
+    storageKey: themeModeStorageKey, requestedMode: parseThemeMode(safeSearchParams.get("modetheme")),
+  });
+  const fixedThemeId = initialThemeBase ? resolveThemeByMode(layouts, initialThemeBase, fixedFamilyMode).id : "";
+  const activeThemeId = themeSelectionMode === "fixed" ? fixedThemeId : preferredThemeId;
   const [themeRestored, setThemeRestored] = useState(false);
   // True only when the theme came from the URL or a user action. The internal
   // default must never be written back to the URL: standalone wrappers mount
@@ -138,7 +137,7 @@ export function useStandaloneShellPreferences({
     }
     // A cached catalogue can precede a newly published theme; keep its URL intact.
     if (urlThemeId || themeRestored) return;
-    const urlMode = toThemeMode(safeSearchParams.get("modetheme"));
+    const urlMode = parseThemeMode(safeSearchParams.get("modetheme"));
     try {
       // Precedence: URL (theme/modetheme) > theme persisted in localStorage > repo
       // default. Storage restores stay non-explicit so they are never written back
@@ -152,7 +151,7 @@ export function useStandaloneShellPreferences({
           return;
         }
       }
-      const savedMode = toThemeMode(window.localStorage.getItem(themeModeStorageKey));
+      const savedMode = parseThemeMode(window.localStorage.getItem(themeModeStorageKey));
       const mode = urlMode ?? savedMode ?? configuredDefaultMode;
       if (urlMode) {
         setThemeExplicit(true);
@@ -231,20 +230,20 @@ export function useStandaloneShellPreferences({
   }
 
   function onToggleMode() {
-    if (themeSelectionMode === "fixed") return;
-
-    const activeLayout = layouts.find((l) => l.id === activeThemeId);
-    if (!activeLayout?.supportsLightAndDarkModes) return;
-    const nextMode = activeLayout.mode === "dark" ? "light" : "dark";
-    const paired = resolveThemeByMode(layouts, activeLayout, nextMode);
-    setThemeExplicit(true);
-    setActiveThemeId(paired.id);
-    syncThemeToUrl(paired.id, paired.mode === "dark" || paired.mode === "light" ? paired.mode : undefined);
+    if (!canToggleMode || !pairedLayout) return;
+    if (themeSelectionMode === "fixed") setFixedFamilyMode(nextMode);
+    else {
+      setThemeExplicit(true);
+      setActiveThemeId(pairedLayout.id);
+    }
+    syncThemeToUrl(pairedLayout.id, nextMode);
   }
 
   const activeLayout = layouts.find((l) => l.id === activeThemeId) ?? layouts[0];
-  const nextModeIsDark = activeLayout?.mode === "dark";
-  const canToggleMode = themeSelectionMode !== "fixed" && Boolean(activeLayout?.supportsLightAndDarkModes);
+  const nextMode = activeLayout?.mode === "dark" ? "light" : "dark";
+  const pairedLayout = activeLayout ? resolveThemeByMode(layouts, activeLayout, nextMode) : undefined;
+  const nextModeIsDark = nextMode === "dark";
+  const canToggleMode = Boolean(pairedLayout && pairedLayout.id !== activeLayout?.id);
 
   return {
     language,

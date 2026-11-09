@@ -1,87 +1,86 @@
 .browser {
-  --source-browser-editor: color-mix(in srgb, var(--card-background) 86%, var(--background) 14%);
-  --source-browser-editor-rail: color-mix(in srgb, var(--background) 88%, var(--card-background) 12%);
-  --source-browser-sidebar: color-mix(in srgb, var(--background) 78%, var(--card-background) 22%);
-  --source-browser-panel: color-mix(in srgb, var(--card-background) 92%, var(--background) 8%);
+  --source-browser-editor: var(--card-background);
+  --source-browser-editor-rail: var(--card-background);
+  --source-browser-sidebar: var(--background);
+  --source-browser-panel: color-mix(in srgb, var(--card-background) 70%, var(--background) 30%);
   --source-browser-line: var(--card-border);
   --source-browser-muted: var(--text-secondary);
-  --source-browser-control: var(--control-background, color-mix(in srgb, var(--card-background) 88%, var(--background) 12%));
+  --source-browser-control: var(--control-background, var(--card-background));
   --source-browser-control-border: var(--control-border, 1px solid var(--card-border));
-  --source-browser-hover: color-mix(in srgb, var(--primary) 14%, var(--card-background) 86%);
-  --source-browser-active: color-mix(in srgb, var(--primary) 22%, var(--card-background) 78%);
-  --source-browser-focus: var(--button-glow, 0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent));
-  --source-browser-radius: min(var(--card-radius, 8px), 8px);
-  --source-browser-control-radius: min(var(--control-radius, 8px), 8px);
+  --source-browser-hover: color-mix(in srgb, var(--primary) 10%, var(--card-background) 90%);
+  --source-browser-active: color-mix(in srgb, var(--primary) 16%, var(--card-background) 84%);
+  --source-browser-radius: 6px;
 
   width: 100%;
+  min-width: 0;
   color: var(--text);
 }
 
 .toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 14px;
+  display: grid;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--source-browser-line);
 }
 
-.titleRow {
+.titleRow,
+.titleActions,
+.repositoryBar,
+.viewerHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.titleRow,
+.viewerHeader {
+  justify-content: space-between;
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
   margin: 0;
   font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 400;
   overflow-wrap: anywhere;
 }
 
-/* Actions on the title row: the optional back link and the GitHub link, side by side. */
+.title > svg {
+  flex-shrink: 0;
+  color: var(--source-browser-muted);
+}
+
 .titleActions {
-  display: flex;
-  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
 .externalLink,
 .button,
 .treeButton,
 .modeButton,
-.breadcrumbButton {
+.filesToggle {
   border: var(--source-browser-control-border);
   background: var(--source-browser-control);
   color: var(--text);
-  border-radius: var(--source-browser-control-radius);
+  border-radius: var(--source-browser-radius);
   cursor: pointer;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    color 160ms ease;
 }
 
 .externalLink:hover,
 .button:hover,
 .treeButton:hover,
 .modeButton:hover,
-.breadcrumbButton:hover {
+.filesToggle:hover {
   background: var(--source-browser-hover);
-  border-color: color-mix(in srgb, var(--primary) 46%, var(--source-browser-line) 54%);
 }
 
-.externalLink:focus-visible,
-.button:focus-visible,
-.treeButton:focus-visible,
-.modeButton:focus-visible,
-.breadcrumbButton:focus-visible,
-.input:focus-visible,
-.treeItem:focus-visible,
-.fileRow:focus-visible {
-  outline: 0;
-  box-shadow: var(--source-browser-focus);
+.browser :is(button, a, input):focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
 }
 
 .externalLink {
@@ -91,23 +90,26 @@
   gap: 8px;
   padding: 0 12px;
   text-decoration: none;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(110px, 0.7fr) auto;
-  gap: 10px;
+  gap: 8px;
 }
 
 .input {
   min-width: 0;
-  height: 40px;
-  border-radius: var(--source-browser-control-radius);
+  width: 100%;
+  height: 36px;
+  border-radius: var(--source-browser-radius);
   border: var(--source-browser-control-border);
   background: var(--source-browser-control);
   color: var(--text);
   padding: 0 10px;
+  font: inherit;
 }
 
 .input::placeholder {
@@ -116,235 +118,276 @@
 }
 
 .button {
-  min-height: 40px;
+  min-height: 36px;
   padding: 0 14px;
-  font-weight: 700;
+  font-weight: 600;
+}
+
+.repositoryBar {
+  min-width: 0;
+  margin-block: 16px;
+}
+
+.branchBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--source-browser-line);
+  border-radius: var(--source-browser-radius);
+  background: var(--source-browser-panel);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.branchBadge > svg {
+  flex-shrink: 0;
+}
+
+.filesToggle {
+  display: none;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-weight: 600;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 44px minmax(220px, 300px) minmax(0, 1fr);
-  height: clamp(520px, 72vh, 760px);
-  max-height: 760px;
-  border: 1px solid var(--source-browser-line);
-  border-radius: var(--source-browser-radius);
-  overflow: hidden;
-  overscroll-behavior: contain;
-  background: var(--source-browser-editor);
-  box-shadow: var(--card-shadow, none);
-}
-
-.layout::before {
-  content: "";
-  grid-column: 1;
-  grid-row: 1;
-  min-width: 44px;
-  border-right: 1px solid var(--source-browser-line);
-  background:
-    radial-gradient(circle at 50% 28px, var(--primary) 0 5px, transparent 6px),
-    radial-gradient(circle at 50% 58px, var(--source-browser-muted) 0 4px, transparent 5px),
-    radial-gradient(circle at 50% 86px, var(--source-browser-muted) 0 4px, transparent 5px),
-    var(--source-browser-editor-rail);
+  grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+  min-width: 0;
 }
 
 .sidebar {
-  grid-column: 2;
   min-width: 0;
-  min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  overflow: hidden;
   border-right: 1px solid var(--source-browser-line);
-  background: var(--source-browser-sidebar);
+  padding-right: 16px;
 }
 
 .sidebarHeader {
   display: grid;
+  gap: 12px;
+  padding: 0 4px 12px;
+}
+
+.sidebarTitle {
+  font-size: 0.875rem;
+}
+
+.filterRow {
+  display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
-  padding: 10px;
-  border-bottom: 1px solid var(--source-browser-line);
-  background: color-mix(in srgb, var(--source-browser-sidebar) 88%, var(--primary) 12%);
+  gap: 6px;
 }
 
 .treeButton {
-  min-height: 40px;
-  padding: 0 10px;
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0 8px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  font-weight: 700;
 }
 
 .tree {
   min-height: 0;
-  max-height: none;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 6px;
-  scrollbar-gutter: stable both-edges;
+  max-height: 70dvh;
+  overflow: auto;
+  padding: 4px;
+  scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-.tree > div {
-  min-width: max-content;
+.treeItem,
+.fileRow,
+.breadcrumbButton {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
 .treeItem,
 .fileRow {
   width: 100%;
-  min-width: max-content;
-  border: 0;
-  background: transparent;
-  color: var(--text);
+  min-width: 0;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 8px;
-  text-align: left;
-  cursor: pointer;
 }
 
 .treeItem {
-  min-height: 32px;
-  border-radius: 6px;
-  padding: 0 8px;
+  grid-template-columns: 12px 16px minmax(0, 1fr);
+  min-height: 34px;
+  border-radius: var(--source-browser-radius);
+  padding: 4px 8px;
+  font-size: 0.875rem;
+}
+
+.treeChevron {
+  display: flex;
+  font-size: 12px;
+}
+
+.folderIcon {
+  color: var(--text);
+  fill: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .treeItem:hover,
 .treeItemActive,
-.fileRow:hover {
+.fileTable tbody tr:hover {
   background: var(--source-browser-hover);
 }
 
-.treeItemActive {
-  color: var(--text);
-  box-shadow: inset 3px 0 0 var(--primary);
+.treeItem[aria-current="page"] {
+  box-shadow: inset 3px 0 0 var(--text);
+  background: var(--source-browser-active);
 }
 
 .fileName {
-  min-width: max-content;
-  overflow: visible;
-  text-overflow: clip;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .main {
-  grid-column: 3;
   min-width: 0;
-  min-height: 0;
-  display: grid;
-  grid-template-rows: minmax(120px, min(32%, 280px)) minmax(0, 1fr);
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel,
+.viewer {
+  min-width: 0;
   overflow: hidden;
+  border: 1px solid var(--source-browser-line);
+  border-radius: var(--source-browser-radius);
   background: var(--source-browser-editor);
 }
 
-.panel {
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex: 1 1 180px;
   min-width: 0;
-  min-height: 0;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  overflow: hidden;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.breadcrumb > span {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+
+.breadcrumbButton {
+  min-width: 0;
+  min-height: 32px;
+  padding: 4px;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.breadcrumb [aria-current="page"] {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pathSeparator {
+  color: var(--source-browser-muted);
+}
+
+.fileList {
+  min-width: 0;
+}
+
+.fileTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.fileTable th {
+  background: var(--source-browser-panel);
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.fileTable th:last-child {
+  width: 6rem;
+  text-align: right;
+}
+
+.fileTable td {
+  padding: 0;
+  border-top: 1px solid var(--source-browser-line);
+}
+
+.fileRow {
+  grid-template-columns: 16px minmax(0, 1fr);
+  min-height: 40px;
+  padding: 8px 12px;
+}
+
+.fileRow .fileName {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.fileRow:hover .fileName {
+  text-decoration: underline;
+}
+
+.fileTable .fileMeta {
+  color: var(--source-browser-muted);
+  padding-inline: 8px 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+}
+
+.viewerHeader {
+  min-height: 48px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--source-browser-line);
   background: var(--source-browser-panel);
 }
 
-.breadcrumb {
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--source-browser-line);
-  background: color-mix(in srgb, var(--source-browser-panel) 92%, var(--primary) 8%);
-  scrollbar-gutter: stable;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
-/* Each crumb wraps its button and trailing separator. Keeping them unshrunk on
- * a single line stops the separators from dropping to a second row on narrow
- * screens — the row scrolls horizontally instead. */
-.breadcrumb > * {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
-
-.breadcrumbButton {
-  min-height: 28px;
-  padding: 0 8px;
-  white-space: nowrap;
-}
-
-.fileList {
-  min-height: 0;
-  overflow-x: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable both-edges;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
-.fileList > * {
-  min-width: max-content;
-}
-
-.fileRow {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  min-height: 38px;
-  padding: 0 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--source-browser-line) 70%, transparent);
-}
-
-.fileMeta {
-  color: var(--source-browser-muted);
-  font-size: 0.86rem;
-}
-
-.viewer {
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--source-browser-editor);
-}
-
-.viewerHeader {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--source-browser-line);
-  background: color-mix(in srgb, var(--source-browser-editor) 88%, var(--primary) 12%);
-}
-
 .viewerTitle {
   min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
-  text-overflow: clip;
-  white-space: nowrap;
-  font-weight: 700;
-  scrollbar-gutter: stable;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .modeGroup {
   display: inline-flex;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 4px;
 }
 
 .modeButton {
@@ -353,21 +396,16 @@
 }
 
 .modeButtonActive {
-  border-color: var(--primary);
   background: var(--source-browser-active);
-  color: var(--text);
-  box-shadow: inset 0 -2px 0 var(--primary);
+  box-shadow: inset 0 -2px 0 var(--text);
 }
 
 .codeScroll {
   min-width: 0;
   min-height: 0;
-  flex: 1;
-  overflow-x: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  max-height: 80dvh;
+  overflow: auto;
   background: var(--source-browser-editor);
-  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
@@ -379,7 +417,6 @@
   font-size: 0.86rem;
   line-height: 1.55;
   background: var(--source-browser-editor);
-  table-layout: auto;
 }
 
 .codeTable td {
@@ -396,7 +433,6 @@
   color: var(--source-browser-muted);
   text-align: right;
   padding: 0 10px;
-  border-right: 1px solid var(--source-browser-line);
   background: var(--source-browser-editor-rail);
 }
 
@@ -406,30 +442,23 @@
   overflow-wrap: normal;
   word-break: normal;
   hyphens: none;
-  padding: 0 12px;
+  padding: 0 16px;
   color: var(--text);
 }
 
 .markdownPreview {
   composes: content from "../../../shared/ui/markdown/markdown.module.css";
-  min-height: 0;
-  flex: 1;
-  padding: 18px;
+  min-width: 0;
+  padding: clamp(16px, 3vw, 32px);
   overflow-x: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable both-edges;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 .state {
   padding: 18px;
   color: var(--source-browser-muted);
-  background: transparent;
 }
 
-/* Native <output> (implicit role=status) is inline by default; keep the block box
-   the loading state had as a <div>. */
 output.state {
   display: block;
 }
@@ -438,7 +467,6 @@ output.state {
   color: var(--danger, #ef4444);
 }
 
-/* Directed state moments: icon + message + one clear next action. */
 .stateCard {
   display: flex;
   flex-direction: column;
@@ -451,7 +479,6 @@ output.state {
 
 .stateIcon {
   font-size: 1.6rem;
-  opacity: 0.75;
 }
 
 .stateMessage {
@@ -459,7 +486,6 @@ output.state {
   max-width: 36ch;
 }
 
-/* Loading signature: a quiet skeleton of the file tree. */
 .skeletonTree {
   display: flex;
   flex-direction: column;
@@ -467,151 +493,60 @@ output.state {
   padding: 4px 2px;
 }
 
-/* Skeleton rows standing in for a pane's content need the padding that the
- * real rows carry themselves. */
 .skeletonPane {
   padding: 12px;
 }
 
-/* Inline placeholder that adopts the surrounding type size, so a heading it
- * stands in for reserves the same line box as the real text. */
+.skeletonInline,
+.skeletonRow {
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--source-browser-muted, currentColor) 20%, transparent);
+  animation: sourceSkeletonPulse 1.4s ease-in-out infinite;
+}
+
 .skeletonInline {
   display: inline-block;
   width: min(220px, 60%);
   height: 1em;
   vertical-align: middle;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--source-browser-muted, currentColor) 20%, transparent);
-  animation: sourceSkeletonPulse 1.4s ease-in-out infinite;
 }
 
 .skeletonRow {
   height: 12px;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--source-browser-muted, currentColor) 20%, transparent);
-  animation: sourceSkeletonPulse 1.4s ease-in-out infinite;
-}
-
-.skeletonRow:nth-child(2n) {
-  animation-delay: 0.2s;
-}
-
-.skeletonRow:nth-child(3n) {
-  animation-delay: 0.4s;
 }
 
 @keyframes sourceSkeletonPulse {
-  0%,
-  100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 1;
-  }
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .skeletonRow,
-  .skeletonInline {
-    animation: none;
-  }
+  .skeletonInline { animation: none; }
 }
 
 @media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
-    height: min(820px, max(560px, 78dvh));
-    max-height: 820px;
-  }
-
-  .form {
-    grid-template-columns: 1fr;
-  }
-
-  .layout::before {
-    display: none;
-  }
-
-  .sidebar {
-    grid-column: 1;
-    min-height: 0;
-    border-right: 0;
-    border-bottom: 1px solid var(--source-browser-line);
-  }
-
-  .tree {
-    height: min(260px, 32dvh);
-    max-height: 260px;
-  }
-
-  .main {
-    grid-column: 1;
-    grid-template-rows: minmax(110px, min(30%, 240px)) minmax(0, 1fr);
-  }
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filesToggle { display: inline-flex; }
+  .sidebar { display: none; padding: 12px; border: 1px solid var(--source-browser-line); border-radius: var(--source-browser-radius); }
+  .sidebarOpen { display: grid; }
+  .tree { max-height: 260px; }
 }
 
 @media (max-width: 560px) {
-  .layout {
-    height: min(760px, calc(100dvh - 24px));
-    max-height: none;
-  }
-
-  .form,
-  .sidebarHeader {
-    grid-template-columns: 1fr;
-  }
-
-  .button,
-  .treeButton,
-  .externalLink {
-    width: 100%;
-    min-width: 0;
-    justify-content: center;
-  }
-
-  /* Back + GitHub share one full-width row instead of stacking. */
-  .titleActions {
-    width: 100%;
-  }
-
-  .titleActions .externalLink {
-    flex: 1 1 0;
-    width: auto;
-  }
-
-  .viewerHeader {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .breadcrumb,
-  .viewerHeader,
-  .fileRow {
-    padding-inline: 10px;
-  }
-
-  .modeGroup {
-    width: 100%;
-  }
-
-  .modeButton {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .lineNumber {
-    min-width: 40px;
-    padding-inline: 8px;
-  }
-
-  .lineCode {
-    padding-inline: 10px;
-  }
+  .form { grid-template-columns: minmax(0, 1fr); }
+  .titleActions { width: 100%; }
+  .titleActions .externalLink { flex: 1 1 0; justify-content: center; min-width: 0; }
+  .repositoryBar { gap: 8px; }
+  .breadcrumb { flex-basis: 100%; }
+  .viewerHeader { align-items: stretch; flex-direction: column; }
+  .modeGroup { width: 100%; }
+  .modeButton { flex: 1; min-width: 0; }
+  .lineNumber { min-width: 36px; padding-inline: 6px; }
+  .lineCode { padding-inline: 10px; }
 }
 
-/* Touch-target floor: the browser's dense desktop controls inflate to 44px on
- * touch devices (WCAG 2.5.5), overriding the compact min-heights above. */
 @media (pointer: coarse) {
   .button,
   .treeButton,
@@ -619,7 +554,8 @@ output.state {
   .externalLink,
   .breadcrumbButton,
   .treeItem,
-  .fileRow {
-    min-height: 44px;
-  }
+  .fileRow,
+  .filesToggle,
+  .input { min-height: 44px; }
+  .treeButton { min-width: 44px; }
 }

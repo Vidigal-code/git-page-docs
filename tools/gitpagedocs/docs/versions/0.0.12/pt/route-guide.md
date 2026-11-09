@@ -2,6 +2,8 @@
 
 O guia do documento é o índice do Markdown atual. Ele é separado do menu do site, dos breadcrumbs e do guia introdutório do GitPageDocs. Configure-o no item correspondente de `routes-md`, na configuração da versão.
 
+Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua. Em larguras de até 1024 pixels, o guia mantém suas dimensões e aparência atuais.
+
 ## Selecione os elementos indexados
 
 A partir da 0.0.21, `RouteGuideTags` escolhe quais tipos de elementos HTML viram entradas automáticas do guia depois da renderização do Markdown. Este site usa explicitamente `h1`, `h2` e `h3` para facilitar a navegação em referências extensas. Preserve a grafia e as maiúsculas de cada campo JSON.

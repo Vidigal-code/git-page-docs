@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import styles from "./repository-source-browser.module.css";
 
 /** Placeholder rows per pane, sized to read as a file tree and a file listing. */
@@ -29,14 +30,11 @@ function SkeletonRows({ widths }: Readonly<{ widths: ReadonlyArray<string> }>) {
 }
 
 /**
- * Height-stable stand-in for {@link RepositorySourceBrowser}.
+ * Loading stand-in for {@link RepositorySourceBrowser}.
  *
- * It reuses the browser's own stylesheet, so the frame it reserves — including
- * every responsive height — is the same box the browser will occupy. Rendering
- * it while the browser's chunk or its initial route resolves keeps the
- * surrounding card from loading collapsed and then stretching.
+ * Shares the responsive directory and file panels while the initial route loads.
  */
-export function SourceBrowserSkeleton({ label, showSearchForm = true }: Readonly<SourceBrowserSkeletonProps>) {
+export function SourceBrowserSkeleton({ label, showSearchForm = true }: Readonly<SourceBrowserSkeletonProps>): ReactElement {
   return (
     <div
       className={styles.browser}
@@ -59,6 +57,7 @@ export function SourceBrowserSkeleton({ label, showSearchForm = true }: Readonly
         ) : null}
       </section>
 
+      <div className={styles.repositoryBar}><span className={styles.branchBadge}><span className={styles.skeletonInline} /></span><span className={styles.skeletonInline} /></div>
       <section className={styles.layout}>
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader} />
@@ -68,7 +67,6 @@ export function SourceBrowserSkeleton({ label, showSearchForm = true }: Readonly
         </aside>
         <div className={styles.main}>
           <section className={styles.panel}>
-            <div className={styles.breadcrumb} />
             <div className={styles.fileList}>
               <SkeletonRows widths={PANEL_ROW_WIDTHS} />
             </div>

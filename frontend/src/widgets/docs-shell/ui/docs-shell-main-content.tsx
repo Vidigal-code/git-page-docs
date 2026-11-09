@@ -34,7 +34,6 @@ export interface DocsShellMainContentProps {
   currentPage: LoadedPage | undefined;
   data: LoadedDocsData;
   language: string;
-  nextMode: string;
   labels: ContentLabels;
   browse: BrowseState;
   navigation: BrowseNavigationProps;
@@ -66,7 +65,6 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
     currentPage,
     data,
     language,
-    nextMode,
     labels,
     browse,
     navigation,
@@ -107,7 +105,7 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
           currentPage={currentPage}
           data={data}
           language={language}
-          isDarkMode={nextMode === "dark"}
+          isDarkMode={activeLayoutMode === "dark"}
           activeThemeId={controlsProps.activeThemeId}
           activeThemeMode={activeLayoutMode}
           labels={labels}

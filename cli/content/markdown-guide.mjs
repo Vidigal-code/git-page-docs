@@ -3,6 +3,8 @@ export const MARKDOWN_GUIDE_DOCS = {
 
 The document guide is the outline of the current Markdown document. It is separate from the site menu, breadcrumbs and the introductory GitPageDocs guide. Configure it on the corresponding item in \`routes-md\` inside the version configuration.
 
+On desktop screens wider than 1024 CSS pixels, the side guide ends after its last entry instead of stretching to the article height. A small bar in the active entry's theme color follows the section marked while scrolling. The indicator uses the existing section tracking without continuous animation. Layouts at 1024 pixels and below retain their current guide dimensions and appearance.
+
 ## Select the indexed elements
 
 Starting with 0.0.21, \`RouteGuideTags\` chooses which HTML element types become automatic guide entries after Markdown is rendered. This site explicitly uses \`h1\`, \`h2\` and \`h3\` to keep long reference pages navigable. The original spelling and capitalization of each JSON field matter.
@@ -89,6 +91,8 @@ Selecting both a container and its children can create several entries for the s
 
 O guia do documento é o índice do Markdown atual. Ele é separado do menu do site, dos breadcrumbs e do guia introdutório do GitPageDocs. Configure-o no item correspondente de \`routes-md\`, na configuração da versão.
 
+Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua. Em larguras de até 1024 pixels, o guia mantém suas dimensões e aparência atuais.
+
 ## Selecione os elementos indexados
 
 A partir da 0.0.21, \`RouteGuideTags\` escolhe quais tipos de elementos HTML viram entradas automáticas do guia depois da renderização do Markdown. Este site usa explicitamente \`h1\`, \`h2\` e \`h3\` para facilitar a navegação em referências extensas. Preserve a grafia e as maiúsculas de cada campo JSON.
@@ -174,6 +178,8 @@ Selecionar um contêiner e seus filhos pode criar várias entradas para o mesmo 
   es: `# Configura la guía del documento
 
 La guía del documento es el índice del Markdown actual. Es independiente del menú del sitio, de las rutas de navegación y de la guía introductoria de GitPageDocs. Configúrala en el elemento correspondiente de \`routes-md\`, dentro de la configuración de la versión.
+
+En pantallas de escritorio con más de 1024 píxeles CSS, la guía lateral termina después de su última entrada, sin extenderse hasta el final del artículo. Una pequeña barra con el color de la entrada activa sigue la sección marcada al desplazarse. El indicador utiliza el seguimiento de secciones existente, sin animación continua. En anchos de hasta 1024 píxeles, la guía conserva sus dimensiones y apariencia actuales.
 
 ## Selecciona los elementos indexados
 
@@ -336,7 +342,7 @@ Manual menu scrolling is preserved between page changes. Resizing or unfolding t
 
 Language, theme and animation controls use the official icon defaults while standalone shell settings load or cannot be retrieved. Repository search, documentation loading, repository opening, the introduction guide, source viewer and not-found views keep accessible button names. An explicit \`reactIcon: false\` remains a valid preference for localized text after the configuration loads; icon defaults do not override it.
 
-The breadcrumb trail has \`1.5rem\` of space above and below (24 CSS pixels at the default root font size). Mobile selectors fill their menu rows with centered icons; desktop header selectors retain their compact dimensions.
+The breadcrumb trail has \`1.75rem\` of space above and below (28 CSS pixels at the default root font size). Mobile selectors fill their menu rows with centered icons; desktop header selectors retain their compact dimensions.
 
 Since 0.0.22, documentation header controls show a built-in fallback while a configured icon loads, so the control does not appear empty. The configured icon replaces that fallback when ready; an explicit text preference remains text. On narrow screens, Markdown action controls reserve their own space before the document heading instead of covering it.
 `,
@@ -416,7 +422,7 @@ A rolagem manual do menu permanece entre mudanças de página. Redimensionar ou 
 
 Os controles de idioma, tema e animação usam os ícones oficiais padrão enquanto a configuração do shell independente carrega ou não pode ser obtida. Busca de repositórios, carregamento da documentação, abertura de repositório, guia introdutório, visualizador de código e páginas não encontradas mantêm nomes acessíveis nos botões. A opção explícita \`reactIcon: false\` continua válida para texto localizado depois que a configuração carrega; os padrões de ícone não a substituem.
 
-A trilha de navegação tem \`1.5rem\` de espaço acima e abaixo (24 pixels CSS no tamanho padrão da fonte raiz). Os seletores móveis preenchem as linhas do menu com ícones centralizados; os seletores do cabeçalho desktop mantêm dimensões compactas.
+A trilha de navegação tem \`1.75rem\` de espaço acima e abaixo (28 pixels CSS no tamanho padrão da fonte raiz). Os seletores móveis preenchem as linhas do menu com ícones centralizados; os seletores do cabeçalho desktop mantêm dimensões compactas.
 
 Desde a 0.0.22, os controles do cabeçalho da documentação exibem um ícone padrão enquanto o ícone configurado carrega, evitando controles vazios. O ícone configurado substitui esse padrão quando está pronto; uma preferência explícita por texto continua como texto. Em telas estreitas, os controles de ações Markdown reservam espaço próprio antes do título do documento, sem cobri-lo.
 `,
@@ -496,7 +502,7 @@ El desplazamiento manual del menú se conserva entre cambios de página. Redimen
 
 Los controles de idioma, tema y animación usan los iconos oficiales predeterminados mientras la configuración del shell independiente carga o no está disponible. La búsqueda de repositorios, la carga de documentación, la apertura del repositorio, la guía introductoria, el visor de código y las páginas no encontradas conservan nombres accesibles en los botones. La opción explícita \`reactIcon: false\` sigue siendo válida para texto localizado al cargar la configuración; los valores de iconos predeterminados no la reemplazan.
 
-Los breadcrumbs tienen \`1.5rem\` de espacio arriba y abajo (24 píxeles CSS con el tamaño raíz predeterminado). Los selectores móviles llenan las filas del menú con iconos centrados; los del encabezado de escritorio conservan dimensiones compactas.
+Los breadcrumbs tienen \`1.75rem\` de espacio arriba y abajo (28 píxeles CSS con el tamaño raíz predeterminado). Los selectores móviles llenan las filas del menú con iconos centrados; los del encabezado de escritorio conservan dimensiones compactas.
 
 Desde 0.0.22, los controles del encabezado de la documentación muestran un icono predeterminado mientras carga el icono configurado, evitando controles vacíos. El icono configurado sustituye ese valor cuando está listo; una preferencia explícita por texto conserva el texto. En pantallas estrechas, los controles de acciones Markdown reservan su propio espacio antes del título del documento, sin cubrirlo.
 `,

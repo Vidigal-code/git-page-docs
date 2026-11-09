@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type {
   BrowseItem,
   ContainerPageSelection,
@@ -133,14 +133,14 @@ export function useDocsShellNavigationState({
     return expandedMenuMap[nodeKey] ?? true;
   }
 
-  function expandAncestors(ancestorKeys: string[]) {
+  const expandAncestors = useCallback((ancestorKeys: string[]) => {
     if (ancestorKeys.length === 0) return;
     setExpandedMenuMap((prev) => {
       const next = { ...prev };
       ancestorKeys.forEach((k) => { next[k] = true; });
       return next;
     });
-  }
+  }, []);
 
   const browse: BrowseState = {
     mdBrowseIndex,

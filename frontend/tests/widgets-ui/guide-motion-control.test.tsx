@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { IntroductionGuidePage } from "@/page-slices/introduction-guide/ui/introduction-guide-page";
 
 const navigation = vi.hoisted(() => ({ params: new URLSearchParams("theme=motion-test"), router: { replace: vi.fn() } }));
@@ -28,13 +28,14 @@ it("pauses and resumes all guide effects from one header control without replaci
   vi.stubGlobal("matchMedia", (query: string) => ({ matches: false, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn(), addListener: vi.fn(), removeListener: vi.fn() }));
   vi.stubGlobal("IntersectionObserver", class { observe = vi.fn(); unobserve = vi.fn(); disconnect = vi.fn(); });
   render(<IntroductionGuidePage />);
-  await screen.findByRole("link", { name: "Test docs" });
+  const brand = await screen.findByRole("link", { name: "Test docs" });
+  const controls = within(screen.getAllByRole("banner").find(banner => banner.contains(brand))!);
   const title = screen.getByRole("heading", { level: 1 });
   const currentChapter = screen.getByTestId("guide-story-counter");
   const chapterLabel = currentChapter.textContent;
 
-  fireEvent.click(screen.getByRole("button", { name: "Pause guide animations" }));
-  expect(screen.getByRole("button", { name: "Resume guide animations" }).getAttribute("aria-pressed")).toBe("true");
+  fireEvent.click(controls.getByRole("button", { name: "Pause guide animations" }));
+  expect(controls.getByRole("button", { name: "Resume guide animations" }).getAttribute("aria-pressed")).toBe("true");
   expect(document.querySelector('[data-guide-motion="disabled"]')).not.toBeNull();
   const eyebrowRow = title.closest("header")!.querySelector<HTMLElement>('[data-hero-row="eyebrow"]')!;
   expect(getComputedStyle(eyebrowRow).opacity).toBe("1");
@@ -43,7 +44,7 @@ it("pauses and resumes all guide effects from one header control without replaci
   expect(screen.getByTestId("guide-story-counter")).toBe(currentChapter);
   expect(currentChapter.textContent).toBe(chapterLabel);
 
-  fireEvent.click(screen.getByRole("button", { name: "Resume guide animations" }));
-  expect(screen.getByRole("button", { name: "Pause guide animations" }).getAttribute("aria-pressed")).toBe("false");
+  fireEvent.click(controls.getByRole("button", { name: "Resume guide animations" }));
+  expect(controls.getByRole("button", { name: "Pause guide animations" }).getAttribute("aria-pressed")).toBe("false");
   expect(document.querySelector('[data-guide-motion="enabled"]')).not.toBeNull();
 });

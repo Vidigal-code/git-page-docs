@@ -33,6 +33,8 @@ El config de versión puede renderizar un contenedor **Código fuente** vía `ro
 - Alternancia vista previa/código para Markdown, incluido `README.md`
 - Carpetas colapsables en la barra lateral
 
+El navegador utiliza cabecera del repositorio, branch, ruta de navegación y tabla de directorios al estilo GitHub, con carpetas antes que archivos y los tamaños disponibles. Abre una carpeta o utiliza la fila de la carpeta superior para navegar; al seleccionar un archivo, su contenido ocupa el panel principal. El README inicial permanece debajo del listado raíz. La barra lateral tiene carpetas expandibles y se puede plegar en pantallas estrechas. El código conserva su propio desplazamiento horizontal y la página se adapta al móvil. El tema claro u oscuro activo se aplica al navegador y al resaltado de sintaxis. El listado reutiliza el árbol del repositorio sin solicitar metadatos por cada fila.
+
 ## Claves de config (site)
 
 - `name`, `defaultLanguage`

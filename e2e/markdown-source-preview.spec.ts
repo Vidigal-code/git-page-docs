@@ -52,3 +52,47 @@ test("source Markdown preview keeps JSON highlighted and readable when changing 
   await expectSourcePreview(markdown);
   await markdown.screenshot({ path: `test-results/markdown-source-github-light-${test.info().project.name}.png` });
 });
+
+const SOURCE_FILE_NAME = "repository-navigation-with-a-long-file-name.ts";
+const SOURCE_PATH = `src/nested/${SOURCE_FILE_NAME}`;
+const SOURCE_CODE = `export const repositoryPath = "${"long-path/".repeat(24)}";\n`;
+
+async function mockRepositoryNavigation(page: Page): Promise<void> {
+  await page.route(TREE_URL, (route) => route.fulfill({
+    json: { tree: [
+      { path: "README.md", type: "blob", size: 28 },
+      { path: "src", type: "tree" },
+      { path: "src/nested", type: "tree" },
+      { path: SOURCE_PATH, type: "blob", size: Buffer.byteLength(SOURCE_CODE) },
+    ] },
+  }));
+  await page.route(FILE_URL, (route) => route.fulfill({ body: "# Repository navigation\n" }));
+  await page.route(`https://raw.githubusercontent.com/Vidigal-code/git-page-docs/main/${SOURCE_PATH}`,
+    (route) => route.fulfill({ body: SOURCE_CODE }));
+}
+
+for (const mode of ["dark", "light"]) {
+  test(`repository folders and code fit desktop and narrow screens in ${mode} mode`, async ({ page }) => {
+    await mockRepositoryNavigation(page);
+    for (const width of [1280, 344, 280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(`/source-viewer/?theme=github-${mode}&modetheme=${mode}`);
+      const directory = page.getByRole("table", { name: "Files", exact: true });
+      await expect(directory).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Repository navigation", exact: true })).toBeVisible();
+      await directory.getByRole("button", { name: "src", exact: true }).click();
+      await directory.getByRole("button", { name: "nested", exact: true }).click();
+      await directory.getByRole("button", { name: SOURCE_FILE_NAME, exact: true }).click();
+      await expect(directory).toHaveCount(0);
+      const breadcrumb = page.getByRole("navigation", { name: "Repository path", exact: true });
+      await expect(breadcrumb).toContainText(SOURCE_FILE_NAME);
+      await expect(page.getByRole("main").getByRole("cell").filter({ hasText: "export const repositoryPath" })).toBeVisible();
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+      await page.screenshot({ path: test.info().outputPath(`source-viewer-${mode}-${width}.png`), fullPage: true });
+      await breadcrumb.getByRole("button", { name: "nested", exact: true }).click();
+      await expect(directory).toBeVisible();
+      await directory.getByRole("button", { name: "Parent directory", exact: true }).click();
+      await expect(directory.getByRole("button", { name: "nested", exact: true })).toBeVisible();
+    }
+  });
+}

@@ -7,6 +7,7 @@ import { DOC_VERSIONS } from "../../../cli/contracts/doc-versions.mjs";
 
 const REPO = process.cwd();
 const CLI = path.resolve(REPO, "cli/index.mjs");
+const CLEANUP_TIMEOUT_MS = 30_000;
 
 /**
  * Give a temp project a node_modules junction to the repo's, replicating an
@@ -43,7 +44,7 @@ describe("E2E: CLI bin in a temp project", () => {
     dir = mkdtempSync(path.join(os.tmpdir(), "gpd-e2e-cli-"));
     linkNodeModules(dir);
   });
-  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+  afterEach(() => rmSync(dir, { recursive: true, force: true }), CLEANUP_TIMEOUT_MS);
 
   it("config-only (no args, non-TTY) generates the gitpagedocs contract", () => {
     const res = runCli([], dir);

@@ -94,6 +94,20 @@ it("uses default icons on a non-repository not-found page", () => {
   expectIconControls();
 });
 
+it.each(["introduction guide", "not found"] as const)("uses the active light mode for the %s brand image", async (page) => {
+  vi.stubGlobal("IntersectionObserver", class { observe = vi.fn(); unobserve = vi.fn(); disconnect = vi.fn(); });
+  serveOfficialSite({
+    name: "Mode-specific guide", HideThemeSelector: true,
+    ThemeDefault: "motion-light", ThemeModeDefault: "light",
+    IconImageMenuHeaderReactIcones: false,
+    IconImageMenuHeaderLightImg: "/brand-light.svg", IconImageMenuHeaderDarkImg: "/brand-dark.svg",
+  });
+  if (page === "introduction guide") render(<IntroductionGuidePage />);
+  else render(<NotFound />);
+  const brand = await screen.findByRole("link", { name: "Mode-specific guide" });
+  await waitFor(() => expect(brand.querySelector("img")?.getAttribute("src")).toBe("/brand-light.svg"));
+});
+
 it.each(["search", "uninstalled repository", "source viewer", "documentation"] as const)("renders initial controls as icons in %s", (page) => {
   serveOfficialSite(null);
   const data = makeDocsData({

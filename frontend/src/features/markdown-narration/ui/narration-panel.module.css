@@ -9,7 +9,7 @@
   box-sizing: border-box;
   container-type: inline-size;
   width: 100%;
-  margin-block: 0.75rem;
+  margin-block: 1rem;
   border: 1px solid var(--card-border);
   border-radius: 0.85rem;
   background: var(--card-background);

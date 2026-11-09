@@ -65,20 +65,20 @@ describe("useStandaloneShellPreferences", () => {
     const { result } = setup();
     expect(result.current.activeThemeId).toBe("aurora-dark");
     expect(result.current.activeLayout?.id).toBe("aurora-dark");
-    expect(result.current.nextModeIsDark).toBe(true);
+    expect(result.current.nextModeIsDark).toBe(false);
     expect(result.current.canToggleMode).toBe(true);
     expect(window.location.search).toBe("");
     expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("dark");
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("aurora-dark");
   });
 
-  it("resolves a fixed theme when layouts arrive without adopting external preferences", () => {
+  it("resolves the requested mode within a fixed family when layouts arrive", () => {
     window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
     window.localStorage.setItem(STORAGE_KEYS.mode, "dark");
-    const search = "?theme=mono-dark&modetheme=dark&lang=pt";
+    const search = "?theme=mono-dark&modetheme=light&lang=pt";
     const { result, rerender } = setup(search, {
       themeSelectionMode: "fixed",
-      configuredDefaultMode: "light",
+      configuredDefaultMode: "dark",
     }, []);
 
     rerender({ layouts: makeLayouts() });
@@ -86,11 +86,39 @@ describe("useStandaloneShellPreferences", () => {
     expect(result.current.activeThemeId).toBe("aurora-light");
     expect(result.current.activeLayout?.mode).toBe("light");
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
-    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
     expect(window.location.search).toBe(search);
   });
 
-  it("locks controls immediately when a fixed configuration replaces selectable preferences", () => {
+  it("switches and restores a fixed family mode without changing the saved family", () => {
+    window.localStorage.setItem(STORAGE_KEYS.theme, "mono-dark");
+    const firstVisit = setup("?theme=mono-dark&modetheme=light", { themeSelectionMode: "fixed" });
+    expect(firstVisit.result.current.canToggleMode).toBe(true);
+    act(() => firstVisit.result.current.onToggleMode());
+    expect(firstVisit.result.current.activeThemeId).toBe("aurora-dark");
+    firstVisit.unmount();
+    const nextVisit = setup("", { themeSelectionMode: "fixed", configuredDefaultMode: "light" });
+    expect(nextVisit.result.current.activeThemeId).toBe("aurora-dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("dark");
+    expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
+  });
+
+  it("reports the destination mode for the toggle label", () => {
+    const { result } = setup("", { themeSelectionMode: "fixed" });
+    expect(result.current.nextModeIsDark).toBe(false);
+    act(() => result.current.onToggleMode());
+    expect(result.current.nextModeIsDark).toBe(true);
+  });
+
+  it("does not expose a mode toggle for an incomplete catalogue", () => {
+    const layouts = makeLayouts().filter(layout => layout.id !== "aurora-light");
+    const { result } = setup("?modetheme=light", { themeSelectionMode: "fixed" }, layouts);
+    expect(result.current.canToggleMode).toBe(false);
+    act(() => result.current.onToggleMode());
+    expect(result.current.activeThemeId).toBe("aurora-dark");
+  });
+
+  it("locks the family but permits mode changes when fixed configuration arrives", () => {
     const options: Partial<Args> = { themeSelectionMode: "selectable" };
     const search = "?theme=mono-dark&modetheme=dark";
     const { result, rerender } = setup(search, options);
@@ -105,9 +133,9 @@ describe("useStandaloneShellPreferences", () => {
     });
 
     expect(result.current.activeThemeId).toBe("aurora-light");
-    expect(result.current.canToggleMode).toBe(false);
+    expect(result.current.canToggleMode).toBe(true);
     expect(window.localStorage.getItem(STORAGE_KEYS.theme)).toBe("mono-dark");
-    expect(window.location.search).toBe(search);
+    expect(window.location.search).toBe("?theme=aurora-light&modetheme=light");
   });
 
   it("waits for the layouts before restoring the theme requested in the URL", () => {
@@ -162,7 +190,7 @@ describe("useStandaloneShellPreferences", () => {
     act(() => result.current.onThemeChange("aurora-dark"));
     act(() => result.current.onToggleMode());
     expect(result.current.activeThemeId).toBe("aurora-light");
-    expect(result.current.nextModeIsDark).toBe(false);
+    expect(result.current.nextModeIsDark).toBe(true);
     expect(window.location.search).toBe("?q=docs&lang=pt&theme=aurora-light&modetheme=light");
     expect(window.localStorage.getItem(STORAGE_KEYS.mode)).toBe("light");
   });

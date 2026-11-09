@@ -76,7 +76,6 @@ export interface DocsShellOverlaysProps {
   urlFullscreenParams: FullscreenParams | null;
   data: LoadedDocsData;
   language: string;
-  nextMode: string;
   activeLayoutMode?: "light" | "dark";
   browse: BrowseState;
   navigation: BrowseNavigationProps;
@@ -164,7 +163,7 @@ export function DocsShellOverlays(props: Readonly<DocsShellOverlaysProps>) {
         params={props.urlFullscreenParams}
         data={props.data}
         language={props.language}
-        isDarkMode={props.nextMode === "dark"}
+        isDarkMode={props.activeLayoutMode === "dark"}
         labels={labels}
         browse={props.browse}
         navigation={props.navigation}

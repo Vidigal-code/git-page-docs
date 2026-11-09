@@ -33,6 +33,8 @@ The version config can render a **Source code** container through `routes-source
 - Markdown preview/code toggle, including `README.md`
 - Collapsible folders in the sidebar
 
+The browser uses a GitHub-style repository header, branch, path breadcrumbs and directory table, with folders before files and the available file sizes. Open a folder or use the parent row to navigate; selecting a file gives its contents the main panel. The initial README remains below the root listing. The sidebar has expandable folders and can be collapsed on narrow screens. Code keeps its own horizontal scrolling, while the surrounding page fits mobile widths. The active light or dark theme applies to the browser and syntax highlighting. File listings reuse the repository tree instead of requesting metadata for each row.
+
 ## Config keys (site)
 
 - `name`, `defaultLanguage`

@@ -110,6 +110,29 @@
   }
 }
 
+@media (min-width: 1025px) {
+  .positionLeft .tocAside,
+  .positionRight .tocAside,
+  .wrapper[data-container-top="false"] .tocAside {
+    align-self: flex-start;
+    position: sticky;
+    top: 5rem;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    max-height: calc(100dvh - 6rem);
+  }
+
+  .wrapper[data-container-top="false"] .tocScroll {
+    max-height: var(--toc-scroll-max-height-desktop, min(65vh, 400px));
+  }
+
+  .tocScroll > nav {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
 /* Mobile: routes extend full width, centered, stacked, never overflow */
 @media (max-width: 767px) {
   .wrapper {

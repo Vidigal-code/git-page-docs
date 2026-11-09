@@ -52,7 +52,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.23/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.24/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -61,9 +61,9 @@ In \`gitpagedocs/docs/versions/0.0.23/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.23/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.24/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -258,6 +258,8 @@ The version config can render a **Source code** container through \`routes-sourc
 - Markdown preview/code toggle, including \`README.md\`
 - Collapsible folders in the sidebar
 
+The browser uses a GitHub-style repository header, branch, path breadcrumbs and directory table, with folders before files and the available file sizes. Open a folder or use the parent row to navigate; selecting a file gives its contents the main panel. The initial README remains below the root listing. The sidebar has expandable folders and can be collapsed on narrow screens. Code keeps its own horizontal scrolling, while the surrounding page fits mobile widths. The active light or dark theme applies to the browser and syntax highlighting. File listings reuse the repository tree instead of requesting metadata for each row.
+
 ## Config keys (site)
 
 - \`name\`, \`defaultLanguage\`
@@ -430,7 +432,7 @@ Important keys:
 - \`defaultLanguage\`
 - \`docsVersion\`
 - \`rendering\`
-- \`HideThemeSelector\`: hide theme controls and fix the configured theme and mode
+- \`HideThemeSelector\`: hide the theme selector and keep the configured theme family; supported light/dark switching remains available
 - \`ThemeDefault\`
 - \`ThemeModeDefault\`
 - \`ProjectLink\`
@@ -648,7 +650,7 @@ Per-route options for \`routes-md\`, \`routes-html\`, \`routes-video\`, and \`ro
 | \`nestedMenusEnabled\` | true; recursive menu tree, or flat destinations when false |
 | \`RouteGuide\` | true; breadcrumbs, overridable by version defaults and individual Markdown routes |
 | \`accessibility\` | Enabled by default; narration settings are explained in Accessibility |
-| \`HideThemeSelector\` | false; true hides theme controls and fixes ThemeDefault/ThemeModeDefault, ignoring URL/storage preferences |
+| \`HideThemeSelector\` | false; true fixes the ThemeDefault family and hides its selector, while supported light/dark modes remain available |
 | \`FooterEnabled\` | true; show the footer |
 | \`FooterLinkName / FooterLinkUrl\` | Footer link label and destination |
 | \`FooterDateMode / FooterDateCustom\` | browser, year or custom; custom uses the configured text |
@@ -791,7 +793,7 @@ Each template usually includes:
 
 Select an installed theme through the theme selector or configure \`site.ThemeDefault\` with its exact ID. \`ThemeModeDefault\` sets the initial light/dark mode.
 
-With \`HideThemeSelector: true\`, \`ThemeDefault\` and \`ThemeModeDefault\` define a fixed appearance: theme selection and light/dark switching are unavailable. Theme and mode from URL parameters, saved storage and other tabs do not override that configuration. With \`false\` or the option omitted, the existing theme-selection and URL/storage preferences remain available.
+With \`HideThemeSelector: true\`, \`ThemeDefault\` fixes the theme family and the theme selector stays hidden. A different theme from the URL, saved storage or another tab cannot replace that family. The light/dark button remains available when the catalog contains a compatible pair. \`ThemeModeDefault\` is the initial fallback; a valid URL mode, saved mode or button selection can choose either supported variant. Mode changes survive navigation and reload. With \`false\` or the option omitted, readers can also choose another theme family.
 
 Use an installed theme ID and a supported light/dark pair. An absent or invalid default still falls back to the first available theme; a theme without a supported matching pair keeps its available mode.
 
