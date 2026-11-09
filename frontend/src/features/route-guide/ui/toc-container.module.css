@@ -116,11 +116,12 @@
   .wrapper[data-container-top="false"] .tocAside {
     align-self: flex-start;
     position: sticky;
-    top: 5rem;
+    --toc-sticky-top: 5.5rem;
+    top: var(--toc-sticky-top);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    max-height: calc(100dvh - 6rem);
+    max-height: calc(100dvh - var(--toc-sticky-top) - 1rem);
   }
 
   .positionLeft .tocScroll,

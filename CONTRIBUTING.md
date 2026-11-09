@@ -35,7 +35,7 @@ This is a pnpm + turbo monorepo: `frontend/` (Next.js viewer), `cli/` (the publi
 ### User references
 
 The generated documentation includes 37 Markdown pages per language: focused references plus complete configuration recipes, migration/compatibility, troubleshooting, contributing/testing, document-guide configuration, narrow/foldable layouts and HTML-container guides. All pages are available in English, Portuguese and Spanish; Markdown filenames stay in English while titles and content preserve UTF-8 accents and special characters.
-The scaffold registers documentation versions 0.0.25, 0.0.24, 0.0.23, 0.0.22, 0.0.21, 0.0.20, 0.0.19, 0.0.18, 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in descending order with the current examples; the npm package version is 0.0.25. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
+The scaffold registers documentation versions 0.0.26, 0.0.25, 0.0.24, 0.0.23, 0.0.22, 0.0.21, 0.0.20, 0.0.19, 0.0.18, 0.0.17, 0.0.16, 0.0.15, 0.0.14, 0.0.13, 0.0.12, 0.0.11, 0.0.10 and 0.0.9 in descending order with the current examples; the npm package version is 0.0.26. Paths and version badges match each generated documentation version. Existing older version folders are preserved.
 
 The scaffold has real nested sections: Guides → Configure your site / Read and explore / Automate and integrate → documents, plus Operations and development and Git/GitHub groups. Getting Started and Project overview remain the first destinations. Every parent section has its own localized Markdown overview: click its title to read it, or use the separate arrow to expand children. Breadcrumb ancestors such as Guides → Configure your site remain navigable. Recursive `submenus` can extend the hierarchy without a fixed depth limit; `site.nestedMenusEnabled: false` keeps every destination in a flat presentation.
 With the navigation padlock unlocked, Previous and Next center the current destination inside the desktop sidebar or mobile drawer, within its scroll range. Opening, unlocking or resizing the menu also centers it. Manual scrolling is preserved between page changes; a locked menu preserves its position. Theme and language icon buttons fill mobile-menu rows with centered icons; desktop-header controls remain compact. The responsive-layout reference covers widths of 280, 320, 344, 390 and 768 CSS pixels and folding/orientation checks.
@@ -83,7 +83,7 @@ Read or download the [GitPageDocs project guide (PDF, English)](cli/content/asse
 Configure `site.pdf` with `enabled`, `previewEnabled`, `downloadEnabled` and `openInNewTabEnabled` (all default to `true`). The version config uses `routes-pdf`, `pdf.pathPdf` per language and `menus-header-pdf` with `page:23` for the bundled example. Route-level preview/download/new-tab options go inside `pdf`; `hierarchyPage.pdf` and `hierarchyMenu.pdf` order the content and menu sections.
 
 ```json
-{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.25/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
+{ "id": 23, "pdf": { "pathPdf": { "en": "gitpagedocs/docs/versions/0.0.26/en/gitpagedocs-project-guide.pdf", "pt": "gitpagedocs/docs/versions/0.0.26/en/gitpagedocs-project-guide.pdf", "es": "gitpagedocs/docs/versions/0.0.26/en/gitpagedocs-project-guide.pdf" }, "previewEnabled": true, "downloadEnabled": true, "openInNewTabEnabled": true } }
 ```
 
 The native browser viewer handles PDF previews and new tabs through validated `application/pdf` Blob URLs. Preview, download and new-tab actions all require CORS permission for external files. Opening a new tab does not navigate to the raw repository URL, so that server's Content-Type/Content-Disposition does not force a download. Browser PDF support and user preferences still apply. With preview disabled, the first download or new-tab action loads the PDF; cached bytes are reused. File/network errors and blocked pop-ups are reported without silently falling back to the raw URL.
@@ -122,13 +122,13 @@ Keep both `routes-html` and `menus-header-html` in the version configuration. Me
     "title": { "en": "DOOM: HTML example", "pt": "DOOM: exemplo HTML", "es": "DOOM: ejemplo HTML" },
     "description": { "en": "Load an interactive HTML demo", "pt": "Carregue uma demonstração HTML interativa", "es": "Carga una demostración HTML interactiva" },
     "titleIsVisible": true, "descriptionIsVisible": true, "container": "full",
-    "path": { "en": "gitpagedocs/docs/versions/0.0.25/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.25/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.25/es/doom.html" }
+    "path": { "en": "gitpagedocs/docs/versions/0.0.26/en/doom.html", "pt": "gitpagedocs/docs/versions/0.0.26/pt/doom.html", "es": "gitpagedocs/docs/versions/0.0.26/es/doom.html" }
   }],
   "menus-header-html": [{
     "id": 29,
-    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.25/en/doom.html" },
-    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.25/pt/doom.html" },
-    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.25/es/doom.html" }
+    "en": { "title": "DOOM: HTML example", "path-click": "gitpagedocs/docs/versions/0.0.26/en/doom.html" },
+    "pt": { "title": "DOOM: exemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.26/pt/doom.html" },
+    "es": { "title": "DOOM: ejemplo HTML", "path-click": "gitpagedocs/docs/versions/0.0.26/es/doom.html" }
   }]
 }
 ```

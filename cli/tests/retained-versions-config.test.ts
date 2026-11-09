@@ -10,6 +10,7 @@ import { writeConfigOnlyOutput as writeOutput } from "../runtime/output.mjs";
 
 it("offers documentation versions from 0.0.9 through the current release in descending order", () => {
   expect(buildRootConfig().VersionControl.versions).toMatchObject([
+    { id: "0.0.26", path: "gitpagedocs/docs/versions/0.0.26/config.json" },
     { id: "0.0.25", path: "gitpagedocs/docs/versions/0.0.25/config.json" },
     { id: "0.0.24", path: "gitpagedocs/docs/versions/0.0.24/config.json" },
     { id: "0.0.23", path: "gitpagedocs/docs/versions/0.0.23/config.json" },
@@ -51,10 +52,10 @@ const DOCS = documentationTemplates as Record<string, Record<string, string>>;
 const writeConfigOnlyOutput = writeOutput as (options: RecipeOutputOptions) => Promise<void>;
 const LANGUAGES = ["en", "pt", "es"] as const;
 const RECIPE_FILE = "configuration-recipes.md";
-const CURRENT_PACKAGE = "@gitpagedocs/cli@0.0.25";
-const HISTORICAL_VERSIONS = ["0.0.25", "0.0.24", "0.0.23", "0.0.22", "0.0.21", "0.0.20", "0.0.19", "0.0.18", "0.0.17", "0.0.16", "0.0.15", "0.0.14", "0.0.13", "0.0.12", "0.0.11", "0.0.10", "0.0.9"];
+const CURRENT_PACKAGE = "@gitpagedocs/cli@0.0.26";
+const HISTORICAL_VERSIONS = ["0.0.26", "0.0.25", "0.0.24", "0.0.23", "0.0.22", "0.0.21", "0.0.20", "0.0.19", "0.0.18", "0.0.17", "0.0.16", "0.0.15", "0.0.14", "0.0.13", "0.0.12", "0.0.11", "0.0.10", "0.0.9"];
 
-it.each(["0.0.25", "0.0.24", "0.0.23", "0.0.22", "0.0.21", "0.0.20", "0.0.19", "0.0.18", "0.0.17", "0.0.16", "0.0.15", "0.0.14", "0.0.9"])(
+it.each(["0.0.26", "0.0.25", "0.0.24", "0.0.23", "0.0.22", "0.0.21", "0.0.20", "0.0.19", "0.0.18", "0.0.17", "0.0.16", "0.0.15", "0.0.14", "0.0.9"])(
   "generates coherent recipe configuration for documentation %s without changing package versions",
   async (versionId) => {
     const root = await mkdtemp(path.join(tmpdir(), "gpd-recipe-version-"));

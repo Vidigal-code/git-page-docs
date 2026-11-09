@@ -3,6 +3,11 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.26 - 2026-11-09 - more space below the desktop header
+
+- Add a small gap between the header and sticky side guides on screens wider than 1024 CSS pixels, preserving the available viewport height and the bottom margin.
+- Keep short guides sized to their entries and preserve centered guides and layouts up to 1024 pixels. Update packages and documentation to 0.0.26 while retaining earlier versions.
+
 ## 0.0.25 - 2026-11-09 - desktop guides use available height
 
 - Let side guides on screens wider than 1024 CSS pixels grow within the available viewport space, keeping short lists sized to their entries and scrolling only when the entries do not fit. This side layout takes precedence over the configured desktop scroll cap.
