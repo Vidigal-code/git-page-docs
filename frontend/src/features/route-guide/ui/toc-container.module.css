@@ -60,6 +60,9 @@
 }
 
 .tocScroll {
+  box-sizing: border-box;
+  padding-inline-end: 0.75rem;
+  scrollbar-gutter: stable;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: var(--toc-scroll-max-height-desktop, min(65vh, 400px));

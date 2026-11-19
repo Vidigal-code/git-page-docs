@@ -20,7 +20,7 @@ export function buildFallbackLayoutsAndThemes(): {
     id: FALLBACK_LAYOUT_ID,
     name: "Fallback Dark",
     author: "gitpagedocs",
-    version: "0.0.26",
+    version: "0.0.27",
     mode: "dark",
     supportsLightAndDarkModes: false,
     colors: {

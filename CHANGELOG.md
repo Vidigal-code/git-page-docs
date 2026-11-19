@@ -3,6 +3,12 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.27 - 2026-11-19 - guide and source viewer scrolling
+
+- Add breathing room around the route guide scrollbar so navigation entries stay clear of the scroll track.
+- Limit the Source code content area to the available viewport height and scroll long file lists and previews inside the container.
+- Update packages and documentation to 0.0.27 while retaining earlier versions.
+
 ## 0.0.26 - 2026-11-09 - more space below the desktop header
 
 - Add a small gap between the header and sticky side guides on screens wider than 1024 CSS pixels, preserving the available viewport height and the bottom margin.

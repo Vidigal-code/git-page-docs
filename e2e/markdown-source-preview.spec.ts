@@ -96,3 +96,53 @@ for (const mode of ["dark", "light"]) {
     }
   });
 }
+
+test("long repository listings and previews scroll inside a bounded content area", async ({ page }) => {
+  const fileCount = 80;
+  const markdown = `# Repository overview\n${"\nRepository content.\n".repeat(120)}\n## End of repository overview\n`;
+  await page.route(TREE_URL, (route) => route.fulfill({
+    json: { tree: [
+      { path: "README.md", type: "blob", size: Buffer.byteLength(markdown) },
+      ...Array.from({ length: fileCount }, (_, index) => ({
+        path: `file-${index.toString().padStart(3, "0")}.ts`, type: "blob", size: 40,
+      })),
+    ] },
+  }));
+  await page.route(FILE_URL, (route) => route.fulfill({ body: markdown }));
+  await page.goto("/source-viewer/?theme=rose-dark&modetheme=dark");
+  const directory = page.getByRole("table", { name: "Files", exact: true });
+  await expect(directory).toBeVisible();
+  const overview = page.getByRole("heading", { name: "End of repository overview", exact: true });
+  await expect(overview).toBeAttached();
+
+  for (const viewport of [page.viewportSize()!, { width: 844, height: 390 }]) {
+    await page.setViewportSize(viewport);
+    const dimensions = await directory.evaluate((element) => {
+      let parent = element.parentElement;
+      while (parent && parent.tagName !== "MAIN") {
+        if (["auto", "scroll"].includes(getComputedStyle(parent).overflowY) && parent.scrollHeight > parent.clientHeight) {
+          parent.scrollTop = 0;
+          return { height: parent.clientHeight, contentHeight: parent.scrollHeight };
+        }
+        parent = parent.parentElement;
+      }
+      return null;
+    });
+    expect(dimensions).not.toBeNull();
+    expect(dimensions!.height).toBeLessThan(viewport.height);
+    expect(dimensions!.contentHeight).toBeGreaterThan(dimensions!.height);
+    const lastFile = directory.getByRole("button", { name: "file-079.ts", exact: true });
+    await directory.getByRole("button", { name: "file-078.ts", exact: true }).focus();
+    await page.keyboard.press("Tab");
+    await expect(lastFile).toBeFocused();
+    await expect(lastFile).toBeInViewport();
+    await overview.scrollIntoViewIfNeeded();
+    await expect(overview).toBeInViewport();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+  }
+  await page.getByRole("button", { name: "Code", exact: true }).click();
+  await expect(overview).toHaveCount(0);
+  await page.getByRole("button", { name: "Preview", exact: true }).click();
+  await expect(overview).toBeAttached();
+  await page.screenshot({ path: test.info().outputPath("source-viewer-bounded-scroll.png") });
+});

@@ -156,6 +156,7 @@
 }
 
 .layout {
+  --source-browser-content-max-height: 70dvh;
   display: grid;
   grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
   align-items: start;
@@ -165,6 +166,7 @@
 
 .sidebar {
   min-width: 0;
+  max-height: var(--source-browser-content-max-height);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   border-right: 1px solid var(--source-browser-line);
@@ -264,15 +266,20 @@
 
 .main {
   min-width: 0;
-  min-height: 420px;
+  min-height: min(420px, var(--source-browser-content-max-height));
+  max-height: var(--source-browser-content-max-height);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: auto;
+  padding-inline-end: 8px;
+  scrollbar-gutter: stable;
 }
 
 .panel,
 .viewer {
   min-width: 0;
+  flex-shrink: 0;
   overflow: hidden;
   border: 1px solid var(--source-browser-line);
   border-radius: var(--source-browser-radius);
