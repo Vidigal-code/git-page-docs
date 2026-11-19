@@ -60,14 +60,29 @@
 }
 
 .tocScroll {
+  --scrollbar-thumb: color-mix(in srgb, var(--text-secondary) 35%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 55%, transparent);
   box-sizing: border-box;
-  padding-inline-end: 0.75rem;
+  padding-inline-end: 1.5rem;
   scrollbar-gutter: stable;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: var(--toc-scroll-max-height-desktop, min(65vh, 400px));
   min-width: 0;
   -webkit-overflow-scrolling: touch;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  @media (forced-colors: none) {
+    .tocScroll {
+      scrollbar-width: auto;
+      scrollbar-color: auto;
+    }
+
+    .tocAside .tocScroll::-webkit-scrollbar {
+      width: 4px;
+    }
+  }
 }
 
 .content {

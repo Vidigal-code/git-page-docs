@@ -3,6 +3,12 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.28 - 2026-11-19 - lighter guide scrollbars and wider spacing
+
+- Increase the gap between document-guide entries and the scrollbar to 1.5rem (24 CSS pixels at the default root font size).
+- Use 4px guide scrollbars in Chromium/WebKit, with native thin scrollbars as the fallback, a transparent track and a translucent, theme-colored thumb.
+- Update packages and documentation to 0.0.28 while retaining earlier versions.
+
 ## 0.0.27 - 2026-11-19 - guide and source viewer scrolling
 
 - Add breathing room around the route guide scrollbar so navigation entries stay clear of the scroll track.
