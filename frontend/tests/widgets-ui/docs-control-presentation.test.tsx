@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { LuScanEye } from "react-icons/lu";
 import { withConfigDefaults } from "@/entities/docs/lib/with-config-defaults";
 import { DocsShellControls } from "@/widgets/docs-shell/ui/docs-shell-controls";
 import { useBuildDocsControlsConfig } from "@/widgets/docs-shell/model/use-build-docs-controls-config";
@@ -111,6 +113,9 @@ it("uses the active mode color and a usable fallback for an invalid icon tag", (
   expect(icon?.style.color).toBe("blue");
   expect(icon?.style.fontSize).toBe("28px");
   expect(button.querySelector("svg")).not.toBeNull();
+  const focusedEye = document.createElement("div");
+  focusedEye.innerHTML = renderToStaticMarkup(<LuScanEye />);
+  expect(button.querySelector("svg")?.innerHTML).toBe(focusedEye.querySelector("svg")?.innerHTML);
 });
 
 it("keeps focus unavailable on pages without Markdown regardless of icon settings", () => {

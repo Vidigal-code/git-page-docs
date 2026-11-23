@@ -74,6 +74,7 @@ function resolveInlineFullscreen(options: { isUrlFullscreen: boolean; enabled: b
 }
 
 interface PageContentAreaProps {
+  documentActions?: React.ReactNode;
   currentPage: LoadedPage | undefined;
   data: LoadedDocsData;
   language: LanguageCode;
@@ -99,11 +100,15 @@ export function PageContentArea(props: Readonly<PageContentAreaProps>) {
   if (!blocks) return <LegacyPageContentArea {...props} />;
   const canAccess = (config: ContentTypeRouteConfig): boolean => props.navigation.canAccessContent?.(config)
     ?? evaluateRouteAccess(config.authorization, props.data.config.auth, ANONYMOUS_SESSION).allowed;
-  if (!props.currentPage || !canAccess({ id: props.currentPage.id, authorization: props.currentPage.authorization })) return null;
-  return <div className={styles.contentBlocksStack}>{blocks.filter((block) => canAccess(block.content.config)).map((block) => (
+  if (!props.currentPage || !canAccess({ id: props.currentPage.id, authorization: props.currentPage.authorization })) return props.documentActions ?? null;
+  const visibleBlocks = blocks.filter((block) => canAccess(block.content.config));
+  if (visibleBlocks.length === 0) return props.documentActions ?? null;
+  const actionsBlock = visibleBlocks.findLast((block) => block.type === "md") ?? visibleBlocks.at(-1);
+  return <div className={styles.contentBlocksStack}>{visibleBlocks.map((block) => (
     <LegacyPageContentArea
       key={block.id}
       {...props}
+      documentActions={block === actionsBlock ? props.documentActions : undefined}
       navigation={{ ...props.navigation, canAccessPdf: canAccess }}
       instanceId={`page-${props.currentPage?.id}-${block.id}`}
       currentPage={{ id: block.content.routeId, [block.type]: {
@@ -114,6 +119,7 @@ export function PageContentArea(props: Readonly<PageContentAreaProps>) {
 }
 
 function LegacyPageContentArea({
+  documentActions,
   instanceId,
   currentPage,
   data,
@@ -202,11 +208,12 @@ function LegacyPageContentArea({
     return (
       <article className={styles.card}>
         <HighlightedMarkdown className={styles.markdown} html={fallbackHtml} theme={{ id: activeThemeId, mode: activeThemeMode ?? (isDarkMode ? "dark" : "light") }} />
+        {documentActions}
       </article>
     );
   }
 
-  if (types.length === 0) return null;
+  if (types.length === 0) return documentActions ?? null;
 
   const langmenu = data.config.site.langmenu;
   // Every content type pages through its browse-all list with the same prev/next labels.
@@ -263,6 +270,7 @@ function LegacyPageContentArea({
     md: currentMd ? (
       <MdContainer
         key="md"
+        documentActions={documentActions}
         pagination={paginationFor("md")}
         instanceId={instanceId}
         html={currentMd.markdownByLanguage[language] ?? ""}
@@ -379,5 +387,8 @@ function LegacyPageContentArea({
     ) : null,
   };
 
-  return <div className={styles.contentBlocksStack}>{types.map((type) => blocks[type])}</div>;
+  return <>
+    <div className={styles.contentBlocksStack}>{types.map((type) => blocks[type])}</div>
+    {(!currentMd || !types.includes("md")) && documentActions}
+  </>;
 }

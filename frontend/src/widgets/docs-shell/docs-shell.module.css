@@ -557,13 +557,19 @@
   max-width: 100%;
 }
 
+.fullscreenButtonInside,
+.fullscreenButton,
+.documentActionButton {
+  --document-action-size: 36px;
+}
+
 .fullscreenButtonInside {
   position: absolute;
   top: 8px;
   right: 8px;
   z-index: 5;
-  width: 36px;
-  height: 36px;
+  width: var(--document-action-size);
+  height: var(--document-action-size);
   padding: 0;
   border: 1px solid var(--card-border);
   border-radius: 8px;
@@ -577,9 +583,10 @@
   transition: border-color 0.2s, color 0.2s;
 }
 
-.fullscreenButton {
-  width: 36px;
-  height: 36px;
+.fullscreenButton,
+.documentActionButton {
+  width: var(--document-action-size);
+  height: var(--document-action-size);
   padding: 0;
   border: 1px solid var(--card-border);
   border-radius: 8px;
@@ -594,6 +601,7 @@
 }
 
 .fullscreenButton:hover,
+.documentActionButton:hover,
 .fullscreenButtonInside:hover {
   border-color: var(--secondary);
   color: var(--secondary);
@@ -894,11 +902,13 @@ dialog.contentContainerFullscreen {
 }
 
 .footerActions {
-  margin-top: 18px;
+  --document-action-gap: 6px;
+  margin-top: 8px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: var(--document-action-gap);
 }
 
 .footerActions[data-position="left"] {
@@ -917,15 +927,33 @@ dialog.contentContainerFullscreen {
   display: flex;
   justify-content: center;
   min-width: 0;
-  gap: 12px;
+  gap: var(--document-action-gap);
 }
 
-.footerNavigation .button {
-  min-width: 44px;
-  min-height: 44px;
+.documentActionButton {
+  min-width: var(--document-action-size);
+  width: auto;
   height: auto;
+  padding: 6px 8px;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.documentActionIcon {
+  width: var(--document-action-size);
+  height: var(--document-action-size);
+  padding: 0;
+  flex: 0 0 var(--document-action-size);
+}
+
+.documentActionButton:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 3px;
+}
+
+.documentActionButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .footerBackToTop {

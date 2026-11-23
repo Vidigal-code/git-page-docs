@@ -3,6 +3,13 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.29 - 2026-11-23 - compact Markdown document controls
+
+- Place Previous, Next and Back to top inside the Markdown container, preserving left, center and right alignment.
+- Match the compact document-action buttons and reserve a small gap in the content flow so controls never cover Markdown text or other content.
+- Use LuScanEye for the focus-mode control while preserving configured icon overrides.
+- Update packages and documentation to 0.0.29 while retaining earlier versions.
+
 ## 0.0.28 - 2026-11-19 - lighter guide scrollbars and wider spacing
 
 - Increase the gap between document-guide entries and the scrollbar to 1.5rem (24 CSS pixels at the default root font size).

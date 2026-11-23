@@ -6,7 +6,7 @@ import { ThemeModeToggle } from "@/features/theme-switcher";
 import { ThemeSelector } from "@/features/theme-selector";
 import { VersionSelector } from "@/features/version-selector";
 import { ControlIcon } from "@/shared/ui/control-icon";
-import { MdFullscreen } from "@/shared/ui/fallback-icons";
+import { LuScanEye } from "@/shared/ui/fallback-icons";
 import type {
   DocsShellControlsBaseProps,
   DocsShellControlsAudioProps,
@@ -139,7 +139,7 @@ export function DocsShellControls({
           aria-label={focusModeLabel}
           title={focusModeLabel}
         >
-          {focusModeIcon ? <ControlIcon icon={focusModeIcon} fallback={<MdFullscreen aria-hidden />} /> : focusModeLabel}
+          {focusModeIcon ? <ControlIcon icon={focusModeIcon} fallback={<LuScanEye aria-hidden />} /> : focusModeLabel}
         </button>
       )}
       {activeNavigation && <QuickNavigationTrigger className={quickNavigationIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} label={quickNavLabel} icon={quickNavigationIcon} onClick={onOpenQuickNavigation} />}

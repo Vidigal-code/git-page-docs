@@ -17,6 +17,7 @@ import styles from "../../docs-shell.module.css";
 const VALID_TOC_POSITIONS: ReadonlySet<TocPosition> = new Set<TocPosition>(["center", "left", "right"]);
 
 interface MdContainerProps extends RouteContainerFrameProps {
+  documentActions?: React.ReactNode;
   html: string;
   instanceId?: string;
   language: LanguageCode;
@@ -133,6 +134,7 @@ export function MdContainer(props: Readonly<MdContainerProps>): ReactElement {
       <article className={styles.card}>
         {contentActions && <div className={styles.markdownActions}>{contentActions}</div>}
         {markdownContent}
+        {!contentOnly && !options?.contentOnly && props.documentActions}
       </article>
     );
     const hideToc = contentOnly || options?.contentOnly;

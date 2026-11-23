@@ -45,7 +45,7 @@ it("generates icons for header controls, PDF actions and document navigation by 
         tag: "LuGitBranch",
       },
       FocusMode: {
-        tag: "LuBookOpen",
+        tag: "LuScanEye",
       },
       PdfDownload: {
         tag: "LuDownload",

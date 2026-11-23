@@ -80,6 +80,29 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
   const previousIcon = resolveControlIcon(data.config.site, { name: "DocumentPrevious", mode: activeLayoutMode ?? "dark" });
   const nextIcon = resolveControlIcon(data.config.site, { name: "DocumentNext", mode: activeLayoutMode ?? "dark" });
 
+  const documentActions = (
+    <div className={styles.footerActions} data-position={data.config.site.documentNavigation?.position}>
+      {linearNavigationEntries.length > 1 && (
+        <div className={styles.footerNavigation}>
+          <button type="button" className={previousIcon ? `${styles.documentActionButton} ${styles.documentActionIcon}` : styles.documentActionButton} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious} aria-label={labels.previousLabel} title={labels.previousLabel}>
+            {previousIcon ? <ControlIcon icon={previousIcon} fallback={<FiChevronLeft aria-hidden />} /> : labels.previousLabel}
+          </button>
+          <button type="button" className={nextIcon ? `${styles.documentActionButton} ${styles.documentActionIcon}` : styles.documentActionButton} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext} aria-label={labels.nextLabel} title={labels.nextLabel}>
+            {nextIcon ? <ControlIcon icon={nextIcon} fallback={<FiChevronRight aria-hidden />} /> : labels.nextLabel}
+          </button>
+        </div>
+      )}
+      <BackToTop
+        label={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "backToTop", "Back to top")}
+        targetId={mainId}
+        enabled={data.config.site.backToTop?.enabled}
+        minPageHeightViewports={data.config.site.backToTop?.minPageHeightViewports}
+        className={styles.footerBackToTop}
+        buttonClassName={`${styles.documentActionButton} ${styles.documentActionIcon}`}
+      />
+    </div>
+  );
+
   return (
     <div className={styles.contentArea}>
       <DocsShellHeader
@@ -102,6 +125,7 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
       <main id={mainId} className={styles.main} tabIndex={-1}>
         {props.accessibilityControls}
         <PageContentArea
+          documentActions={documentActions}
           currentPage={currentPage}
           data={data}
           language={language}
@@ -114,25 +138,6 @@ export function DocsShellMainContent(props: Readonly<DocsShellMainContentProps>)
           onFullscreenOpen={onFullscreenOpen}
           onFullscreenClose={onFullscreenClose}
         />
-        <div className={styles.footerActions} data-position={data.config.site.documentNavigation?.position}>
-          {linearNavigationEntries.length > 1 && (
-            <div className={styles.footerNavigation}>
-              <button type="button" className={previousIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(-1)} disabled={!canGoPrevious} aria-label={labels.previousLabel} title={labels.previousLabel}>
-                {previousIcon ? <ControlIcon icon={previousIcon} fallback={<FiChevronLeft aria-hidden />} /> : labels.previousLabel}
-              </button>
-              <button type="button" className={nextIcon ? `${styles.button} ${styles.modeIconButton}` : styles.button} onClick={() => goToLinearNavigation(1)} disabled={!canGoNext} aria-label={labels.nextLabel} title={labels.nextLabel}>
-                {nextIcon ? <ControlIcon icon={nextIcon} fallback={<FiChevronRight aria-hidden />} /> : labels.nextLabel}
-              </button>
-            </div>
-          )}
-          <BackToTop
-            label={getLangMenuLabelFromMenu(data.config.site.langmenu, language, "backToTop", "Back to top")}
-            targetId={mainId}
-            enabled={data.config.site.backToTop?.enabled}
-            minPageHeightViewports={data.config.site.backToTop?.minPageHeightViewports}
-            className={styles.footerBackToTop}
-          />
-        </div>
       </main>
       {footerEnabled && (
         <SiteFooter

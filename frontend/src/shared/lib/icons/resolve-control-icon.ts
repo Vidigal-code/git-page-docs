@@ -6,7 +6,7 @@ const CONTROL_ICON_TAGS = {
   LanguageSelector: "FiGlobe",
   ThemeSelector: "BsSunFill",
   VersionSelector: "FiGitBranch",
-  FocusMode: "MdFullscreen",
+  FocusMode: "LuScanEye",
   PdfDownload: "FiDownload",
   PdfOpenInNewTab: "FiExternalLink",
   DocumentPrevious: "FiChevronLeft",

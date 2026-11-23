@@ -99,7 +99,7 @@ export function getDefaultSiteConfig(projectLink, languageToggles = buildLanguag
         IconVersionSelectorReactIconesTagColorLight: "currentColor",
         IconVersionSelectorReactIconesTagSize: "22px",
         IconFocusModeReactIcones: true,
-        IconFocusModeReactIconesTag: "LuBookOpen",
+        IconFocusModeReactIconesTag: "LuScanEye",
         IconFocusModeReactIconesTagColorDark: "currentColor",
         IconFocusModeReactIconesTagColorLight: "currentColor",
         IconFocusModeReactIconesTagSize: "22px",
