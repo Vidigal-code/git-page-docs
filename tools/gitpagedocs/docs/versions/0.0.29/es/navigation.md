@@ -175,6 +175,8 @@ Las URLs versionadas utilizan `/v/<version>/`; `?lang=pt` elige el idioma y `?id
 
 Los botones anterior/siguiente del pie usan `site.icons.DocumentPrevious` (`LuChevronLeft`) y `site.icons.DocumentNext` (`LuChevronRight`) por defecto. Define `reactIcon: false` en cualquier entrada para mostrar su texto traducido; cada entrada también acepta `tag`, `size`, `colorDark` y `colorLight`. La apariencia no cambia la navegación: el pie aparece cuando hay más de un destino disponible en el menú, y la dirección no disponible permanece desactivada en los extremos.
 
+El grupo de navegación queda dentro del contenedor Markdown, debajo del documento con 8px de separación. Sigue `site.documentNavigation.position` (`left`, `center` o `right`) e incluye Volver arriba cuando `site.backToTop` lo permite. Con varios bloques Markdown, el último bloque visible contiene el grupo; las páginas sin Markdown visible conservan los controles después de su contenido. Los controles de sección y documento del modo foco siguen separados.
+
 Prueba un menú nuevo desde la barra lateral, por URL directa y en cada idioma habilitado; confirma que el destino existe y está permitido para el lector actual.
 
 > Versión: 0.0.29

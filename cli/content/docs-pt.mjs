@@ -250,6 +250,8 @@ Consulte **Referência da CLI** para comandos, flags, exemplos e compatibilidade
 
 O config da versão pode renderizar um container **Código fonte** via \`routes-source-viewer\` e \`menus-header-source-viewer\`. O viewer lê a árvore do repositório no GitHub em tempo de execução e aplica o tema atual da documentação.
 
+Desde a 0.0.27, o painel principal de Código fonte tem altura máxima de 70% da altura dinâmica da janela. Listas extensas de diretórios, prévias do README e conteúdos de arquivos rolam dentro desse painel; a barra lateral mantém sua própria área de rolagem. O código preserva a rolagem horizontal para linhas longas. Esse comportamento vale para rotas source-viewer configuradas e não adiciona uma rota automaticamente.
+
 - Árvore do repositório a partir de \`source-viewer-path\`; a branch padrão é \`main\`
 - Navegação por pastas e filtro de arquivos
 - Listagem de diretórios no estilo GitHub
@@ -340,6 +342,8 @@ Configure o grupo de botões do rodapé em \`gitpagedocs/config.json\`:
 
 \`position\` aceita \`left\`, \`center\` ou \`right\`; o padrão é \`center\` (centro). Valores ausentes ou inválidos usam esse padrão. Anterior, Próximo e Voltar ao topo permanecem juntos nessa ordem, com o mesmo alinhamento no desktop e no celular. Essa opção posiciona o grupo; \`site.backToTop\` continua determinando quando a seta aparece. Ela não reposiciona a seta do guia de introdução.
 
+Desde a 0.0.29, o grupo fica dentro do contêiner Markdown, após seu conteúdo, com 8px de separação no fluxo normal para não cobrir texto, tabelas ou código. Os botões com ícones seguem o padrão de copiar/baixar: 36 × 36 pixels CSS no desktop, com 6px entre botões. Dispositivos com ponteiro de toque usam altura mínima de 44px; rótulos de texto podem expandir os botões. Em páginas com vários blocos Markdown, o grupo fica no último bloco Markdown visível. Sem Markdown visível, os controles permanecem após o conteúdo da página, em vez de desaparecerem.
+
 ## Voltar ao topo em páginas longas
 
 A seta de voltar ao topo nas páginas de documentação e em \`/introduction-guide\` é controlada por \`site.backToTop\` em \`gitpagedocs/config.json\`:
@@ -367,7 +371,7 @@ Em \`gitpagedocs/config.json\`, estas entradas de \`site.icons\` configuram idio
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "reactIcon": true, "tag": "LuScanEye", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "VersionSelector": {
@@ -1079,11 +1083,15 @@ URLs versionadas usam \`/v/<version>/\`; \`?lang=pt\` escolhe o idioma e \`?id=1
 
 Os botões Voltar/Próximo do rodapé usam \`site.icons.DocumentPrevious\` (\`LuChevronLeft\`) e \`site.icons.DocumentNext\` (\`LuChevronRight\`) por padrão. Defina \`reactIcon: false\` em qualquer entrada para exibir seu texto traduzido; cada entrada também aceita \`tag\`, \`size\`, \`colorDark\` e \`colorLight\`. A aparência não muda a navegação: o rodapé aparece quando há mais de um destino disponível no menu, e a direção indisponível continua desabilitada nas extremidades.
 
+O grupo de navegação fica dentro do contêiner Markdown, abaixo do documento com 8px de separação. Ele segue \`site.documentNavigation.position\` (\`left\`, \`center\` ou \`right\`) e inclui Voltar ao topo quando \`site.backToTop\` permite. Com vários blocos Markdown, o último bloco visível contém o grupo; páginas sem Markdown visível mantêm os controles após seu conteúdo. Os controles de seção e documento do modo foco continuam separados.
+
 Teste um menu novo pela lateral, por URL direta e em cada idioma habilitado; confirme que o destino existe e é permitido para o leitor atual.
 `,
     focusMode: `# Modo foco
 
 O modo foco abre o documento Markdown atual em um diálogo de leitura. Ative-o com \`site.FocusMode\`; o controle aparece apenas para uma página Markdown real. \`site.icons.FocusMode\` muda a aparência em ícone/texto e não habilita ou desabilita o recurso.
+
+O ícone padrão do modo foco é \`LuScanEye\`, um olho dentro de uma moldura que identifica a leitura focada e se distingue do ícone de expansão da tela cheia. O botão mantém seu nome acessível traduzido. Ícones personalizados existentes e controles em texto com \`reactIcon: false\` continuam disponíveis; a mudança do padrão não substitui um override explícito de \`site.icons.FocusMode.tag\`.
 
 ## Configurar os controles
 

@@ -47,7 +47,7 @@ El siguiente JSON completo es un ejemplo mínimo de `gitpagedocs/config.json`. P
         "tag": "LuGitBranch"
       },
       "FocusMode": {
-        "tag": "LuBookOpen"
+        "tag": "LuScanEye"
       },
       "QuickNavigation": {
         "tag": "LuSearch"

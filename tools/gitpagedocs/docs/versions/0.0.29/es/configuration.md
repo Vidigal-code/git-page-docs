@@ -46,6 +46,8 @@ Configura el grupo de botones al pie del documento en `gitpagedocs/config.json`:
 
 `position` admite `left`, `center` o `right`; el valor por defecto es `center` (centro). Los valores ausentes o no válidos usan ese valor. Anterior, Siguiente y Volver arriba permanecen juntos en este orden, con la misma alineación en escritorio y móvil. Esta opción posiciona el grupo; `site.backToTop` sigue determinando cuándo aparece la flecha. No cambia la posición de la flecha de la guía de introducción.
 
+Desde 0.0.29, el grupo queda dentro del contenedor Markdown, después de su contenido, con 8px de separación en el flujo normal para no cubrir texto, tablas ni código. Los botones con iconos siguen el estilo de copiar/descargar: 36 × 36 píxeles CSS en escritorio, con 6px entre botones. Los dispositivos con puntero táctil usan una altura mínima de 44px; las etiquetas de texto pueden ampliar los botones. En páginas con varios bloques Markdown, el grupo queda en el último bloque Markdown visible. Sin Markdown visible, los controles permanecen después del contenido de la página, en lugar de desaparecer.
+
 ## Volver arriba en páginas largas
 
 La flecha para volver arriba en las páginas de documentación y en `/introduction-guide` se controla mediante `site.backToTop` en `gitpagedocs/config.json`:
@@ -73,7 +75,7 @@ En `gitpagedocs/config.json`, estas entradas de `site.icons` configuran idioma, 
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "reactIcon": true, "tag": "LuScanEye", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "VersionSelector": {

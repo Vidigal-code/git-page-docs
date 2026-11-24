@@ -4,6 +4,8 @@ La guía del documento es el índice del Markdown actual. Es independiente del m
 
 En pantallas de escritorio con más de 1024 píxeles CSS, la guía lateral termina después de su última entrada, sin extenderse hasta el final del artículo. Desde 0.0.25, puede crecer hasta la altura disponible de la ventana debajo de la cabecera antes de necesitar desplazamiento interno. Este diseño lateral tiene prioridad sobre `TocScrollMaxHeightDesktop`; la guía centrada encima del contenido y los diseños de hasta 1024 píxeles mantienen sus reglas de tamaño anteriores. Una pequeña barra con el color de la entrada activa sigue la sección marcada al desplazarse. El indicador utiliza el seguimiento de secciones existente, sin animación continua.
 
+Desde 0.0.28, el área de desplazamiento reserva 1.5rem entre las entradas de la guía y su barra de desplazamiento (24 píxeles CSS con la fuente raíz predeterminada). Los navegadores compatibles con `::-webkit-scrollbar` usan una barra de 4px con pista transparente e indicador discreto del color del tema cuando los colores forzados están desactivados. Los demás navegadores conservan la barra nativa fina según su compatibilidad; los ajustes de color de accesibilidad tienen prioridad.
+
 ## Selecciona los elementos indexados
 
 Desde 0.0.21, `RouteGuideTags` selecciona qué tipos de elementos HTML se convierten en entradas automáticas después de renderizar Markdown. Este sitio usa explícitamente `h1`, `h2` y `h3` para facilitar la navegación de referencias extensas. Respeta la escritura y las mayúsculas de cada campo JSON.

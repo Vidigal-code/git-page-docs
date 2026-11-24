@@ -251,6 +251,8 @@ See **CLI reference** for all commands, flags, examples and compatibility behavi
 
 The version config can render a **Source code** container through \`routes-source-viewer\` and \`menus-header-source-viewer\`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
 
+Since 0.0.27, the main Source code pane has a maximum height of 70% of the dynamic viewport height. Long directory listings, README previews and file contents scroll inside this pane; the sidebar keeps its own scroll area. Code retains horizontal scrolling for long lines. This behavior applies to configured source-viewer routes and does not add a route automatically.
+
 - Repository tree from \`source-viewer-path\`; branch defaults to \`main\`
 - Folder navigation and file filtering
 - GitHub-style directory listing
@@ -447,6 +449,8 @@ Configure the document-footer group in \`gitpagedocs/config.json\`:
 
 \`position\` accepts \`left\`, \`center\` or \`right\`; the default is \`center\`. Omitted or invalid values use that default. Previous, Next and Back to top stay together in this order, with the same alignment on desktop and mobile. This setting positions the group; \`site.backToTop\` still determines whether the top arrow is visible. It does not reposition the introduction-guide arrow.
 
+Since 0.0.29, the group sits inside the Markdown container after its content, with 8px of separation in normal flow so text, tables and code remain unobstructed. Icon buttons share the copy/download styling: 36 × 36 CSS pixels on desktop, with 6px between buttons. Coarse-pointer devices use a minimum button height of 44px; text labels can expand the buttons. Pages with multiple Markdown blocks place the group in the last visible Markdown block. If no Markdown is visible, the controls remain after the page content instead of disappearing.
+
 ## Back to top on long pages
 
 The back-to-top arrow on documentation pages and \`/introduction-guide\` is controlled by \`site.backToTop\` in \`gitpagedocs/config.json\`:
@@ -491,7 +495,7 @@ In \`gitpagedocs/config.json\`, these \`site.icons\` entries configure the langu
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "reactIcon": true, "tag": "LuScanEye", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {
@@ -1127,11 +1131,15 @@ Versioned URLs use \`/v/<version>/\`; \`?lang=pt\` selects a language and \`?id=
 
 Footer previous/next buttons use \`site.icons.DocumentPrevious\` (\`LuChevronLeft\`) and \`site.icons.DocumentNext\` (\`LuChevronRight\`) by default. Set \`reactIcon: false\` on either entry to show its translated text; each entry also accepts \`tag\`, \`size\`, \`colorDark\` and \`colorLight\`. Appearance does not change navigation: the footer appears when more than one menu destination is available, and the unavailable direction stays disabled at the ends.
 
+The navigation group is inside the Markdown container, below the document with an 8px gap. It follows \`site.documentNavigation.position\` (\`left\`, \`center\` or \`right\`) and includes Back to top when \`site.backToTop\` allows it. For multiple Markdown blocks, the last visible block owns the group; pages without visible Markdown keep the controls after their content. Focus-mode section and document controls remain separate.
+
 Test a new menu from the sidebar, by direct URL and in each enabled language; verify the destination exists and is allowed for the current reader.
 `,
     focusMode: `# Focus mode
 
 Focus mode opens the current Markdown document in a reading dialog. Enable it with \`site.FocusMode\`; the control is available only for a real Markdown page. \`site.icons.FocusMode\` changes its icon/text appearance and does not enable or disable the feature.
+
+The default focus icon is \`LuScanEye\`, an eye inside a frame that identifies focused reading separately from the fullscreen expand icon. The button retains its translated accessible name. Existing custom icons and \`reactIcon: false\` text controls remain supported; changing the default does not replace an explicit \`site.icons.FocusMode.tag\` override.
 
 ## Configure the controls
 

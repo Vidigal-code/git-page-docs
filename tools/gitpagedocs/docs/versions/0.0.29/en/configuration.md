@@ -32,6 +32,8 @@ Configure the document-footer group in `gitpagedocs/config.json`:
 
 `position` accepts `left`, `center` or `right`; the default is `center`. Omitted or invalid values use that default. Previous, Next and Back to top stay together in this order, with the same alignment on desktop and mobile. This setting positions the group; `site.backToTop` still determines whether the top arrow is visible. It does not reposition the introduction-guide arrow.
 
+Since 0.0.29, the group sits inside the Markdown container after its content, with 8px of separation in normal flow so text, tables and code remain unobstructed. Icon buttons share the copy/download styling: 36 × 36 CSS pixels on desktop, with 6px between buttons. Coarse-pointer devices use a minimum button height of 44px; text labels can expand the buttons. Pages with multiple Markdown blocks place the group in the last visible Markdown block. If no Markdown is visible, the controls remain after the page content instead of disappearing.
+
 ## Back to top on long pages
 
 The back-to-top arrow on documentation pages and `/introduction-guide` is controlled by `site.backToTop` in `gitpagedocs/config.json`:
@@ -76,7 +78,7 @@ In `gitpagedocs/config.json`, these `site.icons` entries configure the language 
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "reactIcon": true, "tag": "LuScanEye", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "QuickNavigation": {

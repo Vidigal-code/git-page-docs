@@ -175,6 +175,8 @@ Versioned URLs use `/v/<version>/`; `?lang=pt` selects a language and `?id=101` 
 
 Footer previous/next buttons use `site.icons.DocumentPrevious` (`LuChevronLeft`) and `site.icons.DocumentNext` (`LuChevronRight`) by default. Set `reactIcon: false` on either entry to show its translated text; each entry also accepts `tag`, `size`, `colorDark` and `colorLight`. Appearance does not change navigation: the footer appears when more than one menu destination is available, and the unavailable direction stays disabled at the ends.
 
+The navigation group is inside the Markdown container, below the document with an 8px gap. It follows `site.documentNavigation.position` (`left`, `center` or `right`) and includes Back to top when `site.backToTop` allows it. For multiple Markdown blocks, the last visible block owns the group; pages without visible Markdown keep the controls after their content. Focus-mode section and document controls remain separate.
+
 Test a new menu from the sidebar, by direct URL and in each enabled language; verify the destination exists and is allowed for the current reader.
 
 > Version: 0.0.29

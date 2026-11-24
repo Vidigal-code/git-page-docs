@@ -5,6 +5,8 @@ The document guide is the outline of the current Markdown document. It is separa
 
 On desktop screens wider than 1024 CSS pixels, the side guide ends after its last entry instead of stretching to the article height. Since 0.0.25, it can grow to the available viewport height below the header before its entries need internal scrolling. This side layout takes precedence over \`TocScrollMaxHeightDesktop\`; centered guides above the content and layouts at 1024 pixels and below retain their previous sizing rules. A small bar in the active entry's theme color follows the section marked while scrolling. The indicator uses the existing section tracking without continuous animation.
 
+Since 0.0.28, the scroll area reserves 1.5rem between the guide entries and its scrollbar (24 CSS pixels at the default root font size). Browsers supporting \`::-webkit-scrollbar\` use a 4px scrollbar with a transparent track and a subtle theme-colored thumb when forced colors are off. Other browsers retain their supported native thin scrollbar; accessibility color settings take precedence.
+
 ## Select the indexed elements
 
 Starting with 0.0.21, \`RouteGuideTags\` chooses which HTML element types become automatic guide entries after Markdown is rendered. This site explicitly uses \`h1\`, \`h2\` and \`h3\` to keep long reference pages navigable. The original spelling and capitalization of each JSON field matter.
@@ -93,6 +95,8 @@ O guia do documento é o índice do Markdown atual. Ele é separado do menu do s
 
 Em telas desktop com mais de 1024 pixels CSS, o guia lateral termina após o último item, sem se estender até o fim do artigo. Desde a 0.0.25, ele pode crescer até a altura disponível da janela abaixo do cabeçalho antes de precisar de rolagem interna. Esse layout lateral tem prioridade sobre \`TocScrollMaxHeightDesktop\`; o guia centralizado acima do conteúdo e os layouts de até 1024 pixels mantêm suas regras anteriores de dimensionamento. Uma pequena barra na cor do item ativo acompanha a seção marcada durante a rolagem. O indicador usa o acompanhamento de seções existente, sem animação contínua.
 
+Desde a 0.0.28, a área de rolagem reserva 1.5rem entre as entradas do guia e a barra de rolagem (24 pixels CSS com a fonte raiz padrão). Navegadores com suporte a \`::-webkit-scrollbar\` usam uma barra de 4px, trilho transparente e indicador discreto na cor do tema quando as cores forçadas estão desativadas. Os demais navegadores mantêm a barra nativa fina conforme seu suporte; as configurações de cores de acessibilidade têm prioridade.
+
 ## Selecione os elementos indexados
 
 A partir da 0.0.21, \`RouteGuideTags\` escolhe quais tipos de elementos HTML viram entradas automáticas do guia depois da renderização do Markdown. Este site usa explicitamente \`h1\`, \`h2\` e \`h3\` para facilitar a navegação em referências extensas. Preserve a grafia e as maiúsculas de cada campo JSON.
@@ -180,6 +184,8 @@ Selecionar um contêiner e seus filhos pode criar várias entradas para o mesmo 
 La guía del documento es el índice del Markdown actual. Es independiente del menú del sitio, de las rutas de navegación y de la guía introductoria de GitPageDocs. Configúrala en el elemento correspondiente de \`routes-md\`, dentro de la configuración de la versión.
 
 En pantallas de escritorio con más de 1024 píxeles CSS, la guía lateral termina después de su última entrada, sin extenderse hasta el final del artículo. Desde 0.0.25, puede crecer hasta la altura disponible de la ventana debajo de la cabecera antes de necesitar desplazamiento interno. Este diseño lateral tiene prioridad sobre \`TocScrollMaxHeightDesktop\`; la guía centrada encima del contenido y los diseños de hasta 1024 píxeles mantienen sus reglas de tamaño anteriores. Una pequeña barra con el color de la entrada activa sigue la sección marcada al desplazarse. El indicador utiliza el seguimiento de secciones existente, sin animación continua.
+
+Desde 0.0.28, el área de desplazamiento reserva 1.5rem entre las entradas de la guía y su barra de desplazamiento (24 píxeles CSS con la fuente raíz predeterminada). Los navegadores compatibles con \`::-webkit-scrollbar\` usan una barra de 4px con pista transparente e indicador discreto del color del tema cuando los colores forzados están desactivados. Los demás navegadores conservan la barra nativa fina según su compatibilidad; los ajustes de color de accesibilidad tienen prioridad.
 
 ## Selecciona los elementos indexados
 

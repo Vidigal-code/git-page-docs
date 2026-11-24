@@ -26,6 +26,8 @@ See **CLI reference** for all commands, flags, examples and compatibility behavi
 
 The version config can render a **Source code** container through `routes-source-viewer` and `menus-header-source-viewer`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
 
+Since 0.0.27, the main Source code pane has a maximum height of 70% of the dynamic viewport height. Long directory listings, README previews and file contents scroll inside this pane; the sidebar keeps its own scroll area. Code retains horizontal scrolling for long lines. This behavior applies to configured source-viewer routes and does not add a route automatically.
+
 - Repository tree from `source-viewer-path`; branch defaults to `main`
 - Folder navigation and file filtering
 - GitHub-style directory listing

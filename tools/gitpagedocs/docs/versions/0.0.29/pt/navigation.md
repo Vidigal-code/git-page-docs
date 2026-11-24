@@ -175,6 +175,8 @@ URLs versionadas usam `/v/<version>/`; `?lang=pt` escolhe o idioma e `?id=101` e
 
 Os botões Voltar/Próximo do rodapé usam `site.icons.DocumentPrevious` (`LuChevronLeft`) e `site.icons.DocumentNext` (`LuChevronRight`) por padrão. Defina `reactIcon: false` em qualquer entrada para exibir seu texto traduzido; cada entrada também aceita `tag`, `size`, `colorDark` e `colorLight`. A aparência não muda a navegação: o rodapé aparece quando há mais de um destino disponível no menu, e a direção indisponível continua desabilitada nas extremidades.
 
+O grupo de navegação fica dentro do contêiner Markdown, abaixo do documento com 8px de separação. Ele segue `site.documentNavigation.position` (`left`, `center` ou `right`) e inclui Voltar ao topo quando `site.backToTop` permite. Com vários blocos Markdown, o último bloco visível contém o grupo; páginas sem Markdown visível mantêm os controles após seu conteúdo. Os controles de seção e documento do modo foco continuam separados.
+
 Teste um menu novo pela lateral, por URL direta e em cada idioma habilitado; confirme que o destino existe e é permitido para o leitor atual.
 
 > Versão: 0.0.29

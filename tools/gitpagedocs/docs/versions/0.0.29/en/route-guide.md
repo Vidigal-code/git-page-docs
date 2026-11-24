@@ -4,6 +4,8 @@ The document guide is the outline of the current Markdown document. It is separa
 
 On desktop screens wider than 1024 CSS pixels, the side guide ends after its last entry instead of stretching to the article height. Since 0.0.25, it can grow to the available viewport height below the header before its entries need internal scrolling. This side layout takes precedence over `TocScrollMaxHeightDesktop`; centered guides above the content and layouts at 1024 pixels and below retain their previous sizing rules. A small bar in the active entry's theme color follows the section marked while scrolling. The indicator uses the existing section tracking without continuous animation.
 
+Since 0.0.28, the scroll area reserves 1.5rem between the guide entries and its scrollbar (24 CSS pixels at the default root font size). Browsers supporting `::-webkit-scrollbar` use a 4px scrollbar with a transparent track and a subtle theme-colored thumb when forced colors are off. Other browsers retain their supported native thin scrollbar; accessibility color settings take precedence.
+
 ## Select the indexed elements
 
 Starting with 0.0.21, `RouteGuideTags` chooses which HTML element types become automatic guide entries after Markdown is rendered. This site explicitly uses `h1`, `h2` and `h3` to keep long reference pages navigable. The original spelling and capitalization of each JSON field matter.

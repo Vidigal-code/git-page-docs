@@ -26,6 +26,8 @@ Consulta **Referencia de la CLI** para comandos, flags, ejemplos y compatibilida
 
 El config de versión puede renderizar un contenedor **Código fuente** vía `routes-source-viewer` y `menus-header-source-viewer`. El viewer lee el árbol del repositorio en GitHub en tiempo de ejecución y aplica el tema actual de la documentación.
 
+Desde 0.0.27, el panel principal de Código fuente tiene una altura máxima del 70% de la altura dinámica de la ventana. Las listas extensas de directorios, las vistas previas del README y el contenido de los archivos se desplazan dentro de este panel; la barra lateral conserva su propia área de desplazamiento. El código mantiene el desplazamiento horizontal para líneas largas. Este comportamiento se aplica a rutas source-viewer configuradas y no añade una ruta automáticamente.
+
 - Árbol del repositorio desde `source-viewer-path`; la branch por defecto es `main`
 - Navegación por carpetas y filtro de archivos
 - Listado de directorios estilo GitHub

@@ -2,6 +2,8 @@
 
 El modo foco abre el documento Markdown actual en un diálogo de lectura. Actívalo con `site.FocusMode`; el control solo está disponible para una página Markdown real. `site.icons.FocusMode` cambia la apariencia de icono/texto y no activa ni desactiva la función.
 
+El icono predeterminado del modo foco es `LuScanEye`, un ojo dentro de un marco que identifica la lectura enfocada y se distingue del icono de expansión de pantalla completa. El botón conserva su nombre accesible traducido. Los iconos personalizados existentes y los controles de texto con `reactIcon: false` siguen disponibles; el cambio del valor predeterminado no sustituye una personalización explícita de `site.icons.FocusMode.tag`.
+
 ## Configurar los controles
 
 Combina este fragmento con `gitpagedocs/config.json`:

@@ -46,6 +46,8 @@ Configure o grupo de botões do rodapé em `gitpagedocs/config.json`:
 
 `position` aceita `left`, `center` ou `right`; o padrão é `center` (centro). Valores ausentes ou inválidos usam esse padrão. Anterior, Próximo e Voltar ao topo permanecem juntos nessa ordem, com o mesmo alinhamento no desktop e no celular. Essa opção posiciona o grupo; `site.backToTop` continua determinando quando a seta aparece. Ela não reposiciona a seta do guia de introdução.
 
+Desde a 0.0.29, o grupo fica dentro do contêiner Markdown, após seu conteúdo, com 8px de separação no fluxo normal para não cobrir texto, tabelas ou código. Os botões com ícones seguem o padrão de copiar/baixar: 36 × 36 pixels CSS no desktop, com 6px entre botões. Dispositivos com ponteiro de toque usam altura mínima de 44px; rótulos de texto podem expandir os botões. Em páginas com vários blocos Markdown, o grupo fica no último bloco Markdown visível. Sem Markdown visível, os controles permanecem após o conteúdo da página, em vez de desaparecerem.
+
 ## Voltar ao topo em páginas longas
 
 A seta de voltar ao topo nas páginas de documentação e em `/introduction-guide` é controlada por `site.backToTop` em `gitpagedocs/config.json`:
@@ -73,7 +75,7 @@ Em `gitpagedocs/config.json`, estas entradas de `site.icons` configuram idioma, 
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "FocusMode": {
-        "reactIcon": true, "tag": "LuBookOpen", "size": "22px",
+        "reactIcon": true, "tag": "LuScanEye", "size": "22px",
         "colorDark": "currentColor", "colorLight": "currentColor"
       },
       "VersionSelector": {

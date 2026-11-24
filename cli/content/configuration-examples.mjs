@@ -44,7 +44,7 @@ export const RECIPE_ROOT_JSON = JSON.stringify({
       LanguageSelector: { tag: "SiGoogletranslate" },
       ThemeSelector: { tag: "LuPencil" },
       VersionSelector: { tag: "LuGitBranch" },
-      FocusMode: { tag: "LuBookOpen" },
+      FocusMode: { tag: "LuScanEye" },
       QuickNavigation: { tag: "LuSearch" },
       PdfDownload: { tag: "LuDownload" },
       PdfOpenInNewTab: { tag: "LuExternalLink" },

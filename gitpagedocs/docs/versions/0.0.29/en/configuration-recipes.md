@@ -47,7 +47,7 @@ Use the following complete JSON as a minimal root-config example in `gitpagedocs
         "tag": "LuGitBranch"
       },
       "FocusMode": {
-        "tag": "LuBookOpen"
+        "tag": "LuScanEye"
       },
       "QuickNavigation": {
         "tag": "LuSearch"

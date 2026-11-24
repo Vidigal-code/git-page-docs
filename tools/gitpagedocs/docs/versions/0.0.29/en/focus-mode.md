@@ -2,6 +2,8 @@
 
 Focus mode opens the current Markdown document in a reading dialog. Enable it with `site.FocusMode`; the control is available only for a real Markdown page. `site.icons.FocusMode` changes its icon/text appearance and does not enable or disable the feature.
 
+The default focus icon is `LuScanEye`, an eye inside a frame that identifies focused reading separately from the fullscreen expand icon. The button retains its translated accessible name. Existing custom icons and `reactIcon: false` text controls remain supported; changing the default does not replace an explicit `site.icons.FocusMode.tag` override.
+
 ## Configure the controls
 
 Merge this fragment into `gitpagedocs/config.json`:
