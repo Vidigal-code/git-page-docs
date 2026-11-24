@@ -208,6 +208,11 @@
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
+.treeContent {
+  width: max-content;
+  min-width: 100%;
+}
+
 .treeItem,
 .fileRow,
 .breadcrumbButton {
@@ -229,7 +234,7 @@
 }
 
 .treeItem {
-  grid-template-columns: 12px 16px minmax(0, 1fr);
+  grid-template-columns: 12px 16px max-content;
   min-height: 34px;
   border-radius: var(--source-browser-radius);
   padding: 4px 8px;
@@ -262,6 +267,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.treeItem .fileName {
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .main {

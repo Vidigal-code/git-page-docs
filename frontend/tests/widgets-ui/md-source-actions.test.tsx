@@ -46,9 +46,8 @@ describe("MdSourceActions", () => {
 
     const copy = screen.getByTestId("md-copy");
     expect(copy.getAttribute("aria-label")).toBe("Copiar Markdown");
-    await act(async () => {
-      fireEvent.click(copy);
-    });
+    fireEvent.click(copy);
+    await act(async () => { await vi.advanceTimersByTimeAsync(0); });
     expect(writeText).toHaveBeenCalledWith("# Oi\n");
     expect(copy.getAttribute("aria-label")).toBe("Copiado!");
     expect(screen.getByRole("status").textContent).toBe("Copiado!");
@@ -62,18 +61,16 @@ describe("MdSourceActions", () => {
   it("reports a failed copy", async () => {
     vi.stubGlobal("navigator", { clipboard: { writeText: vi.fn().mockRejectedValue(new Error("denied")) } });
     render(<MdSourceActions source="x" fileName="a.md" labels={labels} />);
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("md-copy"));
-    });
+    fireEvent.click(screen.getByTestId("md-copy"));
+    await act(async () => { await vi.advanceTimersByTimeAsync(0); });
     expect(screen.getByTestId("md-copy").getAttribute("aria-label")).toBe("Não foi possível copiar");
   });
 
   it("reports a failed copy when the Clipboard API is unavailable", async () => {
     vi.stubGlobal("navigator", {});
     render(<MdSourceActions source="x" fileName="a.md" labels={labels} />);
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("md-copy"));
-    });
+    fireEvent.click(screen.getByTestId("md-copy"));
+    await act(async () => { await vi.advanceTimersByTimeAsync(0); });
     expect(screen.getByTestId("md-copy").getAttribute("aria-label")).toBe("Não foi possível copiar");
   });
 

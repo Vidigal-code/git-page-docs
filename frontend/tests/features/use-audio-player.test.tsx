@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import { useAudioPlayer } from "@/features/audio-player/model/use-audio-player";
 import type { AudioTrackConfig } from "@/entities/docs";
@@ -257,21 +257,15 @@ describe("useAudioPlayer", () => {
 
   it("advances to the next native track when sequential playback is enabled", async () => {
     const sequential = mountPlayer({ tracks: [MP3, OUTRO], sequentialPlayback: true });
-    await act(async () => {
-      fireEvent.ended(sequential.audio);
-    });
+    fireEvent.ended(sequential.audio);
     expect(sequential.api.currentIndex).toBe(1);
-    expect(play).toHaveBeenCalledTimes(1);
-    await act(async () => {
-      fireEvent.ended(sequential.audio);
-    });
+    await waitFor(() => expect(play).toHaveBeenCalledTimes(1));
+    fireEvent.ended(sequential.audio);
     expect(sequential.api.currentIndex).toBe(1);
     sequential.unmount();
 
     const single = mountPlayer({ tracks: [MP3, OUTRO], sequentialPlayback: false });
-    await act(async () => {
-      fireEvent.ended(single.audio);
-    });
+    fireEvent.ended(single.audio);
     expect(single.api.currentIndex).toBe(0);
   });
 

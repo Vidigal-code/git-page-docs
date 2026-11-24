@@ -11,7 +11,10 @@ interface GithubTreeResponse {
 
 const GITHUB_API_BASE = "https://api.github.com";
 const RAW_GITHUB_BASE = "https://raw.githubusercontent.com";
-const UTF8_BOM = "\uFEFF";
+const SOURCE_TEXT_ENCODINGS = [
+  { label: "utf-16le", bom: [0xff, 0xfe] },
+  { label: "utf-16be", bom: [0xfe, 0xff] },
+] as const;
 
 /** Source fetches get a longer deadline than config fetches: recursive tree
  * responses for large repositories can take well past the default timeout. */
@@ -46,15 +49,15 @@ function encodePathSegment(value: string): string {
   return encodeURIComponent(value);
 }
 
-function buildRawFileUrl(owner: string, repo: string, branch: string, path: string): string {
+function buildRawFileUrl({ owner, repo, branch, path }: SourceViewerRoute): string {
   const encodedPath = path.split("/").map(encodePathSegment).join("/");
   return `${RAW_GITHUB_BASE}/${encodePathSegment(owner)}/${encodePathSegment(repo)}/${encodePathSegment(branch)}/${encodedPath}`;
 }
 
-async function readUtf8Text(response: Response): Promise<string> {
-  const decoder = new TextDecoder("utf-8");
-  const text = decoder.decode(await response.arrayBuffer());
-  return text.startsWith(UTF8_BOM) ? text.slice(UTF8_BOM.length) : text;
+async function readSourceText(response: Response): Promise<string> {
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  const encoding = SOURCE_TEXT_ENCODINGS.find(({ bom }) => bom.every((byte, index) => bytes[index] === byte));
+  return new TextDecoder(encoding?.label ?? "utf-8").decode(bytes);
 }
 
 function toTreeEntries(tree: NonNullable<GithubTreeResponse["tree"]>): SourceTreeEntry[] {
@@ -119,9 +122,9 @@ export async function resolveSourceRepository(
   }
 }
 
-export async function loadSourceFile(owner: string, repo: string, branch: string, path: string): Promise<SourceFileContent> {
+export async function loadSourceFile(route: SourceViewerRoute): Promise<SourceFileContent> {
   const response = await fetchWithTimeout(
-    buildRawFileUrl(owner, repo, branch, path),
+    buildRawFileUrl(route),
     { cache: "no-store" },
     SOURCE_FETCH_TIMEOUT_MS,
   );
@@ -130,7 +133,7 @@ export async function loadSourceFile(owner: string, repo: string, branch: string
   }
 
   return {
-    path,
-    content: await readUtf8Text(response),
+    path: route.path,
+    content: await readSourceText(response),
   };
 }

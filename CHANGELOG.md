@@ -3,6 +3,14 @@
 All notable changes to Git Page Docs are documented here. Versions follow semver and count from the
 0.0.1 baseline below.
 
+## 0.0.30 - 2026-11-24 - Unicode source files and repository tree navigation
+
+- Decode UTF-16LE and UTF-16BE source files marked with a BOM through the native text decoder, preserving UTF-8 as the default.
+- Preserve accented characters and non-Latin text in the Source code viewer without modifying repository files.
+- Show complete names in the repository tree with horizontal and vertical scrolling; expand or collapse folders without replacing the open file or changing the current URL.
+- Align React state and setter names, simplify optional PDF types and fullscreen checks, and synchronize UI tests with Testing Library while preserving public interfaces and assertions.
+- Update packages and documentation to 0.0.30 while retaining earlier versions.
+
 ## 0.0.29 - 2026-11-23 - compact Markdown document controls
 
 - Place Previous, Next and Back to top inside the Markdown container, preserving left, center and right alignment.

@@ -56,7 +56,7 @@ export function useStandaloneShellPreferences({
     ? resolveThemeByMode(layouts, initialThemeBase, configuredDefaultMode).id
     : layouts[0]?.id ?? "";
 
-  const [preferredThemeId, setActiveThemeId] = useState(initialThemeId);
+  const [preferredThemeId, setPreferredThemeId] = useState(initialThemeId);
   const { mode: fixedFamilyMode, selectMode: setFixedFamilyMode } = useFixedFamilyMode({
     selectionMode: themeSelectionMode, defaultMode: configuredDefaultMode,
     storageKey: themeModeStorageKey, requestedMode: parseThemeMode(safeSearchParams.get("modetheme")),
@@ -130,7 +130,7 @@ export function useStandaloneShellPreferences({
     const urlThemeId = safeSearchParams.get(THEME_URL_PARAM);
     const layoutFromUrl = urlThemeId ? layouts.find((l) => l.id === urlThemeId) : null;
     if (layoutFromUrl) {
-      setActiveThemeId(layoutFromUrl.id);
+      setPreferredThemeId(layoutFromUrl.id);
       setThemeExplicit(true);
       setThemeRestored(true);
       return;
@@ -146,7 +146,7 @@ export function useStandaloneShellPreferences({
         const savedThemeId = window.localStorage.getItem(themeLayoutStorageKey);
         const savedLayout = savedThemeId ? layouts.find((l) => l.id === savedThemeId) : null;
         if (savedLayout) {
-          setActiveThemeId(savedLayout.id);
+          setPreferredThemeId(savedLayout.id);
           setThemeRestored(true);
           return;
         }
@@ -159,7 +159,7 @@ export function useStandaloneShellPreferences({
       const baseLayout = layouts.find((l) => l.id === initialThemeBaseId) ?? layouts[0];
       if (baseLayout) {
         const resolved = resolveThemeByMode(layouts, baseLayout, mode);
-        setActiveThemeId(resolved.id);
+        setPreferredThemeId(resolved.id);
       }
     } catch {
       /* ignore */
@@ -224,7 +224,7 @@ export function useStandaloneShellPreferences({
     if (themeSelectionMode === "fixed") return;
 
     setThemeExplicit(true);
-    setActiveThemeId(themeId);
+    setPreferredThemeId(themeId);
     const layout = layouts.find((l) => l.id === themeId);
     syncThemeToUrl(themeId, layout?.mode === "dark" || layout?.mode === "light" ? layout.mode : undefined);
   }
@@ -234,7 +234,7 @@ export function useStandaloneShellPreferences({
     if (themeSelectionMode === "fixed") setFixedFamilyMode(nextMode);
     else {
       setThemeExplicit(true);
-      setActiveThemeId(pairedLayout.id);
+      setPreferredThemeId(pairedLayout.id);
     }
     syncThemeToUrl(pairedLayout.id, nextMode);
   }

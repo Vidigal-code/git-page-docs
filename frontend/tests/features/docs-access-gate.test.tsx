@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // jsdom parses its default stylesheet on the first getComputedStyle / role query,
@@ -51,9 +51,7 @@ describe("DocsAccessGate", () => {
 
     fireEvent.change(input, { target: { value: "nope" } });
     expect((screen.getByRole("button", { name: "Unlock" }) as HTMLButtonElement).disabled).toBe(false);
-    await act(async () => {
-      fireEvent.submit(form());
-    });
+    fireEvent.submit(form());
 
     expect(onUnlock).toHaveBeenCalledWith("nope");
     await waitFor(() => expect(screen.getByText("Wrong password")).toBeTruthy());
@@ -66,9 +64,8 @@ describe("DocsAccessGate", () => {
     const onUnlock = vi.fn(async () => true);
     render(<DocsAccessGate texts={TEXTS} onUnlock={onUnlock} />);
     fireEvent.change(screen.getByPlaceholderText("Password"), { target: { value: "secret" } });
-    await act(async () => {
-      fireEvent.submit(form());
-    });
+    fireEvent.submit(form());
+    await waitFor(() => expect((screen.getByRole("button", { name: "Unlock" }) as HTMLButtonElement).disabled).toBe(false));
     expect(onUnlock).toHaveBeenCalledWith("secret");
     expect(screen.queryByText("Wrong password")).toBeNull();
   });

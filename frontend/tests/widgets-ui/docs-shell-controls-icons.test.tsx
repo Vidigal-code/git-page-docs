@@ -1,6 +1,6 @@
 ﻿// @vitest-environment jsdom
 import { afterEach, expect, it } from "vitest";
-import { act, cleanup, render, waitFor } from "@testing-library/react";
+import { cleanup, render, waitFor } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { DocsShellControlsIcons, type DocsShellControlsIconsProps } from "@/widgets/docs-shell/ui/docs-shell-controls-icons";
 
@@ -86,11 +86,9 @@ it("replaces the immediate icons with the explicitly configured icon after it re
 
 it("keeps usable icons when configured tags cannot be resolved", async () => {
   const container = document.createElement("div");
-  await act(async () => {
-    render(<DocsShellControlsIcons {...props}
-      projectLinkReactIconTag="UnknownIcon" versionLinksIconTag="UnknownIcon"
-      infoIconTag="UnknownIcon" previewIconTag="UnknownIcon"
-    />, { container });
-  });
-  expect(container.querySelectorAll("svg")).toHaveLength(4);
+  render(<DocsShellControlsIcons {...props}
+    projectLinkReactIconTag="UnknownIcon" versionLinksIconTag="UnknownIcon"
+    infoIconTag="UnknownIcon" previewIconTag="UnknownIcon"
+  />, { container });
+  await waitFor(() => expect(container.querySelectorAll("svg")).toHaveLength(4));
 });

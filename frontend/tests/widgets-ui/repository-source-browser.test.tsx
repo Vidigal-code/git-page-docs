@@ -65,3 +65,51 @@ it("keeps unrelated folders collapsed and displays and opens an empty file", asy
   expect(screen.queryByRole("table", { name: "Files" })).toBeNull();
   expect(screen.queryByText("File could not be loaded.")).toBeNull();
 });
+
+it("expands and collapses sidebar folders without replacing the open file", async () => {
+  vi.stubGlobal("fetch", vi.fn<typeof fetch>()
+    .mockResolvedValueOnce(Response.json({ tree: TREE }))
+    .mockResolvedValueOnce(new Response("Hello reader")));
+  const onRouteChange = vi.fn();
+  render(<RepositorySourceBrowser initialRoute={{ ...INITIAL_ROUTE, path: "docs/guide.txt" }} labels={buildSourceViewerLabels({}, "en")} onRouteChange={onRouteChange} />);
+
+  await screen.findByText("Hello reader");
+  const tree = screen.getByRole("complementary", { name: "Files" });
+  const folder = within(tree).getByRole("button", { name: "docs" });
+  expect(folder.getAttribute("aria-expanded")).toBe("true");
+  fireEvent.click(folder);
+
+  expect(folder.getAttribute("aria-expanded")).toBe("false");
+  expect(within(tree).queryByRole("button", { name: "guide.txt" })).toBeNull();
+  expect(screen.getByText("Hello reader")).toBeTruthy();
+  expect(onRouteChange).not.toHaveBeenCalled();
+  fireEvent.click(folder);
+
+  expect(folder.getAttribute("aria-expanded")).toBe("true");
+  expect(within(tree).getByRole("button", { name: "guide.txt" }).getAttribute("aria-current")).toBe("page");
+  const nestedFolder = within(tree).getByRole("button", { name: "examples" });
+  fireEvent.click(nestedFolder);
+  expect(nestedFolder.getAttribute("aria-expanded")).toBe("true");
+  expect(within(tree).getByRole("button", { name: "hidden.txt" })).toBeTruthy();
+  fireEvent.click(nestedFolder);
+  expect(nestedFolder.getAttribute("aria-expanded")).toBe("false");
+  expect(within(tree).queryByRole("button", { name: "hidden.txt" })).toBeNull();
+  expect(screen.getByText("Hello reader")).toBeTruthy();
+  expect(onRouteChange).not.toHaveBeenCalled();
+});
+
+it("keeps directory navigation available through filtered sidebar results", async () => {
+  vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockResolvedValueOnce(Response.json({ tree: TREE })));
+  const onRouteChange = vi.fn();
+  render(<RepositorySourceBrowser initialRoute={INITIAL_ROUTE} labels={buildSourceViewerLabels({}, "en")} onRouteChange={onRouteChange} />);
+
+  await screen.findByRole("table", { name: "Files" });
+  const tree = screen.getByRole("complementary", { name: "Files" });
+  fireEvent.change(within(tree).getByRole("textbox", { name: "Filter files" }), { target: { value: "examples" } });
+  fireEvent.click(within(tree).getByRole("button", { name: "docs/examples" }));
+
+  expect(onRouteChange).toHaveBeenLastCalledWith({ ...INITIAL_ROUTE, path: "docs/examples" });
+  const files = screen.getByRole("table", { name: "Files" });
+  expect(within(files).getByRole("button", { name: "hidden.txt" })).toBeTruthy();
+  expect(within(files).queryByRole("button", { name: "guide.txt" })).toBeNull();
+});

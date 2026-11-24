@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import type { ComponentProps } from "react";
 import { DocsShellFocusOverlay } from "@/widgets/docs-shell/ui/docs-shell-focus-overlay";
@@ -36,12 +36,12 @@ it("copies the complete source of the document currently shown in focus", async 
   vi.stubGlobal("navigator", { clipboard: { writeText } });
   const props = overlayProps();
   const { rerender } = render(<DocsShellFocusOverlay {...props} />);
-  await act(async () => fireEvent.click(screen.getByRole("button", { name: "Copy Markdown" })));
-  expect(writeText).toHaveBeenLastCalledWith("# Introduction");
+  fireEvent.click(screen.getByRole("button", { name: "Copy Markdown" }));
+  await waitFor(() => expect(writeText).toHaveBeenLastCalledWith("# Introduction"));
 
   rerender(<DocsShellFocusOverlay {...props} document={{ ...props.document, id: "install", source: "# Installation\n\n## Configure", fileName: "install.md" }} />);
-  await act(async () => fireEvent.click(screen.getByRole("button", { name: "Copy Markdown" })));
-  expect(writeText).toHaveBeenLastCalledWith("# Installation\n\n## Configure");
+  fireEvent.click(screen.getByRole("button", { name: "Copy Markdown" }));
+  await waitFor(() => expect(writeText).toHaveBeenLastCalledWith("# Installation\n\n## Configure"));
 });
 
 it("lets each focus toolbar feature be disabled without hiding the reading surface", () => {

@@ -140,7 +140,7 @@ describe("loadSourceFile", () => {
   it("fetches the raw file with cache disabled, encoding every segment", async () => {
     fetchMock.mockResolvedValueOnce(new Response("export {};\n", { status: 200 }));
 
-    await expect(loadSourceFile("my org", "r#1", "feat/x", "src/a b.ts")).resolves.toEqual({
+    await expect(loadSourceFile({ owner: "my org", repo: "r#1", branch: "feat/x", path: "src/a b.ts" })).resolves.toEqual({
       path: "src/a b.ts",
       content: "export {};\n",
     });
@@ -151,11 +151,11 @@ describe("loadSourceFile", () => {
 
   it("strips a UTF-8 byte order mark", async () => {
     fetchMock.mockResolvedValueOnce(new Response(new TextEncoder().encode("﻿hello"), { status: 200 }));
-    expect((await loadSourceFile("o", "r", "main", "a.txt")).content).toBe("hello");
+    expect((await loadSourceFile({ owner: "o", repo: "r", branch: "main", path: "a.txt" })).content).toBe("hello");
   });
 
   it("throws a GithubRequestError for a missing file", async () => {
     fetchMock.mockResolvedValueOnce(statusResponse(404));
-    await expect(loadSourceFile("o", "r", "main", "missing.txt")).rejects.toMatchObject({ status: 404 });
+    await expect(loadSourceFile({ owner: "o", repo: "r", branch: "main", path: "missing.txt" })).rejects.toMatchObject({ status: 404 });
   });
 });

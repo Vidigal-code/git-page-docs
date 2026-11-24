@@ -60,8 +60,8 @@ it("reserves a tab during the click and opens a validated PDF Blob when preview 
 
 it("keeps an opened PDF available after route changes and releases it when its tab closes", async () => {
   const { rerender } = render(<PdfContainer {...baseProps} sitePdf={{ previewEnabled: false }} />);
-  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Open in new tab" })); });
-  expect(tab.location.replace).toHaveBeenCalledWith(openedUrl);
+  fireEvent.click(screen.getByRole("button", { name: "Open in new tab" }));
+  await waitFor(() => expect(tab.location.replace).toHaveBeenCalledWith(openedUrl));
   rerender(<PdfContainer {...baseProps} pathPdf="/other.pdf" sitePdf={{ previewEnabled: false }} />);
   expect(tab.close).not.toHaveBeenCalled();
   expect(revokeUrl).toHaveBeenCalledWith(previewUrl);
@@ -134,9 +134,9 @@ it("configures PDF action icons independently while preserving accessible button
 it("reuses the validated preview when opening a PDF and localizes popup errors", async () => {
   const { rerender } = render(<PdfContainer {...baseProps} />);
   await screen.findByTitle("PDF");
-  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Open in new tab" })); });
+  fireEvent.click(screen.getByRole("button", { name: "Open in new tab" }));
+  await waitFor(() => expect(tab.location.replace).toHaveBeenCalledWith(openedUrl));
   expect(fetchPdf).toHaveBeenCalledTimes(1);
-  expect(tab.location.replace).toHaveBeenCalledWith(openedUrl);
   vi.mocked(window.open).mockReturnValueOnce(null);
   rerender(<PdfContainer {...baseProps} language="pt" langmenu={{ pt: { PdfOpenInNewTab: "Abrir PDF", PdfOpenError: "Permita a nova guia." } }} />);
   fireEvent.click(screen.getByRole("button", { name: "Abrir PDF" }));

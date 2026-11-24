@@ -51,8 +51,8 @@ it("follows consecutive breadcrumb parents while keeping the sidebar collapsed",
   expect(screen.getByTestId("sidebar-expand")).toBeTruthy();
   fireEvent.click(within(breadcrumb).getByRole("button", { name: "Configure your site" }));
   await screen.findByRole("heading", { name: "Site overview" });
-  expect(screen.queryByTestId("sidebar-expand")).not.toBeNull();
+  expect(screen.getByTestId("sidebar-expand")).not.toBeNull();
   fireEvent.click(within(breadcrumb).getByRole("button", { name: "Guides" }));
   await waitFor(() => expect(within(breadcrumb).getByText("Guides").getAttribute("aria-current")).toBe("page"));
-  expect(screen.queryByTestId("sidebar-expand")).not.toBeNull();
+  expect(screen.getByTestId("sidebar-expand")).not.toBeNull();
 });

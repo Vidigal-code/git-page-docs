@@ -1,6 +1,6 @@
 "use client";
 
-import type { LanguageCode, SiteConfig } from "@/entities/docs";
+import type { LanguageCode, PdfOptions, SiteConfig } from "@/entities/docs";
 import { FiDownload } from "@react-icons/all-files/fi/FiDownload";
 import { FiExternalLink } from "@react-icons/all-files/fi/FiExternalLink";
 import { resolveControlIcon, type ControlIconSettings } from "@/shared/lib/icons/resolve-control-icon";
@@ -19,7 +19,7 @@ interface PdfContainerProps extends RouteContainerFrameProps {
   pathPdf: string;
   language: LanguageCode;
   isDarkMode?: boolean;
-  sitePdf?: SiteConfig["pdf"];
+  sitePdf?: PdfOptions;
   siteIconSettings?: ControlIconSettings;
   langmenu?: SiteConfig["langmenu"];
 }

@@ -51,7 +51,7 @@ As ações PDF usam ícones por padrão. Configure \`site.icons.PdfDownload\` (\
 
 ## Exemplo de rota e menu
 
-Em \`gitpagedocs/docs/versions/0.0.29/config.json\`, mantenha as listas de rotas e menus no nível principal:
+Em \`gitpagedocs/docs/versions/0.0.30/config.json\`, mantenha as listas de rotas e menus no nível principal:
 
 \`\`\`json
 {
@@ -60,9 +60,9 @@ Em \`gitpagedocs/docs/versions/0.0.29/config.json\`, mantenha as listas de rotas
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -251,6 +251,10 @@ Consulte **Referência da CLI** para comandos, flags, exemplos e compatibilidade
 O config da versão pode renderizar um container **Código fonte** via \`routes-source-viewer\` e \`menus-header-source-viewer\`. O viewer lê a árvore do repositório no GitHub em tempo de execução e aplica o tema atual da documentação.
 
 Desde a 0.0.27, o painel principal de Código fonte tem altura máxima de 70% da altura dinâmica da janela. Listas extensas de diretórios, prévias do README e conteúdos de arquivos rolam dentro desse painel; a barra lateral mantém sua própria área de rolagem. O código preserva a rolagem horizontal para linhas longas. Esse comportamento vale para rotas source-viewer configuradas e não adiciona uma rota automaticamente.
+
+Desde a 0.0.30, Código fonte reconhece arquivos UTF-16LE e UTF-16BE com marca de ordem de bytes (BOM) e mantém UTF-8 como padrão para arquivos sem essa marca. Isso preserva acentos e caracteres de outros alfabetos na visualização, sem alterar os arquivos do repositório.
+
+A árvore de arquivos permite rolagem horizontal e vertical e mostra os nomes completos de arquivos e pastas. Clicar na linha de uma pasta expande ou recolhe seus itens sem trocar o arquivo aberto nem o endereço atual. A listagem central, os caminhos de navegação e os resultados de pastas filtrados continuam permitindo navegar pelos diretórios.
 
 - Árvore do repositório a partir de \`source-viewer-path\`; a branch padrão é \`main\`
 - Navegação por pastas e filtro de arquivos

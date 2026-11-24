@@ -550,6 +550,7 @@ for (const step of KEYBOARD_STEPS) {
 }
 
 test("completes one full chapter after a native touch swipe", async ({ page, hasTouch }) => {
+  // The touch project exercises this gesture; desktop projects have no native touch input.
   test.skip(!hasTouch, "The gesture requires a touch-enabled browser");
   await openGuide(page, TRANSITION_THEME);
   const expected = await prepareChapter(page, 2);

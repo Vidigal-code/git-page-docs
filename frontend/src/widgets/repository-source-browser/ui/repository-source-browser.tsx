@@ -465,7 +465,7 @@ export function RepositorySourceBrowser({
         setExpanded({});
         if (initialSelection.file) {
           setIsLoadingFile(true);
-          const file = await loadSourceFile(route.owner, route.repo, route.branch, initialSelection.file.path);
+          const file = await loadSourceFile({ ...route, path: initialSelection.file.path });
           if (!cancelled) {
             setSelectedFile(file);
             setViewMode(defaultViewMode(file.path));
@@ -499,7 +499,7 @@ export function RepositorySourceBrowser({
     setIsLoadingFile(true);
     setError("");
     try {
-      const file = await loadSourceFile(route.owner, route.repo, route.branch, entry.path);
+      const file = await loadSourceFile({ ...route, path: entry.path });
       setSelectedFile(file);
       setActivePath(entry.path);
       setViewMode(defaultViewMode(entry.path));
@@ -534,12 +534,11 @@ export function RepositorySourceBrowser({
     updateRoute(nextRoute);
   }
 
-  function selectTreeDirectory(path: string) {
-    const isOpen = expanded[path] ?? (activePath === path || activePath.startsWith(`${path}/`));
-    setActivePath(path);
-    setSelectedFile(null);
-    setExpanded((prev) => ({ ...prev, [path]: !isOpen }));
-    onRouteChange?.({ ...route, path });
+  function toggleTreeDirectory(path: string) {
+    setExpanded((previous) => {
+      const isOpen = previous[path] ?? (activePath === path || activePath.startsWith(`${path}/`));
+      return { ...previous, [path]: !isOpen };
+    });
   }
 
   function renderNode(node: TreeNode): React.ReactNode {
@@ -554,7 +553,7 @@ export function RepositorySourceBrowser({
           aria-expanded={isDirectory ? isOpen : undefined}
           aria-current={activePath === node.entry.path ? "page" : undefined}
           style={{ paddingLeft: `${TREE_BASE_PADDING + Math.max(0, getEntryDepth(node.entry.path)) * TREE_LEVEL_INDENT}px` }}
-          onClick={() => (isDirectory ? selectTreeDirectory(node.entry.path) : selectFile(node.entry))}
+          onClick={() => (isDirectory ? toggleTreeDirectory(node.entry.path) : selectFile(node.entry))}
         >
           <span className={styles.treeChevron}>{isDirectory ? directoryChevron : null}</span>
           {isDirectory ? <FiFolder className={styles.folderIcon} aria-hidden /> : <FiFile aria-hidden />}
@@ -585,7 +584,7 @@ export function RepositorySourceBrowser({
           type="button"
           className={`${styles.treeItem} ${selectedFile?.path === entry.path ? styles.treeItemActive : ""}`}
           aria-current={activePath === entry.path ? "page" : undefined}
-          onClick={() => (entry.type === "tree" ? selectTreeDirectory(entry.path) : selectFile(entry))}
+          onClick={() => (entry.type === "tree" ? selectDirectory(entry.path) : selectFile(entry))}
         >
           <span className={styles.treeChevron} />
           {entry.type === "tree" ? <FiFolder className={styles.folderIcon} aria-hidden /> : <FiFile aria-hidden />}
@@ -657,7 +656,9 @@ export function RepositorySourceBrowser({
               <button type="button" className={styles.treeButton} aria-label={labels.clear} title={labels.clear} onClick={() => setTreeQuery("")}><FiX aria-hidden /></button>
             </div>
           </div>
-          <div className={styles.tree}>{renderTreeContent()}</div>
+          <div className={styles.tree}>
+            <div className={styles.treeContent}>{renderTreeContent()}</div>
+          </div>
         </aside>
         <div className={styles.main}>
           {!isFileView && !isLoadingTree && repository ? (

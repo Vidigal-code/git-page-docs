@@ -51,7 +51,7 @@ Las acciones PDF usan iconos por defecto. Configura \`site.icons.PdfDownload\` (
 
 ## Ejemplo de ruta y menú
 
-En \`gitpagedocs/docs/versions/0.0.29/config.json\`, conserva las listas de rutas y menús en el nivel principal:
+En \`gitpagedocs/docs/versions/0.0.30/config.json\`, conserva las listas de rutas y menús en el nivel principal:
 
 \`\`\`json
 {
@@ -60,9 +60,9 @@ En \`gitpagedocs/docs/versions/0.0.29/config.json\`, conserva las listas de ruta
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -251,6 +251,10 @@ Consulta **Referencia de la CLI** para comandos, flags, ejemplos y compatibilida
 El config de versión puede renderizar un contenedor **Código fuente** vía \`routes-source-viewer\` y \`menus-header-source-viewer\`. El viewer lee el árbol del repositorio en GitHub en tiempo de ejecución y aplica el tema actual de la documentación.
 
 Desde 0.0.27, el panel principal de Código fuente tiene una altura máxima del 70% de la altura dinámica de la ventana. Las listas extensas de directorios, las vistas previas del README y el contenido de los archivos se desplazan dentro de este panel; la barra lateral conserva su propia área de desplazamiento. El código mantiene el desplazamiento horizontal para líneas largas. Este comportamiento se aplica a rutas source-viewer configuradas y no añade una ruta automáticamente.
+
+Desde 0.0.30, Código fuente reconoce archivos UTF-16LE y UTF-16BE con marca de orden de bytes (BOM) y mantiene UTF-8 como valor predeterminado para archivos sin ella. Esto conserva los acentos y los caracteres de otros alfabetos en la vista, sin modificar los archivos del repositorio.
+
+El árbol de archivos permite desplazarse horizontal y verticalmente y muestra los nombres completos de archivos y carpetas. Al hacer clic en la fila de una carpeta se expanden o contraen sus elementos sin sustituir el archivo abierto ni cambiar la dirección actual. La lista central, las rutas de navegación y los resultados filtrados de carpetas siguen permitiendo navegar por los directorios.
 
 - Árbol del repositorio desde \`source-viewer-path\`; la branch por defecto es \`main\`
 - Navegación por carpetas y filtro de archivos

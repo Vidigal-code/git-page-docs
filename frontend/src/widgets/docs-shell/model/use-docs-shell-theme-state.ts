@@ -32,7 +32,7 @@ export function useDocsShellThemeState({
 }: UseDocsShellThemeStateArgs) {
   const initialThemeBase = layouts.find((layout) => layout.id === initialThemeBaseId) ?? layouts[0];
   const initialThemeId = initialThemeBase ? resolveThemeByMode(layouts, initialThemeBase, configuredDefaultMode).id : "";
-  const [preferredThemeId, setActiveThemeId] = useState(initialThemeId);
+  const [preferredThemeId, setPreferredThemeId] = useState(initialThemeId);
   const { mode: fixedFamilyMode, selectMode: setFixedFamilyMode } = useFixedFamilyMode({
     selectionMode: themeSelectionMode, defaultMode: configuredDefaultMode,
     storageKey: themeModeStorageKey, requestedMode: parseThemeMode(searchParams.get("modetheme")),
@@ -56,7 +56,7 @@ export function useDocsShellThemeState({
       const layoutFromUrl = urlThemeId ? layouts.find((layout) => layout.id === urlThemeId) : null;
       if (urlThemeId) {
         queueMicrotask(() => {
-          setActiveThemeId(layoutFromUrl?.id ?? initialThemeId);
+          setPreferredThemeId(layoutFromUrl?.id ?? initialThemeId);
           setThemeModeRestored(true);
         });
         return;
@@ -68,7 +68,7 @@ export function useDocsShellThemeState({
         const savedLayout = savedThemeId ? layouts.find((layout) => layout.id === savedThemeId) : null;
         if (savedLayout) {
           queueMicrotask(() => {
-            setActiveThemeId(savedLayout.id);
+            setPreferredThemeId(savedLayout.id);
             setThemeModeRestored(true);
           });
           return;
@@ -80,7 +80,7 @@ export function useDocsShellThemeState({
       if (baseLayout) {
         const resolved = resolveThemeByMode(layouts, baseLayout, targetMode);
         queueMicrotask(() => {
-          setActiveThemeId(resolved.id);
+          setPreferredThemeId(resolved.id);
           setThemeModeRestored(true);
         });
         return;
@@ -141,7 +141,7 @@ export function useDocsShellThemeState({
         }
         const resolved = resolveThemeByMode(layouts, currentBase, targetMode);
         if (resolved.id !== activeThemeId) {
-          setActiveThemeId(resolved.id);
+          setPreferredThemeId(resolved.id);
         }
       } catch {
         // Ignore localStorage errors.
@@ -180,7 +180,7 @@ export function useDocsShellThemeState({
   function onThemeChange(themeId: string) {
     if (themeSelectionMode === "fixed") return;
 
-    setActiveThemeId(themeId);
+    setPreferredThemeId(themeId);
     const layout = layouts.find((item) => item.id === themeId);
     syncThemeToUrl(themeId, layout?.mode === "dark" || layout?.mode === "light" ? layout.mode : undefined);
   }
@@ -190,7 +190,7 @@ export function useDocsShellThemeState({
       return;
     }
     if (themeSelectionMode === "fixed") setFixedFamilyMode(nextMode);
-    else setActiveThemeId(pairedLayout.id);
+    else setPreferredThemeId(pairedLayout.id);
     syncThemeToUrl(pairedLayout.id, nextMode);
   }
 

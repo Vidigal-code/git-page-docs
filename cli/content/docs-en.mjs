@@ -52,7 +52,7 @@ PDF actions use icons by default. Configure \`site.icons.PdfDownload\` (\`LuDown
 
 ## Route and menu example
 
-In \`gitpagedocs/docs/versions/0.0.29/config.json\`, keep route and menu arrays at the top level:
+In \`gitpagedocs/docs/versions/0.0.30/config.json\`, keep route and menu arrays at the top level:
 
 \`\`\`json
 {
@@ -61,9 +61,9 @@ In \`gitpagedocs/docs/versions/0.0.29/config.json\`, keep route and menu arrays 
     "title": { "en": "Project guide (English)", "pt": "Guia do projeto (inglês)", "es": "Guía del proyecto (inglés)" },
     "pdf": {
       "pathPdf": {
-        "en": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf",
-        "pt": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf",
-        "es": "gitpagedocs/docs/versions/0.0.29/en/gitpagedocs-project-guide.pdf"
+        "en": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf",
+        "pt": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf",
+        "es": "gitpagedocs/docs/versions/0.0.30/en/gitpagedocs-project-guide.pdf"
       },
       "previewEnabled": true,
       "downloadEnabled": true,
@@ -252,6 +252,10 @@ See **CLI reference** for all commands, flags, examples and compatibility behavi
 The version config can render a **Source code** container through \`routes-source-viewer\` and \`menus-header-source-viewer\`. The viewer reads GitHub repository trees at runtime and applies the current documentation theme.
 
 Since 0.0.27, the main Source code pane has a maximum height of 70% of the dynamic viewport height. Long directory listings, README previews and file contents scroll inside this pane; the sidebar keeps its own scroll area. Code retains horizontal scrolling for long lines. This behavior applies to configured source-viewer routes and does not add a route automatically.
+
+Since 0.0.30, Source code recognizes UTF-16LE and UTF-16BE files with a byte order mark (BOM) and keeps UTF-8 as the default for files without one. This preserves accented characters and non-Latin text in the source view without changing the repository files.
+
+The Files tree scrolls horizontally and vertically and shows complete file and folder names. Clicking a folder row expands or collapses its children without replacing the open file or changing the current URL. The central directory listing, breadcrumbs and filtered folder results continue to navigate directories.
 
 - Repository tree from \`source-viewer-path\`; branch defaults to \`main\`
 - Folder navigation and file filtering

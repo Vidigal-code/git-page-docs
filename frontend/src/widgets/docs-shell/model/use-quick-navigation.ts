@@ -23,7 +23,7 @@ export function filterQuickNavigationEntries<TEntry extends QuickNavigationEntry
 
 export function useQuickNavigation<TEntry extends QuickNavigationEntryBase>(entries: TEntry[]): QuickNavigationState<TEntry> {
   const [quickNavQuery, setQuickNavQuery] = useState("");
-  const [quickNavActiveIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const quickNavActiveIndexRef = useRef(0);
   const quickNavListRef = useRef<HTMLDivElement | null>(null);
   const quickNavItemRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -37,12 +37,12 @@ export function useQuickNavigation<TEntry extends QuickNavigationEntryBase>(entr
 
   useEffect(() => {
     const list = quickNavListRef.current;
-    const activeButton = quickNavItemRefs.current[quickNavActiveIndex];
+    const activeButton = quickNavItemRefs.current[activeIndex];
     if (!list || !activeButton) {
       return;
     }
     activeButton.scrollIntoView({ block: "nearest" });
-  }, [quickNavActiveIndex, filteredQuickNavEntries.length]);
+  }, [activeIndex, filteredQuickNavEntries.length]);
 
   useEffect(() => {
     quickNavListRef.current?.scrollTo({ top: 0, behavior: "auto" });
@@ -51,7 +51,7 @@ export function useQuickNavigation<TEntry extends QuickNavigationEntryBase>(entr
   return {
     quickNavQuery,
     setQuickNavQuery,
-    quickNavActiveIndex,
+    quickNavActiveIndex: activeIndex,
     quickNavActiveIndexRef,
     setQuickNavActiveIndex,
     quickNavListRef,
